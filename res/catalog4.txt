@@ -1,0 +1,82 @@
+/---------name--------\/--directory--\AB (A=1 if requires joystick; B=1 if requires 128K)
+Agent USA              AGENTUSA        0
+Airheart               AIRHEART        1
+Alien Downpour         ALIENDOWNPOUR  00
+Alien Rain             ALIENRAIN       0
+Ankh                   ANKH            0
+Apple Panic            APPLEPANIC      0
+Aquatron               AQUATRON        0
+Arkanoid               ARKANOID        0
+Battlezone             BATTLEZONE      0
+BC's Quest For Tires   BCSQUESTFORTIRE 0
+Beer Run               BEERRUN         0
+Bolo                   BOLO           00
+Brainteaser Boulevard  BRAINTEASERBLVD 0
+BurgerTime             BURGERTIME     00
+Cannonball Blitz       CANNONBALLBLITZ 0
+Centipede              CENTIPEDE       0
+Choplifter             CHOPLIFTER      0
+Commando               COMMANDO        0
+Conan                  CONAN          00
+Crisis Mountain        CRISISMOUNTAIN  0
+Crossfire              CROSSFIRE       0
+David's Midnight Magic DAVIDSMIDNIGHTM 0
+Defender               DEFENDER        0
+Dig Dug                DIGDUG         00
+Dino Eggs              DINOEGGS        0
+Donkey Kong            DONKEYKONG      0
+Drelbs                 DRELBS          0
+Epoch                  EPOCH           0
+Falcons                FALCONS        00
+Flip Out               FLIPOUT         0
+Formula 1 Racer        FORMULA1RACER   0
+Frogger                FROGGER        00
+Galaxian               GALAXIAN        0
+The Goonies            GOONIES         0
+Gremlins               GREMLINS        0
+Hard Hat Mack          HARDHATMACK     0
+H.E.R.O                HERO            0
+High Rise              HIGHRISE        0
+Hungry Boy             HUNGRYBOY       0
+Impossible Mission     IMPOSSIBLEMISSI 0
+Joust                  JOUST          00
+Jungle Hunt            JUNGLEHUNT     00
+Karateka               KARATEKA        0
+Lady Tut               LADYTUT         0
+Lost Tomb              LOSTTOMB        0
+Moon Patrol            MOONPATROL      0
+Mr. Cool               MRCOOL          0
+Mr. Do                 MRDO           10
+Ms. Pacman             MSPACMAN       00
+Nightmare Gallery      NIGHTMAREGALLER 0
+O'Riley's Mine         ORILEYSMINE     0
+Outpost                OUTPOST         0
+Pac-Man                PACMAN         00
+Paperboy               PAPERBOY        0
+Pest Patrol            PESTPATROL      0
+Pie-Man                PIEMAN          0
+Pitfall II             PITFALLII       0
+Plasmania              PLASMANIA       0
+Pooyan                 POOYAN          0
+Prince of Persia       PRINCEOFPERSIA 01
+Puckman                PUCKMAN         0
+Repton                 REPTON          0
+Ribbit                 RIBBIT          0
+Robotron 2084          ROBOTRON2084    0
+Shamus                 SHAMUS          0
+Snake Byte             SNAKEBYTE       0
+Sneakers               SNEAKERS       00
+Snoggle                SNOGGLE         0
+Space Raiders          SPACERAIDERS    0
+Spider Raid            SPIDERRAID      0
+Spy Hunter             SPYHUNTER       0
+Spy's Demise           SPYSDEMISE      0
+Starblaster            STARBLASTER     0
+Stargate               STARGATE        0
+Succession             SUCCESSION      0
+Swashbuckler           SWASHBUCKLER    0
+Tag Team Wrestling     TAGTEAMWRESTLIN 0
+Tapper                 TAPPER         00
+Tomahawk               TOMAHAWK       10
+Tubeway ][             TUBEWAYII       0
+Wavy Navy              WAVYNAVY       00
