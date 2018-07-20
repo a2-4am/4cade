@@ -5,7 +5,6 @@ Ardy the Aardvark
 Argos
 Aztec
 Ballblazer
-Bellhop
 Boulder Dash
 Bouncing Kamungas
 California Games
@@ -38,11 +37,9 @@ Miner 2049er
 Miner 2049er II
 Minit Man
 Monster Mash
-Mr. Robot and His Robot Factory
 Oil's Well
 Pandora's Box
 Pegasus ][
-Pitstop II
 Rampage
 Roundabout
 Sammy Lightfoot
@@ -52,7 +49,6 @@ Shifty Sam
 Shuttle Intercept
 Spindizzy
 Station 5
-Stellar 7
 Street Sports Basketball
 Street Sports Soccer
 Summer Games
@@ -63,7 +59,6 @@ The American Challenge
 The Heist
 The Movie Monster Game
 The World's Greatest Baseball Game
-Thunder Bombs
 Up'N Down
 Video Vegas
 Winter Games
@@ -72,16 +67,13 @@ Xevious
 //4am has unreleased crack
 County Fair
 Free Fall
-Alcazar
 Black Magic
 Ghostbusters
 Ski Crazed
 Bellhop
 Blisterball
 Mad Bomber
-Track N Field
 Neutrons
-Canyon Climber
 Bubble Bobble
 Bop N Wrestle
 Heavy Barrel
@@ -90,7 +82,6 @@ International Gran Prix
 Sea Dragon
 
 //non-4am
-Sabotage
 Night Mission Pinball (LoGo port)
 Mating Zone
 Jawbreaker

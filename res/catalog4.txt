@@ -1,6 +1,7 @@
 /---------name--------\/--directory--\ABC (A=1 if requires joystick; B=1 if requires 128K; C=1 if has good attract mode, 0=none, -=marginal, ?=unknown)
 Agent USA              AGENTUSA        01
 Airheart               AIRHEART        1?
+Alcazar                ALCAZAR        000
 Alien Downpour         ALIENDOWNPOUR  001
 Alien Rain             ALIENRAIN       01
 Ankh                   ANKH            00
@@ -10,10 +11,13 @@ Arkanoid               ARKANOID        01
 Battlezone             BATTLEZONE      00
 BC's Quest For Tires   BCSQUESTFORTIRE 00
 Beer Run               BEERRUN         0-
+Bellhop                BELLHOP        00-
+Bill Budge's Trilogy   BUDGETRILOGY   000
 Bolo                   BOLO           001
 Brainteaser Boulevard  BRAINTEASERBLVD 00
 BurgerTime             BURGERTIME     001
 Cannonball Blitz       CANNONBALLBLITZ 0-
+Canyon Climber         CANYONCLIMBER  001
 Centipede              CENTIPEDE       0-
 Choplifter             CHOPLIFTER      01
 Commando               COMMANDO        00
@@ -26,9 +30,11 @@ Dig Dug                DIGDUG         000
 Dino Eggs              DINOEGGS        01
 Donkey Kong            DONKEYKONG      00
 Drelbs                 DRELBS          01
+Drol                   DROL           001
 Epoch                  EPOCH           0-
 Falcons                FALCONS        000
 Flip Out               FLIPOUT         01
+Flight Simulator I     FLIGHTSIMI     000
 Formula 1 Racer        FORMULA1RACER   01
 Frogger                FROGGER        000
 Galaxian               GALAXIAN        01
@@ -44,17 +50,22 @@ Jungle Hunt            JUNGLEHUNT     001
 Karateka               KARATEKA        01
 Lady Tut               LADYTUT         01
 Lost Tomb              LOSTTOMB        01
+Mario Bros             MARIOBROS      000
 Moon Patrol            MOONPATROL      0-
 Mr. Cool               MRCOOL          01
 Mr. Do                 MRDO           101
+Mr. Robot              MRROBOT        00-
 Ms. Pacman             MSPACMAN       000
+Nibbler                NIBBLER        001
 Nightmare Gallery      NIGHTMAREGALLER 00
+NORAD                  NORAD          000
 O'Riley's Mine         ORILEYSMINE     01
 Outpost                OUTPOST         0-
 Pac-Man                PACMAN         001
 Paperboy               PAPERBOY        0?
 Pest Patrol            PESTPATROL      01
 Pie-Man                PIEMAN          01
+Pit Stop II            PITSTOPII      000
 Pitfall II             PITFALLII       01
 Plasmania              PLASMANIA       01
 Pooyan                 POOYAN          01
@@ -65,6 +76,7 @@ Radwarrior             RADWARRIOR     010
 Repton                 REPTON          01
 Ribbit                 RIBBIT          01
 Robotron 2084          ROBOTRON2084    01
+Sabotage               SABOTAGE       000
 Shamus                 SHAMUS          0-
 Snake Byte             SNAKEBYTE       01
 Sneakers               SNEAKERS       001
@@ -76,11 +88,15 @@ Spy Hunter             SPYHUNTER       01
 Spy's Demise           SPYSDEMISE      01
 Starblaster            STARBLASTER     01
 Stargate               STARGATE        01
+Stellar 7              STELLAR7       001
 Succession             SUCCESSION      01
 Swashbuckler           SWASHBUCKLER    00
 Tag Team Wrestling     TAGTEAMWRESTLIN 01
 Tapper                 TAPPER         000
 Tomahawk               TOMAHAWK       100
+Thief                  THIEF          000
+Thunder Bombs          THUNDERBOMBS   001
+Track N Field          TRACKNFIELD    001
 Tubeway ][             TUBEWAYII       01
 Victory Road           VICTORYROAD    010
 Wavy Navy              WAVYNAVY       001
