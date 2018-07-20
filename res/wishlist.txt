@@ -1,41 +1,57 @@
 //4am
+Alien Munchies
 Apple Cider Spider
 Ardy the Aardvark
 Argos
 Aztec
 Ballblazer
+Bellhop
 Boulder Dash
+Bouncing Kamungas
 California Games
 Championship Baseball
 Championship Lode Runner
 Championship Wrestling
 Conquering Worlds
+Crime Wave
 Cubit
 Deathsword
 Dive Bomber
 Dunzhin
 Elite
 Frogger II
+Galaxy Gates
 GBA Championship Baseball
 Gulf Strike
 Gumball
 Impossible Mission II
 Jumpman
+Kamikaze
 Kung Fu Master
+Laser Bounce
 Little Computer People
 Lock 'N' Chase
 Marauder
 Marble Madness
+Mars Cars
+Miner 2049er
+Miner 2049er II
 Minit Man
 Monster Mash
 Mr. Robot and His Robot Factory
 Oil's Well
+Pandora's Box
+Pegasus ][
 Pitstop II
 Rampage
+Roundabout
 Sammy Lightfoot
 Shanghai
+Short Circuit
 Shifty Sam
+Shuttle Intercept
 Spindizzy
+Station 5
 Stellar 7
 Street Sports Basketball
 Street Sports Soccer
@@ -44,8 +60,10 @@ Super Bunny
 Super Huey
 Tharolian Tunnels
 The American Challenge
+The Heist
 The Movie Monster Game
 The World's Greatest Baseball Game
+Thunder Bombs
 Up'N Down
 Video Vegas
 Winter Games
