@@ -4,9 +4,12 @@ Apple Cider Spider
 Ardy the Aardvark
 Argos
 Aztec
+Bad Dudes [DHGR]
 Ballblazer
+Batman [DHGR]
 Boulder Dash
 Bouncing Kamungas
+Bubble Bobble
 California Games
 Championship Baseball
 Championship Lode Runner
@@ -14,7 +17,8 @@ Championship Wrestling
 Conquering Worlds
 Crime Wave
 Cubit
-Deathsword
+D-Generation [DHGR]
+Deathsword [DHGR]
 Dive Bomber
 Dunzhin
 Elite
@@ -23,6 +27,7 @@ Galaxy Gates
 GBA Championship Baseball
 Gulf Strike
 Gumball
+Heavy Barrel [DHGR]
 Impossible Mission II
 Jumpman
 Kamikaze
@@ -40,13 +45,16 @@ Monster Mash
 Oil's Well
 Pandora's Box
 Pegasus ][
-Rampage
+Platoon [DHGR]
+Rampage [DHGR]
+Robocop [DHGR]
 Roundabout
 Sammy Lightfoot
 Shanghai
 Short Circuit
 Shifty Sam
 Shuttle Intercept
+Soko-Ban [DHGR]
 Spindizzy
 Station 5
 Street Sports Basketball
@@ -54,6 +62,7 @@ Street Sports Soccer
 Summer Games
 Super Bunny
 Super Huey
+Techno Cop [DHGR]
 Tharolian Tunnels
 The American Challenge
 The Heist
@@ -74,9 +83,7 @@ Bellhop
 Blisterball
 Mad Bomber
 Neutrons
-Bubble Bobble
 Bop N Wrestle
-Heavy Barrel
 Galactic Attack
 International Gran Prix
 Sea Dragon
@@ -88,7 +95,7 @@ Jawbreaker
 Tetris
 Randamn
 Captain Goodnight
-D-Generation
+D-Generation [DHGR]
 Dung Beetles
 Crystal Castles
 Horizon V
@@ -126,3 +133,4 @@ Warp Destroyer
 Eggs It
 Flywars
 Shuffleboard
+Thexder [DHGR]
