@@ -42,6 +42,7 @@ Miner 2049er
 Miner 2049er II
 Minit Man
 Monster Mash
+Neutrons
 Oil's Well
 Pandora's Box
 Pegasus ][
@@ -70,6 +71,7 @@ The Movie Monster Game
 The World's Greatest Baseball Game
 Up'N Down
 Video Vegas
+World Karate Championship
 Winter Games
 Xevious
 
@@ -84,7 +86,6 @@ Ghostbusters
 International Gran Prix
 Mad Bomber
 Microwave
-Neutrons
 Pentapus
 Pipe Dream [DHGR]
 Renegade [DHGR]
@@ -95,6 +96,7 @@ Ski Crazed
 Bandits
 Borg
 Buzzard Bait
+Bruce Lee
 Captain Goodnight
 Congo
 Copts and Robbers
@@ -111,6 +113,8 @@ Horizon V
 Ice Hockey
 International Hockey
 Jawbreaker
+Karate Champ
+Kung-Fu Master
 Lemmings
 Lode Runner
 Mating Zone
@@ -124,12 +128,14 @@ Pulsar II
 Randamn
 Raster Blaster
 Rescue Raiders
+Saracen
 Serpentine
 Shuffleboard
 Snack Attack
 Space Eggs
 Spare Change
 Spy Strikes Back
+Super Zaxxon
 Tempest
 Tetris
 The Bilestoad
@@ -138,3 +144,4 @@ Threshold
 Twerps
 Warp Destroyer
 Wayout
+Zaxxon
