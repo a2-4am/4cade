@@ -23,8 +23,8 @@ Dive Bomber
 Dunzhin
 Elite
 Frogger II
-Galaxy Gates
 GBA Championship Baseball
+Galaxy Gates
 Gulf Strike
 Gumball
 Heavy Barrel [DHGR]
@@ -51,8 +51,8 @@ Robocop [DHGR]
 Roundabout
 Sammy Lightfoot
 Shanghai
-Short Circuit
 Shifty Sam
+Short Circuit
 Shuttle Intercept
 Soko-Ban [DHGR]
 Spindizzy
@@ -74,63 +74,67 @@ Winter Games
 Xevious
 
 //4am has unreleased crack
+Black Magic
+Blisterball
+Bop N Wrestle
 County Fair
 Free Fall
-Black Magic
-Ghostbusters
-Ski Crazed
-Bellhop
-Blisterball
-Mad Bomber
-Neutrons
-Bop N Wrestle
 Galactic Attack
+Ghostbusters
 International Gran Prix
+Mad Bomber
+Microwave
+Neutrons
+Pentapus
+Pipe Dream [DHGR]
+Renegade [DHGR]
 Sea Dragon
+Ski Crazed
 
 //non-4am
-Night Mission Pinball (LoGo port)
-Mating Zone
-Jawbreaker
-Tetris
-Randamn
+Bandits
+Borg
+Buzzard Bait
 Captain Goodnight
+Congo
+Copts and Robbers
+Crystal Castles
+Cyber Strike
 D-Generation [DHGR]
 Dung Beetles
-Crystal Castles
-Horizon V
-Phaser Fire
-Lemmings
-Borg
-Bandits
-Twerps
-Space Eggs
-Copts and Robbers
-Phantoms Five
-Pulsar II
-Buzzard Bait
-Wayout
-Orbitron
-Gorgon
-Gamma Goblins
-The Bilestoad
-Tempest
-Congo
-Raster Blaster
-Spy Strikes Back
-One on One
+Eggs It
 Firebird
+Flywars
+Gamma Goblins
+Gorgon
+Horizon V
 Ice Hockey
 International Hockey
+Jawbreaker
+Lemmings
 Lode Runner
+Mating Zone
+Night Mission Pinball (LoGo port)
 Night Stalker
+One on One
+Orbitron
+Phantoms Five
+Phaser Fire
+Pulsar II
+Randamn
+Raster Blaster
 Rescue Raiders
 Serpentine
-Snack Attack
-Spare Change
-Threshold
-Warp Destroyer
-Eggs It
-Flywars
 Shuffleboard
+Snack Attack
+Space Eggs
+Spare Change
+Spy Strikes Back
+Tempest
+Tetris
+The Bilestoad
 Thexder [DHGR]
+Threshold
+Twerps
+Warp Destroyer
+Wayout
