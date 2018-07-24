@@ -1,8 +1,10 @@
 //4am
 Alien Munchies
 Apple Cider Spider
+Arcticfox
 Ardy the Aardvark
 Argos
+Axis Assassin
 Aztec
 Bad Dudes [DHGR]
 Ballblazer
@@ -55,6 +57,7 @@ Shanghai
 Shifty Sam
 Short Circuit
 Shuttle Intercept
+Skyfox
 Soko-Ban [DHGR]
 Spindizzy
 Station 5
@@ -98,8 +101,10 @@ Borg
 Buzzard Bait
 Bruce Lee
 Captain Goodnight
+Ceiling Zero
 Congo
 Copts and Robbers
+Crazey Mazey
 Crystal Castles
 Cyber Strike
 D-Generation [DHGR]
