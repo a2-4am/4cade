@@ -1,5 +1,6 @@
 //4am
 Alien Munchies
+The American Challenge
 Apple Cider Spider
 Arcticfox
 Ardy the Aardvark
@@ -30,6 +31,7 @@ Galaxy Gates
 Gulf Strike
 Gumball
 Heavy Barrel [DHGR]
+The Heist
 Impossible Mission II
 Jumpman
 Kamikaze
@@ -44,6 +46,7 @@ Miner 2049er
 Miner 2049er II
 Minit Man
 Monster Mash
+The Movie Monster Game
 Neutrons
 Oil's Well
 Pandora's Box
@@ -68,13 +71,11 @@ Super Bunny
 Super Huey
 Techno Cop [DHGR]
 Tharolian Tunnels
-The American Challenge
-The Heist
-The Movie Monster Game
-The World's Greatest Baseball Game
+Threshold
 Up'N Down
 Video Vegas
 World Karate Championship
+The World's Greatest Baseball Game
 Winter Games
 Xevious
 
@@ -85,8 +86,10 @@ Bop N Wrestle
 County Fair
 Free Fall
 Galactic Attack
+GBA Championship Basketball
 Ghostbusters
 International Gran Prix
+Karate Champ
 Mad Bomber
 Microwave
 Pentapus
@@ -95,58 +98,73 @@ Renegade [DHGR]
 Sea Dragon
 Ski Crazed
 
-//non-4am
+//qkumba has crack
 Bandits
-Borg
-Buzzard Bait
 Bruce Lee
 Captain Goodnight
-Ceiling Zero
-Congo
-Copts and Robbers
-Crazey Mazey
-Crystal Castles
-Cyber Strike
 D-Generation [DHGR]
-Dung Beetles
-Eggs It
-Firebird
+The Goonies
+Injured Engine
+Jawbreaker ][
+Mating Zone
+Night Stalker
+Randamn
+Snack Attack
+Test Drive
+Tetris
+
+//TODO(flux-imaged but not woz)
+Borg
+Buzzard Bait
+Cyber Strike
 Flywars
 Gamma Goblins
 Gorgon
-Horizon V
-Ice Hockey
-International Hockey
-Jawbreaker
-Karate Champ
-Kung-Fu Master
-Lemmings
 Lode Runner
-Mating Zone
-Night Mission Pinball (LoGo port)
-Night Stalker
-One on One
 Orbitron
 Phantoms Five
-Phaser Fire
 Pulsar II
-Randamn
 Raster Blaster
-Rescue Raiders
-Saracen
-Serpentine
-Shuffleboard
-Snack Attack
 Space Eggs
-Spare Change
-Spy Strikes Back
-Super Zaxxon
-Tempest
-Tetris
-The Bilestoad
-Thexder [DHGR]
-Threshold
 Twerps
 Warp Destroyer
 Wayout
+
+//TODO(woz-imaged but uncracked)
+The Dam Busters
+Fight Night
+Hardball
+The Spy Strikes Back
 Zaxxon
+
+//TODO(unimaged)
+Firebird
+Night Mission Pinball
+Rescue Raiders
+Serpentine
+Spare Change
+The Bilestoad
+Thexder [DHGR]
+
+//TODO(unacquired)
+Ceiling Zero
+Congo
+Copts and Robbers
+Crazy Mazey
+Dung Beetles
+Eggs It
+Horizon V
+Ice Hockey
+International Hockey
+Lemmings
+One on One
+Phaser Fire
+Saracen
+Shuffleboard
+Super Zaxxon
+Tempest
+
+//TODO(unreleased)
+Crystal Castles
+Mario Bros.
+Montezuma's Revenge
