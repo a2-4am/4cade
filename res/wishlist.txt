@@ -18,9 +18,9 @@ Championship Baseball
 Championship Lode Runner
 Championship Wrestling
 Conquering Worlds
+Crazy Mazey
 Crime Wave
 Cubit
-D-Generation [DHGR]
 Deathsword [DHGR]
 Dive Bomber
 Dunzhin
@@ -63,6 +63,7 @@ Shuttle Intercept
 Skyfox
 Soko-Ban [DHGR]
 Spindizzy
+The Spy Strikes Back
 Station 5
 Street Sports Basketball
 Street Sports Soccer
@@ -81,7 +82,6 @@ Xevious
 
 //4am has unreleased crack
 Black Magic
-Blisterball
 Bop N Wrestle
 County Fair
 Free Fall
@@ -90,7 +90,6 @@ GBA Championship Basketball
 Ghostbusters
 International Gran Prix
 Karate Champ
-Mad Bomber
 Microwave
 Pentapus
 Pipe Dream [DHGR]
@@ -102,18 +101,26 @@ Ski Crazed
 Bandits
 Bruce Lee
 Captain Goodnight
-D-Generation [DHGR]
 The Goonies
 Injured Engine
 Jawbreaker ][
 Mating Zone
-Night Stalker
 Randamn
-Snack Attack
 Test Drive
 Tetris
 
+//TODO(woz-imaged but uncracked)
+The Dam Busters
+Fight Night
+Hardball
+One on One
+Saracen
+Rescue Raiders
+Thexder [DHGR]
+Zaxxon
+
 //TODO(flux-imaged but not woz)
+The Bilestoad
 Borg
 Buzzard Bait
 Cyber Strike
@@ -121,50 +128,32 @@ Flywars
 Gamma Goblins
 Gorgon
 Lode Runner
+Night Mission Pinball
 Orbitron
 Phantoms Five
+Phaser Fire
 Pulsar II
 Raster Blaster
 Space Eggs
+Spare Change
 Twerps
 Warp Destroyer
 Wayout
-
-//TODO(woz-imaged but uncracked)
-The Dam Busters
-Fight Night
-Hardball
-The Spy Strikes Back
-Zaxxon
-
-//TODO(unimaged)
-Firebird
-Night Mission Pinball
-Rescue Raiders
-Serpentine
-Spare Change
-The Bilestoad
-Thexder [DHGR]
 
 //TODO(unacquired)
 Ceiling Zero
 Congo
 Copts and Robbers
-Crazy Mazey
 Dung Beetles
 Eggs It
+Firebird
 Horizon V
 Ice Hockey
 International Hockey
 Lemmings
-One on One
-Phaser Fire
-Saracen
 Shuffleboard
 Super Zaxxon
 Tempest
 
 //TODO(unreleased)
 Crystal Castles
-Mario Bros.
-Montezuma's Revenge
