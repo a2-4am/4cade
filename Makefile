@@ -10,6 +10,7 @@
 #
 
 DISK=4cade.2mg
+VOLUME=A.4AM.PACK
 
 # third-party tools required to build
 # https://sourceforge.net/projects/acme-crossass/
@@ -19,26 +20,34 @@ ACME=acme
 CADIUS=cadius
 
 asm: md
-	$(ACME) -r build/prorwts2.lst src/PRORWTS2.S
+	$(ACME) -r build/4cade.lst src/4cade.a
 
 dsk: md asm
-	cadius CREATEVOLUME build/"$(DISK)" "A.4AM.PACK" 32MB
-#	cp res/_FileInformation.txt build/
-#	bin/fixFileInformation.sh build/_FileInformation.txt
-#	$(CADIUS) ADDFILE build/"$(DISK)" "/A.4AM.PACK/" "res/CREDITS.TXT"
-#	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/A.4AM.PACK/LIB/"
-#	$(CADIUS) ADDFILE build/"$(DISK)" "/A.4AM.PACK/LIB/" "build/ONBEYONDZ1"
+	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >/dev/null
+	cp res/_FileInformation.txt build/
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >/dev/null
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >/dev/null
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >/dev/null
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >/dev/null
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >/dev/null
+	bin/do2po.py res/dsk/ build/po/
+	rsync -a res/dsk/*.po build/po/
+	bin/extract.py build/po/ | sh
+	rm -f build/X/**/.DS_Store
+	rm -f build/X/**/PRODOS
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X"
 
 artwork: dsk
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/A.4AM.PACK/ARTWORK" "res/artwork"
-#	$(CADIUS) ADDFILE build/"$(DISK)" "/A.4AM.PACK/ARTWORK/" "res/DHRSLIDE.SYSTEM"
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/A.4AM.PACK/ARTWORKGS" "res/artworkgs"
+#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK" "res/artwork"
+#	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/ARTWORK/" "res/DHRSLIDE.SYSTEM"
+#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORKGS" "res/artworkgs"
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build
+	mkdir -p build/po
+	mkdir -p build/X
 
 clean:
 	rm -rf build/

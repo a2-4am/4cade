@@ -1,0 +1,63 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; common assembler macros
+;
+
+; for functions that take parameters on the stack
+; set (PARAM) to point to the parameters and
+; move the stack pointer to the first byte after the parameters
+; clobbers A,X
+!macro   PARAMS_ON_STACK .bytes {
+         pla
+         sta   PARAM
+         plx
+         stx   PARAM+1
+         lda   #.bytes
+         clc
+         adc   PARAM
+         bcc   +
+         inx
++        phx
+         pha
+}
+
+; for functions that take parameters on the stack
+; load a 16-bit value from the parameters on the stack into A (low) and Y (high)
+; (assumes PARAMS_ON_STACK was used first)
+!macro   LDPARAM .offset {
+         ldy   #.offset+1
+         lda   (PARAM),y
+         pha
+         dey
+         lda   (PARAM),y
+         ply
+}
+
+; load the address of .ptr into A (low) and Y (high)
+!macro   LDADDR .ptr {
+         lda   #<.ptr
+         ldy   #>.ptr
+}
+
+; load a 16-bit value into A (low) and Y (high)
+!macro   LDAY .ptr {
+         lda   .ptr
+         ldy   .ptr+1
+}
+
+; store a 16-bit value from A (low) and Y (high)
+!macro   STAY .ptr {
+         sta   .ptr
+         sty   .ptr+1
+}
+
+; use BIT to swallow the following 1-byte opcode
+!macro   HIDE_NEXT_BYTE {
+         !byte $24
+}
+
+; use BIT to swallow the following 2-byte opcode
+!macro   HIDE_NEXT_2_BYTES {
+         !byte $2C
+}

@@ -9,8 +9,6 @@ ver_02 = 1
 } else { ;ver_02 = 0
   !cpu 65c02
 } ;ver_02
-!to "build/prorwts2",plain
-*=$800
 
 ;place no code before init label below.
 
@@ -43,8 +41,8 @@ ver_02 = 1
                 allow_sparse = 0        ;enable support for reading sparse files
                 bounds_check = 0        ;set to 1 to prevent access beyond the end of the file
                                         ;but limits file size to 64k-2 bytes.
-                no_interrupts= 0        ;set to 1 to disable interrupts across calls
-                detect_err   = 0        ;set to 1 to to detect errors in no_interrupt mode
+                no_interrupts= 1        ;set to 1 to disable interrupts across calls
+                detect_err   = 1        ;set to 1 to to detect errors in no_interrupt mode
                 swap_zp      = 0        ;set to 1 to include code to preserve zpage
                                         ;used only by rwts_mode
                 rwts_mode    = 0        ;set to 1 to enable emulation of DOS RWTS when running from hard disk
@@ -582,7 +580,7 @@ filename	!byte   filename_e-filename_b
 filename_b	!text   "diskimage.dsk"
 filename_e
 } else { ;rwts_mode = 0
-                rts
+         rts
 } ;rwts_mode
 
 c7_parms        !byte   1

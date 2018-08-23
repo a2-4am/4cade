@@ -1,0 +1,53 @@
+!cpu 6502
+!to "build/LAUNCHER.SYSTEM",plain
+*=$2000
+
+MEMFLAG  = $FF                       ; bit 7 = 0 if 64K, 1 if 128K
+
+MACHID   = $BF98                     ; machine identification byte
+
+         lda   MACHID
+         and   #$30
+         cmp   #$30                  ; C=0 if 64K, C=1 if 128K
+         ror   MEMFLAG               ; set bit 7 from C
+
+;         jsr   init                  ; initialize ProRWTS2
+;         lda   $C08B
+;         lda   $C08B
+;         lda   #<cover
+;         sta   namlo
+;         lda   #>cover
+;         sta   namhi
+;         lda   #0
+;         sta   sizelo
+;         lda   #$20
+;         sta   sizehi
+;         jsr   hddopendir
+;         bit   $C055
+;         bit   $C052
+;         bit   $C057
+;         bit   $C050
+-        lda   #0
+         beq   -
+
+cover    !byte cover_e-cover_b
+cover_b  !text "COVER"
+cover_e
+
+;LoadDHGR
+;         sta   $C000
+;         ldx   #$20                  ; copy $2000 bytes to auxmem
+;         stx   @copya+2
+;         stx   @copyb+2
+;         ldy   #0
+;@writeToAuxLoop
+;         sta   $C005
+;@copya   lda   $FF00, y
+;@copyb   sta   $FF00, y
+;         iny
+;         bne   @copya
+;         sta   $C004
+;         inc   @copya+2
+;         inc   @copyb+2
+;         dex
+;         bne   @writeToAuxLoop

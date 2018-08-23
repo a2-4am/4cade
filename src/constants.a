@@ -1,0 +1,10 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+
+; zero page
+PARAM                     = $00      ; used by PARAMS_ON_STACK macro, so basically everywhere
+PTR                       = $02
+SRC                       = $04
+DEST                      = $06
+SAVE                      = $08
