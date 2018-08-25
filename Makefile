@@ -35,6 +35,7 @@ dsk: md asm
 	bin/extract.py build/po/ | sh
 	rm -f build/X/**/.DS_Store
 	rm -f build/X/**/PRODOS
+	rm -f build/X/**/LOADER.SYSTEM
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X"
 
 artwork: dsk

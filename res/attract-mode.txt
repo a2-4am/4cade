@@ -1,0 +1,52 @@
+51 matches for "1$" in buffer: catalog4.txt
+      5:Agent USA=AGENT.USA,001
+      8:Alien Downpour         ALIENDOWNPOUR  001
+      9:Alien Rain             ALIENRAIN      001
+     12:Aquatron               AQUATRON       001
+     13:Arkanoid               ARKANOID       101
+     19:Bolo                   BOLO           001
+     21:BurgerTime             BURGERTIME     001
+     23:Canyon Climber         CANYONCLIMBER  001
+     25:Choplifter             CHOPLIFTER     101
+     27:Conan                  CONAN          001
+     34:Dino Eggs              DINOEGGS        01
+     36:Drelbs                 DRELBS          01
+     37:Drol                   DROL           001
+     40:Flip Out               FLIPOUT         01
+     42:Formula 1 Racer        FORMULA1RACER   01
+     44:Galaxian               GALAXIAN        01
+     48:Hard Hat Mack          HARDHATMACK     01
+     50:High Rise              HIGHRISE        01
+     54:Jungle Hunt            JUNGLEHUNT     001
+     55:Karateka               KARATEKA        01
+     56:Lady Tut               LADYTUT         01
+     57:Lost Tomb              LOSTTOMB        01
+     62:Mr. Cool               MRCOOL          01
+     63:Mr. Do                 MRDO           101
+     66:Nibbler                NIBBLER        001
+     70:O'Riley's Mine         ORILEYSMINE     01
+     72:Pac-Man                PACMAN         001
+     74:Pest Patrol            PESTPATROL      01
+     75:Pie-Man                PIEMAN          01
+     77:Pitfall II             PITFALLII       01
+     78:Plasmania              PLASMANIA       01
+     79:Pooyan                 POOYAN          01
+     80:Prince of Persia       PRINCEOFPERSIA 011
+     84:Repton                 REPTON          01
+     85:Ribbit                 RIBBIT          01
+     86:Robotron 2084          ROBOTRON2084    01
+     91:Snake Byte             SNAKEBYTE       01
+     92:Sneakers               SNEAKERS       001
+     93:Snoggle                SNOGGLE         01
+     95:Spider Raid            SPIDERRAID      01
+     97:Spy Hunter             SPYHUNTER       01
+     98:Spy's Demise           SPYSDEMISE      01
+     99:Starblaster            STARBLASTER     01
+    100:Stargate               STARGATE        01
+    101:Stellar 7              STELLAR7       001
+    102:Succession             SUCCESSION      01
+    104:Tag Team Wrestling     TAGTEAMWRESTLIN 01
+    108:Thunder Bombs          THUNDERBOMBS   001
+    109:Track N Field          TRACKNFIELD    001
+    110:Tubeway ][             TUBEWAYII       01
+    112:Wavy Navy              WAVYNAVY       001
