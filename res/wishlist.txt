@@ -1,7 +1,7 @@
 //4am
 Alien Munchies
 The American Challenge
-Apple Cider Spider
+Apple Cider Spider [priority]
 Arcticfox
 Ardy the Aardvark
 Argos
@@ -11,17 +11,17 @@ Bad Dudes [DHGR]
 Ballblazer
 Batman [DHGR]
 Boulder Dash
-Bouncing Kamungas
-Bubble Bobble
+Bouncing Kamungas [priority]
+Bubble Bobble [priority]
 California Games
 Championship Baseball
 Championship Lode Runner
 Championship Wrestling
 Conquering Worlds
-Crazy Mazey
-Crime Wave
+Crazy Mazey [priority]
+Crime Wave [priority]
 Cubit
-Deathsword [DHGR]
+Deathsword [DHGR] [priority]
 Dive Bomber
 Dunzhin
 Elite
@@ -29,20 +29,20 @@ Frogger II
 GBA Championship Baseball
 Galaxy Gates
 Gulf Strike
-Gumball
+Gumball [priority]
 Heavy Barrel [DHGR]
 The Heist
-Impossible Mission II
-Jumpman
+Impossible Mission II [DHGR]
+Jumpman [priority]
 Kamikaze
 Kung Fu Master
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
 Marauder
-Marble Madness
+Marble Madness [priority]
 Mars Cars
-Miner 2049er
+Miner 2049er [priority]
 Miner 2049er II
 Minit Man
 Monster Mash
@@ -55,7 +55,7 @@ Platoon [DHGR]
 Rampage [DHGR]
 Robocop [DHGR]
 Roundabout
-Sammy Lightfoot
+Sammy Lightfoot [priority]
 Shanghai
 Shifty Sam
 Short Circuit
@@ -73,7 +73,7 @@ Super Huey
 Techno Cop [DHGR]
 Tharolian Tunnels
 Threshold
-Up'N Down
+Up'N Down [priority]
 Video Vegas
 World Karate Championship
 The World's Greatest Baseball Game
@@ -92,14 +92,14 @@ International Gran Prix
 Karate Champ
 Microwave
 Pentapus
-Pipe Dream [DHGR]
+Pipe Dream [DHGR] [priority]
 Renegade [DHGR]
 Sea Dragon
 Ski Crazed
 
 //qkumba has crack
 Bandits
-Bruce Lee
+Bruce Lee [priority]
 Captain Goodnight
 The Goonies
 Injured Engine
@@ -107,7 +107,7 @@ Jawbreaker ][
 Mating Zone
 Randamn
 Test Drive
-Tetris
+Tetris [priority]
 
 //TODO(woz-imaged but uncracked)
 The Dam Busters
@@ -115,9 +115,9 @@ Fight Night
 Hardball
 One on One
 Saracen
-Rescue Raiders
+Rescue Raiders [priority]
 Thexder [DHGR]
-Zaxxon
+Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
 The Bilestoad
@@ -127,15 +127,15 @@ Cyber Strike
 Flywars
 Gamma Goblins
 Gorgon
-Lode Runner
-Night Mission Pinball
+Lode Runner [priority]
+Night Mission Pinball [priority]
 Orbitron
 Phantoms Five
 Phaser Fire
 Pulsar II
 Raster Blaster
 Space Eggs
-Spare Change
+Spare Change [priority]
 Twerps
 Warp Destroyer
 Wayout
