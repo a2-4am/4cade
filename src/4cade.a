@@ -2,14 +2,134 @@
 !to "build/LAUNCHER.SYSTEM",plain
 *=$2000
 
-MEMFLAG  = $FF                       ; bit 7 = 0 if 64K, 1 if 128K
+Has128KStatus =$FF       ; [byte] set by Has128K
 
-MACHID   = $BF98                     ; machine identification byte
+         !source "src/constants.a"
+         !source "src/macros.a"
 
-         lda   MACHID
-         and   #$30
-         cmp   #$30                  ; C=0 if 64K, C=1 if 128K
-         ror   MEMFLAG               ; set bit 7 from C
+         jsr   Has128K
+-        ldx   #0
+         beq   -
+
+;------------------------------------------------------------------------------
+; Has128K
+; Checks whether computer has auxiliary memory (i.e. 128K)
+;
+; in:  none
+; out: zero page $FF has
+;        $00 = not a //e
+;        $20 = //e but no 80-col card
+;        $40 = 80-col card but no aux mem
+;        $80 = aux mem detected (yay!)
+;      all other flags clobbered
+;      all registers clobbered
+;      zero page $1A-$1D clobbered
+;
+; original was AUX.MEM.CHECK from "Extra K"
+; (c) 1986 Beagle Bros
+; written by Alan Bird and Mark Simonsen, 1986-03-28
+;------------------------------------------------------------------------------
+Has128K
+         php
+         sei
+         lda   $E000      ; store values from language card
+         sta   $1A        ; (used later to determine which
+         lda   $D000      ; RAM bank is active and reset it)
+         sta   $1B
+         lda   $D400
+         sta   $1C
+         lda   $D800
+         sta   $1D
+         lda   ROMIN
+         lda   ROMIN
+         lda   MACHINEID
+         cmp   #$06
+         bne   @noiie
+         lda   SLOT3STATUS
+         bmi   @no80col
+         lda   AUXMEMSTATUS
+         bmi   @yesauxmem
+         lda   AUXZPSTATUS
+         bmi   @yesauxmem
+         ldy   #$28
+-        ldx   @checker,Y
+         lda   $100,Y
+         sta   @checker,Y
+         txa
+         sta   $100,Y
+         dey
+         bpl   -
+         jmp   $100
+@postcheck
+         ldy   #$28
+-        lda   @checker,Y
+         sta   $100,Y
+         dey
+         bpl   -
+         bcs   @noauxmem
+@yesauxmem
+         lda   #$80
+         +HIDE_NEXT_2_BYTES
+@noauxmem
+         lda   #$40
+         +HIDE_NEXT_2_BYTES
+@no80col
+         lda   #$20
+         +HIDE_NEXT_2_BYTES
+@noiie
+         lda   #$00
+         sta   Has128KStatus
+         lda   $E000
+         cmp   $1A
+         bne   @tryRAMbank1
+         lda   $D000
+         cmp   $1B
+         bne   @tryRAMbank1
+         lda   $D400
+         cmp   $1C
+         bne   @tryRAMbank1
+         lda   $D800
+         cmp   $1D
+         beq   @done
+@tryRAMbank1
+         lda   LCBANK1READ
+         lda   $E000
+         cmp   $1A
+         bne   @tryRAMbank2
+         lda   $D000
+         cmp   $1B
+         bne   @tryRAMbank2
+         lda   $D400
+         cmp   $1C
+         bne   @tryRAMbank2
+         lda   $D800
+         cmp   $1D
+         beq   @done
+@tryRAMbank2
+         lda   LCBANK2READ
+@done
+         plp
+         lda   Has128KStatus
+         rts
+@checker
+         lda   #$EE
+         sta   WRITEAUXMEM
+         sta   READAUXMEM
+         sta   $800
+         lda   $C00
+         cmp   #$EE
+         bne   @auxworks
+         asl   $C00
+         lda   $800
+         cmp   $C00
+         bne   @auxworks
+         sec
+         +HIDE_NEXT_BYTE
+@auxworks
+         clc
+         sta   WRITEMAINMEM
+         sta   READMAINMEM
+         jmp   @postcheck
 
 ;         jsr   init                  ; initialize ProRWTS2
 ;         lda   $C08B
@@ -27,12 +147,9 @@ MACHID   = $BF98                     ; machine identification byte
 ;         bit   $C052
 ;         bit   $C057
 ;         bit   $C050
--        lda   #0
-         beq   -
-
-cover    !byte cover_e-cover_b
-cover_b  !text "COVER"
-cover_e
+;cover    !byte cover_e-cover_b
+;cover_b  !text "COVER"
+;cover_e
 
 ;LoadDHGR
 ;         sta   $C000
