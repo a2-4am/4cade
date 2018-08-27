@@ -1,0 +1,40 @@
+;------------------------------------------------------------------------------
+; HasJoystick
+; Checks whether computer has joystick connected
+;
+; in:    none
+; out:   C clear if joystick found
+;        C set if no joystick found
+;        other flags clobbered
+;        A,X clobbered
+;        Y preserved
+;
+; adapted from "Prince of Persia" by Jordan Mechner
+; (c) 1989 Broderbund Software
+; https://github.com/jmechner/Prince-of-Persia-Apple-II/blob/master/01%20POP%20Source/Source/GRAFIX.S#L1225
+;------------------------------------------------------------------------------
+HasJoystick
+         lda   #0
+         sta   joyX
+         sta   joyY
+         lda   $C070                 ; reset analog input timers
+@loop    ldx   #1
+@1       lda   $C064,x               ; check timer input
+         bpl   @beat
+         inc   joyX,x                ; still high, increment counter
+@nextpdl dex
+         bpl   @1
+         lda   $C064
+         ora   $C065
+         bpl   @rts                  ; both inputs low, we're done
+         lda   joyX
+         ora   joyY
+         bpl   @loop                 ; do it again
+         sec
+         +HIDE_NEXT_BYTE
+@rts     clc
+         rts
+@beat    nop
+         bpl   @nextpdl              ; kill time
+joyX     !byte 0
+joyY     !byte 0
