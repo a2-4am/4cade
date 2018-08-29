@@ -16,8 +16,10 @@ SLOT3STATUS =  $C017      ; read high bit only
 
 LCBANK2READ =  $C080      ; read once to R RAM bank 2 / no write
 ROMIN    =     $C081      ; read twice to R ROM / W RAM bank 2
-LCBANK2  =     $C083      ; read twice to R/W RAM bank 2
+ROMONLY =      $C082      ; read once to R ROM / no write
+;LCBANK2  =     $C083      ; read twice to R/W RAM bank 2
 LCBANK1READ =  $C088      ; read once to R RAM bank 1 / no write
+LCBANK1WRITE = $C089      ; read twice to R ROM / W RAM bank 1
 LCBANK1  =     $C08B      ; read twice to R/W RAM bank 1
 
 ; ROM
@@ -29,3 +31,5 @@ PTR          = $02
 SRC          = $04
 DEST         = $06
 SAVE         = $08
+MachineStatus =$FF        ; bit 7 = 1 if machine has joystick
+                          ; bit 6 = 1 if machine has 128K

@@ -2,63 +2,99 @@
 !to "build/LAUNCHER.SYSTEM",plain
 *=$2000
 
-         jmp   Start
-
          !source "src/constants.a"
          !source "src/macros.a"
+
+         jsr   DisableAccelerator    ; set to 1 MHz
+         jsr   Has128K               ; check for 128K (64K is OK, we just filter out some games)
+         ror   MachineStatus
+         jsr   HasJoystick           ; check for joystick (keyboard-only is OK, we just filter out some games)
+         ror   MachineStatus
+
+         lda   LCBANK1WRITE          ; read ROM / write LC bank 1
+         lda   LCBANK1WRITE
+         ldx   #$00
+FM       lda   FirstMover,x
+         sta   $D000,x
+         inx
+         bne   FM
+;         inc   FM+2
+;         inc   FM+5
+;         lda   FM+5
+;         cmp   #>LastMover
+;         bcc   FM
+
+         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
+         lda   LCBANK1               ; read/write LC bank 1
+         lda   LCBANK1
+         jmp   Start
+
          !source "src/memcheck.a"
          !source "src/joystick.a"
          !source "src/normfast.a"
+         !source "src/prorwts2.a"
 
-!zone {
+FirstMover
+!pseudopc $D000 {
+!zone
 Start
-         jsr   $FE89
-         jsr   $FE93
-         jsr   $FB2F
-         jsr   $FC58
-         jsr   Has128K
-         bmi   @found128K
-         ldy   #9
--        lda   @s_needs128K,y
-         sta   $400,y
-         dey
-         bpl   -
-@hang    bmi   @hang
-@s_needs128K
-         !text "NEEDS 128K"
-@found128K
-         jsr   DisableAccelerator
-         jsr   HasJoystick
-         bcc   @hang
-         ldy   #10
--        lda   @s_nojoystick,y
-         sta   $400,y
-         dey
-         bpl   -
-         bmi   @hang
-@s_nojoystick
-         !text "NO JOYSTICK"
-}
+         lda   #$00                  ; read first $2000 bytes
+         sta   sizelo
+         lda   #$20
+         sta   sizehi
+         lda   #0                    ; 0 = read into main memory
+         sta   auxreq
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         bit   MachineStatus
+         bvs   @ShowCover128K
+         lda   #<cover64             ; pointer to length-prefixed filename
+         sta   namlo
+         lda   #>cover64
+         sta   namhi
+         jsr   hddopendir            ; call ProRWTS2
+         clc
+         bcc   @Show
+@ShowCover128K
+         inc   auxreq                ; 1 = read into aux memory
+         lda   #<cover128            ; pointer to length-prefixed filename
+         sta   namlo
+         lda   #>cover128
+         sta   namhi
+         jsr   hddopendir            ; call ProRWTS2
+         lda   #$20                  ; read next $2000 bytes
+         sta   sizehi
+         dec   auxreq                ; 0 = read into main memory
+         jsr   hddrdwrpart           ; call ProRWTS2
 
-;         jsr   init                  ; initialize ProRWTS2
-;         lda   $C08B
-;         lda   $C08B
-;         lda   #<cover
-;         sta   namlo
-;         lda   #>cover
-;         sta   namhi
-;         lda   #0
-;         sta   sizelo
-;         lda   #$20
-;         sta   sizehi
-;         jsr   hddopendir
-;         bit   $C055
-;         bit   $C052
-;         bit   $C057
-;         bit   $C050
-;cover    !byte cover_e-cover_b
-;cover_b  !text "COVER"
-;cover_e
+         sta   $C000                 ; display double hi-res page 1
+         sta   $C00D
+         sta   $C05E
+         sta   $C001
+@Show
+         sta   $C057
+         sta   $C052
+         sta   $C054
+         sta   $C050
+
+         bit   $C010
+-        lda   $C000
+         bpl   -
+         bit   $C010
+         brk
+
+cover64
+         !byte cover64_e-cover64_b
+cover64_b
+         !text "COVER"
+cover64_e
+cover128
+         !byte cover128_e-cover128_b
+cover128_b
+         !text "COVER.A2FC"
+cover128_e
+}
+LastMover
 
 ;LoadDHGR
 ;         sta   $C000

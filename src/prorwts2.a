@@ -13,7 +13,7 @@ ver_02 = 1
 ;place no code before init label below.
 
                 ;user-defined options
-                verbose_info = 1        ;set to 1 to enable display of memory usage
+                verbose_info = 0        ;set to 1 to enable display of memory usage
                 enable_floppy = 0       ;set to 1 to enable floppy drive support
                 poll_drive   = 0        ;set to 1 to check if disk is in drive, recommended if allow_multi is enabled
                 override_adr = 0        ;set to 1 to require an explicit load address
@@ -25,10 +25,10 @@ ver_02 = 1
                                         ;seeking with aligned_read=1 requires non-zero offset
                 allow_multi  = 0        ;set to 1 to allow multiple floppies
                 check_chksum = 0        ;set to 1 to enforce checksum verification for floppies
-                allow_subdir = 0        ;set to 1 to allow opening subdirectories to access files
+                allow_subdir = 1        ;set to 1 to allow opening subdirectories to access files
                 might_exist  = 0        ;set to 1 if file is not known to always exist already
                                         ;makes use of status to indicate success or failure
-                allow_aux    = 0        ;set to 1 to allow read/write directly to/from aux memory
+                allow_aux    = 1        ;set to 1 to allow read/write directly to/from aux memory
                                         ;requires load_high to be set for arbitrary memory access
                                         ;else driver must be running from same memory target
                                         ;i.e. running from main if accessing main, running from aux if accessing aux
@@ -38,11 +38,11 @@ ver_02 = 1
                 always_trees = 0        ;set to 1 if the only file access involves tree files
                                         ;not compatible with allow_subdir, allow_saplings
                 detect_treof = 0        ;detect EOF during read of tree files
-                allow_sparse = 0        ;enable support for reading sparse files
-                bounds_check = 0        ;set to 1 to prevent access beyond the end of the file
+                allow_sparse = 1        ;enable support for reading sparse files
+                bounds_check = 1        ;set to 1 to prevent access beyond the end of the file
                                         ;but limits file size to 64k-2 bytes.
-                no_interrupts= 1        ;set to 1 to disable interrupts across calls
-                detect_err   = 1        ;set to 1 to to detect errors in no_interrupt mode
+                no_interrupts= 0        ;set to 1 to disable interrupts across calls
+                detect_err   = 0        ;set to 1 to to detect errors in no_interrupt mode
                 swap_zp      = 0        ;set to 1 to include code to preserve zpage
                                         ;used only by rwts_mode
                 rwts_mode    = 0        ;set to 1 to enable emulation of DOS RWTS when running from hard disk
@@ -2102,13 +2102,11 @@ hddfoundname    iny
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
                 sta     hdddirbuf
     !if fast_trees = 0 {
-                sta     treeblklo
     } ;fast_trees
                 iny
                 lda     (bloklo), y
                 sta     hdddirbuf + 256
     !if fast_trees = 0 {
-                sta     treeblkhi
     } ;fast_trees
     !if (allow_trees and always_trees) = 0 {
                 plp

@@ -27,16 +27,17 @@ dsk: md asm
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >/dev/null
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/games.conf" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >/dev/null
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >/dev/null
-	bin/do2po.py res/dsk/ build/po/
-	rsync -a res/dsk/*.po build/po/
-	bin/extract.py build/po/ | sh
-	rm -f build/X/**/.DS_Store
-	rm -f build/X/**/PRODOS
-	rm -f build/X/**/LOADER.SYSTEM
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X"
+#	bin/do2po.py res/dsk/ build/po/
+#	rsync -a res/dsk/*.po build/po/
+#	bin/extract.py build/po/ | sh >/dev/null
+#	rm -f build/X/**/.DS_Store
+#	rm -f build/X/**/PRODOS
+#	rm -f build/X/**/LOADER.SYSTEM
+#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >/dev/null
 
 artwork: dsk
 #	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK" "res/artwork"
