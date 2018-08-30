@@ -5,10 +5,24 @@
          !source "src/constants.a"
          !source "src/macros.a"
 
+         jsr   Has64K                ; check for 64K (required)
+         bcc   @found64K
+         jsr   $FB2F
+         jsr   $FC58
+         ldy   #@no64Klen
+-        lda   @s_no64K,y
+         sta   $6B6,y
+         dey
+         bpl   -
+@hang    bmi   @hang
+@s_no64K !raw  "REQUIRES 64K"
+@no64Klen=*-@s_no64K
+
+@found64K
          jsr   DisableAccelerator    ; set to 1 MHz
-         jsr   Has128K               ; check for 128K (64K is OK, we just filter out some games)
+         jsr   Has128K               ; check for 128K (absence is OK, we just filter out some games)
          ror   MachineStatus
-         jsr   HasJoystick           ; check for joystick (keyboard-only is OK, we just filter out some games)
+         jsr   HasJoystick           ; check for joystick (absence is OK, we just filter out some games)
          ror   MachineStatus
 
          lda   LCBANK1WRITE          ; read ROM / write LC bank 1

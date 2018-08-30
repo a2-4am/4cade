@@ -1,4 +1,31 @@
 ;------------------------------------------------------------------------------
+; Has64K
+; Checks whether computer has functioning language card (64K)
+;
+; in:    none
+; out:   C set if 64K detected
+;        C clear if 64K not detected
+;        all other flags and registers clobbered
+;        ROM in memory (not LC RAM bank)
+;------------------------------------------------------------------------------
+Has64K
+         lda   LCBANK1               ; read/write LC RAM bank 1
+         lda   LCBANK1
+         lda   #$AA                  ; test #1 for $D0 page
+         sta   $D000
+         eor   $D000
+         bne   @no
+         lsr   $D000                 ; test #2 for $D0 page
+         lda   #$55
+         eor   $D000
+         bne   @no
+         clc
+         +HIDE_NEXT_BYTE
+@no      sec
+         sta   ROMONLY
+         rts
+
+;------------------------------------------------------------------------------
 ; Has128K
 ; Checks whether computer has functioning auxiliary memory (128K)
 ;
@@ -13,7 +40,6 @@
 ; (c) 1989 Broderbund Software
 ; https://github.com/jmechner/Prince-of-Persia-Apple-II/blob/master/01%20POP%20Source/Source/BOOT.S#L119
 ;------------------------------------------------------------------------------
-!zone {
 Has128K
          sta   ROMONLY               ; need ROM for machine ID byte
          lda   MACHINEID
@@ -49,4 +75,3 @@ Has128K
          sta   READMAINMEM
          rts
 @checklen=*-@checker
-}
