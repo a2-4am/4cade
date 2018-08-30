@@ -107,6 +107,7 @@ cover128
 cover128_b
          !text "COVER.A2FC"
 cover128_e
+         !source "src/okvs.a"
 }
 LastMover
 

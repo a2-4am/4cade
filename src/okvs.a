@@ -1,0 +1,497 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Ordered key/value store (6502 version)
+;
+; Public functions
+; - okvs_init(address)                          reset (required)
+; - okvs_len(address)                           get number of keys
+; - okvs_append(address, key, value, max_len)   add new key/value pair
+; - okvs_update(address, key, value)            update key/value pair
+; - okvs_get(address, key)                      get value by key lookup
+; - okvs_nth(address, n)                        get key by numeric index
+; - okvs_iter(address, callback)                iterate through keys
+; - okvs_iter_values(address, callback)         iterate through values
+; - okvs_as_boolean(value)                      set Z flag based on value
+;
+; Used for global preferences, per-game options, and per-game version lists
+;
+; Call init() once. Call it again to reset the store to 0 keys.
+;
+; Keys are maintained in a singly linked list, so most functions are O(n).
+; len() is O(1) though.
+;
+; Key count is stored as a byte, so a store can hold a maximum of 255 keys.
+;
+; Keys and values are length-prefixed strings (Pascal style), so max length
+; of any single key or value is 255 bytes.
+;
+; Keys are case-sensitive. Lookups are an exact byte-for-byte comparison.
+;
+; append() has a max_len argument to reserve more space for the value, in case
+; you want to update it later. max_len is the total space to reserve, not the
+; additional space. One exception: max_len can be 0, and it will be treated as
+; length(value) at append time. update() always modifies the value in place.
+; There is no range checking because this is assembly.
+
+; All functions take the starting address of the store's data buffer in
+; memory, so there can be multiple independent stores at one time. append()
+; will happily extend the store's data buffer without limit. There is no
+; overflow protection because this is assembly.
+;
+; There is no sort() function.
+;
+; There is no delete() function.
+;
+; Keys can be duplicated, but get() will always return the one that was
+; append()ed first.
+;
+; Structures:
+;
+; Store
+;   +0 length (byte)
+;   +1 Record
+;   ...Record...
+;   ...Record...
+;
+; Record
+;   +0 next-record pointer (word)
+;   +2 key length
+;   +3 key
+; +K+2 value length (actual length, not max length)
+; +K+3 value
+;  ... filler bytes up to value max length (set at append() time)
+
+;------------------------------------------------------------------------------
+; okvs_init
+;
+; in:    stack contains 2 bytes of parameters:
+;          +1 [word] handle to storage space
+; out:   $00/$01 clobbered
+;        $02/$03 clobbered
+;        A,Y=0
+;        X clobbered
+;------------------------------------------------------------------------------
+okvs_init
+         +PARAMS_ON_STACK 2
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         tya
+         sta   (PTR),y               ; set number of keys
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_len
+;
+; in:    stack contains 2 bytes of parameters:
+;          +1 [word] handle to storage space
+; out:   A contains number of keys in this store
+;        X, Y clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;------------------------------------------------------------------------------
+okvs_len
+         +PARAMS_ON_STACK 2
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         lda   (PTR),y
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_append
+;
+; in:    stack contains 7 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of key
+;          +5 [word] address of value
+;          +7 [byte] maximum length of value (or 0 to fit)
+; out:   all registers clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 has the address of the next available byte after the new record
+;        $08/$09 clobbered
+;------------------------------------------------------------------------------
+okvs_append
+         +PARAMS_ON_STACK 7
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         lda   (PTR),y
+         clc
+         adc   #1
+         sta   (PTR),y               ; increment number of keys
+         tax
+         jsr   incptr                ; PTR -> first record
+-        dex
+         beq   +
+         jsr   derefptr              ; PTR -> next record
+         clc
+         bcc   -                     ; always branches
++                                    ; PTR -> new record
+         +LDAY PTR
+         +STAY SAVE                  ; save PTR
+         jsr   incptr
+         jsr   incptr                ; PTR -> space for new key
+         +LDPARAM 3
+         +STAY SRC                   ; SRC -> new key to copy
+         ldy   #0
+         lda   (SRC),y
+         clc
+         adc   #1
+         sta   @keylen
+         tay
+-        dey                         ; copy new key
+         lda   (SRC),y
+         sta   (PTR),y
+         cpy   #$FF
+         bne   -
+
+         lda   PTR                   ; update PTR to byte after copied key
+         clc
+@keylen=*+1
+         adc   #$FD                  ; SMC
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++                                    ; PTR -> space for new value
+         +LDPARAM 5
+         +STAY SRC                   ; SRC -> new value to copy
+         ldy   #7
+         lda   (PARAM),y             ; get max length of value
+         bne   +
+         ldy   #0
+         lda   (SRC),y               ; no max, use actual length instead
+         clc
+         adc   #1
++        sta   @valuelen
+         tay
+-        dey
+         lda   (SRC),y
+         sta   (PTR),y
+         cpy   #$FF
+         bne   -
+
+         lda   PTR
+         clc
+@valuelen=*+1
+         adc   #$FD                  ; SMC
+         sta   SRC
+         bcc   +
+         inc   PTR+1
++        lda   PTR+1
+         sta   SRC+1                 ; SRC -> byte after this record
+         +LDAY SAVE
+         +STAY PTR                   ; PTR -> this record again
+         ldy   #0
+         lda   SRC                   ; update next-record pointer
+         sta   (PTR),y
+         iny
+         lda   SRC+1
+         sta   (PTR),y
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_get
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of key
+; out:   if C clear, key was found
+;          A/Y = lo/hi address of value
+;          X = numeric index of key
+;        if C set, key was not found and all registers are clobbered
+;        all other flags clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 clobbered
+;------------------------------------------------------------------------------
+okvs_get
+         +PARAMS_ON_STACK 4
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         lda   (PTR),y
+         beq   @fail                 ; no keys, fail immediately
+         tax                         ; X = number of keys
+         inx
+         stx   @maxkeys
+         ldx   #0
+         jsr   incptr                ; PTR -> first record
+         +LDPARAM 3
+         +STAY SRC                   ; SRC -> key we want to find
+         ldy   #0
+         lda   (SRC),y
+         tay
+         iny
+         sty   @matchlen
+@matchRecordLoop
+         lda   PTR+1
+         sta   DEST+1
+         lda   PTR
+         clc
+         adc   #2
+         sta   DEST
+         bcc   +
+         inc   DEST+1                ; DEST -> key of this record
++        ldy   #0
+@matchKeyLoop
+         lda   (SRC),y
+         cmp   (DEST),y
+         bne   @next
+         iny
+@matchlen=*+1
+         cpy   #$FD                  ; SMC
+         bne   @matchKeyLoop
+         +LDAY PTR
+         clc
+         adc   @matchlen
+         bcc   +
+         iny
++        clc
+         adc   #2
+         sta   PTR
+         bcc   +
+         iny
+         clc
++        rts
+@next    jsr   derefptr              ; PTR -> next record
+         inx
+@maxkeys=*+1
+         cpx   #$FD                  ; SMC
+         bne   @matchRecordLoop
+@fail    sec
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_nth
+;
+; in:    stack contains 3 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [byte] numeric index
+; out:   A/Y = lo/hi address of nth key
+;        all other registers and flags clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 clobbered
+;------------------------------------------------------------------------------
+okvs_nth
+         +PARAMS_ON_STACK 3
+         jsr   SetPTRFromStackParams
+         jsr   incptr                ; PTR -> first record
+         ldy   #3
+         lda   (PARAM),y
+         tax                         ; X = numeric index of key to get
+         beq   @found
+-        jsr   derefptr
+         dex
+         bne   -
+@found   jsr   incptr
+         jsr   incptr
+         +LDAY PTR
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_update
+;
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of key
+;          +5 [word] address of new value
+; out:   if C clear, key was found and value was updated
+;        if C set, key was not found
+;        all registers are clobbered
+;        all other flags clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 clobbered
+;------------------------------------------------------------------------------
+okvs_update
+         +PARAMS_ON_STACK 6
+         ldy   #6
+         lda   (PARAM),y
+         sta   SAVE+1
+         dey
+         lda   (PARAM),y
+         sta   SAVE
+         dey
+-        lda   (PARAM),y
+         sta   @getparams,y
+         dey
+         bne   -
+         jsr   okvs_get
+@getparams=*-1
+         !word $FDFD                 ; SMC
+         !word $FDFD                 ; SMC
+         bcs   @exit
+         +STAY DEST
+         ldy   #0
+         lda   (SAVE),y
+         tay
+-        lda   (SAVE),y
+         sta   (DEST),y
+         dey
+         cpy   #$FF
+         bne   -
+         clc
+@exit    rts
+
+;------------------------------------------------------------------------------
+; okvs_iter
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of callback
+; out:   <callback> will be called for each record in the store, in order, with
+;          X = numeric index of record
+;          A/Y = address of key
+;        all registers are clobbered
+;        all flags clobbered
+;        $00/$01 clobbered
+;------------------------------------------------------------------------------
+okvs_iter
+         +PARAMS_ON_STACK 4
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         lda   (PTR),y
+         beq   @exit                 ; no keys, exit immediately
+         sta   @max
+         +LDPARAM 3
+         +STAY @callback
+         jsr   incptr                ; PTR -> first record
+         ldx   #0
+@loop    txa
+         pha                         ; save X on stack
+         ldy   PTR+1
+         tya
+         pha
+         lda   PTR
+         pha                         ; save PTR on stack (in case callback clobbers it)
+         clc
+         adc   #2                    ; skip over next-record pointer (2 bytes)
+         bcc   +
+         iny                         ; A/Y -> key
++
+@callback=*+1
+         jsr   $FDFD                 ; SMC
+         pla
+         sta   PTR
+         pla
+         sta   PTR+1                 ; restore PTR from stack
+         pla
+         tax                         ; restore X from stack
+         jsr   derefptr              ; PTR -> next record
+         inx
+@max=*+1
+         cpx   #$FD                  ; SMC
+         bne   @loop
+@exit    rts
+
+;------------------------------------------------------------------------------
+; okvs_iter_values
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of callback
+; out:   <callback> will be called for each record in the store, in order, with
+;          X = numeric index of record
+;          A/Y = address of value
+;        all registers are clobbered
+;        all flags clobbered
+;        $00/$01 clobbered
+;------------------------------------------------------------------------------
+okvs_iter_values
+         +PARAMS_ON_STACK 4
+         jsr   SetPTRFromStackParams
+         ldy   #0
+         lda   (PTR),y
+         beq   @exit                 ; no keys, exit immediately
+         sta   @max
+         +LDPARAM 3
+         +STAY @callback
+         jsr   incptr                ; PTR -> first record
+         ldx   #0
+@loop    ldy   #2
+         lda   (PTR),y               ; A = length of key
+         clc
+         adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
+         sta   @skiplen
+         txa
+         pha                         ; save X on stack
+         lda   PTR+1
+         tay
+         pha
+         lda   PTR
+         pha                         ; save PTR on stack (in case callback clobbers it)
+         clc
+@skiplen=*+1                         ; skip over key
+         adc   #$FD                  ; SMC
+         bcc   +
+         iny                         ; A/Y -> value
++
+@callback=*+1
+         jsr   $FDFD                 ; SMC
+         pla
+         sta   PTR
+         pla
+         sta   PTR+1                 ; restore PTR from stack
+         pla
+         tax                         ; restore X from stack
+         jsr   derefptr              ; PTR -> next record
+         inx
+@max=*+1
+         cpx   #$FD                  ; SMC
+         bne   @loop
+@exit    rts
+
+;------------------------------------------------------------------------------
+; okvs_as_boolean
+;
+; in:    A = address of value [lo]
+;        Y = address of value [hi]
+; out:   Z clear if value is a 1-byte string with value #$00 or the digit '0'
+;        Z set otherwise
+;        X preserved, A/Y clobbered
+;------------------------------------------------------------------------------
+okvs_as_boolean
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         cmp   #1
+         bne   +
+         iny
+         lda   (PTR),y
+         beq   +
+         ora   #$80
+         cmp   #$B0
++        rts
+
+;------------------------------------------------------------------------------
+; internal functions
+
+incptr
+; preserves A and X
+         ldy   PTR
+         iny
+         sty   PTR
+         bne   +
+         inc   PTR+1
++        rts
+
+SetPTRFromStackParams
+; preserves X
+         ldy   #1
+         lda   (PARAM),y
+         sta   PTR
+         iny
+         lda   (PARAM),y
+         sta   PTR+1                 ; PTR -> first parameter on stack
+                                     ; execution falls through here
+derefptr
+; preserves X
+         ldy   #0
+         lda   (PTR),y
+         pha
+         iny
+         lda   (PTR),y
+         sta   PTR+1
+         pla
+         sta   PTR
+         rts
