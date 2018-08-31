@@ -9,8 +9,7 @@
 ;        ROM in memory (not LC RAM bank)
 ;------------------------------------------------------------------------------
 Has64K
-         lda   LCBANK1               ; read/write LC RAM bank 1
-         lda   LCBANK1
+         +READ_RAM1_WRITE_RAM1
          lda   #$AA                  ; test #1 for $D0 page
          sta   $D000
          eor   $D000
@@ -22,7 +21,7 @@ Has64K
          clc
          +HIDE_NEXT_BYTE
 @no      sec
-         sta   ROMONLY
+         +READ_ROM_NO_WRITE
          rts
 
 ;------------------------------------------------------------------------------
@@ -41,7 +40,8 @@ Has64K
 ; https://github.com/jmechner/Prince-of-Persia-Apple-II/blob/master/01%20POP%20Source/Source/BOOT.S#L119
 ;------------------------------------------------------------------------------
 Has128K
-         sta   ROMONLY               ; need ROM for machine ID byte
+         +READ_ROM_NO_WRITE
+         sta   STOREOFF
          lda   MACHINEID
          cmp   #6
          bne   @no                   ; earlier than //e -> no 128K

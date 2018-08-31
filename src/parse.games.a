@@ -1,0 +1,129 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; GAMES.CONF parser
+;
+; Public functions:
+; - ParseGamesList
+;
+
+;------------------------------------------------------------------------------
+; ParseGamesList
+; parse buffer with AB,KEY=VALUE lines of text into an okvs
+; keys and values limited to 127 characters, which should be enough for anyone
+; '[' character at beginning of line ends the parsing
+; (see games.conf file for more format information)
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] handle to storage space for okvs
+;          +3 [word] handle to buffer containing contents of GAMES.CONF
+; out:   all registers and flags clobbered
+;        $1F00..$1FFF clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 has the address of the next available byte after the okvs
+;        $FE/$FF clobbered
+;------------------------------------------------------------------------------
+ParseGamesList
+         +PARAMS_ON_STACK 4
+
+         +LDPARAM 1
+         +STAY @store1
+         +STAY @store2
+
+         +LDPARAM 3
+         +STAY $FE
+
+         ldy   #0
+         lda   ($FE),y
+         pha
+         iny
+         lda   ($FE),y
+         tay
+         pla
+         sec
+         sbc   #$01
+         sta   $FE
+         bcs   +
+         dey
++        sty   $FF
+         jsr   okvs_init             ; reset key/value store
+@store1  !word $FDFD                 ; SMC
+
+         ldy   #$00                  ; index into ($FE) pointing to current character
+@newkey  ldx   #$00                  ; X = index into current key
+         jsr   IncAndGetChar         ; get first filter character ('1' if game requires joystick)
+         cmp   #$0D                  ; ignore blank line
+         beq   @newkey
+         cmp   #$5B                  ; '[' ends the parsing
+         beq   .parseKeyValueDone
+         cmp   #$30                  ; '0' -> no filtering on joystick
+         beq   @filterOnMemory
+         cmp   #$31                  ; not '0' or '1' or '[' or CR -> ignore entire line (e.g. comment)
+         bne   @skipLine
+         bit   MachineStatus
+         bpl   @skipLine             ; game requires joystick but we don't have one, so ignore entire line
+@filterOnMemory
+         jsr   IncAndGetChar         ; get second filter character ('1' if game requires 128K)
+         cmp   #$30                  ; '0' -> no filtering on memory
+         beq   @swallowComma
+         cmp   #$31                  ; not '0' or '1' -> ignore entire line
+         bne   @skipLine
+         bit   MachineStatus
+         bvc   @skipLine             ; game requires 128K but we only have 64K, so ignore entire line
+@swallowComma
+         jsr   IncAndGetChar
+         cmp   #$2C                  ; ',' delimiter (required)
+         bne   @skipLine
+@gatherKey
+         jsr   IncAndGetChar
+         cmp   #$3D                  ; '=' ends the key
+         beq   @endKey
+         sta   gKey,x
+         inx
+         bpl   @gatherKey
+@endKey  stx   gKeyLen
+         ldx   #$00                  ; now X = index into the current value
+@gatherValue
+         jsr   IncAndGetChar
+         cmp   #$0D                  ; CR ends the value
+         beq   @endValue
+         sta   gVal,x
+         inx
+         bpl   @gatherValue
+@endValue
+         stx   gValLen
+         tya
+         pha                         ; okvs functions clobber everything but we need Y
+         jsr   okvs_append
+@store2  !word $FDFD                 ; SMC
+         !word gKeyLen
+         !word gValLen
+         !byte 0
+         pla
+         tay
+         clc
+         bcc   @newkey               ; always branches
+
+@skipLine                            ; skip to CR
+         jsr   IncAndGetChar
+         cmp   #$0D                  ; CR
+         bne   @skipLine
+         beq   @newkey               ; always branches
+
+;------------------------------------------------------------------------------
+; IncAndGetChar
+;
+; in:    Y = index into ($FE)
+;        ($FE) -> buffer
+; out:   A contains next byte from buffer
+;        Y incremented
+;        $FF possibly incremented
+;------------------------------------------------------------------------------
+IncAndGetChar
+         iny
+         bne   +
+         inc   $FF
++        lda   ($FE),y
+.parseKeyValueDone
+         rts

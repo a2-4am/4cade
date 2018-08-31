@@ -5,8 +5,33 @@
          !source "src/constants.a"
          !source "src/macros.a"
 
+Init
          jsr   Has64K                ; check for 64K (required)
-         bcc   @found64K
+         bcs   @no64K
+         jsr   DisableAccelerator    ; set to 1 MHz
+         jsr   Has128K               ; check for 128K (absence is OK, we just filter out some games)
+         ror   MachineStatus
+         jsr   HasJoystick           ; check for joystick (absence is OK, we just filter out some games)
+         ror   MachineStatus
+
+         +READ_ROM_WRITE_RAM1
+         ldx   #$00                  ; relocate rest of program to RAM bank 1 in language card
+@FM      lda   FirstMover,x
+         sta   $D000,x
+         inx
+         bne   @FM
+         lda   @FM+2
+         cmp   #>LastMover
+         bcs   +
+         inc   @FM+2
+         inc   @FM+5
+         bne   @FM
++
+         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
+         +READ_RAM1_WRITE_RAM1
+         jmp   Start
+
+@no64K
          jsr   $FB2F
          jsr   $FC58
          ldy   #@no64Klen
@@ -18,78 +43,41 @@
 @s_no64K !raw  "REQUIRES 64K"
 @no64Klen=*-@s_no64K
 
-@found64K
-         jsr   DisableAccelerator    ; set to 1 MHz
-         jsr   Has128K               ; check for 128K (absence is OK, we just filter out some games)
-         ror   MachineStatus
-         jsr   HasJoystick           ; check for joystick (absence is OK, we just filter out some games)
-         ror   MachineStatus
-
-         lda   LCBANK1WRITE          ; read ROM / write LC bank 1
-         lda   LCBANK1WRITE
-         ldx   #$00
-FM       lda   FirstMover,x
-         sta   $D000,x
-         inx
-         bne   FM
-;         inc   FM+2
-;         inc   FM+5
-;         lda   FM+5
-;         cmp   #>LastMover
-;         bcc   FM
-
-         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
-         lda   LCBANK1               ; read/write LC bank 1
-         lda   LCBANK1
-         jmp   Start
-
+         ; these routines will only be called once, from main memory, before relocating to language card
          !source "src/memcheck.a"
          !source "src/joystick.a"
          !source "src/normfast.a"
+         ; ProRWTS2 has its own function to relocate itself
          !source "src/prorwts2.a"
 
 FirstMover
 !pseudopc $D000 {
 !zone
 Start
-         lda   #$00                  ; read first $2000 bytes
-         sta   sizelo
-         lda   #$20
-         sta   sizehi
-         lda   #0                    ; 0 = read into main memory
-         sta   auxreq
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
          bit   MachineStatus
-         bvs   @ShowCover128K
-         lda   #<cover64             ; pointer to length-prefixed filename
-         sta   namlo
-         lda   #>cover64
-         sta   namhi
-         jsr   hddopendir            ; call ProRWTS2
+         bvs   @Load128
+         jsr   LoadFile
+         !word cover64
          clc
          bcc   @Show
-@ShowCover128K
-         inc   auxreq                ; 1 = read into aux memory
-         lda   #<cover128            ; pointer to length-prefixed filename
-         sta   namlo
-         lda   #>cover128
-         sta   namhi
-         jsr   hddopendir            ; call ProRWTS2
-         lda   #$20                  ; read next $2000 bytes
-         sta   sizehi
-         dec   auxreq                ; 0 = read into main memory
-         jsr   hddrdwrpart           ; call ProRWTS2
-
-         sta   $C000                 ; display double hi-res page 1
+@Load128
+         jsr   LoadDHRFile
+         !word cover128
+         sta   $C000                 ; double hi-res mode
          sta   $C00D
          sta   $C05E
          sta   $C001
 @Show
-         sta   $C057
+         sta   $C057                 ; show graphics page 1 (HGR or DHGR)
          sta   $C052
          sta   $C054
          sta   $C050
+
+         jsr   LoadFile
+-        !word gamesconf
+         jsr   ParseGamesList
+         !word gGamesListStore
+         !word -
 
          bit   $C010
 -        lda   $C000
@@ -97,6 +85,11 @@ Start
          bit   $C010
          brk
 
+gamesconf
+         !byte gamesconf_e-gamesconf_b
+gamesconf_b
+         !text "GAMES.CONF"
+gamesconf_e
 cover64
          !byte cover64_e-cover64_b
 cover64_b
@@ -107,24 +100,11 @@ cover128
 cover128_b
          !text "COVER.A2FC"
 cover128_e
+         ; these routines will only be called after relocating to language card
+         !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
+         !source "src/parse.games.a"
+gGamesListStore
+         !word *+2                   ; address of first okvs store
 }
 LastMover
-
-;LoadDHGR
-;         sta   $C000
-;         ldx   #$20                  ; copy $2000 bytes to auxmem
-;         stx   @copya+2
-;         stx   @copyb+2
-;         ldy   #0
-;@writeToAuxLoop
-;         sta   $C005
-;@copya   lda   $FF00, y
-;@copyb   sta   $FF00, y
-;         iny
-;         bne   @copya
-;         sta   $C004
-;         inc   @copya+2
-;         inc   @copyb+2
-;         dex
-;         bne   @writeToAuxLoop

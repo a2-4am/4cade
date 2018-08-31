@@ -66,3 +66,18 @@
 !macro   HIDE_NEXT_2_BYTES {
          !byte $2C
 }
+
+; various language card configurations
+!macro   READ_RAM1_WRITE_RAM1 {
+         bit   $C08B
+         bit   $C08B
+}
+
+!macro   READ_ROM_WRITE_RAM1 {
+         bit   $C089
+         bit   $C089
+}
+
+!macro   READ_ROM_NO_WRITE {
+         bit   $C082
+}

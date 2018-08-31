@@ -3,24 +3,13 @@
 ;
 
 ; soft switches
-STOREOFF =     $C000      ; write to use following flags:
+STOREOFF =     $C000      ; write to use following 4 flags:
 READMAINMEM =  $C002      ; write to R main mem
 READAUXMEM =   $C003      ; write to R aux mem
 WRITEMAINMEM = $C004      ; write to W main mem
 WRITEAUXMEM =  $C005      ; write to W aux mem
-SETMAINZP =    $C008      ; write to R/W main mem zero page
-SETAUXZP =     $C009      ; write to R/W aux mem zero page
-AUXMEMSTATUS = $C013      ; read high bit only
-AUXZPSTATUS =  $C016      ; read high bit only
+;
 SLOT3STATUS =  $C017      ; read high bit only
-
-LCBANK2READ =  $C080      ; read once to R RAM bank 2 / no write
-ROMIN    =     $C081      ; read twice to R ROM / W RAM bank 2
-ROMONLY =      $C082      ; read once to R ROM / no write
-;LCBANK2  =     $C083      ; read twice to R/W RAM bank 2
-LCBANK1READ =  $C088      ; read once to R RAM bank 1 / no write
-LCBANK1WRITE = $C089      ; read twice to R ROM / W RAM bank 1
-LCBANK1  =     $C08B      ; read twice to R/W RAM bank 1
 
 ; ROM
 MACHINEID =    $FBB3
@@ -31,5 +20,13 @@ PTR          = $02
 SRC          = $04
 DEST         = $06
 SAVE         = $08
-MachineStatus =$FF        ; bit 7 = 1 if machine has joystick
+MachineStatus =$F0        ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
+;              $FE        ; used by ParseGamesList
+;              $FF        ; used by ParseGamesList
+
+; main memory
+gKeyLen      = $1F00      ; used by ParseGamesList
+gKey         = $1F01
+gValLen      = $1F80
+gVal         = $1F81
