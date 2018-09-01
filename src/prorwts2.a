@@ -32,13 +32,14 @@ ver_02 = 1
                                         ;requires load_high to be set for arbitrary memory access
                                         ;else driver must be running from same memory target
                                         ;i.e. running from main if accessing main, running from aux if accessing aux
-                allow_saplings=0        ;enable support for saplings
+                allow_saplings=1        ;enable support for saplings
                 allow_trees  = 0        ;enable support for tree files, as opposed to only seedlings and saplings
                 fast_trees   = 0        ;keep tree block in memory, requires an additional 512 bytes of RAM
                 always_trees = 0        ;set to 1 if the only file access involves tree files
                                         ;not compatible with allow_subdir, allow_saplings
                 detect_treof = 0        ;detect EOF during read of tree files
                 allow_sparse = 1        ;enable support for reading sparse files
+                                        ;recommended if enable_write is enabled, to prevent writing to sparse blocks
                 bounds_check = 1        ;set to 1 to prevent access beyond the end of the file
                                         ;but limits file size to 64k-2 bytes.
                 no_interrupts= 0        ;set to 1 to disable interrupts across calls
@@ -194,6 +195,7 @@ ver_02 = 1
 
                 D1S1      = 1           ;disk 1 side 1 volume ID if rwts_mode enabled
 
+
 init            jsr     SETKBD
                 jsr     SETVID
                 lda     DEVNUM
@@ -263,6 +265,9 @@ init            jsr     SETKBD
 
                 ;find current directory name in directory
 
+                sec
+                php
+
 readblock       jsr     MLI
                 !byte   $80
                 !word   x80_parms
@@ -284,7 +289,8 @@ inextent        ldy     #0
                 ;match failed, move to next directory in this block, if possible
 
 -               pla
-                clc
+
+skiphdr         clc
                 lda     bloklo
                 adc     #ENTRY_SIZE
                 sta     bloklo
@@ -313,7 +319,17 @@ ifoundname      dex
                 lda     (namlo), y
                 cmp     #'/'
                 bne     -
-                tya
+                pla
+                and     #$20 ;Volume Directory Header XOR subdirectory
+                beq     adjpath
+                pla
+                clc
+                php
+                lsr
+                bcc     skiphdr
+                inx
+
+adjpath         tya
                 eor     #$ff
                 adc     sizelo
                 sta     sizelo
@@ -321,9 +337,8 @@ ifoundname      dex
                 tya
                 adc     namlo
                 sta     namlo
-                pla
-                and     #$20 ;Volume Directory Header XOR subdirectory
-                bne     ++
+                dex
+                beq     ++
 
                 ;cache block number of current directory
                 ;as starting position for subsequent searches
@@ -343,6 +358,7 @@ ifoundname      dex
                 stx     x80_parms + 5
 ++              lda     sizelo
                 bne     readblock
+                pla
 
                 ;unit to slot for SmartPort interface
 
@@ -497,9 +513,6 @@ unrhddblockhi = *
                 lda     #0
 hddreaddir1     jsr     hddreaddirsel
 
-                ;include volume directory header in count
-
-hddreaddir
 hddfirstent     lda     #NAME_LENGTH
                 sta     bloklo
                 lda     #>(hdddirbuf - 1)
@@ -580,7 +593,7 @@ filename	!byte   filename_e-filename_b
 filename_b	!text   "diskimage.dsk"
 filename_e
 } else { ;rwts_mode = 0
-         rts
+                rts
 } ;rwts_mode
 
 c7_parms        !byte   1
@@ -625,19 +638,16 @@ unrblockhi = unrelocdsk + (* - reloc)
                 lda     #0
                 jsr     readdirsel
 
-                ;include volume directory header in count
-
-readdir
-  !if might_exist = 1 {
-                ldx     dirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
-                inx
-                stx     entries
-  } ;might_exist
-
-firstent        lda     #NAME_LENGTH
-                sta     bloklo
+readdir         ;note that calling this location directly limits subdirectories to 14 entries!
+                lda     #NAME_LENGTH + ENTRY_SIZE
+firstent        sta     bloklo
                 lda     #>(dirbuf - 1)
                 sta     blokhi
+
+  !if might_exist = 1 {
+                lda     dirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
+                sta     entries
+  } ;might_exist
 
                 ;there can be only one page crossed, so we can increment here
 
@@ -713,6 +723,7 @@ unrdrvoff2 = unrelocdsk + (* - reloc)
                 ldx     dirbuf + NEXT_BLOCK_LO
                 lda     dirbuf + NEXT_BLOCK_HI
                 jsr     readdirsec
+                lda     #NAME_LENGTH
                 bne     firstent
 
 foundname       iny
@@ -819,15 +830,15 @@ foundname       iny
                 tax
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
                 sta     dirbuf
-    !if fast_trees = 0 {
+    !if (allow_trees + (fast_trees xor 1)) > 1 {
                 sta     treeblklo
-    } ;fast_trees
+    } ;allow_trees = 1 and fast_trees = 0
                 iny
                 lda     (bloklo), y
                 sta     dirbuf + 256
-    !if fast_trees = 0 {
+    !if (allow_trees + (fast_trees xor 1)) > 1 {
                 sta     treeblkhi
-    } ;fast_trees
+    } ;allow_trees = 1 and fast_trees = 0
     !if (allow_trees and always_trees) = 0 {
                 plp
                 bpl     ++
@@ -1392,6 +1403,7 @@ readdirsel
                 pha
                 phx
   } ;ver_02
+;;;                jsr poll
 
 unrdrvon4 = unrelocdsk + (* - reloc)
                 lda     MOTORON
@@ -1899,7 +1911,7 @@ unrhddblocklo = unrelochdd + (* - reloc)
                 ldx     #2
 unrhddblockhi = unrelochdd + (* - reloc)
                 lda     #0
-hddreaddir1     jsr     hddreaddirsel
+                jsr     hddreaddirsel
 
   !if enable_floppy = 1 {
     !if (* - hddopendir) < (readdir - opendir) {
@@ -1908,19 +1920,16 @@ hddreaddir1     jsr     hddreaddirsel
     }
   } ;enable_floppy
 
-                ;include volume directory header in count
-
-hddreaddir
-  !if might_exist = 1 {
-                ldx     hdddirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
-                inx
-                stx     entries
-  } ;might_exist
-
-hddfirstent     lda     #NAME_LENGTH
-                sta     bloklo
+hddreaddir      ;note that calling this location directly limits subdirectories to 14 entries!
+                lda     #NAME_LENGTH + ENTRY_SIZE
+hddfirstent     sta     bloklo
                 lda     #>(hdddirbuf - 1)
                 sta     blokhi
+
+  !if might_exist = 1 {
+                lda     hdddirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
+                sta     entries
+  } ;might_exist
 
                 ;there can be only one page crossed, so we can increment here
 
@@ -1990,12 +1999,9 @@ hddnextent      ldy     #0
 
                 ldx     hdddirbuf + NEXT_BLOCK_LO
                 lda     hdddirbuf + NEXT_BLOCK_HI
-  !if might_exist = 1 {
                 jsr     hddreaddirsec
-                bcc     hddfirstent
-  } else { ;might_exist = 0
-                bcs     hddreaddir1
-  } ;might_exist
+                lda     #NAME_LENGTH
+                bne     hddfirstent
 
 hddfoundname    iny
                 lda     (bloklo), y
@@ -2101,13 +2107,15 @@ hddfoundname    iny
                 tax
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
                 sta     hdddirbuf
-    !if fast_trees = 0 {
-    } ;fast_trees
+    !if (allow_trees + (fast_trees xor 1)) > 1 {
+                sta     treeblklo
+    } ;allow_trees = 1 and fast_trees = 0
                 iny
                 lda     (bloklo), y
                 sta     hdddirbuf + 256
-    !if fast_trees = 0 {
-    } ;fast_trees
+    !if (allow_trees + (fast_trees xor 1)) > 1 {
+                sta     treeblkhi
+    } ;allow_trees = 1 and fast_trees = 0
     !if (allow_trees and always_trees) = 0 {
                 plp
                 bpl     ++

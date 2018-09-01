@@ -27,10 +27,10 @@ dsk: md asm
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >/dev/null
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >/dev/null
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >/dev/null
-	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >/dev/null
 #	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >/dev/null

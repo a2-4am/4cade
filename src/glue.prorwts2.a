@@ -1,15 +1,17 @@
 ;license:MIT
-;(c) 2017-8 by 4am
+;(c) 2018 by 4am & qkumba
 ;
 ; ProRWTS2 glue functions
 ;
 ; Public functions
 ; - LoadFile
+; - LoadDHRFile
 ;
 
 ;------------------------------------------------------------------------------
 ; LoadFile
 ; load a file into memory all at once, using ProRWTS2
+; supports files in subdirectories, delimited by '/' like ProDOS
 ; uses file's load address
 ;
 ; in:    stack contains 2 bytes of parameters:
@@ -22,13 +24,114 @@ LoadFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY namlo                 ; set filename
-         lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+
+         ;search for '/' character in filename
+
+         ldx   #0
+         ldy   #0
+         lda   (namlo), y
+         tay
+-        inx
+         dey
+         bmi   @go                   ; no '/', just do the read
+         lda   (namlo), y
+         cmp   #'/'
+         bne   -
+         sty   sizelo
+         txa
+         pha
+
+@myreadblock
+@myx80_parms
+         ldx   #2
+         lda   #0
+         jsr   hddreaddirsel
+         lda   #NAME_LENGTH
+         sta   bloklo
+         lda   #>(hdddirbuf - 1)
+         sta   blokhi
+
+         ;there can be only one page crossed, so we can increment here
+
+@mynextent1
+         inc   blokhi
+@mynextent
+         ldy   #0
+         lda   (bloklo), y
+         pha
+         and   #$0f
+         tax
+--       iny
+         lda   (bloklo), y
+         cmp   (namlo), y
+         beq   @myfoundname
+
+         ;match failed, move to next directory in this block, if possible
+
+-        pla
+
+@myskiphdr
+         clc
+         lda   bloklo
+         adc   #ENTRY_SIZE
+         sta   bloklo
+         bcs   @mynextent1
+         cmp   #$ff ;4 + ($27 * $0d)
+         bne   @mynextent
+
+         ;read next directory block when we reach the end of this block
+
+         lda   readbuff + NEXT_BLOCK_LO
+         ldx   readbuff + NEXT_BLOCK_HI
+         bcs   +
+
+@myfoundname
+         dex
+         bne   --
+
+         ;parse path until last directory is seen
+
+         iny
+         lda   (namlo), y
+         cmp   #'/'
+         bne   -
+         pla
+         and   #$20 ;Volume Directory Header XOR subdirectory
+         bne   @myskiphdr
+         tya
+         eor   #$ff
+         adc   sizelo
          sta   sizelo
-         sta   sizehi
-         lda   #0                    ; 0 = read into main memory
-         sta   auxreq
+         clc
+         tya
+         adc   namlo
+         sta   namlo
+
+         ;cache block number of current directory
+         ;as starting position for subsequent searches
+
+         ldy   #(KEY_POINTER + 1)
+         lda   (bloklo), y
+         tax
+         dey
+         lda   (bloklo), y
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         stx   (reloc + unrhddblockhi - unrelochdd) + 1
++        sta   @myx80_parms + 1
+         stx   @myx80_parms + 3
+++       lda   sizelo
+         bne   @myreadblock
+         tay
+
+         pla
+         sta   (namlo), y
+@go
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   auxreq
+         lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+         sta   sizehi
          jmp   hddopendir            ; exit via ProRWTS2
 
 ;------------------------------------------------------------------------------
