@@ -14,8 +14,6 @@
 ; - okvs_iter_values(address, callback)         iterate through values
 ; - okvs_as_boolean(value)                      set Z flag based on value
 ;
-; Used for global preferences, per-game options, and per-game version lists
-;
 ; Call init() once. Call it again to reset the store to 0 keys.
 ;
 ; Keys are maintained in a singly linked list, so most functions are O(n).
@@ -440,28 +438,6 @@ okvs_iter_values
          cpx   #$FD                  ; SMC
          bne   @loop
 @exit    rts
-
-;------------------------------------------------------------------------------
-; okvs_as_boolean
-;
-; in:    A = address of value [lo]
-;        Y = address of value [hi]
-; out:   Z clear if value is a 1-byte string with value #$00 or the digit '0'
-;        Z set otherwise
-;        X preserved, A/Y clobbered
-;------------------------------------------------------------------------------
-okvs_as_boolean
-         +STAY PTR
-         ldy   #0
-         lda   (PTR),y
-         cmp   #1
-         bne   +
-         iny
-         lda   (PTR),y
-         beq   +
-         ora   #$80
-         cmp   #$B0
-+        rts
 
 ;------------------------------------------------------------------------------
 ; internal functions

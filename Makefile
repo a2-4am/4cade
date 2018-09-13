@@ -23,21 +23,24 @@ asm: md
 	$(ACME) -r build/4cade.lst src/4cade.a
 
 dsk: md asm
-	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >/dev/null
-	cp res/_FileInformation.txt build/
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >/dev/null
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >/dev/null
-	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >/dev/null
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >/dev/null
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >/dev/null
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >/dev/null
+	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
+	cp res/_FileInformation.txt build/ >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >>build/log
+	rsync -aP res/hgr/* build/I >>build/log
+	bin/buildfileinfo.py build/I >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/I" "build/I" >>build/log
 #	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
-#	bin/extract.py build/po/ | sh >/dev/null
+#	bin/extract.py build/po/ | sh >build/log
 #	rm -f build/X/**/.DS_Store
 #	rm -f build/X/**/PRODOS
 #	rm -f build/X/**/LOADER.SYSTEM
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >/dev/null
+#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >build/log
 
 artwork: dsk
 #	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK" "res/artwork"

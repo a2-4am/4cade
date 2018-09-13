@@ -26,6 +26,7 @@ MachineStatus =$F0        ; bit 7 = 1 if machine has joystick
 ;              $FF        ; used by ParseGamesList
 
 ; main memory
+gPathname    = $1F00      ; used by ResetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
 gValLen      = $1F80

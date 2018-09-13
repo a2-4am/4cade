@@ -5,14 +5,14 @@
          !source "src/constants.a"
          !source "src/macros.a"
 
-Init
          jsr   Has64K                ; check for 64K (required)
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz
          jsr   Has128K               ; check for 128K (absence is OK, we just filter out some games)
          ror   MachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK, we just filter out some games)
-         ror   MachineStatus
+         ror   MachineStatus         ; now bit 6 = 1 if 128K
+                                     ;     bit 7 = 1 if joystick
 
          +READ_ROM_WRITE_RAM1
          ldx   #$00                  ; relocate rest of program to RAM bank 1 in language card
@@ -44,9 +44,9 @@ Init
 @no64Klen=*-@s_no64K
 
          ; these routines will only be called once, from main memory, before relocating to language card
-         !source "src/memcheck.a"
-         !source "src/joystick.a"
-         !source "src/normfast.a"
+         !source "src/hw.memcheck.a"
+         !source "src/hw.joystick.a"
+         !source "src/hw.normfast.a"
          ; ProRWTS2 has its own function to relocate itself
          !source "src/prorwts2.a"
 
@@ -54,12 +54,43 @@ FirstMover
 !pseudopc $D000 {
 !zone
 Start
+         jsr   LoadFile
+-        !word gamesconf
+
+         jsr   ParseGamesList
+         !word gGamesListStore
+         !word -
+
+         jsr   okvs_iter_values
+         !word gGamesListStore
+         !word HGRLoad
+         brk
+
+HGRLoad
+         ldx   $C000
+         bmi   @exit
+         +STAY PTR
+         jsr   ResetPath
+         +LDADDR kHGRScreenshotDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+         jsr   FizzleHGR
+@exit    rts
+
+ShowCover
          bit   MachineStatus
          bvs   @Load128
+
          jsr   LoadFile
          !word cover64
          clc
          bcc   @Show
+
 @Load128
          jsr   LoadDHRFile
          !word cover128
@@ -67,23 +98,18 @@ Start
          sta   $C00D
          sta   $C05E
          sta   $C001
+
 @Show
          sta   $C057                 ; show graphics page 1 (HGR or DHGR)
          sta   $C052
          sta   $C054
          sta   $C050
 
-         jsr   LoadFile
--        !word gamesconf
-         jsr   ParseGamesList
-         !word gGamesListStore
-         !word -
-
          bit   $C010
 -        lda   $C000
          bpl   -
          bit   $C010
-         brk
+         rts
 
 gamesconf
          !byte gamesconf_e-gamesconf_b
@@ -101,9 +127,12 @@ cover128_b
          !text "COVER.A2FC"
 cover128_e
          ; these routines will only be called after relocating to language card
+         !source "src/prodos.path.a"
          !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
          !source "src/parse.games.a"
+         !source "src/fx.hgr.fizzle.a"
+         !source "src/fx.dhgr.fizzle.a"
 gGamesListStore
          !word *+2                   ; address of first okvs store
 }

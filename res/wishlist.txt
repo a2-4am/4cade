@@ -83,6 +83,7 @@ Xevious
 //4am has unreleased crack
 Black Magic
 Bop N Wrestle
+Congo
 County Fair
 Free Fall
 Galactic Attack
@@ -106,52 +107,47 @@ Injured Engine
 Jawbreaker ][
 Mating Zone
 Randamn
+Rescue Raiders [priority]
+Saracen
 Test Drive
-Tetris [priority]
+Thexder [DHGR]
 
 //TODO(woz-imaged but uncracked)
+Alien Ambush
+Buzzard Bait [priority]
+Caverns of Callisto
+Cyber Strike [priority]
 The Dam Busters
 Fight Night
+Gorgon [priority]
 Hardball
 One on One
-Saracen
-Rescue Raiders [priority]
-Thexder [DHGR]
+Pulsar II [priority]
+Shuffleboard [priority]
+Space Eggs [priority]
 Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
 The Bilestoad
 Borg
-Buzzard Bait
-Cyber Strike
+Copts and Robbers
 Flywars
-Gamma Goblins
-Gorgon
+Horizon V
+Lemmings
 Lode Runner [priority]
-Night Mission Pinball [priority]
 Orbitron
 Phantoms Five
 Phaser Fire
-Pulsar II
 Raster Blaster
-Space Eggs
 Spare Change [priority]
 Twerps
 Warp Destroyer
 Wayout
 
 //TODO(unacquired)
-Ceiling Zero
-Congo
-Copts and Robbers
-Dung Beetles
 Eggs It
-Firebird
-Horizon V
 Ice Hockey
 International Hockey
-Lemmings
-Shuffleboard
 Super Zaxxon
 Tempest
 

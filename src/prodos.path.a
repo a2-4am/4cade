@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; ProDOS - functions for constructing and passing around ProDOS pathnames
+;
+; Public functions
+; - ResetPath
+; - AddToPath
+;
+; Public constants
+; - kPathSeparator
+
+kPathSeparator
+         !byte 1
+         !raw  "/"
+
+kHGRScreenshotDirectory
+         !byte 1
+         !raw  "I"
+
+;------------------------------------------------------------------------------
+; ResetPath
+; reset gPathname to length 0
+;
+; in:    none
+; out:   X = 0
+;        A/Y preserved
+;------------------------------------------------------------------------------
+ResetPath
+         ldx   #0
+         stx   gPathname
+         rts
+
+;------------------------------------------------------------------------------
+; AddToPath
+; append a length-prefixed string to gPathname
+;
+; in:    A contains low byte of address of length-prefixed string to append
+;        Y contains high byte of address of length-prefixed string to append
+; out:   all registers and flags clobbered
+;        $00/$01 clobbered
+;        gPathname updated with concatenated length-prefixed string
+;------------------------------------------------------------------------------
+AddToPath
+         +STAY $00
+         ldx   gPathname             ; current pathname length
+         ldy   #0
+         lda   ($00),y               ; length of this segment
+         tay
+         iny
+         sty   @len
+         ldy   #$01
+-        lda   ($00),y
+         sta   gPathname+1,x
+         inx
+         iny
+@len=*+1
+         cpy   #$FD                  ; SMC
+         bcc   -
+         stx   gPathname
+         rts
