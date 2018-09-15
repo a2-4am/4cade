@@ -111,45 +111,63 @@ Rescue Raiders [priority]
 Saracen
 Test Drive
 Thexder [DHGR]
+Twerps
 
 //TODO(woz-imaged but uncracked)
 Alien Ambush
+The Bilestoad
+Borg
 Buzzard Bait [priority]
 Caverns of Callisto
+Copts and Robbers
 Cyber Strike [priority]
 The Dam Busters
 Fight Night
+Genetic Drift
 Gorgon [priority]
+Hadron
 Hardball
+International Hockey
 One on One
+Orbitron
+Peeping Tom
+Phantoms Five
 Pulsar II [priority]
+Quadrant 6112
+Raster Blaster
+Rear Guard
+Red Alert
+Roach Hotel
+Russki Duck
+Seafox
 Shuffleboard [priority]
+The Snapper
 Space Eggs [priority]
+Spare Change [priority]
+Star Cruiser
+Star Thief
+Superstar Ice Hockey
+Trick Shot
+Zargs
 Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
-The Bilestoad
-Borg
-Copts and Robbers
-Flywars
+Cyclod
+Fly Wars
 Horizon V
+Jellyfish
 Lemmings
 Lode Runner [priority]
-Orbitron
-Phantoms Five
+Minotaur
 Phaser Fire
-Raster Blaster
-Spare Change [priority]
-Twerps
 Warp Destroyer
 Wayout
 
 //TODO(unacquired)
 Eggs It
-Ice Hockey
-International Hockey
 Super Zaxxon
 Tempest
+Zenith
 
 //TODO(unreleased)
 Crystal Castles
