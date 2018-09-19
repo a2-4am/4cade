@@ -11,7 +11,6 @@ Bad Dudes [DHGR]
 Ballblazer
 Batman [DHGR]
 Boulder Dash
-Bouncing Kamungas [priority]
 Bubble Bobble [priority]
 California Games
 Championship Baseball
@@ -55,7 +54,6 @@ Platoon [DHGR]
 Rampage [DHGR]
 Robocop [DHGR]
 Roundabout
-Sammy Lightfoot [priority]
 Shanghai
 Shifty Sam
 Short Circuit
@@ -114,22 +112,19 @@ Thexder [DHGR]
 Twerps
 
 //TODO(woz-imaged but uncracked)
-Alien Ambush
 The Bilestoad
 Borg
-Buzzard Bait [priority]
 Caverns of Callisto
 Copts and Robbers
 Cyber Strike [priority]
 The Dam Busters
 Fight Night
 Genetic Drift
-Gorgon [priority]
 Hadron
 Hardball
 International Hockey
+Jawbreaker
 One on One
-Orbitron
 Peeping Tom
 Phantoms Five
 Pulsar II [priority]
