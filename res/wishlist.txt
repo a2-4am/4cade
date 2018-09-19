@@ -155,6 +155,7 @@ Lemmings
 Lode Runner [priority]
 Minotaur
 Phaser Fire
+Star Blazer
 Warp Destroyer
 Wayout
 
