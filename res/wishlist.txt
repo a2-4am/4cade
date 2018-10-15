@@ -82,6 +82,8 @@ Black Magic
 Bop N Wrestle
 Congo
 County Fair
+Double Trouble
+Frazzle
 Free Fall
 Galactic Attack
 GBA Championship Basketball
@@ -112,6 +114,7 @@ Twerps
 
 //TODO(woz-imaged but uncracked)
 The Bilestoad
+Boa
 Borg
 Caverns of Callisto
 Copts and Robbers
@@ -139,8 +142,11 @@ Space Eggs [priority]
 Spare Change [priority]
 Star Cruiser
 Star Thief
+Super Taxman II
 Superstar Ice Hockey
 Trick Shot
+Vindicator
+Wayout
 Zargs
 Zaxxon [priority]
 
@@ -155,7 +161,6 @@ Minotaur
 Phaser Fire
 Star Blazer
 Warp Destroyer
-Wayout
 
 //TODO(unacquired)
 Eggs It
