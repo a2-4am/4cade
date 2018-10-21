@@ -14,7 +14,6 @@ Boulder Dash
 Bubble Bobble [priority]
 California Games
 Championship Baseball
-Championship Lode Runner
 Championship Wrestling
 Conquering Worlds
 Crazy Mazey [priority]
@@ -28,7 +27,6 @@ Frogger II
 GBA Championship Baseball
 Galaxy Gates
 Gulf Strike
-Gumball [priority]
 Heavy Barrel [DHGR]
 The Heist
 Impossible Mission II [DHGR]
@@ -40,7 +38,6 @@ Little Computer People
 Lock 'N' Chase
 Marauder
 Mars Cars
-Miner 2049er [priority]
 Miner 2049er II
 Minit Man
 Monster Mash
@@ -99,12 +96,12 @@ Ski Crazed
 
 //qkumba has crack
 Bandits
-Bruce Lee [priority]
 Captain Goodnight
 The Goonies
 Injured Engine
 Jawbreaker ][
 Mating Zone
+Phantoms Five
 Randamn
 Rescue Raiders [priority]
 Saracen
@@ -128,7 +125,6 @@ International Hockey
 Jawbreaker
 One on One
 Peeping Tom
-Phantoms Five
 Pulsar II [priority]
 Quadrant 6112
 Rear Guard
@@ -145,7 +141,6 @@ Star Thief
 Super Taxman II
 Superstar Ice Hockey
 Trick Shot
-Vindicator
 Wayout
 Zargs
 Zaxxon [priority]
@@ -156,7 +151,6 @@ Fly Wars
 Horizon V
 Jellyfish
 Lemmings
-Lode Runner [priority]
 Minotaur
 Phaser Fire
 Star Blazer
