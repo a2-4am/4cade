@@ -20,6 +20,7 @@ Crime Wave [priority]
 Cubit
 Deathsword [DHGR] [priority]
 Dive Bomber
+Double Trouble
 Dunzhin
 Elite
 Frogger II
@@ -80,7 +81,6 @@ Black Magic
 Bop N Wrestle
 Congo
 County Fair
-Double Trouble
 Frazzle
 Free Fall
 Galactic Attack
