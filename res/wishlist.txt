@@ -25,6 +25,7 @@ Dunzhin
 Elite
 Frogger II
 GBA Championship Baseball
+GBA Championship Basketball
 Galaxy Gates
 Gulf Strike
 Heavy Barrel [DHGR]
@@ -84,7 +85,6 @@ County Fair
 Frazzle
 Free Fall
 Galactic Attack
-GBA Championship Basketball
 Ghostbusters
 International Gran Prix
 Pentapus
