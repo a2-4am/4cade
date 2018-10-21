@@ -31,12 +31,14 @@ The Heist
 Impossible Mission II [DHGR]
 Jumpman [priority]
 Kamikaze
+Karate Champ
 Kung Fu Master
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
 Marauder
 Mars Cars
+Microwave
 Miner 2049er II
 Minit Man
 Monster Mash
@@ -85,8 +87,6 @@ Galactic Attack
 GBA Championship Basketball
 Ghostbusters
 International Gran Prix
-Karate Champ
-Microwave
 Pentapus
 Pipe Dream [DHGR] [priority]
 Renegade [DHGR]
