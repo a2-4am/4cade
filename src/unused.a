@@ -1,0 +1,39 @@
+ShowCover
+         bit   MachineStatus
+         bvs   @Load128
+
+         jsr   LoadFile
+         !word cover64
+         clc
+         bcc   @Show
+
+@Load128
+         jsr   LoadDHRFile
+         !word cover128
+         sta   $C000                 ; double hi-res mode
+         sta   $C00D
+         sta   $C05E
+         sta   $C001
+
+@Show
+         sta   $C057                 ; show graphics page 1 (HGR or DHGR)
+         sta   $C052
+         sta   $C054
+         sta   $C050
+
+         bit   $C010
+-        lda   $C000
+         bpl   -
+         bit   $C010
+         rts
+
+cover64
+         !byte cover64_e-cover64_b
+cover64_b
+         !text "COVER"
+cover64_e
+cover128
+         !byte cover128_e-cover128_b
+cover128_b
+         !text "COVER.A2FC"
+cover128_e

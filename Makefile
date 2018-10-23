@@ -29,6 +29,7 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >>build/log
 	rsync -aP res/hgr/* build/I >>build/log

@@ -53,13 +53,31 @@
 FirstMover
 !pseudopc $D000 {
 !zone
+Reenter                              ; self-running demos should call this to exit back to 4cade
+         ; TODO
 Start
-         jsr   LoadFile
--        !word gamesconf
+         jsr   LoadFile              ; load games list from file
+         !word kGameListConfFile
 
-         jsr   ParseGamesList
+         jsr   ParseGamesList        ; parse games list
          !word gGamesListStore
-         !word -
+         !word @fileBuffer
+
+         +LDAY SRC
+         +STAY gAttractModeStore     ; save pointer to free space for next store
+
+         jsr   LoadFile              ; load attract-mode configuration from file
+         !word kAttractModeConfFile
+
+         jsr   ParseKeyValueList     ; parse attract-mode configuration
+         !word gAttractModeStore
+         !word @fileBuffer
+
+         lda   #$00
+-        beq   -
+
+@fileBuffer
+         !word $4000
 
          jsr   okvs_iter_values
          !word gGamesListStore
@@ -82,54 +100,22 @@ HGRLoad
          jsr   FizzleHGR
 @exit    rts
 
-ShowCover
-         bit   MachineStatus
-         bvs   @Load128
-
-         jsr   LoadFile
-         !word cover64
-         clc
-         bcc   @Show
-
-@Load128
-         jsr   LoadDHRFile
-         !word cover128
-         sta   $C000                 ; double hi-res mode
-         sta   $C00D
-         sta   $C05E
-         sta   $C001
-
-@Show
-         sta   $C057                 ; show graphics page 1 (HGR or DHGR)
-         sta   $C052
-         sta   $C054
-         sta   $C050
-
-         bit   $C010
--        lda   $C000
-         bpl   -
-         bit   $C010
-         rts
-
-gamesconf
-         !byte gamesconf_e-gamesconf_b
-gamesconf_b
+kGameListConfFile
+         !byte @kGameListConfFile_e-@kGameListConfFile_b
+@kGameListConfFile_b
          !text "GAMES.CONF"
-gamesconf_e
-cover64
-         !byte cover64_e-cover64_b
-cover64_b
-         !text "COVER"
-cover64_e
-cover128
-         !byte cover128_e-cover128_b
-cover128_b
-         !text "COVER.A2FC"
-cover128_e
+@kGameListConfFile_e
+kAttractModeConfFile
+         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
+@kAttractModeConfFile_b
+         !text "ATTRACT.CONF"
+@kAttractModeConfFile_e
+
          ; these routines will only be called after relocating to language card
          !source "src/prodos.path.a"
          !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
+         !source "src/parse.common.a"
          !source "src/parse.games.a"
          !source "src/fx.hgr.fizzle.a"
          !source "src/fx.dhgr.fizzle.a"
