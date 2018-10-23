@@ -104,6 +104,8 @@ ver_02 = 1
                 ldrhi     = $56         ;set to load address if override_adr=1
                 namlo     = $57         ;name of file to access
                 namhi     = $58         ;name of file to access
+                ldrlo2    = $68         ;original load address read from filesystem
+                ldrhi2    = $69         ;original load address read from filesystem
 
 !if enable_floppy = 1 {
                 tmpsec    = $3c         ;(internal) sector number read from disk
@@ -2089,9 +2091,11 @@ hddfoundname    iny
                 lda     (bloklo), y
     !if (allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
                 sta     ldrlo
+                sta     ldrlo2
                 iny
                 lda     (bloklo), y
                 sta     ldrhi
+                sta     ldrhi2
     } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
                 pha
                 iny
