@@ -14,7 +14,8 @@
          ror   MachineStatus         ; now bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
 
-         +READ_ROM_WRITE_RAM1
+         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
+         +READ_RAM1_WRITE_RAM1
          ldx   #$00                  ; relocate rest of program to RAM bank 1 in language card
 @FM      lda   FirstMover,x
          sta   $D000,x
@@ -27,8 +28,6 @@
          inc   @FM+5
          bne   @FM
 +
-         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
-         +READ_RAM1_WRITE_RAM1
          jmp   Start
 
 @no64K
@@ -43,12 +42,16 @@
 @s_no64K !raw  "REQUIRES 64K"
 @no64Klen=*-@s_no64K
 
+         ; ProRWTS2 has its own function to relocate itself
+         !source "src/prorwts2.a"
          ; these routines will only be called once, from main memory, before relocating to language card
+ProRWTSBuffer
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.normfast.a"
-         ; ProRWTS2 has its own function to relocate itself
-         !source "src/prorwts2.a"
+*=ProRWTSBuffer+512                  ; ProRWTS needs a 512-byte buffer for its init function
+                                     ; so we reuse as much of the 1-time code as possible
+                                     ; and fill the rest with zeros
 
 FirstMover
 !pseudopc $D000 {
