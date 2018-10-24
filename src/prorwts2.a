@@ -2727,8 +2727,10 @@ hdddataend
         } ;allow_trees
       } ;load_high
     } else { ;reloc > $c000
-      !if ((dataend + $ff) & -256) < reloc {
-        !serious "initial reloc too high, adjust to ", (0 - (((dataend + $ff) & -256) - reloc)) & $ffff
+      !if ((dataend + $ff) & -256) != 0 {
+        !if ((dataend + $ff) & -256) < reloc {
+          !serious "initial reloc too high, adjust to ", (0 - (((dataend + $ff) & -256) - reloc)) & $ffff
+        } ;dataend
       } ;dataend
       !if load_high = 1 {
         !if (((dataend + $ff) & -256) & $ffff) != 0 {
@@ -2807,8 +2809,10 @@ hdddataend
       } ;allow_trees
     } ;load_high
   } else { ;reloc > $c000
-    !if ((hdddataend + $ff) & -256) < reloc {
-      !serious "initial reloc too high, adjust to ", (0 - (((hdddataend + $ff) & -256) - reloc)) & $ffff
+    !if ((hdddataend + $ff) & -256) != 0 {
+      !if ((hdddataend + $ff) & -256) < reloc {
+        !serious "initial reloc too high, adjust to ", (0 - (((hdddataend + $ff) & -256) - reloc)) & $ffff
+      } ;hdddataend
     } ;hdddataend
     !if load_high = 1 {
       !if enable_floppy = 0 {
