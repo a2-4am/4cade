@@ -18,6 +18,10 @@ kHGRScreenshotDirectory
          !byte 1
          !raw  "I"
 
+kAttractModeSlideshowDirectory
+         !byte 2
+         !raw  "SS"
+
 ;------------------------------------------------------------------------------
 ; ResetPath
 ; reset gPathname to length 0

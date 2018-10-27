@@ -64,7 +64,7 @@ Start
 
          jsr   ParseGamesList        ; parse games list
          !word gGamesListStore
-         !word @fileBuffer
+         !word ldrlo2                ; (ldrlo2) points to load address
 
          +LDAY SRC
          +STAY gAttractModeStore     ; save pointer to free space for next store
@@ -74,18 +74,38 @@ Start
 
          jsr   ParseKeyValueList     ; parse attract-mode configuration
          !word gAttractModeStore
-         !word @fileBuffer
+         !word ldrlo2                ; (ldrlo2) points to load address
 
-         lda   #$00
--        beq   -
+         +LDAY SRC
+         +STAY gSlideshowStore       ; save pointer to free space for next store
 
-@fileBuffer
-         !word $4000
+         jsr   AttractMode
 
-         jsr   okvs_iter_values
-         !word gGamesListStore
+         jmp   $FAA6
+
+AttractMode
+         jsr   okvs_nth              ; get filename of next attract module
+         !word gAttractModeStore
+         !byte 0
+         +STAY PTR
+         jsr   ResetPath
+         +LDADDR kAttractModeSlideshowDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadFile              ; load attract module configuration file
+         !word gPathname
+
+         jsr   ParseKeyValueList     ; parse slideshow configuration
+         !word gSlideshowStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+
+         jsr   okvs_iter
+         !word gSlideshowStore
          !word HGRLoad
-         brk
+         rts
 
 HGRLoad
          ldx   $C000
