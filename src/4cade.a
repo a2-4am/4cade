@@ -5,6 +5,13 @@
          !source "src/constants.a"
          !source "src/macros.a"
 
+         sta   $C00E
+         sta   $C00C
+         sta   $C004
+         sta   $C002
+         sta   $C000
+         jsr   $FB2F
+         jsr   $FC58
          jsr   Has64K                ; check for 64K (required)
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz
@@ -31,8 +38,6 @@
          jmp   Start
 
 @no64K
-         jsr   $FB2F
-         jsr   $FC58
          ldy   #@no64Klen
 -        lda   @s_no64K,y
          sta   $6B6,y
@@ -84,23 +89,15 @@ Start
          +STAY gSlideshowStore       ; save pointer to free space for next store
 
          bit   $C010
+         jsr   BlankHGR
          jsr   AttractMode
          jmp   Reboot
 
 AttractMode
          jsr   okvs_nth              ; get filename of next attract module
          !word gAttractModeStore
-@index   !byte 0
-         +STAY PTR
-         jsr   ResetPath
-         +LDADDR kAttractModeSlideshowDirectory
-         jsr   AddToPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
-         +LDAY PTR
-         jsr   AddToPath
-         jsr   LoadFile              ; load attract module configuration file
-         !word gPathname
+@index   !byte 2
+         +STAY @key
 
          inc   @index                ; increment module index for next time
          jsr   okvs_len
@@ -110,21 +107,66 @@ AttractMode
          lda   #0
          sta   @index
 +
+         jsr   okvs_get
+         !word gAttractModeStore
+@key     !word $FDFD
+         +STAY PTR
+
+         jsr   +
+         lda   $C000
+         bpl   AttractMode
+         rts
++
+         ldy   #1
+         lda   (PTR),y
+         and   #$0F
+         cmp   #$01
+         clc
+         beq   @Slideshow
+         cmp   #$02
+         sec
+         beq   @Slideshow
+         cmp   #$03
+         bne   AttractMode
+         beq   @SelfRunningDemo
+
+@Slideshow
+         php
+         jsr   ResetPath
+         +LDADDR kAttractModeSlideshowDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY @key
+         jsr   AddToPath
+         jsr   LoadFile              ; load attract module configuration file
+         !word gPathname
+
          jsr   ParseKeyValueList     ; parse slideshow configuration
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to load address
 
+         plp                         ; carry clear = HGR, carry set = DHGR
+         bcs   @DHGRSlideshow
+
          jsr   okvs_iter
          !word gSlideshowStore
          !word HGRLoad
+         rts
+@DHGRSlideshow
+         jsr   BlankDHGR
+         jsr   okvs_iter
+         !word gSlideshowStore
+         !word DHGRLoad
+         jmp   BlankHGR
 
-         lda   $C000
-         bpl   AttractMode
+@SelfRunningDemo
+         ; TODO
          rts
 
 HGRLoad
          ldx   $C000
-         bmi   @exit
+         bmi   Exit
          +STAY PTR
          jsr   ResetPath
          +LDADDR kHGRScreenshotDirectory
@@ -136,11 +178,28 @@ HGRLoad
          jsr   LoadFile
          !word gPathname
          jsr   FizzleHGR
+         jmp   WaitOnScreenshot
+
+DHGRLoad
+         ldx   $C000
+         bmi   Exit
+         +STAY PTR
+         jsr   ResetPath
+         +LDADDR kDHGRScreenshotDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadDHRFile
+         !word gPathname
+         jsr   FizzleDHGR
+WaitOnScreenshot
          ldx   #0
          ldy   #0
 @wait    lda   $C000
-         bmi   @exit
-         jsr   @burn
+         bmi   Exit
+;         jsr   @burn
          dey
          bne   @wait
          dex
@@ -148,20 +207,71 @@ HGRLoad
          rts
 @burn    jsr   @burn2
 @burn2   jsr   @burn3
-@burn3   jsr   @exit
-@exit    rts
+@burn3   jsr   Exit
+Exit     rts
 
 Reboot
          ldx   #(@end-@start-1)
 -        lda   @start,x
-         sta   $100,x
+         sta   $300,x
          dex
          bpl   -
-         jmp   $100
+         jmp   $300
 @start
          +READ_ROM_NO_WRITE
          jmp   $FAA6
 @end
+
+Home
+         ldx   #(@end-@start-1)
+-        lda   @start,x
+         sta   $300,x
+         dex
+         bpl   -
+         jmp   $300
+@start
+         ; this will be run from main memory
+         +READ_ROM_NO_WRITE
+         sta   $C00C                 ; get out of DHGR mode
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
+         +READ_RAM1_WRITE_RAM1
+         rts
+@end
+
+BlankHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         lda   $c057                 ; show hi-res screen 1 (now blank)
+         lda   $c054
+         lda   $c052
+         lda   $c050
+         rts
+BlankDHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         sta   $C005
+         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
+         sta   $C004
+         sta   $c00d
+         sta   $c057
+         sta   $c054
+         sta   $c052
+         sta   $c050
+         sta   $c05e
+         rts
+ClearHGR1
+         ldx   #$20                  ; clear hi-res screen 1
+         stx   @a+2
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
 
 kGameListConfFile
          !byte @kGameListConfFile_e-@kGameListConfFile_b

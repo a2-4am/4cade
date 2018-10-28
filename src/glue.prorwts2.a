@@ -28,6 +28,51 @@ LoadFile
          +LDPARAM 1
          +STAY namlo                 ; set filename
 
+         jsr   traverse              ; go to subdirectory, set up filename for read
+
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   auxreq
+         lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+         sta   sizehi
+         jmp   hddopendir            ; exit via ProRWTS2
+
+;------------------------------------------------------------------------------
+; LoadDHRFile
+; load .A2FC file (uncompressed double hi-res graphics) into memory
+; all at once, using ProRWTS2
+; first $2000 bytes of file are loaded into auxiliary memory $2000..$3FFF
+; second $2000 bytes of file are loaded into main memory $2000..$3FFF
+;
+; in:    stack contains 2 bytes of parameters:
+;        +1 address of filename
+; out:   all flags clobbered
+;        all registers clobbered
+;        stack set to next instruction after parameters
+;------------------------------------------------------------------------------
+LoadDHRFile
+         +PARAMS_ON_STACK 2
+         +LDPARAM 1
+         +STAY namlo                 ; set filename
+
+         jsr   traverse              ; go to subdirectory, set up filename for read
+
+         lda   #$00                  ; read first $2000 bytes
+         sta   sizelo
+         lda   #$20
+         sta   sizehi
+         lda   #1                    ; 1 = read into aux memory
+         sta   auxreq
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         jsr   hddopendir            ; call ProRWTS2
+         lda   #$20                  ; read next $2000 bytes
+         sta   sizehi
+         dec   auxreq                ; 0 = read into main memory
+         jmp   hddrdwrpart           ; call ProRWTS2
+
+traverse
          +LDAY gRootDirectory
          sta   @myreadblock+1
          sty   @myreadblock+3        ; reset 'root' directory (saved at program start)
@@ -133,41 +178,4 @@ LoadFile
          pla
          sta   (namlo), y
 @go
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         lda   #0                    ; 0 = read into main memory
-         sta   auxreq
-         lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
-         sta   sizehi
-         jmp   hddopendir            ; exit via ProRWTS2
-
-;------------------------------------------------------------------------------
-; LoadDHRFile
-; load .A2FC file (uncompressed double hi-res graphics) into memory
-; all at once, using ProRWTS2
-; first $2000 bytes of file are loaded into auxiliary memory $2000..$3FFF
-; second $2000 bytes of file are loaded into main memory $2000..$3FFF
-;
-; in:    stack contains 2 bytes of parameters:
-;        +1 address of filename
-; out:   all flags clobbered
-;        all registers clobbered
-;        stack set to next instruction after parameters
-;------------------------------------------------------------------------------
-LoadDHRFile
-         +PARAMS_ON_STACK 2
-         +LDPARAM 1
-         +STAY namlo                 ; set filename
-         lda   #$00                  ; read first $2000 bytes
-         sta   sizelo
-         lda   #$20
-         sta   sizehi
-         lda   #1                    ; 1 = read into aux memory
-         sta   auxreq
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         jsr   hddopendir            ; call ProRWTS2
-         lda   #$20                  ; read next $2000 bytes
-         sta   sizehi
-         dec   auxreq                ; 0 = read into main memory
-         jmp   hddrdwrpart           ; call ProRWTS2
+         rts

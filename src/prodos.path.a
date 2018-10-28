@@ -15,8 +15,12 @@ kPathSeparator
          !raw  "/"
 
 kHGRScreenshotDirectory
-         !byte 1
-         !raw  "I"
+         !byte 3
+         !raw  "HGR"
+
+kDHGRScreenshotDirectory
+         !byte 4
+         !raw  "DHGR"
 
 kAttractModeSlideshowDirectory
          !byte 2

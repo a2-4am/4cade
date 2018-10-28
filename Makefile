@@ -32,9 +32,12 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >>build/log
-	rsync -aP res/hgr/* build/I >>build/log
-	bin/buildfileinfo.py build/I >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/I" "build/I" >>build/log
+	rsync -aP res/hgr/* build/HGR >>build/log
+	bin/buildfileinfo.py build/HGR >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/HGR" "build/HGR" >>build/log
+	rsync -aP res/dhgr/* build/DHGR >>build/log
+	bin/buildfileinfo.py build/DHGR >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DHGR" "build/DHGR" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
 #	bin/do2po.py res/dsk/ build/po/
@@ -56,7 +59,8 @@ mount: dsk
 md:
 	mkdir -p build/po
 	mkdir -p build/X
-	mkdir -p build/I
+	mkdir -p build/HGR
+	mkdir -p build/DHGR
 	mkdir -p build/SS
 
 clean:
