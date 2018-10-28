@@ -62,6 +62,7 @@ FirstMover
 !pseudopc $D000 {
 !zone
 Reenter                              ; self-running demos should call this to exit back to 4cade
+         ldx   #$FF
          txs
          +READ_RAM1_WRITE_RAM1
          jmp   Main
