@@ -62,7 +62,9 @@ FirstMover
 !pseudopc $D000 {
 !zone
 Reenter                              ; self-running demos should call this to exit back to 4cade
-         ; TODO
+         txs
+         +READ_RAM1_WRITE_RAM1
+         jmp   Main
 Start
          lda   hddopendir+1
          ldy   hddopendir+3
@@ -88,6 +90,7 @@ Start
          +LDAY SRC
          +STAY gSlideshowStore       ; save pointer to free space for next store
 
+Main
          bit   $C010
          jsr   BlankHGR
          jsr   AttractMode
@@ -161,8 +164,37 @@ AttractMode
          jmp   BlankHGR
 
 @SelfRunningDemo
-         ; TODO
-         rts
+         jsr   ResetPath
+         +LDADDR kDemoDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY @key
+         jsr   AddToPath
+         jsr   LoadFile              ; load attract module configuration file
+         !word gPathname
+         ldx   #(@end-@start-1)
+-        lda   @start,x
+         sta   $100,x
+         dex
+         bpl   -
+         jmp   $100
+@start
+         ; this runs from main memory
+         +READ_ROM_NO_WRITE
+         jsr   $FE89
+         jsr   $FE93
+         sta   $C000
+         sta   $C002
+         sta   $C004
+         sta   $C00C
+         sta   $C00E
+         jsr   $FB2F
+         jsr   $FC58
+         ldx   #$FF
+         txs
+         jmp   (ldrlo2)
+@end
 
 HGRLoad
          ldx   $C000

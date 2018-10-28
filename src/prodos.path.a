@@ -26,6 +26,10 @@ kAttractModeSlideshowDirectory
          !byte 2
          !raw  "SS"
 
+kDemoDirectory
+         !byte 4
+         !raw  "DEMO"
+
 ;------------------------------------------------------------------------------
 ; ResetPath
 ; reset gPathname to length 0

@@ -40,6 +40,8 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DHGR" "build/DHGR" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
+	rsync -aP res/demo/* build/DEMO >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
 #	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >build/log
@@ -62,6 +64,7 @@ md:
 	mkdir -p build/HGR
 	mkdir -p build/DHGR
 	mkdir -p build/SS
+	mkdir -p build/DEMO
 
 clean:
 	rm -rf build/

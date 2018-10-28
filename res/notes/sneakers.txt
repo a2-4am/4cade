@@ -1,0 +1,3 @@
+$53A4 is (very near to) the start of the attract mode cycle.
+$4072 is immediately after it detects a keypress (space only!)
+And $4065 is the code that detects the keypress in case we want to expand it to any key.
