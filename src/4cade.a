@@ -59,6 +59,10 @@ FirstMover
 Reenter                              ; self-running demos should call this to exit back to 4cade
          ; TODO
 Start
+         lda   hddopendir+1
+         ldy   hddopendir+3
+         +STAY gRootDirectory        ; save current directory as 'root'
+
          jsr   LoadFile              ; load games list from file
          !word kGameListConfFile
 
@@ -79,14 +83,14 @@ Start
          +LDAY SRC
          +STAY gSlideshowStore       ; save pointer to free space for next store
 
+         bit   $C010
          jsr   AttractMode
-
-         jmp   $FAA6
+         jmp   Reboot
 
 AttractMode
          jsr   okvs_nth              ; get filename of next attract module
          !word gAttractModeStore
-         !byte 0
+@index   !byte 0
          +STAY PTR
          jsr   ResetPath
          +LDADDR kAttractModeSlideshowDirectory
@@ -98,6 +102,14 @@ AttractMode
          jsr   LoadFile              ; load attract module configuration file
          !word gPathname
 
+         inc   @index                ; increment module index for next time
+         jsr   okvs_len
+         !word gAttractModeStore
+         cmp   @index
+         bne   +
+         lda   #0
+         sta   @index
++
          jsr   ParseKeyValueList     ; parse slideshow configuration
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to load address
@@ -105,6 +117,9 @@ AttractMode
          jsr   okvs_iter
          !word gSlideshowStore
          !word HGRLoad
+
+         lda   $C000
+         bpl   AttractMode
          rts
 
 HGRLoad
@@ -121,7 +136,32 @@ HGRLoad
          jsr   LoadFile
          !word gPathname
          jsr   FizzleHGR
+         ldx   #0
+         ldy   #0
+@wait    lda   $C000
+         bmi   @exit
+         jsr   @burn
+         dey
+         bne   @wait
+         dex
+         bne   @wait
+         rts
+@burn    jsr   @burn2
+@burn2   jsr   @burn3
+@burn3   jsr   @exit
 @exit    rts
+
+Reboot
+         ldx   #(@end-@start-1)
+-        lda   @start,x
+         sta   $100,x
+         dex
+         bpl   -
+         jmp   $100
+@start
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+@end
 
 kGameListConfFile
          !byte @kGameListConfFile_e-@kGameListConfFile_b

@@ -8,6 +8,9 @@
 ; - LoadDHRFile
 ;
 
+gRootDirectory
+         !word $FDFD
+
 ;------------------------------------------------------------------------------
 ; LoadFile
 ; load a file into memory all at once, using ProRWTS2
@@ -24,6 +27,10 @@ LoadFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY namlo                 ; set filename
+
+         +LDAY gRootDirectory
+         sta   @myreadblock+1
+         sty   @myreadblock+3        ; reset 'root' directory (saved at program start)
 
          ;search for '/' character in filename
 

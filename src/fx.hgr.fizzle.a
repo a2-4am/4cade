@@ -49,10 +49,13 @@ FizzleHGR
          lda   ($3c),y
          sta   ($26),y
 
-         ;check for keypress
+         ;wait while checking for keypress
 
-         lda   $c000
+         ldx   #8
+@wait    lda   $c000
          bmi   @exit
+         dex
+         bne   @wait
 
          ;and exit condition
 
