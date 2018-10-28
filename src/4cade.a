@@ -96,7 +96,7 @@ Start
 AttractMode
          jsr   okvs_nth              ; get filename of next attract module
          !word gAttractModeStore
-@index   !byte 2
+@index   !byte 0
          +STAY @key
 
          inc   @index                ; increment module index for next time
@@ -199,7 +199,7 @@ WaitOnScreenshot
          ldy   #0
 @wait    lda   $C000
          bmi   Exit
-;         jsr   @burn
+         jsr   @burn
          dey
          bne   @wait
          dex
