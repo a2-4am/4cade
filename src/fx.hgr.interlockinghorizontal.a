@@ -34,25 +34,13 @@ InterlockingHorizontalHGR
          dey
          bpl   @innerloop
          lda   #$40
-         jsr   @wait
+         jsr   Wait
          lda   $C000
          bmi   @exit
          inc   index2
          dec   index1
          bpl   @outerloop
 @exit    rts
-
-@wait    sec
-@wait1   pha
-@wait2   sbc   #1
-         bne   @wait2
-         pla
-         bit   $C000
-         bmi   @exitwait
-         sbc   #1
-         bne   @wait1
-@exitwait
-         rts
 
 @data1   !hex  20283038202830382129313921293139
          !hex  222A323A222A323A232B333B232B333B

@@ -1,0 +1,54 @@
+DiagonalHGR
+         lda   #$27
+         sta   $FB
+         lda   #$17
+         sta   $FA
+         sta   $FC
+@loop    jsr   @block
+         dec   $FB
+         inc   $FA
+         lda   $FB
+         bmi   +
+         lda   $FA
+         cmp   #$18
+         bne   @loop
++        dec   $FC
+         lda   #$27
+         sta   $FB
+         lda   $FC
+         sta   $FA
+         bpl   @loop
+         lda   $C000
+         bmi   @exit
+         lda   #$00
+         sta   $FA
+         sec
+         sbc   $FC
+         sta   $FD
+         lda   $FB
+         sec
+         sbc   $FD
+         sta   $FB
+         bpl   @loop
+@exit    rts
+
+@block   lda   $FA
+         bpl   +
+         lda   #$00
++        asl
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$08
+-        ldy   $FB
+         lda   ($3c),y
+         sta   ($26),y
+         lda   $27
+         clc
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   -
+         rts
