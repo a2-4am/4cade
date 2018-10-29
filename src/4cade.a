@@ -212,7 +212,7 @@ HGRLoad
          jsr   AddToPath
          jsr   LoadFile
          !word gPathname
-         jsr   SkipALineHGR;FizzleHGR;
+         jsr   InterlockingHorizontalHGR;InterlockingVerticalHGR;FizzleHGR;
          jmp   WaitOnScreenshot
 
 DHGRLoad
@@ -326,7 +326,8 @@ kAttractModeConfFile
          !source "src/parse.common.a"
          !source "src/parse.games.a"
          !source "src/fx.hgr.fizzle.a"
-         !source "src/fx.hgr.skipaline.a"
+         !source "src/fx.hgr.interlockingvertical.a"
+         !source "src/fx.hgr.interlockinghorizontal.a"
          !source "src/fx.dhgr.fizzle.a"
 gGamesListStore
          !word *+2                   ; address of first okvs store

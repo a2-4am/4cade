@@ -1,4 +1,4 @@
-SkipALineHGR
+InterlockingVerticalHGR
          ldy   #$5F                  ; logical row index
 @loop
          lda   @data1,y
