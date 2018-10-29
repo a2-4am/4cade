@@ -9,6 +9,8 @@
 
 gAttractModeStore
          !word $FDFD
+gFXStore
+         !word $FDFD
 gSlideshowStore
          !word $FDFD
 
@@ -59,7 +61,7 @@ ParseKeyValueList
 
          ldy   #$00                  ; index into ($FE) pointing to current character
 @newkey  ldx   #$00                  ; X = index into current key
-         stx   gVal                  ; initialize value length (in case this line has no value)
+         stx   gValLen               ; initialize value length (in case this line has no value)
          jsr   IncAndGetChar
          cmp   #$0D                  ; CR in first position (blank line) -> no key
          beq   @newkey

@@ -35,7 +35,7 @@
          inc   @FM+5
          bne   @FM
 +
-         jmp   Start
+         jmp   OneTimeSetup
 
 @no64K
          ldy   #@no64Klen
@@ -57,41 +57,56 @@ ProRWTSBuffer
 *=ProRWTSBuffer+512                  ; ProRWTS needs a 512-byte buffer for its init function
                                      ; so we reuse as much of the 1-time code as possible
                                      ; and fill the rest with zeros
+OneTimeSetup
+         lda   hddopendir+1          ; save current directory as 'root'
+         ldy   hddopendir+3
+         +STAY gRootDirectory
+         jsr   LoadFile              ; load games list
+         !word kGameListConfFile
+         jsr   ParseGamesList        ; parse games list
+         !word gGamesListStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+         +LDAY SRC
+         +STAY gFXStore              ; save pointer to free space for next store
+         jsr   LoadFile              ; load transition effects list
+         !word kFXConfFile
+         jsr   ParseKeyValueList     ; parse transition effects list
+         !word gFXStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+         +LDAY SRC
+         +STAY gAttractModeStore     ; save pointer to free space for next store
+         jsr   LoadFile              ; load attract-mode configuration
+         !word kAttractModeConfFile
+         jsr   ParseKeyValueList     ; parse attract-mode configuration
+         !word gAttractModeStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+         +LDAY SRC
+         +STAY gSlideshowStore       ; save pointer to free space for next store
+         jmp   Main
+kGameListConfFile
+         !byte @kGameListConfFile_e-@kGameListConfFile_b
+@kGameListConfFile_b
+         !text "GAMES.CONF"
+@kGameListConfFile_e
+kFXConfFile
+         !byte @kFXConfFile_e-@kFXConfFile_b
+@kFXConfFile_b
+         !text "FX.CONF"
+@kFXConfFile_e
+kAttractModeConfFile
+         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
+@kAttractModeConfFile_b
+         !text "ATTRACT.CONF"
+@kAttractModeConfFile_e
 
 FirstMover
 !pseudopc $D000 {
 !zone
 Reenter                              ; self-running demos should call this to exit back to 4cade
+         +READ_RAM1_WRITE_RAM1
+Main
          ldx   #$FF
          txs
-         +READ_RAM1_WRITE_RAM1
-         jmp   Main
-Start
-         lda   hddopendir+1
-         ldy   hddopendir+3
-         +STAY gRootDirectory        ; save current directory as 'root'
-
-         jsr   LoadFile              ; load games list from file
-         !word kGameListConfFile
-
-         jsr   ParseGamesList        ; parse games list
-         !word gGamesListStore
-         !word ldrlo2                ; (ldrlo2) points to load address
-
-         +LDAY SRC
-         +STAY gAttractModeStore     ; save pointer to free space for next store
-
-         jsr   LoadFile              ; load attract-mode configuration from file
-         !word kAttractModeConfFile
-
-         jsr   ParseKeyValueList     ; parse attract-mode configuration
-         !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to load address
-
-         +LDAY SRC
-         +STAY gSlideshowStore       ; save pointer to free space for next store
-
-Main
          bit   $C010
          jsr   BlankHGR
          jsr   AttractMode
@@ -124,69 +139,21 @@ AttractMode
          ldy   #1
          lda   (PTR),y
          and   #$0F
-         cmp   #$01
-         clc
-         beq   @Slideshow
-         cmp   #$02
-         sec
-         beq   @Slideshow
          cmp   #$03
-         bne   AttractMode
-         beq   @SelfRunningDemo
+         bne   @Slideshow
 
-@Slideshow
-         php
-         jsr   ResetPath
-         +LDADDR kAttractModeSlideshowDirectory
-         jsr   AddToPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
-         +LDAY @key
-         jsr   AddToPath
-         jsr   LoadFile              ; load attract module configuration file
-         !word gPathname
+         +LOAD_FILE kDemoDirectory, @key
 
-         jsr   ParseKeyValueList     ; parse slideshow configuration
-         !word gSlideshowStore
-         !word ldrlo2                ; (ldrlo2) points to load address
-
-         plp                         ; carry clear = HGR, carry set = DHGR
-         bcs   @DHGRSlideshow
-
-;@HGRSlideshow
-         jsr   okvs_iter
-         !word gSlideshowStore
-         !word HGRLoad
-         rts
-
-@DHGRSlideshow
-         jsr   BlankDHGR
-         jsr   okvs_iter
-         !word gSlideshowStore
-         !word DHGRLoad
-         jmp   BlankHGR
-
-@SelfRunningDemo
-         jsr   ResetPath
-         +LDADDR kDemoDirectory
-         jsr   AddToPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
-         +LDAY @key
-         jsr   AddToPath
-         jsr   LoadFile              ; load attract module configuration file
-         !word gPathname
-         ldx   #(@end-@start-1)
--        lda   @start,x
+         ldx   #(@end_prelaunch-@prelaunch-1)
+-        lda   @prelaunch,x          ; copy pre-launch code to main memory
          sta   $100,x
          dex
          bpl   -
-         jmp   $100
-@start
-         ; this runs from main memory
+         jmp   $100                  ; jump to pre-launch code
+@prelaunch                           ; this runs from main memory
          +READ_ROM_NO_WRITE
-         jsr   $FE89
-         jsr   $FE93
+         jsr   $FE89                 ; initialize machine like a cold boot
+         jsr   $FE93                 ; (many games assume a 'clean slate')
          sta   $C000
          sta   $C002
          sta   $C004
@@ -196,23 +163,60 @@ AttractMode
          jsr   $FC58
          ldx   #$FF
          txs
-         jmp   (ldrlo2)
-@end
+         jmp   (ldrlo2)              ; jump to entry point
+@end_prelaunch
+
+@Slideshow
+         pha                         ; save module type
+
+         +LOAD_FILE kAttractModeSlideshowDirectory, @key
+
+         jsr   ParseKeyValueList     ; parse slideshow configuration
+         !word gSlideshowStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+         pla                         ; restore module type
+         cmp   #$01
+         beq   @HGRSlideshow
+
+;@DHGRSlideshow
+         jsr   BlankDHGR
+         jsr   okvs_iter
+         !word gSlideshowStore
+         !word DHGRLoad
+         jmp   BlankHGR
+
+@HGRSlideshow
+         jsr   okvs_nth              ; get filename of transition effect code
+         !word gFXStore
+@fxindex !byte 0
+         +STAY @fxkey
+
+         inc   @fxindex              ; increment transition effect index for next time
+         jsr   okvs_len
+         !word gFXStore
+         cmp   @fxindex
+         bne   +
+         lda   #0
+         sta   @fxindex
++
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @fxkey
+
+         jsr   okvs_iter
+         !word gSlideshowStore
+         !word HGRLoad
+         rts
+@fxkey   !word $FDFD
 
 HGRLoad
          ldx   $C000
          bmi   Exit
          +STAY PTR
-         jsr   ResetPath
-         +LDADDR kHGRScreenshotDirectory
-         jsr   AddToPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
-         +LDAY PTR
-         jsr   AddToPath
-         jsr   LoadFile
-         !word gPathname
-         jsr   IrisHGR;SpiralHGR;DiagonalHGR;InterlockingVerticalHGR;FizzleHGR;InterlockingHorizontalHGR;
+
+         ; load HGR screenshot at $4000
+         +LOAD_FILE kHGRScreenshotDirectory, PTR
+
+         jsr   $6000                            ; transition effect code was loaded here earlier
          jmp   WaitOnScreenshot
 
 DHGRLoad
@@ -308,31 +312,14 @@ ClearHGR1
          bne   @a
          rts
 
-kGameListConfFile
-         !byte @kGameListConfFile_e-@kGameListConfFile_b
-@kGameListConfFile_b
-         !text "GAMES.CONF"
-@kGameListConfFile_e
-kAttractModeConfFile
-         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
-@kAttractModeConfFile_b
-         !text "ATTRACT.CONF"
-@kAttractModeConfFile_e
-
          ; these routines will only be called after relocating to language card
          !source "src/prodos.path.a"
          !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
+         !source "src/wait.a"
          !source "src/parse.common.a"
          !source "src/parse.games.a"
-         !source "src/fx.hgr.common.a"
-         !source "src/fx.hgr.fizzle.a"
-         !source "src/fx.hgr.spiral.a"
-         !source "src/fx.hgr.diagonal.a"
-         !source "src/fx.hgr.iris.a"
-         !source "src/fx.hgr.interlockingvertical.a"
-         !source "src/fx.hgr.interlockinghorizontal.a"
-         !source "src/fx.dhgr.fizzle.a"
+         !source "src/fx/fx.dhgr.fizzle.a"
 gGamesListStore
          !word *+2                   ; address of first okvs store
 }

@@ -1,7 +1,10 @@
 ;license:MIT
 ;(c) 2017-2018 by qkumba
 
-FizzleHGR
+!cpu 6502
+!to "build/FX/FIZZLE",plain
+*=$6000
+
          ;init RNG
 
          ldx   #1

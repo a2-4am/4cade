@@ -133,8 +133,8 @@ traverse
 
          ;read next directory block when we reach the end of this block
 
-         lda   readbuff + NEXT_BLOCK_LO
-         ldx   readbuff + NEXT_BLOCK_HI
+         lda   hdddirbuf + NEXT_BLOCK_LO
+         ldx   hdddirbuf + NEXT_BLOCK_HI
          bcs   +
 
 @myfoundname

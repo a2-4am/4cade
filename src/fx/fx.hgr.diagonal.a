@@ -1,4 +1,7 @@
-DiagonalHGR
+!cpu 6502
+!to "build/FX/DIAGONAL",plain
+*=$6000
+
          lda   #$27
          sta   $FB
          lda   #$17
@@ -35,3 +38,5 @@ DiagonalHGR
          sta   $FB
          bpl   @loop
 @exit    rts
+
+         !source "src/fx/fx.hgr.common.a"

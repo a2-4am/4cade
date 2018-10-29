@@ -1,4 +1,7 @@
-SpiralHGR
+!cpu 6502
+!to "build/FX/SPIRAL",plain
+*=$6000
+
          lda   #$27
          sta   $FB
          lda   #$17
@@ -67,3 +70,6 @@ SpiralHGR
          inc   $FA
          bne   @outerloop            ; always branches
 @exit    rts
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"

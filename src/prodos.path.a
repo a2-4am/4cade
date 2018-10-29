@@ -30,6 +30,10 @@ kDemoDirectory
          !byte 4
          !raw  "DEMO"
 
+kFXDirectory
+         !byte 2
+         !raw  "FX"
+
 ;------------------------------------------------------------------------------
 ; ResetPath
 ; reset gPathname to length 0

@@ -81,3 +81,15 @@
 !macro   READ_ROM_NO_WRITE {
          bit   $C082
 }
+
+!macro   LOAD_FILE .subdirectory, .filename {
+         jsr   ResetPath
+         +LDADDR .subdirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY .filename
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+}

@@ -1,7 +1,10 @@
+!cpu 6502
+!to "build/FX/INTERLOCK.LR",plain
+*=$6000
+
 index1 = $FE
 index2 = $FF
 
-InterlockingHorizontalHGR
          lda   #$27
          sta   index1
          lda   #$00
@@ -66,3 +69,5 @@ InterlockingHorizontalHGR
          !hex  A8A8A8A828282828A8A8A8A828282828
          !hex  80808080000000008080808000000000
          !hex  80808080000000008080808000000000
+
+         !source "src/wait.a"

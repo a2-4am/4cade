@@ -1,8 +1,10 @@
-!zone {
-round = $F0
-block = $F1
+!cpu 6502
+!to "build/FX/IRIS",plain
+*=$6000
 
-IrisHGR
+round = $FC
+block = $FD
+
          lda   #$00
          sta   round
 @outerloop
@@ -18,7 +20,7 @@ IrisHGR
 @innerloop
          ldy   block
          lda   ($fe),y
-         bmi   @nextround
+         bmi   @nextround            ; exit condition
          tax
          iny
          lda   ($fe),y
@@ -27,7 +29,7 @@ IrisHGR
          jsr   HGRBlockCopy
          inc   block
          inc   block
-         bne   @innerloop            ; always branches
+         bne   @innerloop            ; always branches (only exit condition is the BMI above)
 @nextround
          lda   #$40
          jsr   WaitForKeyWithTimeout
@@ -93,4 +95,6 @@ IrisHGR
 @round25 !byte 0,2, 0,37, 1,1, 1,38, 2,0, 2,39, 21,0, 21,39, 22,1, 22,38, 23,2, 23,37, 255
 @round26 !byte 0,1, 0,38, 1,0, 1,39, 22,0, 22,39, 23,1, 23,38, 255
 @round27 !byte 0,0, 0,39, 23,0, 23,39, 255
-}
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"

@@ -21,6 +21,12 @@ CADIUS=cadius
 
 asm: md
 	$(ACME) -r build/4cade.lst src/4cade.a
+	$(ACME) src/fx/fx.hgr.diagonal.a
+	$(ACME) src/fx/fx.hgr.iris.a
+	$(ACME) src/fx/fx.hgr.interlock.ud.a
+	$(ACME) src/fx/fx.hgr.interlock.lr.a
+	$(ACME) src/fx/fx.hgr.spiral.a
+	$(ACME) src/fx/fx.hgr.fizzle.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
@@ -30,6 +36,7 @@ dsk: md asm
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >>build/log
 	rsync -aP res/hgr/* build/HGR >>build/log
@@ -42,6 +49,8 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
 	rsync -aP res/demo/* build/DEMO >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
+	rsync -aP res/fx/* build/FX >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/FX" "build/FX" >>build/log
 #	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >build/log
@@ -65,6 +74,7 @@ md:
 	mkdir -p build/DHGR
 	mkdir -p build/SS
 	mkdir -p build/DEMO
+	mkdir -p build/FX
 
 clean:
 	rm -rf build/
