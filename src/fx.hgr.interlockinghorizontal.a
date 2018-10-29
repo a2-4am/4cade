@@ -34,7 +34,7 @@ InterlockingHorizontalHGR
          dey
          bpl   @innerloop
          lda   #$40
-         jsr   Wait
+         jsr   WaitForKeyWithTimeout
          lda   $C000
          bmi   @exit
          inc   index2

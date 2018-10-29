@@ -1,0 +1,68 @@
+HGRCalc
+; in:    A = HGR row (0x00..0xBF)
+; out:   A/X clobbered
+;        Y preserved
+;        ($26) points to first byte of given HGR row on hi-res page 1
+;        ($3C) points to same byte on hi-res page 2
+; based on 'Woz Recodes Hi-Res Address Calculations'
+; Apple Assembly Line vol. 7 issue 3 (December 1986)
+; http://www.txbobsc.com/aal/1986/aal8612.html#a9
+         asl
+         tax
+         and   #$F0
+         bpl   @calc1
+         ora   #$05
+@calc1   bcc   @calc2
+         ora   #$0A
+@calc2   asl
+         asl
+         sta   $26
+         txa
+         and   #$0E
+         adc   #$10
+         asl   $26
+         rol
+         sta   $27
+         eor   #$60
+         sta   $3d
+         lda   $26
+         sta   $3c
+         rts
+
+HGRBlockCopy
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   all flags and registers clobbered
+         sty   @loop+1
+         asl
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$08
+@loop    ldy   #$FD                  ; modified at runtime
+         lda   ($3c),y
+         sta   ($26),y
+         lda   $27
+         clc
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @loop
+         rts
+
+WaitForKeyWithTimeout
+; in:    A = timeout length (like standard $FCA8 wait routine)
+; out:   A clobbered
+;        X/Y preserved
+         sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         bit   $C000
+         bmi   @exit
+         sbc   #1
+         bne   @wait1
+@exit    rts

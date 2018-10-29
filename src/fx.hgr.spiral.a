@@ -1,0 +1,69 @@
+SpiralHGR
+         lda   #$27
+         sta   $FB
+         lda   #$17
+         sta   $FD
+         lda   #$00
+         sta   $FA
+         sta   $FC
+@outerloop
+         lda   $FC
+         sta   $FE
+         lda   $FA
+         sta   $FF
+         lda   #$00
+         sta   $F9
+@loop    lda   $FE
+         ldy   $FF
+         jsr   HGRBlockCopy
+         lda   #$1F
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         ldx   $F9
+         bne   @a
+         inc   $FF
+         lda   $FB
+         cmp   $FF
+         bcs   @loop
+         inc   $FC
+         inc   $F9
+         lda   $FC
+         sta   $FE
+         lda   $FB
+         sta   $FF
+@a       dex
+         bne   @b
+         inc   $FE
+         lda   $FD
+         cmp   $FE
+         bcs   @loop
+         dec   $FB
+         inc   $F9
+         lda   $FD
+         sta   $FE
+         lda   $FB
+         sta   $FF
+@b       dex
+         bne   @c
+         dec   $FF
+         lda   $FF
+         cmp   $FA
+         bpl   @loop
+         lda   $FD
+         cmp   $FC
+         beq   @exit
+         dec   $FD
+         inc   $F9
+         lda   $FD
+         sta   $FE
+         lda   $FA
+         sta   $FF
+@c       dex
+         bne   @loop
+         dec   $FE
+         lda   $FE
+         cmp   $FC
+         bpl   @loop
+         inc   $FA
+         bne   @outerloop            ; always branches
+@exit    rts

@@ -4,7 +4,11 @@ DiagonalHGR
          lda   #$17
          sta   $FA
          sta   $FC
-@loop    jsr   @block
+@loop    lda   $FA
+         bpl   +
+         lda   #$00
++        ldy   $FB
+         jsr   HGRBlockCopy
          dec   $FB
          inc   $FA
          lda   $FB
@@ -31,24 +35,3 @@ DiagonalHGR
          sta   $FB
          bpl   @loop
 @exit    rts
-
-@block   lda   $FA
-         bpl   +
-         lda   #$00
-+        asl
-         asl
-         asl
-         jsr   HGRCalc
-         ldx   #$08
--        ldy   $FB
-         lda   ($3c),y
-         sta   ($26),y
-         lda   $27
-         clc
-         adc   #$04
-         sta   $27
-         eor   #$60
-         sta   $3d
-         dex
-         bne   -
-         rts
