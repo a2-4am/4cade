@@ -212,7 +212,7 @@ HGRLoad
          jsr   AddToPath
          jsr   LoadFile
          !word gPathname
-         jsr   SpiralHGR;DiagonalHGR;InterlockingVerticalHGR;FizzleHGR;InterlockingHorizontalHGR;
+         jsr   IrisHGR;SpiralHGR;DiagonalHGR;InterlockingVerticalHGR;FizzleHGR;InterlockingHorizontalHGR;
          jmp   WaitOnScreenshot
 
 DHGRLoad
@@ -329,6 +329,7 @@ kAttractModeConfFile
          !source "src/fx.hgr.fizzle.a"
          !source "src/fx.hgr.spiral.a"
          !source "src/fx.hgr.diagonal.a"
+         !source "src/fx.hgr.iris.a"
          !source "src/fx.hgr.interlockingvertical.a"
          !source "src/fx.hgr.interlockinghorizontal.a"
          !source "src/fx.dhgr.fizzle.a"
