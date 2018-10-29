@@ -72,14 +72,4 @@ FizzleDHGR
          cmp   #1
          bne   @loop
 
-        ;graphics mode
-
-         sta   $c00d
-         sta   $c057
-         sta   $c054
-         sta   $c052
-         sta   $c050
-         sta   $c05e
-
-@exit
-         rts
+@exit    rts

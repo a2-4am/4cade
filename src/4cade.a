@@ -98,7 +98,7 @@ Main
          jmp   Reboot
 
 AttractMode
-         jsr   okvs_nth              ; get filename of next attract module
+         jsr   okvs_nth              ; get filename of next attract-mode module
          !word gAttractModeStore
 @index   !byte 0
          +STAY @key
@@ -153,10 +153,12 @@ AttractMode
          plp                         ; carry clear = HGR, carry set = DHGR
          bcs   @DHGRSlideshow
 
+;@HGRSlideshow
          jsr   okvs_iter
          !word gSlideshowStore
          !word HGRLoad
          rts
+
 @DHGRSlideshow
          jsr   BlankDHGR
          jsr   okvs_iter
@@ -210,7 +212,7 @@ HGRLoad
          jsr   AddToPath
          jsr   LoadFile
          !word gPathname
-         jsr   FizzleHGR
+         jsr   SkipALineHGR;FizzleHGR;
          jmp   WaitOnScreenshot
 
 DHGRLoad
@@ -252,7 +254,7 @@ Reboot
          jmp   $300
 @start
          +READ_ROM_NO_WRITE
-         jmp   $FAA6
+         jmp   $FF59
 @end
 
 Home
@@ -324,6 +326,7 @@ kAttractModeConfFile
          !source "src/parse.common.a"
          !source "src/parse.games.a"
          !source "src/fx.hgr.fizzle.a"
+         !source "src/fx.hgr.skipaline.a"
          !source "src/fx.dhgr.fizzle.a"
 gGamesListStore
          !word *+2                   ; address of first okvs store

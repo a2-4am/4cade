@@ -1,0 +1,70 @@
+SkipALineHGR
+         ldy   #$5F                  ; logical row index
+@loop
+         lda   @data1,y
+         sta   @sub2+2
+         clc
+         adc   #$20
+         sta   @sub1+2
+         lda   @data2,y
+         sta   @sub1+1
+         sta   @sub2+1
+         lda   @data3,y
+         sta   @sub4+2
+         clc
+         adc   #$20
+         sta   @sub3+2
+         lda   @data4,y
+         sta   @sub3+1
+         sta   @sub4+1
+         ldx   #$27                  ; logical column index
+@sub1    lda   $FDFD,x
+@sub2    sta   $FDFD,x
+@sub3    lda   $FDFD,x
+@sub4    sta   $FDFD,x
+         dex
+         bpl   @sub1
+         lda   #$40
+         jsr   @wait
+         lda   $C000
+         bmi   @exit
+         dey
+         bpl   @loop
+@exit    rts
+
+@wait    sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         bit   $C000
+         bmi   @exitwait
+         sbc   #1
+         bne   @wait1
+@exitwait
+         rts
+
+@data1   !hex  20283038202830382129313921293139
+         !hex  222A323A222A323A232B333B232B333B
+         !hex  20283038202830382129313921293139
+         !hex  222A323A222A323A232B333B232B333B
+         !hex  20283038202830382129313921293139
+         !hex  222A323A222A323A232B333B232B333B
+@data2   !hex  00000000808080800000000080808080
+         !hex  00000000808080800000000080808080
+         !hex  28282828A8A8A8A828282828A8A8A8A8
+         !hex  28282828A8A8A8A828282828A8A8A8A8
+         !hex  50505050D0D0D0D050505050D0D0D0D0
+         !hex  50505050D0D0D0D050505050D0D0D0D0
+@data3   !hex  3F372F273F372F273E362E263E362E26
+         !hex  3D352D253D352D253C342C243C342C24
+         !hex  3F372F273F372F273E362E263E362E26
+         !hex  3D352D253D352D253C342C243C342C24
+         !hex  3F372F273F372F273E362E263E362E26
+         !hex  3D352D253D352D253C342C243C342C24
+@data4   !hex  D0D0D0D050505050D0D0D0D050505050
+         !hex  D0D0D0D050505050D0D0D0D050505050
+         !hex  A8A8A8A828282828A8A8A8A828282828
+         !hex  A8A8A8A828282828A8A8A8A828282828
+         !hex  80808080000000008080808000000000
+         !hex  80808080000000008080808000000000
