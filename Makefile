@@ -27,6 +27,7 @@ asm: md
 	$(ACME) src/fx/fx.hgr.interlock.lr.a
 	$(ACME) src/fx/fx.hgr.spiral.a
 	$(ACME) src/fx/fx.hgr.fizzle.a
+	$(ACME) src/fx/fx.hgr.bar.dissolve.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
@@ -51,7 +52,7 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
 	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/FX" "build/FX" >>build/log
-#	bin/do2po.py res/dsk/ build/po/
+	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >build/log
 #	rm -f build/X/**/.DS_Store

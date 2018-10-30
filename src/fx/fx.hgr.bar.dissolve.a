@@ -1,0 +1,40 @@
+!cpu 6502
+!to "build/FX/BAR.DISSOLVE",plain
+*=$6000
+
+row1 = $fe
+row2 = $ff
+
+         lda   #$00
+         sta   row1
+         lda   #$BF
+         sta   row2
+@loop    lda   row1
+         jsr   HGRCalc
+         ldy   #$27
+-        lda   ($3c),y
+         sta   ($26),y
+         dey
+         dey
+         bpl   -
+         lda   row2
+         jsr   HGRCalc
+         ldy   #$26
+-        lda   ($3c),y
+         sta   ($26),y
+         dey
+         dey
+         bpl   -
+         lda   #$30
+         jsr   WaitForKeyWithTimeout
+         lda   $C000
+         bmi   @exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$C0
+         bne   @loop
+@exit    rts
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
