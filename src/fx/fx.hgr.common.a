@@ -51,3 +51,26 @@ HGRBlockCopy
          dex
          bne   @loop
          rts
+
+HGRBlockToWhite
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   all flags and registers clobbered
+         sty   @loop+1
+         asl
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$08
+@loop    ldy   #$FD                  ; modified at runtime
+         lda   #$7F
+         sta   ($26),y
+         lda   $27
+         clc
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @loop
+         rts

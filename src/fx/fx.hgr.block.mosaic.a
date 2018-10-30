@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FX/BLOCK.FIZZLE",plain
+!to "build/FX/BLOCK.MOSAIC",plain
 *=$6000
 
 coord = $FE
@@ -8,7 +8,32 @@ coord = $FE
          sta   coord
          lda   #>@coords
          sta   coord+1
-@loop
+@whiteloop
+         ldy   #0
+         lda   (coord),y
+         bmi   @endwhite
+         tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         jsr   HGRBlockToWhite
+         lda   #$03
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        bne   @whiteloop
+@endwhite
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+@copyloop
          ldy   #0
          lda   (coord),y
          bmi   @exit
@@ -18,7 +43,7 @@ coord = $FE
          tay
          txa
          jsr   HGRBlockCopy
-         lda   #$0C
+         lda   #$03
          jsr   WaitForKeyWithTimeout
          bmi   @exit
          inc   coord
@@ -27,7 +52,7 @@ coord = $FE
 +        inc   coord
          bne   +
          inc   coord+1
-+        bne   @loop
++        bne   @copyloop
 @exit    rts
 
 @coords
