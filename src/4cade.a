@@ -186,31 +186,17 @@ AttractMode
          jmp   BlankHGR
 
 @HGRSlideshow
-         jsr   okvs_nth              ; get filename of transition effect code
-         !word gFXStore
-@fxindex !byte 0
-         +STAY @fxkey
-
-         inc   @fxindex              ; increment transition effect index for next time
-         jsr   okvs_len
-         !word gFXStore
-         cmp   @fxindex
-         bne   +
-         lda   #0
-         sta   @fxindex
-+
-         ; load transition effect code at $6000
-         +LOAD_FILE kFXDirectory, @fxkey
-
+         jsr   LoadTransition
          jsr   okvs_iter
          !word gSlideshowStore
          !word HGRLoad
          rts
-@fxkey   !word $FDFD
 
 HGRLoad
          ldx   $C000
-         bmi   Exit
+         bpl   +
+         rts
++
          +STAY PTR
 
          ; load HGR screenshot at $4000
@@ -248,6 +234,25 @@ WaitOnScreenshot
 @burn2   jsr   @burn3
 @burn3   jsr   Exit
 Exit     rts
+
+LoadTransition
+         jsr   okvs_nth              ; get filename of transition effect code
+         !word gFXStore
+@fxindex !byte 0
+         +STAY @fxkey
+
+         inc   @fxindex              ; increment transition effect index for next time
+         jsr   okvs_len
+         !word gFXStore
+         cmp   @fxindex
+         bne   +
+         lda   #0
+         sta   @fxindex
++
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @fxkey
+         rts
+@fxkey   !word $FDFD
 
 Reboot
          ldx   #(@end-@start-1)
