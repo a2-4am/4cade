@@ -35,14 +35,12 @@ asm: md
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >>build/log
+#	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PRODOS" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER.A2FC" >>build/log
 	rsync -aP res/hgr/* build/HGR >>build/log
 	bin/buildfileinfo.py build/HGR >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/HGR" "build/HGR" >>build/log
@@ -58,15 +56,11 @@ dsk: md asm
 	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >build/log
-#	rm -f build/X/**/.DS_Store
-#	rm -f build/X/**/PRODOS
-#	rm -f build/X/**/LOADER.SYSTEM
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >build/log
-
-artwork: dsk
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK" "res/artwork"
-#	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/ARTWORK/" "res/DHRSLIDE.SYSTEM"
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORKGS" "res/artworkgs"
+	rm -f build/X/**/.DS_Store
+	rm -f build/X/**/PRODOS
+	rm -f build/X/**/LOADER.SYSTEM
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >build/log
+	bin/changebootloader.py build/"$(DISK)" res/proboothd
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
@@ -83,4 +77,4 @@ md:
 clean:
 	rm -rf build/
 
-all: clean asm dsk artwork mount
+all: clean asm dsk mount

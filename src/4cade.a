@@ -207,12 +207,14 @@ HGRLoad
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRScreenshotDirectory, PTR
 
-         jsr   $6000                            ; transition effect code was loaded here earlier
+         jsr   $6000                 ; transition effect code was loaded here earlier
          jmp   WaitOnScreenshot
 
 DHGRLoad
          ldx   $C000
-         bmi   Exit
+         bpl   +
+         rts
++
          +STAY PTR
          jsr   ResetPath
          +LDADDR kDHGRScreenshotDirectory
@@ -224,21 +226,15 @@ DHGRLoad
          jsr   LoadDHRFile
          !word gPathname
          jsr   FizzleDHGR
+         ; note: execution falls through here
 WaitOnScreenshot
-         ldx   #0
-         ldy   #0
-@wait    lda   $C000
-         bmi   Exit
-         jsr   @burn
-         dey
-         bne   @wait
+         ldx   #$20
+-        lda   #0
+         jsr   WaitForKeyWithTimeout
+         bmi   +
          dex
-         bne   @wait
-         rts
-@burn    jsr   @burn2
-@burn2   jsr   @burn3
-@burn3   jsr   Exit
-Exit     rts
+         bpl   -
++        rts
 
 LoadTransition
          jsr   okvs_nth              ; get filename of transition effect code
