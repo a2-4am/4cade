@@ -149,6 +149,11 @@ AttractMode
          sta   $100,x
          dex
          bpl   -
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy tiny ProDOS to main memory
+         sta   $bf00,x
+         dex
+         bpl   -
          jmp   $100                  ; jump to pre-launch code
 @prelaunch                           ; this runs from main memory
          +READ_ROM_NO_WRITE
@@ -249,6 +254,35 @@ WaitOnScreenshot
 @burn3   jsr   Exit
 Exit     rts
 
+promote
+!pseudopc $bf00 {
+        lda    $c08b
+        clc
+        bcc    @do_enter
+;$bf06
+        rts ;clock interface, must be RTS on real ProDOS if program uses $20x
+@do_enter
+        lda    $c08b
+        jmp    ProDOS_enter
+        !text  "q4!"
+;$bf10
+        !word  $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
+ProDOS_exit
+        lda    $c081
+        pla ;saved inside ProDOS_enter
+        tay
+        pla
+        tax
+        lda    #0
+        rts
+ProDOS_fatal ;only for debugging, will be removed
+        lda    $c081
+        jsr    $fe89
+        jsr    $fe93
+        jmp    $ff3a
+}
+end_promote
+
 Reboot
          ldx   #(@end-@start-1)
 -        lda   @start,x
@@ -272,6 +306,7 @@ Home
          ; this will be run from main memory
          +READ_ROM_NO_WRITE
          sta   $C00C                 ; get out of DHGR mode
+         sta   $C05F                 ; get out of DHGR mode
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
          +READ_RAM1_WRITE_RAM1

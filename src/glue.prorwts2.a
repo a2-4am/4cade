@@ -10,6 +10,8 @@
 
 gRootDirectory
          !word $FDFD
+gPrefix
+         !word $FDFD
 
 ;------------------------------------------------------------------------------
 ; LoadFile
@@ -27,6 +29,7 @@ LoadFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY namlo                 ; set filename
+         +STAY gPrefix               ; remember path
 
          jsr   traverse              ; go to subdirectory, set up filename for read
 
@@ -179,3 +182,209 @@ traverse
          sta   (namlo), y
 @go
          rts
+
+;------------------------------------------------------------------------------
+; ProDOS_enter
+; intercept certain ProDOS requests
+; wrap them to ProRWTS2 file requests
+;
+; in:    return address+1 is command and pointer to parameter block
+; out:   all flags clobbered
+;        A=0, X and Y preserved
+;        stack set to next instruction after parameters
+;
+; to do: preserve non-$4x zpage locations for titles that open files after start
+;        enable seek
+;        enable < 512 bytes reads
+;------------------------------------------------------------------------------
+packet = $40 ;word
+buffer = $42 ;word
+ProDOS_enter
+    pla
+    sta    @fetchaddr+1
+    pla
+    sta    @fetchaddr+2
+    jsr    @fetchbyte
+    sta    @request+1
+    jsr    @fetchbyte
+    sta    packet
+    jsr    @fetchbyte
+    sta    packet+1
+    lda    @fetchaddr+2
+    pha
+    lda    @fetchaddr+1
+    pha
+    txa
+    pha
+    tya
+    pha
+@request
+    lda    #$d1
+    cmp    #$c7
+    beq    @do_prefix
+    cmp    #$c8
+    beq    @do_open
+    cmp    #$ca
+    beq    @do_read
+    cmp    #$cb
+    beq    @do_write
+    cmp    #$cc
+    beq    @do_close
+;;    cmp    #$ce
+;;    beq    @do_seek
+    ;;any others??
+    jmp    ProDOS_fatal
+@do_prefix
+    jsr    @imp_prefix
+    jmp    ProDOS_exit
+@do_open
+    jsr    @imp_open
+    jmp    ProDOS_exit
+@do_read
+    jsr    @imp_read
+    jmp    ProDOS_exit
+@do_write
+    jsr    @imp_write
+    jmp    ProDOS_exit
+@do_close
+    jsr    @imp_close
+    jmp    ProDOS_exit
+;;@do_seek
+;;    jsr    @imp_seek
+;;    jmp    ProDOS_exit
+
+
+PREV_BLOCK_LO = $0      ;ProDOS constant
+PREV_BLOCK_HI = $1      ;ProDOS constant
+@imp_prefix
+    ldx    #buffer
+    jsr    @setbuffer1
+    lda    gPrefix
+    sta    packet
+    lda    gPrefix+1
+    sta    packet+1
+    ldy    #0
+    lda    (packet), y
+    tax
+    inx
+    !byte  $2c
+@copy_prefix
+    lda    (packet), y
+    iny
+    iny
+    iny
+    cmp    #$2e
+    bcs    @skip_slash1
+    lda    #'/'
+@skip_slash1
+    sta    (buffer), y
+    bcs    @skip_slash2
+    tya
+    ldy    #0
+    sta    (buffer), y
+    tay
+@skip_slash2
+    dey
+    dey
+    dex
+    bne    @copy_prefix
+    ldy    #1
+    lda    #'/'
+    sta    (buffer), y
+    iny
+    lda    #'X'
+    sta    (buffer), y
+    rts
+
+@imp_open
+    ldx    #namlo
+    jsr    @setbuffer1
+    iny
+    inc    @handles+1
+@handles
+    ldx    #0
+    iny
+    lda    (packet), y
+    sta    @handle-1, x
+    iny
+    txa
+    sta    (packet), y
+    rts
+
+@imp_read
+    lda    #cmdread
+    !byte  $2c
+@imp_write
+    lda    #cmdwrite
+    sta    reqcmd
+    jsr    @set_rdwrbuff
+    jmp    hddopendir
+
+@imp_close
+    dec    @handles+1
+    bne    @close_ret
+    lda    #$b1
+    sta    overridepatch1
+    sta    overridepatch2
+    lda    #bloklo
+    sta    overridepatch1+1
+    sta    overridepatch2+1
+    lda    #>hdddirbuf
+
+@patch_buffer
+    sta    bufferpatch2+2
+    sta    bufferpatch3+2
+    sta    bufferpatch4+2
+    sta    bufferpatch6+1
+    sta    bufferpatch7+2
+    sta    bufferpatch9+2
+    sta    bufferpatch10+1
+    tax
+    inx
+    stx    bufferpatch5+2
+    stx    bufferpatch8+2
+    dex
+    dex
+    stx    bufferpatch1+1
+@close_ret
+    rts
+
+@fetchbyte
+    inc    @fetchaddr+1
+    bne    @fetchaddr
+    lda    @fetchaddr+2
+@fetchaddr
+    lda    $d1d1
+    rts
+
+@set_rdwrbuff
+    ldy    #1
+    lda    (packet), y
+    tax
+    lda    @handle-1,x
+    jsr    @patch_buffer
+    lda    #$a9
+    sta    overridepatch1
+    sta    overridepatch2
+    iny
+    lda    (packet), y
+    sta    overridepatch1+1
+    iny
+    lda    (packet), y
+    sta    overridepatch2+1
+    ldx    #sizelo
+    iny
+    !byte  $2c
+@setbuffer1
+    ldy    #1
+
+@setbuffer
+    lda    (packet), y
+    sta    $0,x
+    iny
+    lda    (packet), y
+    sta    $1,x
+    rts
+
+@handle
+    !byte  0, 0 ;only up to two handles at a time

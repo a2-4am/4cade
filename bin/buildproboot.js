@@ -1,0 +1,7 @@
+a = new ActiveXObject("scripting.filesystemobject")
+b = a.opentextfile(WScript.Arguments(0))
+c = b.read(0x40)
+b.skip(0x200)
+d = b.read(0x1fff600)
+b.close()
+b=a.createtextfile(WScript.Arguments(0), 1).write(c+a.opentextfile("res\\proboothd").read(512)+d)
