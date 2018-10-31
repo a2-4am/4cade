@@ -35,6 +35,9 @@ if "%1" equ "asm" (
 %ACME% src\fx\fx.hgr.spiral.a
 %ACME% src\fx\fx.hgr.fizzle.a
 %ACME% src\fx\fx.hgr.bar.dissolve.a
+%ACME% src\fx\fx.hgr.block.fizzle.a
+%ACME% src\fx\fx.hgr.block.mosaic.a
+%ACME% src\fx\fx.hgr.2pass.lr.a
 goto :EOF
 )
 
