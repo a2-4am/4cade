@@ -56,7 +56,7 @@ coord = $FE
 @exit    rts
 
 @coords
-         !source "src/fx/fx.hgr.common.blockcoords.a"
+         !source "src/fx/fx.hgr.block.fizzle.data.a"
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"

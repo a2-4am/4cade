@@ -32,14 +32,19 @@ HGRCalc
 HGRBlockCopy
 ; in:    A = HGR row / 8 (0x00..0x17)
 ;        Y = HGR column (0x00..0x27)
-; out:   all flags and registers clobbered
-         sty   @loop+1
+; out:   Y preserved
+;        X = #$FF
+;        Z set
+;        all other flags and registers clobbered
+         sty   @y
          asl
          asl
          asl
          jsr   HGRCalc
          ldx   #$08
-@loop    ldy   #$FD                  ; modified at runtime
+@y=*+1
+         ldy   #$FD                  ; modified at runtime
+@loop
          lda   ($3c),y
          sta   ($26),y
          lda   $27
@@ -55,14 +60,19 @@ HGRBlockCopy
 HGRBlockToWhite
 ; in:    A = HGR row / 8 (0x00..0x17)
 ;        Y = HGR column (0x00..0x27)
-; out:   all flags and registers clobbered
-         sty   @loop+1
+; out:   Y preserved
+;        X = #$FF
+;        Z set
+;        all other flags and registers clobbered
+         sty   @y
          asl
          asl
          asl
          jsr   HGRCalc
          ldx   #$08
-@loop    ldy   #$FD                  ; modified at runtime
+@y=*+1
+         ldy   #$FD                  ; modified at runtime
+@loop
          lda   #$7F
          sta   ($26),y
          lda   $27
