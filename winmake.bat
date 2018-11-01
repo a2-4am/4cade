@@ -38,6 +38,7 @@ if "%1" equ "asm" (
 %ACME% src\fx\fx.hgr.block.fizzle.a
 %ACME% src\fx\fx.hgr.block.mosaic.a
 %ACME% src\fx\fx.hgr.2pass.lr.a
+%ACME% src\fx\fx.hgr.crystal.a
 goto :EOF
 )
 
@@ -53,15 +54,11 @@ call :asm
 2>nul del build\log
 %CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
-cscript /nologo bin/buildproboot.js "build\%DISK%"
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\PRODOS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER.A2FC" >>build\log
 1>nul copy /y res\hgr\* build\HGR >>build\log
 cscript /nologo bin/buildfileinfo.js build\HGR >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build/log
@@ -75,6 +72,8 @@ cscript /nologo bin/buildfileinfo.js build\DHGR >>build\log
 1>nul copy /y res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build/FX" >>build\log
 cscript /nologo bin/do2po.js res\dsk\ build\po\
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
+cscript /nologo bin/changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
 

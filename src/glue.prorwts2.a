@@ -73,6 +73,7 @@ LoadDHRFile
          lda   #$20                  ; read next $2000 bytes
          sta   sizehi
          dec   auxreq                ; 0 = read into main memory
+         clc                         ; not a subdirectory
          jmp   hddrdwrpart           ; call ProRWTS2
 
 traverse
@@ -194,8 +195,6 @@ traverse
 ;        stack set to next instruction after parameters
 ;
 ; to do: preserve non-$4x zpage locations for titles that open files after start
-;        enable seek
-;        enable < 512 bytes reads
 ;------------------------------------------------------------------------------
 packet = $40 ;word
 buffer = $42 ;word
@@ -230,8 +229,8 @@ ProDOS_enter
     beq    @do_write
     cmp    #$cc
     beq    @do_close
-;;    cmp    #$ce
-;;    beq    @do_seek
+    cmp    #$ce
+    beq    @do_seek
     ;;any others??
     jmp    ProDOS_fatal
 @do_prefix
@@ -249,9 +248,9 @@ ProDOS_enter
 @do_close
     jsr    @imp_close
     jmp    ProDOS_exit
-;;@do_seek
-;;    jsr    @imp_seek
-;;    jmp    ProDOS_exit
+@do_seek
+    jsr    @imp_seek
+    jmp    ProDOS_exit
 
 
 PREV_BLOCK_LO = $0      ;ProDOS constant
@@ -306,11 +305,25 @@ PREV_BLOCK_HI = $1      ;ProDOS constant
     iny
     lda    (packet), y
     sta    @handle-1, x
+    tax
+    jsr    @patch_buffer
     iny
-    txa
+    lda    #1
     sta    (packet), y
-    rts
+    lda    #0
+    sta    reqcmd
+    sta    sizehi
+    sta    sizelo
+    jsr    hddopendir
+    ldx    encbufpatch1+1
+    inx
+    stx    @block_index2+2
+    lda    #0
+    beq    @block_index2 ;always
 
+@imp_seek
+    lda    #cmdseek
+    !byte  $2c
 @imp_read
     lda    #cmdread
     !byte  $2c
@@ -318,34 +331,42 @@ PREV_BLOCK_HI = $1      ;ProDOS constant
     lda    #cmdwrite
     sta    reqcmd
     jsr    @set_rdwrbuff
-    jmp    hddopendir
+    ldx    encbufpatch1+1
+    inx
+    stx    @block_index1+2
+    stx    @block_index2+2
+@block_index1
+    lda    $d1ff
+    sta    blkidx
+    clc ;not a subdirectory
+    jsr    hddrdwrpart
+    lda    blkidx
+@block_index2
+    sta    $d1ff
+    rts
 
 @imp_close
     dec    @handles+1
     bne    @close_ret
-    lda    #$b1
-    sta    overridepatch1
-    sta    overridepatch2
-    lda    #bloklo
-    sta    overridepatch1+1
-    sta    overridepatch2+1
-    lda    #>hdddirbuf
+    lda    #>hddencbuf
 
 @patch_buffer
-    sta    bufferpatch2+2
-    sta    bufferpatch3+2
-    sta    bufferpatch4+2
-    sta    bufferpatch6+1
-    sta    bufferpatch7+2
-    sta    bufferpatch9+2
-    sta    bufferpatch10+1
+    sta    encbufpatch1+1
+    sta    encbufpatch2+1
     tax
     inx
-    stx    bufferpatch5+2
-    stx    bufferpatch8+2
-    dex
-    dex
-    stx    bufferpatch1+1
+    stx    dirbufpatch1+1
+    inx
+    stx    dirbufpatch2+2
+    stx    dirbufpatch3+2
+    stx    dirbufpatch4+2
+    stx    dirbufpatch6+1
+    stx    dirbufpatch7+2
+    stx    dirbufpatch9+2
+    stx    dirbufpatch10+1
+    inx
+    stx    dirbufpatch5+2
+    stx    dirbufpatch8+2
 @close_ret
     rts
 
@@ -361,17 +382,12 @@ PREV_BLOCK_HI = $1      ;ProDOS constant
     ldy    #1
     lda    (packet), y
     tax
-    lda    @handle-1,x
+    lda    @handle-1, x
+    tax
     jsr    @patch_buffer
-    lda    #$a9
-    sta    overridepatch1
-    sta    overridepatch2
+    ldx    #ldrlo
     iny
-    lda    (packet), y
-    sta    overridepatch1+1
-    iny
-    lda    (packet), y
-    sta    overridepatch2+1
+    jsr    @setbuffer
     ldx    #sizelo
     iny
     !byte  $2c
