@@ -1,12 +1,4 @@
-HGRCalc
-; in:    A = HGR row (0x00..0xBF)
-; out:   A/X clobbered
-;        Y preserved
-;        ($26) points to first byte of given HGR row on hi-res page 1
-;        ($3C) points to same byte on hi-res page 2
-; based on 'Woz Recodes Hi-Res Address Calculations'
-; Apple Assembly Line vol. 7 issue 3 (December 1986)
-; http://www.txbobsc.com/aal/1986/aal8612.html#a9
+!macro HGR_CALC {
          asl
          tax
          and   #$F0
@@ -27,6 +19,18 @@ HGRCalc
          sta   $3d
          lda   $26
          sta   $3c
+}
+
+HGRCalc
+; in:    A = HGR row (0x00..0xBF)
+; out:   A/X clobbered
+;        Y preserved
+;        ($26) points to first byte of given HGR row on hi-res page 1
+;        ($3C) points to same byte on hi-res page 2
+; based on 'Woz Recodes Hi-Res Address Calculations'
+; Apple Assembly Line vol. 7 issue 3 (December 1986)
+; http://www.txbobsc.com/aal/1986/aal8612.html#a9
+         +HGR_CALC
          rts
 
 HGRBlockCopy
@@ -35,11 +39,12 @@ HGRBlockCopy
 ; out:   Y preserved
 ;        X = #$00
 ;        Z set
+;        C clear
 ;        all other flags and registers clobbered
          asl
          asl
          asl
-         jsr   HGRCalc
+         +HGR_CALC
          clc
          ldx   #$08
 @loop
@@ -60,11 +65,12 @@ HGRBlockToWhite
 ; out:   Y preserved
 ;        X = #$00
 ;        Z set
+;        C clear
 ;        all other flags and registers clobbered
          asl
          asl
          asl
-         jsr   HGRCalc
+         +HGR_CALC
          clc
          ldx   #$08
 @loop
