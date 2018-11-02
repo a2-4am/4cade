@@ -1,0 +1,72 @@
+!cpu 6502
+!to "build/FX/FOURSQUARE",plain
+*=$6000
+
+         lda   #<@coords
+         sta   $FE
+         lda   #>@coords
+         sta   $FF
+         ldy   #$00
+@loop1
+         lda   ($FE),y
+         bpl   @copy
+         lda   #$18
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         bpl   @next                 ; always branches
+@copy
+         tax
+         iny
+         lda   ($fe),y
+         tay
+         txa
+         jsr   HGRBlockToWhite
+@next
+         inc   $FE
+         bne   +
+         inc   $FF
++        inc   $FE
+         bne   +
+         inc   $FF
++        ldy   #$00
+         lda   ($FE),y
+         cmp   #$80
+         bne   @loop1
+
+@loop2
+         dec   $FE
+         lda   $FE
+         cmp   #$FF
+         bne   +
+         dec   $FF
++        dec   $FE
+         lda   $FE
+         cmp   #$FF
+         bne   +
+         dec   $FF
++        ldy   #$00
+         lda   ($FE),y
+         cmp   #$80
+         beq   @exit
+         lda   ($FE),y
+         bpl   @copy2
+         lda   #$18
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         bpl   @loop2                ; always branches
+@copy2
+         tax
+         iny
+         lda   ($fe),y
+         tay
+         txa
+         jsr   HGRBlockCopy
+         beq   @loop2                ; always branches
+@exit    rts
+
+         !byte $80,$80
+@coords
+         !source "src/fx/fx.hgr.foursquare.data.a"
+         !byte $80
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
