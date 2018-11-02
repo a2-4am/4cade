@@ -4,20 +4,20 @@
 
          lda   #$27
          sta   $FB
-         lda   #$17
+         lda   #$2F
          sta   $FA
          sta   $FC
 @loop    lda   $FA
          bpl   +
          lda   #$00
 +        ldy   $FB
-         jsr   HGRBlockCopy
+         jsr   HGRHalfBlockCopy
          dec   $FB
          inc   $FA
          lda   $FB
          bmi   +
          lda   $FA
-         cmp   #$18
+         cmp   #$30
          bne   @loop
 +        dec   $FC
          lda   #$27
