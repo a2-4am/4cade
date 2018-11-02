@@ -1,0 +1,17 @@
+TWO DIFFERENT MODES
+
+#1 title screen / high scores screen
+$61F6 is after key is pressed
+$6201 is after button is pressed
+
+#2 demo player playing real levels
+$6056 starts attract mode (after title screen has been shown long enough)
+$69B8 checks for key (or button)
+$69CD is after key/button is detected [9 bytes available]
+$61F3 is after demo player has died, high score screen has been shown, jumps back to $6008 to display title screen again [3 bytes available]
+
+$61FB: F0 -> 24
+$61FD: F0 -> 24
+$6201: A2008696E886 -> AD88C04C00D0
+$61F4: 0860 -> 0162
+$69CD: 46AC46 -> 4C0162

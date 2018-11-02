@@ -1,3 +1,9 @@
 $53A4 is (very near to) the start of the attract mode cycle.
+$54AA is at the very end of the attract mode cycle (it jumps back to $53A4) but there are only 3 bytes available.
+
 $4072 is immediately after it detects a keypress (space only!)
 And $4065 is the code that detects the keypress in case we want to expand it to any key.
+
+$0100: AD88C04C00D0
+$54AA: 4CAA53 -> 4C0001
+$4068: C9A0F006A9008D10C0 -> 10034C0001EAEAA900
