@@ -84,3 +84,53 @@ HGRBlockToWhite
          dex
          bne   @loop
          rts
+
+HGRHalfBlockCopy
+; in:    A = HGR row / 4 (0x00..0x2F)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         asl
+         asl
+         +HGR_CALC
+         clc
+         ldx   #$04
+@loop
+         lda   ($3c),y
+         sta   ($26),y
+         lda   $27
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @loop
+         rts
+
+HGRHalfBlockToWhite
+; in:    A = HGR row / 4 (0x00..0x2F)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         asl
+         asl
+         +HGR_CALC
+         clc
+         ldx   #$04
+@loop
+         lda   #$7F
+         sta   ($26),y
+         lda   $27
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @loop
+         rts

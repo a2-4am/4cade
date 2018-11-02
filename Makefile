@@ -36,6 +36,8 @@ asm: md
 	$(ACME) src/fx/fx.hgr.onesquare.a
 	$(ACME) src/fx/fx.hgr.diamond.a
 	$(ACME) src/fx/fx.hgr.checkerboard.a
+	$(ACME) src/fx/fx.hgr.halfblock.fizzle.a
+	$(ACME) src/fx/fx.hgr.halfblock.mosaic.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log

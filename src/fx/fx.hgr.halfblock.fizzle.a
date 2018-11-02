@@ -1,0 +1,37 @@
+!cpu 6502
+!to "build/FX/HALF.FIZZLE",plain
+*=$6000
+
+coord = $FE
+
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+@loop
+         ldy   #0
+         lda   (coord),y
+         bmi   @exit
+         tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         jsr   HGRHalfBlockCopy
+         lda   #$07
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        bne   @loop
+@exit    rts
+
+@coords
+         !source "src/fx/fx.hgr.halfblock.fizzle.data.a"
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"

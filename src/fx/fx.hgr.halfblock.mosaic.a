@@ -1,0 +1,62 @@
+!cpu 6502
+!to "build/FX/HALF.MOSAIC",plain
+*=$6000
+
+coord = $FE
+
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+@whiteloop
+         ldy   #0
+         lda   (coord),y
+         bmi   @endwhite
+         tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         jsr   HGRHalfBlockToWhite
+         lda   #$02
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        bne   @whiteloop
+@endwhite
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+@copyloop
+         ldy   #0
+         lda   (coord),y
+         bmi   @exit
+         tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         jsr   HGRHalfBlockCopy
+         lda   #$02
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        bne   @copyloop
+@exit    rts
+
+@coords
+         !source "src/fx/fx.hgr.halfblock.fizzle.data.a"
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
