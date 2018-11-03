@@ -23,7 +23,6 @@ row = $FF
 
          lda   #$10
          jsr   WaitForKeyWithTimeout
-         lda   $C000
          bmi   @exit
 
          inc   @h1
@@ -47,7 +46,6 @@ row = $FF
 
          lda   #$10
          jsr   WaitForKeyWithTimeout
-         lda   $C000
          bmi   @exit
 
          inc   @h2

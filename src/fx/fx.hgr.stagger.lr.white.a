@@ -1,0 +1,69 @@
+!cpu 6502
+!to "build/FX/STAGGERWHITE.LR",plain
+*=$6000
+
+row = $fd
+col1 = $fe
+col2 = $ff
+
+         lda   #$00
+         sta   col1
+         lda   #$27
+         sta   col2
+@outerloop1
+         lda   #$2E
+         sta   row
+@loop1   ldy   col1
+         lda   row
+         jsr   HGRHalfBlockToWhite
+         iny
+         jsr   HGRStaggerToWhite
+         ldy   col2
+         lda   row
+         jsr   HGRHalfBlockToWhite
+         dey
+         jsr   HGRStaggerToWhite
+         dec   row
+         dec   row
+         bpl   @loop1
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   col1
+         inc   col1
+         dec   col2
+         dec   col2
+         bpl   @outerloop1
+
+         lda   #$00
+         sta   col1
+         lda   #$27
+         sta   col2
+@outerloop2
+         lda   #$2E
+         sta   row
+@loop2   ldy   col1
+         lda   row
+         jsr   HGRHalfBlockCopy
+         iny
+         jsr   HGRStaggerCopy
+         ldy   col2
+         lda   row
+         jsr   HGRHalfBlockCopy
+         dey
+         jsr   HGRStaggerCopy
+         dec   row
+         dec   row
+         bpl   @loop2
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   col1
+         inc   col1
+         dec   col2
+         dec   col2
+         bpl   @outerloop2
+@exit    rts
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"

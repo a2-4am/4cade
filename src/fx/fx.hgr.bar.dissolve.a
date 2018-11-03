@@ -27,7 +27,6 @@ row2 = $ff
          bpl   -
          lda   #$30
          jsr   WaitForKeyWithTimeout
-         lda   $C000
          bmi   @exit
          inc   row1
          dec   row2

@@ -96,6 +96,7 @@ HGRHalfBlockCopy
          asl
          asl
          +HGR_CALC
+HGRStaggerCopy
          clc
          ldx   #$04
 @loop
@@ -121,6 +122,7 @@ HGRHalfBlockToWhite
          asl
          asl
          +HGR_CALC
+HGRStaggerToWhite
          clc
          ldx   #$04
 @loop

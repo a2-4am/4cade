@@ -29,15 +29,22 @@ asm: md
 	$(ACME) src/fx/fx.hgr.fizzle.a
 	$(ACME) src/fx/fx.hgr.bar.dissolve.a
 	$(ACME) src/fx/fx.hgr.block.fizzle.a
-	$(ACME) src/fx/fx.hgr.block.mosaic.a
+	$(ACME) src/fx/fx.hgr.block.fizzle.white.a
 	$(ACME) src/fx/fx.hgr.2pass.lr.a
 	$(ACME) src/fx/fx.hgr.crystal.a
-	$(ACME) src/fx/fx.hgr.foursquare.a
-	$(ACME) src/fx/fx.hgr.onesquare.a
+	$(ACME) src/fx/fx.hgr.foursquare.white.a
+	$(ACME) src/fx/fx.hgr.onesquare.white.a
 	$(ACME) src/fx/fx.hgr.diamond.a
-	$(ACME) src/fx/fx.hgr.checkerboard.a
+	$(ACME) src/fx/fx.hgr.checkerboard.white.a
 	$(ACME) src/fx/fx.hgr.halfblock.fizzle.a
-	$(ACME) src/fx/fx.hgr.halfblock.mosaic.a
+	$(ACME) src/fx/fx.hgr.halfblock.fizzle.white.a
+	$(ACME) src/fx/fx.hgr.stagger.ud.a
+	$(ACME) src/fx/fx.hgr.stagger.ud.white.a
+	$(ACME) src/fx/fx.hgr.stagger.lr.a
+	$(ACME) src/fx/fx.hgr.stagger.lr.white.a
+	$(ACME) src/fx/fx.hgr.corner.circle.a
+	$(ACME) src/fx/fx.hgr.sunrise.a
+	$(ACME) src/fx/fx.hgr.radial.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log

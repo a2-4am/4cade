@@ -30,7 +30,6 @@ row = $FF
          bne   @loop
          lda   #$20
          jsr   WaitForKeyWithTimeout
-         lda   $C000
          bmi   @exit
          inc   @h1
          dec   @h2

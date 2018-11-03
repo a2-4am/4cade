@@ -107,10 +107,10 @@ Reenter                              ; self-running demos should call this to ex
 Main
          ldx   #$FF
          txs
-         bit   $C010
          jsr   BlankHGR
+-        bit   $C010
          jsr   AttractMode
-         jmp   Reboot
+         jmp   -
 
 AttractMode
          jsr   okvs_nth              ; get filename of next attract-mode module
@@ -209,6 +209,7 @@ HGRLoad
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRScreenshotDirectory, PTR
 
+;         jsr   LoadTransition
          jsr   $6000                 ; transition effect code was loaded here earlier
          jmp   WaitOnScreenshot
 
