@@ -1,0 +1,43 @@
+!cpu 6502
+!to "build/FX/STAR",plain
+*=$6000
+
+coord = $FE
+
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+         ldy   #0
+@loop
+         lda   (coord),y
+         bpl   +
+         lda   #$10
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         bpl   @next
++        tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         jsr   HGRHalfBlockCopy
+@next
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        ldy   #$00
+         lda   ($FE),y
+         cmp   #$80
+         bne   @loop
+@exit    rts
+
+@coords
+         !source "src/fx/fx.hgr.star.data.a"
+         !byte $80
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
