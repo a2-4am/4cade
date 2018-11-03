@@ -1,0 +1,121 @@
+!cpu 6502
+!to "build/FX/SPLIT.UD.INTRO",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.macros.a"
+
+col1 = $FE
+col2 = $FF
+
+         lda   #$00
+         sta   col1
+         lda   #$27
+         sta   col2
+@introloop
+         lda   #$17
+         ldy   col1
+         jsr   HGRHalfBlockToWhite
+         lda   #$18
+         ldy   col2
+         jsr   HGRHalfBlockToWhite
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
+         bpl   +
+         jmp   @exit
++
+         inc   col1
+         dec   col2
+         bpl   @introloop
+
+row1 = $FE
+row2 = $FF
+
+         lda   #$16
+         sta   row1
+         lda   #$19
+         sta   row2
+
+@outerloop
+         lda   row1
+         bmi   @skiptopwhite
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$04
+@topwhite
+         ldy   #$27
+         lda   #$7F
+-        sta   ($26),y
+         dey
+         bpl   -
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @topwhite
+@skiptopwhite
+         inc   row1
+
+         lda   row1
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$04
+@topcopy
+         ldy   #$27
+-        lda   ($3c),y
+         sta   ($26),y
+         dey
+         bpl   -
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @topcopy
+
+         lda   row2
+         cmp   #$30
+         bcs   @skipbottomwhite
+         lda   row2
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$04
+@bottomwhite
+         ldy   #$27
+-        lda   #$7F
+         sta   ($26),y
+         dey
+         bpl   -
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @bottomwhite
+@skipbottomwhite
+         dec   row2
+         lda   row2
+         asl
+         asl
+         jsr   HGRCalc
+         ldx   #$04
+@bottomcopy
+         ldy   #$27
+-        lda   ($3c),y
+         sta   ($26),y
+         dey
+         bpl   -
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @bottomcopy
+
+         lda   #$28
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+
+         dec   row1
+         dec   row1
+         inc   row2
+         inc   row2
+         lda   row1
+         cmp   #$FE
+         beq   @exit
+         jmp   @outerloop
+@exit    rts
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
