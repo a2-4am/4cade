@@ -22,7 +22,6 @@ CADIUS=cadius
 asm: md
 	$(ACME) -r build/4cade.lst src/4cade.a
 	$(ACME) src/fx/fx.hgr.diagonal.a
-	$(ACME) src/fx/fx.hgr.iris.a
 	$(ACME) src/fx/fx.hgr.interlock.ud.a
 	$(ACME) src/fx/fx.hgr.interlock.lr.a
 	$(ACME) src/fx/fx.hgr.spiral.a
@@ -46,6 +45,7 @@ asm: md
 	$(ACME) src/fx/fx.hgr.sunrise.a
 	$(ACME) src/fx/fx.hgr.radial.a
 	$(ACME) src/fx/fx.hgr.split.ud.intro.a
+	$(ACME) src/fx/fx.hgr.iris.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
