@@ -19,3 +19,15 @@ for i in range(20000):
 with open("../../src/fx/fx.hgr.iris.data.a", "w") as f:
     for x, y in coords:
         f.write("         !byte %s,%s\n" % (y,x))
+
+radialcoords = []
+#for i, j, k in zip(range(640), range(640,1280), range(1280,1920)):
+for i, j, k, l in zip(range(480), range(480,960), range(960,1440), range(1440,1920)):
+    radialcoords.append(coords[i])
+    radialcoords.append(coords[j])
+    radialcoords.append(coords[k])
+    radialcoords.append(coords[l])
+    radialcoords.append((255,255))
+with open("../../src/fx/fx.hgr.ripple.data.a", "w") as f:
+    for x, y in radialcoords:
+        f.write("         !byte %s,%s\n" % (y,x))
