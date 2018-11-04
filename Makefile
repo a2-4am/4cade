@@ -48,6 +48,7 @@ asm: md
 	$(ACME) src/fx/fx.hgr.iris.a
 	$(ACME) src/fx/fx.hgr.ripple.a
 	$(ACME) src/fx/fx.hgr.star.a
+	$(ACME) src/fx/fx.hgr.fourspiral.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
