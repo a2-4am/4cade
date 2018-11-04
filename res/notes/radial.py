@@ -25,14 +25,64 @@ for i in range(300, 0, -1):
     if any:
         coords.append((255,255))
 
+q1 = coords.copy()
 q2 = [(-x-1,y) for x,y in coords]
 q2.reverse()
 q3 = [(-x-1,-y-1) for x,y in coords]
 q4 = [(x,-y-1) for x,y in coords]
 q4.reverse()
-coords = q4 + coords + q2 + q3
-
+coords = q4 + q1 + q2 + q3
 with open("../../src/fx/fx.hgr.radial.data.a", "w") as f:
+    for x, y in coords:
+        if x not in range(-40,40):
+            f.write("         !byte 255,255\n")
+        else:
+            f.write("         !byte %s,%s\n" % ((23-y,19-x)))
+
+coords = []
+for cs in list(zip(q1,q3)) + list(zip(q2,q4)):
+    for c in cs:
+        coords.append(c)
+with open("../../src/fx/fx.hgr.radial2.data.a", "w") as f:
+    for x, y in coords:
+        if x not in range(-40,40):
+            f.write("         !byte 255,255\n")
+        else:
+            f.write("         !byte %s,%s\n" % ((23-y,19-x)))
+
+coords = []
+for cs in zip(q1,q2,q3,q4):
+    for c in cs:
+        coords.append(c)
+with open("../../src/fx/fx.hgr.radial3.data.a", "w") as f:
+    for x, y in coords:
+        if x not in range(-40,40):
+            f.write("         !byte 255,255\n")
+        else:
+            f.write("         !byte %s,%s\n" % ((23-y,19-x)))
+
+q1.reverse()
+q3.reverse()
+coords = []
+for cs in zip(q1,q2,q3,q4):
+    for c in cs:
+        coords.append(c)
+with open("../../src/fx/fx.hgr.radial4.data.a", "w") as f:
+    for x, y in coords:
+        if x not in range(-40,40):
+            f.write("         !byte 255,255\n")
+        else:
+            f.write("         !byte %s,%s\n" % ((23-y,19-x)))
+
+q1.reverse()
+q2.reverse()
+q3.reverse()
+q4.reverse()
+coords = []
+for cs in zip(q1,q2,q3,q4):
+    for c in cs:
+        coords.append(c)
+with open("../../src/fx/fx.hgr.radial5.data.a", "w") as f:
     for x, y in coords:
         if x not in range(-40,40):
             f.write("         !byte 255,255\n")

@@ -193,7 +193,7 @@ AttractMode
          jmp   BlankHGR
 
 @HGRSlideshow
-         jsr   LoadTransition
+;         jsr   LoadTransition
          jsr   okvs_iter
          !word gSlideshowStore
          !word HGRLoad
@@ -209,7 +209,7 @@ HGRLoad
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRScreenshotDirectory, PTR
 
-;         jsr   LoadTransition
+         jsr   LoadTransition
          jsr   $6000                 ; transition effect code was loaded here earlier
          jmp   WaitOnScreenshot
 

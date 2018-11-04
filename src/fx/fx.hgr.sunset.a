@@ -1,11 +1,11 @@
 !cpu 6502
-!to "build/FX/SUNRISE",plain
+!to "build/FX/SUNSET",plain
 *=$6000
 
          !source "src/fx/fx.hgr.sunrise.common.a"
 
 @coords
-         !source "src/fx/fx.hgr.sunrise.data.a"
+         !source "src/fx/fx.hgr.sunset.data.a"
          !byte $80
 
          !source "src/wait.a"

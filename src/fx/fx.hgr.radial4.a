@@ -1,11 +1,11 @@
 !cpu 6502
-!to "build/FX/RADIAL",plain
+!to "build/FX/RADIAL4",plain
 *=$6000
 
          !source "src/fx/fx.hgr.radial.common.a"
 
 @coords
-         !source "src/fx/fx.hgr.radial.data.a"
+         !source "src/fx/fx.hgr.radial4.data.a"
          !byte $80
 
          !source "src/wait.a"

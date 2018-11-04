@@ -33,3 +33,11 @@ with open("../../src/fx/fx.hgr.sunrise.data.a", "w") as f:
             f.write("         !byte 255,255\n")
         else:
             f.write("         !byte %s,%s\n" % (47-y,39-x))
+
+coords.reverse()
+with open("../../src/fx/fx.hgr.sunset.data.a", "w") as f:
+    for x, y in coords:
+        if x == 255:
+            f.write("         !byte 255,255\n")
+        else:
+            f.write("         !byte %s,%s\n" % (47-y,39-x))
