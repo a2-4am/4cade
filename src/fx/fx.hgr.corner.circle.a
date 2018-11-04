@@ -2,43 +2,9 @@
 !to "build/FX/CORNER.CIRCLE",plain
 *=$6000
 
-coord = $FE
+         !source "src/fx/fx.hgr.precomputed.a"
 
-         lda   #<@coords
-         sta   coord
-         lda   #>@coords
-         sta   coord+1
-         ldy   #0
-@loop
-         lda   (coord),y
-         bpl   @copy
-         lda   #$28
-         jsr   WaitForKeyWithTimeout
-         bmi   @exit
-         bpl   @next                 ; always branches
-@copy
-         tax
-         iny
-         lda   (coord),y
-         tay
-         txa
-         jsr   HGRHalfBlockCopy
-@next
-         inc   coord
-         bne   +
-         inc   coord+1
-+        inc   coord
-         bne   +
-         inc   coord+1
-+        ldy   #$00
-         lda   ($FE),y
-         cmp   #$80
-         bne   @loop
-@exit    rts
+         +FX_PRECOMPUTED $28
 
-@coords
          !source "src/fx/fx.hgr.corner.circle.data.a"
          !byte $80
-
-         !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"

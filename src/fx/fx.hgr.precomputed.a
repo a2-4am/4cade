@@ -1,5 +1,13 @@
 coord = $FE
 
+         jmp   Start
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+
+Start
+
+!macro FX_PRECOMPUTED .wait {
          lda   #<@coords
          sta   coord
          lda   #>@coords
@@ -7,13 +15,12 @@ coord = $FE
          ldy   #0
 @loop
          lda   (coord),y
-         bpl   @copy
-         lda   #$6
+         bpl   +
+         lda   #.wait
          jsr   WaitForKeyWithTimeout
          bmi   @exit
-         bpl   @next                 ; always branches
-@copy
-         tax
+         bpl   @next
++        tax
          iny
          lda   (coord),y
          tay
@@ -31,3 +38,6 @@ coord = $FE
          cmp   #$80
          bne   @loop
 @exit    rts
+
+@coords
+}

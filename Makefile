@@ -25,6 +25,7 @@ asm: md
 	$(ACME) src/fx/fx.hgr.interlock.ud.a
 	$(ACME) src/fx/fx.hgr.interlock.lr.a
 	$(ACME) src/fx/fx.hgr.spiral.a
+	$(ACME) src/fx/fx.hgr.fourspiral.a
 	$(ACME) src/fx/fx.hgr.fizzle.a
 	$(ACME) src/fx/fx.hgr.bar.dissolve.a
 	$(ACME) src/fx/fx.hgr.block.fizzle.a
@@ -52,8 +53,8 @@ asm: md
 	$(ACME) src/fx/fx.hgr.split.ud.intro.a
 	$(ACME) src/fx/fx.hgr.iris.a
 	$(ACME) src/fx/fx.hgr.ripple.a
+	$(ACME) src/fx/fx.hgr.ripple2.a
 	$(ACME) src/fx/fx.hgr.star.a
-	$(ACME) src/fx/fx.hgr.fourspiral.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log

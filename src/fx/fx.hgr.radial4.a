@@ -2,11 +2,9 @@
 !to "build/FX/RADIAL4",plain
 *=$6000
 
-         !source "src/fx/fx.hgr.radial.common.a"
+         !source "src/fx/fx.hgr.precomputed.a"
 
-@coords
+         +FX_PRECOMPUTED $06
+
          !source "src/fx/fx.hgr.radial4.data.a"
          !byte $80
-
-         !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
