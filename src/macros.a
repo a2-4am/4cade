@@ -93,3 +93,11 @@
          jsr   LoadFile
          !word gPathname
 }
+
+!macro   LOAD_PATH .subdirectory {
+         jsr   ResetPath
+         +LDADDR .subdirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+}

@@ -29,16 +29,39 @@ if "%1" equ "asm" (
 
 %ACME% -r build\4cade.lst src\4cade.a
 %ACME% src\fx\fx.hgr.diagonal.a
-%ACME% src\fx\fx.hgr.iris.a
 %ACME% src\fx\fx.hgr.interlock.ud.a
 %ACME% src\fx\fx.hgr.interlock.lr.a
 %ACME% src\fx\fx.hgr.spiral.a
+%ACME% src\fx\fx.hgr.fourspiral.a
 %ACME% src\fx\fx.hgr.fizzle.a
 %ACME% src\fx\fx.hgr.bar.dissolve.a
 %ACME% src\fx\fx.hgr.block.fizzle.a
-%ACME% src\fx\fx.hgr.block.mosaic.a
+%ACME% src\fx\fx.hgr.block.fizzle.white.a
 %ACME% src\fx\fx.hgr.2pass.lr.a
 %ACME% src\fx\fx.hgr.crystal.a
+%ACME% src\fx\fx.hgr.foursquare.white.a
+%ACME% src\fx\fx.hgr.onesquare.white.a
+%ACME% src\fx\fx.hgr.diamond.a
+%ACME% src\fx\fx.hgr.checkerboard.white.a
+%ACME% src\fx\fx.hgr.halfblock.fizzle.a
+%ACME% src\fx\fx.hgr.halfblock.fizzle.white.a
+%ACME% src\fx\fx.hgr.stagger.ud.a
+%ACME% src\fx\fx.hgr.stagger.ud.white.a
+%ACME% src\fx\fx.hgr.stagger.lr.a
+%ACME% src\fx\fx.hgr.stagger.lr.white.a
+%ACME% src\fx\fx.hgr.corner.circle.a
+%ACME% src\fx\fx.hgr.sunrise.a
+%ACME% src\fx\fx.hgr.sunset.a
+%ACME% src\fx\fx.hgr.radial.a
+%ACME% src\fx\fx.hgr.radial2.a
+%ACME% src\fx\fx.hgr.radial3.a
+%ACME% src\fx\fx.hgr.radial4.a
+%ACME% src\fx\fx.hgr.radial5.a
+%ACME% src\fx\fx.hgr.split.ud.intro.a
+%ACME% src\fx\fx.hgr.iris.a
+%ACME% src\fx\fx.hgr.ripple.a
+%ACME% src\fx\fx.hgr.ripple2.a
+%ACME% src\fx\fx.hgr.star.a
 goto :EOF
 )
 

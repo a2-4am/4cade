@@ -142,6 +142,20 @@ AttractMode
          cmp   #$03
          bne   @Slideshow
 
+         +LOAD_PATH kDemoDirectory
+         ldy   gPathname
+         iny
+         iny
+         sty   ProDOS_prefix
+         lda   gPathname-2, y
+         sta   ProDOS_prefix, y
+         dey
+         bne   -
+         lda   #'/'
+         sta   ProDOS_prefix+1
+         lda   #'X'
+         sta   ProDOS_prefix+2
+
          +LOAD_FILE kDemoDirectory, @key
 
          ldx   #(@end_prelaunch-@prelaunch-1)
@@ -155,23 +169,6 @@ AttractMode
          dex
          bpl   -
          jmp   $106                  ; jump to pre-launch code
-@prelaunch                           ; this runs from main memory
-         lda   $C088                 ; entry point used by some self-running demos
-         jmp   Reenter
-         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
-         jsr   $FE89                 ; initialize machine like a cold boot
-         jsr   $FE93                 ; (many games assume a 'clean slate')
-         sta   $C000
-         sta   $C002
-         sta   $C004
-         sta   $C00C
-         sta   $C00E
-         jsr   $FB2F
-         jsr   $FC58
-         ldx   #$FF
-         txs
-         jmp   (ldrlo2)              ; jump to game
-@end_prelaunch
 
 @Slideshow
          pha                         ; save module type
@@ -198,6 +195,24 @@ AttractMode
          !word gSlideshowStore
          !word HGRLoad
          rts
+
+@prelaunch                           ; this runs from main memory
+         lda   $C088                 ; entry point used by some self-running demos
+         jmp   Reenter
+         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
+         jsr   $FE89                 ; initialize machine like a cold boot
+         jsr   $FE93                 ; (many games assume a 'clean slate')
+         sta   $C000
+         sta   $C002
+         sta   $C004
+         sta   $C00C
+         sta   $C00E
+         jsr   $FB2F
+         jsr   $FC58
+         ldx   #$FF
+         txs
+         jmp   (ldrlo2)              ; jump to game
+@end_prelaunch
 
 HGRLoad
          ldx   $C000
@@ -284,6 +299,8 @@ ProDOS_fatal ;only for debugging, will be removed
         jsr    $fe89
         jsr    $fe93
         jmp    $ff3a
+ProDOS_prefix=$bfd0
+;        !fill  $2e
 }
 end_promote
 
