@@ -101,3 +101,11 @@
          +LDADDR kPathSeparator
          jsr   AddToPath
 }
+
+!macro   LOAD_FILE_IMM .filename {
+         +LDAY .filename
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+}
+
