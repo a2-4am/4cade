@@ -1,0 +1,11 @@
+!cpu 6502
+!to "build/FX/DHGR.IRIS",plain
+*=$6000
+
+         !source "src/fx/fx.dhgr.precomputed.a"
+
+         +FX_PRECOMPUTED_DHGR $1
+
+@coords
+         !source "src/fx/fx.dhgr.iris.data.a"
+         !byte $80

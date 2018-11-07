@@ -1,0 +1,11 @@
+!cpu 6502
+!to "build/FX/DHGR.RADIAL2",plain
+*=$6000
+
+         !source "src/fx/fx.dhgr.precomputed.a"
+
+         +FX_PRECOMPUTED_DHGR $1
+
+@coords
+         !source "src/fx/fx.dhgr.radial2.data.a"
+         !byte $80

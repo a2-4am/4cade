@@ -186,11 +186,29 @@ AttractMode
          beq   @HGRSlideshow
 
 ;@DHGRSlideshow
+         ; load transition effect code at $6000
+         jsr   ResetPath
+         +LDADDR kFXDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDADDR @dfx
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+
          jsr   BlankDHGR
+
          jsr   okvs_iter
          !word gSlideshowStore
          !word DHGRLoad
+
          jmp   BlankHGR
+@dfx
+         !byte @dfx_e-@dfx_b
+@dfx_b
+         !text "DHGR.RADIAL3"
+@dfx_e
 
 @HGRSlideshow
          jsr   LoadTransition
@@ -228,7 +246,9 @@ DHGRLoad
          jsr   AddToPath
          jsr   LoadDHRFile
          !word gPathname
-         jsr   FizzleDHGR
+
+;         jsr   FizzleDHGR
+         jsr   $6000
          ; note: execution falls through here
 WaitOnScreenshot
          ldx   #$20

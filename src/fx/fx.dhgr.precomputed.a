@@ -1,0 +1,68 @@
+coord = $FE
+
+         lda   #$00
+         sta   $FE
+         tay
+         lda   #$60
+         sta   $FF
+         tax
+         sta   $c005
+-        lda   ($FE),y
+         sta   ($FE),y
+         iny
+         bne   -
+         inc   $FF
+         dex
+         bne   -
+         sta   $c004
+         jmp   Start
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+
+Start
+
+!macro FX_PRECOMPUTED_DHGR .wait {
+         lda   #<@coords
+         sta   coord
+         lda   #>@coords
+         sta   coord+1
+         ldy   #0
+@loop
+         lda   (coord),y
+         bpl   +
+         lda   #.wait
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         bpl   @next
++        tax
+         iny
+         lda   (coord),y
+         lsr
+         bcs   @aux
+         sta   $c003
+         sta   $c005
+         bcc   +                     ; always branches
+@aux     sta   $c002
+         sta   $c004
++
+         tay
+         txa
+         jsr   HGRHalfBlockCopy
+@next
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        ldy   #$00
+         lda   ($FE),y
+         cmp   #$80
+         bne   @loop
+@exit    sta   $c002
+         sta   $c004
+         rts
+
+@coords
+}

@@ -21,6 +21,14 @@ CADIUS=cadius
 
 asm: md
 	$(ACME) -r build/4cade.lst src/4cade.a
+	$(ACME) src/fx/fx.dhgr.ripple.a
+	$(ACME) src/fx/fx.dhgr.iris.a
+	$(ACME) src/fx/fx.dhgr.radial.a
+	$(ACME) src/fx/fx.dhgr.radial2.a
+	$(ACME) src/fx/fx.dhgr.radial3.a
+	$(ACME) src/fx/fx.dhgr.radial4.a
+	$(ACME) src/fx/fx.dhgr.radial5.a
+	$(ACME) src/fx/fx.dhgr.star.a
 	$(ACME) src/fx/fx.hgr.diagonal.a
 	$(ACME) src/fx/fx.hgr.interlock.ud.a
 	$(ACME) src/fx/fx.hgr.interlock.lr.a
@@ -98,6 +106,6 @@ md:
 	mkdir -p build/FX
 
 clean:
-	rm -rf build/
+	rm -rf build/ || rm -rf build
 
 all: clean asm dsk mount
