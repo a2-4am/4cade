@@ -11,6 +11,8 @@ gAttractModeStore
          !word $FDFD
 gFXStore
          !word $FDFD
+gDFXStore
+         !word $FDFD
 gSlideshowStore
          !word $FDFD
 

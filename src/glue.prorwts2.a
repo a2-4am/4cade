@@ -7,6 +7,8 @@
 ; - LoadFile
 ; - LoadDHRFile
 ;
+; - promote
+;
 
 gRootDirectory
          !word $FDFD
@@ -183,6 +185,37 @@ traverse
          sta   (namlo), y
 @go
          rts
+
+promote
+!pseudopc $bf00 {
+        lda    $c08b
+        clc
+        bcc    @do_enter
+;$bf06
+        rts ;clock interface, must be RTS on real ProDOS if program uses $20x
+@do_enter
+        lda    $c08b
+        jmp    ProDOS_enter
+        !text  "q4!"
+;$bf10
+        !word  $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
+ProDOS_exit
+        lda    $c081
+        pla ;saved inside ProDOS_enter
+        tay
+        pla
+        tax
+        lda    #0
+        rts
+ProDOS_fatal ;only for debugging, will be removed
+        lda    $c081
+        jsr    $fe89
+        jsr    $fe93
+        jmp    $ff3a
+ProDOS_prefix=$bfd0
+;        !fill  $2e
+}
+end_promote
 
 ;------------------------------------------------------------------------------
 ; ProDOS_enter

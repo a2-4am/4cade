@@ -1,6 +1,7 @@
 #
 # 4cade Makefile
 # assembles source code, optionally builds a disk image and mounts it
+# note: Windows users should probably use winmake.bat instead
 #
 # original by Quinn Dunki on 2014-08-15
 # One Girl, One Laptop Productions
@@ -69,9 +70,11 @@ dsk: md asm
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/PREFS.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/DFX.CONF" >>build/log
 	rsync -aP res/hgr/* build/HGR >>build/log
 	bin/buildfileinfo.py build/HGR >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/HGR" "build/HGR" >>build/log

@@ -1,0 +1,255 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Mega Attract Mode - cycle through slideshows and self-running demos
+;
+; Public functions
+; - AttractMode
+;
+
+AttractMode
+         jsr   okvs_nth              ; get filename of next attract-mode module
+         !word gAttractModeStore
+@index   !byte 0
+         +STAY @key
+
+         inc   @index                ; increment module index for next time
+         jsr   okvs_len
+         !word gAttractModeStore
+         cmp   @index
+         bne   +
+         lda   #0
+         sta   @index
++
+         jsr   okvs_get
+         !word gAttractModeStore
+@key     !word $FDFD
+         +STAY PTR
+
+         jsr   @RunNextAttractModule
+         lda   $C000
+         bpl   AttractMode
+         rts
+
+@RunNextAttractModule
+         ldy   #1
+         lda   (PTR),y
+         and   #$0F
+         cmp   #$03
+         bne   @Slideshow
+
+                                     ; Self-running demos are loaded into main memory and executed.
+                                     ; Each binary has been patched to quit on any key and jump back
+                                     ; to the |Reenter| entry point.
+                                     ; All demos are strictly 48K / main memory. No demo uses the
+                                     ; language card or auxiliary memory.
+         +LOAD_PATH kDemoDirectory
+         ldy   gPathname
+         iny
+         iny
+         sty   ProDOS_prefix
+-        lda   gPathname-2, y
+         sta   ProDOS_prefix, y
+         dey
+         bne   -
+         lda   #'/'
+         sta   ProDOS_prefix+1
+         lda   #'X'
+         sta   ProDOS_prefix+2
+
+         +LOAD_FILE_IMM @key
+
+         ldx   #(@end_prelaunch-@prelaunch-1)
+-        lda   @prelaunch,x          ; copy pre-launch code to main memory
+         sta   $100,x
+         dex
+         bpl   -
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy tiny ProDOS to main memory
+         sta   $bf00,x
+         dex
+         bpl   -
+         jmp   $106                  ; jump to pre-launch code
+
+!pseudopc $100 {
+@prelaunch                           ; this runs from main memory
+         lda   $C088                 ; entry point used by some self-running demos
+         jmp   Reenter
+         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
+         jsr   $FE89                 ; initialize machine like a cold boot
+         jsr   $FE93                 ; (many games assume a 'clean slate')
+         sta   $C000
+         sta   $C002
+         sta   $C004
+         sta   $C00C
+         sta   $C00E
+         jsr   $FB2F
+         jsr   $FC58
+         ldx   #$FF
+         txs
+         jmp   (ldrlo2)              ; jump to game
+@end_prelaunch
+}
+
+@Slideshow                           ; HGR or DHGR slideshow
+         pha                         ; save module type (1=HGR, 2=DHGR)
+
+         +LOAD_FILE kAttractModeSlideshowDirectory, @key
+
+         jsr   ParseKeyValueList     ; parse slideshow configuration
+         !word gSlideshowStore
+         !word ldrlo2                ; (ldrlo2) points to load address
+         pla                         ; restore module type
+         cmp   #$01
+         beq   @HGRSlideshow
+
+@DHGRSlideshow
+         jsr   LoadDHGRTransition    ; load transition effect code at $6000
+         jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
+         jsr   okvs_iter             ; cycle through all listed DHGR files
+         !word gSlideshowStore
+         !word DHGRLoad
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen
+
+@HGRSlideshow
+         jsr   LoadTransition        ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRLoad
+         rts
+
+;------------------------------------------------------------------------------
+; internal functions
+
+HGRLoad
+         ldx   $C000
+         bpl   +
+         rts
++
+         +STAY PTR
+
+         ; load HGR screenshot at $4000
+         +LOAD_FILE kHGRScreenshotDirectory, PTR
+
+;         jsr   LoadTransition
+         jsr   $6000                 ; transition effect code was loaded here earlier
+         jmp   WaitOnScreenshot
+
+DHGRLoad
+         ldx   $C000
+         bpl   +
+         rts
++
+         ; load DHGR screenshot at $4000/main and $4000/aux
+         +STAY PTR
+         jsr   ResetPath
+         +LDADDR kDHGRScreenshotDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadDHRFile
+         !word gPathname
+
+         jsr   $6000                 ; transition effect code was loaded here earlier
+         ; note: execution falls through here
+
+WaitOnScreenshot
+         ldx   #$20
+-        lda   #0
+         jsr   WaitForKeyWithTimeout
+         bmi   +
+         dex
+         bpl   -
++        rts
+
+LoadTransition
+         jsr   okvs_nth              ; get filename of transition effect code
+         !word gFXStore
+@fxindex !byte 0
+         +STAY @fxkey
+
+         inc   @fxindex              ; increment transition effect index for next time
+         jsr   okvs_len
+         !word gFXStore
+         cmp   @fxindex
+         bne   +
+         lda   #0
+         sta   @fxindex
++
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @fxkey
+         rts
+@fxkey   !word $FDFD
+
+LoadDHGRTransition
+         jsr   okvs_nth              ; get filename of transition effect code
+         !word gDFXStore
+@dfxindex
+         !byte 0
+         +STAY @dfxkey
+
+         inc   @dfxindex             ; increment transition effect index for next time
+         jsr   okvs_len
+         !word gDFXStore
+         cmp   @dfxindex
+         bne   +
+         lda   #0
+         sta   @dfxindex
++
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @dfxkey
+         rts
+@dfxkey   !word $FDFD
+
+BlankHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         lda   $c057                 ; show hi-res screen 1 (now blank)
+         lda   $c054
+         lda   $c052
+         lda   $c050
+         rts
+BlankDHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         sta   $C005
+         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
+         sta   $C004
+         sta   $c00d
+         sta   $c057
+         sta   $c054
+         sta   $c052
+         sta   $c050
+         sta   $c05e
+         rts
+ClearHGR1
+         ldx   #$20                  ; clear hi-res screen 1
+         stx   @a+2
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
+Home
+         ldx   #(@end-@start-1)
+-        lda   @start,x
+         sta   $300,x
+         dex
+         bpl   -
+         jmp   $300
+@start
+         ; this will be run from main memory
+         +READ_ROM_NO_WRITE
+         sta   $C00C                 ; get out of DHGR mode
+         sta   $C05F                 ; get out of DHGR mode
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
+         +READ_RAM1_WRITE_RAM1
+         rts
+@end
