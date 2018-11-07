@@ -93,3 +93,19 @@
          jsr   LoadFile
          !word gPathname
 }
+
+!macro   LOAD_PATH .subdirectory {
+         jsr   ResetPath
+         +LDADDR .subdirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+}
+
+!macro   LOAD_FILE_IMM .filename {
+         +LDAY .filename
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+}
+

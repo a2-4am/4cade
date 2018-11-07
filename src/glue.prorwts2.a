@@ -252,47 +252,15 @@ ProDOS_enter
     jsr    @imp_seek
     jmp    ProDOS_exit
 
-
-PREV_BLOCK_LO = $0      ;ProDOS constant
-PREV_BLOCK_HI = $1      ;ProDOS constant
 @imp_prefix
     ldx    #buffer
     jsr    @setbuffer1
-    lda    gPrefix
-    sta    packet
-    lda    gPrefix+1
-    sta    packet+1
-    ldy    #0
-    lda    (packet), y
-    tax
-    inx
-    !byte  $2c
+    ldy    ProDOS_prefix
 @copy_prefix
-    lda    (packet), y
-    iny
-    iny
-    iny
-    cmp    #$2e
-    bcs    @skip_slash1
-    lda    #'/'
-@skip_slash1
+    lda    ProDOS_prefix, y
     sta    (buffer), y
-    bcs    @skip_slash2
-    tya
-    ldy    #0
-    sta    (buffer), y
-    tay
-@skip_slash2
     dey
-    dey
-    dex
-    bne    @copy_prefix
-    ldy    #1
-    lda    #'/'
-    sta    (buffer), y
-    iny
-    lda    #'X'
-    sta    (buffer), y
+    bpl    @copy_prefix
     rts
 
 @imp_open

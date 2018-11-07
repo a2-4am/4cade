@@ -142,7 +142,21 @@ AttractMode
          cmp   #$03
          bne   @Slideshow
 
-         +LOAD_FILE kDemoDirectory, @key
+         +LOAD_PATH kDemoDirectory
+         ldy   gPathname
+         iny
+         iny
+         sty   ProDOS_prefix
+-        lda   gPathname-2, y
+         sta   ProDOS_prefix, y
+         dey
+         bne   -
+         lda   #'/'
+         sta   ProDOS_prefix+1
+         lda   #'X'
+         sta   ProDOS_prefix+2
+
+         +LOAD_FILE_IMM @key
 
          ldx   #(@end_prelaunch-@prelaunch-1)
 -        lda   @prelaunch,x          ; copy pre-launch code to main memory
@@ -155,6 +169,7 @@ AttractMode
          dex
          bpl   -
          jmp   $106                  ; jump to pre-launch code
+
 @prelaunch                           ; this runs from main memory
          lda   $C088                 ; entry point used by some self-running demos
          jmp   Reenter
@@ -304,6 +319,8 @@ ProDOS_fatal ;only for debugging, will be removed
         jsr    $fe89
         jsr    $fe93
         jmp    $ff3a
+ProDOS_prefix=$bfd0
+;        !fill  $2e
 }
 end_promote
 
