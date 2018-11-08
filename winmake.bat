@@ -28,6 +28,14 @@ if "%1" equ "asm" (
 2>nul md build\FX
 
 %ACME% -r build\4cade.lst src\4cade.a
+%ACME% src\fx\fx.dhgr.ripple.a
+%ACME% src\fx\fx.dhgr.iris.a
+%ACME% src\fx\fx.dhgr.radial.a
+%ACME% src\fx\fx.dhgr.radial2.a
+%ACME% src\fx\fx.dhgr.radial3.a
+%ACME% src\fx\fx.dhgr.radial4.a
+%ACME% src\fx\fx.dhgr.radial5.a
+%ACME% src\fx\fx.dhgr.star.a
 %ACME% src\fx\fx.hgr.diagonal.a
 %ACME% src\fx\fx.hgr.interlock.ud.a
 %ACME% src\fx\fx.hgr.interlock.lr.a
@@ -79,9 +87,11 @@ call :asm
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DFX.CONF" >>build\log
 1>nul copy /y res\hgr\* build\HGR >>build\log
 cscript /nologo bin/buildfileinfo.js build\HGR >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build/log
