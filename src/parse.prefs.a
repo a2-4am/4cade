@@ -1,0 +1,169 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Parser for global preferences file
+;
+; Public functions
+; - SaveGlobalPreferences
+;
+; Public variables
+; - gGlobalPrefsStore     word       address of prefs okvs
+;
+; Public constants (all length-prefixed strings)
+; - kGlobalPrefsFilename
+; - kLastPlayed
+; - kNextAttract
+; - kNextFX
+; - kNextDFX
+;
+
+gGlobalPrefsStore
+         !word 0
+
+kGlobalPrefsFilename
+         !byte 10
+         !raw  "PREFS.CONF"
+
+kLastPlayed
+         !byte 10
+         !raw  "LASTPLAYED"
+kNextAttract
+         !byte 11
+         !raw  "NEXTATTRACT"
+kNextFX
+         !byte 6
+         !raw  "NEXTFX"
+kNextDFX
+         !byte 7
+         !raw  "NEXTDFX"
+
+;------------------------------------------------------------------------------
+; SaveGlobalPreferences
+; save global options and state to file
+;
+; in:    none
+; out:   all registers and flags clobbered
+;------------------------------------------------------------------------------
+SaveGlobalPreferences
+         +LDADDR kGlobalPrefsBuffer
+         +STAY $FE
+
+         +LDADDR @kFluff1
+         jsr   @addString
+
+         jsr   @addBooleanFromStore
+         !word kForce40
+
+         jsr   @addBooleanFromStore
+         !word kForceUpper
+
+         jsr   @addBooleanFromStore
+         !word kScriptToFile
+
+         jsr   @addBooleanFromStore
+         !word kAutoScript
+
+         +LDADDR @kFluff2
+         jsr   @addString
+
+         jsr   @addStringFromStore
+         !word kLastPlayed
+
+         +LDADDR @kFluff3
+         jsr   @addString
+
+         jsr   okvs_iter
+         !word gGamesListStore
+         !word @addGameToPrefs
+
+         +LDADDR @kEOF
+         jsr   @addString
+
+         lda   $FE
+         sta   @filelen
+         lda   $FF
+         sec
+         sbc   #>kGlobalPrefsBuffer
+         sta   @filelen+1
+
+         jsr   SaveFile
+         !word kGlobalPrefsFilename
+         !byte 4                     ; filetype=TXT
+         !word 0                     ; auxtype=0000
+         !word kGlobalPrefsBuffer
+@filelen !word $FDFD                 ; SMC
+         !word kProDOSFileBuffer
+
+         stz   gGlobalPrefsDirty
+@exit    rts
+
+@addGameToPrefs
+         +STAY +
+         jsr   @addStringFromStore
++        !word $FDFD                 ; SMC
+         rts
+
+@addBooleanFromStore
+         lda   #$24                  ; BIT opcode
+         +HIDE_NEXT_2_BYTES
+@addStringFromStore
+         lda   #$80                  ; BRA opcode
+         sta   @skipOverBooleanLogic
+         +PARAMS_ON_STACK 2
+         +LDPARAM 1
+         +STAY @key
+         jsr   @addString
+         +LDADDR @kEquals
+         jsr   @addString
+         jsr   okvs_get
+         !word gGlobalPrefsStore
+@key     !word $FDFD                 ; SMC
+@skipOverBooleanLogic
+         bra   +                     ; SMC (opcode may become BIT)
+         +STAY PTR
+         ldy   #1
+         lda   (PTR),y
+         ora   #$30
+         sta   (PTR),y
+         +LDAY PTR
++        jsr   @addString
+         +LDADDR @kLF
+         jmp   @addString
+
+@addString
+         +STAY $00
+         lda   ($00)
+         inc
+         sta   @len
+         ldy   #1
+-        lda   ($00),y
+         sta   ($FE)
++        iny
+         inc   $FE
+         bne   +
+         inc   $FF
+@len=*+1
++        cpy   #$FD                  ; SMC
+         bne   -
+         rts
+
+@kEquals !byte 1
+         !raw  "="
+@kLF     !byte 1
+         !byte $0D
+@kFluff1 !byte @kFluff1_e-@kFluff1_b
+@kFluff1_b
+         !raw  "# 4cade preferences file",$0D
+         !raw  "# Do not edit by hand.",$0D
+         !raw  "# Or do. I'm a comment, not a cop.",$0D,$0D
+         !raw  "# value=game directory listed in GAMES.CONF, or empty",$0D
+@kFluff1_e
+@kFluff2 !byte 24
+         !byte $0D
+         !raw  "# value=game directory",$0D
+@kFluff3 !byte 58
+         !byte $0D
+         !raw  "# key=game directory, value=filename of selected version",$0D
+@kEOF    !byte 7
+         !byte $0D
+         !raw  "[eof]",$0D

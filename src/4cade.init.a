@@ -1,4 +1,4 @@
-         sta   $C00E
+         sta   $C00E                 ; 40-column
          sta   $C00C
          sta   $C004
          sta   $C002
@@ -42,8 +42,8 @@
 
          ; ProRWTS2 has its own function to relocate itself
          !source "src/prorwts2.a"
-         ; these routines will only be called once, from main memory, before relocating to language card
 ProRWTSBuffer
+         ; these routines will only be called once, from main memory, before relocating to language card
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.normfast.a"

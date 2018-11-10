@@ -4,11 +4,12 @@
 
          !source "src/constants.a"
          !source "src/macros.a"
+
+         ; first-run initialization, relocates code to language card and continues from Main
          !source "src/4cade.init.a"
 
 FirstMover
 !pseudopc $D000 {
-!zone
 Reenter                              ; self-running demos should call this to exit back to 4cade
          +READ_RAM1_WRITE_RAM1
 Main
@@ -18,18 +19,6 @@ Main
 -        bit   $C010
          jsr   AttractMode
          jmp   -
-
-Reboot
-         ldx   #(@end-@start-1)
--        lda   @start,x
-         sta   $300,x
-         dex
-         bpl   -
-         jmp   $300
-@start
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
-@end
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.attract.mode.a"

@@ -71,7 +71,6 @@ AttractMode
          bpl   -
          jmp   $106                  ; jump to pre-launch code
 
-!pseudopc $100 {
 @prelaunch                           ; this runs from main memory
          lda   $C088                 ; entry point used by some self-running demos
          jmp   Reenter
@@ -89,7 +88,6 @@ AttractMode
          txs
          jmp   (ldrlo2)              ; jump to game
 @end_prelaunch
-}
 
 @Slideshow                           ; HGR or DHGR slideshow
          pha                         ; save module type (1=HGR, 2=DHGR)
