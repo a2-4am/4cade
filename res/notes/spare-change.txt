@@ -1,0 +1,3 @@
+$7A34: 48 -> 44         turn off sound during title page first-run
+$7F6F: 4CC119 -> 4C0001 exit after demo cycle
+$8E1C: 8D10C0 -> 4C0001 exit on keypress (during title or demo) or button press (during demo)
