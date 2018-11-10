@@ -19,7 +19,8 @@
 ;
 ; The PROGRAM ROOT DIRECTORY is not guaranteed to be the root directory of the
 ; underlying ProDOS disk (although it can be). These functions provide no
-; access to any directory outside the PROGRAM ROOT DIRECTORY.
+; access to any directory above the PROGRAM ROOT DIRECTORY, i.e. you can't use
+; '..' to access the parent directory.
 ;
 ; Examples:
 ; '/PREFS.CONF' points to a file named 'PREFS.CONF' in the PROGRAM ROOT
