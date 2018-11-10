@@ -1,7 +1,7 @@
 ;license:MIT
 ;(c) 2018 by 4am
 ;
-; Ordered key/value store (6502 version)
+; Ordered key/value store (6502 compatible)
 ;
 ; Public functions
 ; - okvs_init(address)                          reset (required)

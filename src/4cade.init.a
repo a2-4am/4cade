@@ -55,11 +55,21 @@ OneTimeSetup
          ldy   hddopendir+3
          +STAY gRootDirectory
 
+         jsr   LoadFile              ; load preferences file
+         !word kGlobalPrefsFilename
+
+         jsr   ParseKeyValueText     ; parse contents into global prefs store
+         !word gGlobalPrefsStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 16
+         +LDAY SRC
+         +STAY gGamesListStore       ; save pointer to free space for next store
+
          jsr   LoadFile              ; load games list
          !word kGameListConfFile
          jsr   ParseGamesList        ; parse games list
          !word gGamesListStore
-         !word ldrlo2                ; (ldrlo2) points to load address
+         !word ldrlo2                ; (ldrlo2) points to last load address
          +LDAY SRC
          +STAY gFXStore              ; save pointer to free space for next store
 
@@ -67,7 +77,7 @@ OneTimeSetup
          !word kFXConfFile
          jsr   ParseKeyValueList     ; parse HGR transition effects list
          !word gFXStore
-         !word ldrlo2                ; (ldrlo2) points to load address
+         !word ldrlo2                ; (ldrlo2) points to last load address
          +LDAY SRC
          +STAY gDFXStore             ; save pointer to free space for next store
 
@@ -75,7 +85,7 @@ OneTimeSetup
          !word kDFXConfFile
          jsr   ParseKeyValueList     ; parse DHGR transition effects list
          !word gDFXStore
-         !word ldrlo2                ; (ldrlo2) points to load address
+         !word ldrlo2                ; (ldrlo2) points to last load address
          +LDAY SRC
          +STAY gAttractModeStore     ; save pointer to free space for next store
 
@@ -83,7 +93,7 @@ OneTimeSetup
          !word kAttractModeConfFile
          jsr   ParseKeyValueList     ; parse attract-mode configuration
          !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to load address
+         !word ldrlo2                ; (ldrlo2) points to last load address
          +LDAY SRC
          +STAY gSlideshowStore       ; save pointer to free space for next store
 

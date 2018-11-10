@@ -6,9 +6,27 @@
 ; Public functions
 ; - LoadFile
 ; - LoadDHRFile
+; - SaveSmallFile
 ;
-; - promote
+; A general note about paths:
 ;
+; LoadFile, LoadDHRFile, and SaveSmallFile support files in subdirectories.
+; Paths are delimited by '/' like ProDOS. HOWEVER, you should never include a
+; disk volume name. At program startup, we get the current directory and save
+; it; that is the PROGRAM ROOT DIRECTORY. The first '/' always points to the
+; PROGRAM ROOT DIRECTORY. All pathnames are relative to the PROGRAM ROOT
+; DIRECTORY.
+;
+; The PROGRAM ROOT DIRECTORY is not guaranteed to be the root directory of the
+; underlying ProDOS disk (although it can be). These functions provide no
+; access to any directory outside the PROGRAM ROOT DIRECTORY.
+;
+; Examples:
+; '/PREFS.CONF' points to a file named 'PREFS.CONF' in the PROGRAM ROOT
+; DIRECTORY.
+;
+; '/FX/RIPPLE' points to a file named 'RIPPLE' in a directory named 'FX' in the
+; PROGRAM ROOT DIRECTORY.
 
 gRootDirectory
          !word $FDFD
@@ -18,7 +36,7 @@ gPrefix
 ;------------------------------------------------------------------------------
 ; LoadFile
 ; load a file into memory all at once, using ProRWTS2
-; supports files in subdirectories, delimited by '/' like ProDOS
+; supports paths, see note
 ; uses file's load address
 ;
 ; in:    stack contains 2 bytes of parameters:
@@ -49,6 +67,7 @@ LoadFile
 ; all at once, using ProRWTS2
 ; first $2000 bytes of file are loaded into auxiliary memory $2000..$3FFF
 ; second $2000 bytes of file are loaded into main memory $2000..$3FFF
+; supports paths, see note
 ;
 ; in:    stack contains 2 bytes of parameters:
 ;        +1 address of filename
@@ -78,6 +97,44 @@ LoadDHRFile
          clc                         ; not a subdirectory
          jmp   hddrdwrpart           ; call ProRWTS2
 
+;------------------------------------------------------------------------------
+; SaveSmallFile
+; Save a file into memory all at once, using ProRWTS2.
+; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
+; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
+; supports paths, see note
+;
+; in:    stack contains 4 bytes of parameters:
+;        +1 address of filename
+;        +3 address of data buffer
+; out:   all flags clobbered
+;        all registers clobbered
+;        stack set to next instruction after parameters
+;------------------------------------------------------------------------------
+SaveSmallFile
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY namlo                 ; set filename for ProRWTS2
+         +STAY gPrefix               ; remember path
+
+         +LDPARAM 3
+         +STAY ldrlo                 ; set data buffer address for ProRWTS2
+
+         jsr   traverse              ; go to subdirectory, set up filename for read
+
+         lda   #cmdwrite             ; write (instead of read)
+         sta   reqcmd
+         lda   #0                    ; 0 = data buffer is in main memory (instead of auxmem)
+         sta   auxreq
+         jmp   hddopendir            ; exit via ProRWTS2
+
+;------------------------------------------------------------------------------
+; traverse [private]
+;
+; in:    (namlo) points to length-prefixed pathname+filename
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
 traverse
          +LDAY gRootDirectory
          sta   @myreadblock+1

@@ -7,6 +7,9 @@
 ; - ParseGamesList
 ;
 
+gGamesListStore
+         !word $FDFD                 ; SMC
+
 ;------------------------------------------------------------------------------
 ; ParseGamesList
 ; parse buffer with AB,KEY=VALUE lines of text into an okvs

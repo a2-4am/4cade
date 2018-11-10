@@ -28,6 +28,7 @@ gSlideshowStore
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] handle to storage space for okvs
 ;          +3 [word] handle to buffer containing contents of text file
+;          +5 [byte] max length for okvs records (or 0)
 ; out:   all registers and flags clobbered
 ;        $1F00..$1FFF clobbered
 ;        $00/$01 clobbered
@@ -36,7 +37,7 @@ gSlideshowStore
 ;        $FE/$FF clobbered
 ;------------------------------------------------------------------------------
 ParseKeyValueList
-         +PARAMS_ON_STACK 4
+         +PARAMS_ON_STACK 5
 
          +LDPARAM 1
          +STAY @store1
@@ -44,6 +45,10 @@ ParseKeyValueList
 
          +LDPARAM 3
          +STAY $FE
+
+         ldy   #5
+         lda   (PARAM),y
+         sta   @maxLength
 
          ldy   #0
          lda   ($FE),y
@@ -103,7 +108,8 @@ ParseKeyValueList
 @store2  !word $FDFD                 ; SMC
          !word gKeyLen
          !word gValLen
-         !byte 0
+@maxLength
+         !byte $FD                   ; SMC
          pla
          tay
          clc

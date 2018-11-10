@@ -1,7 +1,7 @@
 ;license:MIT
 ;(c) 2018 by 4am
 ;
-; common assembler macros
+; common assembler macros (6502 compatible)
 ;
 
 ; for functions that take parameters on the stack
@@ -108,4 +108,3 @@
          jsr   LoadFile
          !word gPathname
 }
-
