@@ -10,8 +10,8 @@ $69B8 checks for key (or button)
 $69CD is after key/button is detected [9 bytes available]
 $61F3 is after demo player has died, high score screen has been shown, jumps back to $6008 to display title screen again [3 bytes available]
 
-$61FB: F0 -> 24
-$61FD: F0 -> 24
-$6201: A2008696E886 -> AD88C04C00D0
-$61F4: 0860 -> 0162
-$69CD: 46AC46 -> 4C0162
+$61FB: F0 -> 24 to ignore <Ctrl-E> (would otherwise enter editor)
+$61FD: F0 -> 24 to ignore <RETURN> (would otherwise show high scores)
+$6201: A2008696E886 -> AD88C04C00D0 to exit after user presses any key
+$69CD: 46AC46 -> 4C0162 to exit after user presses button
+$61F4: 0860 -> 0162 to exit after demo player dies

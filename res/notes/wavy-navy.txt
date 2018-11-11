@@ -10,4 +10,3 @@ $09E8: 20F2098D47.. -> AD88C04C00D0
 $1547: 20A61120BF12 -> AD88C04C00D0
 $6B22: 30 -> 00 to disable sound
 $084C: 20 -> 00 to disable cassette sound
-
