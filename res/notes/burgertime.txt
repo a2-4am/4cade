@@ -1,0 +1,14 @@
+$A3A3 is near start of demo cycle
+$A426 after demo player loses single life
+$A497 after demo player loses all lives
+$9FD3 after user presses key to end demo
+$9FCF after user presses button to end demo
+
+$653F: A90185 -> 4C8D65 to skip joystick/keyboard selection
+$9FD3: 8D10C0 -> 4C0001 to quit when user presses key
+$9FCF: 2043A0 -> 4C0001 to quit when user presses button
+$A497: 200CAD -> 4C0001 to quit at end of demo cycle (after player loses all lives)
+$A15B: 30 -> 00 to disable sound
+$A16A: 30 -> 00 to disable sound
+$A17B: 30 -> 00 to disable sound
+$A1D0: 30 -> 00 to disable sound
