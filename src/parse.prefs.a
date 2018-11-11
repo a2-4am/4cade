@@ -17,9 +17,6 @@
 ; - kNextDFX
 ;
 
-gGlobalPrefsStore
-         !word 0
-
 kGlobalPrefsBuffer
          !word $0800
 

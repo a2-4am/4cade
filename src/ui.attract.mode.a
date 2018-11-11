@@ -43,6 +43,9 @@ AttractMode
                                      ; to the |Reenter| entry point.
                                      ; All demos are strictly 48K / main memory. No demo uses the
                                      ; language card or auxiliary memory.
+
+         jsr   Home                  ; clear text screen and switch to it during loading
+
          +LOAD_PATH kDemoDirectory
          ldy   gPathname
          iny
@@ -59,8 +62,8 @@ AttractMode
 
          +LOAD_FILE_IMM @key
 
-         ldx   #(@end_prelaunch-@prelaunch-1)
--        lda   @prelaunch,x          ; copy pre-launch code to main memory
+         ldx   #(End_Prelaunch-Prelaunch-1)
+-        lda   Prelaunch,x           ; copy pre-launch code to main memory
          sta   $100,x
          dex
          bpl   -
@@ -71,24 +74,6 @@ AttractMode
          bpl   -
          jmp   $106                  ; jump to pre-launch code
 
-@prelaunch                           ; this runs from main memory
-         lda   $C088                 ; entry point used by some self-running demos
-         jmp   Reenter
-         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
-         jsr   $FE89                 ; initialize machine like a cold boot
-         jsr   $FE93                 ; (many games assume a 'clean slate')
-         sta   $C000
-         sta   $C002
-         sta   $C004
-         sta   $C00C
-         sta   $C00E
-         jsr   $FB2F
-         jsr   $FC58
-         ldx   #$FF
-         txs
-         jmp   (ldrlo2)              ; jump to game
-@end_prelaunch
-
 @Slideshow                           ; HGR or DHGR slideshow
          pha                         ; save module type (1=HGR, 2=DHGR)
 
@@ -97,6 +82,7 @@ AttractMode
          jsr   ParseKeyValueList     ; parse slideshow configuration
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to load address
+         !byte 0
          pla                         ; restore module type
          cmp   #$01
          beq   @HGRSlideshow
@@ -237,10 +223,10 @@ ClearHGR1
 Home
          ldx   #(@end-@start-1)
 -        lda   @start,x
-         sta   $300,x
+         sta   $100,x
          dex
          bpl   -
-         jmp   $300
+         jmp   $100
 @start
          ; this will be run from main memory
          +READ_ROM_NO_WRITE
@@ -251,3 +237,21 @@ Home
          +READ_RAM1_WRITE_RAM1
          rts
 @end
+
+Prelaunch                            ; this runs from main memory
+         lda   $C088                 ; entry point used by some self-running demos
+         jmp   Reenter
+         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
+         jsr   $FE89                 ; initialize machine like a cold boot
+         jsr   $FE93                 ; (many games assume a 'clean slate')
+         sta   $C000
+         sta   $C002
+         sta   $C004
+         sta   $C00C
+         sta   $C00E
+         jsr   $FB2F
+         jsr   $FC58
+         ldx   #$FF
+         txs
+         jmp   (ldrlo2)              ; jump to game
+End_Prelaunch

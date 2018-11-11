@@ -58,7 +58,7 @@ OneTimeSetup
          jsr   LoadFile              ; load preferences file
          !word kGlobalPrefsFilename
 
-         jsr   ParseKeyValueText     ; parse contents into global prefs store
+         jsr   ParseKeyValueList     ; parse contents into global prefs store
          !word gGlobalPrefsStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          !byte 16
@@ -78,6 +78,7 @@ OneTimeSetup
          jsr   ParseKeyValueList     ; parse HGR transition effects list
          !word gFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
          +LDAY SRC
          +STAY gDFXStore             ; save pointer to free space for next store
 
@@ -86,6 +87,7 @@ OneTimeSetup
          jsr   ParseKeyValueList     ; parse DHGR transition effects list
          !word gDFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
          +LDAY SRC
          +STAY gAttractModeStore     ; save pointer to free space for next store
 
@@ -94,6 +96,7 @@ OneTimeSetup
          jsr   ParseKeyValueList     ; parse attract-mode configuration
          !word gAttractModeStore
          !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
          +LDAY SRC
          +STAY gSlideshowStore       ; save pointer to free space for next store
 

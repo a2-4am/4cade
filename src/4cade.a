@@ -27,6 +27,7 @@ Main
          !source "src/okvs.a"
          !source "src/wait.a"
          !source "src/parse.common.a"
+         !source "src/parse.prefs.a"
          !source "src/parse.games.a"
 gGlobalPrefsStore
          !word *+2                   ; address of first okvs store

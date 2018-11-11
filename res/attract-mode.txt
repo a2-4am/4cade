@@ -5,7 +5,7 @@
      12:Aquatron               AQUATRON       001
      13:Arkanoid               ARKANOID       101
      19:Bolo                   BOLO           001
-     21:BurgerTime             BURGERTIME     001
+*     21:BurgerTime             BURGERTIME     001
      23:Canyon Climber         CANYONCLIMBER  001
      25:Choplifter             CHOPLIFTER     101
      27:Conan                  CONAN          001
@@ -22,13 +22,13 @@
      56:Lady Tut               LADYTUT         01
      57:Lost Tomb              LOSTTOMB        01
      62:Mr. Cool               MRCOOL          01
-     63:Mr. Do                 MRDO           101
+X    63:Mr. Do                 MRDO           101
      66:Nibbler                NIBBLER        001
      70:O'Riley's Mine         ORILEYSMINE     01
      72:Pac-Man                PACMAN         001
      74:Pest Patrol            PESTPATROL      01
      75:Pie-Man                PIEMAN          01
-     77:Pitfall II             PITFALLII       01
+*     77:Pitfall II             PITFALLII       01
      78:Plasmania              PLASMANIA       01
      79:Pooyan                 POOYAN          01
      80:Prince of Persia       PRINCEOFPERSIA 011
@@ -36,10 +36,10 @@
      85:Ribbit                 RIBBIT          01
      86:Robotron 2084          ROBOTRON2084    01
      91:Snake Byte             SNAKEBYTE       01
-     92:Sneakers               SNEAKERS       001
+*     92:Sneakers               SNEAKERS       001
      93:Snoggle                SNOGGLE         01
      95:Spider Raid            SPIDERRAID      01
-     97:Spy Hunter             SPYHUNTER       01
+*     97:Spy Hunter             SPYHUNTER       01
      98:Spy's Demise           SPYSDEMISE      01
      99:Starblaster            STARBLASTER     01
     100:Stargate               STARGATE        01
@@ -49,4 +49,4 @@
     108:Thunder Bombs          THUNDERBOMBS   001
     109:Track N Field          TRACKNFIELD    001
     110:Tubeway ][             TUBEWAYII       01
-    112:Wavy Navy              WAVYNAVY       001
+*    112:Wavy Navy              WAVYNAVY       001

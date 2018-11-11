@@ -59,7 +59,7 @@ ParseGamesList
          cmp   #$0D                  ; ignore blank line
          beq   @newkey
          cmp   #$5B                  ; '[' ends the parsing
-         beq   .parseKeyValueDone
+         beq   @exit
          cmp   #$30                  ; '0' -> no filtering on joystick
          beq   @filterOnMemory
          cmp   #$31                  ; not '0' or '1' or '[' or CR -> ignore entire line (e.g. comment)
@@ -113,3 +113,5 @@ ParseGamesList
          cmp   #$0D                  ; CR
          bne   @skipLine
          beq   @newkey               ; always branches
+
+@exit    rts
