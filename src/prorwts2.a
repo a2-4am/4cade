@@ -2229,6 +2229,7 @@ dirbufpatch5
     } ;allow_trees = 1 and fast_trees = 0
     !if (allow_trees and always_trees) = 0 {
                 plp
+attribpatch
                 bpl     ++
       !if allow_subdir = 1 {
                 php

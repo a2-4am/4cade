@@ -266,10 +266,13 @@ ProDOS_exit
         lda    #0
         rts
 ProDOS_fatal ;only for debugging, will be removed
+        pha
         lda    $c081
         jsr    $fe89
         jsr    $fe93
-        jmp    $ff3a
+        pla
+        jsr    $fdda
+        jmp    $ff59
 ProDOS_prefix=$bfd0
 ;        !fill  $2e
 }
@@ -310,6 +313,8 @@ ProDOS_enter
     pha
 @request
     lda    #$d1
+    cmp    #$c4
+    beq    @do_getattrib
     cmp    #$c7
     beq    @do_prefix
     cmp    #$c8
@@ -324,6 +329,9 @@ ProDOS_enter
     beq    @do_seek
     ;;any others??
     jmp    ProDOS_fatal
+@do_getattrib
+    jsr    @imp_getattrib
+    jmp    ProDOS_exit
 @do_prefix
     jsr    @imp_prefix
     jmp    ProDOS_exit
@@ -342,6 +350,30 @@ ProDOS_enter
 @do_seek
     jsr    @imp_seek
     jmp    ProDOS_exit
+
+@imp_getattrib
+    lda    packet+1
+    pha
+    lda    packet
+    pha
+    ldx    #namlo
+    jsr    @setbuffer1
+    lda    #$60
+    sta    attribpatch
+    jsr    hddopendir
+    lda    #$10
+    sta    attribpatch
+    pla
+    sta    packet
+    pla
+    sta    packet+1
+    ldy    #5
+    lda    ldrlo2
+    sta    (packet), y
+    iny
+    lda    ldrlo2+1
+    sta    (packet), y
+    rts
 
 @imp_prefix
     ldx    #buffer
