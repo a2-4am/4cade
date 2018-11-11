@@ -83,6 +83,7 @@ AttractMode
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to load address
          !byte 0
+
          pla                         ; restore module type
          cmp   #$01
          beq   @HGRSlideshow
@@ -92,20 +93,22 @@ AttractMode
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word DHGRLoad
+         !word DHGRLoad              ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen
 
 @HGRSlideshow
          jsr   LoadTransition        ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
-         !word HGRLoad
+         !word HGRLoad               ; address of callback (called on each file)
          rts
 
 ;------------------------------------------------------------------------------
 ; internal functions
 
 HGRLoad
+; in:    A/Y contains address of filename
+
          ldx   $C000
          bpl   +
          rts
@@ -115,11 +118,13 @@ HGRLoad
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRScreenshotDirectory, PTR
 
-;         jsr   LoadTransition
-         jsr   $6000                 ; transition effect code was loaded here earlier
+;         jsr   LoadTransition        ; uncomment this line to load a new transition on every picture
+         jsr   $6000                 ; call transition effect code to display picture
          jmp   WaitOnScreenshot
 
 DHGRLoad
+; in:    A/Y contains address of filename
+
          ldx   $C000
          bpl   +
          rts
@@ -136,7 +141,7 @@ DHGRLoad
          jsr   LoadDHRFile
          !word gPathname
 
-         jsr   $6000                 ; transition effect code was loaded here earlier
+         jsr   $6000                 ; call transition effect code to display picture
          ; note: execution falls through here
 
 WaitOnScreenshot
