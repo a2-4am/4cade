@@ -437,6 +437,8 @@ ProDOS_enter
     rts
 
 @imp_close
+    lda    @handles+1
+    beq    @close_ret
     dec    @handles+1
     bne    @close_ret
     lda    #>hddencbuf
