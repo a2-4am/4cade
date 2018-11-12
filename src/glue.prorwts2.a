@@ -265,12 +265,7 @@ promote
 ;$bf10
         !word  $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
 ProDOS_exit
-        lda    $c081
-        pla ;saved inside ProDOS_enter
-        tay
-        pla
-        tax
-        lda    #0
+        bit    $c081
         rts
 ProDOS_fatal ;only for debugging, will be removed
         pha
@@ -294,11 +289,9 @@ end_promote
 ; out:   all flags clobbered
 ;        A=0, X and Y preserved
 ;        stack set to next instruction after parameters
-;
-; to do: preserve non-$4x zpage locations for titles that open files after start
 ;------------------------------------------------------------------------------
-packet = $40 ;word
-buffer = $42 ;word
+packet = first_zp ;word
+buffer = first_zp+2 ;word
 
 ProDOS_enter
   !ifdef PASS2 {
@@ -324,6 +317,12 @@ ProDOS_enter
     pha
     tya
     pha
+    ldx    #(last_zp - first_zp) - 1
+@save_zp
+    lda    first_zp,x
+    pha
+    dex
+    bpl    @save_zp
 @request
     lda    #$d1
     cmp    #$c4
@@ -343,26 +342,20 @@ ProDOS_enter
     ;;any others??
     jmp    ProDOS_fatal
 @do_getattrib
-    jsr    @imp_getattrib
-    jmp    ProDOS_exit
+    jmp    @imp_getattrib
 @do_prefix
-    jsr    @imp_prefix
-    jmp    ProDOS_exit
+    jmp    @imp_prefix
 @do_open
-    jsr    @imp_open
-    jmp    ProDOS_exit
+    jmp    @imp_open
 @do_read
-    jsr    @imp_read
-    jmp    ProDOS_exit
+    jmp    @imp_read
 @do_write
-    jsr    @imp_write
-    jmp    ProDOS_exit
+    jmp    @imp_write
 @do_close
-    jsr    @imp_close
-    jmp    ProDOS_exit
+    jsr    @imp_close ;subroutine special case because of dual-use
+    jmp    @restore_zp
 @do_seek
-    jsr    @imp_seek
-    jmp    ProDOS_exit
+    jmp    @imp_seek
 
 @imp_getattrib
     lda    packet+1
@@ -386,7 +379,7 @@ ProDOS_enter
     iny
     lda    ldrlo2+1
     sta    (packet), y
-    rts
+    jmp    @restore_zp
 
 @imp_prefix
     ldx    #buffer
@@ -397,7 +390,7 @@ ProDOS_enter
     sta    (buffer), y
     dey
     bpl    @copy_prefix
-    rts
+    jmp    @restore_zp
 
 @imp_open
     ldx    #namlo
@@ -434,7 +427,15 @@ ProDOS_enter
 @imp_write
     lda    #cmdwrite
     sta    reqcmd
+    pha
     jsr    @set_rdwrbuff
+    pla
+    bne    @set_blocks
+    lda    ldrhi
+    sta    sizehi
+    lda    ldrlo
+    sta    sizelo
+@set_blocks
     ldx    encbufpatch1+1
     inx
     stx    @block_index1+2
@@ -447,7 +448,7 @@ ProDOS_enter
     lda    blkidx
 @block_index2
     sta    $d1ff
-    rts
+    jmp    @restore_zp
 
 @imp_close
     lda    @handles+1
@@ -507,6 +508,20 @@ ProDOS_enter
     lda    (packet), y
     sta    $1,x
     rts
+
+@restore_zp
+    ldx    #(last_zp - first_zp) - 1
+@store_zp
+    pla
+    sta    first_zp,x
+    dex
+    bpl    @store_zp
+    pla ;saved inside ProDOS_enter
+    tay
+    pla
+    tax
+    lda    #0
+    jmp    ProDOS_exit
 
 @handle
     !byte  0, 0 ;only up to two handles at a time
