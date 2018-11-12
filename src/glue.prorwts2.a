@@ -464,7 +464,7 @@ ProDOS_enter
 @fetchbyte
     inc    @fetchaddr+1
     bne    @fetchaddr
-    lda    @fetchaddr+2
+    inc    @fetchaddr+2
 @fetchaddr
     lda    $d1d1
     rts
