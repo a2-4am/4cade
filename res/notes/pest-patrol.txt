@@ -1,0 +1,8 @@
+$485A: 30 -> 00 to disable sound (context is 3E314890032C30C060)
+$48AE: 30 -> 00 to disable sound (context is A207A476F0032C30C0EAEAEAEA)
+$57C4: 4C0040 -> 4C0001 to exit at end of demo cycle (context is ADB95210034C004020BA52)
+$5589: 4C0550 -> 4C0001 to exit when user presses a key during demo (context is 2D4355D0034C0550ADE1B2)
+$47BA: 20B6B2207055A2FF8E6D46 -> 4C0001AD00C030F84C90B3 to exit when user presses a key during main menu, plus new code to exit on keypress during title sequence (context is 2054BB20D7B2902B20B6B2)
+$B493: 4C90B3 -> 4CBD47 to exit when user presses a key during title sequence (original game is not interruptible) (context is E67EC67CF0034C90B3)
+
+no support for joystick buttons to end demo

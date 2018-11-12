@@ -1,0 +1,8 @@
+$B080 is start of demo cycle
+$B29D is end of demo cycle [3 bytes available]
+$AD7A is after user presses a key
+no support for pressing joystick buttons during demo
+
+$0863: 30 -> 00 to disable sound
+$AD7A: C993F0 -> 4C0001 to exit after user presses a key
+$B29D: 4C80B0 -> 4C0001 to exit at end of demo cycle

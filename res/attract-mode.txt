@@ -11,7 +11,7 @@
      27:Conan                  CONAN          001
      34:Dino Eggs              DINOEGGS        01
      36:Drelbs                 DRELBS          01
-     37:Drol                   DROL           001
+X     37:Drol                   DROL           001
      40:Flip Out               FLIPOUT         01
      42:Formula 1 Racer        FORMULA1RACER   01
      44:Galaxian               GALAXIAN        01
