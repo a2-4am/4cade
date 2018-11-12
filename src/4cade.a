@@ -12,6 +12,7 @@ FirstMover
 !pseudopc $D000 {
 Reenter                              ; self-running demos should call this to exit back to 4cade
          +READ_RAM1_WRITE_RAM1
+         jsr   CloseHandles          ; close any open handles to restore ProRWTS state to original
 Main
          ldx   #$FF
          txs

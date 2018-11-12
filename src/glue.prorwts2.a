@@ -292,7 +292,13 @@ end_promote
 ;------------------------------------------------------------------------------
 packet = $40 ;word
 buffer = $42 ;word
+
 ProDOS_enter
+  !ifdef PASS2 {
+!set CloseHandles = @imp_close
+  } else { ;PASS2
+    !set PASS2=1
+  }
     pla
     sta    @fetchaddr+1
     pla
