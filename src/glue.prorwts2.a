@@ -11,22 +11,23 @@
 ; A general note about paths:
 ;
 ; LoadFile, LoadDHRFile, and SaveSmallFile support files in subdirectories.
-; Paths are delimited by '/' like ProDOS. HOWEVER, you should never include a
-; disk volume name. At program startup, we get the current directory and save
-; it; that is the PROGRAM ROOT DIRECTORY. The first '/' always points to the
-; PROGRAM ROOT DIRECTORY. All pathnames are relative to the PROGRAM ROOT
-; DIRECTORY.
+; Directories are delimited by '/' like ProDOS. At program startup, we get the
+; current directory and save it; that is the PROGRAM ROOT DIRECTORY. All
+; pathnames are relative to the PROGRAM ROOT DIRECTORY. There is no concept of
+; setting or changing the 'current' directory.
 ;
 ; The PROGRAM ROOT DIRECTORY is not guaranteed to be the root directory of the
-; underlying ProDOS disk (although it can be). These functions provide no
-; access to any directory above the PROGRAM ROOT DIRECTORY, i.e. you can't use
-; '..' to access the parent directory.
+; underlying ProDOS disk (although it can be). But it doesn't matter, because
+; these functions provide no access to any directory above the PROGRAM ROOT
+; DIRECTORY. You can't use '..' to access the parent directory, and you can't
+; start a pathname with '/' to access the root directory of the underlying
+; ProDOS disk.
 ;
 ; Examples:
-; '/PREFS.CONF' points to a file named 'PREFS.CONF' in the PROGRAM ROOT
+; 'PREFS.CONF' points to a file named 'PREFS.CONF' in the PROGRAM ROOT
 ; DIRECTORY.
 ;
-; '/FX/RIPPLE' points to a file named 'RIPPLE' in a directory named 'FX' in the
+; 'FX/RIPPLE' points to a file named 'RIPPLE' in a directory named 'FX' in the
 ; PROGRAM ROOT DIRECTORY.
 
 gRootDirectory
@@ -36,9 +37,13 @@ gPrefix
 
 ;------------------------------------------------------------------------------
 ; LoadFile
-; load a file into memory all at once, using ProRWTS2
+; Load a file into memory all at once, using ProRWTS2, at the load address
+; specified by the file's ProDOS metadata. Hey, do you have a text file that
+; doesn't have a load address? This routine will happily load it at $0000, and
+; your program will likely crash as a result. So give it a load address as if
+; it were a binary file.
+;
 ; supports paths, see note
-; uses file's load address
 ;
 ; in:    stack contains 2 bytes of parameters:
 ;        +1 address of filename
@@ -68,6 +73,7 @@ LoadFile
 ; all at once, using ProRWTS2
 ; first $2000 bytes of file are loaded into auxiliary memory $2000..$3FFF
 ; second $2000 bytes of file are loaded into main memory $2000..$3FFF
+;
 ; supports paths, see note
 ;
 ; in:    stack contains 2 bytes of parameters:
@@ -103,6 +109,7 @@ LoadDHRFile
 ; Save a file into memory all at once, using ProRWTS2.
 ; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
 ; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
+;
 ; supports paths, see note
 ;
 ; in:    stack contains 4 bytes of parameters:
