@@ -10,10 +10,10 @@ Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
-Championship Lode Runner
+Championship Lode Runner [priority]
 Choplifter
 Conan
-Dino Eggs
+Dino Eggs [priority]
 Drelbs
 Dung Beetles
 Firebird
@@ -23,7 +23,7 @@ Galaxian
 Gamma Goblins
 Gumball
 High Rise
-Jungle Hunt
+Jungle Hunt [priority]
 Karateka
 Lady Tut
 Lost Tomb
@@ -32,17 +32,17 @@ Nibbler
 O'Riley's Mine
 Pac-Man
 Pie-Man
-Plasmania
-Pooyan
+Plasmania [priority]
+Pooyan [priority]
 Prince of Persia
 Repton
 Ribbit
 Robotron 2084
-Sammy Lightfoot
+Sammy Lightfoot [priority]
 Serpentine
 Snake Byte
 Snoggle
-Spider Raid
+Spider Raid [priority]
 Starblaster
 Stargate
 Stellar 7
