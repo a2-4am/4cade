@@ -3,3 +3,4 @@ no support for joystick buttons
 
 $60D1: E0D0F0 -> 4C0001 to exit when user presses key during title page (context is 4C0A61AE00C010DFE0D0F020)
 $69B9: 68688D -> 4C0001 to exit when user presses key during demo (context is 49FF8527E636AD00C0100868688D10C0)
+$6D70: 4C4A60 -> 4C0001 to exit after demo cycle ends (context is A517C901D0034C4A60201662A529)
