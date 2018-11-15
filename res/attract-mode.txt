@@ -86,7 +86,6 @@ Vindicator
 Bolo
 Hard Hat Mack
 Spy Hunter
-Spy's Demise
 
 # done
 BurgerTime
@@ -95,6 +94,7 @@ Pest Patrol
 Pitfall II
 Sneakers
 Spare Change
+Spy's Demise
 Wavy Navy
 
 # obvious candidates that we're skipping
