@@ -42,7 +42,6 @@ Canyon Climber
 Ceiling Zero
 Choplifter
 Conan
-Dino Eggs [priority]
 Drelbs
 Dung Beetles
 Firebird
@@ -89,6 +88,7 @@ Spy Hunter
 Bolo
 BurgerTime
 Championship Lode Runner
+Dino Eggs
 Lode Runner
 Pest Patrol
 Pitfall II
