@@ -1,0 +1,6 @@
+$129A: 8D10C0 -> 4C0001 to exit when user presses a key during demo (context is AD00C010068D10C0297F60A90060)
+$7D8A: 8D10C0 -> 4C0001 to exit when user presses a key during title screen (context is 209894A5DBF01DAD00C010188D10C0)
+$15F8: 4C62FA -> 4C0001 to exit after demo ends (context is A9FF8DF4034C62FA)
+$6E7A: C0 -> D0 to disable sound (context is A908858CA6E0BD20C0A584)
+$6F96: C0 -> D0 to disable sound (context is A9008585A6E0BD20C0A580)
+$8735: C0 -> D0 to disable sound (context is A6E0A018A9208580BD20C0C680)

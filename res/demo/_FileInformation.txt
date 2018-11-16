@@ -1,3 +1,4 @@
+BOLO=Type(06),AuxType(10E5),Access(C3)
 BURGERTIME=Type(06),AuxType(3E97),Access(C3)
 BURGERTIME.1=Type(F1),AuxType(A402),Access(C3)
 BURGERTIME.2=Type(F1),AuxType(6400),Access(C3)
