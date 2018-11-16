@@ -1,0 +1,4 @@
+$8AD3: C9E19006C9 -> 10084C0001 to exit after user presses key on title screen (context is AD00C0C9E19006C9FBB002)
+$7524: 468F46 -> 4C0001 to exit after user presses button during demo (context is AD62C03005AD61C01009468F46)
+$61FF: 4C8662 -> 4C0001 to exit after user presses button during title screen or high scores screen [3 bytes available] (context is 206B8EB07390034C8662)
+$626D: 4C2760 -> 4C0001 to exit after demo player has died and high score screen has been shown [3 bytes available] (context is A902858A4C02624C2760)

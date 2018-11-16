@@ -40,7 +40,6 @@ Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
-Championship Lode Runner [priority]
 Choplifter
 Conan
 Dino Eggs [priority]
@@ -84,6 +83,7 @@ Vindicator
 
 # uncompressed but unpatched
 Bolo
+Championship Lode Runner
 Hard Hat Mack
 Spy Hunter
 
