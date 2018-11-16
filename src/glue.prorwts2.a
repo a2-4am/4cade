@@ -521,6 +521,7 @@ ProDOS_enter
     pla
     tax
     lda    #0
+    clc
     jmp    ProDOS_exit
 
 @handle
