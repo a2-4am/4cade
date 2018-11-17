@@ -60,7 +60,6 @@ Nibbler
 O'Riley's Mine
 Pac-Man
 Pie-Man
-Plasmania [priority]
 Pooyan [priority]
 Repton
 Ribbit
@@ -82,7 +81,7 @@ Vindicator
 
 # uncompressed but unpatched
 Hard Hat Mack
-Spy Hunter
+Plasmania
 
 # done
 Bolo
@@ -94,6 +93,7 @@ Pest Patrol
 Pitfall II
 Sneakers
 Spare Change
+Spy Hunter
 Spy's Demise
 Wavy Navy
 
