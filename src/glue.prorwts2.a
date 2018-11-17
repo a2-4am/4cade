@@ -132,6 +132,8 @@ SaveSmallFile
 ;------------------------------------------------------------------------------
 traverse
          +LDAY gRootDirectory
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         sty   (reloc + unrhddblockhi - unrelochdd) + 1
          sta   @myreadblock+1
          sty   @myreadblock+3        ; reset 'root' directory (saved at program start)
 

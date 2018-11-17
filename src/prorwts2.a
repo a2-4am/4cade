@@ -2200,6 +2200,9 @@ hddfoundname    iny
                 ;cache AUX_TYPE (load offset for binary files)
 
   !if override_adr = 0 {
+                lda     reqcmd
+                lsr
+                bne     + ;cmdwrite
                 ldy     #AUX_TYPE
                 lda     (bloklo), y
     !if (allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
@@ -2209,7 +2212,8 @@ hddfoundname    iny
                 lda     (bloklo), y
                 sta     ldrhi
                 sta     ldrhi2
-    } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
++
+   } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
                 pha
                 iny
                 lda     (bloklo), y
