@@ -89,7 +89,7 @@ AttractMode
          beq   @HGRSlideshow
 
 @DHGRSlideshow
-         bit   MachineStatus
+         bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvc   @exit
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
@@ -158,17 +158,31 @@ WaitOnScreenshot
 LoadTransition
          jsr   okvs_nth              ; get filename of transition effect code
          !word gFXStore
-@fxindex !byte 0
+FXIndex  !byte 0
          +STAY @fxkey
 
-         inc   @fxindex              ; increment transition effect index for next time
+         inc   FXIndex               ; increment transition effect index
          jsr   okvs_len
          !word gFXStore
-         cmp   @fxindex
+         cmp   FXIndex
          bne   +
          lda   #0
-         sta   @fxindex
+         sta   FXIndex
 +
+         lda   FXIndex
+         sta   @nexti
+         jsr   okvs_nth              ; get name of next transition
+         !word gFXStore
+@nexti   !byte $FD                   ; SMC
+         +STAY @nextfx
+
+         jsr   okvs_update           ; save name of next transition in prefs store
+         !word gGlobalPrefsStore
+         !word kNextFX
+@nextfx  !word $FDFD                 ; SMC
+
+         jsr   SaveGlobalPreferences ; write prefs store to disk
+
          ; load transition effect code at $6000
          +LOAD_FILE kFXDirectory, @fxkey
          rts

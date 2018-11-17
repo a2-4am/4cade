@@ -32,8 +32,6 @@
 
 gRootDirectory
          !word $FDFD
-gPrefix
-         !word $FDFD
 
 ;------------------------------------------------------------------------------
 ; LoadFile
@@ -55,10 +53,7 @@ LoadFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY namlo                 ; set filename
-         +STAY gPrefix               ; remember path
-
          jsr   traverse              ; go to subdirectory, set up filename for read
-
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
          lda   #0                    ; 0 = read into main memory
@@ -86,9 +81,7 @@ LoadDHRFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY namlo                 ; set filename
-
          jsr   traverse              ; go to subdirectory, set up filename for read
-
          lda   #$00                  ; read first $2000 bytes
          sta   sizelo
          lda   #$20
@@ -123,17 +116,11 @@ SaveSmallFile
          +PARAMS_ON_STACK 4
          +LDPARAM 1
          +STAY namlo                 ; set filename for ProRWTS2
-         +STAY gPrefix               ; remember path
-
          +LDPARAM 3
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
-
          jsr   traverse              ; go to subdirectory, set up filename for read
-
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd
-         lda   #0                    ; 0 = data buffer is in main memory (instead of auxmem)
-         sta   auxreq
          jmp   hddopendir            ; exit via ProRWTS2
 
 ;------------------------------------------------------------------------------
