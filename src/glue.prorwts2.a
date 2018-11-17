@@ -286,6 +286,7 @@ ProDOS_enter
   } else { ;PASS2
     !set PASS2=1
   }
+    jsr    @swap_zp
     pla
     sta    @fetchaddr+1
     pla
@@ -304,12 +305,6 @@ ProDOS_enter
     pha
     tya
     pha
-    ldx    #(last_zp - first_zp) - 1
-@save_zp
-    lda    first_zp,x
-    pha
-    dex
-    bpl    @save_zp
 @request
     lda    #$d1
     cmp    #$c4
@@ -399,11 +394,9 @@ ProDOS_enter
     sta    sizehi
     sta    sizelo
     jsr    hddopendir
-    ldx    encbufpatch1+1
-    inx
-    stx    @block_index2+2
     lda    #0
-    beq    @block_index2 ;always
+    sta    blkidx
+    beq    @jmp_zp ;always
 
 @imp_seek
     lda    #cmdseek
@@ -423,18 +416,8 @@ ProDOS_enter
     lda    ldrlo
     sta    sizelo
 @set_blocks
-    ldx    encbufpatch1+1
-    inx
-    stx    @block_index1+2
-    stx    @block_index2+2
-@block_index1
-    lda    $d1ff
-    sta    blkidx
-    clc ;not a subdirectory
     jsr    hddrdwrpart
-    lda    blkidx
-@block_index2
-    sta    $d1ff
+@jmp_zp
     jmp    @restore_zp
 
 @imp_close
@@ -496,13 +479,19 @@ ProDOS_enter
     sta    $1,x
     rts
 
-@restore_zp
-    ldx    #(last_zp - first_zp) - 1
-@store_zp
-    pla
-    sta    first_zp,x
+@swap_zp
+    ldx    #last_zp-first_zp
+@save_zp
+    lda    first_zp,x
+    ldy    @saved_zp,x
+    sta    @saved_zp,x
+    sty    first_zp,x
     dex
-    bpl    @store_zp
+    bpl    @save_zp
+    rts
+
+@restore_zp
+    jsr    @swap_zp
     pla ;saved inside ProDOS_enter
     tay
     pla
@@ -513,3 +502,6 @@ ProDOS_enter
 
 @handle
     !byte  0, 0 ;only up to two handles at a time
+
+@saved_zp
+    !fill  (last_zp - first_zp) + 1
