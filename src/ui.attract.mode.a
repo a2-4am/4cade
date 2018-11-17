@@ -89,6 +89,8 @@ AttractMode
          beq   @HGRSlideshow
 
 @DHGRSlideshow
+         bit   MachineStatus
+         bvc   @exit
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
@@ -101,7 +103,7 @@ AttractMode
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
          !word HGRLoad               ; address of callback (called on each file)
-         rts
+@exit    rts
 
 ;------------------------------------------------------------------------------
 ; internal functions
