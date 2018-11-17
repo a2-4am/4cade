@@ -1,2 +1,22 @@
 $0C8D is main demo loop
 
+
+
+$0433: B104 -> EAEA to disable sound on title screen (context is A000B104A66FA46EEAEA88)
+$BD9E: B104 -> EAEA to disable sound during demo (context is 2901D00BB104E6C6E6C6E6C6E6C660)
+
+$07AB: 20 -> 2C to skip playing song
+$07AF: 0F -> 03 to reduce time showing title
+$07D4: 0F -> 03 to reduce time showing "press J to use joystick"
+$0EA7: 15 -> 1A to exit when user presses key on title screen after song
+$0EAF: 0B -> 12 to exit when user presses button on title screen after song
+$0EC1: AD61C00D -> 604C0001 to disable old code and insert new code
+$0EE1: AE10C0 -> 4C0001 to exit when user presses key during demo (context is AD00C01036AE10C0C9D0D00EADEDBF)
+$61C0: A90485 -> 4C0001 to exit after demo car crashes (context is A90485948595)
+
+
+
+
+no longer necessary since we're skipping this entire routine:
+XXXXXXXXXX$280C: F3 -> 05 to exit when user presses button during initial song (context is AD61C00D62C030F3)
+XXXXXXXXXX$2812: AC10C0 -> 4C0001 to exit when user presses key during initial song (context is AD00C01008AC10C0)
