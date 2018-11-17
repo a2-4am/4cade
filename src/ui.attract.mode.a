@@ -6,6 +6,9 @@
 ; Public functions
 ; - AttractMode
 ;
+; Public variables
+; - gFXIndex                         ; [byte] numeric index of HGR transition effect
+; - gDFXIndex                        ; [byte] numeric index of DHGR transition effect
 
 AttractMode
          jsr   okvs_nth              ; get filename of next attract-mode module
@@ -158,30 +161,31 @@ WaitOnScreenshot
 LoadTransition
          jsr   okvs_nth              ; get filename of transition effect code
          !word gFXStore
-FXIndex  !byte 0
+gFXIndex
+         !byte 0
          +STAY @fxkey
 
-         inc   FXIndex               ; increment transition effect index
+         inc   gFXIndex              ; increment transition effect index
          jsr   okvs_len
          !word gFXStore
-         cmp   FXIndex
+         cmp   gFXIndex
          bne   +
          lda   #0
-         sta   FXIndex
+         sta   gFXIndex
 +
-         lda   FXIndex
+         lda   gFXIndex
          sta   @nexti
-         jsr   okvs_nth              ; get name of next transition
+         jsr   okvs_nth              ; get name of next HGR transition
          !word gFXStore
 @nexti   !byte $FD                   ; SMC
          +STAY @nextfx
 
-         jsr   okvs_update           ; save name of next transition in prefs store
+         jsr   okvs_update           ; save name of next HGR transition in prefs store
          !word gGlobalPrefsStore
          !word kNextFX
 @nextfx  !word $FDFD                 ; SMC
 
-         jsr   SaveGlobalPreferences ; write prefs store to disk
+;         jsr   SaveGlobalPreferences ; write prefs store to disk
 
          ; load transition effect code at $6000
          +LOAD_FILE kFXDirectory, @fxkey
@@ -189,20 +193,34 @@ FXIndex  !byte 0
 @fxkey   !word $FDFD
 
 LoadDHGRTransition
-         jsr   okvs_nth              ; get filename of transition effect code
+         jsr   okvs_nth              ; get filename of DHGR transition effect code
          !word gDFXStore
-@dfxindex
+gDFXIndex
          !byte 0
          +STAY @dfxkey
 
-         inc   @dfxindex             ; increment transition effect index for next time
+         inc   gDFXIndex             ; increment transition effect index for next time
          jsr   okvs_len
          !word gDFXStore
-         cmp   @dfxindex
+         cmp   gDFXIndex
          bne   +
          lda   #0
-         sta   @dfxindex
+         sta   gDFXIndex
 +
+         lda   gDFXIndex
+         sta   @nexti
+         jsr   okvs_nth              ; get name of next DHGR transition
+         !word gDFXStore
+@nexti   !byte $FD                   ; SMC
+         +STAY @nextdfx
+
+         jsr   okvs_update           ; save name of next DHGR transition in prefs store
+         !word gGlobalPrefsStore
+         !word kNextDFX
+@nextdfx !word $FDFD                 ; SMC
+
+;         jsr   SaveGlobalPreferences ; write prefs store to disk
+
          ; load transition effect code at $6000
          +LOAD_FILE kFXDirectory, @dfxkey
          rts
