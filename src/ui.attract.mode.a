@@ -7,23 +7,40 @@
 ; - AttractMode
 ;
 ; Public variables
+; - gAttractIndex                    ; [byte] numeric index of Mega-Attract Module
 ; - gFXIndex                         ; [byte] numeric index of HGR transition effect
 ; - gDFXIndex                        ; [byte] numeric index of DHGR transition effect
 
 AttractMode
          jsr   okvs_nth              ; get filename of next attract-mode module
          !word gAttractModeStore
-@index   !byte 0
+gAttractIndex
+         !byte 0
          +STAY @key
 
-         inc   @index                ; increment module index for next time
+         inc   gAttractIndex         ; increment module index for next time
          jsr   okvs_len
          !word gAttractModeStore
-         cmp   @index
+         cmp   gAttractIndex
          bne   +
          lda   #0
-         sta   @index
+         sta   gAttractIndex
 +
+         lda   gAttractIndex
+         sta   @nexti
+         jsr   okvs_nth              ; get name of next attract-mode module
+         !word gAttractModeStore
+@nexti   !byte $FD                   ; SMC
+         +STAY @nextattract
+
+         jsr   okvs_update           ; save name of next attract-mode module in prefs store
+         !word gGlobalPrefsStore
+         !word kNextAttract
+@nextattract
+         !word $FDFD                 ; SMC
+
+;         jsr   SaveGlobalPreferences ; write prefs store to disk
+
          jsr   okvs_get
          !word gAttractModeStore
 @key     !word $FDFD

@@ -100,6 +100,19 @@ OneTimeSetup
          +LDAY SRC
          +STAY gSlideshowStore       ; save pointer to free space for next store
 
+         jsr   okvs_get              ; get next attract-mode module from prefs
+         !word gGlobalPrefsStore
+         !word kNextAttract
+         bcs   @noattract
+         +STAY @attract
+         jsr   okvs_get
+         !word gAttractModeStore
+@attract !word $FDFD                 ; SMC
+         bcc   +
+@noattract
+         ldx   #0
++        stx   gAttractIndex
+
          jsr   okvs_get              ; get next HGR transition effect from prefs
          !word gGlobalPrefsStore
          !word kNextFX
