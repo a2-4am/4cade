@@ -81,7 +81,6 @@ Vindicator
 
 # uncompressed but unpatched
 Hard Hat Mack
-Plasmania
 
 # done
 Bolo
@@ -91,6 +90,7 @@ Dino Eggs
 Lode Runner
 Pest Patrol
 Pitfall II
+Plasmania
 Sneakers
 Spare Change
 Spy Hunter
