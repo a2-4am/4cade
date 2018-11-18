@@ -80,7 +80,6 @@ Vindicator
 # uncompressed but unpatched
 Hard Hat Mack
 Jungle Hunt
-Pooyan
 
 # done
 Bolo
@@ -91,6 +90,7 @@ Lode Runner
 Pest Patrol
 Pitfall II
 Plasmania
+Pooyan
 Sneakers
 Spare Change
 Spy Hunter
