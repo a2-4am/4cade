@@ -51,7 +51,6 @@ Galaxian
 Gamma Goblins
 Gumball
 High Rise
-Jungle Hunt [priority]
 Karateka
 Lady Tut
 Lost Tomb
@@ -60,7 +59,6 @@ Nibbler
 O'Riley's Mine
 Pac-Man
 Pie-Man
-Pooyan [priority]
 Repton
 Ribbit
 Robotron 2084
@@ -81,6 +79,8 @@ Vindicator
 
 # uncompressed but unpatched
 Hard Hat Mack
+Jungle Hunt
+Pooyan
 
 # done
 Bolo
