@@ -1,0 +1,8 @@
+$676C: A42AF0 -> 4C0001 to exit when user presses a key on title screen (context AD00C0300160A42AF0)
+$14A0: C0 -> D0 to disable sound (context 4CD014A423AD30C0E625)
+$14BA: C0 -> D0 to disable sound (context 4CB414D0EBA424AD30C0)
+$0BD6: A90085 -> 4C0001 to exit when user presses a key or button (context AD00C03009A52AD01BAD61C01016A900853A)
+$6553: C99BD0 -> 4C0001 to exit when user presses a key (context AD00C01070C99BD06CA900)
+$1425: C0 -> D0 to disable sound during demo (context 8D4214BE4E142C30C0CA)
+$0C28: 4C0C0C -> 4C0001 to exit at end of demo cycle (context C904D0E6E63C4C0C0C)
+$1501: EA -> 60 to reduce wait times while not playing sounds (context EAEA4C0615E625)
