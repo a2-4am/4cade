@@ -79,13 +79,13 @@ Vindicator
 
 # uncompressed but unpatched
 Hard Hat Mack
-Jungle Hunt
 
 # done
 Bolo
 BurgerTime
 Championship Lode Runner
 Dino Eggs
+Jungle Hunt
 Lode Runner
 Pest Patrol
 Pitfall II
