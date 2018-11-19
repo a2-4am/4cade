@@ -1,0 +1,5 @@
+$030C: 20 -> 2C to skip flashing title screen (context is 200060)
+$9A73: A90085 -> 4C0001 to exit at end of demo cycle (context is 4CC694A900852860)
+$97C6: C9C1D0 -> 4C0001 to exit when user presses a key (context is AD00C0100AC9C1D0)
+$A4EE: 20F7A4 -> 4C0001 to exit when user presses a key (context is AD00C0100520F7A4)
+$97DF: 8D10C0 -> 4C0001 to exit when user presses a key (context is AD00C010C68D10C020F7A4)
