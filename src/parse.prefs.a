@@ -94,6 +94,7 @@ SaveGlobalPreferences
          ldx   #0
          ldy   #0
          lda   ($00),y
+         beq   ++
          clc
          adc   #$01
          sta   @len
@@ -107,7 +108,7 @@ SaveGlobalPreferences
 @len=*+1
 +        cpy   #$FD                  ; SMC
          bne   -
-         rts
+++       rts
 
 @kEquals !byte 1
          !raw  "="
