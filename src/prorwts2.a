@@ -107,8 +107,10 @@ ver_02 = 1
                 ldrhi     = $56         ;set to load address if override_adr=1
                 namlo     = $57         ;name of file to access
                 namhi     = $58         ;name of file to access
-                ldrlo2    = $68         ;original load address read from filesystem
-                ldrhi2    = $69         ;original load address read from filesystem
+                ldrlo2    = $59         ;original load address read from filesystem
+                ldrhi2    = $5a         ;original load address read from filesystem
+                sizelo2   = $5b         ;original file size read from filesystem
+                sizehi2   = $5c         ;original file size read from filesystem
 
 !if enable_floppy = 1 {
                 tmpsec    = $3c         ;(internal) sector number read from disk
@@ -196,7 +198,7 @@ ver_02 = 1
                 SETAUXZP  = $c009
 
                 first_zp  = $40         ;lowest address to save if swap_zp enabled
-                last_zp   = $5f         ;highest address to save if swap_zp enabled (max 127 entries later)
+                last_zp   = $62         ;highest address to save if swap_zp enabled (max 127 entries later)
 
                 D1S1      = 1           ;disk 1 side 1 volume ID if rwts_mode enabled
 
@@ -2271,13 +2273,16 @@ attribpatch
 
   !if allow_subdir = 1 {
                 plp
-                !byte  $24 ;mask the clc that follows
+                bcs     hddrdwrfilei
   } ;allow_subdir
 ++
 } ;rwts_mode
 
 hddrdfile
 hddrdwrfile
+                lda     #$ff
+                sta     sizehi2
+hddrdwrfilex
 !if allow_subdir = 1 {
                 clc
 } ;allow_subdir
@@ -2345,6 +2350,14 @@ dirbufpatch6
     } ;bounds_check
 
 hddcopyblock
+                ldx     sizehi2
+                inx
+                bne     +
+                lda     sizehi
+                sta     sizehi2
+                lda     sizelo
+                sta     sizelo2
++
     !if allow_aux = 1 {
                 ldx     auxreq
                 jsr     hddsetaux
@@ -2416,21 +2429,8 @@ encbufpatch1
                 sbc     sizehi
                 sta     sizehi
                 ora     sizelo
-    !if allow_subdir = 1 {
-      !if no_interrupts = 1 {
-                clc
-                bne     hddrdwrfilei
-      } else { ;no_interrupts = 0
-                bne     hddrdwrfile
-      } ;no_interrupts
-    } else { ;allow_subdir = 0
-                bne     hddrdwrfilei
-    } ;allow_subdir
-    !if allow_aux = 0 {
-                rts
-    } else { ;allow_aux
                 beq     hddrdwrdone
-    } ;allow_aux
+                jmp     hddrdwrfilex
   } else { ;aligned_read = 1
     !if bounds_check = 1 {
                 lda     blefthi

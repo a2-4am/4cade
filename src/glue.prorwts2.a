@@ -419,6 +419,12 @@ ProDOS_enter
     sta    sizelo
 @set_blocks
     jsr    hddrdwrpart
+    ldy    #6
+    lda    sizelo2
+    sta    (packet), y
+    iny
+    lda    sizehi2
+    sta    (packet), y
 @jmp_zp
     jmp    @restore_zp
 
