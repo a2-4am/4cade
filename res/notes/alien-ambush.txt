@@ -1,0 +1,2 @@
+$60CA: C99BF0 -> 4C0001 to exit when user presses a key (context is C99BF007C9D3F003)
+$60DB: AD10C0 -> 4C0001 to exit when user presses a button (context is AD10C04CAC60AD10C0)

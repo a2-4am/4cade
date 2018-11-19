@@ -76,11 +76,11 @@ Vindicator
 Agent USA
 Alien Ambush
 Alien Downpour
-Alien Rain
-Aquatron
 Hard Hat Mack
 
 # done
+Alien Rain
+Aquatron
 Bolo
 BurgerTime
 Championship Lode Runner
