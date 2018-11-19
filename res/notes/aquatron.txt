@@ -1,0 +1,6 @@
+$7AE1: 20B20A -> 4C0001 to exit when user presses a key (context AD00C0100820B20A)
+$7D1D: E001D0 -> 4C0001 to exit at end of demo cycle (context 20A371E001D0DF205571)
+$7E11: C0 -> D0 to disable sound (context AD30C0)
+$7E38: C0 -> D0 to disable sound (context AD30C0)
+$7E43: C0 -> D0 to disable sound (context AD30C0)
+$7EA0: C0 -> D0 to disable sound (context AD30C0) (all instances of AD30C0 should be changed)

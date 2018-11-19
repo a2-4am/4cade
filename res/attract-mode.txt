@@ -30,12 +30,7 @@
 #
 
 # TODO
-Agent USA
-Alien Ambush
-Alien Downpour
-Alien Rain
 Apple Cider Spider
-Aquatron
 Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
@@ -78,6 +73,11 @@ Tubeway ][
 Vindicator
 
 # uncompressed but unpatched
+Agent USA
+Alien Ambush
+Alien Downpour
+Alien Rain
+Aquatron
 Hard Hat Mack
 
 # done
