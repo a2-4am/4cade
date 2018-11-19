@@ -412,6 +412,7 @@ ProDOS_enter
     pha
     jsr    @set_rdwrbuff
     pla
+    pha
     bne    @set_blocks
     lda    ldrhi
     sta    sizehi
@@ -419,6 +420,8 @@ ProDOS_enter
     sta    sizelo
 @set_blocks
     jsr    hddrdwrpart
+    pla
+    beq    @jmp_zp ;seek doesn't return size
     ldy    #6
     lda    sizelo2
     sta    (packet), y
