@@ -208,9 +208,7 @@ okvs_get
          ldy   #0
          lda   (PTR),y
          beq   @fail                 ; no keys, fail immediately
-         tax                         ; X = number of keys
-         inx
-         stx   @maxkeys
+         sta   @maxkeys              ; A = number of keys
          ldx   #0
          jsr   incptr                ; PTR -> first record
          +LDPARAM 3
