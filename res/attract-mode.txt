@@ -32,36 +32,17 @@
 # TODO
 Apple Cider Spider
 Bouncing Kamungas
-Buzzard Bait
-Canyon Climber
-Ceiling Zero
-Choplifter
 Conan
-Drelbs
-Dung Beetles
-Firebird
-Flip Out
-Formula 1 Racer
-Galaxian
-Gamma Goblins
 Gumball
-High Rise
 Karateka
 Lady Tut
-Lost Tomb
 Mr. Cool
-Nibbler
-O'Riley's Mine
 Pac-Man
 Pie-Man
 Repton
 Ribbit
-Robotron 2084
 Sammy Lightfoot [priority]
 Serpentine
-Snake Byte
-Snoggle
-Spider Raid [priority]
 Starblaster
 Stargate
 Stellar 7
@@ -76,7 +57,26 @@ Vindicator
 Agent USA
 Alien Ambush
 Alien Downpour
+Buzzard Bait
+Canyon Climber
+Ceiling Zero
+Choplifter
+Drelbs
+Dung Beetles
+Firebird
+Flip Out
+Formula 1 Racer
+Galaxian
+Gamma Goblins
 Hard Hat Mack
+High Rise
+Lost Tomb
+Nibbler
+O'Riley's Mine
+Robotron 2084
+Snake Byte
+Snoggle
+Spider Raid
 
 # done
 Alien Rain

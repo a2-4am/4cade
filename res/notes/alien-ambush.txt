@@ -1,2 +1,6 @@
-$60CA: C99BF0 -> 4C0001 to exit when user presses a key (context is C99BF007C9D3F003)
-$60DB: AD10C0 -> 4C0001 to exit when user presses a button (context is AD10C04CAC60AD10C0)
+$60CA: C99BF0 -> 4C0001 to exit when user presses a key during title animation (context is C99BF007C9D3F003)
+$60DB: AD10C0 -> 4C0001 to exit when user presses a button during title animation (context is AD10C04CAC60AD10C0 it's the second one)
+$6123: C9D3F0 -> 4C0001 to exit when user presses a key during demo (context is A592D022AD00C0101DC9D3F01A)
+$4538: A5D3D0 -> 4C0001 to exit when user presses a button during demo (context is AD61C01007A5D3D0064CCB45)
+$4612: A98085 -> 4C0001 (context is 60A98085A060)
+$6040: A90185 -> 4C0001 to exit after demo cycle (context is A9018592A5D3D007)
