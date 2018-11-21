@@ -31,32 +31,24 @@
 
 # TODO
 Apple Cider Spider
-Bouncing Kamungas
 Conan
 Gumball
 Karateka
-Lady Tut
-Mr. Cool
 Pac-Man
-Pie-Man
 Repton
 Ribbit
 Sammy Lightfoot [priority]
-Serpentine
-Starblaster
-Stargate
 Stellar 7
 Succession
 Tag Team Wrestling
-Thunder Bombs
 Track N Field
 Tubeway ][
 Vindicator
 
 # uncompressed but unpatched
 Agent USA
-Alien Ambush
 Alien Downpour
+Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
@@ -70,15 +62,23 @@ Galaxian
 Gamma Goblins
 Hard Hat Mack
 High Rise
+Lady Tut
 Lost Tomb
+Mr. Cool
 Nibbler
 O'Riley's Mine
+Pie-Man
 Robotron 2084
+Serpentine
 Snake Byte
 Snoggle
 Spider Raid
+Starblaster
+Stargate
+Thunder Bombs
 
 # done
+Alien Ambush
 Alien Rain
 Aquatron
 Bolo
