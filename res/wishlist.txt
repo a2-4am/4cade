@@ -1,4 +1,4 @@
-//4am
+//4am crack
 The American Challenge
 Arcticfox
 Ardy the Aardvark
@@ -58,8 +58,10 @@ Soko-Ban [DHGR] [priority]
 Spindizzy
 The Spy Strikes Back
 Station 5
-Street Sports Basketball
-Street Sports Soccer
+Street Sports Baseball [DHGR]
+Street Sports Basketball [DHGR]
+Street Sports Football [DHGR]
+Street Sports Soccer [DHGR]
 Summer Games
 Super Bunny
 Super Huey
@@ -72,7 +74,7 @@ The World's Greatest Baseball Game
 Winter Games
 Xevious
 
-//4am has unreleased crack
+//4am crack (unreleased)
 Black Magic
 Bop N Wrestle
 Congo
@@ -88,7 +90,7 @@ Renegade [DHGR] [priority]
 Sea Dragon
 Ski Crazed
 
-//qkumba has crack
+//qkumba crack
 Bandits
 Captain Goodnight
 The Goonies
