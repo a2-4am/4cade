@@ -8,7 +8,7 @@ Bad Dudes [DHGR] [priority]
 Ballblazer
 Batman [DHGR] [priority]
 Boulder Dash
-California Games
+California Games [DHGR]
 Championship Baseball
 Championship Wrestling
 Congo Bongo
@@ -20,6 +20,7 @@ Double Trouble
 Dunzhin
 Elite
 Frogger II
+G.I. Joe
 GBA Championship Baseball
 GBA Championship Basketball
 Galaxy Gates
@@ -31,6 +32,7 @@ Jumpman
 Kamikaze
 Karate Champ
 Kung Fu Master
+L.A. Crackdown [DHGR]
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
@@ -67,6 +69,7 @@ Super Bunny
 Super Huey
 Techno Cop [DHGR] [priority]
 Tharolian Tunnels
+The Games: Winter Edition [DHGR]
 Threshold
 Video Vegas
 World Karate Championship
@@ -89,6 +92,7 @@ Pipe Dream [DHGR] [priority]
 Renegade [DHGR] [priority]
 Sea Dragon
 Ski Crazed
+The Games: Summer Edition [DHGR]
 
 //qkumba crack
 Bandits
@@ -115,6 +119,7 @@ Genetic Drift
 Hadron
 Hardball
 International Hockey
+Into The Eagle's Nest [DHGR]
 Jawbreaker
 One on One
 Peeping Tom
@@ -132,6 +137,7 @@ Super Taxman II
 Superstar Ice Hockey
 Trick Shot
 Wayout
+World Games [DHGR]
 Zargs
 Zaxxon [priority]
 
