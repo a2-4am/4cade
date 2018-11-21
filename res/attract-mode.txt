@@ -55,7 +55,6 @@ Firebird
 Flip Out
 Formula 1 Racer
 Galaxian
-Gamma Goblins
 Hard Hat Mack
 High Rise
 Lady Tut
@@ -83,6 +82,7 @@ Bolo
 BurgerTime
 Championship Lode Runner
 Dino Eggs
+Gamma Goblins
 Jungle Hunt
 Lode Runner
 Pest Patrol
