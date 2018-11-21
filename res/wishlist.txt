@@ -96,9 +96,9 @@ Injured Engine
 Jawbreaker ][
 Mating Zone
 Randamn
-Rescue Raiders
+Rescue Raiders [priority]
 Saracen
-Test Drive
+Test Drive [DHGR] [priority]
 Thexder [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
@@ -131,7 +131,7 @@ Superstar Ice Hockey
 Trick Shot
 Wayout
 Zargs
-Zaxxon
+Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
 Cyclod
