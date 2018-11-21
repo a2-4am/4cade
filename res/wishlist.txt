@@ -4,16 +4,15 @@ Arcticfox
 Ardy the Aardvark
 Axis Assassin
 Aztec
-Bad Dudes [DHGR]
+Bad Dudes [DHGR] [priority]
 Ballblazer
-Batman [DHGR]
+Batman [DHGR] [priority]
 Boulder Dash
 California Games
 Championship Baseball
 Championship Wrestling
 Congo Bongo
 Conquering Worlds
-Crime Wave [priority]
 Cubit
 Deathsword [DHGR] [priority]
 Dive Bomber
@@ -25,10 +24,10 @@ GBA Championship Baseball
 GBA Championship Basketball
 Galaxy Gates
 Gulf Strike
-Heavy Barrel [DHGR]
+Heavy Barrel [DHGR] [priority]
 The Heist
-Impossible Mission II [DHGR]
-Jumpman [priority]
+Impossible Mission II [DHGR] [priority]
+Jumpman
 Kamikaze
 Karate Champ
 Kung Fu Master
@@ -46,16 +45,16 @@ Neutrons
 Oil's Well
 Pandora's Box
 Pegasus ][
-Platoon [DHGR]
-Rampage [DHGR]
-Robocop [DHGR]
+Platoon [DHGR] [priority]
+Rampage [DHGR] [priority]
+Robocop [DHGR] [priority]
 Roundabout
 Shanghai
 Shifty Sam
 Short Circuit
 Shuttle Intercept
 Skyfox
-Soko-Ban [DHGR]
+Soko-Ban [DHGR] [priority]
 Spindizzy
 The Spy Strikes Back
 Station 5
@@ -64,7 +63,7 @@ Street Sports Soccer
 Summer Games
 Super Bunny
 Super Huey
-Techno Cop [DHGR]
+Techno Cop [DHGR] [priority]
 Tharolian Tunnels
 Threshold
 Video Vegas
@@ -85,7 +84,7 @@ Ghostbusters
 International Gran Prix
 Pentapus
 Pipe Dream [DHGR] [priority]
-Renegade [DHGR]
+Renegade [DHGR] [priority]
 Sea Dragon
 Ski Crazed
 
@@ -97,11 +96,10 @@ Injured Engine
 Jawbreaker ][
 Mating Zone
 Randamn
-Rescue Raiders [priority]
+Rescue Raiders
 Saracen
 Test Drive
-Thexder [DHGR]
-Twerps
+Thexder [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
 The Bilestoad
@@ -118,18 +116,14 @@ International Hockey
 Jawbreaker
 One on One
 Peeping Tom
-Pulsar II [priority]
+Pulsar II
 Quadrant 6112
 Rear Guard
 Red Alert
 Roach Hotel
 Russki Duck
 Seafox
-Shuffleboard [priority]
 The Snapper
-Space Eggs [priority]
-Space Quarks
-Spare Change [priority]
 Star Cruiser
 Star Thief
 Super Taxman II
@@ -137,7 +131,7 @@ Superstar Ice Hockey
 Trick Shot
 Wayout
 Zargs
-Zaxxon [priority]
+Zaxxon
 
 //TODO(flux-imaged but not woz)
 Cyclod
