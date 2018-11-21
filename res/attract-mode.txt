@@ -64,7 +64,6 @@ Mr. Cool
 Nibbler
 O'Riley's Mine
 Pac-Man
-Pie-Man
 Ribbit
 Robotron 2084
 Serpentine
@@ -87,6 +86,7 @@ Dino Eggs
 Jungle Hunt
 Lode Runner
 Pest Patrol
+Pie-Man
 Pitfall II
 Plasmania
 Pooyan

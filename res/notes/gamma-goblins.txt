@@ -1,0 +1,6 @@
+$5B9A: 4C5F7E -> 4C0001 to exit at end of demo cycle (context is A9AD8D68514C5F7E)
+$7ECC: AD10C0 -> 4C0001 to exit when user presses a key on title screen (context is AD10C0A9D08DBC4A)
+$50CB: AD10C0 -> 4C0001 to exit during demo screen 1 (context is AD10C0A9608DD56A)
+$50B5: AD10C0 -> 4C0001 to exit during demo screen 2 (context is AD10C0A9388D006B)
+
+no buttons, no sound, hurrah
