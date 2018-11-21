@@ -1,4 +1,3 @@
 $1387: A9008D -> 4C0001 to exit when demo cycle ends (context is A9008DAC132058FC)
 $09A1: A90620 -> 4C970A to start quiet demo immediately (context is 782058FCA906205BFB207614)
 $0EA6: 2C10C0 -> 4C0001 to exit when user presses key (context is 2C00C010152C10C0AD00C0297F)
-

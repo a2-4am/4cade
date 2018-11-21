@@ -34,12 +34,9 @@ Apple Cider Spider
 Conan
 Gumball
 Karateka
-Pac-Man
 Repton
-Ribbit
 Sammy Lightfoot [priority]
 Stellar 7
-Succession
 Track N Field
 Tubeway ][
 Vindicator
@@ -66,7 +63,9 @@ Lost Tomb
 Mr. Cool
 Nibbler
 O'Riley's Mine
+Pac-Man
 Pie-Man
+Ribbit
 Robotron 2084
 Serpentine
 Snake Byte
@@ -74,6 +73,7 @@ Snoggle
 Spider Raid
 Starblaster
 Stargate
+Succession
 Thunder Bombs
 
 # done
