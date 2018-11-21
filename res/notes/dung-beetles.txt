@@ -1,0 +1,7 @@
+$9B7D: 8D10C0 -> 4C0001 to exit when user presses key on title screen (context is 8D10C0C993F003A980)
+$9B93: AD61C00D62C0 -> A901EAEAEAEA to disable button support on title screen
+$1C17: C0 -> D0 to disable sound (context is BD30C0AE0803BC141F)
+$12CE: C0 -> D0 to disable sound (context is 241230038D30C02C8902)
+$9B4D: C0 -> D0 to disable sound (context is BD30C0C8CC8A02)
+$9B56: C0 -> D0 to disable sound (context is BD30C0CD8A02C8D0FA)
+$97D5: 4CBD96 -> 4C0001 to exit when demo cycle ends (context is 20429B20C8994CBD96)
