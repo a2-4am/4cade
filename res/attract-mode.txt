@@ -40,7 +40,6 @@ Ribbit
 Sammy Lightfoot [priority]
 Stellar 7
 Succession
-Tag Team Wrestling
 Track N Field
 Tubeway ][
 Vindicator
@@ -102,3 +101,4 @@ Arkanoid (requires 64K)
 Drol (attract mode is minimal)
 Mr. Do (attract mode requires 64K)
 Prince of Persia (requires 128K)
+Tag Team Wrestling (requires 64K)
