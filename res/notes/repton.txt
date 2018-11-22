@@ -1,0 +1,4 @@
+$06A6: AC10C0C9A0 -> 10124C0001 to exit when user presses any key
+$07A4: 4C8007 -> 4C0001 to exit at end of demo cycle
+
+no sound, no buttons, hurrah
