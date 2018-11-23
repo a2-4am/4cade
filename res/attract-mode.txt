@@ -34,12 +34,10 @@ Apple Cider Spider
 Conan
 Gumball
 Karateka
-Repton
-Sammy Lightfoot [priority]
+Serpentine [has graphical artifacts]
 Stellar 7
 Track N Field
 Tubeway ][
-Vindicator
 
 # uncompressed but unpatched
 Agent USA
@@ -64,7 +62,6 @@ O'Riley's Mine
 Pac-Man
 Ribbit
 Robotron 2084
-Serpentine
 Snake Byte
 Snoggle
 Spider Raid
@@ -90,11 +87,14 @@ Pie-Man
 Pitfall II
 Plasmania
 Pooyan
+Repton
+Sammy Lightfoot [priority]
 Sneakers
 Spare Change
 Spy Hunter
 Spy's Demise
 Wavy Navy
+Vindicator
 
 # obvious candidates that we're skipping
 Arkanoid (requires 64K)
