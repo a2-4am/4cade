@@ -55,7 +55,6 @@ Galaxian
 Hard Hat Mack
 High Rise
 Lady Tut
-Lost Tomb
 Mr. Cool
 Nibbler
 O'Riley's Mine
@@ -82,6 +81,7 @@ Dung Beetles
 Gamma Goblins
 Jungle Hunt
 Lode Runner
+Lost Tomb
 Pest Patrol
 Pie-Man
 Pitfall II
