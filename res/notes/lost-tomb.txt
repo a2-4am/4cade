@@ -1,0 +1,17 @@
+$A762: ADEA03 -> 4C0001 to exit on button press on title screens (context is AD61C01011ADEA03)
+$A77E: C9B1F008C9 -> 10064C0001 to exit on keypress on title screens (context is AD00C08D10C0C9B1F008C9)
+$896B: AD61C0 -> A901EA to disable button press later during demo (context is AD61C03004C60810F4)
+$B17C: AD61C0 -> A901EA to disable button press (context is AD61C03003CA10F860A9D4)
+$80AD: C99BD008AD -> 100A4C0001 to exit on keypress during demo (context is AD00C08D10C0C99BD008ADEA03D003200076)
+$88D0: A90129 -> 4C0001 to exit on button press during demo (context is A90129038D24084AD0F8)
+$88B5: C9B1F019C9 -> 10064C0001 to exit on keypress during demo (context is AD00C08D10C0C9B1F019C9B2)
+$8022: 30 -> 00 to disable sound (context is A9308DFF02)
+$8032: 2C81C0 -> 201C88 \
+$8039: E0 -> E3        -- (context is 2C81C0AD52C04CE088)
+$88E0: 201C88 -> 4C0001 (context is 201C8820A98AEEEA03)
+
+old/unused:
+XXX$7B95: C0 -> D0 to disable sound (context is BD00C0A617CAD0FD)
+XXX$7BA0: C0 -> D0 to disable sound (contexti s BD00C0A617CAD0FD again)
+XXX$8329: C0 -> D0 to disable sound (context is BD00C0B950088507)
+XXX$B168: C0 -> D0 to disable sound (context is BD00C0A4174868)
