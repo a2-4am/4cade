@@ -82,6 +82,7 @@ gAttractIndex
 
          +LOAD_FILE_IMM @key
 
+         jsr   SaveScreenHoles       ; save screen hole contents in case game changes them
          ldx   #(End_Prelaunch-Prelaunch-1)
 -        lda   Prelaunch,x           ; copy pre-launch code to main memory
          sta   $100,x
