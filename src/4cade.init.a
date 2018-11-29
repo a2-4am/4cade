@@ -51,6 +51,11 @@ ProRWTSBuffer
                                      ; so we reuse as much of the 1-time code as possible
                                      ; and fill the rest with zeros
 OneTimeSetup
+         lda   MachineStatus
+         sta   oldstatus
+         jsr   SaveScreenHoles       ; save initial copy of screen hole content
+         lda   #$91
+         sta   holepatch             ; enable restoring of copy from now on
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
          +STAY gRootDirectory

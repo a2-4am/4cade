@@ -7,6 +7,8 @@
 ; - LoadFile
 ; - LoadDHRFile
 ; - SaveSmallFile
+; - CloseHandles
+; - SaveScreenHoles
 ;
 ; A general note about paths:
 ;
@@ -240,6 +242,15 @@ traverse
 @go
          rts
 
+;------------------------------------------------------------------------------
+; promote [private]
+;
+; tiny ProDOS-style interface for ProRWTS
+; in:    whatever ProDOS expects for the supported functions
+; out:   carry clear, A=0
+;        X, Y, and other flags clobbered
+;------------------------------------------------------------------------------
+
 promote
 !pseudopc $bf00 {
         lda    $c08b
@@ -268,6 +279,50 @@ ProDOS_prefix=$bfd0
 ;        !fill  $2e
 }
 end_promote
+
+;------------------------------------------------------------------------------
+; SaveScreenHoles
+; preserve screen hole contents across demo execution
+; to avoid crashing later on disk access
+;
+; in:    nothing
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+
+SaveScreenHoles
+    lda    #4
+    sta    namhi
+    ldx    #0
+    stx    namlo
+    sta    bloklo
+--  ldy    #$78
+-   lda    (namlo),y
+    pha
+    lda    holey_stuff,x
+holepatch ;sta->lda
+    lda    (namlo),y
+    pla
+    sta    holey_stuff,x
+    inx
+    tya
+    eor    #$80
+    tay
+    bmi    -
+    iny
+    bpl    -
+    inc    namhi
+    dec    bloklo
+    bne    --
+    lda    oldstatus
+    ldx    MachineStatus
+    sta    MachineStatus
+    sta    oldstatus
+    rts
+oldstatus
+    !byte  0
+holey_stuff
+    !fill  64
 
 ;------------------------------------------------------------------------------
 ; ProDOS_enter
