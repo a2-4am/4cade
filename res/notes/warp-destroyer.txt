@@ -1,0 +1,6 @@
+$65D6: C0 -> D0 to disable sound (context is AC30C0CAD0F660A9C0)
+$7AA6: AD00C0 -> A9CBEA to auto-select keyboard control (context is AD00C010A68D10C0C9CB)
+$8107: 8D10C0 -> 4C0001 to exit on keypress while writing out "Warp Destroyer" in script (context is 8D10C0A9008D4802ADFE80)
+$8157: 8D10C0 -> 4C0001 to exit on keypress while little ship flies in (context is 8D10C0C99DF059A9008D4802686860)
+$8398: 8D10C0 -> 4C0001 to exit on keypress on points screen (context is 8D10C0A0008D48026868686860)
+$8051: 4C0380 -> 4C0001 to exit after demo cycle (context is 202B81208882204A8520E0844C0380)

@@ -80,6 +80,9 @@ dsk: md asm
 	rsync -aP res/hgr/* build/HGR >>build/log
 	bin/buildfileinfo.py build/HGR >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/HGR" "build/HGR" >>build/log
+	rsync -aP res/action/* build/ACTION >>build/log
+	bin/buildfileinfo.py build/ACTION >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION" "build/ACTION" >>build/log
 	rsync -aP res/dhgr/* build/DHGR >>build/log
 	bin/buildfileinfo.py build/DHGR >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DHGR" "build/DHGR" >>build/log
