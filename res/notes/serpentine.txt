@@ -1,0 +1,7 @@
+$96AA: 2C10C0 -> 4C0001 to exit on keypress (context is AD00C085A910032C10C0C98B)
+$9702: AD61C0 -> A900EA to disable button
+$9707: AD62C0 -> A900EA to disable button
+$091B: AD61C0 -> A900EA to disable button
+$0920: AD62C0 -> A900EA to disable button
+$962D: C0 -> D0 to disable sound (context is 2C20C0CAD0F560A217)
+$8834: 20158C -> 4C0001 to exit at end of demo cycle (context is 20158C20DA8B20898B)
