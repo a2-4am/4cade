@@ -1,0 +1,11 @@
+$B7EA: AD61C0 -> A900EA to disable button
+$B7EF: AD62C0 -> A900EA to disable button (context is AD61C08546AD62C0854760)
+$B7FC: 200376 -> 4C0001 to exit on keypress (context is AD00C0100C2003768D10C0)
+$B80C: AD61C0 -> A900EA to disable button
+$B818: AD62C0 -> A900EA to disable button
+$0D15: 200376 -> 4C0001 to exit on keypress after scrolling text (context is AD00C0100D2003768D10C0A586)
+global AD30C0 -> AD30D0 to disable sound
+global AC30C0 -> AC30D0 to disable sound
+$0D0A: 8D880D -> EAEAEA to disable sound
+$777F: AD -> 60 to disable <esc> key check (context is AD00C0C99BD003208E77)
+$B5D7: 4C66B7 -> 4C0001 to exit after demo cycle (context is 4C66B7A5C4D000)
