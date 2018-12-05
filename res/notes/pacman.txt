@@ -1,0 +1,6 @@
+$48A6: 203C6F -> 4CCD48 to skip "keyboard or joystick" selection (context is 203C6F206848A900)
+$52F1: C9A0F004 -> 3006EAEA to exit on keypress
+$52F9: 4C5E6F -> 4C0001 to exit on keypress
+$027C: A5E8F0 -> 4C0001 to exit on button press (context is AD61C04D62C01007A5E8F0)
+$6F7C: 8D10C0 -> 4C0001 to exit on keypress (context is 20740210528D10C0C9D3)
+$8C0B: 4CD243 -> 4C0001 to exit after demo cycle (context is A5E8F0034CD243C658)
