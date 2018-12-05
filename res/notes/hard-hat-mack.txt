@@ -1,1 +1,13 @@
-a
+$0BD0: 8D1C08 -> 4C0001 to exit on keypress during title screen (context is AD00C030034CF70B8D1C08)
+$0BF7: AD -> 60 (context is AD00C0CD08C0D01B)
+$72B9: AD -> 60 (context is AD00C0C983F00160)
+$0C82: AE2508 -> 4C0001 to exit on keypress during demo (context is AE2508D01CC9C1)
+$5E4E: C0 -> D0 to disable sound during demo (context is B52ED008F62E2C30C0)
+$7249: 8D1072 -> 200601 to exit at end of demo cycle
+$0106: -> 8D10728D13728D1472EE147260 (new code for above patch)
+
+STA $7210
+STA $7213
+STA $7214
+INC $7214
+RTS
