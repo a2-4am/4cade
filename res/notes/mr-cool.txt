@@ -1,0 +1,33 @@
+$597F: AE10C0 -> 4C0001 to exit on keypress (context is AE10C0C983)
+$5A05: AD635E -> 4C0001 to exit on button press (context is AD61C010A2AD635E)
+$7F37: 8D9B5E -> 200601 to exit at end of demo cycle (context is A9058D9B5E203E7F60)
+
+$0106:
+STA $5E9B
+LDA $5C04
+CMP #$0C
+BEQ $0100
+RTS
+
+*3FE7L
+
+3FE7-   A0 0A       LDY   #$0A
+3FE9-   B9 F5 3F    LDA   $3FF5,Y
+3FEC-   99 06 01    STA   $0106,Y
+3FEF-   88          DEY
+3FF0-   10 F7       BPL   $3FE9
+3FF2-   4C 00 40    JMP   $4000
+3FF5-   8D 9B 5E    STA   $5E9B
+3FF8-   AD 04 5C    LDA   $5C04
+3FFB-   C9 0C       CMP   #$0C
+3FFD-   F0 F0       BEQ   $3FEF
+3FFF-   60          RTS
+4000-   2C 00 69    BIT   $6900
+4003-   20 00 85    JSR   $8500
+4006-   20 1F 5F    JSR   $5F1F
+4009-   A2 06       LDX   #$06
+400B-   A9 30       LDA   #$30
+400D-   9D 9E 5E    STA   $5E9E,X
+4010-   CA          DEX
+4011-   10 FA       BPL   $400D
+4013-   A2 03       LDX   #$03

@@ -33,8 +33,6 @@
 Apple Cider Spider
 Conan
 Gumball
-Karateka
-Serpentine [has graphical artifacts]
 Stellar 7
 Track N Field
 Tubeway ][
@@ -46,19 +44,16 @@ Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
-Choplifter
 Drelbs
 Firebird
 Flip Out
 Formula 1 Racer
 Galaxian
-Hard Hat Mack
 High Rise
 Lady Tut
 Mr. Cool
 Nibbler
 O'Riley's Mine
-Pac-Man
 Ribbit
 Robotron 2084
 Snake Byte
@@ -67,6 +62,7 @@ Spider Raid
 Starblaster
 Stargate
 Succession
+The Goonies
 Thunder Bombs
 
 # done
@@ -76,23 +72,29 @@ Aquatron
 Bolo
 BurgerTime
 Championship Lode Runner
+Choplifter
 Dino Eggs
 Dung Beetles
 Gamma Goblins
+Hard Hat Mack
 Jungle Hunt
+Karateka
 Lode Runner
 Lost Tomb
+Pac-Man
 Pest Patrol
 Pie-Man
 Pitfall II
 Plasmania
 Pooyan
 Repton
-Sammy Lightfoot [priority]
+Sammy Lightfoot
+Serpentine
 Sneakers
 Spare Change
 Spy Hunter
 Spy's Demise
+Warp Destroyer
 Wavy Navy
 Vindicator
 
