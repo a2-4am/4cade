@@ -1,0 +1,3 @@
+$A4E2: C99EF0 -> 4C0001 to exit on keypress (context is A9A08D8F03C99EF00E3860)
+$A4D3: AC62C0 -> 4C0001 to exit on button press (context is AC61C01015AC62C03010)
+$A0D4: 4CAFA0 -> 4C0001 to exit at end of demo cycle (context is 205AA120BCA44CAFA0)

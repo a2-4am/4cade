@@ -1,0 +1,2 @@
+$1D27: AD00C0 -> 4C0001 to exit on keypress (context is 2C00C01009AD00C0297F85D1)
+$0C00: 2058FC -> 4C0001 to exit at end of demo cycle (context is 2058FCAD51C0A902)
