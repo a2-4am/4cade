@@ -14,7 +14,7 @@ Championship Wrestling
 Congo Bongo
 Conquering Worlds
 Cubit
-Deathsword [DHGR] [priority]
+Deathsword [DHGR]
 Dive Bomber
 Double Trouble
 Dunzhin
@@ -27,12 +27,12 @@ Galaxy Gates
 Gulf Strike
 Heavy Barrel [DHGR] [priority]
 The Heist
-Impossible Mission II [DHGR] [priority]
+Impossible Mission II [DHGR]
 Jumpman
 Kamikaze
 Karate Champ
 Kung Fu Master
-L.A. Crackdown [DHGR]
+L.A. Crackdown
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
@@ -86,7 +86,6 @@ Frazzle
 Free Fall
 Galactic Attack
 Ghostbusters
-International Gran Prix
 Pentapus
 Pipe Dream [DHGR] [priority]
 Renegade [DHGR] [priority]
@@ -97,7 +96,6 @@ The Games: Summer Edition [DHGR]
 //qkumba crack
 Bandits
 Captain Goodnight
-The Goonies
 Injured Engine
 Jawbreaker ][
 Mating Zone
@@ -151,7 +149,6 @@ Lemmings
 Minotaur
 Phaser Fire
 Star Blazer
-Warp Destroyer
 
 //TODO(unacquired)
 Eggs It
