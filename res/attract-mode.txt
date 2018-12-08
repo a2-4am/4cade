@@ -31,11 +31,7 @@
 
 # TODO
 Apple Cider Spider
-Conan
 Gumball
-Stellar 7
-Track N Field
-Tubeway ][
 
 # uncompressed but unpatched
 Agent USA
@@ -44,6 +40,7 @@ Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
+Conan
 Drelbs
 Firebird
 Flip Out
@@ -61,9 +58,12 @@ Snoggle
 Spider Raid
 Starblaster
 Stargate
+Stellar 7
 Succession
 The Goonies
 Thunder Bombs
+Track N Field
+Tubeway ][
 
 # done
 Alien Ambush
