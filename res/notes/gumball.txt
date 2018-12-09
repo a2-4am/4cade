@@ -1,0 +1,10 @@
+stage 1 (title screen and credits):
+
+$0DFB: A56710 -> 4C0001 to exit on button press or keypress (context is 4CE60DA56710034C100E)
+$0FD0: 4CA00F -> 4C020E to continue to demo stage 2 after end of demo stage 1
+$0E09: 00 -> FF so stage 2 doesn't stomp on our code at $100 (context is A2009AA9014CEDFD)
+
+stage 2 (demo play):
+
+$0DF6: 205D0F -> 4C0001 to exit on button press or keypress (context is A9FF3002A900851B205D0F)
+$12F6: A90185 -> 4C0001 to exit when clock strikes 01:00 (context is A5ADC913D004A90185ADD860)
