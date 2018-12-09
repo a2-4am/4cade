@@ -1,0 +1,6 @@
+$4F46: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010158D10C0C9C3)
+$AD44: 297FC9 -> 4C0001 to exit on keypress (context is AD00C01016297FC920D006)
+$AD28: 2980CD1CAD -> 10154C0001 to exit on button press (context is BD61C02980CD1CADF00DAE1CAD)
+$9580: C0 -> D0 to disable cassette sound (context is CD00C0CD20C0EAEAEAEAEAEAEA)
+$AB84: C9D3D0068D -> 10084C0001 to exit on keypress (context is A001AD00C0C9D3D0068D10C04CACA8)
+$AC64: 4C52AC -> 4C0001 to exit after demo cycle (context is 20034E2006A84C52AC)
