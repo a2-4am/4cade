@@ -29,10 +29,6 @@
 # Notes on completed and in-progress captive demos are in res/notes/
 #
 
-# TODO
-Apple Cider Spider
-Gumball
-
 # uncompressed but unpatched
 Agent USA
 Alien Downpour
@@ -40,7 +36,6 @@ Bouncing Kamungas
 Buzzard Bait
 Canyon Climber
 Ceiling Zero
-Conan
 Drelbs
 Firebird
 Flip Out
@@ -48,7 +43,6 @@ Formula 1 Racer
 Galaxian
 High Rise
 Lady Tut
-Mr. Cool
 Nibbler
 O'Riley's Mine
 Ribbit
@@ -63,24 +57,27 @@ Succession
 The Goonies
 Thunder Bombs
 Track N Field
-Tubeway ][
 
 # done
 Alien Ambush
 Alien Rain
+Apple Cider Spider
 Aquatron
 Bolo
 BurgerTime
 Championship Lode Runner
 Choplifter
+Conan
 Dino Eggs
 Dung Beetles
 Gamma Goblins
+Gumball
 Hard Hat Mack
 Jungle Hunt
 Karateka
 Lode Runner
 Lost Tomb
+Mr. Cool
 Pac-Man
 Pest Patrol
 Pie-Man
@@ -94,6 +91,7 @@ Sneakers
 Spare Change
 Spy Hunter
 Spy's Demise
+Tubeway ][
 Warp Destroyer
 Wavy Navy
 Vindicator
