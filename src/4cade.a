@@ -11,6 +11,8 @@
 FirstMover
 !pseudopc $D000 {
 Reenter                              ; self-running demos should call this to exit back to 4cade
+         cld
+         cli
          +READ_RAM1_WRITE_RAM1
          jsr   CloseHandles          ; close any open handles to restore ProRWTS state to original
          jsr   SaveScreenHoles       ; restore screen hole contents from saved copy
