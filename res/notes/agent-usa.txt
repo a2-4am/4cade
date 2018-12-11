@@ -1,5 +1,3 @@
-initial title screen needs keypress awareness
-
 $15DD: 2C61C0 -> EAEAEA to disable button press on main menu (context is 2C61C01002290F85DD)
 $1605: 2C10C0 -> 4C0001 to exit when user presses key on main menu (context is 2C10C0851AA205DDD09D)
 $AC64: C0 -> D0 to disable sound (context is AD30C088D004C6FAF007)

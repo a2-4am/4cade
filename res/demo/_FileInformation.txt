@@ -1,4 +1,4 @@
-AGENT.USA=Type(06),AuxType(367C),Access(C3)
+AGENT.USA=Type(06),AuxType(0300),Access(C3)
 AGENT.USA.1=Type(F1),AuxType(0000),Access(C3)
 ALIEN.AMBUSH=Type(06),AuxType(4000),Access(C3)
 ALIEN.DOWNPOUR=Type(06),AuxType(0300),Access(C3)
