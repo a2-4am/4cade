@@ -1,0 +1,11 @@
+$50B8: C0 -> D0 to disable sound (context is AD30C0EA8810EAA51C)
+$0933: C9C5D020AD -> 101E4C0001 to exit on keypress at title screen (context is AD00C0C9C5D020ADC170F017A23FA900)
+$0905: 203009 -> 4C0001 to exit on keypress during demo (context is AD00C0100320309)
+$1DF7: C0 -> D0 to disable sound (context is 8D30C0A419C8C41AD0D660)
+$5F5D: C992F00FC9 -> 10064C0001 to exit on keypress (context is AD00C0C992F00FC993F005)
+$1151: C0 -> D0 to disable sound (context is B11C91268D30C088D0B9)
+$16E0: C0 -> D0 to disable sound (context is 20E01F8D30C0A419C8C415)
+$166B: C0 -> D0 to disable sound (context is 8D30C020E01FA5192901)
+$167A: C0 -> D0 to disable sound (context is 8D30C020E01FA4198810D1)
+$51C7: 203009 -> 4C0001 to exit on keypress on enemies page (context is AD00C01003203009E64E)
+$51D2: 4C0D51 -> 4C0001 to exit at end of demo cycle

@@ -30,7 +30,6 @@
 #
 
 # uncompressed but unpatched
-Agent USA
 Alien Downpour
 Bouncing Kamungas
 Buzzard Bait
@@ -45,20 +44,18 @@ High Rise
 Lady Tut
 Nibbler
 O'Riley's Mine
-Ribbit
 Robotron 2084
 Snake Byte
 Snoggle
 Spider Raid
-Starblaster
 Stargate
 Stellar 7
-Succession
 The Goonies
 Thunder Bombs
 Track N Field
 
 # done
+Agent USA
 Alien Ambush
 Alien Rain
 Apple Cider Spider
@@ -102,4 +99,7 @@ Drol (attract mode is minimal)
 Mr. Do (attract mode requires 64K)
 Prince of Persia (requires 128K)
 Rescue Raiders (requires 64K)
+Ribbit ("demo" is just "practice mode" with infinite lives and no scoring)
+Starblaster ("demo" is just "practice mode" with infinite lives and no scoring)
+Succession ("demo" is just "practice mode" with infinite lives and no scoring)
 Tag Team Wrestling (requires 64K)
