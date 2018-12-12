@@ -1,0 +1,8 @@
+$408E: 83 -> 82
+$4091: 83 -> 82 (context is AD83C0AD83C0)
+$5BF9: 8D -> 60 to disable sound (context is 209B478D30C060)
+$4056: C0 -> D0 to disable sound
+$405C: C0 -> D0 to disable sound (context is AD30C088D005AD30C0A4B7)
+$49A9: C993D0 -> 4C0001 to exit on keypress (context is AD00C01046C993)
+$5A79: AD00C0 -> A901EA (context is AD00C0A2004CAC47)
+$164B: C0 -> D0 to disable sound (context is AD30C0A5FEF01088D0)

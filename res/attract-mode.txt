@@ -37,16 +37,13 @@ Canyon Climber
 Ceiling Zero
 Drelbs
 Firebird
-Flip Out
 Formula 1 Racer
-Galaxian
 High Rise
 Lady Tut
 Nibbler
 O'Riley's Mine
 Robotron 2084
 Snake Byte
-Snoggle
 Spider Raid
 Stargate
 Stellar 7
@@ -67,6 +64,7 @@ Choplifter
 Conan
 Dino Eggs
 Dung Beetles
+Flip Out
 Gamma Goblins
 Gumball
 Hard Hat Mack
