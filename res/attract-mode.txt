@@ -45,7 +45,6 @@ O'Riley's Mine
 Robotron 2084
 Snake Byte
 Spider Raid
-Stargate
 Stellar 7
 The Goonies
 Thunder Bombs
@@ -86,6 +85,7 @@ Sneakers
 Spare Change
 Spy Hunter
 Spy's Demise
+Stargate
 Tubeway ][
 Warp Destroyer
 Wavy Navy
