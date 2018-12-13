@@ -40,7 +40,6 @@ Firebird
 Formula 1 Racer
 High Rise
 O'Riley's Mine
-Robotron 2084
 Snake Byte
 Spider Raid
 Stellar 7
@@ -78,6 +77,7 @@ Pitfall II
 Plasmania
 Pooyan
 Repton
+Robotron 2084
 Sammy Lightfoot
 Serpentine
 Sneakers
