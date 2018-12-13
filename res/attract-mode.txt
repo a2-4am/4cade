@@ -39,7 +39,6 @@ Drelbs
 Firebird
 Formula 1 Racer
 High Rise
-Nibbler
 O'Riley's Mine
 Robotron 2084
 Snake Byte
