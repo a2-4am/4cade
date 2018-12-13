@@ -39,7 +39,6 @@ Drelbs
 Firebird
 Formula 1 Racer
 High Rise
-Lady Tut
 Nibbler
 O'Riley's Mine
 Robotron 2084
@@ -69,6 +68,7 @@ Gumball
 Hard Hat Mack
 Jungle Hunt
 Karateka
+Lady Tut
 Lode Runner
 Lost Tomb
 Mr. Cool
