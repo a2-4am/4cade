@@ -1,0 +1,6 @@
+$1984: 03686860 -> 0A4C0001 to exit on keypress and disable button detection on title screen (context is AD00C01003686860AD61C01002686860)
+$0914: 00 -> FF to disable sound (context is A900853020AB16)
+$165C: AD61C0 -> A901EA to disable button detection (context is AD61C01007A90085FA)
+$166D: 297FC9 -> 4C0001 to exit on keypress during demo (context is AD00C01015297FC931F019)
+$0981: 297FC9 -> 4C0001 to exit on keypress during demo (context is AD00C0102B297FC953D009)
+$11BC: 4C3409 -> 4C0001 to exit at end of demo cycle (context is A9FF85E92029174C3B094C3409)
