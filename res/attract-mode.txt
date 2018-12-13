@@ -38,7 +38,6 @@ Ceiling Zero
 Drelbs
 Firebird
 Formula 1 Racer
-High Rise
 O'Riley's Mine
 Snake Byte
 Spider Raid
@@ -63,6 +62,7 @@ Flip Out
 Gamma Goblins
 Gumball
 Hard Hat Mack
+High Rise
 Jungle Hunt
 Karateka
 Lady Tut

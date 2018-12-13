@@ -1,0 +1,7 @@
+$06BF: 20 -> 2C to skip unskippable text title page and joystick configuration (context is 20000CA9088503)
+$0586: A008B9 -> 4C0001 to exit on keypress (context is AD00C01043A008B9E006)
+$406F: E6B260 -> 4C0001 to exit on buttonn press (context is AE61C030034C2140E6B260)
+$4039: 20 -> 2C to reduce wait time on title screen (context is 207240A002B107F012)
+$087C: 4C2408 -> 4C0001 to exit on button press (context is AD61C010034C2408AD6D10)
+$12C3: 4C2408 -> 4C0001 to exit on button press (context is AD61C010034C2408AD00C0)
+$12CB: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C0103A8D10C08D5C10C9A0)
