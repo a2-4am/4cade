@@ -1,0 +1,4 @@
+$789B: 48A900 -> 4C0001 to exit on keypress (context is AD00C0C980902448A9008D10C068)
+$78CB: 4C9878 -> 4C0001 to exit on keypress (context is AD00C0C98090034C9B7860)
+$7A8C: 48A900 -> 4C0001 to exit on keypress (context is AD00C0C980904448A9008D10C068)
+$7837: 4C3178 -> 4C0001 to exit at end of demo cycle (context is 209309203A78209F794C3178)
