@@ -39,7 +39,6 @@ Drelbs
 Firebird
 Formula 1 Racer
 O'Riley's Mine
-Snake Byte
 Spider Raid
 Stellar 7
 The Goonies
@@ -79,6 +78,7 @@ Repton
 Robotron 2084
 Sammy Lightfoot
 Serpentine
+Snake Byte
 Sneakers
 Spare Change
 Spy Hunter

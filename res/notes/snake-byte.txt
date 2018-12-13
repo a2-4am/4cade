@@ -1,0 +1,4 @@
+$621F: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010F78D10C09D3C62)
+$6C11: B900C0 -> B900D0 to disable sound (context is AC496CB900C0) <-- possible general purpose search-and-replace here
+$7806: 4CB776 -> 4C0001 to exit at end of demo cycle (context is 20B3782033764CB776)
+$78AD: 4CC776 -> 4C0001 to exit at end of demo cycle (context is 8D5E72D84CC776)
