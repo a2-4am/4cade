@@ -301,6 +301,7 @@ Prelaunch                            ; this runs from main memory
          +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
          jsr   $FE89                 ; initialize machine like a cold boot
          jsr   $FE93                 ; (many games assume a 'clean slate')
+         jsr   $FE84
          sta   $C000
          sta   $C002
          sta   $C004
