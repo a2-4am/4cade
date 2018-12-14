@@ -1,0 +1,4 @@
+$1067: 4C1B90 -> 4C0001 to exit on keypress or button press (context is 20F51E4C6B104C1B90)
+$1B31: C9E090 -> 4C0001 to exit on keypress (context is AD00C01006C9E0900229DF60)
+$7A6B: 4C1B90 -> 4C0001 to exit on button press (context is AD61C04DB60910034C1B90)
+$80DD: 20EF15 -> 4C0001 to exit at end of demo cycle (context is 20EF152003904C1380)
