@@ -22,6 +22,7 @@ if "%1" equ "asm" (
 2>nul md build\po
 2>nul md build\X
 2>nul md build\HGR
+2>nul md build\ACTION
 2>nul md build\DHGR
 2>nul md build\SS
 2>nul md build\DEMO
@@ -96,6 +97,9 @@ call :asm
 1>nul copy /y res\hgr\* build\HGR >>build\log
 cscript /nologo bin/buildfileinfo.js build\HGR >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build/log
+1>nul copy /y res\action\* build\ACTION >>build/log
+cscript /nologo bin/buildfileinfo.js build\ACTION >>build/log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION" "build/ACTION" >>build/log
 1>nul copy /y res\dhgr\* build\DHGR >>build\log
 cscript /nologo bin/buildfileinfo.js build\DHGR >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DHGR" "build/DHGR" >>build\log

@@ -253,19 +253,26 @@ traverse
 
 promote
 !pseudopc $bf00 {
-        lda    $c08b
-        clc
-        bcc    @do_enter
+        lda    $c012
+        asl
+        !byte  $2c
+        nop
 ;$bf06
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
-@do_enter
-        lda    $c08b
-        jmp    ProDOS_enter
+
+        lda    $c011
+        jmp    ProDOS_enable
         !text  "q4!"
 ;$bf10
         !word  $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
+ProDOS_enable
+        bit    $c08b
+        bit    $c08b
+        jmp    ProDOS_enter
 ProDOS_exit
-        bit    $c081
+        sta    $c082, x
+ProDOS_savedX
+        ldx    #$d1
         rts
 ProDOS_fatal ;only for debugging, will be removed
         pha
@@ -274,7 +281,7 @@ ProDOS_fatal ;only for debugging, will be removed
         jsr    $fe93
         pla
         jsr    $fdda
-        jmp    $ff59
+        jmp    $ff65
 ProDOS_prefix=$bfd0
 ;        !fill  $2e
 }
@@ -343,7 +350,11 @@ ProDOS_enter
   } else { ;PASS2
     !set PASS2=1
   }
+    stx    ProDOS_savedX+1
+    pha
     jsr    @swap_zp
+    pla
+    tax
     pla
     sta    @fetchaddr+1
     pla
@@ -358,6 +369,7 @@ ProDOS_enter
     pha
     lda    @fetchaddr+1
     pha
+    php
     txa
     pha
     tya
@@ -378,6 +390,8 @@ ProDOS_enter
     beq    @do_close
     cmp    #$ce
     beq    @do_seek
+    cmp    #$d1
+    beq    @do_eof
     ;;any others??
     jmp    ProDOS_fatal
 @do_getattrib
@@ -395,6 +409,8 @@ ProDOS_enter
     jmp    @restore_zp
 @do_seek
     jmp    @imp_seek
+@do_eof
+    jmp    @imp_eof
 
 @imp_getattrib
     lda    packet+1
@@ -486,6 +502,15 @@ ProDOS_enter
 @jmp_zp
     jmp    @restore_zp
 
+@imp_eof
+    ldy    #2
+    lda    bleftlo
+    sta    (packet), y
+    iny
+    lda    blefthi
+    sta    (packet), y
+    jmp    @restore_zp
+
 @imp_close
     lda    @handles+1
     beq    @close_ret
@@ -558,9 +583,16 @@ ProDOS_enter
 
 @restore_zp
     jsr    @swap_zp
-    pla ;saved inside ProDOS_enter
+    pla
     tay
     pla
+    lsr
+    lsr
+    lsr
+    lsr
+    and    #8
+    plp
+    adc    #0
     tax
     lda    #0
     clc

@@ -1997,9 +1997,6 @@ seek1           sta     blkidx
                 lda     #1
                 sta     sizehi
 } else { ;rwts_mode
-  !if (enable_readseq + allow_subdir) > 0 {
-hddrdwrpart     jmp     hddrdwrfile
-  } ;enable_readseq or allow_subdir
 hddopendir
   !if no_interrupts = 1 {
     !if detect_err = 1 {
@@ -2086,6 +2083,9 @@ hddnextent      ldy     #0
                 tax
                 inx
 -               cmp     (namlo), y
+                beq     hddfoundname
+                ora     #$80
+                cmp     (namlo), y
                 beq     hddfoundname
 
                 ;match failed, check if any directory entries remain
@@ -2278,6 +2278,7 @@ attribpatch
 ++
 } ;rwts_mode
 
+hddrdwrpart
 hddrdfile
 hddrdwrfile
                 lda     #$ff
