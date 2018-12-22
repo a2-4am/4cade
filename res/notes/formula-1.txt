@@ -1,0 +1,6 @@
+$72AE: C9B190 -> 4C0001 to exit on keypress (context is AD00C0300160C9B190)
+$7356: C0 -> D0 to disable sound (context is AD30C0A01EEA88D0FCCA60)
+$6DEC: C99BD00FA9 -> 10114C0001 to exit on keypress (context is AD00C0C99BD00FA9)
+$733F: C0 -> D0 to disable sound (context is AD30C0A92020A8FC88D0F5)
+$7307: C0 -> D0 to diasble sound (context is AD30C0CAD0DFCE030F)
+$6EBD: 4CC371 -> 4C0001 to exit at end of demo cycle (context is A53AD0034CC371)
