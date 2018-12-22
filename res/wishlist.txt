@@ -28,7 +28,6 @@ Gulf Strike
 Heavy Barrel [DHGR] [priority]
 The Heist
 Impossible Mission II [DHGR]
-Jumpman
 Kamikaze
 Karate Champ
 Kung Fu Master
@@ -69,8 +68,6 @@ Super Bunny
 Super Huey
 Techno Cop [DHGR] [priority]
 Tharolian Tunnels
-The Games: Winter Edition [DHGR]
-Threshold
 Video Vegas
 World Karate Championship
 The World's Greatest Baseball Game
@@ -91,7 +88,6 @@ Pipe Dream [DHGR] [priority]
 Renegade [DHGR] [priority]
 Sea Dragon
 Ski Crazed
-The Games: Summer Edition [DHGR]
 
 //qkumba crack
 Bandits
@@ -100,10 +96,8 @@ Injured Engine
 Jawbreaker ][
 Mating Zone
 Randamn
-Rescue Raiders [priority]
 Saracen
 Test Drive [DHGR] [priority]
-Thexder [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
 The Bilestoad
@@ -124,7 +118,6 @@ Peeping Tom
 Pulsar II
 Quadrant 6112
 Rear Guard
-Red Alert
 Roach Hotel
 Russki Duck
 Seafox
