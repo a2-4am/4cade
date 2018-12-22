@@ -1,0 +1,17 @@
+$277C: C0 -> D0 to disable sound (context is 8D30C0E8D0F5A940)
+$278F: C0 -> D0 to disable sound (context is 2C30C0CAD0FD2C30)
+$2795: C0 -> D0 to disable sound (context is 2C30C0C600D0ECA9)
+$3170: A9FF85 -> 4C0001 to exit on keypress (context is A9FF85304C800B)
+$3156: C0 -> D0 to disable sound (context is 2C30C0A90120A8FC2C30)
+$315E: C0 -> D0 to disable sound (context is 2C30C0CAD0EAA96020A8FC4C1031)
+$8C35: C0 -> D0 to disable sound (context is 186901850785074C80898D30C060)
+$A367: C9A0F005 -> 3007EAEA
+$A370: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C0C9A0F005A9024CA8FC8D10C0)
+$7E48: A5AA85 -> 4C0001 to exit on keypress (context is AD00C0100BA5AA85D4)
+$18A5: C9D3D0 -> 4C0001 to exit on keypress (context is AD00C01028C9D3D004203818)
+$198D: C995D0 -> 4C0001 to exit on keypress (context is AD00C0101EC995D00BA5F9)
+$8EDE: C0 -> D0 to disable sound (context is 8D30C0CAD0F5A5D1)
+$8CBD: C0 -> D0 to disable sound (context is 20308D2080898D30C060)
+$8C7B: C0 -> D0 to disable sound (context is 850618690185074C80898D30C060)
+$8C9D: C0 -> D0 to disable sound (context is A900850820388D2080898D30C060)
+$7B28: 4C00B0 -> 4C0001 to exit at end of demo cycle
