@@ -32,13 +32,8 @@
 # uncompressed but unpatched
 Alien Downpour
 Bouncing Kamungas
-Buzzard Bait
-Canyon Climber
 Ceiling Zero
 Drelbs
-Firebird
-Formula 1 Racer
-O'Riley's Mine
 Spider Raid
 Stellar 7
 The Goonies
@@ -52,12 +47,15 @@ Apple Cider Spider
 Aquatron
 Bolo
 BurgerTime
+Buzzard Bait
 Championship Lode Runner
 Choplifter
 Conan
 Dino Eggs
 Dung Beetles
+Firebird
 Flip Out
+Formula 1 Racer
 Gamma Goblins
 Gumball
 Hard Hat Mack
@@ -68,6 +66,7 @@ Lady Tut
 Lode Runner
 Lost Tomb
 Mr. Cool
+O'Riley's Mine
 Pac-Man
 Pest Patrol
 Pie-Man
