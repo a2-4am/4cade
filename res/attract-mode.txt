@@ -30,7 +30,6 @@
 #
 
 # uncompressed but unpatched
-Alien Downpour
 Spider Raid
 Stellar 7
 The Goonies
@@ -39,6 +38,7 @@ Track N Field
 # done
 Agent USA
 Alien Ambush
+Alien Downpour
 Alien Rain
 Apple Cider Spider
 Aquatron
