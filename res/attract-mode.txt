@@ -31,7 +31,6 @@
 
 # uncompressed but unpatched
 Alien Downpour
-Bouncing Kamungas
 Spider Raid
 Stellar 7
 The Goonies
@@ -44,6 +43,7 @@ Alien Rain
 Apple Cider Spider
 Aquatron
 Bolo
+Bouncing Kamungas
 BurgerTime
 Buzzard Bait
 Ceiling Zero
