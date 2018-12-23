@@ -1,0 +1,7 @@
+$7D97: AD61C0 -> AD00C0 to change button detection to keypress detection (context is AD61C010036C1C04)
+$7D9C: 6C1C04 -> 4C0001 to exit on aforementioned keypress
+$8117: AD61C0 -> AD00C0 to change button detection to keypress detection (context is AD61C03004C617)
+$7DD7: AD61C0 -> AD00C0 to change button detection to keypress detection (context is AD61C0300CE658)
+$7DE8: 6C1C04 -> 4C0001 to exit on aforementioned keypress
+$7E69: AD61C0 -> AD00C0 to change button detection to keypress detection (context is AD61C030036C0A046C1E04)
+$7DE3: AD61C0 -> 4C0001 to exit at end of demo cycle

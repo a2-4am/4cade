@@ -1,0 +1,139 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Search Mode - incrementally search game catalog
+;
+; Public functions
+; - SearchMode
+;
+
+MaxInputLength = 24
+
+SearchMode
+         jsr   Home                  ; switches to text mode
+
+         jsr   LoadFile              ; load initial background at $2000
+         !word Cover
+
+         lda   #22                   ; draw search UI on top of background
+         sta   VTAB
+         clc                         ; draw on page 1
+         +LDADDR UILine1
+         jsr   Draw40Chars
+         clc
+         +LDADDR UILine2
+         jsr   Draw40Chars
+
+         bit   $c054                 ; show it
+         bit   $c052
+         bit   $c057
+         bit   $c050
+
+@loop
+         bit   $c010
+-        lda   $c000
+         bpl   -
+
+         ldx   InputLength
+         cpx   MaxInputLength
+         beq   @loop
+
+         sta   InputBuffer,x
+         inc   InputLength
+         jsr   OnInputChanged
+
+         jmp   @loop
+
+OnInputChanged
+         lda   #0
+         sta   MatchCount
+
+         jsr   okvs_iter_values
+         !word gGamesListStore
+         !word RankSearchResult
+
+         lda   MatchCount
+         beq   @nomatches
+
+         lda   BestMatchIndex
+         cmp   SelectedIndex
+         beq   @nochange
+
+         sta   SelectedIndex
+         sta   @index
+         jsr   okvs_nth
+         !word gGamesListStore
+@index   !byte $FD
+         +STAY @key
+
+         ; load game title page at $4000 (page 2, not currently visible)
+         +LOAD_FILE kHGRScreenshotDirectory, @key
+
+         jsr   okvs_get
+         !word gGamesListStore
+@key     !word $FDFD
+         ; TODO A/Y points to visible title string now
+
+@nochange
+         ; TODO
+         clc
+         rts
+@nomatches
+         ; TODO
+         sec
+         rts
+
+RankSearchResult
+zpword = $0
+zpstring = $2
+runningscore = $4
+startat = $6
+i = $7
+tmp = $8
+         stx   @tmpx
+         +STAY zpstring
+         +LDADDR InputLength
+         +STAY zpword
+         ldy   #0
+         lda   (zpstring),y
+         cmp   InputLength
+         bne   +
+-        lda   (zpword),y
+         cmp   (zpstring),y
+         bne   +
+         dey
+         bne   -
+         lda   #100
+         rts
++
+@tmpx    !byte $FD
+
+Cover    !byte 5
+         !text "COVER"
+
+InputLength
+         !byte 0
+InputBuffer
+         !text "                         "
+SelectedIndex                        ; only valid if InputLength > 0
+         !byte $FF
+MatchCount                           ; only valid during OnInputChanged
+         !byte 0
+BestMatchScore                       ; only valid during OnInputChanged
+         !byte 0
+BestMatchIndex                       ; only valid during OnInputChanged, and only if MatchCount > 0
+         !byte 0
+
+UILine1
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0
+
+UILine2
+;        !text "0123456789012345678901234567890123456789"
+         !text "["
+         !byte $7F
+;        !text "Championship Lode Runner_"
+         !text "                         "
+         !text "]   000 games"

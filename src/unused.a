@@ -37,3 +37,68 @@ cover128
 cover128_b
          !text "COVER.A2FC"
 cover128_e
+
+
+
+
+
+
+         bcs   @noname
+         +STAY PTR
+         ldx   #0
+         stx   HTAB
+         ldx   #22
+         stx   VTAB
+         ldy   #0
+         lda   (PTR),y
+         tax
+         +LDADDR @topline
+         jsr   DrawBuffer
+         ldx   #3
+         +LDADDR @toprightcorner
+         jsr   DrawBuffer
+         inc   VTAB
+         ldx   #0
+         stx   HTAB
+         inx
+         +LDADDR @rightline
+         jsr   DrawBuffer
+         +LDAY PTR
+         jsr   DrawString
+         ldx   #2
+         +LDADDR @rightline
+         jsr   DrawBuffer
+
+         dec   VTAB
+         ldx   #0
+         stx   HTAB
+@noname
+         rts
+@topline
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+@toprightcorner
+         !byte 0,0,7
+@rightline
+         !text " "
+         !byte 3
+
+
+
+
+HGR2To1
+         lda   #$40
+         sta   @a+2
+         ldx   #$20
+         stx   @b+2
+         ldy   #0
+@a       lda   $FD00,y    ; SMC
+@b       sta   $FD00,y    ; SMC
+         iny
+         bne   @a
+         inc   @a+2
+         inc   @b+2
+         dex
+         bne   @a
+         rts
+

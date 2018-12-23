@@ -20,11 +20,13 @@ Main
          ldx   #$FF
          txs
          jsr   BlankHGR
--        bit   $C010
+@loop
+         bit   $C010
          jsr   AttractMode
-         jmp   -
+         jmp   @loop
 
          ; these routines will only be called after relocating to language card
+         !source "src/ui.search.mode.a"
          !source "src/ui.attract.mode.a"
          !source "src/prodos.path.a"
          !source "src/glue.prorwts2.a"
@@ -33,6 +35,8 @@ Main
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
          !source "src/parse.games.a"
+         !source "src/ui.font.a"
+         !source "src/ui.font.data.a"
 gGlobalPrefsStore
          !word *+2                   ; address of first okvs store
 }

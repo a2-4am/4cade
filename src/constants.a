@@ -20,6 +20,8 @@ PTR          = $02
 SRC          = $04
 DEST         = $06
 SAVE         = $08
+HTAB         = $24
+VTAB         = $25
 MachineStatus =$F0        ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
 ;              $FE        ; used by ParseGamesList

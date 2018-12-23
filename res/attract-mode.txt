@@ -32,8 +32,6 @@
 # uncompressed but unpatched
 Alien Downpour
 Bouncing Kamungas
-Ceiling Zero
-Drelbs
 Spider Raid
 Stellar 7
 The Goonies
@@ -48,6 +46,7 @@ Aquatron
 Bolo
 BurgerTime
 Buzzard Bait
+Ceiling Zero
 Championship Lode Runner
 Choplifter
 Conan
