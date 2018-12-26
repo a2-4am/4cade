@@ -31,7 +31,6 @@
 
 # uncompressed but unpatched
 Spider Raid
-Stellar 7
 Track N Field
 
 # done
@@ -81,6 +80,7 @@ Spare Change
 Spy Hunter
 Spy's Demise
 Stargate
+Stellar 7
 The Goonies
 Thunder Bombs
 Tubeway ][
