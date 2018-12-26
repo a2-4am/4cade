@@ -273,6 +273,8 @@ ProDOS_exit
         sta    $c082, x
 ProDOS_savedX
         ldx    #$d1
+ProDOS_savedY
+        ldy    #$d1
         rts
 ProDOS_fatal ;only for debugging, will be removed
         pha
@@ -351,6 +353,7 @@ ProDOS_enter
     !set PASS2=1
   }
     stx    ProDOS_savedX+1
+    sty    ProDOS_savedY+1
     pha
     jsr    @swap_zp
     pla
@@ -371,8 +374,6 @@ ProDOS_enter
     pha
     php
     txa
-    pha
-    tya
     pha
 @request
     lda    #$d1
@@ -583,8 +584,6 @@ ProDOS_enter
 
 @restore_zp
     jsr    @swap_zp
-    pla
-    tay
     pla
     lsr
     lsr
