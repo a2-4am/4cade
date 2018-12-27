@@ -1,0 +1,6 @@
+$70F1: A901A4 -> 4C0001 to exit on button press (context is AD61C00D62C01010A901A4B5)
+$712C: 4C7070 -> 4CE370 to skip special key handlers (context is AD00C08D10C04C7070)
+$70D9: 8D10C0 -> 4C0001 to exit on key or button press (context is 8D10C0AD61C00D62C03004A90085B5)
+$0AD7: C9A0F0.. -> 3027EAEA to exit on keypress (context is A9818D6F9760AD00C0C9A0F0)
+$0B00: A901A2 -> 4C0001 to exit on button press (context is A901A2014C0004ADC2980DC498)
+$0863: A91420 -> 4C0001 to exit at end of demo cycle (context is A91420331820DD0EA2FF9A4C0608)

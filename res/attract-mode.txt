@@ -31,7 +31,6 @@
 
 # uncompressed but unpatched
 Spider Raid
-Track N Field
 
 # done
 Agent USA
@@ -83,6 +82,7 @@ Stargate
 Stellar 7
 The Goonies
 Thunder Bombs
+Track N Field
 Tubeway ][
 Warp Destroyer
 Wavy Navy
