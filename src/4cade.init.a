@@ -102,8 +102,6 @@ OneTimeSetup
          !word gAttractModeStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          !byte 0
-         +LDAY SRC
-         +STAY gSlideshowStore       ; save pointer to free space for next store
 
          jsr   okvs_get              ; get next attract-mode module from prefs
          !word gGlobalPrefsStore

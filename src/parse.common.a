@@ -14,7 +14,7 @@ gFXStore
 gDFXStore
          !word $FDFD
 gSlideshowStore
-         !word $FDFD
+         !word $0800
 
 ;------------------------------------------------------------------------------
 ; ParseKeyValueList
