@@ -76,24 +76,6 @@ OneTimeSetup
          !word gGamesListStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          +LDAY SRC
-         +STAY gFXStore              ; save pointer to free space for next store
-
-         jsr   LoadFile              ; load HGR transition effects list
-         !word kFXConfFile
-         jsr   ParseKeyValueList     ; parse HGR transition effects list
-         !word gFXStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
-         !byte 0
-         +LDAY SRC
-         +STAY gDFXStore             ; save pointer to free space for next store
-
-         jsr   LoadFile              ; load DHGR transition effects list
-         !word kDFXConfFile
-         jsr   ParseKeyValueList     ; parse DHGR transition effects list
-         !word gDFXStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
-         !byte 0
-         +LDAY SRC
          +STAY gAttractModeStore     ; save pointer to free space for next store
 
          jsr   LoadFile              ; load attract-mode configuration
@@ -146,16 +128,6 @@ kGameListConfFile
 @kGameListConfFile_b
          !text "GAMES.CONF"
 @kGameListConfFile_e
-kFXConfFile
-         !byte @kFXConfFile_e-@kFXConfFile_b
-@kFXConfFile_b
-         !text "FX.CONF"
-@kFXConfFile_e
-kDFXConfFile
-         !byte @kDFXConfFile_e-@kDFXConfFile_b
-@kDFXConfFile_b
-         !text "DFX.CONF"
-@kDFXConfFile_e
 kAttractModeConfFile
          !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
 @kAttractModeConfFile_b

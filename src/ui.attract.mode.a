@@ -177,6 +177,13 @@ WaitOnScreenshot
 +        rts
 
 LoadTransition
+         jsr   LoadFile              ; load HGR transition effects list
+         !word kFXConfFile
+         jsr   ParseKeyValueList     ; parse HGR transition effects list
+         !word gFXStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
+
          jsr   okvs_nth              ; get filename of transition effect code
          !word gFXStore
 gFXIndex
@@ -209,8 +216,20 @@ gFXIndex
          +LOAD_FILE kFXDirectory, @fxkey
          rts
 @fxkey   !word $FDFD
+kFXConfFile
+         !byte @kFXConfFile_e-@kFXConfFile_b
+@kFXConfFile_b
+         !text "FX.CONF"
+@kFXConfFile_e
 
 LoadDHGRTransition
+         jsr   LoadFile              ; load DHGR transition effects list
+         !word kDFXConfFile
+         jsr   ParseKeyValueList     ; parse DHGR transition effects list
+         !word gDFXStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
+
          jsr   okvs_nth              ; get filename of DHGR transition effect code
          !word gDFXStore
 gDFXIndex
@@ -243,6 +262,11 @@ gDFXIndex
          +LOAD_FILE kFXDirectory, @dfxkey
          rts
 @dfxkey   !word $FDFD
+kDFXConfFile
+         !byte @kDFXConfFile_e-@kDFXConfFile_b
+@kDFXConfFile_b
+         !text "DFX.CONF"
+@kDFXConfFile_e
 
 BlankHGR
          jsr   Home
