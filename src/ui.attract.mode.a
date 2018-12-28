@@ -12,6 +12,26 @@
 ; - gDFXIndex                        ; [byte] numeric index of DHGR transition effect
 
 AttractMode
+         jsr   LoadFile              ; load attract-mode configuration into $8000
+         !word kAttractModeConfFile
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into $6000
+         !word gAttractModeStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
+
+         jsr   okvs_get              ; get next attract-mode module from prefs
+         !word gGlobalPrefsStore
+         !word kNextAttract
+         bcs   @noattract
+         +STAY @attract
+         jsr   okvs_get
+         !word gAttractModeStore
+@attract !word $FDFD                 ; SMC
+         bcc   +
+@noattract
+         ldx   #0
++        stx   gAttractIndex
+
          jsr   okvs_nth              ; get filename of next attract-mode module
          !word gAttractModeStore
 gAttractIndex
@@ -125,6 +145,11 @@ gAttractIndex
          !word gSlideshowStore
          !word HGRLoad               ; address of callback (called on each file)
 @exit    rts
+kAttractModeConfFile
+         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
+@kAttractModeConfFile_b
+         !text "ATTRACT.CONF"
+@kAttractModeConfFile_e
 
 ;------------------------------------------------------------------------------
 ; internal functions
@@ -177,12 +202,24 @@ WaitOnScreenshot
 +        rts
 
 LoadTransition
-         jsr   LoadFile              ; load HGR transition effects list
+         jsr   LoadFile              ; load HGR transition effects list into $8000
          !word kFXConfFile
-         jsr   ParseKeyValueList     ; parse HGR transition effects list
+         jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
          !word gFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          !byte 0
+
+         jsr   okvs_get              ; get next HGR transition effect from prefs
+         !word gGlobalPrefsStore
+         !word kNextFX
+         bcs   @nofx
+         +STAY @fx
+         jsr   okvs_get
+         !word gFXStore
+@fx      !word $FDFD                 ; SMC
+         bcc   +
+@nofx    ldx   #0
++        stx   gFXIndex
 
          jsr   okvs_nth              ; get filename of transition effect code
          !word gFXStore
@@ -223,12 +260,24 @@ kFXConfFile
 @kFXConfFile_e
 
 LoadDHGRTransition
-         jsr   LoadFile              ; load DHGR transition effects list
+         jsr   LoadFile              ; load DHGR transition effects list into $8000
          !word kDFXConfFile
-         jsr   ParseKeyValueList     ; parse DHGR transition effects list
+         jsr   ParseKeyValueList     ; parse DHGR transition effects list into $6000
          !word gDFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          !byte 0
+
+         jsr   okvs_get              ; get next DHGR transition effect from prefs
+         !word gGlobalPrefsStore
+         !word kNextDFX
+         bcs   @nodfx
+         +STAY @dfx
+         jsr   okvs_get
+         !word gDFXStore
+@dfx     !word $FDFD                 ; SMC
+         bcc   +
+@nodfx   ldx   #0
++        stx   gDFXIndex
 
          jsr   okvs_nth              ; get filename of DHGR transition effect code
          !word gDFXStore

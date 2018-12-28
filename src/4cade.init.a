@@ -60,67 +60,21 @@ OneTimeSetup
          ldy   hddopendir+3
          +STAY gRootDirectory
 
-         jsr   LoadFile              ; load preferences file
+         jsr   LoadFile              ; load preferences file into $8000
          !word kGlobalPrefsFilename
 
-         jsr   ParseKeyValueList     ; parse contents into global prefs store
+         jsr   ParseKeyValueList     ; parse contents into global prefs store into LC RAM bank
          !word gGlobalPrefsStore
          !word ldrlo2                ; (ldrlo2) points to last load address
          !byte 16
          +LDAY SRC
          +STAY gGamesListStore       ; save pointer to free space for next store
 
-         jsr   LoadFile              ; load games list
+         jsr   LoadFile              ; load games list into $8000
          !word kGameListConfFile
-         jsr   ParseGamesList        ; parse games list
+         jsr   ParseGamesList        ; parse games list into LC RAM bank
          !word gGamesListStore
          !word ldrlo2                ; (ldrlo2) points to last load address
-         +LDAY SRC
-         +STAY gAttractModeStore     ; save pointer to free space for next store
-
-         jsr   LoadFile              ; load attract-mode configuration
-         !word kAttractModeConfFile
-         jsr   ParseKeyValueList     ; parse attract-mode configuration
-         !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
-         !byte 0
-
-         jsr   okvs_get              ; get next attract-mode module from prefs
-         !word gGlobalPrefsStore
-         !word kNextAttract
-         bcs   @noattract
-         +STAY @attract
-         jsr   okvs_get
-         !word gAttractModeStore
-@attract !word $FDFD                 ; SMC
-         bcc   +
-@noattract
-         ldx   #0
-+        stx   gAttractIndex
-
-         jsr   okvs_get              ; get next HGR transition effect from prefs
-         !word gGlobalPrefsStore
-         !word kNextFX
-         bcs   @nofx
-         +STAY @fx
-         jsr   okvs_get
-         !word gFXStore
-@fx      !word $FDFD                 ; SMC
-         bcc   +
-@nofx    ldx   #0
-+        stx   gFXIndex
-
-         jsr   okvs_get              ; get next DHGR transition effect from prefs
-         !word gGlobalPrefsStore
-         !word kNextDFX
-         bcs   @nodfx
-         +STAY @dfx
-         jsr   okvs_get
-         !word gDFXStore
-@dfx     !word $FDFD                 ; SMC
-         bcc   +
-@nodfx   ldx   #0
-+        stx   gDFXIndex
 
          jmp   Main
 kGameListConfFile
@@ -128,8 +82,3 @@ kGameListConfFile
 @kGameListConfFile_b
          !text "GAMES.CONF"
 @kGameListConfFile_e
-kAttractModeConfFile
-         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
-@kAttractModeConfFile_b
-         !text "ATTRACT.CONF"
-@kAttractModeConfFile_e

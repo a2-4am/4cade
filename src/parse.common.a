@@ -14,7 +14,7 @@
 ;
 
 gAttractModeStore
-         !word $FDFD
+         !word $6000
 gFXStore
          !word $6000
 gDFXStore
