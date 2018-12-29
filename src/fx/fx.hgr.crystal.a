@@ -1,3 +1,8 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; reverse engineered from Sapphire's crack screen of 'Crystal Castles'
+;
 !cpu 6502
 !to "build/FX/CRYSTAL",plain
 *=$6000

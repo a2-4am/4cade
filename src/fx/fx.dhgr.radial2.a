@@ -1,3 +1,6 @@
+;license:MIT
+;(c) 2018 by 4am
+;
 !cpu 6502
 !to "build/FX/DHGR.RADIAL2",plain
 *=$6000
