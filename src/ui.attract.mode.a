@@ -11,12 +11,25 @@
 ; - gFXIndex                         ; [byte] numeric index of HGR transition effect
 ; - gDFXIndex                        ; [byte] numeric index of DHGR transition effect
 
+;------------------------------------------------------------------------------
+; AttractMode
+; main entry point for Mega Attract Mode, which cycles through modules listed
+; in ATTRACT.CONF to provide pretty visual effects and snippets of self-running
+; self-terminating game demos
+;
+; in:    gGlobalPrefsStore must be initialized
+; out:   exits to caller (note that some attract mode modules never return but
+;        instead call |Reenter|, in which case this routine technically never
+;        returns)
+;        if this routine returns, everything is clobbered (zero page, main
+;        memory, unused portions of the stack page, all registers, all flags)
+;------------------------------------------------------------------------------
 AttractMode
-         jsr   LoadFile              ; load attract-mode configuration into $8000
+         jsr   LoadFile              ; load attract-mode configuration file at $8000
          !word kAttractModeConfFile
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into $6000
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
          !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
          !byte 0
 
          jsr   okvs_get              ; get next attract-mode module from prefs
@@ -63,7 +76,7 @@ gAttractIndex
 
          jsr   okvs_get
          !word gAttractModeStore
-@key     !word $FDFD
+@key     !word $FDFD                 ; SMC
          +STAY PTR
 
          jsr   @RunNextAttractModule
@@ -75,17 +88,16 @@ gAttractIndex
          ldy   #1
          lda   (PTR),y
          and   #$0F
-         cmp   #$03
          bne   @Slideshow
 
-                                     ; Self-running demos are loaded into main memory and executed.
-                                     ; Each binary has been patched to quit on any key and jump back
-                                     ; to the |Reenter| entry point.
-                                     ; All demos are strictly 48K / main memory. No demo uses the
-                                     ; language card or auxiliary memory.
+; Self-running demos are loaded into main memory and executed.
+; Each binary has been patched to quit on any key and jump back
+; to the |Reenter| entry point.
+; All demos are strictly 48K / main memory. No demo uses the
+; language card or auxiliary memory.
 
          jsr   Home                  ; clear text screen and switch to it during loading
-
+                                     ; to avoid seeing executable code load into the HGR page
          +LOAD_PATH kDemoDirectory
          ldy   gPathname
          iny
@@ -109,14 +121,14 @@ gAttractIndex
          dex
          bpl   -
          ldx   #(end_promote-promote-1)
--        lda   promote,x             ; copy tiny ProDOS to main memory
+-        lda   promote,x             ; copy ProDOS shim to main memory
          sta   $bf00,x
          dex
          bpl   -
          jmp   $106                  ; jump to pre-launch code
 
 @Slideshow                           ; HGR or DHGR slideshow
-         pha                         ; save module type (1=HGR, 2=DHGR)
+         pha                         ; save module type (1=HGR title, 2=HGR action, 3=DHGR title)
 
          +LOAD_FILE kAttractModeSlideshowDirectory, @key
 
@@ -127,36 +139,54 @@ gAttractIndex
 
          pla                         ; restore module type
          cmp   #$01
-         beq   @HGRSlideshow
+         beq   @HGRTitleSlideshow
+         cmp   #$02
+         beq   @HGRActionSlideshow
 
-@DHGRSlideshow
+@DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvc   @exit
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word DHGRLoad              ; address of callback (called on each file)
-         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen
+         !word DHGRTitleCallback     ; address of callback (called on each file)
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
-@HGRSlideshow
-         jsr   LoadTransition        ; load transition effect code at $6000
+@HGRTitleSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
-         !word HGRLoad               ; address of callback (called on each file)
-@exit    rts
+         !word HGRTitleCallback      ; address of callback (called on each file)
+@exit    rts                         ; exit with last picture still visible
+
+@HGRActionSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRActionCallback     ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
 kAttractModeConfFile
-         !byte @kAttractModeConfFile_e-@kAttractModeConfFile_b
-@kAttractModeConfFile_b
+         !byte @kAttractModeConfFile_e-*-1
          !text "ATTRACT.CONF"
 @kAttractModeConfFile_e
 
 ;------------------------------------------------------------------------------
 ; internal functions
 
-HGRLoad
-; in:    A/Y contains address of filename
+;------------------------------------------------------------------------------
+; HGRTitleCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single HGR title screenshot
 
+; in:    A/Y contains address of filename (name only, path is always /HGR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+HGRTitleCallback
          ldx   $C000
          bpl   +
          rts
@@ -164,15 +194,107 @@ HGRLoad
          +STAY PTR
 
          ; load HGR screenshot at $4000
-         +LOAD_FILE kHGRScreenshotDirectory, PTR
+         +LOAD_FILE kHGRTitleDirectory, PTR
 
-;         jsr   LoadTransition        ; uncomment this line to load a new transition on every picture
-         jsr   $6000                 ; call transition effect code to display picture
-         jmp   WaitOnScreenshot
+         jmp   ExecuteTransition     ; call transition effect code to display picture
 
-DHGRLoad
-; in:    A/Y contains address of filename
+;------------------------------------------------------------------------------
+; HGRActionCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single HGR action screenshot
 
+; in:    A/Y contains address of filename (name only, path is always /ACTION/)
+;        X contains 0-based index of the current record in gSlideshowStore
+;        gGamesListStore must be initialized
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+HGRActionCallback
+         ldx   $C000
+         bpl   +
+         rts
++
+         +STAY PTR
+         +STAY @key
+         +STAY @key2
+
+         ; load HGR screenshot at $4000
+         +LOAD_FILE kHGRActionDirectory, PTR
+
+; try to get the human-readable name of this game from gGamesListStore
+; and display it in the bottom-left corner
+         jsr   okvs_get
+         !word gGamesListStore
+@key     !word $FDFD                 ; SMC
+         bcc   @foundname
+; if the key is not found, try getting the value of the current record
+; from gSlideshowStore and using that instead
+; (some games have multiple action screenshots)
+         jsr   okvs_get
+         !word gSlideshowStore
+@key2    !word $FDFD                 ; SMC
+         bcs   @noname               ; should never happen
+         +STAY @key3
+         jsr   okvs_get
+         !word gGamesListStore
+@key3    !word $FDFD                 ; SMC
+         bcs   @noname               ; should never happen
+@foundname
+         +STAY PTR
+         ldx   #0
+         stx   HTAB
+         ldx   #22
+         stx   VTAB
+         ldy   #0
+         lda   (PTR),y
+         tax
+         +LDADDR @topline
+         sec
+         jsr   DrawBuffer
+         ldx   #3
+         +LDADDR @toprightcorner
+         sec
+         jsr   DrawBuffer
+         inc   VTAB
+         ldx   #0
+         stx   HTAB
+         inx
+         +LDADDR @rightline
+         sec
+         jsr   DrawBuffer
+         +LDAY PTR
+         sec
+         jsr   DrawString
+         ldx   #2
+         +LDADDR @rightline
+         sec
+         jsr   DrawBuffer
+@noname
+         jmp   ExecuteTransition
+@topline
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+@toprightcorner
+         !byte 0,0,7
+@rightline
+         !text " "
+         !byte 3
+
+;------------------------------------------------------------------------------
+; DHGRTitleCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single DHGR title screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /DHGR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+;        gGamesListStore must be initialized
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;        $2000..$5FFF/aux clobbered
+;------------------------------------------------------------------------------
+DHGRTitleCallback
          ldx   $C000
          bpl   +
          rts
@@ -180,7 +302,7 @@ DHGRLoad
          ; load DHGR screenshot at $4000/main and $4000/aux
          +STAY PTR
          jsr   ResetPath
-         +LDADDR kDHGRScreenshotDirectory
+         +LDADDR kDHGRTitleDirectory
          jsr   AddToPath
          +LDADDR kPathSeparator
          jsr   AddToPath
@@ -188,12 +310,12 @@ DHGRLoad
          jsr   AddToPath
          jsr   LoadDHRFile
          !word gPathname
+         ; execution falls through here
 
+ExecuteTransition
          jsr   $6000                 ; call transition effect code to display picture
-         ; note: execution falls through here
 
-WaitOnScreenshot
-         ldx   #$20
+         ldx   #$20                  ; picture is already showing so just wait
 -        lda   #0
          jsr   WaitForKeyWithTimeout
          bmi   +
@@ -201,7 +323,17 @@ WaitOnScreenshot
          bpl   -
 +        rts
 
-LoadTransition
+;------------------------------------------------------------------------------
+; LoadHGRTransition
+; looks up name of next HGR transition effect in FX.CONF and loads that file
+; at $6000
+
+; in:    gFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $6000..$BFFF contains transition effect code
+;------------------------------------------------------------------------------
+LoadHGRTransition
          jsr   LoadFile              ; load HGR transition effects list into $8000
          !word kFXConfFile
          jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
@@ -259,6 +391,16 @@ kFXConfFile
          !text "FX.CONF"
 @kFXConfFile_e
 
+;------------------------------------------------------------------------------
+; LoadDHGRTransition
+; looks up name of next DHGR transition effect in DFX.CONF and loads that file
+; at $6000
+
+; in:    gDFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $6000..$BFFF/main contains transition effect code
+;------------------------------------------------------------------------------
 LoadDHGRTransition
          jsr   LoadFile              ; load DHGR transition effects list into $8000
          !word kDFXConfFile
@@ -317,6 +459,14 @@ kDFXConfFile
          !text "DFX.CONF"
 @kDFXConfFile_e
 
+;------------------------------------------------------------------------------
+; BlankHGR
+; clear and show HGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF cleared
+;------------------------------------------------------------------------------
 BlankHGR
          jsr   Home
          jsr   ClearHGR1             ; clear hi-res screen 1
@@ -325,6 +475,15 @@ BlankHGR
          lda   $c052
          lda   $c050
          rts
+
+;------------------------------------------------------------------------------
+; BlankDHGR
+; clear and show DHGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF/main and /aux cleared
+;------------------------------------------------------------------------------
 BlankDHGR
          jsr   Home
          jsr   ClearHGR1             ; clear hi-res screen 1
@@ -338,8 +497,20 @@ BlankDHGR
          sta   $c050
          sta   $c05e
          rts
+
+;------------------------------------------------------------------------------
+; ClearHGR1
+; clear $2000..$3FFF in current memory bank (main or auxmem)
+;
+; in:    none
+; out:   $2000..$3FFF cleared
+;        A = 0
+;        X = 0
+;        Y = 0
+;        Z = 1
+;------------------------------------------------------------------------------
 ClearHGR1
-         ldx   #$20                  ; clear hi-res screen 1
+         ldx   #$20
          stx   @a+2
          lda   #0
          tay
@@ -350,6 +521,14 @@ ClearHGR1
          dex
          bne   @a
          rts
+
+;------------------------------------------------------------------------------
+; Home
+; clear and display text screen
+;
+; in:    none
+; out:   $0100..$011F clobbered
+;------------------------------------------------------------------------------
 Home
          ldx   #(@end-@start-1)
 -        lda   @start,x
@@ -368,13 +547,28 @@ Home
          rts
 @end
 
+;------------------------------------------------------------------------------
+; Prelaunch
+; code to set up machine for running a self-running, self-terminating game demo
+; DO NOT CALL DIRECTLY
+; must be run from main memory
+; contains multiple entry points
+;
+; in:    none
+; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
+;        (not here, but wherever it was copied to in main memory) or by
+;        manually enabling LC RAM bank 1 then JMP |Reenter|
+;------------------------------------------------------------------------------
 Prelaunch                            ; this runs from main memory
-         lda   $C088                 ; entry point used by some self-running demos
+; entry point used by some self-running demos
+         lda   $C088
          jmp   Reenter
-         +READ_ROM_NO_WRITE          ; entry point to launch game (called above)
-         jsr   $FE89                 ; initialize machine like a cold boot
-         jsr   $FE93                 ; (many games assume a 'clean slate')
-         jsr   $FE84
+
+; entry point to launch game
+         +READ_ROM_NO_WRITE
+         jsr   $FE89                 ; initialize machine like a cold boot (many
+         jsr   $FE93                 ; games assume a 'clean slate' and rely on
+         jsr   $FE84                 ; zero page values set by these ROM routines)
          sta   $C000
          sta   $C002
          sta   $C004

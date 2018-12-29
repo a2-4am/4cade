@@ -14,11 +14,15 @@ kPathSeparator
          !byte 1
          !raw  "/"
 
-kHGRScreenshotDirectory
+kHGRTitleDirectory
          !byte 3
          !raw  "HGR"
 
-kDHGRScreenshotDirectory
+kHGRActionDirectory
+         !byte 6
+         !raw  "ACTION"
+
+kDHGRTitleDirectory
          !byte 4
          !raw  "DHGR"
 

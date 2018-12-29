@@ -67,7 +67,7 @@ OnInputChanged
          +STAY @key
 
          ; load game title page at $4000 (page 2, not currently visible)
-         +LOAD_FILE kHGRScreenshotDirectory, @key
+         +LOAD_FILE kHGRTitleDirectory, @key
 
          jsr   okvs_get
          !word gGamesListStore
