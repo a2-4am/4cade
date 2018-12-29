@@ -1,6 +1,10 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+
 ; This file is included from multiple assembly targets,
 ; so it should only have 1 function.
-;
+
 WaitForKeyWithTimeout
 ; in:    A = timeout length (like standard $FCA8 wait routine)
 ; out:   A clobbered

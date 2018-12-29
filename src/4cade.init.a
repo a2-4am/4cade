@@ -1,3 +1,9 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+
+; this file is included directly and is run from $2000/main as soon as the .SYSTEM file is loaded
+
          sta   $C00E                 ; 40-column
          sta   $C00C
          sta   $C004
@@ -63,22 +69,21 @@ OneTimeSetup
          jsr   LoadFile              ; load preferences file into $8000
          !word kGlobalPrefsFilename
 
-         jsr   ParseKeyValueList     ; parse contents into global prefs store into LC RAM bank
+         jsr   ParseKeyValueList     ; parse contents into OKVS data structure into LC RAM bank
          !word gGlobalPrefsStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
          !byte 16
-         +LDAY SRC
+         +LDAY SRC                   ; (SRC) points to free space after the OKVS data structure we just created
          +STAY gGamesListStore       ; save pointer to free space for next store
 
-         jsr   LoadFile              ; load games list into $8000
+         jsr   LoadFile              ; load games list file into $8000
          !word kGameListConfFile
-         jsr   ParseGamesList        ; parse games list into LC RAM bank
+         jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
          !word gGamesListStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
 
-         jmp   Main
+         jmp   Main                  ; continue execution from LC RAM bank
+
 kGameListConfFile
-         !byte @kGameListConfFile_e-@kGameListConfFile_b
-@kGameListConfFile_b
+         !byte 10
          !text "GAMES.CONF"
-@kGameListConfFile_e
