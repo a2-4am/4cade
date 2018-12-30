@@ -130,11 +130,12 @@ gAttractIndex
 @Slideshow                           ; HGR or DHGR slideshow
          pha                         ; save module type (1=HGR title, 2=HGR action, 3=DHGR title)
 
+         ; load slideshow configuration file at $4000
          +LOAD_FILE kAttractModeSlideshowDirectory, @key
 
-         jsr   ParseKeyValueList     ; parse slideshow configuration
+         jsr   ParseKeyValueList     ; parse slideshow configuration into an OKVS data structure at $0800
          !word gSlideshowStore
-         !word ldrlo2                ; (ldrlo2) points to load address
+         !word ldrlo2                ; (ldrlo2) points to address of last loaded file, so $4000
          !byte 0
 
          pla                         ; restore module type
