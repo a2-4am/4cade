@@ -69,7 +69,6 @@ dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
-#	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
 #	cp res/prefs-sample.conf build/PREFS.CONF >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
@@ -79,20 +78,22 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/DFX.CONF" >>build/log
 	rsync -aP res/hgr/* build/HGR >>build/log
-	bin/buildfileinfo.py build/HGR >>build/log
+	bin/buildfileinfo.py build/HGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/HGR" "build/HGR" >>build/log
 	rsync -aP res/action/* build/ACTION >>build/log
-	bin/buildfileinfo.py build/ACTION >>build/log
+	bin/buildfileinfo.py build/ACTION "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION" "build/ACTION" >>build/log
 	rsync -aP res/dhgr/* build/DHGR >>build/log
-	bin/buildfileinfo.py build/DHGR >>build/log
+	bin/buildfileinfo.py build/DHGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DHGR" "build/DHGR" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
+	bin/buildfileinfo.py build/SS "04" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
 	rsync -aP res/demo/* build/DEMO >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
 	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/FX" "build/FX" >>build/log
+#	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
 #	bin/do2po.py res/dsk/ build/po/
 #	rsync -a res/dsk/*.po build/po/
 #	bin/extract.py build/po/ | sh >build/log
