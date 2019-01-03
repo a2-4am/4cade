@@ -87,31 +87,29 @@ call :asm
 %CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
-%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build/log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DFX.CONF" >>build\log
 1>nul copy /y res\hgr\* build\HGR >>build\log
-cscript /nologo bin/buildfileinfo.js build\HGR >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build/log
-1>nul copy /y res\action\* build\ACTION >>build/log
-cscript /nologo bin/buildfileinfo.js build\ACTION >>build/log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION" "build/ACTION" >>build/log
+cscript /nologo bin/buildfileinfo.js build\HGR "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build\log
+1>nul copy /y res\action\* build\ACTION >>build\log
+cscript /nologo bin/buildfileinfo.js build\ACTION "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION" "build/ACTION" >>build\log
 1>nul copy /y res\dhgr\* build\DHGR >>build\log
-cscript /nologo bin/buildfileinfo.js build\DHGR >>build\log
+cscript /nologo bin/buildfileinfo.js build\DHGR "06" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DHGR" "build/DHGR" >>build\log
 1>nul copy /y res\ss\* build\SS >>build\log
+cscript /nologo bin/buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build/SS" >>build\log
 1>nul copy /y res\demo\* build\DEMO >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build/DEMO" >>build\log
 1>nul copy /y res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build/FX" >>build\log
-cscript /nologo bin/do2po.js res\dsk\ build\po\
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
 cscript /nologo bin/changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
