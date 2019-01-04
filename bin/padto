@@ -1,0 +1,7 @@
+#!/bin/bash
+
+totalsize=$1
+outfile=$2
+filesize=`stat -f "%z" "$outfile"`
+padsize=$((512-$filesize))
+dd if=/dev/zero bs=1 count=$padsize >> "$outfile"

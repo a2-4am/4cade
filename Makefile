@@ -71,6 +71,7 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
 #	cp res/prefs-sample.conf build/PREFS.CONF >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
+	bin/padto 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/PREFS.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log

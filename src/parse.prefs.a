@@ -17,7 +17,7 @@
 ; - kNextDFX
 ;
 
-kGlobalPrefsBuffer = $0800
+kGlobalPrefsBuffer = $8000
 
 kGlobalPrefsFilename
          !byte 10
@@ -45,8 +45,7 @@ kNextDFX
 ;        $00/$01/$FE/$FF clobbered
 ;------------------------------------------------------------------------------
 SaveGlobalPreferences
-         lda     #$00
-         ldy     #$08
+         +LDADDR kGlobalPrefsBuffer
          +STAY   $FE
 
          +LDADDR @kFluff1
@@ -71,11 +70,6 @@ SaveGlobalPreferences
 
          +LDADDR @kEOF
          jsr     @addString
-
-         bit   $c010
--        lda   $c000
-         bpl   -
-         bit   $c010
 
          jsr   SaveSmallFile
          !word kGlobalPrefsFilename
