@@ -72,7 +72,7 @@ gAttractIndex
 @nextattract
          !word $FDFD                 ; SMC
 
-;         jsr   SaveGlobalPreferences ; write prefs store to disk
+         jsr   SaveGlobalPreferences ; write prefs store to disk
 
          jsr   okvs_get
          !word gAttractModeStore
@@ -380,7 +380,7 @@ gFXIndex
          !word kNextFX
 @nextfx  !word $FDFD                 ; SMC
 
-;         jsr   SaveGlobalPreferences ; write prefs store to disk
+         jsr   SaveGlobalPreferences ; write prefs store to disk
 
          ; load transition effect code at $6000
          +LOAD_FILE kFXDirectory, @fxkey
@@ -448,7 +448,7 @@ gDFXIndex
          !word kNextDFX
 @nextdfx !word $FDFD                 ; SMC
 
-;         jsr   SaveGlobalPreferences ; write prefs store to disk
+         jsr   SaveGlobalPreferences ; write prefs store to disk
 
          ; load transition effect code at $6000
          +LOAD_FILE kFXDirectory, @dfxkey

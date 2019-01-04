@@ -72,6 +72,11 @@ SaveGlobalPreferences
          +LDADDR @kEOF
          jsr     @addString
 
+         bit   $c010
+-        lda   $c000
+         bpl   -
+         bit   $c010
+
          jsr   SaveSmallFile
          !word kGlobalPrefsFilename
          !word kGlobalPrefsBuffer
