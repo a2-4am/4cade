@@ -1,0 +1,102 @@
+# List of candidates for self-running 'captive' demos
+#
+# Not all games are good candidates. Some have no demo mode at all.
+# Others technically have one but it's visually uninteresting or too short.
+# Others are ruled out by technical constraints. Due to the architecture of
+# the launcher, all captive demos must run entirely in main memory (48K).
+# NO languard card, NO auxmem!
+#
+# We have enough disk space that we don't worry too much about it. (Wow.)
+# Generally we start with an uncompressed ProDOS port of the entire game
+# and whittle it down to just the files it needs for its demo mode, then
+# apply patches so that it
+#
+# - returns control after the natural end of the demo cycle
+# - returns control on any keypress
+# - returns control on any button press (note: some games don't support
+#   joystick buttons at all, and we don't add button support, but if you
+#   can start the game by pressing a button, we need to ensure that that
+#   returns control instead)
+# - disables all sound output
+#
+# 'Returning control' involves activating RAM bank 1 read access and
+# jumping to $D000 (labeled as |Reenter| in the source code). The launcher
+# puts this code at $0100 before executing a captive demo, so generally
+# you can just put 'JMP $0100' anywhere. If a particular game overwrites
+# this area of the stack page, you will need to find 6 bytes for the
+# 'LDA $C088 / JMP $D000' instructions yourself.
+#
+# Notes on completed and in-progress captive demos are in res/notes/
+#
+
+# uncompressed but unpatched
+Spider Raid
+
+# needs work
+Buzzard Bait
+Formula 1 Racer
+Snake Byte
+Track N Field
+
+# done
+Agent USA
+Alien Ambush
+Alien Downpour
+Alien Rain
+Apple Cider Spider
+Aquatron
+Bolo
+Bouncing Kamungas
+BurgerTime
+Ceiling Zero
+Championship Lode Runner
+Choplifter
+Conan
+Dino Eggs
+Dung Beetles
+Firebird
+Flip Out
+Gamma Goblins
+Gumball
+Hard Hat Mack
+High Rise
+Jungle Hunt
+Karateka
+Lady Tut
+Lode Runner
+Lost Tomb
+Mr. Cool
+O'Riley's Mine
+Pac-Man
+Pest Patrol
+Pie-Man
+Pitfall II
+Plasmania
+Pooyan
+Repton
+Robotron 2084
+Sammy Lightfoot
+Serpentine
+Sneakers
+Spare Change
+Spy Hunter
+Spy's Demise
+Stargate
+Stellar 7
+The Goonies
+Thunder Bombs
+Tubeway ][
+Warp Destroyer
+Wavy Navy
+Vindicator
+
+# obvious candidates that we're skipping
+Arkanoid (requires 64K)
+Drol (attract mode is minimal)
+Mr. Do (attract mode requires 64K)
+Prince of Persia (requires 128K)
+Rescue Raiders (requires 64K)
+Ribbit ("demo" is just "practice mode" with infinite lives and no scoring)
+Starblaster ("demo" is just "practice mode" with infinite lives and no scoring)
+Succession ("demo" is just "practice mode" with infinite lives and no scoring)
+Tag Team Wrestling (requires 64K)

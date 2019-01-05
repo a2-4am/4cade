@@ -567,17 +567,34 @@ Prelaunch                            ; this runs from main memory
 
 ; entry point to launch game
          +READ_ROM_NO_WRITE
+         lda   ldrlo2                ; set up game entry point in stack page
+         ldy   ldrhi2                ; (last load address - 1)
+         sec
+         sbc   #$01
+         bcs   +
+         dey
++
+         +STAY $1FE
+         ldx   #0                    ; wipe zero page
+         txa
+-        sta   $00,x
+         inx
+         bne   -
+         lda   #$65                  ; initialize random seed (some games like Pooyan
+         sta   $4E                   ; require these to be non-zero)
+         lda   #$02
+         sta   $4F
          jsr   $FE89                 ; initialize machine like a cold boot (many
          jsr   $FE93                 ; games assume a 'clean slate' and rely on
-         jsr   $FE84                 ; zero page values set by these ROM routines)
-         sta   $C000
-         sta   $C002
+         jsr   $FE84                 ; zero page values set by these ROM routines,
+         sta   $C000                 ; e.g. Wavy Navy just prints out text via $FDED
+         sta   $C002                 ; and expects it to work)
          sta   $C004
          sta   $C00C
          sta   $C00E
          jsr   $FB2F
          jsr   $FC58
-         ldx   #$FF
+         ldx   #$FD                  ; jump to game entry point via stack pop
          txs
-         jmp   (ldrlo2)              ; jump to game
+         rts
 End_Prelaunch
