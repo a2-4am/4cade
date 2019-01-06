@@ -33,9 +33,7 @@
 Spider Raid
 
 # needs work
-Buzzard Bait
 Formula 1 Racer
-Snake Byte
 Track N Field
 
 # done
@@ -48,6 +46,7 @@ Aquatron
 Bolo
 Bouncing Kamungas
 BurgerTime
+Buzzard Bait
 Ceiling Zero
 Championship Lode Runner
 Choplifter
@@ -77,6 +76,7 @@ Repton
 Robotron 2084
 Sammy Lightfoot
 Serpentine
+Snake Byte
 Sneakers
 Spare Change
 Spy Hunter
