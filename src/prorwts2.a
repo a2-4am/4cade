@@ -1259,8 +1259,7 @@ unrdrvoff4 = unrelocdsk + (* - reloc)
 rdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-setaux          sta     CLRAUXRD, x
-                sta     CLRAUXWR, x
+setaux          sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 
