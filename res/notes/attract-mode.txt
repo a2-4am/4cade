@@ -34,7 +34,6 @@ Spider Raid
 
 # needs work
 Formula 1 Racer
-Track N Field
 
 # done
 Agent USA
@@ -85,6 +84,7 @@ Stargate
 Stellar 7
 The Goonies
 Thunder Bombs
+Track N Field
 Tubeway ][
 Warp Destroyer
 Wavy Navy
