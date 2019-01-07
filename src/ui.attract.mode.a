@@ -223,6 +223,7 @@ HGRActionCallback
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRActionDirectory, PTR
 
+         jmp   @drawname
 ; try to get the human-readable name of this game from gGamesListStore
 ; and display it in the bottom-left corner
          jsr   okvs_get
@@ -243,6 +244,7 @@ HGRActionCallback
          bcs   @noname               ; should never happen
 @foundname
          +STAY PTR
+@drawname
          ldx   #0
          stx   HTAB
          ldx   #22
