@@ -1,0 +1,5 @@
+a = new ActiveXObject("scripting.filesystemobject")
+b = a.opentextfile(WScript.Arguments(1))
+c = b.readall()
+b.close()
+a.createtextfile(WScript.Arguments(1)).write(String(c + Array(512).join(" ")).substr(0, 512))
