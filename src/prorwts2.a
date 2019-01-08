@@ -2685,8 +2685,7 @@ hddresparse
 hddrdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-hddsetaux       sta     CLRAUXRD, x
-                sta     CLRAUXWR, x
+hddsetaux       sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 } ;rwts_mode
