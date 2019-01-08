@@ -529,15 +529,15 @@ ClearHGR1
 ; clear and display text screen
 ;
 ; in:    none
-; out:   $0100..$011F clobbered
+; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
 Home
          ldx   #(@end-@start-1)
 -        lda   @start,x
-         sta   $100,x
+         sta   $106,x
          dex
          bpl   -
-         jmp   $100
+         jmp   $106
 @start
          ; this will be run from main memory
          +READ_ROM_NO_WRITE

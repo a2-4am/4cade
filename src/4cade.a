@@ -22,6 +22,21 @@ Reenter                              ; self-running demos should call this to ex
 Main
          ldx   #$FF
          txs
+         ldx   #5
+-        lda   Prelaunch,x           ; copy reset vector code (switches to LC RAM and jumps to |Reenter|)
+         sta   $100,x
+         dex
+         bpl   -
+         inx
+         stx   $3F2                  ; set up reset vectors
+         stx   $FFFC
+         inx
+         stx   $3F3
+         stx   $FFFD
+         txa
+         eor   #$A5
+         sta   $3F4
+
          jsr   BlankHGR
 @loop
          bit   $C010

@@ -82,6 +82,8 @@ OneTimeSetup
          !word gGamesListStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
 
+         bit   $C010                 ; clear keyboard strobe so we don't mistakenly think we just tried to run something
+
          jmp   Main                  ; continue execution from LC RAM bank
 
 kGameListConfFile

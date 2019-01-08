@@ -94,14 +94,14 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
 	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/FX" "build/FX" >>build/log
-#	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
-#	bin/do2po.py res/dsk/ build/po/
-#	rsync -a res/dsk/*.po build/po/
-#	bin/extract.py build/po/ | sh >build/log
-#	rm -f build/X/**/.DS_Store
-#	rm -f build/X/**/PRODOS
-#	rm -f build/X/**/LOADER.SYSTEM
-#	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
+	bin/do2po.py res/dsk/ build/po/
+	rsync -a res/dsk/*.po build/po/
+	bin/extract.py build/po/ | sh >build/log
+	rm -f build/X/**/.DS_Store
+	rm -f build/X/**/PRODOS
+	rm -f build/X/**/LOADER.SYSTEM
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
 
 mount: dsk

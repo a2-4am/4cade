@@ -34,6 +34,10 @@ kDemoDirectory
          !byte 4
          !raw  "DEMO"
 
+kGameDirectory
+         !byte 1
+         !raw  "X"
+
 kFXDirectory
          !byte 2
          !raw  "FX"
