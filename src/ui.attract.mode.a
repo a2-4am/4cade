@@ -7,9 +7,12 @@
 ; - AttractMode
 ;
 ; Public variables
-; - gAttractIndex                    ; [byte] numeric index of Mega-Attract Module
-; - gFXIndex                         ; [byte] numeric index of HGR transition effect
-; - gDFXIndex                        ; [byte] numeric index of DHGR transition effect
+; - gCurrentAttractIndex             ; [byte] numeric index in gAttractModeStore of current Mega-Attract Module
+; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
+                                     ;        (only valid during slideshows, not updated once a key is pressed)
+; - gAttractIndex                    ; [byte] numeric index in gAttractModeStore of next Mega-Attract Module
+; - gFXIndex                         ; [byte] numeric index in gFXStore of next HGR transition effect
+; - gDFXIndex                        ; [byte] numeric index in gDFXStore of next DHGR transition effect
 
 ;------------------------------------------------------------------------------
 ; AttractMode
@@ -51,6 +54,8 @@ gAttractIndex
          !byte 0
          +STAY @key
 
+         lda   gAttractIndex
+         sta   gCurrentAttractIndex
          inc   gAttractIndex         ; increment module index for next time
          jsr   okvs_len
          !word gAttractModeStore
@@ -173,6 +178,63 @@ kAttractModeConfFile
          !text "ATTRACT.CONF"
 @kAttractModeConfFile_e
 
+Play
+         jsr   LoadFile              ; load attract-mode configuration file at $8000
+         !word kAttractModeConfFile
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
+         !word gAttractModeStore
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !byte 0
+
+         jsr   okvs_nth              ; get filename of current attract-mode module
+         !word gAttractModeStore
+gCurrentAttractIndex
+         !byte $FD                   ; set in AttractMode
+         +STAY @key
+         jsr   okvs_get
+         !word gAttractModeStore
+@key     !word $FDFD                 ; SMC
+         +STAY PTR
+         ldy   #1
+         lda   (PTR),y
+         and   #$0F
+         bne   @playFromSlideshow
+
+; we reached here by pressing <RETURN> during a self-running demo,
+; which means that @key points to the filename of the game we want to play
+         +LDAY @key
+         jmp   Go
+
+@playFromSlideshow
+; we reached here by pressing <RETURN> during a slideshow
+; gSlideshowStore is still in memory, and gCurrentlyVisibleSlideshowIndex
+; is the index into gSlideshowStore of the picture that is being displayed
+         jsr   okvs_nth
+         !word gSlideshowStore
+gCurrentlyVisibleSlideshowIndex
+         !byte $FD                   ; set in HGRTitleCallback, HGRActionCallback, DHGRTitleCallback
+         +STAY @sskey
+         +STAY @sskey2
+         jsr   okvs_get
+         !word gGamesListStore
+@sskey   !word $FDFD                 ; SMC
+         bcs   +
+         +LDAY @sskey
+         jmp   Go
++
+; if the key is not found, try getting the value of the current record
+; from gSlideshowStore and using that instead
+; (some games have multiple action screenshots, value points to the key in gGamesListStore)
+         jsr   okvs_get
+         !word gSlideshowStore
+@sskey2  !word $FDFD                 ; SMC
+         bcc   Go
+         rts
+Go
+         +STAY PTR
+
+         brk
+
 ;------------------------------------------------------------------------------
 ; internal functions
 
@@ -188,11 +250,13 @@ kAttractModeConfFile
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 HGRTitleCallback
-         ldx   $C000
+         +STAY PTR
+
+         lda   $C000
          bpl   +
          rts
 +
-         +STAY PTR
+         stx   gCurrentlyVisibleSlideshowIndex
 
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRTitleDirectory, PTR
@@ -212,13 +276,15 @@ HGRTitleCallback
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 HGRActionCallback
-         ldx   $C000
-         bpl   +
-         rts
-+
          +STAY PTR
          +STAY @key
          +STAY @key2
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
 
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRActionDirectory, PTR
@@ -297,12 +363,15 @@ HGRActionCallback
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 DHGRTitleCallback
-         ldx   $C000
+         +STAY PTR
+
+         lda   $C000
          bpl   +
          rts
 +
+         stx   gCurrentlyVisibleSlideshowIndex
+
          ; load DHGR screenshot at $4000/main and $4000/aux
-         +STAY PTR
          jsr   ResetPath
          +LDADDR kDHGRTitleDirectory
          jsr   AddToPath

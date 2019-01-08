@@ -39,6 +39,11 @@ Main
 
          jsr   BlankHGR
 @loop
+         lda   $C000
+         cmp   #$8D
+         bne   +
+         jsr   Play
++
          bit   $C010
          jsr   AttractMode
          jmp   @loop
