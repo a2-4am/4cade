@@ -111,6 +111,14 @@ cscript /nologo bin/buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build/DEMO" >>build\log
 1>nul copy /y res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build/FX" >>build\log
+%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build/log
+cscript /nologo bin/do2po.js res\dsk build\po
+1>nul copy /y res\dsk\*.po build\po
+cscript /nologo bin/extract.js build\po >>build/log
+echo y|1>nul 2>nul del /s build\X\.DS_Store
+echo y|1>nul 2>nul del /s build\X\PRODOS
+echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build/log
 cscript /nologo bin/changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
