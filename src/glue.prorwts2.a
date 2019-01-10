@@ -440,7 +440,7 @@ ProDOS_enter
     lda    (packet), y
 @rdwrop
     ldy    #$d1                      ; SMC
-    jsr    hddseekrdwr
+    jsr    hddseekrd+2
     bcc    @jmp_zp2 ;always
 
 @imp_getattrib
