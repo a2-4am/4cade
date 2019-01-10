@@ -105,32 +105,16 @@ gAttractIndex
                                      ; to avoid seeing executable code load into the HGR page
          +LOAD_PATH kDemoDirectory
          ldy   gPathname
-         iny
-         iny
          sty   ProDOS_prefix
--        lda   gPathname-2, y
+-        lda   gPathname, y
          sta   ProDOS_prefix, y
          dey
          bne   -
-         lda   #'/'
-         sta   ProDOS_prefix+1
-         lda   #'X'
-         sta   ProDOS_prefix+2
 
          +LOAD_FILE_IMM @key
 
          jsr   SaveScreenHoles       ; save screen hole contents in case game changes them
-         ldx   #(End_Prelaunch-Prelaunch-1)
--        lda   Prelaunch,x           ; copy pre-launch code to main memory
-         sta   $100,x
-         dex
-         bpl   -
-         ldx   #(end_promote-promote-1)
--        lda   promote,x             ; copy ProDOS shim to main memory
-         sta   $bf00,x
-         dex
-         bpl   -
-         jmp   $106                  ; jump to pre-launch code
+         jmp   copy_prelaunch
 
 @Slideshow                           ; HGR or DHGR slideshow
          pha                         ; save module type (1=HGR title, 2=HGR action, 3=DHGR title)
@@ -232,8 +216,54 @@ gCurrentlyVisibleSlideshowIndex
          rts
 Go
          +STAY PTR
+         bit   $C010                 ; forget the key that was pressed
+         ldx   #1
+         sec
+         !byte $24
+--       clc
+         php
+         ldy   #0
+         lda   (PTR), y
+         tay
+         iny
+         sty   @runlength+1
+         ldy   #0
+         lda   #'X'
+         sta   ProDOS_prefix+1
+         lda   #'/'
+-        inx
+         sta   ProDOS_prefix, x
+         iny
+         lda   (PTR), y
+@runlength
+         cpy   #$D1                  ; SMC
+         bne   -
+         plp
+         bcs   --
+         stx   ProDOS_prefix
 
-         brk
+         jsr   LoadFile
+         !word ProDOS_prefix
+
+         ldy   #0
+         lda   (namlo), y
+         tay
+         iny
+         iny
+         sty   ProDOS_prefix
+
+copy_prelaunch
+         ldx   #(End_Prelaunch-Prelaunch-1)
+-        lda   Prelaunch,x           ; copy pre-launch code to main memory
+         sta   $100,x
+         dex
+         bpl   -
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy ProDOS shim to main memory
+         sta   $bf00,x
+         dex
+         bpl   -
+         jmp   $106                  ; jump to pre-launch code
 
 ;------------------------------------------------------------------------------
 ; internal functions

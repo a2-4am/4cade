@@ -66,6 +66,10 @@ OneTimeSetup
          ldy   hddopendir+3
          +STAY gRootDirectory
 
+         lda   $43
+         sta   promote + ProDOS_unit - $bf00
+                                     ; save unit while overriding !pseudopc
+
          jsr   LoadFile              ; load preferences file into $8000
          !word kGlobalPrefsFilename
 

@@ -261,14 +261,12 @@ promote
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
 
         lda    $c011
-        jmp    ProDOS_enable
-        !text  "q4!"
+        bit    $c08b
+        bit    $c08b
 ;$bf10
-        !word  $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
-ProDOS_enable
-        bit    $c08b
-        bit    $c08b
         jmp    ProDOS_enter
+        !byte  $c1
+        !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
 ProDOS_exit
         sta    $c082, x
 ProDOS_savedX
@@ -276,10 +274,17 @@ ProDOS_savedX
 ProDOS_savedY
         ldy    #$d1
         rts
+
 ProDOS_fatal ;only for debugging, will be removed
         pha
         lda    $c081
         jsr    $fe89
+
+        !byte $24
+ProDOS_unit
+        ;$bf30
+        !byte  $d1
+
         jsr    $fe93
         pla
         jsr    $fdda
@@ -377,6 +382,10 @@ ProDOS_enter
     pha
 @request
     lda    #$d1
+    cmp    #$80
+    beq    @do_readblock
+    cmp    #$81 ;I don't remember if I used this, but it's cheap to add
+    beq    @do_writeblock
     cmp    #$c4
     beq    @do_getattrib
     cmp    #$c7
@@ -395,6 +404,9 @@ ProDOS_enter
     beq    @do_eof
     ;;any others??
     jmp    ProDOS_fatal
+@do_readblock
+@do_writeblock
+    jmp    @imp_rdwrblock
 @do_getattrib
     jmp    @imp_getattrib
 @do_prefix
@@ -412,6 +424,24 @@ ProDOS_enter
     jmp    @imp_seek
 @do_eof
     jmp    @imp_eof
+
+@imp_rdwrblock
+    and    #$7f
+    tay
+    iny
+    sty    @rdwrop+1
+    ldx    #$44
+    ldy    #2
+    jsr    @setbuffer
+    iny
+    lda    (packet), y
+    tax
+    iny
+    lda    (packet), y
+@rdwrop
+    ldy    #$d1                      ; SMC
+    jsr    hddseekrdwr
+    bcc    @jmp_zp2 ;always
 
 @imp_getattrib
     lda    packet+1
@@ -435,18 +465,44 @@ ProDOS_enter
     iny
     lda    ldrlo2+1
     sta    (packet), y
+    ldy    #$13
+    lda    (bloklo), y
+    tax
+    iny
+    lda    (bloklo), y
+    ldy    #9
+    sta    (packet), y
+    txa
+    dey
+    sta    (packet), y
+@jmp_zp2
     jmp    @restore_zp
 
 @imp_prefix
     ldx    #buffer
     jsr    @setbuffer1
     ldy    ProDOS_prefix
+    iny
+    lda    #'/'
+    bne    @append_slash
 @copy_prefix
     lda    ProDOS_prefix, y
+@append_slash
+    iny
     sta    (buffer), y
     dey
+    dey
     bpl    @copy_prefix
-    jmp    @restore_zp
+    tax
+    inx
+    inx
+    txa
+    iny
+    sta    (buffer), y
+    iny
+    lda    #'/'
+    sta    (buffer), y
+    bne    @jmp_zp2
 
 @imp_open
     ldx    #namlo
