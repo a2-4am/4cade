@@ -87,6 +87,9 @@ dsk: md asm
 	rsync -aP res/dhgr/* build/DHGR >>build/log
 	bin/buildfileinfo.py build/DHGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DHGR" "build/DHGR" >>build/log
+	rsync -aP res/shr/* build/SHR >>build/log
+	bin/buildfileinfo.py build/SHR "C1" "2000" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SHR" "build/SHR" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
 	bin/buildfileinfo.py build/SS "04" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
@@ -113,6 +116,7 @@ md:
 	mkdir -p build/HGR
 	mkdir -p build/ACTION
 	mkdir -p build/DHGR
+	mkdir -p build/SHR
 	mkdir -p build/SS
 	mkdir -p build/DEMO
 	mkdir -p build/FX
