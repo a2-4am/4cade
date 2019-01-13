@@ -198,7 +198,7 @@ ver_02 = 1
                 SETAUXZP  = $c009
 
                 first_zp  = $40         ;lowest address to save if swap_zp enabled
-                last_zp   = $62         ;highest address to save if swap_zp enabled (max 127 entries later)
+                last_zp   = $64         ;highest address to save if swap_zp enabled (max 127 entries later)
 
                 D1S1      = 1           ;disk 1 side 1 volume ID if rwts_mode enabled
 
