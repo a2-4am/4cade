@@ -24,6 +24,8 @@ HTAB         = $24
 VTAB         = $25
 MachineStatus =$F0        ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
+                          ; bit 5 = 1 if machine has a VidHD card
+                          ; bit 4 = 1 if machine is a IIgs
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
 

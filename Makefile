@@ -64,12 +64,12 @@ asm: md
 	$(ACME) src/fx/fx.hgr.ripple.a
 	$(ACME) src/fx/fx.hgr.ripple2.a
 	$(ACME) src/fx/fx.hgr.star.a
+	$(ACME) src/fx/fx.shr.fizzle.a
 
 dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
-#	cp res/prefs-sample.conf build/PREFS.CONF >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
 	bin/padto 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log

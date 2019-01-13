@@ -13,7 +13,6 @@
 ; (c) 1989 Broderbund Software
 ; https://github.com/jmechner/Prince-of-Persia-Apple-II/blob/master/01%20POP%20Source/Source/GRAFIX.S#L1225
 ;------------------------------------------------------------------------------
-!zone {
 HasJoystick
          lda   #0
          sta   @joyX
@@ -39,4 +38,3 @@ HasJoystick
          bpl   @nextpdl              ; kill time
 @joyX    !byte 0
 @joyY    !byte 0
-}

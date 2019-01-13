@@ -1,0 +1,20 @@
+;------------------------------------------------------------------------------
+; IsGS
+; detect IIgs by running CPU-specific magic
+;
+; in:    none
+; out:   C set if running on a IIgs
+;        C clear otherwise
+;        A clobbered
+;        X/Y preserved
+;------------------------------------------------------------------------------
+IsGS
+         lda   #0                    ; set Z flag
+!cpu 65816
+         rep   #2                    ; clear Z flag on 65816 only
+!cpu 6502
+         beq   @no
+@yes     sec
+         +HIDE_NEXT_BYTE
+@no      clc
+         rts

@@ -26,6 +26,10 @@ kDHGRTitleDirectory
          !byte 4
          !raw  "DHGR"
 
+kSHRArtworkDirectory
+         !byte 3
+         !raw  "SHR"
+
 kAttractModeSlideshowDirectory
          !byte 2
          !raw  "SS"

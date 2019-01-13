@@ -128,34 +128,54 @@ gAttractIndex
          !byte 0
 
          pla                         ; restore module type
-         cmp   #$01
-         beq   @HGRTitleSlideshow
-         cmp   #$02
-         beq   @HGRActionSlideshow
+         asl
+         tax
+         lda   @slideshows-2,x
+         sta   @jmp+1
+         lda   @slideshows-1,x
+         sta   @jmp+2
+@jmp     jmp   $FDFD                 ; SMC
+@slideshows
+         !word HGRTitleSlideshow
+         !word HGRActionSlideshow
+         !word DHGRTitleSlideshow
+         !word SHRArtworkSlideshow
 
-@DHGRTitleSlideshow
+HGRTitleSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRTitleCallback      ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
+HGRActionSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRActionCallback     ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
+DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvc   @exit
-         jsr   LoadDHGRTransition    ; load transition effect code at $6000
+         bvs   +
+         rts
++        jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
          !word DHGRTitleCallback     ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
-@HGRTitleSlideshow
-         jsr   LoadHGRTransition     ; load transition effect code at $6000
-         jsr   okvs_iter             ; cycle through all listed HGR files
+SHRArtworkSlideshow
+         lda   MachineStatus         ; only run SHR slideshow on IIgs or if we have a VidHD card
+         and   #%00110000
+         bne   +
+         rts
++        jsr   LoadSHRTransition
+         jsr   okvs_iter
          !word gSlideshowStore
-         !word HGRTitleCallback      ; address of callback (called on each file)
-@exit    rts                         ; exit with last picture still visible
-
-@HGRActionSlideshow
-         jsr   LoadHGRTransition     ; load transition effect code at $6000
-         jsr   okvs_iter             ; cycle through all listed HGR files
-         !word gSlideshowStore
-         !word HGRActionCallback     ; address of callback (called on each file)
-         rts                         ; exit with last picture still visible
+         !word SHRArtworkCallback
+         jmp   BlankHGR
 
 kAttractModeConfFile
          !byte @kAttractModeConfFile_e-*-1
@@ -386,7 +406,6 @@ HGRActionCallback
 
 ; in:    A/Y contains address of filename (name only, path is always /DHGR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
-;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -415,7 +434,9 @@ DHGRTitleCallback
 
 ExecuteTransition
          jsr   $6000                 ; call transition effect code to display picture
+         ; execution falls through here
 
+WaitAfterTransition
          ldx   #$20                  ; picture is already showing so just wait
 -        lda   #0
          jsr   WaitForKeyWithTimeout
@@ -423,6 +444,43 @@ ExecuteTransition
          dex
          bpl   -
 +        rts
+
+;------------------------------------------------------------------------------
+; SHRArtworkCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single SHR graphic
+
+; in:    A/Y contains address of filename (name only, path is always /SHR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;        $2000..$5FFF/aux clobbered
+;------------------------------------------------------------------------------
+SHRArtworkCallback
+         +STAY PTR
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         jsr   BlankSHR
+
+         ; load SHR artwork at $2000/main (not aux)
+         jsr   ResetPath
+         +LDADDR kSHRArtworkDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+
+         jsr   $A000
+         jmp   WaitAfterTransition
 
 ;------------------------------------------------------------------------------
 ; LoadHGRTransition
@@ -487,8 +545,7 @@ gFXIndex
          rts
 @fxkey   !word $FDFD
 kFXConfFile
-         !byte @kFXConfFile_e-@kFXConfFile_b
-@kFXConfFile_b
+         !byte @kFXConfFile_e-*-1
          !text "FX.CONF"
 @kFXConfFile_e
 
@@ -555,10 +612,29 @@ gDFXIndex
          rts
 @dfxkey   !word $FDFD
 kDFXConfFile
-         !byte @kDFXConfFile_e-@kDFXConfFile_b
-@kDFXConfFile_b
+         !byte @kDFXConfFile_e-*-1
          !text "DFX.CONF"
 @kDFXConfFile_e
+
+;------------------------------------------------------------------------------
+; LoadSHGRTransition
+; [TODO] for now there is only 1 SHR transition so this always load the same file
+; [TODO] but eventually it should look up name of next SHR transition effect in
+; [TODO] SFX.CONF or something and loads that file at $A000
+;
+; in:    gSFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $A000..$BFFF/main contains transition effect code
+;------------------------------------------------------------------------------
+LoadSHRTransition
+         jsr   LoadFile
+         !word kSFXFizzleFile
+         rts
+kSFXFizzleFile
+         !byte @kSFXFizzleFile_e-*-1
+         !text "FX/SHR.FIZZLE"
+@kSFXFizzleFile_e
 
 ;------------------------------------------------------------------------------
 ; BlankHGR
@@ -597,6 +673,50 @@ BlankDHGR
          sta   $c052
          sta   $c050
          sta   $c05e
+         rts
+
+;------------------------------------------------------------------------------
+; BlankSHR
+; clear and show SHR mode without flickering
+;
+; in:    machine is a IIgs or has a VidHD card that responds appropriately to
+;        IIgs-specific softswitches for graphics and memory modes
+;        NOTE: THIS ROUTINE WILL CRASH ON AN APPLE //C due to writing $C029,
+;        so it is imperative that the caller ensure the machine type
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$9FFF/aux cleared
+;------------------------------------------------------------------------------
+BlankSHR
+         jsr   Home
+
+         lda   $C029                 ; set GS NEWVIDEO mode to turn off linearize
+         ora   #$40
+         sta   $C029
+
+         sta   $C005                 ; writes go to auxmem
+
+         lda   $C035                 ; enable auxmem-to-bank-E1 shadowing on IIgs
+         and   #$F7
+         sta   $C035
+
+         lda   #$20                  ; clear $2000..$9FFF in auxmem
+         sta   @a+2
+         ldx   #$80
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+
+         sta   $C004                 ; writes go to main memory
+
+         lda   $C029                 ; set GS NEWVIDEO mode to turn on SHR mode
+         ora   #$81
+         sta   $C029
+
          rts
 
 ;------------------------------------------------------------------------------
@@ -645,6 +765,13 @@ Home
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
          +READ_RAM1_WRITE_RAM1
+         lda   MachineStatus
+         and   #%00110000
+         beq   @noSHR
+         lda   $C029
+         and   #$7F
+         sta   $C029                 ; get out of SHR mode
+@noSHR
          rts
 @end
 

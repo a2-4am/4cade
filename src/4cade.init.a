@@ -13,11 +13,17 @@
          jsr   $FC58
          jsr   Has64K                ; check for 64K (required)
          bcs   @no64K
-         jsr   DisableAccelerator    ; set to 1 MHz
-         jsr   Has128K               ; check for 128K (absence is OK, we just filter out some games)
+         jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
+         jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
          ror   MachineStatus
-         jsr   HasJoystick           ; check for joystick (absence is OK, we just filter out some games)
-         ror   MachineStatus         ; now bit 6 = 1 if 128K
+         jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
+         ror   MachineStatus
+         jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
+         ror   MachineStatus
+         jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
+         ror   MachineStatus         ; now bit 4 = 1 if IIgs
+                                     ;     bit 5 = 1 if VidHD
+                                     ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
 
          jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
@@ -50,6 +56,8 @@
          !source "src/prorwts2.a"
 ProRWTSBuffer
          ; these routines will only be called once, from main memory, before relocating to language card
+         !source "src/hw.iigs.a"
+         !source "src/hw.vidhd.a"
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.normfast.a"
