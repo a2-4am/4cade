@@ -1,0 +1,155 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Double hi-res slideshows
+;
+; Public functions
+; - DHGRTitleSlideshow
+; - BlankDHGR
+;
+
+DHGRTitleSlideshow
+         bit   MachineStatus         ; only run DHGR slideshow if we have 128K
+         bvs   +
+         rts
++        jsr   LoadDHGRTransition    ; load transition effect code at $6000
+         jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
+         jsr   okvs_iter             ; cycle through all listed DHGR files
+         !word gSlideshowStore
+         !word DHGRTitleCallback     ; address of callback (called on each file)
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
+;------------------------------------------------------------------------------
+; LoadDHGRTransition
+; looks up name of next DHGR transition effect in DFX.CONF and loads that file
+; at $6000
+
+; in:    gDFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $6000..$BFFF/main contains transition effect code
+;------------------------------------------------------------------------------
+LoadDHGRTransition
+         jsr   LoadFile              ; load DHGR transition effects list into $8000
+         !word kDFXConfFile
+         jsr   ParseKeyValueList     ; parse DHGR transition effects list into $6000
+         !word gDFXStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
+
+         jsr   okvs_get              ; get next DHGR transition effect from prefs
+         !word gGlobalPrefsStore
+         !word kNextDFX
+         bcs   @nodfx
+         +STAY @dfx
+         jsr   okvs_get
+         !word gDFXStore
+@dfx     !word $FDFD                 ; SMC
+         bcc   +
+@nodfx   ldx   #0
++        stx   gDFXIndex
+
+         jsr   okvs_nth              ; get filename of DHGR transition effect code
+         !word gDFXStore
+gDFXIndex
+         !byte 0
+         +STAY @dfxkey
+
+         inc   gDFXIndex             ; increment transition effect index for next time
+         jsr   okvs_len
+         !word gDFXStore
+         cmp   gDFXIndex
+         bne   +
+         lda   #0
+         sta   gDFXIndex
++
+         lda   gDFXIndex
+         sta   @nexti
+         jsr   okvs_nth              ; get name of next DHGR transition
+         !word gDFXStore
+@nexti   !byte $FD                   ; SMC
+         +STAY @nextdfx
+
+         jsr   okvs_update           ; save name of next DHGR transition in prefs store
+         !word gGlobalPrefsStore
+         !word kNextDFX
+@nextdfx !word $FDFD                 ; SMC
+
+         jsr   SaveGlobalPreferences ; write prefs store to disk
+
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @dfxkey
+         rts
+@dfxkey   !word $FDFD
+kDFXConfFile
+         !byte @kDFXConfFile_e-*-1
+         !text "DFX.CONF"
+@kDFXConfFile_e
+
+;------------------------------------------------------------------------------
+; DHGRTitleCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single DHGR title screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /DHGR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;        $2000..$5FFF/aux clobbered
+;------------------------------------------------------------------------------
+DHGRTitleCallback
+         +STAY PTR
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         ; load DHGR screenshot at $4000/main and $4000/aux
+         jsr   ResetPath
+         +LDADDR kDHGRTitleDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadDHRFile
+         !word gPathname
+         ; execution falls through here
+
+ExecuteTransition
+         jsr   $6000                 ; call transition effect code to display picture
+         ; execution falls through here
+
+WaitAfterTransition
+         ldx   #$20                  ; picture is already showing so just wait
+-        lda   #0
+         jsr   WaitForKeyWithTimeout
+         bmi   +
+         dex
+         bpl   -
++        rts
+
+;------------------------------------------------------------------------------
+; BlankDHGR
+; clear and show DHGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF/main and /aux cleared
+;------------------------------------------------------------------------------
+BlankDHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         sta   $C005
+         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
+         sta   $C004
+         sta   $c00d
+         sta   $c057
+         sta   $c054
+         sta   $c052
+         sta   $c050
+         sta   $c05e
+         rts

@@ -1,0 +1,121 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; Super hi-res slideshows
+;
+; Public functions
+; - SHRArtworkSlideshow
+; - BlankSHR
+;
+
+SHRArtworkSlideshow
+         lda   MachineStatus         ; only run SHR slideshow on IIgs or if we have a VidHD card
+         and   #SUPPORTS_SHR
+         bne   +
+         rts
++        jsr   LoadSHRTransition
+         jsr   okvs_iter
+         !word gSlideshowStore
+         !word SHRArtworkCallback
+         jmp   BlankHGR
+
+;------------------------------------------------------------------------------
+; LoadSHGRTransition
+; [TODO] for now there is only 1 SHR transition so this always load the same file
+; [TODO] but eventually it should look up name of next SHR transition effect in
+; [TODO] SFX.CONF or something and loads that file at $A000
+;
+; in:    gSFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $A000..$BFFF/main contains transition effect code
+;------------------------------------------------------------------------------
+LoadSHRTransition
+         jsr   LoadFile
+         !word kSFXFizzleFile
+         rts
+kSFXFizzleFile
+         !byte @kSFXFizzleFile_e-*-1
+         !text "FX/SHR.FIZZLE"
+@kSFXFizzleFile_e
+
+;------------------------------------------------------------------------------
+; SHRArtworkCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single SHR graphic
+
+; in:    A/Y contains address of filename (name only, path is always /SHR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;        $2000..$5FFF/aux clobbered
+;------------------------------------------------------------------------------
+SHRArtworkCallback
+         +STAY PTR
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         jsr   BlankSHR
+
+         ; load SHR artwork at $2000/main (not aux)
+         jsr   ResetPath
+         +LDADDR kSHRArtworkDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadFile
+         !word gPathname
+
+         jsr   $A000
+         jmp   WaitAfterTransition
+
+;------------------------------------------------------------------------------
+; BlankSHR
+; clear and show SHR mode without flickering
+;
+; in:    machine is a IIgs or has a VidHD card that responds appropriately to
+;        IIgs-specific softswitches for graphics and memory modes
+;        NOTE: THIS ROUTINE WILL CRASH ON AN APPLE //C due to writing $C029,
+;        so it is imperative that the caller ensure the machine type
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$9FFF/aux cleared
+;------------------------------------------------------------------------------
+BlankSHR
+         jsr   Home
+
+         lda   $C029                 ; set GS NEWVIDEO mode to turn off linearize
+         ora   #$40
+         sta   $C029
+
+         sta   $C005                 ; writes go to auxmem
+
+         lda   $C035                 ; enable auxmem-to-bank-E1 shadowing on IIgs
+         and   #$F7
+         sta   $C035
+
+         lda   #$20                  ; clear $2000..$9FFF in auxmem
+         sta   @a+2
+         ldx   #$80
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+
+         sta   $C004                 ; writes go to main memory
+
+         lda   $C029                 ; set GS NEWVIDEO mode to turn on SHR mode
+         ora   #$81
+         sta   $C029
+
+         rts

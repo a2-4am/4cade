@@ -35,3 +35,6 @@ gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
 gValLen      = $1F80
 gVal         = $1F81
+
+; actual constants
+SUPPORTS_SHR = %00110000  ; AND mask for MachineStatus

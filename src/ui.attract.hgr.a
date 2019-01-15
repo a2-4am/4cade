@@ -1,0 +1,244 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; HGR title and action slideshows
+;
+; Public functions
+; - HGRTitleSlideshow
+; - HGRActionSlideshow
+; - BlankHGR
+; - ClearHGR1
+;
+
+HGRTitleSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRTitleCallback      ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
+HGRActionSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRActionCallback     ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
+;------------------------------------------------------------------------------
+; BlankHGR
+; clear and show HGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF cleared
+;------------------------------------------------------------------------------
+BlankHGR
+         jsr   Home
+         jsr   ClearHGR1             ; clear hi-res screen 1
+         lda   $c057                 ; show hi-res screen 1 (now blank)
+         lda   $c054
+         lda   $c052
+         lda   $c050
+         rts
+
+;------------------------------------------------------------------------------
+; ClearHGR1
+; clear $2000..$3FFF in current memory bank (main or auxmem)
+;
+; in:    none
+; out:   $2000..$3FFF cleared
+;        A = 0
+;        X = 0
+;        Y = 0
+;        Z = 1
+;------------------------------------------------------------------------------
+ClearHGR1
+         ldx   #$20
+         stx   @a+2
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
+
+;------------------------------------------------------------------------------
+; HGRTitleCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single HGR title screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /HGR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+HGRTitleCallback
+         +STAY PTR
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         ; load HGR screenshot at $4000
+         +LOAD_FILE kHGRTitleDirectory, PTR
+
+         jmp   ExecuteTransition     ; call transition effect code to display picture
+
+;------------------------------------------------------------------------------
+; HGRActionCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single HGR action screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /ACTION/)
+;        X contains 0-based index of the current record in gSlideshowStore
+;        gGamesListStore must be initialized
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+HGRActionCallback
+         +STAY PTR
+         +STAY @key
+         +STAY @key2
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         ; load HGR screenshot at $4000
+         +LOAD_FILE kHGRActionDirectory, PTR
+
+; try to get the human-readable name of this game from gGamesListStore
+; and display it in the bottom-left corner
+         jsr   okvs_get
+         !word gGamesListStore
+@key     !word $FDFD                 ; SMC
+         bcc   @foundname
+; if the key is not found, try getting the value of the current record
+; from gSlideshowStore and using that instead
+; (some games have multiple action screenshots)
+         jsr   okvs_get
+         !word gSlideshowStore
+@key2    !word $FDFD                 ; SMC
+         bcs   @noname               ; should never happen
+         +STAY @key3
+         jsr   okvs_get
+         !word gGamesListStore
+@key3    !word $FDFD                 ; SMC
+         bcs   @noname               ; should never happen
+@foundname
+         +STAY PTR
+@drawname
+         ldx   #0
+         stx   HTAB
+         ldx   #22
+         stx   VTAB
+         ldy   #0
+         lda   (PTR),y
+         tax
+         +LDADDR @topline
+         sec
+         jsr   DrawBuffer
+         ldx   #3
+         +LDADDR @toprightcorner
+         sec
+         jsr   DrawBuffer
+         inc   VTAB
+         ldx   #0
+         stx   HTAB
+         inx
+         +LDADDR @rightline
+         sec
+         jsr   DrawBuffer
+         +LDAY PTR
+         sec
+         jsr   DrawString
+         ldx   #2
+         +LDADDR @rightline
+         sec
+         jsr   DrawBuffer
+@noname
+         jmp   ExecuteTransition
+@topline
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+@toprightcorner
+         !byte 0,0,7
+@rightline
+         !text " "
+         !byte 3
+
+;------------------------------------------------------------------------------
+; LoadHGRTransition
+; looks up name of next HGR transition effect in FX.CONF and loads that file
+; at $6000
+
+; in:    gFXStore has been initialized
+;        gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $6000..$BFFF contains transition effect code
+;------------------------------------------------------------------------------
+LoadHGRTransition
+         jsr   LoadFile              ; load HGR transition effects list into $8000
+         !word kFXConfFile
+         jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
+         !word gFXStore
+         !word ldrlo2                ; (ldrlo2) points to last load address
+         !byte 0
+
+         jsr   okvs_get              ; get next HGR transition effect from prefs
+         !word gGlobalPrefsStore
+         !word kNextFX
+         bcs   @nofx
+         +STAY @fx
+         jsr   okvs_get
+         !word gFXStore
+@fx      !word $FDFD                 ; SMC
+         bcc   +
+@nofx    ldx   #0
++        stx   gFXIndex
+
+         jsr   okvs_nth              ; get filename of transition effect code
+         !word gFXStore
+gFXIndex
+         !byte 0
+         +STAY @fxkey
+
+         inc   gFXIndex              ; increment transition effect index
+         jsr   okvs_len
+         !word gFXStore
+         cmp   gFXIndex
+         bne   +
+         lda   #0
+         sta   gFXIndex
++
+         lda   gFXIndex
+         sta   @nexti
+         jsr   okvs_nth              ; get name of next HGR transition
+         !word gFXStore
+@nexti   !byte $FD                   ; SMC
+         +STAY @nextfx
+
+         jsr   okvs_update           ; save name of next HGR transition in prefs store
+         !word gGlobalPrefsStore
+         !word kNextFX
+@nextfx  !word $FDFD                 ; SMC
+
+         jsr   SaveGlobalPreferences ; write prefs store to disk
+
+         ; load transition effect code at $6000
+         +LOAD_FILE kFXDirectory, @fxkey
+         rts
+@fxkey   !word $FDFD
+kFXConfFile
+         !byte @kFXConfFile_e-*-1
+         !text "FX.CONF"
+@kFXConfFile_e
