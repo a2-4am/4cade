@@ -524,37 +524,46 @@ ProDOS_enter
     sta    sizehi
     sta    sizelo
     jsr    hddopendir
-    ldx    @handles+1
-    lda    bleftlo
-    sta    @sizelo-1, x
-    lda    blefthi
-    sta    @sizehi-1, x
     lda    #0
     sta    blkidx
     beq    @jmp_zp ;always
 
 @imp_seek
-    ldx    @handles+1
-    lda    @sizelo-1, x
-    sta    bleftlo
-    lda    @sizehi-1, x
-    sta    blefthi
+    jsr    @set_rdwrbuff
     lda    #0
     sta    blkidx
     sta    blkofflo
     sta    blkoffhi
     sta    reqcmd
-    jsr    @set_rdwrbuff
+    jsr    @reset
+    ldx    sizelo
+    beq    @seek64
+    sta    sizehi
+    sta    sizelo
+    jsr    @seekreset
+    inc    ldrlo
+    bne    @seek64
+    inc    ldrhi
+
+@seek64
     lda    ldrhi
     sta    sizehi
     lda    ldrlo
     sta    sizelo
-    jsr    hddrdwrpart
+    jsr    @seekreset
     lda    ldrhi
     ora    ldrlo
     bne    @jmp_zp
     dec    blkidx
     beq    @jmp_zp ;always
+
+@seekreset
+    jsr    hddrdwrpart
+@reset
+    lda    #$ff
+    sta    blefthi
+    sta    bleftlo
+    rts
 
 @imp_read
     lda    #cmdread
@@ -669,11 +678,6 @@ ProDOS_enter
 
 @handle
     !byte  0, 0 ;only up to two handles at a time
-
-@sizelo
-    !byte  0, 0 ;only up to two files at a time
-@sizehi
-    !byte  0, 0 ;only up to two files at a time
 
 @saved_zp
     !fill  (last_zp - first_zp) + 1
