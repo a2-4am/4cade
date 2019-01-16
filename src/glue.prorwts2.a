@@ -524,32 +524,46 @@ ProDOS_enter
     sta    sizehi
     sta    sizelo
     jsr    hddopendir
+    ldx    @handles+1
+    lda    bleftlo
+    sta    @sizelo-1, x
+    lda    blefthi
+    sta    @sizehi-1, x
     lda    #0
     sta    blkidx
     beq    @jmp_zp ;always
 
 @imp_seek
-    lda    #cmdseek
-    !byte  $2c
+    ldx    @handles+1
+    lda    @sizelo-1, x
+    sta    bleftlo
+    lda    @sizehi-1, x
+    sta    blefthi
+    lda    #0
+    sta    blkidx
+    sta    blkofflo
+    sta    blkoffhi
+    sta    reqcmd
+    jsr    @set_rdwrbuff
+    lda    ldrhi
+    sta    sizehi
+    lda    ldrlo
+    sta    sizelo
+    jsr    hddrdwrpart
+    lda    ldrhi
+    ora    ldrlo
+    bne    @jmp_zp
+    dec    blkidx
+    beq    @jmp_zp ;always
+
 @imp_read
     lda    #cmdread
     !byte  $2c
 @imp_write
     lda    #cmdwrite
     sta    reqcmd
-    pha
     jsr    @set_rdwrbuff
-    pla
-    pha
-    bne    @set_blocks
-    lda    ldrhi
-    sta    sizehi
-    lda    ldrlo
-    sta    sizelo
-@set_blocks
     jsr    hddrdwrpart
-    pla
-    beq    @jmp_zp ;seek doesn't return size
     ldy    #6
     lda    sizelo2
     sta    (packet), y
@@ -566,7 +580,7 @@ ProDOS_enter
     iny
     lda    blefthi
     sta    (packet), y
-    jmp    @restore_zp
+    bcs    @restore_zp ;always
 
 @imp_close
     lda    @handles+1
@@ -655,6 +669,11 @@ ProDOS_enter
 
 @handle
     !byte  0, 0 ;only up to two handles at a time
+
+@sizelo
+    !byte  0, 0 ;only up to two files at a time
+@sizehi
+    !byte  0, 0 ;only up to two files at a time
 
 @saved_zp
     !fill  (last_zp - first_zp) + 1
