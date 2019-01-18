@@ -154,6 +154,16 @@ kAttractModeConfFile
 ; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
 Home
+         lda   MachineStatus
+         and   #SUPPORTS_SHR
+         beq   @noSHR
+         lda   $C035
+         ora   #$08
+         sta   $C035                 ; turn off auxmem-to-bank-E1 shadowing
+         lda   $C029
+         and   #$7F
+         sta   $C029                 ; get out of SHR mode
+@noSHR
          ldx   #(@end-@start-1)
 -        lda   @start,x
          sta   $106,x
@@ -168,12 +178,5 @@ Home
          jsr   $FB2F                 ; TEXT
          jsr   $FC58                 ; HOME
          +READ_RAM1_WRITE_RAM1
-         lda   MachineStatus
-         and   #SUPPORTS_SHR
-         beq   @noSHR
-         lda   $C029
-         and   #$7F
-         sta   $C029                 ; get out of SHR mode
-@noSHR
          rts
 @end

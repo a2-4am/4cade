@@ -90,7 +90,7 @@ SHRArtworkCallback
 BlankSHR
          jsr   Home
 
-         lda   $C029                 ; set GS NEWVIDEO mode to turn off linearize
+         lda   $C029                 ; set GS NEWVIDEO mode to turn on linearize
          ora   #$40
          sta   $C029
 
