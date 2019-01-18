@@ -31,12 +31,14 @@ SHRArtworkSlideshow
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadSHRTransition
-         jsr   LoadFile
-         !word kSFXFizzleFile
+         +LDADDR kSFXFizzleFile
+         +STAY @file
+         +LOAD_FILE kFXDirectory, @file
          rts
+@file    !word $FDFD
 kSFXFizzleFile
          !byte @kSFXFizzleFile_e-*-1
-         !text "FX/SHR.FIZZLE"
+         !text "SHR.FIZZLE"
 @kSFXFizzleFile_e
 
 ;------------------------------------------------------------------------------

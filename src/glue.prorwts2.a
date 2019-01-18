@@ -49,6 +49,10 @@ gRootDirectory
 ;        +1 address of filename
 ; out:   all flags clobbered
 ;        all registers clobbered
+;        filename clobbered (hey, this is important, you can't call this with
+;          the same filename buffer twice unless you REALLY know what you're
+;          doing, so you should probably use one of the LOAD_* macros which
+;          copies the filename to a temporary buffer)
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 LoadFile
