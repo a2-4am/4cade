@@ -529,27 +529,50 @@ ProDOS_enter
     beq    @jmp_zp ;always
 
 @imp_seek
-    lda    #cmdseek
-    !byte  $2c
+    jsr    @set_rdwrbuff
+    lda    #0
+    sta    blkidx
+    sta    blkofflo
+    sta    blkoffhi
+    sta    reqcmd
+    jsr    @reset
+    ldx    sizelo
+    beq    @seek64
+    sta    sizehi
+    sta    sizelo
+    jsr    @seekreset
+    inc    ldrlo
+    bne    @seek64
+    inc    ldrhi
+
+@seek64
+    lda    ldrhi
+    sta    sizehi
+    lda    ldrlo
+    sta    sizelo
+    jsr    @seekreset
+    lda    ldrhi
+    ora    ldrlo
+    bne    @jmp_zp
+    dec    blkidx
+    beq    @jmp_zp ;always
+
+@seekreset
+    jsr    hddrdwrpart
+@reset
+    lda    #$ff
+    sta    blefthi
+    sta    bleftlo
+    rts
+
 @imp_read
     lda    #cmdread
     !byte  $2c
 @imp_write
     lda    #cmdwrite
     sta    reqcmd
-    pha
     jsr    @set_rdwrbuff
-    pla
-    pha
-    bne    @set_blocks
-    lda    ldrhi
-    sta    sizehi
-    lda    ldrlo
-    sta    sizelo
-@set_blocks
     jsr    hddrdwrpart
-    pla
-    beq    @jmp_zp ;seek doesn't return size
     ldy    #6
     lda    sizelo2
     sta    (packet), y
@@ -566,7 +589,7 @@ ProDOS_enter
     iny
     lda    blefthi
     sta    (packet), y
-    jmp    @restore_zp
+    bcs    @restore_zp ;always
 
 @imp_close
     lda    @handles+1
