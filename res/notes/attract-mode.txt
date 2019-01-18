@@ -33,6 +33,7 @@
 Spider Raid
 
 # needs work
+Dung Beetles [can escape to game by pressing RETURN at title screen]
 Formula 1 Racer
 
 # done
@@ -51,7 +52,6 @@ Championship Lode Runner
 Choplifter
 Conan
 Dino Eggs
-Dung Beetles
 Firebird
 Flip Out
 Gamma Goblins
