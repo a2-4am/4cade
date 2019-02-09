@@ -4,9 +4,7 @@ Arcticfox
 Ardy the Aardvark
 Axis Assassin
 Aztec
-Bad Dudes [DHGR] [priority]
 Ballblazer
-Batman [DHGR] [priority]
 Boulder Dash
 California Games [DHGR]
 Championship Baseball
@@ -25,7 +23,6 @@ GBA Championship Baseball
 GBA Championship Basketball
 Galaxy Gates
 Gulf Strike
-Heavy Barrel [DHGR] [priority]
 The Heist
 Impossible Mission II [DHGR]
 Kamikaze
@@ -46,7 +43,6 @@ Neutrons
 Oil's Well
 Pandora's Box
 Pegasus ][
-Platoon [DHGR] [priority]
 Rampage [DHGR] [priority]
 Robocop [DHGR] [priority]
 Roundabout
