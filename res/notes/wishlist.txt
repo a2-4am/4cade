@@ -83,11 +83,16 @@ Frazzle
 Free Fall
 Galactic Attack
 Ghostbusters
+MIRV
 Pentapus
+Photar
 Pipe Dream [DHGR] [priority]
+Rear Guard
 Renegade [DHGR] [priority]
 Sea Dragon
 Ski Crazed
+Space Cadette
+Tunnel Terror
 
 //qkumba crack
 Bandits
@@ -113,11 +118,11 @@ Hardball
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
+Lemmings
 One on One
 Peeping Tom
 Pulsar II
 Quadrant 6112
-Rear Guard
 Roach Hotel
 Road Block
 Russki Duck
@@ -139,7 +144,6 @@ Fly Wars
 Horizon V
 Jellyfish
 Lancaster
-Lemmings
 Minotaur
 Phaser Fire
 Star Blazer

@@ -136,6 +136,7 @@ gAttractIndex
          !word HGRTitleSlideshow
          !word HGRActionSlideshow
          !word DHGRTitleSlideshow
+         !word DHGRActionSlideshow
          !word SHRArtworkSlideshow
 
 kAttractModeConfFile

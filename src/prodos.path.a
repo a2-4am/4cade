@@ -15,20 +15,24 @@ kPathSeparator
          !raw  "/"
 
 kHGRTitleDirectory
-         !byte 3
-         !raw  "HGR"
-
-kHGRActionDirectory
-         !byte 6
-         !raw  "ACTION"
+         !byte 9
+         !raw  "TITLE.HGR"
 
 kDHGRTitleDirectory
-         !byte 4
-         !raw  "DHGR"
+         !byte 10
+         !raw  "TITLE.DHGR"
+
+kHGRActionDirectory
+         !byte 10
+         !raw  "ACTION.HGR"
+
+kDHGRActionDirectory
+         !byte 11
+         !raw  "ACTION.DHGR"
 
 kSHRArtworkDirectory
-         !byte 3
-         !raw  "SHR"
+         !byte 11
+         !raw  "ARTWORK.SHR"
 
 kAttractModeSlideshowDirectory
          !byte 2

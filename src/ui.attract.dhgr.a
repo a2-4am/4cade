@@ -19,6 +19,17 @@ DHGRTitleSlideshow
          !word DHGRTitleCallback     ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
+DHGRActionSlideshow
+         bit   MachineStatus         ; only run DHGR slideshow if we have 128K
+         bvs   +
+         rts
++        jsr   LoadDHGRTransition    ; load transition effect code at $6000
+         jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
+         jsr   okvs_iter             ; cycle through all listed DHGR files
+         !word gSlideshowStore
+         !word DHGRActionCallback    ; address of callback (called on each file)
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
 ;------------------------------------------------------------------------------
 ; LoadDHGRTransition
 ; looks up name of next DHGR transition effect in DFX.CONF and loads that file
@@ -131,6 +142,39 @@ WaitAfterTransition
          dex
          bpl   -
 +        rts
+
+;------------------------------------------------------------------------------
+; DHGRActionCallback
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single DHGR action screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /DHGR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;        $2000..$5FFF/aux clobbered
+;------------------------------------------------------------------------------
+DHGRActionCallback
+         +STAY PTR
+
+         lda   $C000
+         bpl   +
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         ; load DHGR screenshot at $4000/main and $4000/aux
+         jsr   ResetPath
+         +LDADDR kDHGRActionDirectory
+         jsr   AddToPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY PTR
+         jsr   AddToPath
+         jsr   LoadDHRFile
+         !word gPathname
+         jmp   ExecuteTransition
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
