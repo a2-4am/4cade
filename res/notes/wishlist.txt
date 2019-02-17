@@ -111,12 +111,15 @@ Fight Night
 Genetic Drift
 Hadron
 Hardball
+Horizon V
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
+Lancaster [priority]
 Lemmings
 One on One
 Peeping Tom
+Phaser Fire
 Pulsar II
 Quadrant 6112
 Roach Hotel
@@ -137,11 +140,8 @@ Zaxxon [priority]
 //TODO(flux-imaged but not woz)
 Cyclod
 Fly Wars
-Horizon V
 Jellyfish
-Lancaster
 Minotaur
-Phaser Fire
 Star Blazer
 
 //TODO(unacquired)
