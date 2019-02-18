@@ -101,12 +101,14 @@ Saracen
 Test Drive [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
+A.E.
 The Bilestoad
 Boa
 Borg
 Caverns of Callisto
 Copts and Robbers
 The Dam Busters
+Dueling Digits
 Fight Night
 Genetic Drift
 Hadron
@@ -116,6 +118,7 @@ International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
 Lancaster [priority]
+Labyrinth
 Lemmings
 One on One
 Peeping Tom
