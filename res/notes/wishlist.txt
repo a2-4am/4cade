@@ -132,6 +132,7 @@ Road Block
 Russki Duck
 Seafox
 The Snapper
+Star Blazer
 Star Cruiser
 Star Thief
 Super Taxman II
@@ -147,7 +148,6 @@ Cyclod
 Fly Wars
 Jellyfish
 Minotaur
-Star Blazer
 
 //TODO(unacquired)
 Eggs It
