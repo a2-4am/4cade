@@ -109,8 +109,10 @@ Caverns of Callisto
 Copts and Robbers
 The Dam Busters
 Dueling Digits
+Eggs It
 Fight Night
 Genetic Drift
+Gold Rush
 Hadron
 Hardball
 Horizon V
@@ -131,6 +133,7 @@ Roach Hotel
 Road Block
 Russki Duck
 Seafox
+The Asteroid Field
 The Snapper
 Star Blazer
 Star Cruiser
@@ -142,6 +145,7 @@ Wayout
 World Games [DHGR]
 Zargs
 Zaxxon [priority]
+Zenith
 
 //TODO(flux-imaged but not woz)
 Cyclod
@@ -150,10 +154,8 @@ Jellyfish
 Minotaur
 
 //TODO(unacquired)
-Eggs It
 Super Zaxxon
 Tempest
-Zenith
 
 //TODO(unreleased)
 Crystal Castles
