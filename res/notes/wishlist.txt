@@ -91,7 +91,6 @@ Tunnel Terror
 
 //qkumba crack
 Bandits
-Captain Goodnight
 Injured Engine
 Jawbreaker ][
 Mating Zone
@@ -109,11 +108,8 @@ Caverns of Callisto
 Copts and Robbers
 The Dam Busters
 Dueling Digits
-Eggs It
 Fight Night
-Genetic Drift
 Gold Rush
-Hadron
 Hardball
 Horizon V
 Hyper Head-On
@@ -142,7 +138,6 @@ Wayout
 World Games [DHGR]
 Zargs
 Zaxxon [priority]
-Zenith
 
 //TODO(flux-imaged but not woz)
 Cyclod
