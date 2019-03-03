@@ -44,7 +44,6 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Rampage [DHGR] [priority]
-Robocop [DHGR] [priority]
 Roundabout
 Shanghai
 Shifty Sam
@@ -102,6 +101,7 @@ Test Drive [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
 A.E.
+Alien Lander
 The Bilestoad
 Boa
 Borg
@@ -116,22 +116,19 @@ Gold Rush
 Hadron
 Hardball
 Horizon V
+Hyper Head-On
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
-Lancaster [priority]
 Labyrinth
 Lemmings
 Lunar Leepers
 One on One
 Peeping Tom
-Phaser Fire
 Pulsar II
-Quadrant 6112
 Retro-Ball
 Roach Hotel
 Road Block
-Russki Duck
 Seafox
 The Asteroid Field
 The Snapper
