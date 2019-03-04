@@ -21,10 +21,11 @@ if "%1" equ "asm" (
 2>nul md build
 2>nul md build\po
 2>nul md build\X
-2>nul md build\HGR
-2>nul md build\ACTION
-2>nul md build\DHGR
-2>nul md build\SHR
+2>nul md build\TITLE.HGR
+2>nul md build\TITLE.DHGR
+2>nul md build\ACTION.HGR
+2>nul md build\ACTION.DHGR
+2>nul md build\ARTWORK.SHR
 2>nul md build\SS
 2>nul md build\DEMO
 2>nul md build\FX
@@ -90,41 +91,44 @@ call :asm
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
-cscript /nologo bin/padto.js 512 build\PREFS.CONF
+cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DFX.CONF" >>build\log
-cscript /nologo bin/rsync.js res\hgr\* build\HGR >>build\log
-cscript /nologo bin/buildfileinfo.js build\HGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/HGR" "build/HGR" >>build\log
-cscript /nologo bin/rsync.js res\action\* build\ACTION >>build\log
-cscript /nologo bin/buildfileinfo.js build\ACTION "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION" "build/ACTION" >>build\log
-cscript /nologo bin/rsync.js res\dhgr\* build\DHGR >>build\log
-cscript /nologo bin/buildfileinfo.js build\DHGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DHGR" "build/DHGR" >>build\log
-cscript /nologo bin/rsync.js res\shr\* build\SHR >>build\log
-cscript /nologo bin/buildfileinfo.js build\SHR "C1" "2000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SHR" "build/SHR" >>build/log
-cscript /nologo bin/rsync.js res\ss\* build\SS >>build\log
-cscript /nologo bin/buildfileinfo.js build\SS "04" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build/SS" >>build\log
-cscript /nologo bin/rsync.js res\demo\* build\DEMO >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build/DEMO" >>build\log
-cscript /nologo bin/rsync.js res\fx\* build\FX >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build/FX" >>build\log
-%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build/log
-cscript /nologo bin/do2po.js res\dsk build\po
-cscript /nologo bin/rsync.js res\dsk\*.po build\po
-cscript /nologo bin/extract.js build\po >>build/log
+cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
+cscript /nologo cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "build\TITLE.HGR" >>build\log
+cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
+cscript /nologo bin\buildfileinfo.js build\TITLE.DHGR "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "build\TITLE.DHGR" >>build\log
+cscript /nologo bin\rsync.js res\action.hgr\* build\ACTION.HGR >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "build\ACTION.HGR" >>build\log
+cscript /nologo bin\rsync.js res\action.dhgr\* build\ACTION.DHGR >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "build\ACTION.DHGR" >>build\log
+cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
+cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "build\ARTWORK.SHR" >>build\log
+cscript /nologo bin\rsync.js res\ss\* build\SS >>build\log
+cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
+cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build\DEMO" >>build\log
+cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
+%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
+cscript /nologo bin\do2po.js res\dsk build\po
+cscript /nologo bin\rsync.js res\dsk\*.po build\po
+cscript /nologo bin\extract.js build\po >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build/log
-cscript /nologo bin/changebootloader.js "build\%DISK%" res\proboothd
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
+cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
 
