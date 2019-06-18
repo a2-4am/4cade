@@ -64,6 +64,45 @@ LoadFile
          sta   reqcmd
          lda   #0                    ; 0 = read into main memory
          sta   auxreq
+         sta   sizelo
+         sta   sizehi                ; 0 = query load address
+         jsr   hddopendir            ; call ProRWTS2
+         lda   ldrlo2
+         sta   ldrlo
+         lda   ldrhi2
+         sta   ldrhi
+         dec   sizehi                ; read entire file (ProRWTS2 will figure out exact size)
+         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+
+;------------------------------------------------------------------------------
+; LoadFileAt
+; Load a file into memory all at once, using ProRWTS2, at the load address
+; specified by the passed parameter.
+;
+; supports paths, see note
+;
+; in:    stack contains 4 bytes of parameters:
+;        +1 address of filename
+;        +3 address to load file
+; out:   all flags clobbered
+;        all registers clobbered
+;        filename clobbered (hey, this is important, you can't call this with
+;          the same filename buffer twice unless you REALLY know what you're
+;          doing, so you should probably use one of the LOAD_* macros which
+;          copies the filename to a temporary buffer)
+;        stack set to next instruction after parameters
+;------------------------------------------------------------------------------
+LoadFileAt
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY namlo                 ; set filename
+         +LDPARAM 3
+         +STAY ldrlo                 ; set load address
+         jsr   traverse              ; go to subdirectory, set up filename for read
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   auxreq
          lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
          jmp   hddopendir            ; exit via ProRWTS2
@@ -90,8 +129,11 @@ LoadDHRFile
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #$00                  ; read first $2000 bytes
          sta   sizelo
+         sta   ldrlo
          lda   #$20
          sta   sizehi
+         asl
+         sta   ldrhi
          lda   #1                    ; 1 = read into aux memory
          sta   auxreq
          lda   #cmdread              ; read (instead of write)
@@ -99,6 +141,8 @@ LoadDHRFile
          jsr   hddopendir            ; call ProRWTS2
          lda   #$20                  ; read next $2000 bytes
          sta   sizehi
+         asl
+         sta   ldrhi
          dec   auxreq                ; 0 = read into main memory
          clc                         ; not a subdirectory
          jmp   hddrdwrpart           ; call ProRWTS2
@@ -125,9 +169,21 @@ SaveSmallFile
          +LDPARAM 3
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
          jsr   traverse              ; go to subdirectory, set up filename for read
+         ;;if the write address is always a fixed value then we can discard the query
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   sizelo
+         sta   sizehi                ; 0 = query load address
+         jsr   hddopendir            ; call ProRWTS2
+         lda   ldrlo2
+         sta   ldrlo
+         lda   ldrhi2
+         sta   ldrhi
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd
-         jmp   hddopendir            ; exit via ProRWTS2
+         sta   sizelo                ; non-zero
+         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
 
 ;------------------------------------------------------------------------------
 ; traverse [private]
