@@ -115,6 +115,11 @@ OnInputChanged
                                      ; no input, reset params and UI
          lda   #$FF
          sta   SelectedIndex         ; reset selected index
+         ldx   #40                   ; reset visible line
+         lda   #0
+-        sta   UILine1-1,x
+         dex
+         bne   -
          ldy   #MaxInputLength       ; clear visible search bar
          lda   #" "
 -        sta   UILine2+1,y
@@ -136,16 +141,11 @@ OnInputChanged
          jmp   Draw40Chars
 
 @findMatchingTitle
-         ldx   #0                    ; reset match count
-         stx   MatchCount            ; TextRankCallback will increment this if
-                                     ; there are any matches
-         stx   BestMatchScore
-         dex
-         stx   BestMatchIndex
+         jsr   ResetTextRank
 
-         jsr   okvs_iter_values
-         !word gGamesListStore
-         !word TextRankCallback
+         jsr   okvs_iter_values      ; iterate through all game titles
+         !word gGamesListStore       ; and rank them for the best match
+         !word TextRankCallback      ; to the current input buffer
 
          lda   MatchCount            ; check match count
          bne   @yeschange
@@ -187,6 +187,27 @@ OnInputChanged
          cpy   #MaxInputLength+1
          bcc   -
 
+         ldx   #40
+         lda   #0
+-        sta   UILine1-1,x
+         dex
+         bne   -
+         tay
+-        lda   (SRC),y
+         +LOW_ASCII_TO_LOWER
+         cmp   InputBuffer,x
+         bne   +
+         lda   #$0B                  ; dot to highlight matched character
+         sta   UILine1,y
+         inx
+         cpx   InputLength
+         beq   @doneHighlight
++        inc   HTAB
+         iny
+         cpy   #40
+         bne   -
+@doneHighlight
+
          lda   #22                   ; draw search bar
          sta   VTAB
          sec                         ; on page 2, not currently visible
@@ -196,23 +217,6 @@ OnInputChanged
          +LDADDR UILine2
          jsr   Draw40Chars
          dec   VTAB
-         ldx   #0                    ; highlight matched characters
-         ldy   #0
--        lda   (SRC),y
-         +LOW_ASCII_TO_LOWER
-         cmp   InputBuffer,x
-         bne   +
-         sec                         ; on page 2
-         jsr   InvertChar
-         inx
-         cpx   InputLength
-         beq   @doneHighlight
-+        inc   HTAB
-         iny
-         cpy   #MaxInputLength
-         bne   -
-
-@doneHighlight
 
          bit   $C055                 ; show page 2
          ldx   #$20                  ; copy back to page 1
