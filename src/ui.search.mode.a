@@ -8,14 +8,14 @@
 ;
 
 ; indices into InputDispatchTable
+kInputSearchKey= 0
 kInputBackspace= 1
 kInputEnter    = 2
-kInputSearchKey= 3
+
 InputDispatchTable
-         !word 0
+         !word OnSearchKey
          !word OnBackspace
          !word OnEnter
-         !word OnKey
 
 SearchMode
          jsr   Home                  ; switches to text mode
@@ -96,9 +96,9 @@ OnBackspace
 
 OnEnter
          ; TODO
-         jmp   $ff59
+         rts
 
-OnKey
+OnSearchKey
          ldx   InputLength
          cpx   #MaxInputLength
          bne   +
@@ -135,9 +135,12 @@ OnInputChanged
          jmp   Draw40Chars
 
 @findMatchingTitle
-         lda   #0                    ; reset match count
-         sta   MatchCount            ; TextRankCallback will increment this if
+         ldx   #0                    ; reset match count
+         stx   MatchCount            ; TextRankCallback will increment this if
                                      ; there are any matches
+         stx   BestMatchScore
+         dex
+         stx   BestMatchIndex
 
          jsr   okvs_iter_values
          !word gGamesListStore
@@ -191,6 +194,24 @@ OnInputChanged
          sec
          +LDADDR UILine2
          jsr   Draw40Chars
+         dec   VTAB
+         ldx   #0                    ; highlight matched characters
+         ldy   #0
+-        lda   (SRC),y
+         +LOW_ASCII_TO_LOWER
+         cmp   InputBuffer,x
+         bne   +
+         sec                         ; on page 2
+         jsr   InvertChar
+         inx
+         cpx   InputLength
+         beq   @doneHighlight
++        inc   HTAB
+         iny
+         cpy   #MaxInputLength
+         bne   -
+
+@doneHighlight
 
          bit   $C055                 ; show page 2
          ldx   #$20                  ; copy back to page 1
@@ -207,42 +228,6 @@ OnInputChanged
          dex
          bne   @a
          bit   $C054                 ; show page 1
-         rts
-
-;------------------------------------------------------------------------------
-; SoftBell
-;
-; in:    none
-; out:   all registers and flags preserved
-;------------------------------------------------------------------------------
-SoftBell
-         php
-         pha
-         txa
-         pha
-         ldx   #32
--        lda   #2
-         jsr   Wait
-         bit   $C030
-         lda   #33
-         jsr   Wait
-         bit   $C030
-         dex
-         bne   -
-         pla
-         tax
-         pla
-         plp
-         rts
-
-Wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
-         sec
---       pha
--        sbc   #1
-         bne   -
-         pla
-         sbc   #1
-         bne   --
          rts
 
 ;------------------------------------------------------------------------------

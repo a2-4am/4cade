@@ -64,6 +64,7 @@ Main
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
          !source "src/parse.games.a"
+         !source "src/ui.sound.a"
          !source "src/ui.font.a"
          !source "src/ui.font.data.a"
 gGlobalPrefsStore
