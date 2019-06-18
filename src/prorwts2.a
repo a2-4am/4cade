@@ -17,7 +17,7 @@ ver_02 = 1
                 enable_floppy = 0       ;set to 1 to enable floppy drive support
                 poll_drive   = 0        ;set to 1 to check if disk is in drive, recommended if allow_multi is enabled
                 allow_extend = 0        ;enable support for more than four partitions (note: it has overhead)
-                override_adr = 0        ;set to 1 to require an explicit load address
+                override_adr = 1        ;set to 1 to require an explicit load address
                 aligned_read = 0        ;set to 1 if all reads can be a multiple of block size
                 enable_readseq=0        ;set to 1 to enable reading multiple sequential times from the same file without seek
                                         ;(exposes a fixed address that can be called for either floppy or hard disk support)
@@ -2221,6 +2221,14 @@ hddfoundname    iny
                 pha
     } ;allow_subdir or allow_saplings or allow_trees or not aligned_read
   } ;override_adr
+
+;;allow query even in override mode
+                ldy     #AUX_TYPE
+                lda     (bloklo), y
+                sta     ldrlo2
+                iny
+                lda     (bloklo), y
+                sta     ldrhi2
 
                 ;cache KEY_POINTER
 

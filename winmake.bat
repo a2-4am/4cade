@@ -99,7 +99,7 @@ cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DFX.CONF" >>build\log
 cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
-cscript /nologo cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "build\TITLE.HGR" >>build\log
 cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
 cscript /nologo bin\buildfileinfo.js build\TITLE.DHGR "06" "4000" >>build\log
