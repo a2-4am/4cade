@@ -1,0 +1,181 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+; text rank - an implementation of the Quicksilver search rank algorithm
+;
+; Public functions
+; - TextRankCallback (as okvs_iter_values callback)
+;
+; Public variables
+; - InputLength
+; - InputBuffer
+; - SelectedIndex
+; - MatchCount
+; - BestMatchScore
+; - BestMatchIndex
+
+zpword   =     $F0        ; word
+zpstring =     $F2        ; word
+runningscore=  $F4        ; word
+startat  =     $F6        ; byte
+i        =     $F7        ; byte
+tmp      =     $F8        ; byte
+gamelength=    $F9        ; byte
+firstletter=   $FA        ; byte
+
+MaxInputLength = 24
+InputLength
+         !byte 0
+InputBuffer
+         !text "                         "
+SelectedIndex
+         !byte $FF
+MatchCount
+         !byte 0
+BestMatchScore
+         !byte 0
+BestMatchIndex
+         !byte 0
+
+;------------------------------------------------------------------------------
+; TextRankCallback
+; callback called by okvs_iter_values on gGamesListStore
+; to calculate a ranking score for a single game title
+; against the current InputBuffer
+
+; in:    A/Y contains address of game title
+;        X contains 0-based index of the current record in gGamesListStore
+; out:   all registers and flags clobbered
+;        MatchCount possibly incremented (if this title was a match at all)
+;        BestMatchScore and BestMatchIndex possibly updated (if this title
+;          was the best match so far)
+;------------------------------------------------------------------------------
+TextRankCallback
+         stx   @tmpx                 ; X = OKVS index of this title
+         +STAY zpstring              ; A/Y = address of this title
+         +LDADDR InputLength
+         +STAY zpword
+;         ldy   #0                    ; first we'll check for an exact match
+;         lda   (zpstring),y          ; check length of this title against the input buffer
+;         sta   gamelength
+;         cmp   InputLength
+;         bne   +                     ; not equal, so can't be an exact match
+;         tay                         ; check for exact match
+;-        lda   (zpword),y
+;         cmp   (zpstring),y
+;         bne   +                     ; nope, not an exact match
+;         dey
+;         bne   -
+;         inc   MatchCount
+;         lda   #100                  ; maximum possible score
+;         sta   BestMatchScore
+;         ldx   @tmpx                 ; save this game as the best match
+;         stx   BestMatchIndex
+;         rts
+;+
+         lda   #0
+         sta   runningscore
+         sta   runningscore+1
+         ldy   #1
+         sty   startat
+-        sty   i
+         lda   (zpword),y
+         +LOW_ASCII_TO_LOWER
+         sta   tmp
+         ldy   startat
+--       lda   (zpstring),y
+         +LOW_ASCII_TO_LOWER
+         cmp   tmp
+         beq   +
+         cpy   gamelength
+         iny
+         bcc   --
+         rts                         ; no match :(
++
+         ldx   #80
+         cpy   startat
+         beq   +
+         ldx   #10
+         cpy   #1
+         beq   +
+         dey
+         lda   (zpstring),y
+         iny
+         cmp   #' '
+         bne   +
+         ldx   #90
++        txa
+         clc
+         adc   runningscore
+         sta   runningscore
+         bcc   +
+         inc   runningscore+1
++        iny
+         sty   startat
+         ldy   i
+         cpy   InputLength
+         iny
+         bcc   -
+
+         lda   runningscore
+         ldx   runningscore+1
+         ldy   gamelength
+         jsr   @div
+         sta   tmp
+         lda   runningscore
+         ldx   runningscore+1
+         ldy   InputLength
+         jsr   @div
+         clc
+         adc   tmp
+         lsr
+         pha
+         ldy   #1
+         lda   (zpstring),y
+         sta   firstletter
+         pla
+         ldx   InputBuffer
+         cpx   firstletter
+         bne   +
+         cmp   #85
+         bcs   +
+         adc   #15
++
+         cmp   BestMatchScore
+         bcc   +
+         sta   BestMatchScore
+         ldx   @tmpx
+         stx   BestMatchIndex
+         inc   MatchCount
++
+         rts
+
+@div
+         sta   @num1
+         stx   @num1+1
+         sty   @num2
+
+         lda   #0
+         sta   @rem
+         sta   @rem+1
+         ldx   #16
+-        asl   @num1
+         rol   @num1+1
+         rol   @rem
+         rol   @rem+1
+         lda   @rem
+         sec
+         sbc   @num2
+         bcc   +
+         sta   @rem
+         dec   @rem+1
+         inc   @num1
++        dex
+         bne   -
+         lda   @num1
+         rts
+
+@rem     !word 0
+@num1    !word 0
+@num2    !byte 0
+@tmpx    !byte $FD

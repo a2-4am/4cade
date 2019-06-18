@@ -108,3 +108,12 @@
          jsr   LoadFile
          !word gPathname
 }
+
+!macro   LOW_ASCII_TO_LOWER {
+         cmp   #$41
+         bcc   +
+         cmp   #$5B
+         bcs   +
+         ora   #$20
++
+}

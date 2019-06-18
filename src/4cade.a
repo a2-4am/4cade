@@ -45,7 +45,8 @@ Main
          jsr   Play
 +
          bit   $C010
-         jsr   AttractMode
+;         jsr   AttractMode
+         jsr   SearchMode
          jmp   @loop
 
          ; these routines will only be called after relocating to language card
@@ -59,6 +60,7 @@ Main
          !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
          !source "src/wait.a"
+         !source "src/textrank.a"
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
          !source "src/parse.games.a"
