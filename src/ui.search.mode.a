@@ -39,7 +39,8 @@ InputLoop
 
          cmp   #$7F                  ; delete key
          bne   +
--        ldx   #kInputBackspace
+-        jsr   ResetTextRank
+         ldx   #kInputBackspace
          bne   InputDispatch         ; always branches
 
 +        cmp   #$08                  ; left arrow = delete

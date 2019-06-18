@@ -38,6 +38,20 @@ BestMatchIndex
          !byte 0
 
 ;------------------------------------------------------------------------------
+; ResetTextRank
+; reset the Match variables to allow re-scanning (e.g. because of backspace)
+
+; in:    nothing
+; out:   X, MatchCount, BestMatchScore, BestMatchIndex zeroed
+;------------------------------------------------------------------------------
+ResetTextRank
+         ldx   #0
+         stx   MatchCount
+         stx   BestMatchScore
+         stx   BestMatchIndex
+         rts
+
+;------------------------------------------------------------------------------
 ; TextRankCallback
 ; callback called by okvs_iter_values on gGamesListStore
 ; to calculate a ranking score for a single game title
@@ -132,6 +146,7 @@ TextRankCallback
          pha
          ldy   #1
          lda   (zpstring),y
+         +LOW_ASCII_TO_LOWER
          sta   firstletter
          pla
          ldx   InputBuffer
