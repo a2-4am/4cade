@@ -12,8 +12,9 @@
                                      ;        (only valid during slideshows, not updated once a key is pressed)
 
 Play
+         +LDADDR kAttractModeConfFile
+         jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
-         !word kAttractModeConfFile
          jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
          !word gAttractModeStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
@@ -91,8 +92,9 @@ Go
          bcs   --
          stx   ProDOS_prefix
 
+         +LDADDR ProDOS_prefix
+         jsr   SetPath
          jsr   LoadFile
-         !word ProDOS_prefix
 
          ldy   #0
          lda   (namlo), y

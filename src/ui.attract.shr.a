@@ -65,15 +65,13 @@ SHRArtworkCallback
          jsr   BlankSHR
 
          ; load SHR artwork at $2000/main (not aux)
-         jsr   ResetPath
          +LDADDR kSHRArtworkDirectory
-         jsr   AddToPath
+         jsr   SetPath
          +LDADDR kPathSeparator
          jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadFile
-         !word gPathname
 
          jsr   $A000
          jmp   WaitAfterTransition

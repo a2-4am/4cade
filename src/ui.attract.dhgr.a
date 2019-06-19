@@ -41,8 +41,9 @@ DHGRActionSlideshow
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadDHGRTransition
+         +LDADDR kDFXConfFile
+         jsr   SetPath
          jsr   LoadFile              ; load DHGR transition effects list into $8000
-         !word kDFXConfFile
          jsr   ParseKeyValueList     ; parse DHGR transition effects list into $6000
          !word gDFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address

@@ -83,21 +83,18 @@
 }
 
 !macro   LOAD_FILE .subdirectory, .filename {
-         jsr   ResetPath
          +LDADDR .subdirectory
-         jsr   AddToPath
+         jsr   SetPath
          +LDADDR kPathSeparator
          jsr   AddToPath
          +LDAY .filename
          jsr   AddToPath
          jsr   LoadFile
-         !word gPathname
 }
 
 !macro   LOAD_PATH .subdirectory {
-         jsr   ResetPath
          +LDADDR .subdirectory
-         jsr   AddToPath
+         jsr   SetPath
          +LDADDR kPathSeparator
          jsr   AddToPath
 }
@@ -106,7 +103,6 @@
          +LDAY .filename
          jsr   AddToPath
          jsr   LoadFile
-         !word gPathname
 }
 
 !macro   LOW_ASCII_TO_LOWER {

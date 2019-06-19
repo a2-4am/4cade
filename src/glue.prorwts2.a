@@ -1,10 +1,11 @@
 ;license:MIT
-;(c) 2018 by 4am & qkumba
+;(c) 2018-9 by 4am & qkumba
 ;
 ; ProRWTS2 glue functions
 ;
 ; Public functions
 ; - LoadFile
+; - LoadFileAt
 ; - LoadDHRFile
 ; - SaveSmallFile
 ; - CloseHandles
@@ -12,7 +13,7 @@
 ;
 ; A general note about paths:
 ;
-; LoadFile, LoadDHRFile, and SaveSmallFile support files in subdirectories.
+; LoadFile, LoadFileAt, LoadDHRFile, and SaveSmallFile support subdirectories.
 ; Directories are delimited by '/' like ProDOS. At program startup, we get the
 ; current directory and save it; that is the PROGRAM ROOT DIRECTORY. All
 ; pathnames are relative to the PROGRAM ROOT DIRECTORY. There is no concept of
@@ -45,19 +46,13 @@ gRootDirectory
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 2 bytes of parameters:
-;        +1 address of filename
+; in:    gPathname contains filename
 ; out:   all flags clobbered
 ;        all registers clobbered
-;        filename clobbered (hey, this is important, you can't call this with
-;          the same filename buffer twice unless you REALLY know what you're
-;          doing, so you should probably use one of the LOAD_* macros which
-;          copies the filename to a temporary buffer)
-;        stack set to next instruction after parameters
+;        gPathname clobbered
 ;------------------------------------------------------------------------------
 LoadFile
-         +PARAMS_ON_STACK 2
-         +LDPARAM 1
+         +LDADDR gPathname
          +STAY namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
@@ -81,23 +76,20 @@ LoadFile
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 4 bytes of parameters:
-;        +1 address of filename
-;        +3 address to load file
+; in:    gPathname contains filename
+;        stack contains 2 bytes of parameters:
+;        +1 address to load file
 ; out:   all flags clobbered
 ;        all registers clobbered
-;        filename clobbered (hey, this is important, you can't call this with
-;          the same filename buffer twice unless you REALLY know what you're
-;          doing, so you should probably use one of the LOAD_* macros which
-;          copies the filename to a temporary buffer)
+;        gPathname clobbered
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 LoadFileAt
-         +PARAMS_ON_STACK 4
+         +PARAMS_ON_STACK 2
          +LDPARAM 1
-         +STAY namlo                 ; set filename
-         +LDPARAM 3
          +STAY ldrlo                 ; set load address
+         +LDADDR gPathname
+         +STAY namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
@@ -116,15 +108,13 @@ LoadFileAt
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 2 bytes of parameters:
-;        +1 address of filename
+; in:    gPathname contains filename
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 LoadDHRFile
-         +PARAMS_ON_STACK 2
-         +LDPARAM 1
+         +LDADDR gPathname
          +STAY namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #$00                  ; read first $2000 bytes
@@ -155,19 +145,18 @@ LoadDHRFile
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 4 bytes of parameters:
-;        +1 address of filename
-;        +3 address of data buffer
+; in:    stack contains 2 bytes of parameters:
+;        +1 address of data buffer
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 SaveSmallFile
-         +PARAMS_ON_STACK 4
+         +PARAMS_ON_STACK 2
          +LDPARAM 1
-         +STAY namlo                 ; set filename for ProRWTS2
-         +LDPARAM 3
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
+         +LDADDR gPathname
+         +STAY namlo                 ; set filename for ProRWTS2
          jsr   traverse              ; go to subdirectory, set up filename for read
          ;;if the write address is always a fixed value then we can discard the query
          lda   #cmdread              ; read (instead of write)

@@ -25,8 +25,10 @@
 ;        memory, unused portions of the stack page, all registers, all flags)
 ;------------------------------------------------------------------------------
 AttractMode
+         +LDADDR kAttractModeConfFile
+         jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
-         !word kAttractModeConfFile
+
          jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
          !word gAttractModeStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
@@ -83,7 +85,9 @@ gAttractIndex
 
          jsr   @RunNextAttractModule
          lda   $C000
-         bpl   AttractMode
+         bmi   +
+         jmp   AttractMode
++
          rts
 
 @RunNextAttractModule

@@ -128,8 +128,9 @@ OnInputChanged
          lda   #$7F
          sta   UILine2+1
 
+         +LDADDR Cover
+         jsr   SetPath
          jsr   LoadFile              ; load default background at $2000
-         !word Cover
 
          lda   #22                   ; draw visible search bar
          sta   VTAB

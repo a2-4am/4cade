@@ -64,8 +64,9 @@ ResetPath
          rts
 
 ;------------------------------------------------------------------------------
-; AddToPath
+; SetPath/AddToPath
 ; append a length-prefixed string to gPathname
+; SetPath will reset the path first
 ;
 ; in:    A contains low byte of address of length-prefixed string to append
 ;        Y contains high byte of address of length-prefixed string to append
@@ -73,6 +74,9 @@ ResetPath
 ;        $00/$01 clobbered
 ;        gPathname updated with concatenated length-prefixed string
 ;------------------------------------------------------------------------------
+SetPath
+         jsr   ResetPath
+         ; execution falls through here
 AddToPath
          +STAY $00
          ldx   gPathname             ; current pathname length
