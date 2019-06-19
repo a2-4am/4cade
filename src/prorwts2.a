@@ -2691,6 +2691,7 @@ hddresparse
                 bne     hddrdwrloop
   } ;aligned_read
 hddrdwrdone
+                bit     $c08b ;restore banks
   !if allow_aux = 1 {
                 ldx     #0
 hddsetaux       sta     CLRAUXWR, x
@@ -2829,6 +2830,7 @@ hddseekrdwr
 
                 stx     bloklo
                 sta     blokhi
+                bit     $c083 ;switch banks
 
 unrunit1 = unrelochdd + (* - reloc)
                 lda     #$d1
@@ -3003,7 +3005,7 @@ hdddataend
           !warn "initial reloc too low, adjust to ", (0 - (((hdddataend + $ff) & -256) - reloc)) & $ffff
         } ;hdddataend
       } ;enable_floppy
-      hdddirbuf = reloc - $200
+      hdddirbuf = $d200
       !if aligned_read = 0 {
         hddencbuf = hdddirbuf - $200
       } ;aligned_read
