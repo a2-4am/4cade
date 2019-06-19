@@ -26,11 +26,10 @@
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
 
-         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
-         +READ_RAM1_WRITE_RAM1
+         +READ_ROM_WRITE_RAM1
          ldx   #$00                  ; relocate rest of program to RAM bank 1 in language card
 @FM      lda   FirstMover,x
-         sta   $D000,x
+         sta   RELBASE,x
          inx
          bne   @FM
          lda   @FM+2
@@ -40,6 +39,7 @@
          inc   @FM+5
          bne   @FM
 +
+         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
          jmp   OneTimeSetup
 
 @no64K

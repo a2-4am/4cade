@@ -288,6 +288,7 @@ traverse
 
          pla
          sta   (namlo), y
+         lda   $c08b
 @go
          rts
 
@@ -404,7 +405,7 @@ ProDOS_enter
   !ifdef PASS2 {
 !set CloseHandles = @imp_close
   } else { ;PASS2
-    !set PASS2=1
+!set CloseHandles = *
   }
     stx    ProDOS_savedX+1
     sty    ProDOS_savedY+1

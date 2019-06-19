@@ -5,6 +5,10 @@
 !to "build/LAUNCHER.SYSTEM",plain
 *=$2000
 
+!ifndef RELBASE {
+RELBASE=$2000
+}
+
          !source "src/constants.a"
          !source "src/macros.a"
 
@@ -12,7 +16,7 @@
          !source "src/4cade.init.a"
 
 FirstMover
-!pseudopc $D000 {
+!pseudopc RELBASE {
 Reenter                              ; self-running demos should call this to exit back to 4cade
          cld
          cli
@@ -68,6 +72,13 @@ Main
          !source "src/ui.font.a"
          !source "src/ui.font.data.a"
 gGlobalPrefsStore
-         !word *+2                   ; address of first okvs store
+         !word $D000                 ; address of first okvs store
 }
 LastMover
+!if RELBASE = $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !set PASS2=1
+    !warn "RELBASE = ", $FE00 - (LastMover - FirstMover)
+  }
+}

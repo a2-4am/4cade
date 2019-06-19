@@ -463,8 +463,8 @@ unrentry1       jsr     $d1d1
 
 bankram
 !if load_banked = 1 {
-                lda     LCBANK2 - ((lc_bank - 1) * 8)
-                lda     LCBANK2 - ((lc_bank - 1) * 8)
+                lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
+                lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
 } ;load_banked
 !if load_aux = 1 {
                 sta     SETAUXWR + (load_banked * 4) ;SETAUXWR or SETAUXZP
@@ -550,15 +550,8 @@ unrdrvoff1      lda     MOTOROFF
                 ;and code is less than two pages long (e.g. aligned_read, no write)
                 ;can't insert code during pass two because it breaks existing offsets
 
-    !ifdef PASS2 {
-      !if >(hddcodeend - reloc) > 0 {
-        !set hack=$100
-      } ;hddcodeend
-    } else { ;PASS2 not defined
-      !set hack=0
-    } ;PASS2
-                lda     unrelochdd + hack, y
-                sta     reloc + hack, y
+                lda     unrelochdd + $100, y
+                sta     reloc + $100, y
   } ;one_page
                 iny
                 bne     -
@@ -2877,7 +2870,6 @@ hdddataend
 ;math magic to determine ideal loading address, and information dump
 !ifdef PASS2 {
 } else { ;PASS2 not defined
-  !set PASS2=1
   !if enable_floppy = 1 {
     !if reloc < $c000 {
       !if ((dataend + $ff) & -256) > $c000 {
