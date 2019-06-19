@@ -21,7 +21,7 @@ ACME=acme
 CADIUS=cadius
 
 asm: md
-	$(ACME) -r build/4cade.lst src/4cade.a >build/relbase.log
+	$(ACME) -r build/4cade.lst src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 	$(ACME) src/fx/fx.dhgr.ripple.a
 	$(ACME) src/fx/fx.dhgr.iris.a
