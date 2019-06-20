@@ -8,28 +8,28 @@
 ;
 
 ; indices into InputDispatchTable
-kInputSearchKey= 0
-kInputBackspace= 1
-kInputEnter    = 2
+kInputSearch   = 0
+kInputClear    = 1
+kInputBack     = 2
+kInputLaunch   = 3
 
 InputDispatchTable
-         !word OnSearchKey
-         !word OnBackspace
-         !word OnEnter
+         !word OnSearch
+         !word OnClear
+         !word OnBack
+         !word OnLaunch
 
 SearchMode
-         jsr   Home                  ; switches to text mode
+         jsr   Home
 
          lda   #0
+         sta   OffscreenPage
          sta   InputLength
 
-         jsr   OnInputChanged
-
-         bit   $C054                 ; show it
+         jsr   OnInputChanged        ; draw default UI on HGR page 1
          bit   $C052
          bit   $C057
          bit   $C050
-
          bit   $C010
 InputLoop
 -        lda   $C000
@@ -39,16 +39,20 @@ InputLoop
 
          cmp   #$7F                  ; delete key
          bne   +
--        jsr   ResetTextRank
-         ldx   #kInputBackspace
+-        ldx   #kInputBack
          bne   InputDispatch         ; always branches
 
 +        cmp   #$08                  ; left arrow = delete
          beq   -
 
+         cmp   #$1B                  ; Esc clears the input buffer
+         bne   +
+         ldx   #kInputClear
+         bne   InputDispatch         ; always branches
+
          cmp   #$0D                  ; ENTER launches the current game (if any)
          bne   +
-         ldx   #kInputEnter
+         ldx   #kInputLaunch
          bne   InputDispatch         ; always branches
 +
          cmp   #$30                  ; control keys and punctuation ignored
@@ -72,7 +76,7 @@ InputLoop
          jmp   InputLoop             ; and start over
 
 @goodkey
-         ldx   #kInputSearchKey
+         ldx   #kInputSearch
          ; execution falls through here
 InputDispatch
          pha                         ; save key pressed
@@ -87,7 +91,16 @@ InputDispatch
 @j       jsr   $FDFD                 ; SMC
          jmp   InputLoop
 
-OnBackspace
+OnClear
+         ldx   InputLength
+         bne   +
+         jsr   SoftBell
+         rts
++        ldx   #0
+         stx   InputLength
+         jmp   OnInputChanged
+
+OnBack
          ldx   InputLength
          bne   +
          jsr   SoftBell
@@ -95,11 +108,11 @@ OnBackspace
 +        dec   InputLength
          jmp   OnInputChanged
 
-OnEnter
+OnLaunch
          ; TODO
          rts
 
-OnSearchKey
+OnSearch
          ldx   InputLength
          cpx   #MaxInputLength
          bne   +
@@ -114,7 +127,7 @@ OnInputChanged
          bne   @findMatchingTitle
                                      ; no input, reset params and UI
          lda   #$FF
-         sta   SelectedIndex         ; reset selected index
+         sta   SelectedIndex         ; no game selected
          ldx   #40                   ; reset visible line
          lda   #0
 -        sta   UILine1-1,x
@@ -128,18 +141,19 @@ OnInputChanged
          lda   #$7F
          sta   UILine2+1
 
+         lda   OffscreenPage
+         beq   +
+         lda   #$40
+         +HIDE_NEXT_2_BYTES
++        lda   #$20
+         sta   @coveraddress+1
          +LDADDR Cover
          jsr   SetPath
-         jsr   LoadFile              ; load default background at $2000
-
-         lda   #22                   ; draw visible search bar
-         sta   VTAB
-         clc                         ; on page 1
-         +LDADDR UILine1
-         jsr   Draw40Chars
-         clc
-         +LDADDR UILine2
-         jmp   Draw40Chars
+         jsr   LoadFileAt            ; load default background
+@coveraddress
+         !word $FD00
+         jsr   _DrawSearchBarOffscreen
+         jmp   _ShowOtherPage
 
 @findMatchingTitle
          jsr   ResetTextRank
@@ -148,28 +162,47 @@ OnInputChanged
          !word gGamesListStore       ; and rank them for the best match
          !word TextRankCallback      ; to the current input buffer
 
-         lda   MatchCount            ; check match count
-         bne   @yeschange
+         lda   MatchCount            ; any matches at all?
+         bne   +
          jsr   SoftBell              ; no matches for this input buffer, beep
          dec   InputLength           ; and ignore the last key typed
-@nochange
          rts
-@yeschange
-         lda   BestMatchIndex
-         cmp   SelectedIndex         ; we found a 'new' best match but it's the
-         beq   @nochange             ; same as the current match, so we're done
-                                     ; TODO re-highlight here
++
+         lda   BestMatchIndex        ; check if the new best match is the same
+         cmp   SelectedIndex         ; as the current best match
+         php                         ; (we'll use this later to skip reloading)
 
-         sta   SelectedIndex         ; we have a new best match, so load the
-         sta   @index                ; new title screenshot and display the
-         jsr   okvs_nth              ; new game title in the search bar
+         sta   SelectedIndex
+         sta   @index
+         jsr   okvs_nth
          !word gGamesListStore
 @index   !byte $FD
          +STAY @key
 
-         ; load game title page at $4000 (page 2, not currently visible)
-         +LOAD_FILE kHGRTitleDirectory, @key
+         plp
+         bne   +
+         lda   OffscreenPage
+         eor   #$01
+         sta   OffscreenPage
+         jmp   @skipload
++
+         lda   OffscreenPage         ; we have a new best match, so load the
+         beq   +                     ; new title screenshot (offscreen)
+         lda   #$40
+         +HIDE_NEXT_2_BYTES
++        lda   #$20
+         sta   @titleaddress+1
+         +LDADDR kHGRTitleDirectory
+         jsr   SetPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDAY @key
+         jsr   AddToPath
+         jsr   LoadFileAt
+@titleaddress
+         !word $FD00
 
+@skipload
          jsr   okvs_get
          !word gGamesListStore
 @key     !word $FDFD
@@ -183,14 +216,14 @@ OnInputChanged
          bcc   +
          lda   #" "
          +HIDE_NEXT_2_BYTES
-+        lda   (SRC),y
++        lda   (SRC),y               ; copy game title to search UI
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
 
          ldx   #40
          lda   #0
--        sta   UILine1-1,x
+-        sta   UILine1-1,x           ; reset search bar
          dex
          bne   -
          tay
@@ -198,7 +231,7 @@ OnInputChanged
          +LOW_ASCII_TO_LOWER
          cmp   InputBuffer,x
          bne   +
-         lda   #$0B                  ; dot to highlight matched character
+         lda   #$0B                  ; add dots to highlight matched characters
          sta   UILine1,y
          inx
          cpx   InputLength
@@ -208,32 +241,29 @@ OnInputChanged
          cpy   #40
          bne   -
 @doneHighlight
+         jsr   _DrawSearchBarOffscreen; actually draw the search UI (offscreen)
+         jmp   _ShowOtherPage        ; now show everything at once
 
-         lda   #22                   ; draw search bar
+_DrawSearchBarOffscreen
+         lda   #22                   ; draw visible search bar
          sta   VTAB
-         sec                         ; on page 2, not currently visible
+         lda   OffscreenPage
+         ror                         ; draw on offscreen page
          +LDADDR UILine1
          jsr   Draw40Chars
-         sec
+         lda   OffscreenPage
+         ror                         ; draw on offscreen page
          +LDADDR UILine2
-         jsr   Draw40Chars
-         dec   VTAB
+         jmp   Draw40Chars
 
+_ShowOtherPage
+         lda   OffscreenPage
+         eor   #$01
+         sta   OffscreenPage
+         bne   +
          bit   $C055                 ; show page 2
-         ldx   #$20                  ; copy back to page 1
-         stx   @b+2                  ; TODO delete this and use LoadFileAt
-         lda   #$40                  ; to load title screenshots on different
-         sta   @a+2                  ; pages
-         ldy   #0
-@a       lda   $4000,y
-@b       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         inc   @b+2
-         dex
-         bne   @a
-         bit   $C054                 ; show page 1
+         rts
++        bit   $C054                 ; show page 1
          rts
 
 ;------------------------------------------------------------------------------
@@ -252,3 +282,9 @@ UILine2
          !byte $7F
          !text "                         "
          !text "]   000 games"
+
+OffscreenPage
+         !byte 1                     ; 0 = currently showing HGR page 2
+                                     ;     (so offscreen is page 1 @ $2000)
+                                     ; 1 = currently showing HGR page 1
+                                     ;     (so offscreen is page 2 @ $4000)
