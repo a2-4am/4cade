@@ -108,6 +108,7 @@ InputDispatch
 OnClear
          ldx   InputLength
          bne   +
+         jsr   BlankHGR
          pla                         ; Esc with no input exits search mode
          pla                         ; and switches to attract mode
          rts
