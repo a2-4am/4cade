@@ -79,6 +79,6 @@ LastMover
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", $FE00 - (LastMover - FirstMover)
+    !warn "RELBASE = ", $FFFC - (LastMover - FirstMover)
   }
 }

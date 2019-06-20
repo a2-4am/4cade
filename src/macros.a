@@ -73,6 +73,11 @@
          bit   $C08B
 }
 
+!macro   READ_RAM2_WRITE_RAM2 {
+         bit   $C083
+         bit   $C083
+}
+
 !macro   READ_ROM_WRITE_RAM1 {
          bit   $C089
          bit   $C089

@@ -54,6 +54,7 @@ gRootDirectory
 LoadFile
          +LDADDR gPathname
          +STAY namlo                 ; set filename
+         +READ_RAM2_WRITE_RAM2
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
@@ -67,7 +68,9 @@ LoadFile
          lda   ldrhi2
          sta   ldrhi
          dec   sizehi                ; read entire file (ProRWTS2 will figure out exact size)
-         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         jsr   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         +READ_RAM1_WRITE_RAM1
+         rts
 
 ;------------------------------------------------------------------------------
 ; LoadFileAt
@@ -90,6 +93,7 @@ LoadFileAt
          +STAY ldrlo                 ; set load address
          +LDADDR gPathname
          +STAY namlo                 ; set filename
+         +READ_RAM2_WRITE_RAM2
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
@@ -97,7 +101,9 @@ LoadFileAt
          sta   auxreq
          lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
-         jmp   hddopendir            ; exit via ProRWTS2
+         jsr   hddopendir            ; exit via ProRWTS2
+         +READ_RAM1_WRITE_RAM1
+         rts
 
 ;------------------------------------------------------------------------------
 ; LoadDHRFile
@@ -116,6 +122,7 @@ LoadFileAt
 LoadDHRFile
          +LDADDR gPathname
          +STAY namlo                 ; set filename
+         +READ_RAM2_WRITE_RAM2
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #$00                  ; read first $2000 bytes
          sta   sizelo
@@ -135,7 +142,9 @@ LoadDHRFile
          sta   ldrhi
          dec   auxreq                ; 0 = read into main memory
          clc                         ; not a subdirectory
-         jmp   hddrdwrpart           ; call ProRWTS2
+         jsr   hddrdwrpart           ; call ProRWTS2
+         +READ_RAM1_WRITE_RAM1
+         rts
 
 ;------------------------------------------------------------------------------
 ; SaveSmallFile
@@ -157,6 +166,7 @@ SaveSmallFile
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
          +LDADDR gPathname
          +STAY namlo                 ; set filename for ProRWTS2
+         +READ_RAM2_WRITE_RAM2
          jsr   traverse              ; go to subdirectory, set up filename for read
          ;;if the write address is always a fixed value then we can discard the query
          lda   #cmdread              ; read (instead of write)
@@ -172,7 +182,9 @@ SaveSmallFile
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd
          sta   sizelo                ; non-zero
-         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         jsr   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         +READ_RAM1_WRITE_RAM1
+         rts
 
 ;------------------------------------------------------------------------------
 ; traverse [private]
@@ -288,7 +300,6 @@ traverse
 
          pla
          sta   (namlo), y
-         lda   $c08b
 @go
          rts
 
@@ -311,8 +322,7 @@ promote
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
 
         lda    $c011
-        bit    $c08b
-        bit    $c08b
+        +READ_RAM2_WRITE_RAM2
 ;$bf10
         jmp    ProDOS_enter
         !byte  $c1

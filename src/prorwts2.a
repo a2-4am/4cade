@@ -54,10 +54,10 @@ ver_02 = 1
                                         ;use unique volume numbers to distinguish between images in the same file
                                         ;requires override_adr, enable_seek, allow_trees, always_trees
                                         ;not compatible with enable_floppy, aligned_read, allow_subdir, might_exist, bounds_check
-                load_high    = 1        ;set to 1 to load to top of RAM (either main or banked, enables a himem check)
+                load_high    = 0        ;set to 1 to load to top of RAM (either main or banked, enables a himem check)
                 load_aux     = 0        ;load to aux memory
                 load_banked  = 1        ;set to 1 to load into banked RAM instead of main RAM (can be combined with load_aux for aux banked)
-                lc_bank      = 1        ;load into specified bank (1 or 2) if load_banked=1
+                lc_bank      = 2        ;load into specified bank (1 or 2) if load_banked=1
                 one_page     = 0        ;set to 1 if verbose mode says that you should (smaller code)
 
                 ;user-defined driver load address
@@ -68,7 +68,7 @@ ver_02 = 1
                 reloc     = $fe00       ;page-aligned, as high as possible, the ideal value will be shown on mismatch
     } ;PASS2
   } else { ;load_high = 0
-                reloc     = $d000       ;page-aligned, but otherwise wherever you want
+                reloc     = $d400       ;page-aligned, but otherwise wherever you want
   } ;load_high
 } else { ;load_banked = 0
   !if load_high = 1 {
@@ -2684,7 +2684,6 @@ hddresparse
                 bne     hddrdwrloop
   } ;aligned_read
 hddrdwrdone
-                bit     $c08b ;restore banks
   !if allow_aux = 1 {
                 ldx     #0
 hddsetaux       sta     CLRAUXWR, x
@@ -2823,7 +2822,6 @@ hddseekrdwr
 
                 stx     bloklo
                 sta     blokhi
-                bit     $c083 ;switch banks
 
 unrunit1 = unrelochdd + (* - reloc)
                 lda     #$d1
@@ -2997,7 +2995,7 @@ hdddataend
           !warn "initial reloc too low, adjust to ", (0 - (((hdddataend + $ff) & -256) - reloc)) & $ffff
         } ;hdddataend
       } ;enable_floppy
-      hdddirbuf = $d200
+      hdddirbuf = reloc - $200
       !if aligned_read = 0 {
         hddencbuf = hdddirbuf - $200
       } ;aligned_read
@@ -3010,7 +3008,7 @@ hdddataend
       } ;allow_trees
     } else { ;load_high = 0
       !pseudopc ((hdddataend + $ff) & -256) {
-        hdddirbuf = *
+        hdddirbuf = $d000
       }
       !if aligned_read = 0 {
         hddencbuf = hdddirbuf + $200

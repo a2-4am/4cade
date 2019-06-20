@@ -72,6 +72,7 @@ OneTimeSetup
          sta   holepatch             ; enable restoring of copy from now on
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
+         +READ_RAM1_WRITE_RAM1
          +STAY gRootDirectory
 
          lda   $43
