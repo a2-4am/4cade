@@ -25,6 +25,7 @@ SearchMode
          lda   #0
          sta   OffscreenPage
          sta   InputLength
+         jsr   _UpdateGameCount
 
          jsr   OnInputChanged        ; draw default UI on HGR page 1
          bit   $C052
@@ -213,10 +214,15 @@ OnInputChanged
          inc   SAVE
 -        iny
          cpy   SAVE
-         bcc   +
+         bcc   @printTitleChar
+         beq   @printCursor
          lda   #" "
          +HIDE_NEXT_2_BYTES
-+        lda   (SRC),y               ; copy game title to search UI
+@printCursor
+         lda   #$7F
+         +HIDE_NEXT_2_BYTES
+@printTitleChar
+         lda   (SRC),y               ; copy game title to search UI
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
@@ -266,6 +272,41 @@ _ShowOtherPage
 +        bit   $C054                 ; show page 1
          rts
 
+_UpdateGameCount
+         jsr   okvs_len
+         !word gGamesListStore
+         sta   SAVE
+         ldy   #0
+@outer
+         lda   #0
+         pha
+@inner
+         lda   SAVE
+         cmp   @powersOfTen,y
+         bcc   @digitDone
+         sbc   @powersOfTen,y
+         sta   SAVE
+         lda   SAVE+1
+         sbc   #0
+         sta   SAVE+1
+         pla
+         adc   #0
+         pha
+         jmp   @inner
+@digitDone
+         pla
+         ora   #$30
+         sta   UILine2_GameCount,y
+         iny
+         cpy   #$03
+         bcc   @outer
+         rts
+
+@powersOfTen
+         !byte 100
+         !byte 10
+         !byte 1
+
 ;------------------------------------------------------------------------------
 
 Cover    !byte 5
@@ -281,7 +322,9 @@ UILine2
          !text "["
          !byte $7F
          !text "                         "
-         !text "]   000 games"
+         !text "]   "
+UILine2_GameCount
+         !text "000 games"
 
 OffscreenPage
          !byte 1                     ; 0 = currently showing HGR page 2
