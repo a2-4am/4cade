@@ -412,11 +412,7 @@ packet = first_zp ;word
 buffer = first_zp+2 ;word
 
 ProDOS_enter
-  !ifdef PASS2 {
 !set CloseHandles = @imp_close
-  } else { ;PASS2
-!set CloseHandles = *
-  }
     stx    ProDOS_savedX+1
     sty    ProDOS_savedY+1
     pha
@@ -574,7 +570,6 @@ ProDOS_enter
     iny
     lda    (packet), y
     sta    @handle-1, x
-    tax
     jsr    @patch_buffer
     iny
     lda    #1
@@ -691,7 +686,6 @@ ProDOS_enter
     lda    (packet), y
     tax
     lda    @handle-1, x
-    tax
     jsr    @patch_buffer
     ldx    #ldrlo
     iny

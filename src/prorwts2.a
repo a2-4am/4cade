@@ -3008,10 +3008,10 @@ hdddataend
       } ;allow_trees
     } else { ;load_high = 0
       !pseudopc ((hdddataend + $ff) & -256) {
-        hdddirbuf = $d000
+        hdddirbuf = $d200
       }
       !if aligned_read = 0 {
-        hddencbuf = hdddirbuf + $200
+        hddencbuf = hdddirbuf - $200
       } ;aligned_read
       !if allow_trees = 1 {
         !if aligned_read = 0 {
