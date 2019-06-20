@@ -46,14 +46,19 @@ InputLoop
          sta   Mode                  ; switch to attract mode
          rts
 +
-         cmp   #$9B                  ; Esc with no input returns to caller
-         bne   +                     ; and switches to attract mode
-         ldx   InputLength
+         jsr   _ResetInputTimeout
+
+         cmp   #$9B                  ; Esc clears the input buffer
          bne   +
-         rts
+         ldx   #kInputClear
+         bne   InputDispatch         ; always branches
++
+         cmp   #$8D                  ; ENTER launches the current game (if any)
+         bne   +
+         ldx   #kInputLaunch
+         bne   InputDispatch         ; always branches
 +
          bit   $C010
-         jsr   _ResetInputTimeout
          and   #$7F
 
          cmp   #$7F                  ; delete key
@@ -64,16 +69,6 @@ InputLoop
 +        cmp   #$08                  ; left arrow = delete
          beq   -
 
-         cmp   #$1B                  ; Esc clears the input buffer
-         bne   +
-         ldx   #kInputClear
-         bne   InputDispatch         ; always branches
-
-         cmp   #$0D                  ; ENTER launches the current game (if any)
-         bne   +
-         ldx   #kInputLaunch
-         bne   InputDispatch         ; always branches
-+
          cmp   #$30                  ; control keys and punctuation ignored
          bcc   @badkey
          cmp   #$3A                  ; numbers are good input
@@ -113,10 +108,12 @@ InputDispatch
 OnClear
          ldx   InputLength
          bne   +
-         jsr   SoftBell
+         pla                         ; Esc with no input exits search mode
+         pla                         ; and switches to attract mode
          rts
 +        ldx   #0
          stx   InputLength
+         bit   $c010
          jmp   OnInputChanged
 
 OnBack
@@ -125,11 +122,16 @@ OnBack
          jsr   SoftBell
          rts
 +        dec   InputLength
+         bit   $c010
          jmp   OnInputChanged
 
 OnLaunch
-         ; TODO
-         rts
+         ldx   SelectedIndex
+         cpx   #$FF
+         beq   +
+         pla                         ; Return exits search mode
+         pla                         ; and launches game
++        rts
 
 OnSearch
          ldx   InputLength

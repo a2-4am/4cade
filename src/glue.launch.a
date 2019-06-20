@@ -12,6 +12,18 @@
                                      ;        (only valid during slideshows, not updated once a key is pressed)
 
 Play
+         lda   Mode
+         bmi   @playFromAttract
+@playFromSearch
+         lda   SelectedIndex
+         sta   @selectedIndex
+         jsr   okvs_nth
+         !word gGamesListStore
+@selectedIndex
+         !byte $FD                   ; SMC
+         jmp   Go
+
+@playFromAttract
          +LDADDR kAttractModeConfFile
          jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
