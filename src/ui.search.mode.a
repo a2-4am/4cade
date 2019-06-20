@@ -32,10 +32,28 @@ SearchMode
          bit   $C057
          bit   $C050
          bit   $C010
+         jsr   _ResetInputTimeout
 InputLoop
 -        lda   $C000
-         bpl   -
+         bmi   +
+         dec   $4F
+         bne   -
+         dec   $4E
+         bne   -
+         dec   $4D
+         bne   -
+         lda   #kAttractMode         ; no input for ~30 seconds
+         sta   Mode                  ; switch to attract mode
+         rts
++
+         cmp   #$9B                  ; Esc with no input returns to caller
+         bne   +                     ; and switches to attract mode
+         ldx   InputLength
+         bne   +
+         rts
++
          bit   $C010
+         jsr   _ResetInputTimeout
          and   #$7F
 
          cmp   #$7F                  ; delete key
@@ -306,6 +324,14 @@ _UpdateGameCount
          !byte 100
          !byte 10
          !byte 1
+
+_ResetInputTimeout
+; clobbers X, preserves A/Y
+         ldx   #$24
+         stx   $4D                   ; timeout counter
+         stx   $4E
+         stx   $4F
+         rts
 
 ;------------------------------------------------------------------------------
 

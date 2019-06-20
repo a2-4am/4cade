@@ -47,11 +47,22 @@ Main
          cmp   #$8D
          bne   +
          jsr   Play
++        cmp   #$9B
+         bne   +
+         lda   Mode
+         eor   #$80
+         sta   Mode
 +
          bit   $C010
-;         jsr   AttractMode
+         bit   Mode
+         bpl   +
+         jsr   AttractMode
+         jmp   @loop
++
          jsr   SearchMode
          jmp   @loop
+Mode
+         !byte $80
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"

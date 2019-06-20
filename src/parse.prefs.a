@@ -71,8 +71,9 @@ SaveGlobalPreferences
          +LDADDR @kEOF
          jsr     @addString
 
+         +LDADDR kGlobalPrefsFilename
+         jsr   SetPath
          jsr   SaveSmallFile
-         !word kGlobalPrefsFilename
          !word kGlobalPrefsBuffer
          rts
 

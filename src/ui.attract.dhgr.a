@@ -120,15 +120,13 @@ DHGRTitleCallback
          stx   gCurrentlyVisibleSlideshowIndex
 
          ; load DHGR screenshot at $4000/main and $4000/aux
-         jsr   ResetPath
          +LDADDR kDHGRTitleDirectory
-         jsr   AddToPath
+         jsr   SetPath
          +LDADDR kPathSeparator
          jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile
-         !word gPathname
          ; execution falls through here
 
 ExecuteTransition
@@ -166,15 +164,13 @@ DHGRActionCallback
          stx   gCurrentlyVisibleSlideshowIndex
 
          ; load DHGR screenshot at $4000/main and $4000/aux
-         jsr   ResetPath
          +LDADDR kDHGRActionDirectory
-         jsr   AddToPath
+         jsr   SetPath
          +LDADDR kPathSeparator
          jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile
-         !word gPathname
          jmp   ExecuteTransition
 
 ;------------------------------------------------------------------------------

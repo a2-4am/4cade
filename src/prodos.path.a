@@ -51,19 +51,6 @@ kFXDirectory
          !raw  "FX"
 
 ;------------------------------------------------------------------------------
-; ResetPath
-; reset gPathname to length 0
-;
-; in:    none
-; out:   X = 0
-;        A/Y preserved
-;------------------------------------------------------------------------------
-ResetPath
-         ldx   #0
-         stx   gPathname
-         rts
-
-;------------------------------------------------------------------------------
 ; SetPath/AddToPath
 ; append a length-prefixed string to gPathname
 ; SetPath will reset the path first
@@ -75,7 +62,8 @@ ResetPath
 ;        gPathname updated with concatenated length-prefixed string
 ;------------------------------------------------------------------------------
 SetPath
-         jsr   ResetPath
+         ldx   #0
+         stx   gPathname
          ; execution falls through here
 AddToPath
          +STAY $00

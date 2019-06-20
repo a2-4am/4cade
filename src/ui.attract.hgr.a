@@ -135,14 +135,14 @@ HGRActionCallback
 @key3    !word $FDFD                 ; SMC
          bcs   @noname               ; should never happen
 @foundname
-         +STAY PTR
+         +STAY SAVE
 @drawname
          ldx   #0
          stx   HTAB
          ldx   #22
          stx   VTAB
          ldy   #0
-         lda   (PTR),y
+         lda   (SAVE),y
          tax
          +LDADDR @topline
          sec
@@ -158,7 +158,9 @@ HGRActionCallback
          +LDADDR @rightline
          sec
          jsr   DrawBuffer
-         +LDAY PTR
+         +LDAY SAVE
+         jsr   SetPath
+         +LDADDR gPathname
          sec
          jsr   DrawString
          ldx   #2
