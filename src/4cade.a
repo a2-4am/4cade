@@ -70,11 +70,11 @@ Main
          !source "src/parse.games.a"
          !source "src/ui.sound.a"
          !source "src/ui.font.a"
-         !source "src/ui.font.data.a"
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
 }
 LastMover
+         !source "src/ui.font.data.a"
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2

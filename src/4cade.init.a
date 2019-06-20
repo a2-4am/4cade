@@ -27,8 +27,8 @@
                                      ;     bit 7 = 1 if joystick
 
          +READ_ROM_WRITE_RAM2
-         jsr   init                  ; initialize ProRWTS2 (bye bye ProDOS)
-         ldx   #$00                  ; relocate rest of program to RAM bank 1 in language card
+         jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
+         ldx   #$00                  ; relocate program code to top of language card
 @FM      lda   FirstMover,x
          sta   RELBASE,x
          inx
@@ -39,7 +39,17 @@
          inc   @FM+2
          inc   @FM+5
          bne   @FM
-+
+
++        ldy   #$04
+@LM      lda   LastMover,x           ; relocate font data to $D600 in RAM bank 2
+         sta   $D600,x
+         inx
+         bne   @LM
+         inc   @LM+2
+         inc   @LM+5
+         dey
+         bne   @LM
+
          jmp   OneTimeSetup
 
 @no64K

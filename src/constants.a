@@ -1,6 +1,21 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
+
+;------------------------------------------------------------------------------
+; YE OLDE GRAND UNIFIED MEMORY MAP
+;
+; LC RAM BANK 1
+; D000..     - data structures (e.g. gGamesListStore)
+;     ..FFFB - main program code
+; FFFC..FFFF - reset and other vectors
+;
+; LC RAM BANK 2
+; D000..D3FF - ProRWTS data
+; D400..D5FF - ProRWTS code
+; D600..D9FF - HGR font data
+; DA00..DFFF - unused
+;------------------------------------------------------------------------------
 
 ; soft switches
 STOREOFF =     $C000      ; write to use following 4 flags:

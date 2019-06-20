@@ -1,3 +1,4 @@
+!pseudopc $D600 {
 FontDataRow0
          !byte $80
          !byte $80
@@ -1030,3 +1031,4 @@ FontDataRow7
          !byte $86
          !byte $80
          !byte $FF
+}

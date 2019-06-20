@@ -128,6 +128,7 @@ DrawBuffer
          sta   @row5+1
          sta   @row6+1
          sta   @row7+1
+         +READ_RAM2_WRITE_RAM2
 @loop
 @src     ldy   $FDFD,x
          lda   FontDataRow0,y
@@ -149,69 +150,5 @@ DrawBuffer
          inc   HTAB
          dex
          bpl   @loop
-         rts
-
-InvertChar
-; inverts a character already drawn to the screen
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; $24 contains textpage column (0..39) (this is the standard HTAB address)
-; $25 contains textpage line (0..23) (this is the standard VTAB address)
-; HTAB is NOT incremented
-; VTAB is NOT incremented
-; clobbers A
-; preserves X/Y
-         bcs   +
-         lda   #$00
-         +HIDE_NEXT_2_BYTES
-+
-         lda   #$60
-         sta   @pagemask
-         txa
-         pha
-         tya
-         pha
-         lda   VTAB
-         asl
-         asl
-         asl
-; routine to calculate memory address within HGR page
-; (routine clobbers A and Y but preserves X)
-         asl
-         tay
-         and   #$F0
-         bpl   @calc1
-         ora   #$05
-@calc1   bcc   @calc2
-         ora   #$0A
-@calc2   asl
-         asl
-         sta   @hgrlo+1
-         tya
-         and   #$0E
-         adc   #$10
-         asl   @hgrlo+1
-         rol
-@pagemask=*+1
-         eor   #$FD                  ; SMC (0=hi-res page 1, #$60=hi-res page 2)
-         sta   DEST+1
-@hgrlo   lda   #$FD
-         clc
-         adc   HTAB
-         sta   DEST
-         ldx   #8
-         ldy   #0
--        lda   (DEST),y
-         eor   #$7F
-         sta   (DEST),y
-         lda   DEST+1
-         clc
-         adc   #$04
-         sta   DEST+1
-         dex
-         bne   -
-         pla
-         tay
-         pla
-         tax
+         +READ_RAM1_WRITE_RAM1
          rts
