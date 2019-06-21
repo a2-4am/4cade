@@ -17,26 +17,25 @@ SEED     = $F8                       ; 4 bytes
 TMP      = $FC                       ; 4 bytes
 
          jsr   InitPRNG
-         lda   #75
+
+         lda   #$80
          sta   COUNTER
 -        jsr   PRNG
          lda   SEED+3
-         and   #$7F
-         cmp   #75
-         bcs   -
          tax
-         ldy   Order,x
-         cpy   #$FF
-         bne   -
-         dec   COUNTER
-         lda   COUNTER
+         ldy   COUNTER
+         lda   Order,x
+         pha
+         lda   Order,y
          sta   Order,x
+         pla
+         sta   Order,y
+         inc   COUNTER
          bne   -
 
-         lda   #74
-         sta   COUNTER
 -        ldx   COUNTER
          ldy   Order,x
+         bmi   +
          lda   TransformHi,y
          sta   @j+2
          lda   TransformLo,y
@@ -50,8 +49,8 @@ TMP      = $FC                       ; 4 bytes
          pla
          sbc   #1
          bne   @wait1
-         dec   COUNTER
-         bpl   -
++        inc   COUNTER
+         bne   -
          rts
 
 InitPRNG
@@ -102,7 +101,82 @@ PRNG
          !byte $00,$19,$66,$0D
 
 Order
-         !fill 75,$FF
+         !byte 73
+         !byte 31
+         !byte 71
+         !byte 13
+         !byte 50
+         !byte 36
+         !byte 66
+         !byte 46
+         !byte 57
+         !byte 18
+         !byte 15
+         !byte 55
+         !byte 45
+         !byte 26
+         !byte  6
+         !byte  0
+         !byte  9
+         !byte  8
+         !byte 35
+         !byte 23
+         !byte 43
+         !byte 44
+         !byte  2
+         !byte 48
+         !byte  5
+         !byte 52
+         !byte 41
+         !byte 25
+         !byte 67
+         !byte 56
+         !byte 12
+         !byte 29
+         !byte  7
+         !byte 34
+         !byte 74
+         !byte 40
+         !byte  1
+         !byte 72
+         !byte 54
+         !byte 19
+         !byte 39
+         !byte 58
+         !byte 68
+         !byte 51
+         !byte 28
+         !byte 33
+         !byte  4
+         !byte 42
+         !byte 64
+         !byte 60
+         !byte  3
+         !byte 24
+         !byte 17
+         !byte 27
+         !byte 53
+         !byte 65
+         !byte 37
+         !byte 69
+         !byte 11
+         !byte 70
+         !byte 22
+         !byte 63
+         !byte 30
+         !byte 32
+         !byte 21
+         !byte 61
+         !byte 47
+         !byte 16
+         !byte 62
+         !byte 49
+         !byte 59
+         !byte 38
+         !byte 10
+         !byte 20
+         !byte 14
+         !fill 181,$FF
 
          !source "src/wait.a"
          !source "src/fx/fx.cover.fade.data.a"
