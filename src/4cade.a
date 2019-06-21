@@ -33,10 +33,8 @@ Main
          bpl   -
          inx
          stx   $3F2                  ; set up reset vectors
-         stx   $FFFC
          inx
          stx   $3F3
-         stx   $FFFD
          txa
          eor   #$A5
          sta   $3F4
@@ -83,6 +81,9 @@ Mode
          !source "src/ui.font.a"
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
+         !word Reenter               ; NMI vector ($FFFA-B)
+         !word Reenter               ; reset vector ($FFFC-D)
+         !word Reenter               ; IRQ vector ($FFFE-F)
 }
 LastMover
          !source "src/ui.font.data.a"
@@ -90,6 +91,6 @@ LastMover
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "RELBASE = ", $FFFC - (LastMover - FirstMover)
+    !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
 }

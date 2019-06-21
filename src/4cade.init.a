@@ -28,14 +28,13 @@
 
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
+                                     ; ProRWTS2 disk-data live at $D000-D3FF
          ldx   #$00                  ; relocate program code to top of language card
-@FM      lda   FirstMover,x
-         sta   RELBASE,x
+                                     ; since we end at $0000 now, adjust low offset to avoid destroying zpage
+@FM      lda   FirstMover - (RELBASE & $FF),x
+         sta   RELBASE & $FF00,x
          inx
          bne   @FM
-         lda   @FM+2
-         cmp   #>LastMover
-         bcs   +
          inc   @FM+2
          inc   @FM+5
          bne   @FM
