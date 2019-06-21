@@ -35,9 +35,7 @@ TMP      = $FC                       ; 4 bytes
 
          lda   #74
          sta   COUNTER
--        lda   $C000
-         bmi   @done
-         ldx   COUNTER
+-        ldx   COUNTER
          ldy   Order,x
          lda   TransformHi,y
          sta   @j+2
@@ -45,10 +43,16 @@ TMP      = $FC                       ; 4 bytes
          sta   @j+1
 @j       jsr   $FDFD                 ; SMC
          lda   #80
-         jsr   WaitForKeyWithTimeout
+         sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         sbc   #1
+         bne   @wait1
          dec   COUNTER
          bpl   -
-@done    rts
+         rts
 
 InitPRNG
          lda   $4E

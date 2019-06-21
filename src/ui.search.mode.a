@@ -48,10 +48,10 @@ _SearchModeInputLoop
          bne   -                     ; on every keypress (whether or not
          dec   $52                   ; the key leads to an action)
          bne   -
-         jsr   _CoverFade
          lda   #kAttractMode         ; no input for ~30 seconds
          sta   Mode                  ; switch to attract mode
-         rts
+         jmp   _CoverFade
+
 @gotKey
          jsr   _ResetInputTimeout
 
@@ -115,7 +115,7 @@ InputDispatch
 OnClear
          ldx   InputLength
          bne   +
-         jsr   BlankHGR
+         jsr   _CoverFade
          pla                         ; Esc with no input exits search mode
          pla                         ; and switches to attract mode
          rts
