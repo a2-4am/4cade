@@ -539,24 +539,21 @@ ProDOS_enter
     jsr    @setbuffer1
     ldy    ProDOS_prefix
     iny
-    lda    #'/'
-    bne    @append_slash
+    iny
+    tya
+    pha
+    dey
 @copy_prefix
     lda    ProDOS_prefix, y
-@append_slash
     iny
     sta    (buffer), y
     dey
     dey
-    bpl    @copy_prefix
-    tax
-    inx
-    inx
-    txa
-    iny
+    bne    @copy_prefix
+    pla
     sta    (buffer), y
-    iny
     lda    #'/'
+    iny
     sta    (buffer), y
     bne    @jmp_zp2
 

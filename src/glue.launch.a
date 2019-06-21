@@ -81,8 +81,9 @@ Go
          bit   $C010                 ; forget the key that was pressed
          ldx   #1
          sec
-         !byte $24
---       clc
+         !byte $2c
+--       pha
+         clc
          php
          ldy   #0
          lda   (PTR), y
@@ -100,6 +101,7 @@ Go
 @runlength
          cpy   #$D1                  ; SMC
          bne   -
+         txa
          plp
          bcs   --
          stx   ProDOS_prefix
@@ -108,12 +110,8 @@ Go
          jsr   SetPath
          jsr   LoadFile
 
-         ldy   #0
-         lda   (namlo), y
-         tay
-         iny
-         iny
-         sty   ProDOS_prefix
+         pla
+         sta   ProDOS_prefix
 
 copy_prelaunch
          ldx   #(End_Prelaunch-Prelaunch-1)
