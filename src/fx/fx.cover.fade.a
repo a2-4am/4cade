@@ -1,0 +1,104 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+; randomized fade-to-black routine customized for a specific piece of cover art
+; with 75 fill rectangles
+;
+; Linear Congruential Pseudo-Random Number Generator
+; (c) 2004 Bruce Clark
+; http://www.6502.org/source/integers/random/random.html
+
+!cpu 6502
+!to "build/FX/COVERFADE",plain
+*=$6000
+
+COUNTER  = $F7
+SEED     = $F8                       ; 4 bytes
+TMP      = $FC                       ; 4 bytes
+
+         jsr   InitPRNG
+         lda   #75
+         sta   COUNTER
+-        jsr   PRNG
+         lda   SEED+3
+         and   #$7F
+         cmp   #75
+         bcs   -
+         tax
+         ldy   Order,x
+         cpy   #$FF
+         bne   -
+         dec   COUNTER
+         lda   COUNTER
+         sta   Order,x
+         bne   -
+
+         lda   #74
+         sta   COUNTER
+-        lda   $C000
+         bmi   @done
+         ldx   COUNTER
+         ldy   Order,x
+         lda   TransformHi,y
+         sta   @j+2
+         lda   TransformLo,y
+         sta   @j+1
+@j       jsr   $FDFD                 ; SMC
+         lda   #80
+         jsr   WaitForKeyWithTimeout
+         dec   COUNTER
+         bpl   -
+@done    rts
+
+InitPRNG
+         lda   $4E
+         sta   SEED
+         lda   $4F
+         sta   SEED+1
+         lda   $c050
+         sta   SEED+2
+         lda   $c000
+         sta   SEED+3
+         rts
+
+RAND7BIT
+         rts
+
+PRNG
+         lda   #$01
+         ldx   #$03
+-        sta   TMP,x
+         lsr
+         dex
+         bpl   -
+         ldy   #$20
+         bne   @rotateseed           ; always branches
+@loop    bcc   @rotatetmp
+         clc
+         ldx   #$03
+-        lda   TMP,x
+         adc   @randtable,x
+         sta   TMP,x
+         dex
+         bpl   -
+@rotatetmp
+         ror   TMP
+         ror   TMP+1
+         ror   TMP+2
+         ror   TMP+3
+@rotateseed
+         ror   SEED+3
+         ror   SEED+2
+         ror   SEED+1
+         ror   SEED
+         dey
+         bpl   @loop
+         rts
+@randtable
+         !byte $00,$19,$66,$0D
+
+Order
+         !fill 75,$FF
+
+         !source "src/wait.a"
+         !source "src/fx/fx.cover.fade.data.a"

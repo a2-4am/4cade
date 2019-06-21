@@ -62,7 +62,7 @@ Main
          jsr   SearchMode
          jmp   @loop
 Mode
-         !byte $80
+         !byte $00
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"

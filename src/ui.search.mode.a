@@ -33,23 +33,30 @@ SearchMode
          bit   $C050
          bit   $C010
          jsr   _ResetInputTimeout
-InputLoop
+
+_SearchModeInputLoop
 -        lda   $C000
-         bmi   +
-         dec   $4F
+         bmi   @gotKey
+
+         inc   $4F                   ; these are only ever incremented, never
+         bne   +                     ; reset (used as a pseudorandom seed)
+         inc   $4E
++
+         dec   $50                   ; these are a 3-byte timeout counter
+         bne   -                     ; that counts down from a number set
+         dec   $51                   ; in _ResetInputTimeout and reset
+         bne   -                     ; on every keypress (whether or not
+         dec   $52                   ; the key leads to an action)
          bne   -
-         dec   $4E
-         bne   -
-         dec   $4D
-         bne   -
+         jsr   _CoverFade
          lda   #kAttractMode         ; no input for ~30 seconds
          sta   Mode                  ; switch to attract mode
          rts
-+
+@gotKey
          jsr   _ResetInputTimeout
 
-         cmp   #$9B                  ; Esc clears the input buffer
-         bne   +
+         cmp   #$9B                  ; Esc clears the input buffer (if any)
+         bne   +                     ; or switches to attract mode
          ldx   #kInputClear
          bne   InputDispatch         ; always branches
 +
@@ -87,7 +94,7 @@ InputLoop
          ; execution falls through here
 @badkey
          jsr   SoftBell              ; beep on invalid input
-         jmp   InputLoop             ; and start over
+         jmp   _SearchModeInputLoop  ; and start over
 
 @goodkey
          ldx   #kInputSearch
@@ -103,7 +110,7 @@ InputDispatch
          sta   @j+2
          pla                         ; restore key pressed
 @j       jsr   $FDFD                 ; SMC
-         jmp   InputLoop
+         jmp   _SearchModeInputLoop
 
 OnClear
          ldx   InputLength
@@ -114,7 +121,7 @@ OnClear
          rts
 +        ldx   #0
          stx   InputLength
-         bit   $c010
+         bit   $C010
          jmp   OnInputChanged
 
 OnBack
@@ -123,7 +130,7 @@ OnBack
          jsr   SoftBell
          rts
 +        dec   InputLength
-         bit   $c010
+         bit   $C010
          jmp   OnInputChanged
 
 OnLaunch
@@ -163,17 +170,7 @@ OnInputChanged
          lda   #$7F
          sta   UILine2+1
 
-         lda   OffscreenPage
-         beq   +
-         lda   #$40
-         +HIDE_NEXT_2_BYTES
-+        lda   #$20
-         sta   @coveraddress+1
-         +LDADDR Cover
-         jsr   SetPath
-         jsr   LoadFileAt            ; load default background
-@coveraddress
-         !word $FD00
+         jsr   _LoadCoverOffscreen
          jsr   _DrawSearchBarOffscreen
          jmp   _ShowOtherPage
 
@@ -271,6 +268,22 @@ OnInputChanged
          jsr   _DrawSearchBarOffscreen; actually draw the search UI (offscreen)
          jmp   _ShowOtherPage        ; now show everything at once
 
+;------------------------------------------------------------------------------
+
+_LoadCoverOffscreen
+         lda   OffscreenPage
+         beq   +
+         lda   #$40
+         +HIDE_NEXT_2_BYTES
++        lda   #$20
+         sta   @coveraddress+1
+         +LDADDR Cover
+         jsr   SetPath
+         jsr   LoadFileAt            ; load default background
+@coveraddress
+         !word $FD00                 ; SMC
+         rts
+
 _DrawSearchBarOffscreen
          lda   #22                   ; draw visible search bar
          sta   VTAB
@@ -330,13 +343,34 @@ _UpdateGameCount
 
 _ResetInputTimeout
 ; clobbers X, preserves A/Y
-         ldx   #$24
-         stx   $4D                   ; timeout counter
-         stx   $4E
-         stx   $4F
+         ldx   #$16
+         stx   $50                   ; timeout counter
+         stx   $51
+         stx   $52
          rts
 
-;------------------------------------------------------------------------------
+_CoverFade
+         jsr   _LoadCoverOffscreen
+         jsr   _ShowOtherPage
+         lda   OffscreenPage
+         bne   +
+         jsr   _LoadCoverOffscreen
+         jsr   _ShowOtherPage
++
+          ; load transition effect code at $6000
+         +LDADDR kFXDirectory
+         jsr   SetPath
+         +LDADDR kPathSeparator
+         jsr   AddToPath
+         +LDADDR kFXCoverFade
+         jsr   AddToPath
+         jsr   LoadFile
+
+         jmp   $6000
+
+kFXCoverFade
+         !byte 9
+         !text "COVERFADE"
 
 Cover    !byte 5
          !text "COVER"
