@@ -20,8 +20,9 @@ FirstMover
 Reenter                              ; self-running demos should call this to exit back to 4cade
          cld
          cli
-         +READ_RAM1_WRITE_RAM1
+         +READ_RAM2_WRITE_RAM2
          jsr   CloseHandles          ; close any open handles to restore ProRWTS state to original
+                                     ; (also switches to LC RAM bank 1)
          jsr   SaveScreenHoles       ; restore screen hole contents from saved copy
 Main
          ldx   #$FF
