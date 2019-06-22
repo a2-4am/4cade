@@ -4,51 +4,45 @@
 ; ProDOS - functions for constructing and passing around ProDOS pathnames
 ;
 ; Public functions
-; - ResetPath
+; - SetPath
 ; - AddToPath
 ;
-; Public constants
-; - kPathSeparator
-
-kPathSeparator
-         !byte 1
-         !raw  "/"
 
 kHGRTitleDirectory
-         !byte 9
-         !raw  "TITLE.HGR"
+         !byte 10
+         !raw  "TITLE.HGR/"
 
 kDHGRTitleDirectory
-         !byte 10
-         !raw  "TITLE.DHGR"
+         !byte 11
+         !raw  "TITLE.DHGR/"
 
 kHGRActionDirectory
-         !byte 10
-         !raw  "ACTION.HGR"
+         !byte 11
+         !raw  "ACTION.HGR/"
 
 kDHGRActionDirectory
-         !byte 11
-         !raw  "ACTION.DHGR"
+         !byte 12
+         !raw  "ACTION.DHGR/"
 
 kSHRArtworkDirectory
-         !byte 11
-         !raw  "ARTWORK.SHR"
+         !byte 12
+         !raw  "ARTWORK.SHR/"
 
 kAttractModeSlideshowDirectory
-         !byte 2
-         !raw  "SS"
+         !byte 3
+         !raw  "SS/"
 
 kDemoDirectory
-         !byte 4
-         !raw  "DEMO"
+         !byte 5
+         !raw  "DEMO/"
 
 kGameDirectory
-         !byte 1
-         !raw  "X"
+         !byte 2
+         !raw  "X/"
 
 kFXDirectory
-         !byte 2
-         !raw  "FX"
+         !byte 3
+         !raw  "FX/"
 
 ;------------------------------------------------------------------------------
 ; SetPath/AddToPath

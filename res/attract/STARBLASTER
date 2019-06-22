@@ -1,0 +1,8 @@
+#
+# Attract mode for Starblaster
+#
+
+ARTWORK.SHR/STARBLASTER=9
+ACTION.HGR/STARBLASTER=7
+
+[eof]

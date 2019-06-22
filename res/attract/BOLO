@@ -1,0 +1,9 @@
+#
+# Attract mode for Bolo
+#
+
+ARTWORK.SHR/BOLO=9
+ACTION.HGR/BOLO=7
+BOLO=0
+
+[eof]

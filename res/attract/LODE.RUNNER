@@ -1,0 +1,9 @@
+#
+# Attract mode for Lode Runner
+#
+
+ACTION.HGR/LODE001=7
+ACTION.HGR/LODE137=7
+LODE.RUNNER=0
+
+[eof]

@@ -1,0 +1,8 @@
+#
+# Attract mode for Space Raiders
+#
+
+ARTWORK.SHR/SPACE.RAIDERS=9
+ACTION.HGR/SPACE.RAIDERS=7
+
+[eof]

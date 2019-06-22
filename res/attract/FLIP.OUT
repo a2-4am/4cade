@@ -1,0 +1,8 @@
+#
+# Attract mode for Flip Out
+#
+
+ACTION.HGR/FLIP.OUT=7
+FLIP.OUT=0
+
+[eof]

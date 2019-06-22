@@ -67,8 +67,6 @@ SHRArtworkCallback
          ; load SHR artwork at $2000/main (not aux)
          +LDADDR kSHRArtworkDirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadFile

@@ -1,0 +1,8 @@
+#
+# Attract mode for Frogger
+#
+
+ACTION.HGR/FROGGER2=7
+ACTION.HGR/FROGGER=7
+
+[eof]

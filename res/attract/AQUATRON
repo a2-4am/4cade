@@ -1,0 +1,8 @@
+#
+# Attract mode for Aquatron
+#
+
+ACTION.HGR/AQUATRON=7
+AQUATRON=0
+
+[eof]

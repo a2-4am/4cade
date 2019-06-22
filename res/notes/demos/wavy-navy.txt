@@ -6,7 +6,7 @@ $1547 after demo player dies
 $9E8 after user hits any key in demo mode
 6 bytes available
 
-$09E8: 20F2098D47.. -> AD88C04C00D0
-$1547: 20A61120BF12 -> AD88C04C00D0
+$09E8: 20F2098D47.. -> AD88C06CFCFF
+$1547: 20A61120BF12 -> AD88C06CFCFF
 $6B22: 30 -> 00 to disable sound
 $084C: 20 -> 00 to disable cassette sound

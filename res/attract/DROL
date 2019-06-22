@@ -1,0 +1,10 @@
+#
+# Attract mode for Drol
+#
+
+ARTWORK.SHR/DROL=9
+ACTION.HGR/DROL=7
+ACTION.HGR/DROL3=7
+ACTION.HGR/DROL2=7
+
+[eof]

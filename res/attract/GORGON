@@ -1,0 +1,8 @@
+#
+# Attract mode for Gorgon
+#
+
+ARTWORK.SHR/GORGON=9
+ACTION.HGR/GORGON=7
+
+[eof]

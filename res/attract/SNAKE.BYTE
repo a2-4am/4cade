@@ -1,0 +1,9 @@
+#
+# Attract mode for Snake Byte
+#
+
+ARTWORK.SHR/SNAKE.BYTE=9
+ACTION.HGR/SNAKE.BYTE=7
+SNAKE.BYTE=0
+
+[eof]

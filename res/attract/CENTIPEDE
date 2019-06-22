@@ -1,0 +1,7 @@
+#
+# Attract mode for Centipede
+#
+
+ACTION.HGR/CENTIPEDE=7
+
+[eof]

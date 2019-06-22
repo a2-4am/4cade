@@ -1,0 +1,9 @@
+#
+# Attract mode for Spy Hunter
+#
+
+ACTION.HGR/SPY.HUNTER2=7
+ACTION.HGR/SPY.HUNTER=7
+SPY.HUNTER=0
+
+[eof]

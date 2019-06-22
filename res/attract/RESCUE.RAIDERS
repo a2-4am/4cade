@@ -1,0 +1,9 @@
+#
+# Attract mode for Rescue Raiders
+#
+
+ACTION.HGR/RESCUE.RAIDERS=7
+ACTION.HGR/RESCUE.RAIDERS3=7
+ACTION.HGR/RESCUE.RAIDERS2=7
+
+[eof]

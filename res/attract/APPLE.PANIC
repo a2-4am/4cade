@@ -1,0 +1,8 @@
+#
+# Attract mode for Apple Panic
+#
+
+ARTWORK.SHR/APPLE.PANIC=9
+ACTION.HGR/APPLE.PANIC=7
+
+[eof]

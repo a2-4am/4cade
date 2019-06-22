@@ -54,7 +54,7 @@ Main
          bit   $C010
          bit   Mode
          bpl   +
-         jsr   AttractMode
+         jsr   MegaAttractMode
          jmp   @loop
 +
          jsr   SearchMode

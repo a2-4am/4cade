@@ -1,0 +1,8 @@
+#
+# Attract mode for Plasmania
+#
+
+ACTION.HGR/PLASMANIA=7
+PLASMANIA=0
+
+[eof]

@@ -1,0 +1,9 @@
+#
+# Attract mode for Karateka
+#
+
+ARTWORK.SHR/KARATEKA=9
+ACTION.HGR/KARATEKA=7
+KARATEKA=0
+
+[eof]

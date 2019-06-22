@@ -1,0 +1,8 @@
+#
+# Attract mode for Tubeway ][
+#
+
+ACTION.HGR/TUBEWAY=7
+TUBEWAY=0
+
+[eof]

@@ -1,0 +1,9 @@
+#
+# Attract mode for Pitfall II
+#
+
+ACTION.HGR/PITFALL.II2=7
+ACTION.HGR/PITFALL.II=7
+PITFALL.II=0
+
+[eof]

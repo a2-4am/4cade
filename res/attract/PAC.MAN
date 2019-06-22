@@ -1,0 +1,7 @@
+#
+# Attract mode for Pac-Man
+#
+
+ACTION.HGR/PAC.MAN=7
+
+[eof]

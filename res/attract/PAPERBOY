@@ -1,0 +1,8 @@
+#
+# Attract mode for Paperboy
+#
+
+ARTWORK.SHR/PAPERBOY=9
+ACTION.HGR/PAPERBOY=7
+
+[eof]

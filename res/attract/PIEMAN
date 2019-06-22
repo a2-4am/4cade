@@ -1,0 +1,8 @@
+#
+# Attract mode for Pie-Man
+#
+
+ACTION.HGR/PIEMAN=7
+PIEMAN=0
+
+[eof]

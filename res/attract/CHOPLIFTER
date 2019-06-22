@@ -1,0 +1,9 @@
+#
+# Attract mode for Choplifter
+#
+
+ARTWORK.SHR/CHOPLIFTER=9
+ACTION.HGR/CHOPLIFTER=7
+CHOPLIFTER=0
+
+[eof]

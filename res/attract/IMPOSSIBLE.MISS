@@ -1,0 +1,8 @@
+#
+# Attract mode for Impossible Mission
+#
+
+ARTWORK.SHR/IMPOSSIBLE.MISS=9
+ACTION.HGR/IMPOSSIBLE.MISS=7
+
+[eof]

@@ -122,8 +122,6 @@ DHGRTitleCallback
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRTitleDirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile
@@ -166,8 +164,6 @@ DHGRActionCallback
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRActionDirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile

@@ -1,0 +1,8 @@
+#
+# Attract mode for Joust
+#
+
+ACTION.HGR/JOUST2=7
+ACTION.HGR/JOUST=7
+
+[eof]

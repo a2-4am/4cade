@@ -1,0 +1,9 @@
+#
+# Attract mode for Lady Tut
+#
+
+ARTWORK.SHR/LADY.TUT=9
+ACTION.HGR/LADY.TUT=7
+LADY.TUT=0
+
+[eof]

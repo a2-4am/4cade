@@ -1,0 +1,8 @@
+#
+# Attract mode for Robotron 2084
+#
+
+ACTION.HGR/ROBOTRON=7
+ROBOTRON=0
+
+[eof]

@@ -2,7 +2,6 @@ $6055 checks for <ESC> (ends demo, starts game)
 $60FD checks for Ctrl-S (changes sound once game starts, but sound is always off during demo) (harmless, ignore)
 $AB43 is after demo cycle (demo player has died and returned to spawn point) [7 bytes available]
 
-$6055: C91BD011A20D -> AD88C04C00D0 to exit when user presses any key
-$AB43: A90085614C49 -> AD88C04C00D0 to exit after demo player has died and returned to spawn
+$6055: C91BD011A20D -> AD88C06CFCFF to exit when user presses any key
+$AB43: A90085614C49 -> AD88C06CFCFF to exit after demo player has died and returned to spawn
 $6021: FF -> BF to reduce time before demo starts
-

@@ -4,7 +4,8 @@
 ; Mega Attract Mode - cycle through slideshows and self-running demos
 ;
 ; Public functions
-; - AttractMode
+; - MegaAttractMode
+;;;;;; - RunAttractModule
 ;
 ; Public variables
 ; - gAttractIndex                    ; [byte] numeric index in gAttractModeStore of next Mega-Attract Module
@@ -12,7 +13,7 @@
 ; - gDFXIndex                        ; [byte] numeric index in gDFXStore of next DHGR transition effect
 
 ;------------------------------------------------------------------------------
-; AttractMode
+; MegaAttractMode
 ; main entry point for Mega Attract Mode, which cycles through modules listed
 ; in ATTRACT.CONF to provide pretty visual effects and snippets of self-running
 ; self-terminating game demos
@@ -24,7 +25,7 @@
 ;        if this routine returns, everything is clobbered (zero page, main
 ;        memory, unused portions of the stack page, all registers, all flags)
 ;------------------------------------------------------------------------------
-AttractMode
+MegaAttractMode
          +LDADDR kAttractModeConfFile
          jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
@@ -86,7 +87,7 @@ gAttractIndex
          jsr   @RunNextAttractModule
          lda   $C000
          bmi   +
-         jmp   AttractMode
+         jmp   MegaAttractMode
 +
          rts
 
@@ -94,7 +95,19 @@ gAttractIndex
          ldy   #1
          lda   (PTR),y
          and   #$0F
-         bne   @Slideshow
+;         jsr   RunAttractModule
+
+;------------------------------------------------------------------------------
+; RunAttractModule
+; run a single attract module of any type and return to caller
+;
+; in:    A = module type (#$01..#$09, see attract.conf)
+;        gGlobalPrefsStore must be initialized
+; out:   all flags and registers clobbered
+;        assume all of main memory has been clobbered
+;------------------------------------------------------------------------------
+;RunAttractModule
+         bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
 ; Each binary has been patched to quit on any key and jump back
@@ -117,8 +130,11 @@ gAttractIndex
          jsr   SaveScreenHoles       ; save screen hole contents in case game changes them
          jmp   copy_prelaunch
 
-@Slideshow                           ; HGR or DHGR slideshow
-         pha                         ; save module type (1=HGR title, 2=HGR action, 3=DHGR title)
+@NotDemo                             ; slideshow module or screenshot
+;         cmp   #$06                  ; 1-5 are slideshow modules
+;         bcs   @Single               ; higher values are screenshot modules
+
+         pha                         ; save module type
 
          ; load slideshow configuration file at $4000
          +LOAD_FILE kAttractModeSlideshowDirectory, @key
@@ -142,6 +158,10 @@ gAttractIndex
          !word DHGRTitleSlideshow
          !word DHGRActionSlideshow
          !word SHRArtworkSlideshow
+         !word 0
+;         !word HGRSingle
+;         !word DHGRSingle
+;         !word SHRSingle
 
 kAttractModeConfFile
          !byte @kAttractModeConfFile_e-*-1

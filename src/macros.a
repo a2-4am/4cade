@@ -95,8 +95,6 @@
 !macro   LOAD_FILE .subdirectory, .filename {
          +LDADDR .subdirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDAY .filename
          jsr   AddToPath
          jsr   LoadFile
@@ -105,8 +103,6 @@
 !macro   LOAD_PATH .subdirectory {
          +LDADDR .subdirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
 }
 
 !macro   LOAD_FILE_IMM .filename {

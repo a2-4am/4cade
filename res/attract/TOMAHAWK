@@ -1,0 +1,8 @@
+#
+# Attract mode for Tomahawk
+#
+
+ARTWORK.SHR/TOMAHAWK=9
+ACTION.HGR/TOMAHAWK=7
+
+[eof]

@@ -1,0 +1,8 @@
+#
+# Attract mode for Apple Cider Spider
+#
+
+ACTION.HGR/CIDER.SPIDER=7
+CIDER.SPIDER=0
+
+[eof]

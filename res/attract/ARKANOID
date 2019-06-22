@@ -1,0 +1,7 @@
+#
+# Attract mode for Arkanoid
+#
+
+ACTION.HGR/ARKANOID=7
+
+[eof]

@@ -1,0 +1,8 @@
+#
+# Attract mode for Mr. Robot
+#
+
+ARTWORK.SHR/MR.ROBOT=9
+ACTION.HGR/MR.ROBOT=7
+
+[eof]

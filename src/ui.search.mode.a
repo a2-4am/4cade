@@ -213,8 +213,6 @@ OnInputChanged
          sta   @titleaddress+1
          +LDADDR kHGRTitleDirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDAY @key
          jsr   AddToPath
          jsr   LoadFileAt
@@ -360,8 +358,6 @@ _CoverFade
           ; load transition effect code at $6000
          +LDADDR kFXDirectory
          jsr   SetPath
-         +LDADDR kPathSeparator
-         jsr   AddToPath
          +LDADDR kFXCoverFade
          jsr   AddToPath
          jsr   LoadFile

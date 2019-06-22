@@ -1,0 +1,8 @@
+#
+# Attract mode for Warp Destroyer
+#
+
+ACTION.HGR/WARP.DESTROYER=7
+WARP.DESTROYER=0
+
+[eof]

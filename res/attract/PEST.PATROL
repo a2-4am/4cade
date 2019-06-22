@@ -1,0 +1,9 @@
+#
+# Attract mode for Pest Patrol
+#
+
+ACTION.HGR/PEST.PATROL=7
+ACTION.HGR/PEST.PATROL2=7
+PEST.PATROL=0
+
+[eof]

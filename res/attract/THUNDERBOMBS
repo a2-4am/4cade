@@ -1,0 +1,8 @@
+#
+# Attract mode for Thunder Bombs
+#
+
+ACTION.HGR/THUNDERBOMBS=7
+THUNDERBOMBS=0
+
+[eof]

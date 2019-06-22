@@ -1,0 +1,10 @@
+#
+# Attract mode for Gumball
+#
+
+ARTWORK.SHR/GUMBALL=9
+ACTION.HGR/GUMBALL=7
+ACTION.HGR/GUMBALL2=7
+GUMBALL=0
+
+[eof]

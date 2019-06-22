@@ -1,0 +1,9 @@
+#
+# Attract mode for Dung Beetles
+#
+
+ACTION.HGR/DUNG.BEETLES2=7
+ACTION.HGR/DUNG.BEETLES3=7
+ACTION.HGR/DUNG.BEETLES=7
+
+[eof]

@@ -1,0 +1,9 @@
+#
+# Attract mode for Alien Ambush
+#
+
+ARTWORK.SHR/ALIEN.AMBUSH=9
+ACTION.HGR/ALIEN.AMBUSH=7
+ALIEN.AMBUSH=0
+
+[eof]

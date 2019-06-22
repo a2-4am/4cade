@@ -1,0 +1,9 @@
+#
+# Attract mode for Spare Change
+#
+
+ARTWORK.SHR/SPARE.CHANGE=9
+ACTION.HGR/SPARE.CHANGE=7
+SPARE.CHANGE=0
+
+[eof]
