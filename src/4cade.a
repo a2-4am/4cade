@@ -80,7 +80,6 @@ RestoreStackNextTime
          !source "src/parse.games.a"
          !source "src/ui.sound.a"
          !source "src/ui.font.a"
-Mode     !byte $00
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
          !word Reenter               ; NMI vector ($FFFA-B)
