@@ -35,23 +35,24 @@ SearchMode
          jsr   _ResetInputTimeout
 
 _SearchModeInputLoop
--        lda   $C000
+         lda   $C000
          bmi   @gotKey
 
          inc   $4F                   ; these are only ever incremented, never
          bne   +                     ; reset (used as a pseudorandom seed)
          inc   $4E
 +
-         dec   $50                   ; these are a 3-byte timeout counter
-         bne   -                     ; that counts down from a number set
-         dec   $51                   ; in _ResetInputTimeout and reset
-         bne   -                     ; on every keypress (whether or not
-         dec   $52                   ; the key leads to an action)
-         bne   -
-         jsr   _CoverFade
-         jmp   MegaAttractMode
+         dec   Timeout               ; these are a 3-byte timeout counter
+         bne   _SearchModeInputLoop  ; that counts down from a number set
+         dec   Timeout+1             ; in _ResetInputTimeout and reset
+         bne   _SearchModeInputLoop  ; on every keypress (whether or not
+         dec   Timeout+2             ; the key leads to an action)
+         bne   _SearchModeInputLoop
+         jsr   _CoverFade            ; no input for ~30 seconds, so switch
+         jmp   MegaAttractMode       ; to mega-attract mode
 
 @gotKey
+         bit   $C010
          jsr   _ResetInputTimeout
 
          cmp   #$9B                  ; Esc clears the input buffer (if any)
@@ -64,7 +65,6 @@ _SearchModeInputLoop
          ldx   #kInputLaunch
          bne   InputDispatch         ; always branches
 +
-         bit   $C010
          and   #$7F
 
          cmp   #$7F                  ; delete key
@@ -114,7 +114,6 @@ InputDispatch
 +        jmp   _SearchModeInputLoop
 
 OnClear
-         bit   $C010
          ldx   InputLength
          bne   +
          jsr   _CoverFade            ; Esc with no input switches to
@@ -129,7 +128,6 @@ OnBack
          jsr   SoftBell
          rts
 +        dec   InputLength
-         bit   $C010
          jmp   OnInputChanged
 
 OnLaunch
@@ -310,9 +308,9 @@ _ShowOtherPage
 _ResetInputTimeout
 ; clobbers X, preserves A/Y
          ldx   #$16
-         stx   $50                   ; timeout counter
-         stx   $51
-         stx   $52
+         stx   Timeout
+         stx   Timeout+1
+         stx   Timeout+2
          rts
 
 _CoverFade
