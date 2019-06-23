@@ -76,7 +76,7 @@ ProRWTSBuffer
 OneTimeSetup
          lda   MachineStatus
          sta   oldstatus
-         jsr   SaveScreenHoles       ; save initial copy of screen hole content
+         jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
          lda   #$91
          sta   holepatch             ; enable restoring of copy from now on
          lda   hddopendir+1          ; save current directory as 'root'
@@ -107,10 +107,55 @@ OneTimeSetup
          !word gGamesListStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
 
+         jsr   okvs_len
+         !word gGamesListStore
+         sta   SAVE
+         ; calculate and update visible game count (3-digit decimal number as ASCII string)
+         ldy   #0
+@outer
+         lda   #0
+         pha
+@inner
+         lda   SAVE
+         cmp   kPowersOfTen,y
+         bcc   @digitDone
+         sbc   kPowersOfTen,y
+         sta   SAVE
+         lda   SAVE+1
+         sbc   #0
+         sta   SAVE+1
+         pla
+         adc   #0
+         pha
+         jmp   @inner
+@digitDone
+         pla
+         ora   #$30
+         sta   UILine2_GameCount,y
+         iny
+         cpy   #$03
+         bcc   @outer
+
          bit   $C010                 ; clear keyboard strobe so we don't mistakenly think we just tried to run something
 
-         jmp   Main                  ; continue execution from LC RAM bank
+         ldx   #5
+-        lda   Prelaunch,x           ; copy reentry wrapper to bottom of stack
+         sta   $100,x                ; (many self-running demos use this)
+         dex
+         bpl   -
+         inx
+         stx   $3F2                  ; page 3 reset vector to ($100)
+         inx
+         stx   $3F3
+         ldx   #$A4
+         stx   $3F4
+         jmp   $100                  ; continue execution from LC RAM bank
 
 kGameListConfFile
          !byte 10
          !text "GAMES.CONF"
+
+kPowersOfTen
+         !byte 100
+         !byte 10
+         !byte 1

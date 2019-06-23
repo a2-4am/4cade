@@ -4,26 +4,23 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
-; - Launch
+; - PlayGameFromSearch
+; - PlayGameFromAttract
 ;
 ; Public variables
+; - SelectedIndex                    ; [byte] numeric index in gGamesStore of currently selected game in search mode
 ; - gCurrentAttractIndex             ; [byte] numeric index in gAttractModeStore of current Mega-Attract Module
 ; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
                                      ;        (only valid during slideshows, not updated once a key is pressed)
 
-Play
-         lda   Mode
-         bmi   @playFromAttract
-@playFromSearch
-         lda   SelectedIndex
-         sta   @selectedIndex
+PlayGameFromSearch
          jsr   okvs_nth
          !word gGamesListStore
-@selectedIndex
+SelectedIndex
          !byte $FD                   ; SMC
          jmp   Go
 
-@playFromAttract
+PlayGameFromAttract
          +LDADDR kAttractModeConfFile
          jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
@@ -114,6 +111,17 @@ Go
          sta   ProDOS_prefix
 
 copy_prelaunch
+         +READ_RAM2_WRITE_RAM2
+         ldx   #1
+-        lda   $100,x
+         sta   $DF00,x               ; backup stack
+         inx
+         bne   -
+         tsx                         ; backup stack pointer
+         stx   $DF00
+         lda   #$38                  ; 'sec' opcode
+         sta   RestoreStackNextTime  ; tell |Reenter| to restore stack
+
          ldx   #(End_Prelaunch-Prelaunch-1)
 -        lda   Prelaunch,x           ; copy pre-launch code to main memory
          sta   $100,x
@@ -136,7 +144,7 @@ copy_prelaunch
 ; in:    none
 ; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
 ;        (not here, but wherever it was copied to in main memory) or by
-;        manually enabling LC RAM bank 1 then JMP |Reenter|
+;        manually enabling LC RAM then JMP |Reenter|
 ;------------------------------------------------------------------------------
 Prelaunch                            ; this runs from main memory
 ; entry point used by some self-running demos

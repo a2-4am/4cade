@@ -1,7 +1,7 @@
 ;license:MIT
 ;(c) 2018 by 4am
 ;
-; Search Mode - incrementally search game catalog
+; Search Mode - UI to search game catalog, see game assets, and launch games
 ;
 ; Public functions
 ; - SearchMode
@@ -20,14 +20,14 @@ InputDispatchTable
          !word OnLaunch
 
 SearchMode
-         jsr   Home
-
-         lda   #0
-         sta   OffscreenPage
-         sta   InputLength
-         jsr   _UpdateGameCount
-
-         jsr   OnInputChanged        ; draw default UI on HGR page 1
+         ldx   #0
+         stx   OffscreenPage
+         dex
+         stx   SelectedIndex         ; no game selected
+         txs
+         jsr   Home                  ; clear screen
+         lda   #$FF
+         jsr   OnInputChanged        ; draw UI on HGR page 1, set $C054
          bit   $C052
          bit   $C057
          bit   $C050
@@ -110,18 +110,18 @@ InputDispatch
          sta   @j+2
          pla                         ; restore key pressed
 @j       jsr   $FDFD                 ; SMC
-         jmp   _SearchModeInputLoop
+         bcc   +
+         jmp   SearchMode
++        jmp   _SearchModeInputLoop
 
 OnClear
+         bit   $C010
          ldx   InputLength
          bne   +
-         jsr   _CoverFade
-         pla                         ; Esc with no input exits search mode
-         pla                         ; and switches to attract mode
-         rts
-+        ldx   #0
+         jsr   _CoverFade            ; Esc with no input switches to
+         jmp   MegaAttractMode       ; mega-attract mode
++        ldx   #0                    ; Esc with input clears the input
          stx   InputLength
-         bit   $C010
          jmp   OnInputChanged
 
 OnBack
@@ -137,9 +137,11 @@ OnLaunch
          ldx   SelectedIndex
          cpx   #$FF
          beq   +
-         pla                         ; Return exits search mode
-         pla                         ; and launches game
-+        rts
+         jsr   PlayGameFromSearch
+         sec                         ; tell caller to redraw UI
+         rts
++        clc
+         rts
 
 OnSearch
          ldx   InputLength
@@ -172,7 +174,9 @@ OnInputChanged
 
          jsr   _LoadCoverOffscreen
          jsr   _DrawSearchBarOffscreen
-         jmp   _ShowOtherPage
+         jsr   _ShowOtherPage
+         clc
+         rts
 
 @findMatchingTitle
          jsr   ResetTextRank
@@ -303,41 +307,6 @@ _ShowOtherPage
          rts
 +        bit   $C054                 ; show page 1
          rts
-
-_UpdateGameCount
-         jsr   okvs_len
-         !word gGamesListStore
-         sta   SAVE
-         ldy   #0
-@outer
-         lda   #0
-         pha
-@inner
-         lda   SAVE
-         cmp   @powersOfTen,y
-         bcc   @digitDone
-         sbc   @powersOfTen,y
-         sta   SAVE
-         lda   SAVE+1
-         sbc   #0
-         sta   SAVE+1
-         pla
-         adc   #0
-         pha
-         jmp   @inner
-@digitDone
-         pla
-         ora   #$30
-         sta   UILine2_GameCount,y
-         iny
-         cpy   #$03
-         bcc   @outer
-         rts
-
-@powersOfTen
-         !byte 100
-         !byte 10
-         !byte 1
 
 _ResetInputTimeout
 ; clobbers X, preserves A/Y

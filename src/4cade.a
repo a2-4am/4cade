@@ -12,56 +12,56 @@ RELBASE=$2000
          !source "src/constants.a"
          !source "src/macros.a"
 
-         ; first-run initialization, relocates code to language card and continues from Main
+         ; first-run initialization, relocates code to language card and jumps
+         ; to |Reenter|
          !source "src/4cade.init.a"
 
 FirstMover
 !pseudopc RELBASE {
-Reenter                              ; self-running demos should call this to exit back to 4cade
+;------------------------------------------------------------------------------
+; Reenter
+; This is the primary entry point for returning to the launcher from anywhere.
+; - Self-running demos call this when the user presses a key or when the demo
+;   cycles ends naturally.
+; - It is set as the reset vector, so the user can play a game then press
+;   Ctrl-Reset to return to the launcher and choose another.
+; - It also functions as a reset vector while the launcher is running.
+; - It is also called on program startup, after the first-run initialization.
+;
+; When execution reaches this point, we may have previously backed up the stack
+; and stack pointer, in which case it is now our job to restore it and return
+; to the caller. This allows magic like 'JSR PlayGame' then continuing once the
+; JSR returns.
+;
+; If there is no stack to restore, this exits via SearchMode.
+;
+; in:    no parameters
+; out:   see above
+;------------------------------------------------------------------------------
+Reenter
          cld
          cli
          +READ_RAM2_WRITE_RAM2
-         jsr   CloseHandles          ; close any open handles to restore ProRWTS state to original
+         jsr   CloseHandles          ; close any open handles to restore ProRWTS
                                      ; (also switches to LC RAM bank 1)
-         jsr   SaveScreenHoles       ; restore screen hole contents from saved copy
-Main
-         ldx   #$FF
-         txs
-         ldx   #5
--        lda   Prelaunch,x           ; copy reset vector code (switches to LC RAM and jumps to |Reenter|)
+         jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
+RestoreStackNextTime
+         clc                         ; SMC
+         bcc   SearchMode            ; not an unconditional branch because code
+                                     ; might change the 'clc' just before it
+         ; If we fall through to here, it's because we backed up the stack and
+         ; stack pointer and wanted this routine to restore it and return to
+         ; caller.
+         lda   #$18                  ; reset to 'clc' opcode so we don't try to
+         sta   RestoreStackNextTime  ; restore the same stack twice
+         ldx   #1
+-        lda   $DF00,x               ; restore stack
          sta   $100,x
-         dex
-         bpl   -
          inx
-         stx   $3F2                  ; set up reset vectors
-         inx
-         stx   $3F3
-         txa
-         eor   #$A5
-         sta   $3F4
-
-         jsr   BlankHGR
-@loop
-         lda   $C000
-         cmp   #$8D
-         bne   +
-         jsr   Play
-+        cmp   #$9B
-         bne   +
-         lda   Mode
-         eor   #$80
-         sta   Mode
-+
-         bit   $C010
-         bit   Mode
-         bpl   +
-         jsr   MegaAttractMode
-         jmp   @loop
-+
-         jsr   SearchMode
-         jmp   @loop
-Mode
-         !byte $00
+         bne   -
+         ldx   $DF00                 ; restore stack pointer
+         txs
+         rts
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"
@@ -80,6 +80,7 @@ Mode
          !source "src/parse.games.a"
          !source "src/ui.sound.a"
          !source "src/ui.font.a"
+Mode     !byte $00
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
          !word Reenter               ; NMI vector ($FFFA-B)
