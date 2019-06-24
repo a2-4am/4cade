@@ -137,6 +137,7 @@ OnSearch
          cpx   #MaxInputLength
          bne   +
          jsr   SoftBell
+         clc
          rts
 +        sta   InputBuffer,x
          inc   InputLength
@@ -175,6 +176,7 @@ OnInputChanged
          bne   +
          jsr   SoftBell              ; no matches for this input buffer, beep
          dec   InputLength           ; and ignore the last key typed
+         clc
          rts
 +
          lda   BestMatchIndex        ; check if the new best match is the same
