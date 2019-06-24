@@ -1,29 +1,16 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
 coord = $FE
 
-         lda   #$00
-         sta   $FE
-         tay
-         lda   #$60
-         sta   $FF
-         tax
-         sta   $c005
--        lda   ($FE),y
-         sta   ($FE),y
-         iny
-         bne   -
-         inc   $FF
-         dex
-         bne   -
-         sta   $c004
          jmp   Start
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/fx.dhgr.common.a"
 
 Start
+         jsr   CopySelfToAuxmem
 
 !macro FX_PRECOMPUTED_DHGR .wait {
          lda   #<@coords

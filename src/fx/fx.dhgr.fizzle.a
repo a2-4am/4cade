@@ -1,10 +1,12 @@
 ;license:MIT
 ;(c) 2017-2018 by qkumba
 ;
-; NOTE:  must be run from language card, or caller must ensure that
-;        this code is in an identical location in auxmem
-;
-FizzleDHGR
+!cpu 6502
+!to "build/FX/DHGR.FIZZLE",plain
+*=$6000
+
+         jsr   CopySelfToAuxmem
+
          ;init RNG
 
          ldx   #1
@@ -73,3 +75,5 @@ FizzleDHGR
          bne   @loop
 
 @exit    rts
+
+         !source "src/fx/fx.dhgr.common.a"

@@ -1,0 +1,17 @@
+CopySelfToAuxmem
+         lda   #$00
+         sta   $FE
+         tay
+         lda   #$60
+         sta   $FF
+         tax
+         sta   $c005
+-        lda   ($FE),y
+         sta   ($FE),y
+         iny
+         bne   -
+         inc   $FF
+         dex
+         bne   -
+         sta   $c004
+         rts
