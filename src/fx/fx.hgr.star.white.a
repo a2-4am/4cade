@@ -2,12 +2,13 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/STAR",plain
+!to "build/FX/STARWHITE",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.a"
 
-         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $10
+         +FX_PRECOMPUTED HGRHalfBlockToWhite, Coordinates, $08
+         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $08
 
          rts
 

@@ -7,7 +7,10 @@
 
          !source "src/fx/fx.hgr.precomputed.a"
 
-         +FX_PRECOMPUTED $30
+         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $30
 
+         rts
+
+Coordinates
          !source "src/fx/fx.hgr.ripple.data.a"
          !byte $80

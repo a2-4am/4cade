@@ -2,12 +2,13 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/DHGR.RADIAL",plain
+!to "build/FX/DHGR.RADIALWH",plain
 *=$6000
 
          !source "src/fx/fx.dhgr.precomputed.a"
 
-         +FX_PRECOMPUTED_DHGR HGRHalfBlockCopy, Coordinates, $1
+         +FX_PRECOMPUTED_DHGR HGRHalfBlockToWhite, Coordinates, $0
+         +FX_PRECOMPUTED_DHGR HGRHalfBlockCopy, Coordinates, $0
 
          rts
 

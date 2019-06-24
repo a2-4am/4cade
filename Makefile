@@ -25,14 +25,23 @@ asm: md
 	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 	$(ACME) src/fx/fx.cover.fade.a
 	$(ACME) src/fx/fx.dhgr.fizzle.a
+	$(ACME) src/fx/fx.dhgr.fizzle.white.a
 	$(ACME) src/fx/fx.dhgr.ripple.a
+	$(ACME) src/fx/fx.dhgr.ripple.white.a
 	$(ACME) src/fx/fx.dhgr.iris.a
+	$(ACME) src/fx/fx.dhgr.iris.white.a
 	$(ACME) src/fx/fx.dhgr.radial.a
+	$(ACME) src/fx/fx.dhgr.radial.white.a
 	$(ACME) src/fx/fx.dhgr.radial2.a
+	$(ACME) src/fx/fx.dhgr.radial2.white.a
 	$(ACME) src/fx/fx.dhgr.radial3.a
+	$(ACME) src/fx/fx.dhgr.radial3.white.a
 	$(ACME) src/fx/fx.dhgr.radial4.a
+	$(ACME) src/fx/fx.dhgr.radial4.white.a
 	$(ACME) src/fx/fx.dhgr.radial5.a
+	$(ACME) src/fx/fx.dhgr.radial5.white.a
 	$(ACME) src/fx/fx.dhgr.star.a
+	$(ACME) src/fx/fx.dhgr.star.white.a
 	$(ACME) src/fx/fx.hgr.diagonal.a
 	$(ACME) src/fx/fx.hgr.interlock.ud.a
 	$(ACME) src/fx/fx.hgr.interlock.lr.a
@@ -67,6 +76,7 @@ asm: md
 	$(ACME) src/fx/fx.hgr.ripple.a
 	$(ACME) src/fx/fx.hgr.ripple2.a
 	$(ACME) src/fx/fx.hgr.star.a
+	$(ACME) src/fx/fx.hgr.star.white.a
 	$(ACME) src/fx/fx.shr.fizzle.a
 
 dsk: md asm

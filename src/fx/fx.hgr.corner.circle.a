@@ -7,7 +7,10 @@
 
          !source "src/fx/fx.hgr.precomputed.a"
 
-         +FX_PRECOMPUTED $28
+         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $28
 
+         rts
+
+Coordinates
          !source "src/fx/fx.hgr.corner.circle.data.a"
          !byte $80

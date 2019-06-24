@@ -10,10 +10,10 @@ coord = $FE
 
 Start
 
-!macro FX_PRECOMPUTED .wait {
-         lda   #<@coords
+!macro FX_PRECOMPUTED .copy, .coords, .wait {
+         lda   #<.coords
          sta   coord
-         lda   #>@coords
+         lda   #>.coords
          sta   coord+1
          ldy   #0
 @loop
@@ -28,7 +28,7 @@ Start
          lda   (coord),y
          tay
          txa
-         jsr   HGRHalfBlockCopy
+         jsr   .copy
 @next
          inc   coord
          bne   +
@@ -40,7 +40,5 @@ Start
          lda   ($FE),y
          cmp   #$80
          bne   @loop
-@exit    rts
-
-@coords
+@exit
 }

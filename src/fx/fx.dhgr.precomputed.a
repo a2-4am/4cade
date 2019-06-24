@@ -12,17 +12,19 @@ coord = $FE
 Start
          jsr   CopySelfToAuxmem
 
-!macro FX_PRECOMPUTED_DHGR .wait {
-         lda   #<@coords
+!macro FX_PRECOMPUTED_DHGR .copy, .coords, .wait {
+         lda   #<.coords
          sta   coord
-         lda   #>@coords
+         lda   #>.coords
          sta   coord+1
          ldy   #0
 @loop
          lda   (coord),y
          bpl   +
          lda   #.wait
+         beq   @nowait
          jsr   WaitForKeyWithTimeout
+@nowait  bit   $C000
          bmi   @exit
          bpl   @next
 +        tax
@@ -38,7 +40,7 @@ Start
 +
          tay
          txa
-         jsr   HGRHalfBlockCopy
+         jsr   .copy
 @next
          inc   coord
          bne   +
@@ -52,7 +54,4 @@ Start
          bne   @loop
 @exit    sta   $c002
          sta   $c004
-         rts
-
-@coords
 }
