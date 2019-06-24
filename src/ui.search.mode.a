@@ -1,36 +1,31 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
-; Search Mode - UI to search game catalog, see game assets, and launch games
+; Search Mode - main UI
 ;
 ; Public functions
 ; - SearchMode
 ;
 
-; indices into InputDispatchTable
-kInputSearch   = 0
-kInputClear    = 1
-kInputBack     = 2
-kInputLaunch   = 3
-
-InputDispatchTable
-         !word OnSearch
-         !word OnClear
-         !word OnBack
-         !word OnLaunch
-
+;------------------------------------------------------------------------------
+; SearchMode
+; main entry point for Search Mode, which allows the user to search the game
+; catalog and launch games
+;
+; in:    none
+; out:   never returns to caller (may JMP to other major modes)
+;------------------------------------------------------------------------------
 SearchMode
-         ldx   #0
-         stx   OffscreenPage
-         dex
-         stx   SelectedIndex         ; no game selected
+         ldx   #$FF
          txs
+         stx   SelectedIndex         ; no game selected
+         inx
+         stx   OffscreenPage
          jsr   Home                  ; clear screen
-         lda   #$FF
-         jsr   OnInputChanged        ; draw UI on HGR page 1, set $C054
+         jsr   OnInputChanged        ; draw UI on HGR page 1
          bit   $C052
          bit   $C057
-         bit   $C050
+         bit   $C050                 ; show HGR page 1
          bit   $C010
          jsr   _ResetInputTimeout
 
@@ -39,8 +34,8 @@ _SearchModeInputLoop
          bmi   @gotKey
 
          inc   $4F                   ; these are only ever incremented, never
-         bne   +                     ; reset (used as a pseudorandom seed)
-         inc   $4E
+         bne   +                     ; reset (may be used as a pseudorandom
+         inc   $4E                   ; seed)
 +
          dec   Timeout               ; these are a 3-byte timeout counter
          bne   _SearchModeInputLoop  ; that counts down from a number set
@@ -48,8 +43,8 @@ _SearchModeInputLoop
          bne   _SearchModeInputLoop  ; on every keypress (whether or not
          dec   Timeout+2             ; the key leads to an action)
          bne   _SearchModeInputLoop
-         jsr   _CoverFade            ; no input for ~30 seconds, so switch
-         jmp   MegaAttractMode       ; to mega-attract mode
+         jsr   _CoverFade            ; no input for ~30 seconds, switch to
+         jmp   MegaAttractMode       ; mega-attract mode
 
 @gotKey
          bit   $C010
@@ -65,16 +60,15 @@ _SearchModeInputLoop
          ldx   #kInputLaunch
          bne   InputDispatch         ; always branches
 +
-         and   #$7F
-
-         cmp   #$7F                  ; delete key
+         cmp   #$FF                  ; delete key
          bne   +
 -        ldx   #kInputBack
          bne   InputDispatch         ; always branches
 
-+        cmp   #$08                  ; left arrow = delete
++        cmp   #$88                  ; left arrow = delete
          beq   -
 
+         and   #$7F                  ; strip high bit for search characters
          cmp   #$30                  ; control keys and punctuation ignored
          bcc   @badkey
          cmp   #$3A                  ; numbers are good input
@@ -90,7 +84,6 @@ _SearchModeInputLoop
          bcc   @badkey
          cmp   #$7B                  ; lowercase letters are good input
          bcc   @goodkey
-         ; execution falls through here
 @badkey
          jsr   SoftBell              ; beep on invalid input
          jmp   _SearchModeInputLoop  ; and start over
@@ -109,9 +102,8 @@ InputDispatch
          sta   @j+2
          pla                         ; restore key pressed
 @j       jsr   $FDFD                 ; SMC
-         bcc   +
-         jmp   SearchMode
-+        jmp   _SearchModeInputLoop
+         bcc   _SearchModeInputLoop
+         jmp   SearchMode            ; if carry is set, force full redraw
 
 OnClear
          ldx   InputLength
@@ -149,7 +141,6 @@ OnSearch
 +        sta   InputBuffer,x
          inc   InputLength
          ; execution falls through here
-
 OnInputChanged
          lda   InputLength
          bne   @findMatchingTitle
@@ -168,13 +159,11 @@ OnInputChanged
          bne   -
          lda   #$7F
          sta   UILine2+1
-
          jsr   _LoadCoverOffscreen
          jsr   _DrawSearchBarOffscreen
          jsr   _ShowOtherPage
          clc
          rts
-
 @findMatchingTitle
          jsr   ResetTextRank
 
@@ -191,22 +180,19 @@ OnInputChanged
          lda   BestMatchIndex        ; check if the new best match is the same
          cmp   SelectedIndex         ; as the current best match
          php                         ; (we'll use this later to skip reloading)
-
          sta   SelectedIndex
          sta   @index
          jsr   okvs_nth
          !word gGamesListStore
 @index   !byte $FD
          +STAY @key
-
          plp
          bne   +
          lda   OffscreenPage
          eor   #$01
          sta   OffscreenPage
          jmp   @skipload
-+
-         lda   OffscreenPage         ; we have a new best match, so load the
++        lda   OffscreenPage         ; we have a new best match, so load the
          beq   +                     ; new title screenshot (offscreen)
          lda   #$40
          +HIDE_NEXT_2_BYTES
@@ -243,7 +229,6 @@ OnInputChanged
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
-
          ldx   #40
          lda   #0
 -        sta   UILine1-1,x           ; reset search bar
@@ -270,6 +255,7 @@ OnInputChanged
 ;------------------------------------------------------------------------------
 
 _LoadCoverOffscreen
+; clobbers all
          lda   OffscreenPage
          beq   +
          lda   #$40
@@ -284,6 +270,7 @@ _LoadCoverOffscreen
          rts
 
 _DrawSearchBarOffscreen
+; clobbers all
          lda   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
@@ -296,6 +283,7 @@ _DrawSearchBarOffscreen
          jmp   Draw40Chars
 
 _ShowOtherPage
+; clobbers A, preserves X/Y
          lda   OffscreenPage
          eor   #$01
          sta   OffscreenPage
@@ -314,6 +302,7 @@ _ResetInputTimeout
          rts
 
 _CoverFade
+; clobbers all
          jsr   _LoadCoverOffscreen
          jsr   _ShowOtherPage
          lda   OffscreenPage
@@ -356,3 +345,15 @@ OffscreenPage
                                      ;     (so offscreen is page 1 @ $2000)
                                      ; 1 = currently showing HGR page 1
                                      ;     (so offscreen is page 2 @ $4000)
+
+; indices into InputDispatchTable
+kInputSearch   = 0
+kInputClear    = 1
+kInputBack     = 2
+kInputLaunch   = 3
+
+InputDispatchTable
+         !word OnSearch
+         !word OnClear
+         !word OnBack
+         !word OnLaunch

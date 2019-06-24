@@ -1,8 +1,11 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
-
-; this file is included directly and is run from $2000/main as soon as the .SYSTEM file is loaded
+; first-run initialization code
+;
+; This file is included directly and is run from $2000/main as soon as the
+; .SYSTEM file is loaded
+;
 
          sta   $C00E                 ; 40-column
          sta   $C00C
@@ -73,6 +76,10 @@ ProRWTSBuffer
 *=ProRWTSBuffer+512                  ; ProRWTS needs a 512-byte buffer for its init function
                                      ; so we reuse as much of the 1-time code as possible
                                      ; and fill the rest with zeros
+
+         !source "src/parse.games.a" ; this needs to be outside the buffer because it's not used
+                                     ; until after ProRWTS initialization
+
 OneTimeSetup
          lda   MachineStatus
          sta   oldstatus
@@ -136,20 +143,22 @@ OneTimeSetup
          cpy   #$03
          bcc   @outer
 
-         bit   $C010                 ; clear keyboard strobe so we don't mistakenly think we just tried to run something
-
          ldx   #5
 -        lda   Prelaunch,x           ; copy reentry wrapper to bottom of stack
-         sta   $100,x                ; (many self-running demos use this)
-         dex
+         sta   $100,x                ; (used as reset vector because ][+ always
+         dex                         ; switches to ROM on Ctrl-Reset)
          bpl   -
+
          inx
          stx   $3F2                  ; page 3 reset vector to ($100)
          inx
          stx   $3F3
          ldx   #$A4
          stx   $3F4
-         jmp   $100                  ; continue execution from LC RAM bank
+
+         bit   $C010
+
+         jmp   ($FFFC)               ; continue from |Reentry| in LC RAM bank
 
 kGameListConfFile
          !byte 10

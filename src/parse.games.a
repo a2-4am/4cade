@@ -1,14 +1,11 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
 ; GAMES.CONF parser
 ;
 ; Public functions:
 ; - ParseGamesList
 ;
-
-gGamesListStore
-         !word $FDFD                 ; SMC
 
 ;------------------------------------------------------------------------------
 ; ParseGamesList

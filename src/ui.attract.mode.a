@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
 ; Mega Attract Mode - cycle through slideshows and self-running demos
 ;
@@ -19,14 +19,13 @@
 ; self-terminating game demos
 ;
 ; in:    gGlobalPrefsStore must be initialized
-; out:   exits to caller (note that some attract mode modules never return but
-;        instead call |Reenter|, in which case this routine technically never
-;        returns)
-;        if this routine returns, everything is clobbered (zero page, main
-;        memory, unused portions of the stack page, all registers, all flags)
+; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 MegaAttractMode
-         jsr   BlankHGR
+         ldx   #$FF
+         txs
+
+         jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
          +LDADDR kAttractModeConfFile
          jsr   SetPath
@@ -92,7 +91,6 @@ gAttractIndex
          cmp   #$8D
          bne   @jmpsearch
          jsr   PlayGameFromAttract
-         ; execution falls through here
 @jmpattract
          jmp   MegaAttractMode
 @jmpsearch

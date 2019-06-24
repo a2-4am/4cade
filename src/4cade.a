@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
 !cpu 6502
 !to "build/LAUNCHER.SYSTEM",plain
@@ -9,7 +9,7 @@
 RELBASE=$2000
 }
 
-         !source "src/constants.a"
+         !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
          ; first-run initialization, relocates code to language card and jumps
@@ -35,7 +35,7 @@ FirstMover
 ;
 ; If there is no stack to restore, this exits via SearchMode.
 ;
-; in:    no parameters
+; in:    none
 ; out:   see above
 ;------------------------------------------------------------------------------
 Reenter
@@ -61,7 +61,7 @@ RestoreStackNextTime
          bne   -
          ldx   $DF00                 ; restore stack pointer
          txs
-         rts
+         rts                         ; and return to caller
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"
@@ -77,11 +77,12 @@ RestoreStackNextTime
          !source "src/textrank.a"
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
-         !source "src/parse.games.a"
          !source "src/ui.sound.a"
          !source "src/ui.font.a"
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
+gGamesListStore
+         !word $FDFD                 ; SMC
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
          !word Reenter               ; IRQ vector ($FFFE-F)

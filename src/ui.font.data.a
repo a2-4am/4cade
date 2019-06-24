@@ -1,3 +1,9 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; 'Circuitous' hi-res font data
+;
+
 !pseudopc $D600 {
 FontDataRow0
          !byte $80

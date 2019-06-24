@@ -1,23 +1,13 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
 ; hi-res font drawing routines
 ;
 ; Public functions
-; - DrawPage
 ; - Draw40Chars
 ; - DrawString
 ; - DrawBuffer
 ;
-
-DrawPage
-; A/Y contains address of text buffer
-; no special characters are drawn (0x20..0x7F only)
-; 0x0A acts as carriage return
-; drawing starts at HTAB 0, VTAB 0
-; drawing ends after 24 lines have been drawn
-
-         ; TODO
 
 Draw40Chars
 ; A/Y contains address of character buffer
