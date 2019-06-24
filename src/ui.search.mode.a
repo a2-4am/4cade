@@ -159,7 +159,7 @@ OnInputChanged
          bne   -
          lda   #$7F
          sta   UILine2+1
-         jsr   _LoadCoverOffscreen
+         jsr   _LoadTitleOffscreen
          jsr   _DrawSearchBarOffscreen
          jsr   _ShowOtherPage
          clc
@@ -254,6 +254,20 @@ OnInputChanged
 
 ;------------------------------------------------------------------------------
 
+_LoadTitleOffscreen
+; clobbers all
+         lda   OffscreenPage
+         beq   +
+         lda   #$40
+         +HIDE_NEXT_2_BYTES
++        lda   #$20
+         sta   @addr+1
+         +LDADDR Title
+         jsr   SetPath
+         jsr   LoadFileAt
+@addr    !word $FD00                 ; SMC
+         rts
+
 _LoadCoverOffscreen
 ; clobbers all
          lda   OffscreenPage
@@ -261,17 +275,16 @@ _LoadCoverOffscreen
          lda   #$40
          +HIDE_NEXT_2_BYTES
 +        lda   #$20
-         sta   @coveraddress+1
+         sta   @addr+1
          +LDADDR Cover
          jsr   SetPath
-         jsr   LoadFileAt            ; load default background
-@coveraddress
-         !word $FD00                 ; SMC
+         jsr   LoadFileAt
+@addr    !word $FD00                 ; SMC
          rts
 
 _DrawSearchBarOffscreen
 ; clobbers all
-         lda   #22                   ; draw visible search bar
+         LDA   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
          ror                         ; draw on offscreen page
@@ -325,6 +338,9 @@ kFXCoverFade
 
 Cover    !byte 5
          !text "COVER"
+
+Title    !byte 5
+         !text "TITLE"
 
 UILine1
          !byte 0,0,0,0,0,0,0,0,0,0

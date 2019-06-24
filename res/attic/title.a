@@ -1,0 +1,51 @@
+         lda   #8
+         sta   VTAB
+         lda   #12
+         sta   HTAB
+         lda   OffscreenPage
+         ror
+         +LDADDR TITLETOP
+         jsr   DrawString
+
+         inc   VTAB
+         lda   #12
+         sta   HTAB
+         lda   OffscreenPage
+         ror
+         +LDADDR TITLE1
+         jsr   DrawString
+         inc   VTAB
+
+         lda   #12
+         sta   HTAB
+         lda   OffscreenPage
+         ror
+         +LDADDR TITLE2
+         jsr   DrawString
+         inc   VTAB
+
+         lda   #12
+         sta   HTAB
+         lda   OffscreenPage
+         ror
+         +LDADDR TITLEBOTTOM
+         jsr   DrawString
+         inc   VTAB
+
+TITLETOP
+         !byte 15
+         !byte 6,0,0,0,0,0,0,0,0,0,0,0,0,0,7
+TITLE1
+         !byte 15
+         !byte 3
+         !text "  T O T A L  "
+         !byte 3
+TITLE2
+         !byte 15
+         !byte 3
+         !text " R E P L A Y "
+         !byte 3
+TITLEBOTTOM
+         !byte 15
+         !byte 8,0,0,0,0,0,0,0,0,0,0,0,0,0,9
+
