@@ -36,13 +36,13 @@ Mars Cars
 Microwave
 Miner 2049er II
 Minit Man
+MIRV
 Monster Mash
 The Movie Monster Game
 Neutrons
 Oil's Well
 Pandora's Box
 Pegasus ][
-Rampage [DHGR] [priority]
 Roundabout
 Shanghai
 Shifty Sam
@@ -77,7 +77,6 @@ Frazzle
 Free Fall
 Galactic Attack
 Ghostbusters
-MIRV
 Pentapus
 Rear Guard
 Renegade [DHGR] [priority]
@@ -124,7 +123,6 @@ Road Block
 Seafox
 The Asteroid Field
 The Snapper
-Star Blazer
 Star Cruiser
 Star Thief
 Super Taxman II
