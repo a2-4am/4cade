@@ -35,14 +35,24 @@ if "%1" equ "asm" (
 for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" build\out.txt') do set _make=%%q
 %ACME% -DRELBASE=$%_make:~-4% -r build\4cade.lst src\4cade.a
 %ACME% src\fx\fx.cover.fade.a
+%ACME% src\fx\fx.dhgr.fizzle.a
+%ACME% src\fx\fx.dhgr.fizzle.white.a
 %ACME% src\fx\fx.dhgr.ripple.a
+%ACME% src\fx\fx.dhgr.ripple.white.a
 %ACME% src\fx\fx.dhgr.iris.a
+%ACME% src\fx\fx.dhgr.iris.white.a
 %ACME% src\fx\fx.dhgr.radial.a
+%ACME% src\fx\fx.dhgr.radial.white.a
 %ACME% src\fx\fx.dhgr.radial2.a
+%ACME% src\fx\fx.dhgr.radial2.white.a
 %ACME% src\fx\fx.dhgr.radial3.a
+%ACME% src\fx\fx.dhgr.radial3.white.a
 %ACME% src\fx\fx.dhgr.radial4.a
+%ACME% src\fx\fx.dhgr.radial4.white.a
 %ACME% src\fx\fx.dhgr.radial5.a
+%ACME% src\fx\fx.dhgr.radial5.white.a
 %ACME% src\fx\fx.dhgr.star.a
+%ACME% src\fx\fx.dhgr.star.white.a
 %ACME% src\fx\fx.hgr.diagonal.a
 %ACME% src\fx\fx.hgr.interlock.ud.a
 %ACME% src\fx\fx.hgr.interlock.lr.a
@@ -77,6 +87,7 @@ for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" build\out.txt') do set _m
 %ACME% src\fx\fx.hgr.ripple.a
 %ACME% src\fx\fx.hgr.ripple2.a
 %ACME% src\fx\fx.hgr.star.a
+%ACME% src\fx\fx.hgr.star.white.a
 %ACME% src\fx\fx.shr.fizzle.a
 goto :EOF
 )
@@ -96,6 +107,7 @@ call :asm
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
@@ -125,9 +137,9 @@ cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
-rem cscript /nologo bin\do2po.js res\dsk build\po
-rem cscript /nologo bin\rsync.js res\dsk\*.po build\po
-rem cscript /nologo bin\extract.js build\po >>build\log
+cscript /nologo bin\do2po.js res\dsk build\po
+cscript /nologo bin\rsync.js res\dsk\*.po build\po
+cscript /nologo bin\extract.js build\po >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
