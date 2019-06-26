@@ -4,11 +4,13 @@
 ; Super hi-res slideshows
 ;
 ; Public functions
-; - SHRArtworkSlideshow
-; - BlankSHR
+; - SHRSlideshow
+; - SHRSingle
 ;
 
-SHRArtworkSlideshow
+!zone {
+
+SHRSlideshow
          lda   MachineStatus         ; only run SHR slideshow on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
@@ -19,8 +21,12 @@ SHRArtworkSlideshow
          !word SHRArtworkCallback
          jmp   BlankHGR
 
+SHRSingle
+         ; TODO
+         rts
+
 ;------------------------------------------------------------------------------
-; LoadSHGRTransition
+; .LoadSHGRTransition
 ; [TODO] for now there is only 1 SHR transition so this always load the same file
 ; [TODO] but eventually it should look up name of next SHR transition effect in
 ; [TODO] SFX.CONF or something and loads that file at $A000
@@ -62,7 +68,7 @@ SHRArtworkCallback
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
-         jsr   BlankSHR
+         jsr   .BlankSHR
 
          ; load SHR artwork at $2000/main (not aux)
          +LDADDR kSHRArtworkDirectory
@@ -71,11 +77,11 @@ SHRArtworkCallback
          jsr   AddToPath
          jsr   LoadFile
 
-         jsr   $A000
-         jmp   WaitAfterTransition
+         +LDADDR $A000
+         jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
-; BlankSHR
+; .BlankSHR [private]
 ; clear and show SHR mode without flickering
 ;
 ; in:    machine is a IIgs or has a VidHD card that responds appropriately to
@@ -85,7 +91,7 @@ SHRArtworkCallback
 ; out:   text page clobbered (but screen holes preserved)
 ;        $2000..$9FFF/aux cleared
 ;------------------------------------------------------------------------------
-BlankSHR
+.BlankSHR
          jsr   Home
 
          lda   $C029                 ; set GS NEWVIDEO mode to turn on linearize
@@ -117,3 +123,5 @@ BlankSHR
          sta   $C029
 
          rts
+
+}

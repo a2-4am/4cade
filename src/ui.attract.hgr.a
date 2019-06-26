@@ -6,67 +6,31 @@
 ; Public functions
 ; - HGRTitleSlideshow
 ; - HGRActionSlideshow
-; - BlankHGR
-; - ClearHGR1
+; - HGRSingle
 ;
 
+!zone {
+
 HGRTitleSlideshow
-         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   .LoadHGRTransition    ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
-         !word HGRTitleCallback      ; address of callback (called on each file)
+         !word .HGRTitleCallback     ; address of callback (called on each file)
          rts                         ; exit with last picture still visible
 
 HGRActionSlideshow
-         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   .LoadHGRTransition    ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
-         !word HGRActionCallback     ; address of callback (called on each file)
+         !word .HGRActionCallback    ; address of callback (called on each file)
          rts                         ; exit with last picture still visible
 
-;------------------------------------------------------------------------------
-; BlankHGR
-; clear and show HGR page 1 without flickering
-;
-; in:    none
-; out:   text page clobbered (but screen holes preserved)
-;        $2000..$3FFF cleared
-;------------------------------------------------------------------------------
-BlankHGR
-         jsr   Home
-         jsr   ClearHGR1             ; clear hi-res screen 1
-         lda   $c057                 ; show hi-res screen 1 (now blank)
-         lda   $c054
-         lda   $c052
-         lda   $c050
+HGRSingle
+         ; TODO
          rts
 
 ;------------------------------------------------------------------------------
-; ClearHGR1
-; clear $2000..$3FFF in current memory bank (main or auxmem)
-;
-; in:    none
-; out:   $2000..$3FFF cleared
-;        A = 0
-;        X = 0
-;        Y = 0
-;        Z = 1
-;------------------------------------------------------------------------------
-ClearHGR1
-         ldx   #$20
-         stx   @a+2
-         lda   #0
-         tay
-@a       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         dex
-         bne   @a
-         rts
-
-;------------------------------------------------------------------------------
-; HGRTitleCallback
+; .HGRTitleCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR title screenshot
 
@@ -76,7 +40,7 @@ ClearHGR1
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
-HGRTitleCallback
+.HGRTitleCallback
          +STAY PTR
 
          lda   $C000
@@ -88,10 +52,11 @@ HGRTitleCallback
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRTitleDirectory, PTR
 
-         jmp   ExecuteTransition     ; call transition effect code to display picture
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
-; HGRActionCallback
+; .HGRActionCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR action screenshot
 
@@ -102,7 +67,7 @@ HGRTitleCallback
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
-HGRActionCallback
+.HGRActionCallback
          +STAY PTR
          +STAY @key
          +STAY @key2
@@ -168,7 +133,8 @@ HGRActionCallback
          sec
          jsr   DrawBuffer
 @noname
-         jmp   ExecuteTransition
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
 @topline
          !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
          !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -179,7 +145,7 @@ HGRActionCallback
          !byte 3
 
 ;------------------------------------------------------------------------------
-; LoadHGRTransition
+; .LoadHGRTransition [private]
 ; looks up name of next HGR transition effect in FX.CONF and loads that file
 ; at $6000
 
@@ -188,7 +154,7 @@ HGRActionCallback
 ; out:   all registers and flags clobbered
 ;        $6000..$BFFF contains transition effect code
 ;------------------------------------------------------------------------------
-LoadHGRTransition
+.LoadHGRTransition
          +LDADDR kFXConfFile
          jsr   SetPath
          jsr   LoadFile              ; load HGR transition effects list into $8000
@@ -245,3 +211,5 @@ kFXConfFile
          !byte @kFXConfFile_e-*-1
          !text "FX.CONF"
 @kFXConfFile_e
+
+}

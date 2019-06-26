@@ -1,9 +1,1 @@
-#
-# Attract mode for Agent U S A
-#
-
-ARTWORK.SHR/AGENT.USA=9
-ACTION.HGR/AGENT.USA=7
-AGENT.USA=0
-
-[eof]
+## Attract mode for Agent U S A#ARTWORK.SHR/AGENT.USA=9ACTION.HGR/AGENT.USA=7AGENT.USA=0[eof]

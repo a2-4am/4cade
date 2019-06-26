@@ -77,8 +77,8 @@ RestoreStackNextTime
          !source "src/textrank.a"
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
-         !source "src/ui.sound.a"
          !source "src/ui.font.a"
+         !source "src/ui.common.a"
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
 gGamesListStore

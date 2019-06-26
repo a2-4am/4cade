@@ -1,8 +1,1 @@
-#
-# Attract mode for Spy's Demise
-#
-
-ACTION.HGR/SPYS.DEMISE=7
-SPYS.DEMISE=0
-
-[eof]
+## Attract mode for Spy's Demise#ACTION.HGR/SPYS.DEMISE=7SPYS.DEMISE=0[eof]

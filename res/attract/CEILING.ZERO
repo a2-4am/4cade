@@ -1,8 +1,1 @@
-#
-# Attract mode for Ceiling Zero
-#
-
-ACTION.HGR/CEILING.ZERO=7
-CEILING.ZERO=0
-
-[eof]
+## Attract mode for Ceiling Zero#ACTION.HGR/CEILING.ZERO=7CEILING.ZERO=0[eof]

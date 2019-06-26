@@ -1,0 +1,159 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; common UI functions
+;
+; Public functions
+; - SoftBell
+; - Home
+; - BlankHGR
+; - BlankDHGR
+;
+
+!zone {
+
+;------------------------------------------------------------------------------
+; SoftBell
+; yell at the user, but, like, gently
+;
+; in:    none
+; out:   all registers and flags preserved
+;------------------------------------------------------------------------------
+SoftBell
+         php
+         pha
+         txa
+         pha
+         ldx   #32
+-        lda   #2
+         jsr   @wait
+         bit   $C030
+         lda   #33
+         jsr   @wait
+         bit   $C030
+         dex
+         bne   -
+         pla
+         tax
+         pla
+         plp
+         rts
+@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
+         sec
+--       pha
+-        sbc   #1
+         bne   -
+         pla
+         sbc   #1
+         bne   --
+         rts
+
+;------------------------------------------------------------------------------
+; Home
+; clear and display text screen (HARDER THAN IT SOUNDS)
+;
+; in:    none
+; out:   $0106..$011F clobbered
+;------------------------------------------------------------------------------
+Home
+         lda   MachineStatus
+         and   #SUPPORTS_SHR
+         beq   @noSHR
+         lda   $C035
+         ora   #$08
+         sta   $C035                 ; turn off auxmem-to-bank-E1 shadowing
+         lda   $C029
+         and   #$7F
+         sta   $C029                 ; get out of SHR mode
+@noSHR
+         ldx   #(@end-@start-1)
+-        lda   @start,x
+         sta   $106,x
+         dex
+         bpl   -
+         jmp   $106
+@start
+         ; this will be run from main memory
+         +READ_ROM_NO_WRITE
+         sta   $C00C                 ; get out of DHGR mode
+         sta   $C05F                 ; get out of DHGR mode
+         jsr   $FB2F                 ; TEXT
+         jsr   $FC58                 ; HOME
+         +READ_RAM1_WRITE_RAM1
+         rts
+@end
+
+;------------------------------------------------------------------------------
+; BlankHGR
+; clear and show HGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF cleared
+;------------------------------------------------------------------------------
+BlankHGR
+         jsr   Home
+         jsr   .ClearHGR1            ; clear hi-res screen 1
+         lda   $c057                 ; show hi-res screen 1 (now blank)
+         lda   $c054
+         lda   $c052
+         lda   $c050
+         rts
+
+;------------------------------------------------------------------------------
+; BlankDHGR
+; clear and show DHGR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered (but screen holes preserved)
+;        $2000..$3FFF/main and /aux cleared
+;------------------------------------------------------------------------------
+BlankDHGR
+         jsr   Home
+         jsr   .ClearHGR1            ; clear hi-res screen 1
+         sta   $C005
+         jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
+         sta   $C004
+         sta   $c00d
+         sta   $c057
+         sta   $c054
+         sta   $c052
+         sta   $c050
+         sta   $c05e
+         rts
+
+ExecuteTransitionAndWait
+         +STAY @j+1
+@j       jsr   $FDFD                 ; SMC call transition effect code
+         ldx   #$20                  ; picture is showing so now we wait
+-        lda   #0
+         jsr   WaitForKeyWithTimeout
+         bmi   +
+         dex
+         bpl   -
++        rts
+
+;------------------------------------------------------------------------------
+; .ClearHGR1 [private]
+; clear $2000..$3FFF in current memory bank (main or auxmem)
+;
+; in:    none
+; out:   $2000..$3FFF cleared
+;        A = 0
+;        X = 0
+;        Y = 0
+;        Z = 1
+;------------------------------------------------------------------------------
+.ClearHGR1
+         ldx   #$20
+         stx   @a+2
+         lda   #0
+         tay
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
+}

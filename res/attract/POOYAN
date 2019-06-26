@@ -1,9 +1,1 @@
-#
-# Attract mode for Pooyan
-#
-
-ARTWORK.SHR/POOYAN=9
-ACTION.HGR/POOYAN=7
-POOYAN=0
-
-[eof]
+## Attract mode for Pooyan#ARTWORK.SHR/POOYAN=9ACTION.HGR/POOYAN=7POOYAN=0[eof]

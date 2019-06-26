@@ -1,8 +1,1 @@
-#
-# Attract mode for Jumpman
-#
-
-ARTWORK.SHR/JUMPMAN=9
-ACTION.HGR/JUMPMAN=7
-
-[eof]
+## Attract mode for Jumpman#ARTWORK.SHR/JUMPMAN=9ACTION.HGR/JUMPMAN=7[eof]

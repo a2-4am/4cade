@@ -1,8 +1,1 @@
-#
-# Attract mode for Crossfire
-#
-
-ARTWORK.SHR/CROSSFIRE=9
-ACTION.HGR/CROSSFIRE=7
-
-[eof]
+## Attract mode for Crossfire#ARTWORK.SHR/CROSSFIRE=9ACTION.HGR/CROSSFIRE=7[eof]

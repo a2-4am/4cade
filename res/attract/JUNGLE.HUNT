@@ -1,9 +1,1 @@
-#
-# Attract mode for Jungle Hunt
-#
-
-ACTION.HGR/JUNGLE.HUNT=7
-ACTION.HGR/JUNGLE.HUNT2=7
-JUNGLE.HUNT=0
-
-[eof]
+## Attract mode for Jungle Hunt#ACTION.HGR/JUNGLE.HUNT2=7ACTION.HGR/JUNGLE.HUNT=7JUNGLE.HUNT=0[eof]

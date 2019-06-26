@@ -1,8 +1,1 @@
-#
-# Attract mode for H.E.R.O.
-#
-
-ARTWORK.SHR/HERO=9
-ACTION.HGR/HERO=7
-
-[eof]
+## Attract mode for H.E.R.O.#ARTWORK.SHR/HERO=9ACTION.HGR/HERO=7[eof]

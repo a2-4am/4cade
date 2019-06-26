@@ -1,8 +1,1 @@
-#
-# Attract mode for Track & Field
-#
-
-ACTION.HGR/TRACK.AND.FIELD=7
-TRACK.AND.FIELD=0
-
-[eof]
+## Attract mode for Track & Field#ACTION.HGR/TRACK.AND.FIELD=7TRACK.AND.FIELD=0[eof]

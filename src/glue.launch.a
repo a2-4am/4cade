@@ -6,6 +6,8 @@
 ; Public functions
 ; - PlayGameFromSearch
 ; - PlayGameFromAttract
+; - Prelaunch
+; - Launch
 ;
 ; Public variables
 ; - SelectedIndex                    ; [byte] numeric index in gGamesStore of currently selected game in search mode
@@ -13,26 +15,22 @@
 ; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
                                      ;        (only valid during slideshows, not updated once a key is pressed)
 
+!zone {
+
 PlayGameFromSearch
          jsr   okvs_nth
          !word gGamesListStore
 SelectedIndex
          !byte $FD                   ; SMC
-         jmp   Go
+         jmp   .Go
 
 PlayGameFromAttract
-         +LDADDR kAttractModeConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load attract-mode configuration file at $8000
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
-         !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
-         !byte 0
+         jsr   LoadAndParseAttractModeConf
 
          jsr   okvs_nth              ; get filename of current attract-mode module
          !word gAttractModeStore
 gCurrentAttractIndex
-         !byte $FD                   ; set in AttractMode
+         !byte $FD                   ; set in MegaAttractMode
          +STAY @key
          jsr   okvs_get
          !word gAttractModeStore
@@ -46,7 +44,7 @@ gCurrentAttractIndex
 ; we reached here by pressing <RETURN> during a self-running demo,
 ; which means that @key points to the filename of the game we want to play
          +LDAY @key
-         jmp   Go
+         jmp   .Go
 
 @playFromSlideshow
 ; we reached here by pressing <RETURN> during a slideshow
@@ -63,7 +61,7 @@ gCurrentlyVisibleSlideshowIndex
 @sskey   !word $FDFD                 ; SMC
          bcs   +
          +LDAY @sskey
-         jmp   Go
+         jmp   .Go
 +
 ; if the key is not found, try getting the value of the current record
 ; from gSlideshowStore and using that instead
@@ -71,13 +69,13 @@ gCurrentlyVisibleSlideshowIndex
          jsr   okvs_get
          !word gSlideshowStore
 @sskey2  !word $FDFD                 ; SMC
-         bcc   Go
+         bcc   .Go
          rts
-Go
+
+.Go
          +STAY PTR
-         bit   $C010                 ; forget the key that was pressed
-         ldx   #1
-         sec
+         ldx   #1                    ; construct path to game's startup file
+         sec                         ; which is always /X/game/game
          !byte $2c
 --       pha
          clc
@@ -105,22 +103,27 @@ Go
 
          +LDADDR ProDOS_prefix
          jsr   SetPath
-         jsr   LoadFile
+         jsr   LoadFile              ; load the game startup file
 
          pla
-         sta   ProDOS_prefix
+         sta   ProDOS_prefix         ; set 'root' directory to the path part
+                                     ; of the game startup file we just loaded
+                                     ;  so games can load other files without
+                                     ; knowing which directory they're in
 
-copy_prelaunch
+         ; execution falls through here
+
+Launch
          +READ_RAM2_WRITE_RAM2
          ldx   #1
 -        lda   $100,x
-         sta   $DF00,x               ; backup stack
+         sta   $DF00,x               ; back up stack
          inx
          bne   -
-         tsx                         ; backup stack pointer
+         tsx                         ; back up stack pointer
          stx   $DF00
-         lda   #$38                  ; 'sec' opcode
-         sta   RestoreStackNextTime  ; tell |Reenter| to restore stack
+         lda   #$38                  ; 'sec' opcode to tell |Reenter| to
+         sta   RestoreStackNextTime  ; restore the stack and stack pointer
 
          ldx   #(End_Prelaunch-Prelaunch-1)
 -        lda   Prelaunch,x           ; copy pre-launch code to main memory
@@ -136,22 +139,25 @@ copy_prelaunch
 
 ;------------------------------------------------------------------------------
 ; Prelaunch
-; code to set up machine for running a self-running, self-terminating game demo
-; DO NOT CALL DIRECTLY
+; code to set up and launch third-party code (either a self-running demo or
+; an actual game)
+; THIS IS NOT A FUNCTION. DO NOT CALL THIS DIRECTLY.
 ; must be run from main memory
 ; contains multiple entry points
 ;
-; in:    none
+; in:    for first entry point, none
+;        for second entry point, the game must already be loaded in memory
+;          and ldrlo2/ldrhi2 must be the game entry point
 ; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
 ;        (not here, but wherever it was copied to in main memory) or by
 ;        manually enabling LC RAM then JMP |Reenter|
 ;------------------------------------------------------------------------------
-Prelaunch                            ; this runs from main memory
-; entry point used by some self-running demos
+Prelaunch
+; entry point to return to launcher (used by self-running demos)
          lda   $C088
          jmp   Reenter
 
-; entry point to launch game
+; entry point to launch game (must be Prelaunch+6)
          +READ_ROM_NO_WRITE
          lda   ldrlo2                ; set up game entry point in stack page
          ldy   ldrhi2                ; (last load address - 1)
@@ -166,21 +172,24 @@ Prelaunch                            ; this runs from main memory
 -        sta   $00,x
          inx
          bne   -
-         lda   #$65                  ; initialize random seed (some games like Pooyan
-         sta   $4E                   ; require these to be non-zero)
-         lda   #$02
-         sta   $4F
-         jsr   $FE89                 ; initialize machine like a cold boot (many
-         jsr   $FE93                 ; games assume a 'clean slate' and rely on
-         jsr   $FE84                 ; zero page values set by these ROM routines,
-         sta   $C000                 ; e.g. Wavy Navy just prints out text via $FDED
-         sta   $C002                 ; and expects it to work)
-         sta   $C004
-         sta   $C00C
-         sta   $C00E
+         lda   #$65                  ; Initialize 'random' seed. These are
+         sta   $4E                   ; arbitrary values. Some games like Pooyan
+         lda   #$02                  ; require these to be non-zero. Ask me
+         sta   $4F                   ; how long that one took to debug.
+         jsr   $FE89                 ; Initialize machine like a cold boot.
+         jsr   $FE93                 ; Many games assume a 'clean slate' and
+         jsr   $FE84                 ; rely on zero page values set by these
+         sta   $C000                 ; ROM routines,
+         sta   $C002                 ; e.g. Wavy Navy just prints out text via
+         sta   $C004                 ; $FDED and expects it to work. Having it
+         sta   $C00C                 ; print all null characters is amusing, in
+         sta   $C00E                 ; a quiet way, but not really helpful.
          jsr   $FB2F
          jsr   $FC58
-         ldx   #$FD                  ; jump to game entry point via stack pop
+         bit   $C010
+         ldx   #$FD                  ; Jump to game entry point via stack pop.
          txs
          rts
 End_Prelaunch
+
+}

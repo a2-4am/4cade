@@ -1,8 +1,1 @@
-#
-# Attract mode for Buzzard Bait
-#
-
-ACTION.HGR/BUZZARD.BAIT=7
-BUZZARD.BAIT=0
-
-[eof]
+## Attract mode for Buzzard Bait#ACTION.HGR/BUZZARD.BAIT=7BUZZARD.BAIT=0[eof]

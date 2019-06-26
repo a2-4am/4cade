@@ -1,7 +1,1 @@
-#
-# Attract mode for Blister Ball
-#
-
-ACTION.HGR/BLISTER.BALL=7
-
-[eof]
+## Attract mode for Blister Ball#ACTION.HGR/BLISTER.BALL=7[eof]

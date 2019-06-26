@@ -1,8 +1,1 @@
-#
-# Attract mode for Galaxian
-#
-
-ACTION.HGR/GALAXIAN2=7
-ACTION.HGR/GALAXIAN=7
-
-[eof]
+## Attract mode for Galaxian#ACTION.HGR/GALAXIAN2=7ACTION.HGR/GALAXIAN=7[eof]

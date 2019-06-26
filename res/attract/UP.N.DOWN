@@ -1,8 +1,1 @@
-#
-# Attract mode for Up'n Down
-#
-
-ARTWORK.SHR/UP.N.DOWN=9
-ACTION.HGR/UP.N.DOWN=7
-
-[eof]
+## Attract mode for Up'n Down#ARTWORK.SHR/UP.N.DOWN=9ACTION.HGR/UP.N.DOWN=7[eof]

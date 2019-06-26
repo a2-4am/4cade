@@ -5,12 +5,8 @@
 ;
 ; Public functions
 ; - MegaAttractMode
-;;;;;; - RunAttractModule
-;
-; Public variables
-; - gAttractIndex                    ; [byte] numeric index in gAttractModeStore of next Mega-Attract Module
-; - gFXIndex                         ; [byte] numeric index in gFXStore of next HGR transition effect
-; - gDFXIndex                        ; [byte] numeric index in gDFXStore of next DHGR transition effect
+; - RunAttractModule
+; - LoadAndParseAttractModeConf
 
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
@@ -27,14 +23,7 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         +LDADDR kAttractModeConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load attract-mode configuration file at $8000
-
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
-         !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
-         !byte 0
+         jsr   LoadAndParseAttractModeConf
 
          jsr   okvs_get              ; get next attract-mode module from prefs
          !word gGlobalPrefsStore
@@ -47,25 +36,25 @@ MegaAttractMode
          bcc   +
 @noattract
          ldx   #0
-+        stx   gAttractIndex
++        stx   @attractIndex
 
          jsr   okvs_nth              ; get filename of next attract-mode module
          !word gAttractModeStore
-gAttractIndex
+@attractIndex
          !byte 0
          +STAY @key
 
-         lda   gAttractIndex
+         lda   @attractIndex
          sta   gCurrentAttractIndex
-         inc   gAttractIndex         ; increment module index for next time
+         inc   @attractIndex         ; increment module index for next time
          jsr   okvs_len
          !word gAttractModeStore
-         cmp   gAttractIndex
+         cmp   @attractIndex
          bne   +
          lda   #0
-         sta   gAttractIndex
+         sta   @attractIndex
 +
-         lda   gAttractIndex
+         lda   @attractIndex
          sta   @nexti
          jsr   okvs_nth              ; get name of next attract-mode module
          !word gAttractModeStore
@@ -85,33 +74,39 @@ gAttractIndex
 @key     !word $FDFD                 ; SMC
          +STAY PTR
 
-         jsr   @RunNextAttractModule
+         ldy   #1
+         lda   (PTR),y
+         and   #$0F                  ; convert ASCII digit to integer
+         tax                         ; X = module type
+         +LDAY @key                  ; A/Y = address of module name
+         jsr   RunAttractModule
          lda   $C000
          bpl   @jmpattract
-         cmp   #$8D
-         bne   @jmpsearch
-         jsr   PlayGameFromAttract
+         cmp   #$8D                  ; Enter plays the game shown on screen.
+         bne   @jmpsearch            ; Any other key switches to Search Mode.
+         jsr   PlayGameFromAttract   ; Might return if user hits Ctrl-Reset.
 @jmpattract
          jmp   MegaAttractMode
 @jmpsearch
          jmp   SearchMode
 
-@RunNextAttractModule
-         ldy   #1
-         lda   (PTR),y
-         and   #$0F
-;         jsr   RunAttractModule
-
 ;------------------------------------------------------------------------------
 ; RunAttractModule
 ; run a single attract module of any type and return to caller
 ;
-; in:    A = module type (#$01..#$09, see attract.conf)
-;        gGlobalPrefsStore must be initialized
+; in:    X = module type (1-9, see attract.conf)
+;        A/Y = address of module name
+;              for demos, this is the filename of an executable in /demo/
+;              for slideshows, this is the filename of a .conf file in /ss/
+;              for singles, this is a pathname of the graphic to load
+;        gGlobalPrefsStore must be initialized (if we load a transition effect
+;          of any kind, we will update the global prefs with the next one)
 ; out:   all flags and registers clobbered
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------
-;RunAttractModule
+RunAttractModule
+         +STAY @key
+         txa
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
@@ -120,93 +115,63 @@ gAttractIndex
 ; All demos are strictly 48K / main memory. No demo uses the
 ; language card or auxiliary memory.
 
-         jsr   Home                  ; clear text screen and switch to it during loading
-                                     ; to avoid seeing executable code load into the HGR page
+         jsr   Home                  ; avoid seeing code load into the HGR page
          +LOAD_PATH kDemoDirectory
          ldy   gPathname
-         sty   ProDOS_prefix
--        lda   gPathname, y
-         sta   ProDOS_prefix, y
+         sty   ProDOS_prefix         ; temporarily set 'root' directory to
+-        lda   gPathname, y          ; /demos/ directory so demos can can load
+         sta   ProDOS_prefix, y      ; other resources in the same directory
          dey
          bne   -
+         +LOAD_FILE_IMM @key         ; load self-running demo (address varies)
+         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
+         jmp   Launch                ; will return to caller via |Reenter|
 
-         +LOAD_FILE_IMM @key
+; not a demo, so maybe a slideshow or single screenshot
+@NotDemo
+         cmp   #$06                  ; 1-5 are slideshow modules
+         bcs   @startDispatch
 
-         jsr   SaveOrRestoreScreenHoles ; save screen hole contents in case game changes them
-         jmp   copy_prelaunch
-
-@NotDemo                             ; slideshow module or screenshot
-;         cmp   #$06                  ; 1-5 are slideshow modules
-;         bcs   @Single               ; higher values are screenshot modules
-
+; it's a slideshow, so load slideshow configuration file at $4000
          pha                         ; save module type
-
-         ; load slideshow configuration file at $4000
          +LOAD_FILE kAttractModeSlideshowDirectory, @key
-
          jsr   ParseKeyValueList     ; parse slideshow configuration into an OKVS data structure at $0800
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to address of last loaded file, so $4000
          !byte 0
-
          pla                         ; restore module type
+
+@startDispatch
          asl
          tax
          lda   @slideshows-2,x
          sta   @jmp+1
          lda   @slideshows-1,x
          sta   @jmp+2
+         +LDAY @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
+@key     !word $FDFD                 ; SMC
 @slideshows
          !word HGRTitleSlideshow
          !word HGRActionSlideshow
          !word DHGRTitleSlideshow
          !word DHGRActionSlideshow
-         !word SHRArtworkSlideshow
+         !word SHRSlideshow
          !word 0
-;         !word HGRSingle
-;         !word DHGRSingle
-;         !word SHRSingle
+         !word HGRSingle
+         !word DHGRSingle
+         !word SHRSingle
 
-kAttractModeConfFile
-         !byte @kAttractModeConfFile_e-*-1
-         !text "ATTRACT.CONF"
-@kAttractModeConfFile_e
+LoadAndParseAttractModeConf
+         +LDADDR @AttractModeConfFile
+         jsr   SetPath
+         jsr   LoadFile              ; load attract-mode configuration file at $8000
 
-;------------------------------------------------------------------------------
-; internal functions
-
-;------------------------------------------------------------------------------
-; Home
-; clear and display text screen
-;
-; in:    none
-; out:   $0106..$011F clobbered
-;------------------------------------------------------------------------------
-Home
-         lda   MachineStatus
-         and   #SUPPORTS_SHR
-         beq   @noSHR
-         lda   $C035
-         ora   #$08
-         sta   $C035                 ; turn off auxmem-to-bank-E1 shadowing
-         lda   $C029
-         and   #$7F
-         sta   $C029                 ; get out of SHR mode
-@noSHR
-         ldx   #(@end-@start-1)
--        lda   @start,x
-         sta   $106,x
-         dex
-         bpl   -
-         jmp   $106
-@start
-         ; this will be run from main memory
-         +READ_ROM_NO_WRITE
-         sta   $C00C                 ; get out of DHGR mode
-         sta   $C05F                 ; get out of DHGR mode
-         jsr   $FB2F                 ; TEXT
-         jsr   $FC58                 ; HOME
-         +READ_RAM1_WRITE_RAM1
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
+         !word gAttractModeStore
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !byte 0
          rts
-@end
+@AttractModeConfFile
+         !byte 12
+         !text "ATTRACT.CONF"

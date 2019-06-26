@@ -5,33 +5,40 @@
 ;
 ; Public functions
 ; - DHGRTitleSlideshow
-; - BlankDHGR
+; - DHGRActionSlideshow
+; - DHGRSingle
 ;
+
+!zone {
 
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvs   +
          rts
-+        jsr   LoadDHGRTransition    ; load transition effect code at $6000
++        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word DHGRTitleCallback     ; address of callback (called on each file)
+         !word .DHGRTitleCallback    ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvs   +
          rts
-+        jsr   LoadDHGRTransition    ; load transition effect code at $6000
++        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word DHGRActionCallback    ; address of callback (called on each file)
+         !word .DHGRActionCallback   ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
+DHGRSingle
+         ; TODO
+         rts
+
 ;------------------------------------------------------------------------------
-; LoadDHGRTransition
+; .LoadDHGRTransition [private]
 ; looks up name of next DHGR transition effect in DFX.CONF and loads that file
 ; at $6000
 
@@ -40,7 +47,7 @@ DHGRActionSlideshow
 ; out:   all registers and flags clobbered
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
-LoadDHGRTransition
+.LoadDHGRTransition
          +LDADDR kDFXConfFile
          jsr   SetPath
          jsr   LoadFile              ; load DHGR transition effects list into $8000
@@ -99,7 +106,7 @@ kDFXConfFile
 @kDFXConfFile_e
 
 ;------------------------------------------------------------------------------
-; DHGRTitleCallback
+; .DHGRTitleCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR title screenshot
 
@@ -110,7 +117,7 @@ kDFXConfFile
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
-DHGRTitleCallback
+.DHGRTitleCallback
          +STAY PTR
 
          lda   $C000
@@ -125,23 +132,11 @@ DHGRTitleCallback
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile
-         ; execution falls through here
-
-ExecuteTransition
-         jsr   $6000                 ; call transition effect code to display picture
-         ; execution falls through here
-
-WaitAfterTransition
-         ldx   #$20                  ; picture is already showing so just wait
--        lda   #0
-         jsr   WaitForKeyWithTimeout
-         bmi   +
-         dex
-         bpl   -
-+        rts
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
-; DHGRActionCallback
+; .DHGRActionCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR action screenshot
 
@@ -152,7 +147,7 @@ WaitAfterTransition
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
-DHGRActionCallback
+.DHGRActionCallback
          +STAY PTR
 
          lda   $C000
@@ -167,26 +162,7 @@ DHGRActionCallback
          +LDAY PTR
          jsr   AddToPath
          jsr   LoadDHRFile
-         jmp   ExecuteTransition
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
 
-;------------------------------------------------------------------------------
-; BlankDHGR
-; clear and show DHGR page 1 without flickering
-;
-; in:    none
-; out:   text page clobbered (but screen holes preserved)
-;        $2000..$3FFF/main and /aux cleared
-;------------------------------------------------------------------------------
-BlankDHGR
-         jsr   Home
-         jsr   ClearHGR1             ; clear hi-res screen 1
-         sta   $C005
-         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
-         sta   $C004
-         sta   $c00d
-         sta   $c057
-         sta   $c054
-         sta   $c052
-         sta   $c050
-         sta   $c05e
-         rts
+}

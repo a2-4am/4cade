@@ -1,8 +1,1 @@
-#
-# Attract mode for Falcons
-#
-
-ACTION.HGR/FALCONS.SCORE=7
-ACTION.HGR/FALCONS=7
-
-[eof]
+## Attract mode for Falcons#ACTION.HGR/FALCONS.SCORE=7ACTION.HGR/FALCONS=7[eof]

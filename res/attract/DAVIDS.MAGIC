@@ -1,8 +1,1 @@
-#
-# Attract mode for David's Midnight Magic
-#
-
-ARTWORK.SHR/DAVIDS.MAGIC=9
-ACTION.HGR/DAVIDS.MAGIC=7
-
-[eof]
+## Attract mode for David's Midnight Magic#ARTWORK.SHR/DAVIDS.MAGIC=9ACTION.HGR/DAVIDS.MAGIC=7[eof]
