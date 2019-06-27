@@ -94,10 +94,8 @@ Home
 BlankHGR
          jsr   Home
          jsr   .ClearHGR1            ; clear hi-res screen 1
-         lda   $c057                 ; show hi-res screen 1 (now blank)
-         lda   $c054
-         lda   $c052
-         lda   $c050
+         bit   PAGE1                 ; show hi-res screen 1 (now blank)
+         +HGR_MODE
          rts
 
 ;------------------------------------------------------------------------------
@@ -115,10 +113,8 @@ BlankDHGR
          jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
          sta   SET80VID
-         sta   $c057
-         sta   $c054
-         sta   $c052
-         sta   $c050
+         bit   PAGE1
+         +HGR_MODE
          sta   DHIRESON
          rts
 
@@ -136,6 +132,7 @@ ExecuteTransitionAndWait
 ;------------------------------------------------------------------------------
 ; .ClearHGR1 [private]
 ; clear $2000..$3FFF in current memory bank (main or auxmem)
+; does not change HGR mode
 ;
 ; in:    none
 ; out:   $2000..$3FFF cleared

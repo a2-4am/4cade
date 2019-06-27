@@ -139,7 +139,7 @@ OneTimeSetup
 @digitDone
          pla
          ora   #$30
-         sta   UILine2_GameCount,y
+         sta   VisibleGameCount,y
          iny
          cpy   #$03
          bcc   @outer

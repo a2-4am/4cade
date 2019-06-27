@@ -35,6 +35,8 @@ SLOT3STATUS =  $C017      ; bit 7 only
 NEWVIDEO =     $C029      ; IIgs graphics modes
 SPEAKER =      $C030      ; chirp chirp
 SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing
+PAGE1 =        $C054      ; page 1 (affects text, HGR, DHGR)
+PAGE2 =        $C055      ; page 2 (affects text, HGR, DHGR)
 DHIRESON =     $C05E      ; double hi-res on switch
 DHIRESOFF =    $C05F      ; double hi-res off switch
 

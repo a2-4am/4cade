@@ -123,3 +123,10 @@
          ora   #$20
 +
 }
+
+; does not set page 1 or 2
+!macro   HGR_MODE {
+         lda   $C057
+         lda   $C052
+         lda   $C050
+}
