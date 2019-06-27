@@ -106,7 +106,7 @@ TextRankCallback
          cpy   gamelength
          iny
          bcc   --
-         rts                         ; no match :(
+--       rts                         ; no match :(
 +
          ldx   #80
          cpy   startat
@@ -127,6 +127,8 @@ TextRankCallback
          bcc   +
          inc   runningscore+1
 +        iny
+         cpy   gamelength
+         beq   --
          sty   startat
          ldy   i
          cpy   InputLength
