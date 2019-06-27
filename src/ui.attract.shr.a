@@ -11,7 +11,7 @@
 !zone {
 
 SHRSlideshow
-         lda   oldstatus             ; only show SHR on IIgs or if we have a VidHD card
+         lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
          rts
@@ -23,7 +23,7 @@ SHRSlideshow
 
 SHRSingle
          +STAY SAVE
-         lda   oldstatus             ; only show SHR on IIgs or if we have a VidHD card
+         lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
          rts

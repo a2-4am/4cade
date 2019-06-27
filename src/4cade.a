@@ -43,7 +43,6 @@ Reenter
          cli
          +READ_RAM2_WRITE_RAM2
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
-                                     ; (also switches to LC RAM bank 1)
          jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
 RestoreStackNextTime
          clc                         ; SMC
@@ -61,6 +60,7 @@ RestoreStackNextTime
          bne   -
          ldx   $DF00                 ; restore stack pointer
          txs
+         +READ_RAM1_WRITE_RAM1
          rts                         ; and return to caller
 
          ; these routines will only be called after relocating to language card
@@ -79,6 +79,8 @@ RestoreStackNextTime
          !source "src/parse.prefs.a"
          !source "src/ui.font.a"
          !source "src/ui.common.a"
+MachineStatus
+         !byte 0
 gGlobalPrefsStore
          !word $D000                 ; address of first okvs store
 gGamesListStore

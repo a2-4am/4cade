@@ -61,7 +61,7 @@ ParseGamesList
          beq   @filterOnMemory
          cmp   #$31                  ; not '0' or '1' or '[' or CR -> ignore entire line (e.g. comment)
          bne   @skipLine
-         bit   MachineStatus
+         bit   zpMachineStatus
          bpl   @skipLine             ; game requires joystick but we don't have one, so ignore entire line
 @filterOnMemory
          jsr   IncAndGetChar         ; get second filter character ('1' if game requires 128K)
@@ -69,7 +69,7 @@ ParseGamesList
          beq   @swallowComma
          cmp   #$31                  ; not '0' or '1' -> ignore entire line
          bne   @skipLine
-         bit   MachineStatus
+         bit   zpMachineStatus
          bvc   @skipLine             ; game requires 128K but we only have 64K, so ignore entire line
 @swallowComma
          jsr   IncAndGetChar

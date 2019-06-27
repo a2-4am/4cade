@@ -18,13 +18,13 @@
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
-         ror   MachineStatus
+         ror   zpMachineStatus
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
-         ror   MachineStatus
+         ror   zpMachineStatus
          jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
-         ror   MachineStatus
+         ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
-         ror   MachineStatus         ; now bit 4 = 1 if IIgs
+         ror   zpMachineStatus       ; now bit 4 = 1 if IIgs
                                      ;     bit 5 = 1 if VidHD
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
@@ -81,8 +81,8 @@ ProRWTSBuffer
                                      ; until after ProRWTS initialization
 
 OneTimeSetup
-         lda   MachineStatus
-         sta   oldstatus
+         lda   zpMachineStatus
+         sta   MachineStatus         ; save machine status
          jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
          lda   #$91
          sta   holepatch             ; enable restoring of copy from now on

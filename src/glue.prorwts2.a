@@ -388,13 +388,7 @@ holepatch ;sta->lda
     inc    namhi
     dec    bloklo
     bne    --
-    lda    oldstatus
-    ldx    MachineStatus
-    sta    MachineStatus
-    sta    oldstatus
     rts
-oldstatus
-    !byte  0
 holey_stuff
     !fill  64
 

@@ -39,10 +39,11 @@ SAVE         = $08
 HTAB         = $24
 VTAB         = $25
 Timeout      = $ED        ; 3 bytes (used by SearchMode)
-MachineStatus =$F0        ; bit 7 = 1 if machine has joystick
+zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
                           ; bit 5 = 1 if machine has a VidHD card
                           ; bit 4 = 1 if machine is a IIgs
+                          ; only used during init, then copied to MachineStatus in LC RAM
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
 
