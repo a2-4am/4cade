@@ -128,7 +128,7 @@ kDFXConfFile
 .DHGRTitleCallback
          +STAY PTR
 
-         lda   $C000
+         lda   KBD
          bpl   +
          rts
 +
@@ -158,7 +158,7 @@ kDFXConfFile
 .DHGRActionCallback
          +STAY PTR
 
-         lda   $C000
+         lda   KBD
          bpl   +
          rts
 +

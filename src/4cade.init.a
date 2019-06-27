@@ -7,13 +7,14 @@
 ; .SYSTEM file is loaded
 ;
 
-         sta   $C00E                 ; 40-column
-         sta   $C00C
-         sta   $C004
-         sta   $C002
-         sta   $C000
-         jsr   $FB2F
-         jsr   $FC58
+         +READ_ROM_NO_WRITE
+         sta   PRIMARYCHARSET
+         sta   CLR80VID
+         sta   STOREOFF
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
          jsr   Has64K                ; check for 64K (required)
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
@@ -156,7 +157,7 @@ OneTimeSetup
          ldx   #$A4
          stx   $3F4
 
-         bit   $C010
+         bit   CLEARKBD
 
          jmp   ($FFFC)               ; continue from |Reentry| in LC RAM bank
 

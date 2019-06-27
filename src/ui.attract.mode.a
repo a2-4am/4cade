@@ -18,6 +18,7 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 MegaAttractMode
+         +READ_RAM1_WRITE_RAM1
          ldx   #$FF
          txs
 
@@ -80,7 +81,7 @@ MegaAttractMode
          tax                         ; X = module type
          +LDAY @key                  ; A/Y = address of module name
          jsr   RunAttractModule
-         lda   $C000
+         lda   KBD
          bpl   @jmpattract
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   @jmpsearch            ; Any other key switches to Search Mode.
@@ -94,7 +95,7 @@ MegaAttractMode
 ; MiniAttractMode
 ; run attract modules related to one game
 ;
-; in:    X = index in gGamesStore of game
+; in:    X = index in gGamesListStore
 ;        gGlobalPrefsStore must be initialized
 ; out:   all flags and registers clobbered
 ;        assume all of main memory has been clobbered
@@ -146,7 +147,7 @@ MiniAttractMode
          jsr   RunAttractModule      ; execute the module
 
          inc   @MiniAttractIndex
-         lda   $C000
+         lda   KBD
          bpl   @loop
 @exit    rts
 @MiniAttractIndex

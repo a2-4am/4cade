@@ -42,7 +42,7 @@ Has64K
 Has128K
          +READ_ROM_NO_WRITE
          sta   STOREOFF
-         lda   MACHINEID
+         lda   ROM_MACHINEID
          cmp   #6
          bne   @no                   ; earlier than //e -> no 128K
          lda   SLOT3STATUS

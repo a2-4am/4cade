@@ -27,10 +27,10 @@ SoftBell
          ldx   #32
 -        lda   #2
          jsr   @wait
-         bit   $C030
+         bit   SPEAKER
          lda   #33
          jsr   @wait
-         bit   $C030
+         bit   SPEAKER
          dex
          bne   -
          pla
@@ -59,12 +59,12 @@ Home
          lda   MachineStatus
          and   #SUPPORTS_SHR
          beq   @noSHR
-         lda   $C035
+         lda   SHADOW
          ora   #$08
-         sta   $C035                 ; turn off auxmem-to-bank-E1 shadowing
-         lda   $C029
+         sta   SHADOW                ; turn off auxmem-to-bank-E1 shadowing
+         lda   NEWVIDEO
          and   #$7F
-         sta   $C029                 ; get out of SHR mode
+         sta   NEWVIDEO              ; get out of SHR mode
 @noSHR
          ldx   #(@end-@start-1)
 -        lda   @start,x
@@ -75,10 +75,10 @@ Home
 @start
          ; this will be run from main memory
          +READ_ROM_NO_WRITE
-         sta   $C00C                 ; get out of DHGR mode
-         sta   $C05F                 ; get out of DHGR mode
-         jsr   $FB2F                 ; TEXT
-         jsr   $FC58                 ; HOME
+         sta   CLR80VID              ; get out of DHGR mode
+         sta   DHIRESOFF             ; get out of DHGR mode
+         jsr   ROM_TEXT              ; TEXT
+         jsr   ROM_HOME              ; HOME
          +READ_RAM1_WRITE_RAM1
          rts
 @end
@@ -111,15 +111,15 @@ BlankHGR
 BlankDHGR
          jsr   Home
          jsr   .ClearHGR1            ; clear hi-res screen 1
-         sta   $C005
+         sta   WRITEAUXMEM
          jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
-         sta   $C004
-         sta   $c00d
+         sta   WRITEMAINMEM
+         sta   SET80VID
          sta   $c057
          sta   $c054
          sta   $c052
          sta   $c050
-         sta   $c05e
+         sta   DHIRESON
          rts
 
 ExecuteTransitionAndWait

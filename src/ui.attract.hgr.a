@@ -46,7 +46,7 @@ HGRSingle
 .HGRTitleCallback
          +STAY PTR
 
-         lda   $C000
+         lda   KBD
          bpl   +
          rts
 +
@@ -75,7 +75,7 @@ HGRSingle
          +STAY @key
          +STAY @key2
 
-         lda   $C000
+         lda   KBD
          bpl   +
          rts
 +

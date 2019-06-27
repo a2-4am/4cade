@@ -68,6 +68,10 @@
 }
 
 ; various language card configurations
+!macro   READ_RAM1_NO_WRITE {
+         bit   $C088
+}
+
 !macro   READ_RAM1_WRITE_RAM1 {
          bit   $C08B
          bit   $C08B

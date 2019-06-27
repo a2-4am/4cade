@@ -16,6 +16,7 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 SearchMode
+         +READ_RAM1_WRITE_RAM1
          ldx   #$FF
          txs
          stx   SelectedIndex         ; no game selected
@@ -26,11 +27,11 @@ SearchMode
          bit   $C052
          bit   $C057
          bit   $C050                 ; show HGR page 1
-         bit   $C010
+         bit   CLEARKBD
          jsr   _ResetInputTimeout
 
 _SearchModeInputLoop
-         lda   $C000
+         lda   KBD
          bmi   @gotKey
 
          inc   $4F                   ; these are only ever incremented, never
@@ -47,7 +48,7 @@ _SearchModeInputLoop
          jmp   MegaAttractMode       ; mega-attract mode
 
 @gotKey
-         bit   $C010
+         bit   CLEARKBD
          jsr   _ResetInputTimeout
 
          cmp   #$9B                  ; Esc clears the input buffer (if any)

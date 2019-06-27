@@ -35,5 +35,4 @@ HasVidHDCard
          clc                         ; not found
          rts
 @kVidHDMagicBytes
-         !byte $00, $00, $00
-;         !byte $24, $EA, $4C
+         !byte $24, $EA, $4C

@@ -6,8 +6,10 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..     - data structures (e.g. gGamesListStore)
-;     ..FFFB - main program code
+; D000..E180 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; ...end of data and start of code are approximate, in between is unused...
+; ...if they ever overlap, things will go boom...
+; E900..FFFB - main program code
 ; FFFC..FFFF - reset and other vectors
 ;
 ; LC RAM BANK 2
@@ -15,20 +17,36 @@
 ; D400..D5FF - ProRWTS code
 ; D600..D9FF - HGR font data
 ; DA00..DEFF - unused
-; DF00..DFFF - backup of stack during self-running demos
+; DF00..DFFF - backup of stack (during gameplay and self-running demos)
 ;------------------------------------------------------------------------------
 
 ; soft switches
-STOREOFF =     $C000      ; write to use following 4 flags:
-READMAINMEM =  $C002      ; write to R main mem
-READAUXMEM =   $C003      ; write to R aux mem
-WRITEMAINMEM = $C004      ; write to W main mem
-WRITEAUXMEM =  $C005      ; write to W aux mem
-;
-SLOT3STATUS =  $C017      ; read high bit only
+KBD =          $C000      ; last key pressed (if any)
+CLEARKBD =     $C010      ; clear last key pressed
+STOREOFF =     $C000      ; STA then use the following 4 flags:
+READMAINMEM =  $C002      ; STA to read from main mem
+READAUXMEM =   $C003      ; STA to read from aux mem
+WRITEMAINMEM = $C004      ; STA to write to main mem
+WRITEAUXMEM =  $C005      ; STA to write to aux mem
+CLR80VID =     $C00C      ; 40 columns (also used to get out of DHGR mode)
+SET80VID =     $C00D      ; 80 columns (also used to get into DHGR mode)
+PRIMARYCHARSET= $C00E     ; no mousetext for you
+SLOT3STATUS =  $C017      ; bit 7 only
+NEWVIDEO =     $C029      ; IIgs graphics modes
+SPEAKER =      $C030      ; chirp chirp
+SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing
+DHIRESON =     $C05E      ; double hi-res on switch
+DHIRESOFF =    $C05F      ; double hi-res off switch
 
-; ROM
-MACHINEID =    $FBB3
+; ROM routines and addresses
+; (prefixed because so much of the program runs from LC RAM, so don't call
+; these without thinking about memory banks first)
+ROM_TEXT =     $FB2F
+ROM_MACHINEID =$FBB3
+ROM_HOME =     $FC58
+ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
+ROM_IN0 =      $FE89      ; SETKBD
+ROM_PR0 =      $FE93      ; SETVID
 
 ; zero page
 PARAM        = $00        ; used by PARAMS_ON_STACK macro, so basically everywhere
@@ -38,6 +56,7 @@ DEST         = $06
 SAVE         = $08
 HTAB         = $24
 VTAB         = $25
+RNDSEED      = $4E        ; word
 Timeout      = $ED        ; 3 bytes (used by SearchMode)
 zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
@@ -56,5 +75,3 @@ gVal         = $1F81
 
 ; actual constants
 SUPPORTS_SHR = %00110000  ; AND mask for MachineStatus
-kAttractMode = %10000000
-kSearchMode  = %00000000
