@@ -27,6 +27,7 @@ if "%1" equ "asm" (
 2>nul md build\ACTION.HGR
 2>nul md build\ACTION.DHGR
 2>nul md build\ARTWORK.SHR
+2>nul md build\ATTRACT
 2>nul md build\SS
 2>nul md build\DEMO
 2>nul md build\FX
@@ -129,6 +130,9 @@ cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
 cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
 cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "build\ARTWORK.SHR" >>build\log
+cscript /nologo bin\rsync.js res\attract\* build\ATTRACT >>build\log
+cscript /nologo bin\buildfileinfo.js build\ATTRACT "04" "8000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "build\ATTRACT" >>build\log
 cscript /nologo bin\rsync.js res\ss\* build\SS >>build\log
 cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
