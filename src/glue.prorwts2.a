@@ -612,12 +612,23 @@ ProDOS_enter
     rts
 
 @imp_read
-    lda    #cmdread
-    !byte  $2c
+    clc
 @imp_write
-    lda    #cmdwrite
+    php
+    lda    #cmdread
+    adc    #0
     sta    reqcmd
     jsr    @set_rdwrbuff
+    plp
+    bcc    @skip_align
+    lda    sizelo
+    adc    #$fe
+    lda    sizehi
+    adc    #1
+    and    #$fe
+    sta    sizehi
+
+@skip_align
     jsr    hddrdwrpart
     ldy    #6
     lda    sizelo2
