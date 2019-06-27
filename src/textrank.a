@@ -160,6 +160,7 @@ TextRankCallback
 +
          cmp   BestMatchScore
          bcc   +
+         beq   +
          sta   BestMatchScore
          ldx   @tmpx
          stx   BestMatchIndex
