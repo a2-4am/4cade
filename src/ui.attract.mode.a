@@ -10,9 +10,9 @@
 
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
-; main entry point for Mega Attract Mode, which cycles through modules listed
-; in ATTRACT.CONF to provide pretty visual effects and snippets of self-running
-; self-terminating game demos
+; main entry point for Mega Attract Mode, which endlessly cycles through
+; modules listed in ATTRACT.CONF to display title pages, action screenshots,
+; super hi-res box art (on supporting platforms), and self-running game demos
 ;
 ; in:    gGlobalPrefsStore must be initialized
 ; out:   never returns to caller (may JMP to other major modes)
@@ -89,6 +89,70 @@ MegaAttractMode
          jmp   MegaAttractMode
 @jmpsearch
          jmp   SearchMode
+
+;------------------------------------------------------------------------------
+; MiniAttractMode
+; run attract modules related to one game
+;
+; in:    X = index in gGamesStore of game
+;        gGlobalPrefsStore must be initialized
+; out:   all flags and registers clobbered
+;        assume all of main memory has been clobbered
+;------------------------------------------------------------------------------
+MiniAttractMode
+         stx   +
+
+         jsr   BlankHGR
+
+         jsr   okvs_nth
+         !word gGamesListStore
++        !byte $FD                   ; SMC
+         +STAY @MiniAttractGame
+
+         lda   #0
+         sta   @MiniAttractIndex
+
+@loop
+         ; load mini attract mode configuration file at $8000
+         +LOAD_FILE kMiniAttractDirectory, @MiniAttractGame
+
+         jsr   ParseKeyValueList     ; parse configuration into OKVS data structure at $6000
+         !word gAttractModeStore
+         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !byte 0
+
+         jsr   okvs_len
+         !word gAttractModeStore
+         cmp   @MiniAttractIndex
+         beq   @exit                 ; we've run through all modules, so exit to caller
+
+         lda   @MiniAttractIndex
+         sta   +
+         jsr   okvs_nth              ; get the next module on the list
+         !word gAttractModeStore
++        !byte $FD                   ; SMC
+         +STAY @key
+
+         jsr   okvs_get              ; get module type
+         !word gAttractModeStore
+@key     !word $FDFD                 ; SMC
+         +STAY PTR
+
+         ldy   #1
+         lda   (PTR),y
+         and   #$0F                  ; convert ASCII digit to integer
+         tax                         ; X = module type
+         +LDAY @key                  ; A/Y = address of module name
+         jsr   RunAttractModule      ; execute the module
+
+         inc   @MiniAttractIndex
+         lda   $C000
+         bpl   @loop
+@exit    rts
+@MiniAttractIndex
+         !byte $FD
+@MiniAttractGame
+         !word $FDFD
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule

@@ -56,7 +56,7 @@ SoftBell
 ; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
 Home
-         lda   MachineStatus
+         lda   oldstatus
          and   #SUPPORTS_SHR
          beq   @noSHR
          lda   $C035

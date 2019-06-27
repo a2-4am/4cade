@@ -12,7 +12,7 @@
 !zone {
 
 DHGRTitleSlideshow
-         bit   MachineStatus         ; only run DHGR slideshow if we have 128K
+         bit   oldstatus             ; only run DHGR slideshow if we have 128K
          bvs   +
          rts
 +        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
@@ -23,7 +23,7 @@ DHGRTitleSlideshow
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 DHGRActionSlideshow
-         bit   MachineStatus         ; only run DHGR slideshow if we have 128K
+         bit   oldstatus             ; only run DHGR slideshow if we have 128K
          bvs   +
          rts
 +        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
@@ -34,8 +34,16 @@ DHGRActionSlideshow
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 DHGRSingle
-         ; TODO
+         bit   oldstatus             ; only show DHGR screenshots if we have 128K
+         bvs   +
          rts
++        jsr   SetPath               ; A/Y point to path
+         jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
+         jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
++        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
+         +LDADDR $6000
+         jsr   ExecuteTransitionAndWait
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
 ; .LoadDHGRTransition [private]

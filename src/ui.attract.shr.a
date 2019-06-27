@@ -11,22 +11,34 @@
 !zone {
 
 SHRSlideshow
-         lda   MachineStatus         ; only run SHR slideshow on IIgs or if we have a VidHD card
+         lda   oldstatus             ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
          rts
-+        jsr   LoadSHRTransition
++        jsr   .LoadSHRTransition
          jsr   okvs_iter
          !word gSlideshowStore
          !word SHRArtworkCallback
          jmp   BlankHGR
 
 SHRSingle
-         ; TODO
+         +STAY SAVE
+         lda   oldstatus             ; only show SHR on IIgs or if we have a VidHD card
+         and   #SUPPORTS_SHR
+         bne   +
          rts
++
+         +LDAY SAVE
+         jsr   SetPath
+         jsr   .BlankSHR
+         jsr   LoadFile
+         jsr   .LoadSHRTransition
+         +LDADDR $A000
+         jsr   ExecuteTransitionAndWait
+         jmp   BlankHGR
 
 ;------------------------------------------------------------------------------
-; .LoadSHGRTransition
+; .LoadSHGRTransition [private]
 ; [TODO] for now there is only 1 SHR transition so this always load the same file
 ; [TODO] but eventually it should look up name of next SHR transition effect in
 ; [TODO] SFX.CONF or something and loads that file at $A000
@@ -36,7 +48,7 @@ SHRSingle
 ; out:   all registers and flags clobbered
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
-LoadSHRTransition
+.LoadSHRTransition
          +LDADDR kSFXFizzleFile
          +STAY @file
          +LOAD_FILE kFXDirectory, @file

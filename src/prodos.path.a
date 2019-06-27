@@ -28,6 +28,10 @@ kSHRArtworkDirectory
          !byte 12
          !raw  "ARTWORK.SHR/"
 
+kMiniAttractDirectory
+         !byte 8
+         !raw  "ATTRACT/"
+
 kAttractModeSlideshowDirectory
          !byte 3
          !raw  "SS/"

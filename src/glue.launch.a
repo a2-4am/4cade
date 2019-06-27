@@ -10,7 +10,6 @@
 ; - Launch
 ;
 ; Public variables
-; - SelectedIndex                    ; [byte] numeric index in gGamesStore of currently selected game in search mode
 ; - gCurrentAttractIndex             ; [byte] numeric index in gAttractModeStore of current Mega-Attract Module
 ; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
                                      ;        (only valid during slideshows, not updated once a key is pressed)
@@ -18,9 +17,10 @@
 !zone {
 
 PlayGameFromSearch
+         stx   @gameIndex
          jsr   okvs_nth
          !word gGamesListStore
-SelectedIndex
+@gameIndex
          !byte $FD                   ; SMC
          jmp   .Go
 

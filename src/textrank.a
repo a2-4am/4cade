@@ -4,14 +4,16 @@
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
 ; Public functions
+; - ResetTextRank
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
 ; Public variables
-; - InputLength
-; - InputBuffer
-; - MatchCount
-; - BestMatchScore
-; - BestMatchIndex
+; - InputLength                      ; [byte] number of characters typed in search mode
+; - InputBuffer                      ; [25 bytes] characters typed in search mode
+; - SelectedIndex                    ; [byte] index in gGamesListStore of currently selected game in search mode
+; - MatchCount                       ; [byte] number of games that match InputBuffer
+; - BestMatchScore                   ; [byte] raw ranking score (0-100) of current best match (updated during TextRankCallback)
+; - BestMatchIndex                   ; [byte] index in gGamesListStore of current best match (updated during TextRankCallback)
 
 zpword   =     $F0        ; word
 zpstring =     $F2        ; word
@@ -27,6 +29,8 @@ InputLength
          !byte 0
 InputBuffer
          !text "                         "
+SelectedIndex
+         !byte $FF
 MatchCount
          !byte 0
 BestMatchScore

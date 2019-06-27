@@ -51,7 +51,7 @@ _SearchModeInputLoop
          jsr   _ResetInputTimeout
 
          cmp   #$9B                  ; Esc clears the input buffer (if any)
-         bne   +                     ; or switches to attract mode
+         bne   +                     ; or switches to mega attract mode
          ldx   #kInputClear
          bne   InputDispatch         ; always branches
 +
@@ -68,6 +68,11 @@ _SearchModeInputLoop
 +        cmp   #$88                  ; left arrow = delete
          beq   -
 
+         cmp   #$89                  ; TAB switches to mini attract mode
+         bne   +                     ; if there is a game selected
+         ldx   #kInputTab
+         bne   InputDispatch         ; always branches
++
          and   #$7F                  ; strip high bit for search characters
          cmp   #$30                  ; control keys and punctuation ignored
          bcc   @badkey
@@ -102,8 +107,9 @@ InputDispatch
          sta   @j+2
          pla                         ; restore key pressed
 @j       jsr   $FDFD                 ; SMC
-         bcc   _SearchModeInputLoop
-         jmp   SearchMode            ; if carry is set, force full redraw
+         bcs   +
+         jmp   _SearchModeInputLoop  ; if carry is clear, continue
++        jmp   SearchMode            ; if carry is set, force full redraw
 
 OnClear
          ldx   InputLength
@@ -121,6 +127,18 @@ OnBack
          rts
 +        dec   InputLength
          jmp   OnInputChanged
+
+OnTab
+         ldx   SelectedIndex
+         cpx   #$FF
+         beq   +
+         jsr   MiniAttractMode
+         cmp   #$8D
+         beq   OnLaunch
+         sec                         ; tell caller to redraw UI
+         rts
++        clc
+         rts
 
 OnLaunch
          ldx   SelectedIndex
@@ -368,10 +386,12 @@ OffscreenPage
 kInputSearch   = 0
 kInputClear    = 1
 kInputBack     = 2
-kInputLaunch   = 3
+kInputTab      = 3
+kInputLaunch   = 4
 
 InputDispatchTable
          !word OnSearch
          !word OnClear
          !word OnBack
+         !word OnTab
          !word OnLaunch

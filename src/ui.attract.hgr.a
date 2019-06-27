@@ -26,8 +26,11 @@ HGRActionSlideshow
          rts                         ; exit with last picture still visible
 
 HGRSingle
-         ; TODO
-         rts
+         jsr   SetPath
+         jsr   LoadFile              ; load HGR screenshot at $4000
+         jsr   .LoadHGRTransition    ; load transition effect code at $6000
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
 ; .HGRTitleCallback [private]
@@ -149,8 +152,7 @@ HGRSingle
 ; looks up name of next HGR transition effect in FX.CONF and loads that file
 ; at $6000
 
-; in:    gFXStore has been initialized
-;        gGlobalPrefsStore has been initialized
+; in:    gGlobalPrefsStore has been initialized
 ; out:   all registers and flags clobbered
 ;        $6000..$BFFF contains transition effect code
 ;------------------------------------------------------------------------------
