@@ -65,6 +65,10 @@ Home
          lda   NEWVIDEO
          and   #$7F
          sta   NEWVIDEO              ; get out of SHR mode
+         lda   #$F0
+         sta   TBCOLOR               ; white text on black background
+         lda   #$00
+         sta   CLOCKCTL              ; black border
 @noSHR
          ldx   #(@end-@start-1)
 -        lda   @start,x
