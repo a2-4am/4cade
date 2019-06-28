@@ -69,6 +69,7 @@ Home
          sta   TBCOLOR               ; white text on black background
          lda   #$00
          sta   CLOCKCTL              ; black border
+         sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
          ldx   #(@end-@start-1)
 -        lda   @start,x
