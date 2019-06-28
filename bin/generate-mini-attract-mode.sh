@@ -13,8 +13,9 @@ cat res/games.conf | tr "\r" "\n" | grep "=" | grep -v "^#" | cut -d"," -f2 | cu
         # add box art, if any
         [ -f res/artwork.shr/"$game" ] && echo "ARTWORK.SHR/$game=9" >> /tmp/g
         # TODO add DHGR action screenshots, if any
+        cat res/ss/ACTDHGR*.CONF | tr "\r" "\n" | grep "$game""$" | cut -d"=" -f1 | sed -e "s/^/ACTION.DHGR\//g" | sed -e "s/$/=8/g" | sort | uniq >> /tmp/g
         # add action screenshots, if any
-        cat res/ss/ACTION*.CONF | tr "\r" "\n" | grep "$game""$" | cut -d"=" -f1 | sed -e "s/^/ACTION.HGR\//g" | sed -e "s/$/=7/g" | sort | uniq >> /tmp/g
+            cat res/ss/ACTION*.CONF | tr "\r" "\n" | grep "$game""$" | cut -d"=" -f1 | sed -e "s/^/ACTION.HGR\//g" | sed -e "s/$/=7/g" | sort | uniq >> /tmp/g
         # add self-running demo, if any
         cat res/attract.conf | tr "\r" "\n" | grep "^$game=0" >> /tmp/g
         # add eof
