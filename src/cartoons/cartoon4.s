@@ -18,12 +18,9 @@ buffer=$2000
 	jsr	$bf00
 	!byte	$cc		;close
 	!word	cc_parms
-lda #>callback
-sta $277a
-lda #<callback-1
-sta $277d
-jmp $2700
-callback:
+lda #$60
+sta $277b
+jsr $2700
 lda #cartoon-1
 sta $19c7
 lda #$4c
