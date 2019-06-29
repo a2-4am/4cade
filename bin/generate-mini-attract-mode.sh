@@ -15,7 +15,7 @@ cat res/games.conf |
         # initialize attract mode configuration file for this game
         echo "#\n# Attract mode for $name\n#\n" > /tmp/g
 
-        # add title screenshot for DHGR games only
+        # add DHGR title screenshot, if any
         [ -f res/title.dhgr/"$game" ] &&
             echo "TITLE.DHGR/$game=8" >> /tmp/g
 
