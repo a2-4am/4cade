@@ -35,6 +35,7 @@ Spider Raid
 # needs work
 Dung Beetles [can escape to game by pressing RETURN at title screen]
 Formula 1 Racer
+Stellar 7 [not all keys escape properly once spinny demo starts]
 
 # done
 Agent USA

@@ -86,6 +86,7 @@ Space Cadette
 
 //qkumba crack
 Bandits
+Cyclod
 Injured Engine
 Jawbreaker ][
 Mating Zone
@@ -104,7 +105,6 @@ Copts and Robbers
 The Dam Busters
 Dueling Digits
 Fight Night
-Gold Rush
 Hardball
 Horizon V
 Hyper Head-On
@@ -134,7 +134,6 @@ Zargs
 Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
-Cyclod
 Fly Wars
 Jellyfish
 Minotaur
