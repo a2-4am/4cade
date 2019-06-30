@@ -59,12 +59,9 @@ Home
          lda   MachineStatus
          and   #SUPPORTS_SHR
          beq   @noSHR
-         lda   SHADOW
-         ora   #$08
-         sta   SHADOW                ; turn off auxmem-to-bank-E1 shadowing
          lda   NEWVIDEO
-         and   #$7F
-         sta   NEWVIDEO              ; get out of SHR mode
+         and   #$3F
+         sta   NEWVIDEO              ; get out of SHR mode and linear mode
          lda   #$F0
          sta   TBCOLOR               ; white text on black background
          lda   #$00
