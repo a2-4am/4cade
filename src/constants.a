@@ -6,7 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E180 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E200 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...end of data and start of code are approximate, in between is unused...
 ; ...if they ever overlap, things will go boom...
 ; E900..FFFB - main program code
