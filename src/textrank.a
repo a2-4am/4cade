@@ -71,24 +71,9 @@ TextRankCallback
          +STAY zpstring              ; A/Y = address of this title
          +LDADDR InputLength
          +STAY zpword
-         ldy   #0                    ; first we'll check for an exact match
-         lda   (zpstring),y          ; check length of this title against the input buffer
+         ldy   #0
+         lda   (zpstring),y
          sta   gamelength
-;         cmp   InputLength
-;         bne   +                     ; not equal, so can't be an exact match
-;         tay                         ; check for exact match
-;-        lda   (zpword),y
-;         cmp   (zpstring),y
-;         bne   +                     ; nope, not an exact match
-;         dey
-;         bne   -
-;         inc   MatchCount
-;         lda   #100                  ; maximum possible score
-;         sta   BestMatchScore
-;         ldx   @tmpx                 ; save this game as the best match
-;         stx   BestMatchIndex
-;         rts
-;+
          lda   #0
          sta   runningscore
          sta   runningscore+1

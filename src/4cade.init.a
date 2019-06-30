@@ -107,7 +107,7 @@ OneTimeSetup
          +LDAY SRC                   ; (SRC) points to free space after the OKVS data structure we just created
          +STAY gGamesListStore       ; save pointer to free space for next store
 
-         +LDADDR kGameListConfFile
+         +LDADDR @kGameListConfFile
          jsr   SetPath
          jsr   LoadFile              ; load games list file into $8000
 
@@ -125,9 +125,9 @@ OneTimeSetup
          pha
 @inner
          lda   SAVE
-         cmp   kPowersOfTen,y
+         cmp   @kPowersOfTen,y
          bcc   @digitDone
-         sbc   kPowersOfTen,y
+         sbc   @kPowersOfTen,y
          sta   SAVE
          lda   SAVE+1
          sbc   #0
@@ -159,13 +159,13 @@ OneTimeSetup
 
          bit   CLEARKBD
 
-         jmp   ($FFFC)               ; continue from |Reentry| in LC RAM bank
+         jmp   $100                  ; will jump to |Reentry| in LC RAM bank
 
-kGameListConfFile
+@kGameListConfFile
          !byte 10
          !text "GAMES.CONF"
 
-kPowersOfTen
+@kPowersOfTen
          !byte 100
          !byte 10
          !byte 1

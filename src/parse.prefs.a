@@ -6,9 +6,6 @@
 ; Public functions
 ; - SaveGlobalPreferences
 ;
-; Public variables
-; - gGlobalPrefsStore     word       address of prefs okvs
-;
 ; Public constants (all length-prefixed strings)
 ; - kGlobalPrefsFilename
 ; - kLastPlayed
@@ -114,7 +111,7 @@ SaveGlobalPreferences
          !raw  "="
 @kLF     !byte 1,$0D
 @kFluff1 !byte @kFluff2-*-1
-         !raw  "# 4cade preferences file",$0D
+         !raw  "# Total Replay preferences file",$0D
          !raw  "# Do not edit by hand.",$0D
          !raw  "# Or do. I'm a comment, not a cop.",$0D
          !byte $0D

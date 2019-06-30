@@ -5,22 +5,8 @@
 ;
 ; Public functions:
 ; - ParseKeyValueList
+; - IncAndGetChar
 ;
-; Public variables:
-; - gAttractModeStore
-; - gFXStore
-; - gDFXStore
-; - gSlideshowStore
-;
-
-gAttractModeStore
-         !word $6000
-gFXStore
-         !word $6000
-gDFXStore
-         !word $6000
-gSlideshowStore
-         !word $0800
 
 ;------------------------------------------------------------------------------
 ; ParseKeyValueList

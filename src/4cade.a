@@ -81,8 +81,14 @@ RestoreStackNextTime
          !source "src/ui.common.a"
 MachineStatus
          !byte 0
+gAttractModeStore
+gFXStore
+gDFXStore
+         !word $6000
+gSlideshowStore
+         !word $0800
 gGlobalPrefsStore
-         !word $D000                 ; address of first okvs store
+         !word $D000
 gGamesListStore
          !word $FDFD                 ; SMC
          !word Reenter               ; NMI vector ($FFFA-B)
