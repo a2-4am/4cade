@@ -18,7 +18,7 @@ SHRSlideshow
 +        jsr   .LoadSHRTransition
          jsr   okvs_iter
          !word gSlideshowStore
-         !word SHRArtworkCallback
+         !word .SHRArtworkCallback
          jmp   BlankHGR
 
 SHRSingle
@@ -39,9 +39,6 @@ SHRSingle
 
 ;------------------------------------------------------------------------------
 ; .LoadSHGRTransition [private]
-; [TODO] for now there is only 1 SHR transition so this always load the same file
-; [TODO] but eventually it should look up name of next SHR transition effect in
-; [TODO] SFX.CONF or something and loads that file at $A000
 ;
 ; in:    gSFXStore has been initialized
 ;        gGlobalPrefsStore has been initialized
@@ -60,7 +57,7 @@ kSFXFizzleFile
 @kSFXFizzleFile_e
 
 ;------------------------------------------------------------------------------
-; SHRArtworkCallback
+; .SHRArtworkCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single SHR graphic
 
@@ -71,7 +68,7 @@ kSFXFizzleFile
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
-SHRArtworkCallback
+.SHRArtworkCallback
          +STAY PTR
 
          lda   KBD

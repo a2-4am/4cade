@@ -197,10 +197,10 @@ RunAttractModule
          cmp   #$06                  ; 1-5 are slideshow modules
          bcs   @startDispatch
 
-; it's a slideshow, so load slideshow configuration file at $4000
+; it's a slideshow, so load and parse slideshow configuration file
          pha                         ; save module type
-         +LOAD_FILE kAttractModeSlideshowDirectory, @key
-         jsr   ParseKeyValueList     ; parse slideshow configuration into an OKVS data structure at $0800
+         +LOAD_FILE kAttractModeSlideshowDirectory, @key ; load slideshow configuration file at $4000
+         jsr   ParseKeyValueList     ; parse into an OKVS data structure at $0800
          !word gSlideshowStore
          !word ldrlo2                ; (ldrlo2) points to address of last loaded file, so $4000
          !byte 0
@@ -228,6 +228,7 @@ RunAttractModule
          !word SHRSingle
 
 LoadAndParseAttractModeConf
+; TODO refactor launch code then make this private
          +LDADDR @AttractModeConfFile
          jsr   SetPath
          jsr   LoadFile              ; load attract-mode configuration file at $8000
