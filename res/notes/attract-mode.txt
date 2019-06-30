@@ -1,9 +1,9 @@
 # List of candidates for self-running 'captive' demos
 #
-# Not all games are good candidates. Some have no demo mode at all.
-# Others technically have one but it's visually uninteresting or too short.
-# Others are ruled out by technical constraints. Due to the architecture of
-# the launcher, all captive demos must run entirely in main memory (48K).
+# Not all games are good candidates. Some have no demo mode at all. Others
+# technically have one but it's visually uninteresting or too short. Still
+# others are ruled out by technical constraints. Due to the architecture of
+# the launcher, all self-running demos must run entirely in main memory.
 # NO languard card, NO auxmem!
 #
 # We have enough disk space that we don't worry too much about it. (Wow.)
@@ -20,13 +20,14 @@
 # - disables all sound output
 #
 # 'Returning control' involves activating RAM bank 1 read access and
-# jumping to $D000 (labeled as |Reenter| in the source code). The launcher
-# puts this code at $0100 before executing a captive demo, so generally
-# you can just put 'JMP $0100' anywhere. If a particular game overwrites
-# this area of the stack page, you will need to find 6 bytes for the
-# 'LDA $C088 / JMP $D000' instructions yourself.
+# jumping indirectly to ($FFFC), which points to the routine labeled as
+# |Reenter| in the source code. The launcher puts this code at $0100 before
+# executing a self-running demo, so generally you can just put 'JMP $0100'
+# anywhere you can find 3 bytes. If a particular game overwrites this area
+# of the stack page, you will need to find 6 bytes for the instructions
+# 'LDA $C088 / JMP ($FFFC)' yourself.
 #
-# Notes on completed and in-progress captive demos are in res/notes/
+# Notes on completed and in-progress demos are in res/notes/demos/
 #
 
 # uncompressed but unpatched
