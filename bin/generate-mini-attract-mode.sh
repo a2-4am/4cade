@@ -65,6 +65,10 @@ cat res/games.conf |
             echo "SPCARTOON.6=0" >> /tmp/g
         fi
 
+        if [ "$game" == "PRINCEUNP" ]; then
+            echo "ARTWORK.SHR/POP.END=9" >> /tmp/g
+        fi
+
         # add eof
         echo "\n[eof]" >> /tmp/g
 
