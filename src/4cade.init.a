@@ -117,6 +117,7 @@ OneTimeSetup
 
          jsr   okvs_len
          !word gGamesListStore
+         sta   GameCount
          sta   SAVE
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          ldy   #0

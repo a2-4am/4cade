@@ -5,6 +5,7 @@
 ;
 ; Public functions
 ; - PlayGameFromSearch
+; - PlayGameFromBrowse
 ; - PlayGameFromAttract
 ; - Prelaunch
 ; - Launch
@@ -17,6 +18,7 @@
 !zone {
 
 PlayGameFromSearch
+PlayGameFromBrowse
          stx   @gameIndex
          jsr   okvs_nth
          !word gGamesListStore

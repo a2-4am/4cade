@@ -65,6 +65,7 @@ RestoreStackNextTime
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"
+         !source "src/ui.browse.mode.a"
          !source "src/ui.attract.mode.a"
          !source "src/ui.attract.hgr.a"
          !source "src/ui.attract.dhgr.a"
@@ -80,6 +81,8 @@ RestoreStackNextTime
          !source "src/ui.font.a"
          !source "src/ui.common.a"
 MachineStatus
+         !byte 0
+GameCount
          !byte 0
 gAttractModeStore
 gFXStore

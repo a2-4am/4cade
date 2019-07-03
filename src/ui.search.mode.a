@@ -6,8 +6,6 @@
 ; Public functions
 ; - SearchMode
 ;
-; Public addresses
-; - VisibleGameCount (set during init)
 
 !zone {
 
@@ -25,12 +23,12 @@ SearchMode
          txs
          stx   SelectedIndex         ; no game selected
          inx
-         stx   .OffscreenPage
+         stx   OffscreenPage
          jsr   Home                  ; clear screen
          jsr   .OnInputChanged       ; draw UI on HGR page 1
          +HGR_MODE                   ; show HGR
          bit   CLEARKBD
-         jsr   .ResetInputTimeout
+         jsr   ResetInputTimeout
 
 .SearchModeInputLoop
          lda   KBD
@@ -42,7 +40,7 @@ SearchMode
 +
          dec   Timeout               ; these are a 3-byte timeout counter
          bne   .SearchModeInputLoop  ; that counts down from a number set
-         dec   Timeout+1             ; in .ResetInputTimeout and reset
+         dec   Timeout+1             ; in ResetInputTimeout and reset
          bne   .SearchModeInputLoop  ; on every keypress (whether or not
          dec   Timeout+2             ; the key leads to an action)
          bne   .SearchModeInputLoop
@@ -50,8 +48,19 @@ SearchMode
          jmp   MegaAttractMode       ; mega-attract mode
 
 @gotKey
+         cmp   #$88                  ; left arrow switches to browse mode
+         beq   @arrow
+         cmp   #$8B                  ; also right arrow
+         beq   @arrow
+         cmp   #$95                  ; also up arrow
+         beq   @arrow
+         cmp   #$8A                  ; also down arrow
+         bne   @notArrow
+@arrow   ldx   #kInputBrowse
+         bne   @InputDispatch        ; always branches
+@notArrow
          bit   CLEARKBD
-         jsr   .ResetInputTimeout
+         jsr   ResetInputTimeout
 
          cmp   #$9B                  ; Esc clears the input buffer (if any)
          bne   +                     ; or switches to mega attract mode
@@ -65,12 +74,9 @@ SearchMode
 +
          cmp   #$FF                  ; delete key
          bne   +
--        ldx   #kInputBack
+         ldx   #kInputBack
          bne   @InputDispatch        ; always branches
-
-+        cmp   #$88                  ; left arrow = delete
-         beq   -
-
++
          cmp   #$89                  ; TAB switches to mini attract mode
          bne   +                     ; if there is a game selected
          ldx   #kInputTab
@@ -171,19 +177,19 @@ SearchMode
          sta   SelectedIndex         ; no game selected
          ldx   #40                   ; reset visible line
          lda   #0
--        sta   .UILine1-1,x
+-        sta   UILine1-1,x
          dex
          bne   -
          ldy   #MaxInputLength       ; clear visible search bar
          lda   #" "
--        sta   .UILine2+1,y
+-        sta   UILine2+1,y
          dey
          bne   -
          lda   #$7F
-         sta   .UILine2+1
+         sta   UILine2+1
          jsr   .LoadTitleOffscreen
-         jsr   .DrawSearchBarOffscreen
-         jsr   .ShowOtherPage
+         jsr   DrawSearchBarOffscreen
+         jsr   ShowOtherPage
          clc
          rts
 @findMatchingTitle
@@ -211,12 +217,12 @@ SearchMode
          +STAY @key
          plp
          bne   +
-         lda   .OffscreenPage        ; since we're not loading a new screenshot
-         eor   #$01                  ; we fake switching the 'offscreen' page
-         sta   .OffscreenPage        ; in order to draw on the visible page
+         jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
+                                     ; we fake switching the 'offscreen' page
+                                     ; in order to draw on the visible page.
          bpl   @skipload             ; always branches
 +
-         jsr   .GetOffscreenAddress  ; we have a new best match, so load the
+         jsr   GetOffscreenAddress   ; we have a new best match, so load the
          sta   +                     ; new title screenshot (offscreen)
          +LDADDR kHGRTitleDirectory
          jsr   SetPath
@@ -246,12 +252,12 @@ SearchMode
          +HIDE_NEXT_2_BYTES
 @printTitleChar
          lda   (SRC),y               ; copy game title to search UI
-         sta   .UILine2,y
+         sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
          ldx   #40
          lda   #0
--        sta   .UILine1-1,x           ; reset search bar
+-        sta   UILine1-1,x           ; reset search bar
          dex
          bne   -
          tay
@@ -260,7 +266,7 @@ SearchMode
          cmp   InputBuffer,x
          bne   +
          lda   #$0B                  ; add dots to highlight matched characters
-         sta   .UILine1,y
+         sta   UILine1,y
          inx
          cpx   InputLength
          beq   @doneHighlight
@@ -269,28 +275,24 @@ SearchMode
          cpy   #40
          bne   -
 @doneHighlight
-         jsr   .DrawSearchBarOffscreen; actually draw the search UI (offscreen)
-         jmp   .ShowOtherPage        ; now show everything at once
+         jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
+         jmp   ShowOtherPage         ; now show everything at once
 
 ;------------------------------------------------------------------------------
 
-.GetOffscreenAddress
-; in:    none
-; out:   A = high byte of offscreen HGR page (#$20 or #$40)
-;        preserves X/Y
-         lda   .OffscreenPage
-         beq   +
-         lda   #$40
-         rts
-+        lda   #$20
-         rts
-
 .LoadTitleOffscreen
-; clobbers all
-         jsr   .GetOffscreenAddress
-         sta   +
+; [private] clobbers all
          +LDADDR @TitleFile
+         bne   +                     ; Always branches, because Y is loaded
+                                     ; last with the high byte of the address,
+                                     ; which is never 0. I miss my 65c02.
+.LoadCoverOffscreen
+; [private] clobbers all
+         +LDADDR @CoverFile
++
          jsr   SetPath
+         jsr   GetOffscreenAddress
+         sta   +
          jsr   LoadFileAt
          !byte $00
 +        !byte $FD                   ; SMC
@@ -298,61 +300,18 @@ SearchMode
 @TitleFile
          !byte 5
          !text "TITLE"
-
-.LoadCoverOffscreen
-; clobbers all
-         jsr   .GetOffscreenAddress
-         sta   +
-         +LDADDR @CoverFile
-         jsr   SetPath
-         jsr   LoadFileAt
-         !byte $00
-+        !byte $FD                   ; SMC
-         rts
 @CoverFile
          !byte 5
          !text "COVER"
 
-.DrawSearchBarOffscreen
-; clobbers all
-         LDA   #22                   ; draw visible search bar
-         sta   VTAB
-         lda   .OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR .UILine1
-         jsr   Draw40Chars
-         lda   .OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR .UILine2
-         jmp   Draw40Chars
-
-.ShowOtherPage
-; clobbers A, preserves X/Y
-         lda   .OffscreenPage
-         eor   #$01
-         sta   .OffscreenPage
-         bne   +
-         bit   PAGE2                 ; show page 2
-         rts
-+        bit   PAGE1                 ; show page 1
-         rts
-
-.ResetInputTimeout
-; clobbers X, preserves A/Y
-         ldx   #$16
-         stx   Timeout
-         stx   Timeout+1
-         stx   Timeout+2
-         rts
-
 .CoverFade
-; clobbers all
+; [private] clobbers all
          jsr   .LoadCoverOffscreen
-         jsr   .ShowOtherPage
-         lda   .OffscreenPage
+         jsr   ShowOtherPage
+         lda   OffscreenPage
          bne   +
          jsr   .LoadCoverOffscreen
-         jsr   .ShowOtherPage
+         jsr   ShowOtherPage
 +
           ; load transition effect code at $6000
          +LDADDR kFXDirectory
@@ -365,38 +324,19 @@ SearchMode
          !byte 9
          !text "COVERFADE"
 
-.UILine1
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-
-.UILine2
-         !text "["
-         !byte $7F
-         !text "                         "
-         !text "]   "
-VisibleGameCount
-         !text "000"
-         !text " games"
-
-.OffscreenPage
-         !byte 1                     ; 0 = currently showing HGR page 2
-                                     ;     (so offscreen is page 1 @ $2000)
-                                     ; 1 = currently showing HGR page 1
-                                     ;     (so offscreen is page 2 @ $4000)
-
 ; indices into InputDispatchTable
 kInputSearch   = 0
 kInputClear    = 1
 kInputBack     = 2
-kInputTab      = 3
-kInputLaunch   = 4
+kInputBrowse   = 3
+kInputTab      = 4
+kInputLaunch   = 5
 
 .InputDispatchTable
          !word .OnSearch
          !word .OnClear
          !word .OnBack
+         !word BrowseMode
          !word .OnTab
          !word .OnLaunch
 

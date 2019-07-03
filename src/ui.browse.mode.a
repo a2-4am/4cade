@@ -1,0 +1,217 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; Browse Mode - main UI
+;
+; Public functions
+; - BrowseMode
+;
+
+!zone {
+
+;------------------------------------------------------------------------------
+; BrowseMode
+; main entry point for Browse Mode, which allows the user to browse the game
+; catalog in alphabetical order and launch games
+;
+; in:    none
+; out:   never returns to caller (may JMP to other major modes)
+;------------------------------------------------------------------------------
+BrowseMode
+         +READ_RAM1_WRITE_RAM1
+         ldx   #$FF
+         txs
+         ldx   SelectedIndex
+         stx   BrowseSelectedIndex
+
+.BrowseModeInputLoop
+         lda   KBD
+         bmi   @gotKey
+
+         inc   RNDSEED+1             ; these are only ever incremented, never
+         bne   +                     ; reset (may be used as a pseudorandom
+         inc   RNDSEED               ; seed)
++
+         dec   Timeout               ; these are a 3-byte timeout counter
+         bne   .BrowseModeInputLoop  ; that counts down from a number set
+         dec   Timeout+1             ; in .ResetInputTimeout and reset
+         bne   .BrowseModeInputLoop  ; on every keypress (whether or not
+         dec   Timeout+2             ; the key leads to an action)
+         bne   .BrowseModeInputLoop
+;         jsr   .CoverFade            ; no input for ~30 seconds, switch to
+         jmp   MegaAttractMode       ; mega-attract mode
+
+@gotKey
+         bit   CLEARKBD
+         jsr   ResetInputTimeout
+
+         cmp   #$88                  ; left arrow = previous
+         bne   +
+-        ldx   #kBrowsePrevious
+         bne   @BrowseDispatch       ; always branches
++        cmp   #$8B                  ; up arrow is same as left arrow
+         beq   -
+
+         cmp   #$95                  ; right arrow = next
+         bne   +
+-        ldx   #kBrowseNext
+         bne   @BrowseDispatch       ; always branches
++        cmp   #$8A                  ; down arrow is same as right arrow
+         beq   -
+
+         cmp   #$9B                  ; Esc switches to search mode
+         bne   +
+         ldx   #kBrowseExitMode
+         bne   @BrowseDispatch       ; always branches
++
+         cmp   #$8D                  ; ENTER launches the current game
+         bne   +
+         ldx   #kBrowseLaunch
+         bne   @BrowseDispatch       ; always branches
++
+         cmp   #$89                  ; TAB switches to mini attract mode
+         bne   +                     ; temporarily
+         ldx   #kBrowseTab
+         bne   @BrowseDispatch       ; always branches
++
+         and   #$7F                  ; strip high bit for search characters
+         cmp   #$30                  ; control keys and punctuation ignored
+         bcc   @badkey
+         cmp   #$3A                  ; numbers are good input
+         bcc   @goodkey
+         cmp   #$41                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$5B                  ; uppercase letters are good input
+         bcs   +
+         ora   #$20                  ; convert uppercase letters to lowercase
+         bne   @goodkey              ; always branches
+
++        cmp   #$61                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$7B                  ; lowercase letters are good input
+         bcc   @goodkey
+@badkey
+         jsr   SoftBell              ; beep on invalid input
+         jmp   .BrowseModeInputLoop  ; and start over
+
+@goodkey
+         ldx   #kBrowseSearch
+         ; execution falls through here
+@BrowseDispatch
+         pha                         ; save key pressed
+         txa
+         asl
+         tax
+         lda   .BrowseDispatchTable,x
+         sta   @j+1
+         lda   .BrowseDispatchTable+1,x
+         sta   @j+2
+         pla                         ; restore key pressed
+@j       jsr   $FDFD                 ; SMC
+         bcs   +
+         jmp   .BrowseModeInputLoop  ; if carry is clear, we're done
+         ; TODO
++        jmp   BrowseMode            ; if carry is set, force full redraw
+
+.OnSearch
+         sta   InputBuffer
+         lda   #$01
+         sta   InputLength
+         jmp   SearchMode
+
+.OnPrevious
+         dec   BrowseSelectedIndex
+         jmp   +
+.OnNext
+         inc   BrowseSelectedIndex
++
+         ldx   BrowseSelectedIndex
+         cpx   #$FF
+         bne   @notTooSmall
+         ldx   GameCount
+         dex
+         bne   @done                 ; always branches
+@notTooSmall
+         cpx   GameCount
+         bcc   @done
+         ldx   #0
+@done    stx   BrowseSelectedIndex
+         jmp   .OnBrowseChanged
+
+.OnTab
+         ldx   BrowseSelectedIndex
+         jsr   MiniAttractMode
+         cmp   #$8D
+         beq   .OnLaunch
+         ; TODO redraw
+         rts
+
+.OnLaunch
+         ldx   BrowseSelectedIndex
+         jsr   PlayGameFromBrowse
+         jmp   BrowseMode
+
+.OnBrowseChanged
+         stx   @index
+         jsr   okvs_nth              ; get the name of the new game
+         !word gGamesListStore
+@index   !byte $FD
+         +STAY @key
+         jsr   GetOffscreenAddress   ; load new title screenshot offscreen
+         sta   +                     ; new title screenshot (offscreen)
+         +LDADDR kHGRTitleDirectory
+         jsr   SetPath
+         +LDAY @key
+         jsr   AddToPath
+         jsr   LoadFileAt
+         !byte $00
++        !byte $FD                   ; SMC
+
+         jsr   okvs_get
+         !word gGamesListStore
+@key     !word $FDFD
+         +STAY SRC                   ; A/Y points to game title (in OKVS)
+         ldy   #0                    ; copy game title into search bar buffer
+         lda   (SRC),y
+         sta   SAVE                  ; game title length
+         inc   SAVE
+-        iny
+         cpy   SAVE
+         bcc   @printTitleChar
+         lda   #" "
+         +HIDE_NEXT_2_BYTES
+@printTitleChar
+         lda   (SRC),y               ; copy game title to UI line 2
+         sta   UILine2,y
+         cpy   #MaxInputLength+1
+         bcc   -
+         ldx   #40
+         lda   #0
+-        sta   UILine1-1,x           ; reset UI line 1
+         dex
+         bne   -
+         jsr   DrawSearchBarOffscreen ; actually draw the search UI (offscreen)
+         jmp   ShowOtherPage          ; now show everything at once
+
+;------------------------------------------------------------------------------
+
+; indices into BrowseDispatchTable
+kBrowseSearch   = 0
+kBrowsePrevious = 1
+kBrowseNext     = 2
+kBrowseExitMode = 3
+kBrowseTab      = 4
+kBrowseLaunch   = 5
+
+.BrowseDispatchTable
+         !word .OnSearch
+         !word .OnPrevious
+         !word .OnNext
+         !word SearchMode
+         !word .OnTab
+         !word .OnLaunch
+
+BrowseSelectedIndex
+         !byte $FF
+
+}
