@@ -314,13 +314,14 @@ traverse
 
 promote
 !pseudopc $bf00 {
+        php
+        sei
         lda    $c012
-        asl
-        !byte  $2c
-        nop
+        !byte  $24
 ;$bf06
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
 
+        asl
         lda    $c011
         +READ_RAM2_WRITE_RAM2
 ;$bf10
@@ -333,18 +334,20 @@ ProDOS_savedX
         ldx    #$d1
 ProDOS_savedY
         ldy    #$d1
+        plp
+        lda    #0
+        clc
         rts
 
-ProDOS_fatal ;only for debugging, will be removed
-        pha
-        lda    $c081
-        jsr    $fe89
-
-        !byte $24
+        !text  "4Q!"
 ProDOS_unit
         ;$bf30
         !byte  $d1
 
+ProDOS_fatal ;only for debugging, will be removed
+        bit    $c081
+        pha
+        jsr    $fe89
         jsr    $fe93
         pla
         jsr    $fdda
@@ -414,6 +417,8 @@ ProDOS_enter
     pla
     tax
     pla
+    tay
+    pla
     sta    @fetchaddr+1
     pla
     sta    @fetchaddr+2
@@ -426,6 +431,8 @@ ProDOS_enter
     lda    @fetchaddr+2
     pha
     lda    @fetchaddr+1
+    pha
+    tya
     pha
     php
     txa
@@ -728,8 +735,6 @@ ProDOS_enter
     plp
     adc    #0
     tax
-    lda    #0
-    clc
     jmp    ProDOS_exit
 
 @handle
