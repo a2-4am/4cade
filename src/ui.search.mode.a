@@ -239,19 +239,20 @@ SearchMode
          dex
          bne   -
          tay
--        lda   (SRC),y
+@dotloop
+         iny
+         lda   (SRC),y
          +LOW_ASCII_TO_LOWER
          cmp   InputBuffer,x
          bne   +
          lda   #$0B                  ; add dots to highlight matched characters
          sta   UILine1,y
          inx
-         cpx   InputLength
+         cpx   InputLength           ; if input buffer is exhausted, we're done
          beq   @doneHighlight
 +        inc   HTAB
-         iny
-         cpy   #40
-         bne   -
+         cpy   SAVE                  ; if game name is exhausted, we're done
+         bne   @dotloop
 @doneHighlight
          jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
          jmp   ShowOtherPage         ; now show everything at once
