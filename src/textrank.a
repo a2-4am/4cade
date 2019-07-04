@@ -111,16 +111,15 @@ TextRankCallback
          sta   runningscore
          bcc   +
          inc   runningscore+1
-+        iny
-         cpy   gamelength
-         beq   --
-         sty   startat
++        cpy   gamelength
+         beq   +
+         inc   startat
          ldy   i
          cpy   InputLength
          iny
          bcc   -
 
-         lda   runningscore
++        lda   runningscore
          ldx   runningscore+1
          ldy   gamelength
          jsr   @div
