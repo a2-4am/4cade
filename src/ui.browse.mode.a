@@ -18,30 +18,13 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 BrowseMode
-         +READ_RAM1_WRITE_RAM1
          ldx   #$FF
          txs
          ldx   SelectedIndex
          stx   BrowseSelectedIndex
 
 .BrowseModeInputLoop
-         lda   KBD
-         bmi   @gotKey
-
-         inc   RNDSEED+1             ; these are only ever incremented, never
-         bne   +                     ; reset (may be used as a pseudorandom
-         inc   RNDSEED               ; seed)
-+
-         dec   Timeout               ; these are a 3-byte timeout counter
-         bne   .BrowseModeInputLoop  ; that counts down from a number set
-         dec   Timeout+1             ; in .ResetInputTimeout and reset
-         bne   .BrowseModeInputLoop  ; on every keypress (whether or not
-         dec   Timeout+2             ; the key leads to an action)
-         bne   .BrowseModeInputLoop
-;         jsr   .CoverFade            ; no input for ~30 seconds, switch to
-         jmp   MegaAttractMode       ; mega-attract mode
-
-@gotKey
+         jsr   WaitForKeyFor30Seconds
          bit   CLEARKBD
          jsr   ResetInputTimeout
 
@@ -61,7 +44,7 @@ BrowseMode
 
          cmp   #$9B                  ; Esc switches to search mode
          bne   +
-         ldx   #kBrowseExitMode
+         ldx   #kBrowseExitToSearch
          bne   @BrowseDispatch       ; always branches
 +
          cmp   #$8D                  ; ENTER launches the current game
@@ -75,26 +58,11 @@ BrowseMode
          bne   @BrowseDispatch       ; always branches
 +
          and   #$7F                  ; strip high bit for search characters
-         cmp   #$30                  ; control keys and punctuation ignored
-         bcc   @badkey
-         cmp   #$3A                  ; numbers are good input
-         bcc   @goodkey
-         cmp   #$41                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$5B                  ; uppercase letters are good input
-         bcs   +
-         ora   #$20                  ; convert uppercase letters to lowercase
-         bne   @goodkey              ; always branches
-
-+        cmp   #$61                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$7B                  ; lowercase letters are good input
-         bcc   @goodkey
-@badkey
+         jsr   IsSearchKey
+         beq   +
          jsr   SoftBell              ; beep on invalid input
          jmp   .BrowseModeInputLoop  ; and start over
-
-@goodkey
++
          ldx   #kBrowseSearch
          ; execution falls through here
 @BrowseDispatch
@@ -108,10 +76,7 @@ BrowseMode
          sta   @j+2
          pla                         ; restore key pressed
 @j       jsr   $FDFD                 ; SMC
-         bcs   +
-         jmp   .BrowseModeInputLoop  ; if carry is clear, we're done
-         ; TODO
-+        jmp   BrowseMode            ; if carry is set, force full redraw
+         jmp   .BrowseModeInputLoop
 
 .OnSearch
          sta   InputBuffer
@@ -138,18 +103,20 @@ BrowseMode
 @done    stx   BrowseSelectedIndex
          jmp   .OnBrowseChanged
 
+.OnLaunch
+         ldx   BrowseSelectedIndex
+         jsr   PlayGameFromBrowse
+         jsr   BlankHGR
+         jmp   +
+
 .OnTab
          ldx   BrowseSelectedIndex
          jsr   MiniAttractMode
          cmp   #$8D
          beq   .OnLaunch
-         ; TODO redraw
-         rts
-
-.OnLaunch
++        bit   CLEARKBD
          ldx   BrowseSelectedIndex
-         jsr   PlayGameFromBrowse
-         jmp   BrowseMode
+         ; execution falls through here
 
 .OnBrowseChanged
          stx   @index
@@ -199,7 +166,7 @@ BrowseMode
 kBrowseSearch   = 0
 kBrowsePrevious = 1
 kBrowseNext     = 2
-kBrowseExitMode = 3
+kBrowseExitToSearch = 3
 kBrowseTab      = 4
 kBrowseLaunch   = 5
 

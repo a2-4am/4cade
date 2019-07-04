@@ -5,6 +5,7 @@
 ;
 ; Public functions
 ; - SearchMode
+; - IsSearchKey
 ;
 
 !zone {
@@ -31,23 +32,12 @@ SearchMode
          jsr   ResetInputTimeout
 
 .SearchModeInputLoop
-         lda   KBD
-         bmi   @gotKey
+         jsr   WaitForKeyFor30Seconds
 
-         inc   RNDSEED+1             ; these are only ever incremented, never
-         bne   +                     ; reset (may be used as a pseudorandom
-         inc   RNDSEED               ; seed)
-+
-         dec   Timeout               ; these are a 3-byte timeout counter
-         bne   .SearchModeInputLoop  ; that counts down from a number set
-         dec   Timeout+1             ; in ResetInputTimeout and reset
-         bne   .SearchModeInputLoop  ; on every keypress (whether or not
-         dec   Timeout+2             ; the key leads to an action)
-         bne   .SearchModeInputLoop
-         jsr   .CoverFade            ; no input for ~30 seconds, switch to
-         jmp   MegaAttractMode       ; mega-attract mode
+         ; Don't clear keyboard strobe yet. If the user pressed an arrow key,
+         ; we want to switch to Browse Mode with the keyboard still hot so
+         ; that mode finds and dispatches the arrow key.
 
-@gotKey
          cmp   #$88                  ; left arrow switches to browse mode
          beq   @arrow
          cmp   #$8B                  ; also right arrow
@@ -83,26 +73,13 @@ SearchMode
          bne   @InputDispatch        ; always branches
 +
          and   #$7F                  ; strip high bit for search characters
-         cmp   #$30                  ; control keys and punctuation ignored
-         bcc   @badkey
-         cmp   #$3A                  ; numbers are good input
-         bcc   @goodkey
-         cmp   #$41                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$5B                  ; uppercase letters are good input
-         bcs   +
-         ora   #$20                  ; convert uppercase letters to lowercase
-         bne   @goodkey              ; always branches
-
-+        cmp   #$61                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$7B                  ; lowercase letters are good input
-         bcc   @goodkey
-@badkey
-         jsr   SoftBell              ; beep on invalid input
-         jmp   .SearchModeInputLoop  ; and start over
-
-@goodkey
+         jsr   IsSearchKey
+         beq   +
+         jsr   SoftBell              ; Beep on invalid input and start over.
+         bne   .SearchModeInputLoop  ; This always branches because SoftBell
+                                     ; preserves all flags and we got here
+                                     ; because the BEQ didn't branch.
++
          ldx   #kInputSearch
          ; execution falls through here
 @InputDispatch
@@ -123,7 +100,7 @@ SearchMode
 .OnClear
          ldx   InputLength
          bne   +
-         jsr   .CoverFade            ; Esc with no input switches to
+         jsr   CoverFade             ; Esc with no input switches to
          jmp   MegaAttractMode       ; mega-attract mode
 +        ldx   #0                    ; Esc with input clears the input
          stx   InputLength
@@ -169,6 +146,7 @@ SearchMode
 +        sta   InputBuffer,x
          inc   InputLength
          ; execution falls through here
+
 .OnInputChanged
          lda   InputLength
          bne   @findMatchingTitle
@@ -187,7 +165,7 @@ SearchMode
          bne   -
          lda   #$7F
          sta   UILine2+1
-         jsr   .LoadTitleOffscreen
+         jsr   LoadTitleOffscreen
          jsr   DrawSearchBarOffscreen
          jsr   ShowOtherPage
          clc
@@ -278,51 +256,30 @@ SearchMode
          jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
          jmp   ShowOtherPage         ; now show everything at once
 
-;------------------------------------------------------------------------------
+IsSearchKey
+         cmp   #$30                  ; control keys and punctuation ignored
+         bcc   @badkey
+         cmp   #$3A                  ; numbers are good input
+         bcc   @goodkey
+         cmp   #$41                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$5B                  ; uppercase letters are good input
+         bcs   +
+         ora   #$20                  ; convert uppercase letters to lowercase
+         bne   @goodkey              ; always branches
 
-.LoadTitleOffscreen
-; [private] clobbers all
-         +LDADDR @TitleFile
-         bne   +                     ; Always branches, because Y is loaded
-                                     ; last with the high byte of the address,
-                                     ; which is never 0. I miss my 65c02.
-.LoadCoverOffscreen
-; [private] clobbers all
-         +LDADDR @CoverFile
-+
-         jsr   SetPath
-         jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFileAt
-         !byte $00
-+        !byte $FD                   ; SMC
++        cmp   #$61                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$7B                  ; lowercase letters are good input
+         bcc   @goodkey
+@badkey
+         ldx   #1
          rts
-@TitleFile
-         !byte 5
-         !text "TITLE"
-@CoverFile
-         !byte 5
-         !text "COVER"
+@goodkey
+         ldx   #0
+         rts
 
-.CoverFade
-; [private] clobbers all
-         jsr   .LoadCoverOffscreen
-         jsr   ShowOtherPage
-         lda   OffscreenPage
-         bne   +
-         jsr   .LoadCoverOffscreen
-         jsr   ShowOtherPage
-+
-          ; load transition effect code at $6000
-         +LDADDR kFXDirectory
-         jsr   SetPath
-         +LDADDR @CoverFadeFile
-         jsr   AddToPath
-         jsr   LoadFile
-         jmp   $6000                 ; exit via loaded code
-@CoverFadeFile
-         !byte 9
-         !text "COVERFADE"
+;------------------------------------------------------------------------------
 
 ; indices into InputDispatchTable
 kInputSearch   = 0

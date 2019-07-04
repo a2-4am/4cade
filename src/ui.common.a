@@ -4,10 +4,14 @@
 ; common UI functions
 ;
 ; Public functions
+; - WaitForKeyFor30Seconds
 ; - GetOffscreenAddress
+; - LoadTitleOffscreen
+; - LoadCoverOffscreen
 ; - DrawSearchBarOffscreen
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
+; - CoverFade
 ; - ResetInputTimeout
 ; - SoftBell
 ; - Home
@@ -22,6 +26,7 @@
 ;
 
 !zone {
+
 OffscreenPage
          !byte 1                     ; 0 = currently showing HGR page 2
                                      ;     (so offscreen is page 1 @ $2000)
@@ -53,6 +58,50 @@ GetOffscreenAddress
          rts
 +        lda   #$20
          rts
+
+LoadTitleOffscreen
+; clobbers all
+         +LDADDR .TitleFile
+         bne   +                     ; Always branches, because Y is loaded
+                                     ; last with the high byte of the address,
+                                     ; which is never 0. I miss my 65c02.
+LoadCoverOffscreen
+; clobbers all
+         +LDADDR .CoverFile
++
+         jsr   SetPath
+         jsr   GetOffscreenAddress
+         sta   +
+         jsr   LoadFileAt
+         !byte $00
++        !byte $FD                   ; SMC
+         rts
+.TitleFile
+         !byte 5
+         !text "TITLE"
+.CoverFile
+         !byte 5
+         !text "COVER"
+
+CoverFade
+; clobbers all
+         jsr   LoadCoverOffscreen
+         jsr   ShowOtherPage
+         lda   OffscreenPage
+         bne   +
+         jsr   LoadCoverOffscreen
+         jsr   ShowOtherPage
++
+          ; load transition effect code at $6000
+         +LDADDR kFXDirectory
+         jsr   SetPath
+         +LDADDR @CoverFadeFile
+         jsr   AddToPath
+         jsr   LoadFile
+         jmp   $6000                 ; exit via loaded code
+@CoverFadeFile
+         !byte 9
+         !text "COVERFADE"
 
 DrawSearchBarOffscreen
 ; clobbers all
@@ -94,6 +143,24 @@ ResetInputTimeout
          stx   Timeout+1
          stx   Timeout+2
          rts
+
+WaitForKeyFor30Seconds
+         lda   KBD
+         bmi   @gotKey
+
+         inc   RNDSEED+1             ; these are only ever incremented, never
+         bne   +                     ; reset (may be used as a pseudorandom
+         inc   RNDSEED               ; seed)
++
+         dec   Timeout               ; these are a 3-byte timeout counter
+         bne   WaitForKeyFor30Seconds; that counts down from a number set
+         dec   Timeout+1             ; in .ResetInputTimeout and reset
+         bne   WaitForKeyFor30Seconds; on every keypress (whether or not
+         dec   Timeout+2             ; the key leads to an action)
+         bne   WaitForKeyFor30Seconds
+         jsr   CoverFade             ; no input for ~30 seconds, switch to
+         jmp   MegaAttractMode       ; mega-attract mode
+@gotKey  rts
 
 ;------------------------------------------------------------------------------
 ; SoftBell
