@@ -74,6 +74,8 @@ TextRankCallback
          ldy   #0
          lda   (zpstring),y
          sta   gamelength
+         cmp   InputLength
+         bcc   @no
          lda   #0
          sta   runningscore
          sta   runningscore+1
@@ -91,6 +93,7 @@ TextRankCallback
          cpy   gamelength
          iny
          bcc   --
+@no
 --       rts                         ; no match :(
 +
          ldx   #80
