@@ -93,8 +93,7 @@ TextRankCallback
          cpy   gamelength
          iny
          bcc   --
-@no
---       rts                         ; no match :(
+@no      rts                         ; no match :(
 +
          ldx   #80
          cpy   startat
