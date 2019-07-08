@@ -23,11 +23,13 @@ GBA Championship Basketball
 Galaxy Gates
 Gulf Strike
 The Heist
+Horizon V
 Impossible Mission II [DHGR]
 Kamikaze
 Karate Champ
 Kung Fu Master
 L.A. Crackdown
+Labyrinth
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
@@ -44,6 +46,7 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Roundabout
+Seafox
 Shanghai
 Shifty Sam
 Short Circuit
@@ -60,6 +63,7 @@ Street Sports Soccer [DHGR]
 Summer Games
 Super Bunny
 Super Huey
+Super Taxman II
 Techno Cop [DHGR] [priority]
 Tharolian Tunnels
 Video Vegas
@@ -102,15 +106,12 @@ Borg
 Caverns of Callisto
 Copts and Robbers
 The Dam Busters
-Dueling Digits
 Fight Night
 Hardball
-Horizon V
 Hyper Head-On
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
-Labyrinth
 Lemmings
 Lunar Leepers
 One on One
@@ -119,12 +120,10 @@ Pulsar II
 Retro-Ball
 Roach Hotel
 Road Block
-Seafox
 The Asteroid Field
 The Snapper
 Star Cruiser
 Star Thief
-Super Taxman II
 Superstar Ice Hockey
 Trick Shot
 Wayout
