@@ -126,18 +126,22 @@ kDFXConfFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .DHGRTitleCallback
-         +STAY PTR
+         +STAY SAVE
 
          lda   KBD
          bpl   +
-         rts
+@exit    rts
 +
          stx   gCurrentlyVisibleSlideshowIndex
+
+         +LDAY SAVE
+         jsr   GetGameDisplayName
+         bcs   @exit                 ; not found, so just skip this title
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRTitleDirectory
          jsr   SetPath
-         +LDAY PTR
+         +LDAY SAVE
          jsr   AddToPath
          jsr   LoadDHRFile
          +LDADDR $6000
@@ -156,13 +160,17 @@ kDFXConfFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .DHGRActionCallback
-         +STAY PTR
+         +STAY SAVE
 
          lda   KBD
          bpl   +
          rts
 +
          stx   gCurrentlyVisibleSlideshowIndex
+
+         +LDAY SAVE
+         jsr   GetGameDisplayName
+         bcs   @exit                 ; not found, so just skip this title
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRActionDirectory

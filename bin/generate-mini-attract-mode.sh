@@ -43,14 +43,6 @@ cat res/games.conf |
             sort |
             uniq >> /tmp/g
 
-        if [ "$game" == "CAPTN.GOODNIGHT" ]; then
-            cat res/ss/ACTIONCAPT.CONF |
-                tr "\r" "\n" |
-                grep "^CAPT" |
-                sed -e "s/^/ACTION.HGR\//g" |
-                sed -e "s/$/=7/g" >> /tmp/g
-        fi
-
         # add self-running demo, if any
         cat res/attract.conf |
             tr "\r" "\n" |

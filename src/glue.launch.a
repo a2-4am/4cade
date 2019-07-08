@@ -4,6 +4,7 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
+; - GetGameDisplayName
 ; - PlayGameFromSearch
 ; - PlayGameFromBrowse
 ; - PlayGameFromAttract
@@ -16,6 +17,38 @@
                                      ;        (only valid during slideshows, not updated once a key is pressed)
 
 !zone {
+
+GetGameDisplayName
+; in:    A/Y points to game filename
+; out:   C clear if game exists in gGamesListStore, and
+;          A/Y points to game display name (but see hack notes below)
+;        C set if game does not exist (this can happen because slideshows
+;          list games that require a joystick, but the games list parser
+;          filters out joystick-only games if the machine doesn't have a
+;          joystick)
+         +STAY @key
+         jsr   okvs_get
+         !word gGamesListStore
+@key     !word $FDFD                 ; SMC
+         bcc   @exit
+         ; Hack to allow self-running demos that don't correspond to a game
+         ; filename. If the name ends in a '.', accept it unconditionally.
+         ; The filename is its own display name. Launching this fake game
+         ; will of course fail, so don't do that.
+         +LDAY @key
+         +STAY PARAM
+         ldy   #0
+         lda   (PARAM),y
+         tay
+         lda   (PARAM),y
+         cmp   #"."
+         beq   @forceGoodResult
+         sec
+         rts
+@forceGoodResult
+         +LDAY @key
+         clc
+@exit    rts
 
 PlayGameFromSearch
 PlayGameFromBrowse

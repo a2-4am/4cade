@@ -44,16 +44,23 @@ HGRSingle
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 .HGRTitleCallback
-         +STAY PTR
+         +STAY SAVE
 
          lda   KBD
          bpl   +
-         rts
+@exit    rts
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
+         ; check if game exists in the catalog (it might not if it requires a
+         ; joystick and the machine doesn't have one, or if it requires 128K
+         ; but the machine only has 64K)
+         +LDAY SAVE
+         jsr   GetGameDisplayName
+         bcs   @exit                 ; not found, so just skip this title
+
          ; load HGR screenshot at $4000
-         +LOAD_FILE kHGRTitleDirectory, PTR
+         +LOAD_FILE kHGRTitleDirectory, SAVE
 
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
@@ -71,37 +78,39 @@ HGRSingle
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 .HGRActionCallback
-         +STAY PTR
-         +STAY @key
-         +STAY @key2
+         +STAY SAVE
+         +STAY @slideshowKey
 
          lda   KBD
          bpl   +
+@actionExit
          rts
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
          ; load HGR screenshot at $4000
-         +LOAD_FILE kHGRActionDirectory, PTR
+         +LOAD_FILE kHGRActionDirectory, SAVE
 
 ; try to get the human-readable name of this game from gGamesListStore
 ; and display it in the bottom-left corner
-         jsr   okvs_get
-         !word gGamesListStore
-@key     !word $FDFD                 ; SMC
+         +LDAY SAVE
+         jsr   GetGameDisplayName
          bcc   @foundname
-; if the key is not found, try getting the value of the current record
-; from gSlideshowStore and using that instead
-; (some games have multiple action screenshots)
+; if the key is not found, try getting the value of the current record from
+; gSlideshowStore and using that instead
+; (some games have multiple action screenshots, in which case the filename of
+; the action screenshot is not the game name, but the value is)
          jsr   okvs_get
          !word gSlideshowStore
-@key2    !word $FDFD                 ; SMC
-         bcs   @noname               ; should never happen
+@slideshowKey
+         !word $FDFD                 ; SMC
          +STAY @key3
          jsr   okvs_get
          !word gGamesListStore
 @key3    !word $FDFD                 ; SMC
-         bcs   @noname               ; should never happen
+         bcs   @actionExit           ; game still not found, bail
+                                     ; (could happen if game can't be played
+                                     ; due to memory or joystick requirements)
 @foundname
          +STAY SAVE
 @drawname
@@ -135,7 +144,7 @@ HGRSingle
          +LDADDR @rightline
          sec
          jsr   DrawBuffer
-@noname
+
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
 @topline

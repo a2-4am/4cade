@@ -180,6 +180,11 @@ RunAttractModule
 ; All demos are strictly 48K / main memory. No demo uses the
 ; language card or auxiliary memory.
 
+         +LDAY @key
+         jsr   GetGameDisplayName
+         bcc   +                     ; if game doesn't exist, skip the demo
+         rts
++
          jsr   Home                  ; avoid seeing code load into the HGR page
          +LOAD_PATH kDemoDirectory
          ldy   gPathname
