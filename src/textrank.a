@@ -24,7 +24,7 @@ tmp      =     $F8        ; byte
 gamelength=    $F9        ; byte
 firstletter=   $FA        ; byte
 
-MaxInputLength = 24
+MaxInputLength = 26
 InputLength
          !byte 0
 InputBuffer

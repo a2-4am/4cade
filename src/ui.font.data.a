@@ -16,18 +16,18 @@ FontDataRow0
          !byte $80
          !byte $9C
          !byte $9C
+         !byte $00
+         !byte $80
+         !byte $00
+         !byte $E0
+         !byte $00
+         !byte $00
          !byte $80
          !byte $80
          !byte $80
          !byte $80
          !byte $B6
          !byte $80
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -145,18 +145,18 @@ FontDataRow1
          !byte $80
          !byte $BC
          !byte $9E
+         !byte $00
+         !byte $98
+         !byte $00
+         !byte $E0
+         !byte $00
+         !byte $00
          !byte $80
          !byte $80
          !byte $80
          !byte $9C
          !byte $FF
          !byte $E6
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -274,18 +274,18 @@ FontDataRow2
          !byte $87
          !byte $FC
          !byte $9F
+         !byte $00
+         !byte $B0
+         !byte $00
+         !byte $EC
+         !byte $00
+         !byte $00
          !byte $80
          !byte $88
          !byte $9C
          !byte $BE
          !byte $FF
          !byte $BC
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -403,18 +403,18 @@ FontDataRow3
          !byte $8F
          !byte $F8
          !byte $8F
+         !byte $00
+         !byte $FF
+         !byte $00
+         !byte $E6
+         !byte $00
+         !byte $00
          !byte $88
          !byte $9C
          !byte $BE
          !byte $BE
          !byte $FF
          !byte $98
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -532,18 +532,18 @@ FontDataRow4
          !byte $9F
          !byte $F0
          !byte $87
+         !byte $00
+         !byte $FF
+         !byte $00
+         !byte $FF
+         !byte $00
+         !byte $00
          !byte $80
          !byte $9C
          !byte $BE
          !byte $BE
          !byte $BE
          !byte $BC
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -661,18 +661,18 @@ FontDataRow5
          !byte $9E
          !byte $80
          !byte $80
+         !byte $00
+         !byte $B0
+         !byte $00
+         !byte $BF
+         !byte $00
+         !byte $00
          !byte $80
          !byte $88
          !byte $9C
          !byte $BE
          !byte $9C
          !byte $E6
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -790,18 +790,18 @@ FontDataRow6
          !byte $9C
          !byte $80
          !byte $80
+         !byte $00
+         !byte $98
+         !byte $00
+         !byte $86
+         !byte $00
+         !byte $00
          !byte $80
          !byte $80
          !byte $80
          !byte $9C
          !byte $88
          !byte $80
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00
@@ -919,18 +919,18 @@ FontDataRow7
          !byte $9C
          !byte $80
          !byte $80
+         !byte $00
+         !byte $80
+         !byte $00
+         !byte $8C
+         !byte $00
+         !byte $00
          !byte $80
          !byte $80
          !byte $80
          !byte $80
          !byte $80
          !byte $80
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
-         !byte $00
          !byte $00
          !byte $00
          !byte $00

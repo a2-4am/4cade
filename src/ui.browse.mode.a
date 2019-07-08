@@ -152,6 +152,11 @@ BrowseMode
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
+         ldx   #8
+-        lda   ReturnToPlay,x        ; replace games count with 'to play' label
+         sta   UI_ToPlay,x
+         dex
+         bpl   -
          ldx   #40
          lda   #0
 -        sta   UILine1-1,x           ; reset UI line 1

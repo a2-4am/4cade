@@ -4,16 +4,18 @@ CIRCUITOUS font information
 - $80 characters only (high bit is always 0)
 - $20 and above are standard ASCII
 - $00..$1F are various shapes and characters in no standard order
+- Capital letters are full-width, which makes all-caps drawing look bad, so
+  don't do that
 
 Font routines are near the top of LC RAM, accessible to either bank. However,
-font data is stored in LC RAM bank 2, because that's where we have space.
-Note that most strings are in LC RAM bank 1, which is admittedly inconvenient.
-You are responsible for copying characters to a place where the drawing routine
-can access them. (See src/ui.font.a) The drawing routines will switch to LC 2
-to access font data, then back to LC 1 before returning.
+font data is stored in LC RAM bank 2, because that's where we have space. Note
+that most strings are in LC RAM bank 1, which is admittedly inconvenient. You
+are responsible for copying characters to a place where the drawing routine can
+access them. (See src/ui.font.a) The drawing routines will switch to LC 2 to
+access font data, then back to LC 1 before returning.
 
-Font data is stored non-consecutively. Row 0 data starts at $D600, in order,
-so row 0 of character $00 is at $D600, row 0 of character $01 is at $D601, &c.
+Font data is stored non-consecutively. Row 0 data starts at $D600, in order, so
+row 0 of character $00 is at $D600, row 0 of character $01 is at $D601, &c.
 Row 1 starts at $D680; row 2 starts at $D700. The entire font set finishes at
 $D9FF.
 
@@ -31,15 +33,15 @@ $09  rounded bottom-right quadrant circuit path
 $0A
 $0B  right arrow
 $0C
-$0D
+$0D  carriage return symbol
 $0E
-$0F  times
+$0F
 $10  dot, small
 $11  dot, medium
 $12  dot, large
 $13  dot, extra large
 $14
-$15
+$15  times
 $16
 $17
 $18
