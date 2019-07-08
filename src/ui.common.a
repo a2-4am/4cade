@@ -38,15 +38,23 @@ UILine1
          !byte 0,0,0,0,0,0,0,0,0,0
          !byte 0,0,0,0,0,0,0,0,0,0
          !byte 0,0,0,0,0,0,0,0,0,0
-
 UILine2
-         !text "["
-         !byte $7F
-         !text "                         "
-         !text "]   "
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0
+         !byte 0
+UI_ToPlay
+         !byte 0,0,0,0,0,0,0,0,0
+
+Instructions
+         !text "[Type to search, "
+         !byte $0B
+         !text " to browse]  "
 VisibleGameCount
-         !text "000"
-         !text " games"
+         !text "000 games"
+ReturnToPlay
+         !byte $0D
+         !text " to play"
 
 GetOffscreenAddress
 ; in:    none

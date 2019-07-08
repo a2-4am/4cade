@@ -38,9 +38,7 @@ SearchMode
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
-         cmp   #$88                  ; left arrow switches to browse mode
-         beq   @arrow
-         cmp   #$8B                  ; also right arrow
+         cmp   #$8B                  ; right arrow switches to browse mode
          beq   @arrow
          cmp   #$95                  ; also up arrow
          beq   @arrow
@@ -64,9 +62,13 @@ SearchMode
 +
          cmp   #$FF                  ; delete key
          bne   +
-         ldx   #kInputBack
+-        ldx   #kInputBack
          bne   @InputDispatch        ; always branches
 +
+         cmp   #$88                  ; left arrow = delete (may as well, since
+                                     ; popular emulators remap this anyway)
+         beq   -
+
          cmp   #$89                  ; TAB switches to mini attract mode
          bne   +                     ; if there is a game selected
          ldx   #kInputTab
@@ -153,18 +155,13 @@ SearchMode
                                      ; no input, reset params and UI
          lda   #$FF
          sta   SelectedIndex         ; no game selected
-         ldx   #40                   ; reset visible line
-         lda   #0
--        sta   UILine1-1,x
+         ldx   #39                   ; reset visible line
+-        lda   #0
+         sta   UILine1,x
+         lda   Instructions,x
+         sta   UILine2,x
          dex
-         bne   -
-         ldy   #MaxInputLength       ; clear visible search bar
-         lda   #" "
--        sta   UILine2+1,y
-         dey
-         bne   -
-         lda   #$7F
-         sta   UILine2+1
+         bpl   -
          jsr   LoadTitleOffscreen
          jsr   DrawSearchBarOffscreen
          jsr   ShowOtherPage
@@ -233,6 +230,11 @@ SearchMode
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
+         ldx   #8
+-        lda   ReturnToPlay,x        ; replace games count with 'to play' label
+         sta   UI_ToPlay,x
+         dex
+         bpl   -
          ldx   #40
          lda   #0
 -        sta   UILine1-1,x           ; reset search bar
@@ -245,7 +247,7 @@ SearchMode
          +LOW_ASCII_TO_LOWER
          cmp   InputBuffer,x
          bne   +
-         lda   #$0B                  ; add dots to highlight matched characters
+         lda   #$11                  ; add dots to highlight matched characters
          sta   UILine1,y
          inx
          cpx   InputLength           ; if input buffer is exhausted, we're done
