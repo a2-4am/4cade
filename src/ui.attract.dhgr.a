@@ -175,7 +175,7 @@ kDFXConfFile
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRActionDirectory
          jsr   SetPath
-         +LDAY PTR
+         +LDAY SAVE
          jsr   AddToPath
          jsr   LoadDHRFile
          +LDADDR $6000
