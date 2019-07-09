@@ -318,16 +318,24 @@ promote
         sei
         lda    $c012
         !byte  $24
-;$bf06
+  !if * != $bf06 {
+    !error "$BF06 misplaced (",*,")"
+  }
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
 
         asl
         lda    $c011
-        +READ_RAM2_WRITE_RAM2
-;$bf10
-        jmp    ProDOS_enter
+        bit    $c083
+        jmp    ProDOS_LC
+        !text  "4Q"
+  !if * != $bf13 {
+    !error "$BF13 misplaced (",*,")"
+  }
         !byte  $c1
         !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
+ProDOS_LC
+        bit    $c083
+        jmp    ProDOS_enter
 ProDOS_exit
         sta    $c082, x
 ProDOS_savedX
@@ -335,14 +343,16 @@ ProDOS_savedX
 ProDOS_savedY
         ldy    #$d1
         plp
-        lda    #0
         clc
-        rts
-
-        !text  "4Q!"
+        !byte  $24
 ProDOS_unit
-        ;$bf30
+  !if * != $bf30 {
+    !error "$BF30 misplaced (",*,")"
+  }
         !byte  $d1
+
+        lda    #0
+        rts
 
 ProDOS_fatal ;only for debugging, will be removed
         bit    $c081
