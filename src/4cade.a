@@ -66,6 +66,7 @@ RestoreStackNextTime
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"
          !source "src/ui.browse.mode.a"
+         !source "src/ui.credits.a"
          !source "src/ui.attract.mode.a"
          !source "src/ui.attract.hgr.a"
          !source "src/ui.attract.dhgr.a"

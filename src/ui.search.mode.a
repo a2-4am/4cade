@@ -74,6 +74,15 @@ SearchMode
          ldx   #kInputTab
          bne   @InputDispatch        ; always branches
 +
+
+         cmp   #$BF                  ; '?' display scredits
+         bne   +
+-        ldx   #kInputCredits
+         bne   @InputDispatch        ; always branches
++
+         cmp   #$AF                  ; '/' also displays credits
+         beq   -
+
          and   #$7F                  ; strip high bit for search characters
          jsr   IsSearchKey
          beq   +
@@ -291,6 +300,7 @@ kInputBack     = 2
 kInputBrowse   = 3
 kInputTab      = 4
 kInputLaunch   = 5
+kInputCredits  = 6
 
 .InputDispatchTable
          !word .OnSearch
@@ -299,5 +309,6 @@ kInputLaunch   = 5
          !word BrowseMode
          !word .OnTab
          !word .OnLaunch
+         !word Credits
 
 }

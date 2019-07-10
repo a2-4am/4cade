@@ -9,6 +9,7 @@
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
 ; - DrawSearchBarOffscreen
+; - ClearOffscreen
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
 ; - CoverFade
@@ -301,11 +302,15 @@ ExecuteTransitionAndWait
 ;        Y = 0
 ;        Z = 1
 ;------------------------------------------------------------------------------
+ClearOffscreen
+         jsr   GetOffscreenAddress
+         +HIDE_NEXT_2_BYTES
 .ClearHGR1
+         lda   #$20
+         sta   @a+2
          ldx   #$20
-         stx   @a+2
-         lda   #0
-         tay
+         lda   #$80
+         ldy   #0
 @a       sta   $2000,y
          iny
          bne   @a

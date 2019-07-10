@@ -57,6 +57,14 @@ BrowseMode
          ldx   #kBrowseTab
          bne   @BrowseDispatch       ; always branches
 +
+         cmp   #$BF                  ; '?' display scredits
+         bne   +
+-        ldx   #kBrowseCredits
+         bne   @BrowseDispatch       ; always branches
++
+         cmp   #$AF                  ; '/' also displays credits
+         beq   -
+
          and   #$7F                  ; strip high bit for search characters
          jsr   IsSearchKey
          beq   +
@@ -174,6 +182,7 @@ kBrowseNext     = 2
 kBrowseExitToSearch = 3
 kBrowseTab      = 4
 kBrowseLaunch   = 5
+kBrowseCredits  = 6
 
 .BrowseDispatchTable
          !word .OnSearch
@@ -182,6 +191,7 @@ kBrowseLaunch   = 5
          !word SearchMode
          !word .OnTab
          !word .OnLaunch
+         !word Credits
 
 BrowseSelectedIndex
          !byte $FF

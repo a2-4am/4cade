@@ -84,6 +84,7 @@ dsk: md asm
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
+	cp res/credits.txt build/CREDITS >>build/log
 	bin/padto 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/TITLE" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
@@ -92,6 +93,7 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/DFX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/CREDITS" >>build/log
 	rsync -aP res/title.hgr/* build/TITLE.HGR >>build/log
 	bin/buildfileinfo.py build/TITLE.HGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/TITLE.HGR" "build/TITLE.HGR" >>build/log
