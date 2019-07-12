@@ -106,6 +106,9 @@ dsk: md asm
 	rsync -aP res/action.dhgr/* build/ACTION.DHGR >>build/log
 	bin/buildfileinfo.py build/ACTION.DHGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION.DHGR" "build/ACTION.DHGR" >>build/log
+	rsync -aP res/action.gr/* build/ACTION.GR >>build/log
+	bin/buildfileinfo.py build/ACTION.GR "06" "0800" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION.GR" "build/ACTION.GR" >>build/log
 	rsync -aP res/artwork.shr/* build/ARTWORK.SHR >>build/log
 	bin/buildfileinfo.py build/ARTWORK.SHR "C1" "2000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK.SHR" "build/ARTWORK.SHR" >>build/log
@@ -139,6 +142,7 @@ md:
 	mkdir -p build/TITLE.DHGR
 	mkdir -p build/ACTION.HGR
 	mkdir -p build/ACTION.DHGR
+	mkdir -p build/ACTION.GR
 	mkdir -p build/ARTWORK.SHR
 	mkdir -p build/ATTRACT
 	mkdir -p build/SS
