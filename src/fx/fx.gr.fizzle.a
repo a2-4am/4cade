@@ -46,9 +46,9 @@
          ;target page 1
 
          ora   #4
-         sta   $27
-         eor   #$64
          sta   $3d
+         eor   #$64
+         sta   $27
 
          ;set mask according to offset
 
@@ -69,7 +69,7 @@
 
          ;wait while checking for keypress
 
-         ldx   #8
+         ldx   #$10
 @wait    lda   $c000
          bmi   @exit
          dex

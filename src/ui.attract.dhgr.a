@@ -118,7 +118,7 @@ kDFXConfFile
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR title screenshot
 
-; in:    A/Y contains address of filename (name only, path is always /DHGR/)
+; in:    A/Y contains address of filename (name only, path is always /TITLE.DHGR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
@@ -152,7 +152,7 @@ kDFXConfFile
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR action screenshot
 
-; in:    A/Y contains address of filename (name only, path is always /DHGR/)
+; in:    A/Y contains address of filename (name only, path is always /ACTION.DHGR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)

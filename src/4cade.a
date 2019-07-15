@@ -71,6 +71,7 @@ RestoreStackNextTime
          !source "src/ui.attract.hgr.a"
          !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
+         !source "src/ui.attract.gr.a"
          !source "src/prodos.path.a"
          !source "src/glue.launch.a"
          !source "src/glue.prorwts2.a"

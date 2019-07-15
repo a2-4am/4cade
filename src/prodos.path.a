@@ -24,6 +24,10 @@ kDHGRActionDirectory
          !byte 12
          !raw  "ACTION.DHGR/"
 
+kGRActionDirectory
+         !byte 10
+         !raw  "ACTION.GR/"
+
 kSHRArtworkDirectory
          !byte 12
          !raw  "ARTWORK.SHR/"

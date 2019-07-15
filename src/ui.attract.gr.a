@@ -1,0 +1,103 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; GR action slideshows
+;
+; Public functions
+; - GRActionSlideshow
+; - GRSingle
+;
+
+!zone {
+
+GRActionSlideshow
+         jsr   .LoadGRTransition     ; load transition effect code at $6000
+         jsr   BlankGR               ; switch GR mode with initial blank screen
+         jsr   okvs_iter             ; cycle through all listed GR files
+         !word gSlideshowStore
+         !word .GRActionCallback     ; address of callback (called on each file)
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
+GRSingle
+         jsr   SetPath
+         jsr   BlankGR               ; switch to GR mode with initial blank screen
+         jsr   LoadFile              ; load GR screenshot at $6000
+         jsr   .LoadGRTransition     ; load transition effect code at $6400
+         +LDADDR $6400
+         jsr   ExecuteTransitionAndWait
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
+;------------------------------------------------------------------------------
+; BlankGR
+; clear and show GR page 1 without flickering
+;
+; in:    none
+; out:   text page clobbered
+;------------------------------------------------------------------------------
+BlankGR
+         ldx   #$04
+         stx   @loop+2
+         lda   #0
+         tay
+@loop    sta   $FD00,y
+         iny
+         bne   @loop
+         inc   @loop+2
+         dex
+         bne   @loop
+         bit   PAGE1
+         +GR_MODE
+         rts
+
+;------------------------------------------------------------------------------
+; .LoadGRTransition [private]
+;
+; in:    none
+; out:   all registers and flags clobbered
+;        $6400..$BFFF/main contains transition effect code (probably not all
+;        of that, but no promises)
+;------------------------------------------------------------------------------
+.LoadGRTransition
+         +LDADDR kGRFizzleFile
+         +STAY @file
+         +LOAD_FILE kFXDirectory, @file
+         rts
+@file    !word $FDFD
+kGRFizzleFile
+         !byte @kSFXFizzleFile_e-*-1
+         !text "GR.FIZZLE"
+@kSFXFizzleFile_e
+
+;------------------------------------------------------------------------------
+; .GRActionCallback [private]
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single GR action screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /ACTION.GR/)
+;        X contains 0-based index of the current record in gSlideshowStore
+;        gGamesListStore must be initialized
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+.GRActionCallback
+         +STAY SAVE
+
+         lda   KBD
+         bpl   +
+@actionExit
+         rts
++
+         stx   gCurrentlyVisibleSlideshowIndex
+
+         +LDAY SAVE
+         jsr   GetGameDisplayName
+         bcs   @actionExit           ; not found, so just skip this title
+
+         ; load GR screenshot at $6000
+         +LOAD_FILE kGRActionDirectory, SAVE
+
+         +LDADDR $6000
+         jmp   ExecuteTransitionAndWait
+
+}

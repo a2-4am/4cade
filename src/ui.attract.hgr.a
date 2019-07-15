@@ -37,7 +37,7 @@ HGRSingle
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR title screenshot
 
-; in:    A/Y contains address of filename (name only, path is always /HGR/)
+; in:    A/Y contains address of filename (name only, path is always /TITLE.HGR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
@@ -70,7 +70,7 @@ HGRSingle
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR action screenshot
 
-; in:    A/Y contains address of filename (name only, path is always /ACTION/)
+; in:    A/Y contains address of filename (name only, path is always /ACTION.HGR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
 ;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered

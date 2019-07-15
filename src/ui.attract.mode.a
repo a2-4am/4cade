@@ -77,7 +77,6 @@ MegaAttractMode
 
          ldy   #1
          lda   (PTR),y
-         and   #$0F                  ; convert ASCII digit to integer
          tax                         ; X = module type
          +LDAY @key                  ; A/Y = address of module name
          jsr   RunAttractModule
@@ -141,7 +140,6 @@ MiniAttractMode
 
          ldy   #1
          lda   (PTR),y
-         and   #$0F                  ; convert ASCII digit to integer
          tax                         ; X = module type
          +LDAY @key                  ; A/Y = address of module name
          jsr   RunAttractModule      ; execute the module
@@ -159,7 +157,7 @@ MiniAttractMode
 ; RunAttractModule
 ; run a single attract module of any type and return to caller
 ;
-; in:    X = module type (1-9, see attract.conf)
+; in:    X = module type as ASCII char (1-6,A-C, see attract.conf)
 ;        A/Y = address of module name
 ;              for demos, this is the filename of an executable in /demo/
 ;              for slideshows, this is the filename of a .conf file in /ss/
@@ -172,6 +170,7 @@ MiniAttractMode
 RunAttractModule
          +STAY @key
          txa
+         cmp   #$30
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
@@ -199,8 +198,8 @@ RunAttractModule
 
 ; not a demo, so maybe a slideshow or single screenshot
 @NotDemo
-         cmp   #$06                  ; 1-5 are slideshow modules
-         bcs   @startDispatch
+         cmp   #$41                  ; numbers are slideshow modules,
+         bcs   @dispatchSingle       ; letters are single files
 
 ; it's a slideshow, so load and parse slideshow configuration file
          pha                         ; save module type
@@ -211,7 +210,7 @@ RunAttractModule
          !byte 0
          pla                         ; restore module type
 
-@startDispatch
+-        and   #$0F                  ; convert ASCII digit to int
          asl
          tax
          lda   @slideshows-2,x
@@ -220,6 +219,11 @@ RunAttractModule
          sta   @jmp+2
          +LDAY @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
+
+@dispatchSingle
+         clc
+         adc   #$06
+         bne   -                     ; always branches
 @key     !word $FDFD                 ; SMC
 @slideshows
          !word HGRTitleSlideshow
@@ -227,10 +231,12 @@ RunAttractModule
          !word DHGRTitleSlideshow
          !word DHGRActionSlideshow
          !word SHRSlideshow
-         !word 0
+         !word GRActionSlideshow
+@singles
          !word HGRSingle
          !word DHGRSingle
          !word SHRSingle
+         !word GRSingle
 
 LoadAndParseAttractModeConf
 ; TODO refactor launch code then make this private

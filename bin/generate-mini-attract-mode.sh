@@ -17,11 +17,11 @@ cat res/games.conf |
 
         # add DHGR title screenshot, if any
         [ -f res/title.dhgr/"$game" ] &&
-            echo "TITLE.DHGR/$game=8" >> /tmp/g
+            echo "TITLE.DHGR/$game=B" >> /tmp/g
 
         # add box art, if any
         [ -f res/artwork.shr/"$game" ] &&
-            echo "ARTWORK.SHR/$game=9" >> /tmp/g
+            echo "ARTWORK.SHR/$game=C" >> /tmp/g
 
         # add DHGR action screenshots, if any
         cat res/ss/ACTDHGR*.CONF |
@@ -29,7 +29,7 @@ cat res/games.conf |
             grep "$game""$" |
             cut -d"=" -f1 |
             sed -e "s/^/ACTION.DHGR\//g" |
-            sed -e "s/$/=8/g" |
+            sed -e "s/$/=B/g" |
             sort |
             uniq >> /tmp/g
 
@@ -39,7 +39,17 @@ cat res/games.conf |
             grep "$game""$" |
             cut -d"=" -f1 |
             sed -e "s/^/ACTION.HGR\//g" |
-            sed -e "s/$/=7/g" |
+            sed -e "s/$/=A/g" |
+            sort |
+            uniq >> /tmp/g
+
+        # add GR action screenshots, if any
+        cat res/ss/ACTGR*.CONF |
+            tr "\r" "\n" |
+            grep "$game""$" |
+            cut -d"=" -f1 |
+            sed -e "s/^/ACTION.GR\//g" |
+            sed -e "s/$/=D/g" |
             sort |
             uniq >> /tmp/g
 
@@ -58,7 +68,7 @@ cat res/games.conf |
         fi
 
         if [ "$game" == "PRINCEUNP" ]; then
-            echo "ARTWORK.SHR/POP.END=9" >> /tmp/g
+            echo "ARTWORK.SHR/POP.END=C" >> /tmp/g
         fi
 
         # add eof

@@ -1,1 +1,1 @@
-## Attract mode for Mr. Robot#ARTWORK.SHR/MR.ROBOT=9ACTION.HGR/MR.ROBOT=7[eof]
+## Attract mode for Mr. Robot#ARTWORK.SHR/MR.ROBOT=CACTION.HGR/MR.ROBOT=A[eof]

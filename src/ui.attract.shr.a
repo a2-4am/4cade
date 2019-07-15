@@ -40,8 +40,7 @@ SHRSingle
 ;------------------------------------------------------------------------------
 ; .LoadSHGRTransition [private]
 ;
-; in:    gSFXStore has been initialized
-;        gGlobalPrefsStore has been initialized
+; in:    none
 ; out:   all registers and flags clobbered
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ kSFXFizzleFile
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single SHR graphic
 
-; in:    A/Y contains address of filename (name only, path is always /SHR/)
+; in:    A/Y contains address of filename (name only, path is always /ARTWORK.SHR/)
 ;        X contains 0-based index of the current record in gSlideshowStore
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
