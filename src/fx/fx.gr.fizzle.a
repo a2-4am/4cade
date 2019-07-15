@@ -39,7 +39,7 @@
          sta   $3c
          and   #$78
          cmp   #$78
-         beq   @rndval2
+         beq   @rnd2
          txa
          and   #3
 
