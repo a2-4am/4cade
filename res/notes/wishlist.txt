@@ -3,6 +3,7 @@ The American Challenge
 Arcticfox
 Ardy the Aardvark
 Aztec
+The Bilestoad
 Boulder Dash
 California Games [DHGR]
 Championship Baseball
@@ -89,7 +90,6 @@ Test Drive [DHGR] [priority]
 //TODO(woz-imaged but uncracked)
 A.E.
 Alien Lander
-The Bilestoad
 Boa
 Borg
 Caverns of Callisto
