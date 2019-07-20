@@ -3,32 +3,25 @@ The American Challenge
 Arcticfox
 Ardy the Aardvark
 Aztec
-Ballblazer
 Boulder Dash
 California Games [DHGR]
 Championship Baseball
 Championship Wrestling
 Congo Bongo
 Conquering Worlds
-Cubit
 Dive Bomber
 Double Trouble
 Dunzhin
 Elite
-Frogger II
 G.I. Joe
 GBA Championship Baseball
 GBA Championship Basketball
-Galaxy Gates
 Gulf Strike
 The Heist
-Horizon V
 Impossible Mission II [DHGR]
-Kamikaze
 Karate Champ
 Kung Fu Master
 L.A. Crackdown
-Labyrinth
 Laser Bounce
 Little Computer People
 Lock 'N' Chase
@@ -69,10 +62,8 @@ Video Vegas
 World Karate Championship
 The World's Greatest Baseball Game
 Winter Games
-Xevious
 
 //4am crack (unreleased)
-Black Magic
 Bop N Wrestle
 Congo
 County Fair
@@ -117,7 +108,6 @@ Peeping Tom
 Pulsar II
 Retro-Ball
 Roach Hotel
-Road Block
 The Asteroid Field
 The Snapper
 Star Cruiser
@@ -127,7 +117,6 @@ Trick Shot
 Wayout
 World Games [DHGR]
 Zargs
-Zaxxon [priority]
 
 //TODO(flux-imaged but not woz)
 Fly Wars
