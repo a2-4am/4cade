@@ -455,6 +455,8 @@ ProDOS_enter
     beq    @do_writeblock
     cmp    #$c4
     beq    @do_getattrib
+    cmp    #$c6
+    beq    @do_nothing
     cmp    #$c7
     beq    @do_prefix
     cmp    #$c8
@@ -476,6 +478,8 @@ ProDOS_enter
     jmp    @imp_rdwrblock
 @do_getattrib
     jmp    @imp_getattrib
+@do_nothing
+    jmp    @restore_zp
 @do_prefix
     jmp    @imp_prefix
 @do_open
