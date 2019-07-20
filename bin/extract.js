@@ -3,6 +3,6 @@ for (b = new Enumerator(a.GetFolder(WScript.Arguments(0)).files); !b.atEnd(); b.
 {
     if (a.GetExtensionName(b.item()).toLowerCase() == "po")
     {
-        new ActiveXObject("WScript.Shell").run("cadius EXTRACTVOLUME " + '"' + b.item() + '"' + " build/X/", 0)
+        new ActiveXObject("WScript.Shell").run("cadius.exe EXTRACTVOLUME " + '"' + b.item() + '"' + " build/X/", 0)
     }
 }
