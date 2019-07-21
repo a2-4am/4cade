@@ -150,6 +150,12 @@ echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
