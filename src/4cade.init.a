@@ -20,8 +20,10 @@
          jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
          ror   zpMachineStatus
+         sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
          ror   zpMachineStatus
+         sta   CLRC3ROM
          jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
          ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
