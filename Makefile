@@ -81,62 +81,62 @@ asm: md
 	$(ACME) src/fx/fx.gr.fizzle.a
 
 dsk: md asm
-	$(CADIUS) CREATEVOLUME build/"$(DISK)" "${VOLUME}" 32766KB >>build/log
+	$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32766KB >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/LAUNCHER.SYSTEM" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
 	cp res/credits.txt build/CREDITS >>build/log
 	bin/padto 512 build/PREFS.CONF
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/TITLE" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/COVER" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/PREFS.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/GAMES.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/ATTRACT.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/FX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "res/DFX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/${VOLUME}/" "build/CREDITS" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/GAMES.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/ATTRACT.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/FX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/DFX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/CREDITS" >>build/log
 	rsync -aP res/title.hgr/* build/TITLE.HGR >>build/log
 	bin/buildfileinfo.py build/TITLE.HGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/TITLE.HGR" "build/TITLE.HGR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.HGR" "build/TITLE.HGR" >>build/log
 	rsync -aP res/title.dhgr/* build/TITLE.DHGR >>build/log
 	bin/buildfileinfo.py build/TITLE.DHGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/TITLE.DHGR" "build/TITLE.DHGR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.DHGR" "build/TITLE.DHGR" >>build/log
 	rsync -aP res/action.hgr/* build/ACTION.HGR >>build/log
 	bin/buildfileinfo.py build/ACTION.HGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION.HGR" "build/ACTION.HGR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.HGR" "build/ACTION.HGR" >>build/log
 	rsync -aP res/action.dhgr/* build/ACTION.DHGR >>build/log
 	bin/buildfileinfo.py build/ACTION.DHGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION.DHGR" "build/ACTION.DHGR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.DHGR" "build/ACTION.DHGR" >>build/log
 	rsync -aP res/action.gr/* build/ACTION.GR >>build/log
 	bin/buildfileinfo.py build/ACTION.GR "06" "6000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ACTION.GR" "build/ACTION.GR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.GR" "build/ACTION.GR" >>build/log
 	rsync -aP res/artwork.shr/* build/ARTWORK.SHR >>build/log
 	bin/buildfileinfo.py build/ARTWORK.SHR "C1" "2000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ARTWORK.SHR" "build/ARTWORK.SHR" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ARTWORK.SHR" "build/ARTWORK.SHR" >>build/log
 	rsync -aP res/attract/* build/ATTRACT >>build/log
 	bin/buildfileinfo.py build/ATTRACT "04" "8000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/ATTRACT" "build/ATTRACT" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ATTRACT" "build/ATTRACT" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
 	bin/buildfileinfo.py build/SS "04" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/SS" "build/SS" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/SS" "build/SS" >>build/log
 	rsync -aP res/demo/* build/DEMO >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/DEMO" "build/DEMO" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/DEMO" "build/DEMO" >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build/log
+	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build/log
 	rsync -aP res/fx/* build/FX >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/FX" "build/FX" >>build/log
-	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/${VOLUME}/X/" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	bin/do2po.py res/dsk/ build/po/
 	rsync -a res/dsk/*.po build/po/
 	bin/extract.py build/po/ | sh >>build/log
 	rm -f build/X/**/.DS_Store
 	rm -f build/X/**/PRODOS
 	rm -f build/X/**/LOADER.SYSTEM
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/${VOLUME}/X" "build/X" >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/{$VOLUME}/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
 
 mount: dsk
