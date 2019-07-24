@@ -4,6 +4,7 @@ Arcticfox
 Ardy the Aardvark
 Aztec
 Boulder Dash
+C'est La Vie
 California Games [DHGR]
 Championship Baseball
 Championship Wrestling
@@ -63,6 +64,7 @@ The World's Greatest Baseball Game
 Winter Games
 
 //4am crack (unreleased)
+Beyond Castle Wolfenstein
 Bop N Wrestle
 Congo
 County Fair
