@@ -122,6 +122,7 @@ Jellyfish
 Minotaur
 
 //TODO(unacquired)
+Buck Rogers
 Super Zaxxon
 
 //TODO(unreleased)
