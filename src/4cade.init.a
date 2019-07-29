@@ -19,6 +19,10 @@
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
+         php
+         bcc   +
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
++        plp
          ror   zpMachineStatus
          sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
@@ -31,7 +35,6 @@
                                      ;     bit 5 = 1 if VidHD
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
-
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
                                      ; ProRWTS2 disk-data live at $D000-D3FF
