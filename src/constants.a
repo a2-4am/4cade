@@ -47,6 +47,7 @@ DHIRESOFF =    $C05F      ; double hi-res off switch
 ; ROM routines and addresses
 ; (prefixed because so much of the program runs from LC RAM, so don't call
 ; these without thinking about memory banks first)
+ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
 ROM_HOME =     $FC58
