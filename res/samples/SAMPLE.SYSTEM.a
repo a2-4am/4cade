@@ -1,0 +1,283 @@
+; SAMPLE.SYSTEM - play a BTC audio file
+; by Frank Milliron
+; using BTC.SYSTEM by Oliver Schmidt
+; July 22, 2019
+;
+; To assemble using ACME under macOS: Start "Wine Stable" application
+; cd /Users/Frank/Desktop/Vintage\ Computers/Apple\ II/Assemblers/acme0.96.4win
+; wine acme.exe -v (drop this file)  v=verbose mode
+
+!cpu 6502 ; should work on ][+
+
+
+!to "SAMPLE.SYSTEM#ff0000",plain	; CiderPress friendly name
+*=$2000				; AKA ORG
+
+
+btc_lo  = $E2 ; current playing page (low byte)
+btc_hi  = $E3 ; current playing page (high byte)
+mli     = $BF00 ; ProDOS Machine Language Interface entry point
+spkr    = $C030 ; click speaker
+buffer  = $9000 ; temp
+
+
+	JSR	mli
+	!byte	$C4		; get file attributes
+	!word	c4_parms
+	LDA	c4_parms+5
+	STA	ca_parms+2
+	LDA	c4_parms+6
+	STA	ca_parms+3
+	JSR	mli
+	!byte	$C8		; open file
+	!word	c8_parms	; ->bd5d
+	LDA	c8_parms+5
+	STA	ca_parms+1
+	JSR	mli
+	!byte	$CA		; read file
+	!word	ca_parms
+	JSR	mli
+	!byte	$CC		; close
+	!word	cc_parms
+
+	JMP	play
+
+c4_parms			; bd4b - C4 file attributes
+	!byte	$0a
+	!word	filename
+	!byte	0
+	!byte	0
+	!word	0
+	!byte	0
+	!word	0
+	!word	0
+	!word	0
+	!word	0
+	!word	0
+
+c8_parms			; bd5d - C8 open file
+	!byte	3
+	!word	filename
+	!word	buffer		; somewhere
+	!byte	0
+
+ca_parms			; bd68 - CA read file
+	!byte	4
+	!byte	$ff
+
+cc_parms			; bd70 - CC close file
+	!byte	1
+	!byte	0
+
+filename
+	!byte	(filename_e-filename)-1
+	!text	"TOTALREPLAY.BTC"
+filename_e
+
+
+play	JSR	playaud
+
+	JSR	mli
+	!byte	$CC		; close audio file
+	!word	close_parms	; pointer to parameter table
+
+	JSR	mli
+	!byte	$65		; exit using ProDOS QUIT
+	!word	quit_parms	; pointer to parameter table
+
+close_parms			; bd70 - CC close file parameters
+	!byte	1		; always 1
+	!byte	0		; file ref number. 0=close all open files
+
+quit_parms
+	!byte	$04		; number of parameters is 4 
+	!fill	6,0		; two are words = 6 bytes total
+
+
+;****************************************************************
+;*                        Audio playback                        *
+;****************************************************************
+playaud				; BTC audio player core by Oliver Schmidt
+	LDA	#$40
+	STA	btc_hi		; first page of audio to play $4000
+	LDA	#$00
+	STA	btc_lo
+	LDX	#$31		; play $31 pages ($3100/12544 bytes) of data
+audfix	LDY	#$00		; byte offset within current page
+
+ ; loop here as long as BITs are [F]alse (aka 0)
+F_NX	NOP			; 2 2
+	NOP			; 2 2
+	NOP			; 2 2
+	BIT	$00		; 3 3
+F_RD	LDA	(btc_lo),y	; 5 5 5
+	ASL			; 2 2 2
+	BCS	T_1_SW		; 2/3 2
+	NOP			; 2 2
+	NOP			; 2 2
+	NOP			; 2 2
+	NOP			; 2 2
+F_1	JSR	delay		; 6 (+13) 19
+	ASL			; 2 2 = 31
+	BCS	T_2_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_2	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_3_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_3	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_4_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_4	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_5_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_5	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_6_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_6	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_7_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+F_7	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCS	T_8_SW		; 2/3 2 2
+	NOP			; 2 2 2
+	NOP			; 2 2 2
+	NOP			; 2 2 2
+	NOP			; 2 2 2
+F_8	INY			; 2 2 2
+	BNE	F_NX		; 2/3 3 = 31 2
+	INC	btc_hi		; 5 5
+	DEX			; 2 2
+	BNE	F_RD		; 2/3 3 = 31
+	RTS
+				; click speaker on transitions
+T_1_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [1]
+	BCS	T_1		; 3 (always)
+T_2_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [2]
+	BCS	T_2		; 3 (always)
+T_3_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [3]
+	BCS	T_3		; 3 (always)
+T_4_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [4]
+	BCS	T_4		; 3 (always)
+T_5_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [5]
+	BCS	T_5		; 3 (always)
+T_6_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [6]
+	BCS	T_6		; 3 (always)
+T_7_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [7]
+	BCS	T_7		; 3 (always)
+T_8_SW	STA	spkr		; 4 [SW]itch to [T]rue on BIT [8]
+	BCS	T_8		; 3 (always)
+
+F_1_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [1]
+	BCC	F_1		; 3 (always)
+F_2_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [2]
+	BCC	F_2		; 3 (always)
+F_3_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [3]
+	BCC	F_3		; 3 (always)
+F_4_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [4]
+	BCC	F_4		; 3 (always)
+F_5_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [5]
+	BCC	F_5		; 3 (always)
+F_6_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [6]
+	BCC	F_6		; 3 (always)
+F_7_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [7]
+	BCC	F_7		; 3 (always)
+F_8_SW	STA	spkr		; 4 [SW]itch to [F]alse on BIT [8]
+	BCC	F_8		; 3 (always)
+
+ ; loop here as long as BITs are [T]rue (aka 1)
+T_NX	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	BIT	$00		; 3
+T_RD	LDA	(btc_lo),y		; 5
+	ASL			; 2
+	BCC	F_1_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_1	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_2_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_2	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_3_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_3	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_4_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_4	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_5_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_5	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_6_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_6	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_7_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_7	JSR	delay		; 6 (+13)
+	ASL			; 2
+	BCC	F_8_SW		; 2/3
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+	NOP			; 2
+T_8	INY			; 2
+	BNE	T_NX		; 2/3
+	INC	btc_hi		; 5
+	DEX			; 2
+	BNE	T_RD		; 2/3
+	RTS
+
+delay	NOP	
+	NOP			; 4 - "quiet mode"
+	BIT	$00		; 3
+	RTS			; 6 = 13
+
+
