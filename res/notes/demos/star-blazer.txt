@@ -1,0 +1,6 @@
+$17DB: A20120 -> 4C0001 to exit on button press (context is 0D62C01017A201201EFB)
+$1760: 8D10C0 -> 4C0001 to exit on keypress (context is 8D10C084F220B617)
+$17AD: 29C085 -> 4C0001 to exit on button press (context is 29C085F1A9006C2400)
+$1705: 4C5017 -> 4C7003 to decrement custom counter after demo cycle and eventually exit (context is 8AF00286B64C5017)
+no sound
+
