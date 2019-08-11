@@ -1,0 +1,3 @@
+$A3AE: AD10C0 -> 4CB9A3 to skip title screen and input selection (context is 2031A3AD10C0AD00C010FB205EA2)
+$A12E: 2C10C0 -> 4C0001 to exit on keypress (context is AD00C030034C85A12C10C0)
+$A3D4: 6885D8 -> 4C0001 to exit after demo cycle (context is 20B7A06885D8)
