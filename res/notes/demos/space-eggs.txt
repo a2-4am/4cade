@@ -1,0 +1,6 @@
+$4821: 7A3A7A1A5A5A -> EAEAEAEAEAEA to avoid clobbering stack
+$4B00: AD61C0 -> AD00C0 to change button press detection to keypress detection
+$4B06: 4C3E48 -> 4C0001 to exit on keypress
+$4BD6: 4CB04B -> CEFF4B10034C00014CB04B to decrement custom counter after demo cycle and eventually exit
+$4BFF: FF -> 02 to initialize custom counter
+no sound
