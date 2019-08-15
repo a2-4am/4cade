@@ -1,0 +1,7 @@
+$1072: C0 -> D0 to disable sound (context is AD30C0A90820ED10)
+$107A: C0 -> D0 to disable sound (context is AD30C0CEAF10ADAFC0)
+$1E66: 207D1E -> 4C0001 to exit on keypress (context is 6C0002207D1EA9008571)
+$1EE9: 8D10C0 -> 4C0001 to exit on keypress (context is 8D10C0A571F0036C2400)
+$1F00: AD61C0 -> EAA900 to disable joystick button detection (context is AD61C029808DBB86)
+XXXX$0CC0: 2C00C0 -> ??? (context is 2C00C060A8B98A69)
+$8CAA: A571D0 -> 4C0001 to exit at end of demo cycle (context is A571D012AD10C0AD5884)
