@@ -84,16 +84,20 @@ dsk: md asm
 	$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32766KB >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
+	cp res/attract.conf build/ATTRACT.CONF >>build/log
+	cp res/dfx.conf build/DFX.CONF >>build/log
+	cp res/fx.conf build/FX.CONF >>build/log
+	cp res/games.conf build/GAMES.CONF >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
 	cp res/credits.txt build/CREDITS >>build/log
 	bin/padto 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/GAMES.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/ATTRACT.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/FX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/DFX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/GAMES.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/ATTRACT.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/FX.CONF" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/DFX.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/CREDITS" >>build/log
 	rsync -aP res/title.hgr/* build/TITLE.HGR >>build/log
 	bin/buildfileinfo.py build/TITLE.HGR "06" "4000" >>build/log
