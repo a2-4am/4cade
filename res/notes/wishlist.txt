@@ -2,7 +2,6 @@
 The American Challenge
 Arcticfox
 Ardy the Aardvark
-Aztec
 Boulder Dash
 C'est La Vie
 California Games [DHGR]
@@ -38,7 +37,6 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Roundabout
-Seafox
 Shanghai
 Shifty Sam
 Short Circuit
@@ -46,7 +44,6 @@ Shuttle Intercept
 Skyfox
 Soko-Ban [DHGR] [priority]
 Spindizzy
-The Spy Strikes Back
 Station 5
 Street Sports Baseball [DHGR]
 Street Sports Basketball [DHGR]
@@ -64,17 +61,14 @@ The World's Greatest Baseball Game
 Winter Games
 
 //4am crack (unreleased)
-Beyond Castle Wolfenstein
 Bop N Wrestle
 Congo
 County Fair
 Frazzle
-Free Fall
 Galactic Attack
 Ghostbusters
 Pentapus
 Rear Guard
-Sea Dragon
 Ski Crazed
 Space Cadette
 
@@ -97,7 +91,6 @@ Copts and Robbers
 The Dam Busters
 Fight Night
 Hardball
-Hyper Head-On
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
@@ -111,7 +104,6 @@ Roach Hotel
 The Asteroid Field
 The Snapper
 Star Cruiser
-Star Thief
 Superstar Ice Hockey
 Trick Shot
 Wayout
