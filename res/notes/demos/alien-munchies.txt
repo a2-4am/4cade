@@ -1,0 +1,8 @@
+$1161: C0 -> D0 to disable sound (context is 2C30C0CAF560A200ACDD13)
+$1392: AD62C0 -> 4C0001 to exit on joystick button at title screen (context is AD61C01008AD62C03003)
+$139D: C9CAF026C9A0 -> 100A4C0001 to exit on keypress at title screen (context is AD00C0C9CAF026C9A0)
+$0B50: 4C4808 -> 4C0001 to exit on keypress during demo (context is AD62C030034C4808)
+$0B4B: AD62C0 -> 4C0001 to exit on joystick button during demo (context is AD61C01008AD62C030034C4808)
+$0F67: 300AAD00C0C9A0D027 -> 3005AD00C010294C0001 to exit on button or keypress during demo (context is AD61C0300AAD00C0C9A0D027)
+$092D: C992F00BC9 -> 100A4C0001 to exit on keypress during demo
+$1153: 4C4808 -> 4C0001 to exit after demo cycle (context is 8D8111CEFC15D0AA4C4808)
