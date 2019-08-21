@@ -362,6 +362,9 @@ ProDOS_fatal ;only for debugging, will be removed
         pla
         jsr    $fdda
         jmp    $ff65
+*=$bf58
+        !fill  $18
+
 ProDOS_prefix=$bfd0
 ;        !fill  $2e
 }
