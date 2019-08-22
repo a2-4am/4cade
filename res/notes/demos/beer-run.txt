@@ -1,0 +1,5 @@
+$419C: 4CFC40 -> 4C0001 to exit on keypress (context is 20C840604CFC40)
+$67D1: C0 -> D0 to disable sound (context is AD0E6FD0032C30C060)
+$6C62: A9008D -> 4C0001 to exit on keypress (context is 1860A9008D10C03860)
+$4085: 4CFC40 -> 4C0001 to exit on keypress (context is 4C36404CFC404CC840)
+$4088: 4CC840 -> 4C5003 to decrement custom counter and eventually exit after demo cycle (context is 4CC840A9048559)
