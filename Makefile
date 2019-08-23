@@ -81,7 +81,8 @@ asm: md
 	$(ACME) src/fx/fx.gr.fizzle.a
 
 dsk: md asm
-	$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32766KB >>build/log
+	#$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32767KB >>build/log
+	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	cp res/attract.conf build/ATTRACT.CONF >>build/log
@@ -142,6 +143,9 @@ dsk: md asm
 	rm -f build/X/**/LOADER.SYSTEM
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
+
+chd:	dsk
+	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
