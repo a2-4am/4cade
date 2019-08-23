@@ -103,7 +103,8 @@ if "%1" equ "dsk" (
 :dsk
 call :asm
 2>nul del build\log
-%CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
+rem %CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
+1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
@@ -160,4 +161,10 @@ cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
 
-echo usage: %0 clean / asm / dsk
+if "%1" equ "chd" (
+call :dsk
+chdman createhd -c none -isb 64 -i "build\%DISK%" -o "build\%DISK%.chd" >>build\log
+goto :EOF
+)
+
+echo usage: %0 clean / asm / dsk / chd
