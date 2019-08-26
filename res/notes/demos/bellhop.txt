@@ -1,0 +1,4 @@
+$602F: 8D10C0 -> 4C0001 to exit on keypress on title screen (context is AD00C010068D10C04C6160)
+$6BD4: AC1974 -> 4C0001 to exit on keypress during demo (context is AC1974100568684C6160)
+$66CA: AD197410034C0060A9008DD5 -> CED56630034C00604C000102 to decrement custom counter and eventually exit after demo cycles
+no sound
