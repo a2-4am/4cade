@@ -124,6 +124,14 @@
 +
 }
 
+; requires setting zpCharMask in zero page to #$FF or #$DF before use
+!macro   FORCE_UPPERCASE_IF_REQUIRED {
+         cmp   #$E1
+         bcc   +
+         and   zpCharMask
++
+}
+
 ; does not set page 1 or 2
 !macro   HGR_MODE {
          bit   $C057

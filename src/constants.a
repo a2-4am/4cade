@@ -70,6 +70,7 @@ zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 5 = 1 if machine has a VidHD card
                           ; bit 4 = 1 if machine is a IIgs
                           ; only used during init, then copied to MachineStatus in LC RAM
+zpCharMask   = $F1        ; only uesd during init, then clobbered
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
 

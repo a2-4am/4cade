@@ -16,8 +16,18 @@
          jsr   ROM_TEXT
          jsr   ROM_HOME
          jsr   Has64K                ; check for 64K (required)
-         bcs   @no64K
-         jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
+         bcc   +
+
+         ldy   #@no64Klen
+-        lda   @s_no64K,y
+         sta   $6B6,y
+         dey
+         bpl   -
+@hang    bmi   @hang
+@s_no64K !raw  "REQUIRES 64K"
+@no64Klen=*-@s_no64K
+
++        jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
          php
          bcc   +
@@ -35,6 +45,64 @@
                                      ;     bit 5 = 1 if VidHD
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
+
+         lda   ROM_MACHINEID
+         cmp   #$06
+         beq   +
+         lda   #$DF
+         +HIDE_NEXT_2_BYTES
++        lda   #$FF
+         sta   zpCharMask
+
+         ldy   #8
+-        lda   TOTAL,y
+         ora   #$80
+         sta   $04B7,y
+         dey
+         bpl   -
+         ldy   #10
+-        lda   REPLAY,y
+         ora   #$80
+         sta   $0536,y
+         dey
+         bpl   -
+
+         ldy   LoaderVersion
+-        lda   LoaderVersion,y
+         ora   #$80
+         +FORCE_UPPERCASE_IF_REQUIRED
+         sta   $07CF,y
+         dey
+         bne   -
+
+         bit   zpMachineStatus
+         bvc   ++
+         bpl   +
+         +LDADDR Loader128KAndJoystick
+         bne   @ShowLoadScreen
++
+         +LDADDR Loader128K
+         bne   @ShowLoadScreen
+++
+         bpl   +
+         +LDADDR Loader64KAndJoystick
+         bne   @ShowLoadScreen
++
+         +LDADDR Loader64K
+@ShowLoadScreen
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         tay
+-        lda   (PTR),y
+         ora   #$80
+         +FORCE_UPPERCASE_IF_REQUIRED
+@load    sta   $07F7
+         dec   @load+1
+         dey
+         bne   -
+
+@Relocate
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
                                      ; ProRWTS2 disk-data live at $D000-D3FF
@@ -60,16 +128,6 @@
 
          jmp   OneTimeSetup
 
-@no64K
-         ldy   #@no64Klen
--        lda   @s_no64K,y
-         sta   $6B6,y
-         dey
-         bpl   -
-@hang    bmi   @hang
-@s_no64K !raw  "REQUIRES 64K"
-@no64Klen=*-@s_no64K
-
          ; ProRWTS2 has its own function to relocate itself
          !source "src/prorwts2.a"
 ProRWTSBuffer
@@ -79,6 +137,26 @@ ProRWTSBuffer
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.normfast.a"
+TOTAL
+         !text   "T O T A L"
+REPLAY
+         !text   "R E P L A Y"
+LoaderVersion
+         !byte   4
+         !text   "v2.0"
+Loader64K
+         !byte   3
+         !text   "64K"
+Loader64KAndJoystick
+         !byte   14
+         !text   "joystick + 64K"
+Loader128K
+         !byte   4
+         !text   "128K"
+Loader128KAndJoystick
+         !byte   15
+         !text   "joystick + 128K"
+
 *=ProRWTSBuffer+512                  ; ProRWTS needs a 512-byte buffer for its init function
                                      ; so we reuse as much of the 1-time code as possible
                                      ; and fill the rest with zeros
