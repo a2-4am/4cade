@@ -54,9 +54,12 @@ BrowseMode
 +
          cmp   #$89                  ; TAB switches to mini attract mode
          bne   +                     ; temporarily
-         ldx   #kBrowseTab
+-        ldx   #kBrowseTab
          bne   @BrowseDispatch       ; always branches
 +
+         cmp   #$A0                  ; SPACE = TAB because ][+ doesn't have TAB
+         beq   -
+
          cmp   #$BF                  ; '?' display scredits
          bne   +
 -        ldx   #kBrowseCredits
