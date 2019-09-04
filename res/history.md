@@ -5,6 +5,7 @@
  - Asteroid Blaster
  - Aztec
  - Beyond Castle Wolfenstein
+ - Buck Rogers: Planet of Zoom
  - Free Fall
  - Hyper Head-On
  - Indiana Jones
@@ -19,6 +20,8 @@
  - Alien Typhoon
  - Axis Assassin
  - Beer Run
+ - Bellhop
+ - Brainteaser Blvd
  - Dig Dug
  - Falcons
  - Labyrinth
