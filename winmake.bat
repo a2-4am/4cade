@@ -26,6 +26,7 @@ if "%1" equ "asm" (
 2>nul md build\TITLE.DHGR
 2>nul md build\ACTION.HGR
 2>nul md build\ACTION.DHGR
+2>nul md build\ACTION.GR
 2>nul md build\ARTWORK.SHR
 2>nul md build\ATTRACT
 2>nul md build\SS
@@ -90,6 +91,7 @@ for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" build\out.txt') do set _m
 %ACME% src\fx\fx.hgr.star.a
 %ACME% src\fx\fx.hgr.star.white.a
 %ACME% src\fx\fx.shr.fizzle.a
+%ACME% src\fx\fx.gr.fizzle.a
 goto :EOF
 )
 
@@ -107,6 +109,10 @@ rem %CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
 1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
+1>nul copy /y res\attract.conf build\ATTRACT.CONF >>build\log
+1>nul copy /y res\dfx.conf build\DFX.CONF >>build\log
+1>nul copy /y res\fx.conf build\FX.CONF >>build\log
+1>nul copy /y res\games.conf build\GAMES.CONF >>build\log
 1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
 1>nul copy /y res\credits.txt build\CREDITS >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
@@ -130,6 +136,9 @@ cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "4000" >>build\log
 cscript /nologo bin\rsync.js res\action.dhgr\* build\ACTION.DHGR >>build\log
 cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "build\ACTION.DHGR" >>build\log
+cscript /nologo bin\rsync.js res\action.gr\* build\ACTION.GR >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.GR "06" "6000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "build\ACTION.GR" >>build\log
 cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
 cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "build\ARTWORK.SHR" >>build\log
@@ -141,6 +150,12 @@ cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
 cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build\DEMO" >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
 cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
@@ -151,12 +166,6 @@ echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )

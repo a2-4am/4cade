@@ -1252,7 +1252,8 @@ unrdrvoff4 = unrelocdsk + (* - reloc)
 rdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-setaux          sta     CLRAUXWR, x
+setaux          sta     CLRAUXRD, x
+                sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 
@@ -2686,7 +2687,8 @@ hddresparse
 hddrdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-hddsetaux       sta     CLRAUXWR, x
+hddsetaux       sta     CLRAUXRD, x
+                sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 } ;rwts_mode
