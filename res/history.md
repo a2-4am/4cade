@@ -36,8 +36,7 @@
  - Mr. Do no longer crashes on level 8
  - Prince of Persia no longer crashes on startup
  - Zaxxon no longer crashes after a game ends
- - Battlezone no longer crashes on the //c
- - Axis Assassin no longer crashes on the //c
+ - Several games no longer crash on the //c
  - Sneakers demo has corrected graphics
  - Plasmania demo has corrected graphics
  - properly detect VidHD in slot 3
