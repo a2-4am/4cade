@@ -3,8 +3,8 @@
 ; Checks whether computer has functioning language card (64K)
 ;
 ; in:    none
-; out:   C set if 64K detected
-;        C clear if 64K not detected
+; out:   C clear if 64K detected
+;        C set if 64K not detected
 ;        all other flags and registers clobbered
 ;        ROM in memory (not LC RAM bank)
 ;------------------------------------------------------------------------------

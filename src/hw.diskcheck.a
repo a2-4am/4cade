@@ -1,0 +1,23 @@
+;------------------------------------------------------------------------------
+; IsLowPartition
+; Checks whether image was run from partition 1-4
+;
+; in:    none
+; out:   C clear if partition is acceptable
+;        C set if partition is not acceptable
+;        all other flags and registers clobbered
+;------------------------------------------------------------------------------
+
+DEVADR01HI = $bf11      ;ProDOS constant
+DEVNUM     = $bf30      ;ProDOS constant
+
+IsLowPartition
+         lda   DEVNUM
+         and   #$70
+         lsr
+         lsr
+         lsr
+         tay
+         lda   DEVADR01HI, y
+         cmp   #$c8
+         rts

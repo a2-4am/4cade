@@ -15,7 +15,19 @@
          sta   WRITEMAINMEM
          jsr   ROM_TEXT
          jsr   ROM_HOME
-         jsr   Has64K                ; check for 64K (required)
+         jsr   IsLowPartition        ; check if running from partition 1-4 (required)
+         bcc   +
+
+         ldy   #@noHighPartlen
+-        lda   @s_noHighPart,y
+         sta   $6B1,y
+         dey
+         bpl   -
+         bmi   @hang
+@s_noHighPart !scrxor $80,"RUN FROM PARTITION 1-4"
+@noHighPartlen=(*-@s_noHighPart)-1
+
++        jsr   Has64K                ; check for 64K (required)
          bcc   +
 
          ldy   #@no64Klen
@@ -24,8 +36,8 @@
          dey
          bpl   -
 @hang    bmi   @hang
-@s_no64K !raw  "REQUIRES 64K"
-@no64Klen=*-@s_no64K
+@s_no64K !scrxor $80,"REQUIRES 64K"
+@no64Klen=(*-@s_no64K)-1
 
 +        jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
@@ -132,6 +144,7 @@
          !source "src/prorwts2.a"
 ProRWTSBuffer
          ; these routines will only be called once, from main memory, before relocating to language card
+         !source "src/hw.diskcheck.a"
          !source "src/hw.iigs.a"
          !source "src/hw.vidhd.a"
          !source "src/hw.memcheck.a"
