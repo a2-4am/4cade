@@ -10,7 +10,9 @@
 
 Credits
 ; clobbers all
-         jsr   .LoadCredits
+         +LDADDR .CreditsFile
+         jsr   SetPath
+         jsr   LoadFile              ; loads at $8000
          jsr   ClearOffscreen
          lda   OffscreenPage
          ror                         ; draw on offscreen page
@@ -21,14 +23,6 @@ Credits
          jsr   ShowOtherPage
          bit   CLEARKBD
          clc
-         rts
-
-.LoadCredits
-; [private] clobbers all
-         +LDADDR .CreditsFile
-+
-         jsr   SetPath
-         jsr   LoadFile              ; loads at $8000
          rts
 .CreditsFile
          !byte 7

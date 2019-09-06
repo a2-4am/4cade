@@ -25,50 +25,17 @@ BrowseMode
 
 .BrowseModeInputLoop
          jsr   WaitForKeyFor30Seconds
-         bit   CLEARKBD
          jsr   ResetInputTimeout
 
-         cmp   #$88                  ; left arrow = previous
-         bne   +
--        ldx   #kBrowsePrevious
+         ldy   #kNumBrowseKeys
+-        dey
+         bmi   @noKeyMatch
+         cmp   .BrowseKeys,y
+         bne   -
+         ldx   .BrowseKeyDispatch,y
          bne   @BrowseDispatch       ; always branches
-+        cmp   #$8B                  ; up arrow is same as left arrow
-         beq   -
 
-         cmp   #$95                  ; right arrow = next
-         bne   +
--        ldx   #kBrowseNext
-         bne   @BrowseDispatch       ; always branches
-+        cmp   #$8A                  ; down arrow is same as right arrow
-         beq   -
-
-         cmp   #$9B                  ; Esc switches to search mode
-         bne   +
-         ldx   #kBrowseExitToSearch
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$8D                  ; ENTER launches the current game
-         bne   +
-         ldx   #kBrowseLaunch
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$89                  ; TAB switches to mini attract mode
-         bne   +                     ; temporarily
--        ldx   #kBrowseTab
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$A0                  ; SPACE = TAB because ][+ doesn't have TAB
-         beq   -
-
-         cmp   #$BF                  ; '?' display scredits
-         bne   +
--        ldx   #kBrowseCredits
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$AF                  ; '/' also displays credits
-         beq   -
-
-         and   #$7F                  ; strip high bit for search characters
+@noKeyMatch
          jsr   IsSearchKey
          beq   +
          jsr   SoftBell              ; beep on invalid input
@@ -77,15 +44,10 @@ BrowseMode
          ldx   #kBrowseSearch
          ; execution falls through here
 @BrowseDispatch
-         pha                         ; save key pressed
-         txa
-         asl
-         tax
-         lda   .BrowseDispatchTable,x
-         sta   @j+1
-         lda   .BrowseDispatchTable+1,x
-         sta   @j+2
-         pla                         ; restore key pressed
+         ldy   .BrowseDispatchTableLo,x
+         sty   @j+1
+         ldy   .BrowseDispatchTableHi,x
+         sty   @j+2
 @j       jsr   $FDFD                 ; SMC
          jmp   .BrowseModeInputLoop
 
@@ -187,14 +149,46 @@ kBrowseTab      = 4
 kBrowseLaunch   = 5
 kBrowseCredits  = 6
 
-.BrowseDispatchTable
-         !word .OnSearch
-         !word .OnPrevious
-         !word .OnNext
-         !word SearchMode
-         !word .OnTab
-         !word .OnLaunch
-         !word Credits
+.BrowseDispatchTableLo
+         !byte <.OnSearch
+         !byte <.OnPrevious
+         !byte <.OnNext
+         !byte <SearchMode
+         !byte <.OnTab
+         !byte <.OnLaunch
+         !byte <Credits
+.BrowseDispatchTableHi
+         !byte >.OnSearch
+         !byte >.OnPrevious
+         !byte >.OnNext
+         !byte >SearchMode
+         !byte >.OnTab
+         !byte >.OnLaunch
+         !byte >Credits
+
+kNumBrowseKeys = 10                  ; number of entries in next 2 tables (each)
+.BrowseKeys
+         !byte $AF                   ; '/' = credits
+         !byte $BF                   ; '?' = credits
+         !byte $A0                   ; Space = mini attract mode
+         !byte $89                   ; TAB = mini attract mode
+         !byte $8D                   ; ENTER = launch current game
+         !byte $9B                   ; Esc = switch to search mode
+         !byte $8A                   ; down arrow = next
+         !byte $95                   ; right arrow = next
+         !byte $8B                   ; up arrow = previous
+         !byte $88                   ; left arrow = previous
+.BrowseKeyDispatch
+         !byte kBrowseCredits
+         !byte kBrowseCredits
+         !byte kBrowseTab
+         !byte kBrowseTab
+         !byte kBrowseLaunch
+         !byte kBrowseExitToSearch
+         !byte kBrowseNext
+         !byte kBrowseNext
+         !byte kBrowsePrevious
+         !byte kBrowsePrevious
 
 BrowseSelectedIndex
          !byte $FF
