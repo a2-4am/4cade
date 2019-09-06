@@ -6,17 +6,18 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E300 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E500 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...end of data and start of code are approximate, in between is unused...
 ; ...if they ever overlap, things will go boom...
-; E600..FFFB - main program code
+; E800..FFFB - main program code
 ; FFFC..FFFF - reset and other vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D5FF - ProRWTS code
 ; D600..D9FF - HGR font data
-; DA00..DEFF - unused
+; DA00..DCFF - ProRWTS glue code
+; DD00..DEFF - unused
 ; DF00..DFFF - backup of stack (during gameplay and self-running demos)
 ;------------------------------------------------------------------------------
 
