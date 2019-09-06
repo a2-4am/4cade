@@ -102,6 +102,8 @@ gGamesListStore
 }
 LastMover
          !source "src/ui.font.data.a"
+         !source "src/prodos.impl.a"
+EvenLasterMover
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2

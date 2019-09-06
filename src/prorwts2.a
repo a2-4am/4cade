@@ -380,6 +380,7 @@ adjpath         tya
                 lsr
                 tay
                 ldx     DEVADR01HI, y
+!if allow_extend = 1 {
                 cpx     #$c8
                 bcc     set_slot
                 ldx     #$c8
@@ -403,6 +404,7 @@ adjpath         tya
                 ldy     #$ff
                 lda     (bloklo), y
                 beq     -
+}
 
 set_slot        stx     slot + 2
 !if allow_extend = 1 {

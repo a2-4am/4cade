@@ -128,9 +128,9 @@
          inc   @FM+5
          bne   @FM
 
-+        ldy   #$04
++        ldy   #>(255 + EvenLasterMover - LastMover)
 @LM      lda   LastMover,x           ; relocate font data to $D600 in RAM bank 2
-         sta   $D600,x
+         sta   $D600,x               ; and pseudo-ProDOS to $DA00 in RAM bank 2
          inx
          bne   @LM
          inc   @LM+2
