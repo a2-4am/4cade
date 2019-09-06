@@ -156,7 +156,7 @@ REPLAY
          !text   "R E P L A Y"
 LoaderVersion
          !byte   10
-         !text   "v2.0-alpha"
+         !text   "v2.0-beta1"
 Loader64K
          !byte   3
          !text   "64K"
