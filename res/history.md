@@ -6,6 +6,7 @@
  - Aztec
  - Beyond Castle Wolfenstein
  - Buck Rogers: Planet of Zoom
+ - Diamond Mine
  - Free Fall
  - Hyper Head-On
  - Indiana Jones
@@ -41,6 +42,7 @@
  - Plasmania demo has corrected graphics
  - properly detect VidHD in slot 3
  - properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
+ - no longer crashes after loading a double hi-res screenshot from a SCSI hard drive
  - pressing Space will now also show a game's screenshots, as well as Tab
 
 # Revision 1 / serial number 190720
