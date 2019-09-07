@@ -39,11 +39,12 @@
  - Several games no longer crash on the //c
  - Sneakers demo has corrected graphics
  - Plasmania demo has corrected graphics
- - properly detect VidHD in slot 3
- - properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
- - no longer crashes after loading a double hi-res screenshot from a SCSI hard drive
- - pressing Space will now also show a game's screenshots, as well as Tab
+ - Properly detect VidHD in slot 3
+ - Properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
+ - No longer crashes after loading a double hi-res screenshot from a SCSI hard drive
+ - Pressing Space will now also show a game's screenshots, as well as Tab
  - Small high score files (e.g. Apple Cider Spider) are saved
+ - Disk image is now exactly 32 MB
 
 # Revision 1 / serial number 190720
 
