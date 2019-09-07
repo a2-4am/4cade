@@ -248,6 +248,12 @@ ProDOS_enter
     adc    #1
     and    #$fe
     sta    sizehi
+    lda    bleftlo
+    adc    #$ff
+    lda    blefthi
+    adc    #1
+    and    #$fe
+    sta    blefthi
 
 @skip_align
     jsr    hddrdwrpart
