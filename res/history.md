@@ -43,6 +43,7 @@
  - properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
  - no longer crashes after loading a double hi-res screenshot from a SCSI hard drive
  - pressing Space will now also show a game's screenshots, as well as Tab
+ - Small high score files (e.g. Apple Cider Spider) are saved
 
 # Revision 1 / serial number 190720
 
