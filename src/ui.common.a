@@ -178,13 +178,13 @@ WaitForKeyFor30Seconds
 ; yell at the user, but, like, gently
 ;
 ; in:    none
-; out:   all registers and flags preserved
+; out:   C clear
+;        Y preserved
+;        A=0
+;        X=0
+;        all flags preserved
 ;------------------------------------------------------------------------------
 SoftBell
-         php
-         pha
-         txa
-         pha
          ldx   #32
 -        lda   #2
          jsr   @wait
@@ -194,10 +194,7 @@ SoftBell
          bit   SPEAKER
          dex
          bne   -
-         pla
-         tax
-         pla
-         plp
+         clc
          rts
 @wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
          sec

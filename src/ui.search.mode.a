@@ -73,6 +73,9 @@ SearchMode
          bcc   .SearchModeInputLoop  ; if carry is clear, we're done
          bcs   SearchMode            ; if carry is set, force full redraw
 
+.OnError
+         jmp   SoftBell              ; Beep on invalid input and start over.
+
 .OnClear
          ldx   InputLength
          bne   +
@@ -80,19 +83,18 @@ SearchMode
          jmp   MegaAttractMode       ; mega-attract mode
 +        ldx   #0                    ; Esc with input clears the input
          stx   InputLength
-         jmp   .OnInputChanged
+         beq   .OnInputChanged       ; always branches
 
 .OnBack
          ldx   InputLength
-         bne   +
-         jmp   SoftBell
-+        dec   InputLength
+         beq   .OnError
+         dec   InputLength
          jmp   .OnInputChanged
 
 .OnTab
          ldx   SelectedIndex
          cpx   #$FF
-         beq   .ClearAndReturn
+         beq   .OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
          beq   .OnLaunch             ; by pressing Enter, launch the game
@@ -102,7 +104,7 @@ SearchMode
 .OnLaunch
          ldx   SelectedIndex
          cpx   #$FF
-         beq   .ClearAndReturn
+         beq   .OnError
          jsr   PlayGameFromSearch
          sec                         ; tell caller to redraw UI
          rts
@@ -110,13 +112,8 @@ SearchMode
 .OnSearch
          ldx   InputLength
          cpx   #MaxInputLength
-         bne   +
-.OnError
-         jsr   SoftBell              ; Beep on invalid input and start over.
-.ClearAndReturn
-         clc
-         rts
-+        sta   InputBuffer,x
+         beq   .OnError
+         sta   InputBuffer,x
          inc   InputLength
          ; execution falls through here
 .OnInputChanged
