@@ -20,21 +20,25 @@
 
 GetGameDisplayName
 ; in:    A/Y points to game filename
+;        X = #$60 if we should only look in gGamesListStore for a match
+;        X = #$EA if we should also look in gSlideshowStore
 ; out:   C clear if game exists in gGamesListStore, and
 ;          A/Y points to game display name (but see hack notes below)
 ;        C set if game does not exist (this can happen because slideshows
 ;          list games that require a joystick, but the games list parser
 ;          filters out joystick-only games if the machine doesn't have a
 ;          joystick)
+         stx   @maybeExit
          +STAY @key
+         +STAY @slideshowKey
          jsr   okvs_get
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
          bcc   @exit
-         ; Hack to allow self-running demos that don't correspond to a game
-         ; filename. If the name ends in a '.', accept it unconditionally.
-         ; The filename is its own display name. Launching this fake game
-         ; will of course fail, so don't do that.
+; Hack to allow self-running demos that don't correspond to a game
+; filename. If the name ends in a '.', accept it unconditionally.
+; The filename is its own display name. Launching this fake game
+; will of course fail, so don't do that.
          +LDAY @key
          +STAY PARAM
          ldy   #0
@@ -44,6 +48,23 @@ GetGameDisplayName
          cmp   #"."
          beq   @forceGoodResult
          sec
+@maybeExit
+         !byte $00                   ; SMC
+; if the key is still not found, AND the caller said to try this, then try
+; getting the value of the current record from gSlideshowStore
+; (some games have multiple action screenshots, in which case the filename of
+; the action screenshot is not the game name, but the value is)
+         jsr   okvs_get
+         !word gSlideshowStore
+@slideshowKey
+         !word $FDFD                 ; SMC
+         +STAY @key3
+         jsr   okvs_get
+         !word gGamesListStore
+@key3    !word $FDFD                 ; SMC
+; note that the game might still not be found (C will be set by okvs_get),
+; which can happen if the game can't be played due to memory or joystick
+; requirements
          rts
 @forceGoodResult
          +LDAY @key

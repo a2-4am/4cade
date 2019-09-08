@@ -134,9 +134,16 @@ kDFXConfFile
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
+; try to get the human-readable name of this game from gGamesListStore
          +LDAY SAVE
+         ldx   #$60
          jsr   GetGameDisplayName
-         bcs   @exit                 ; not found, so just skip this title
+; if game is not found (C will be set here), it means it can't be played on
+; this machine due to memory or joystick requirements, so we don't display
+; it in slideshows
+         bcs   @exit
+; (we don't actually use the display name in the title slideshow, we just
+; reuse the function for convenience)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRTitleDirectory
@@ -164,13 +171,22 @@ kDFXConfFile
 
          lda   KBD
          bpl   +
+@actionExit
          rts
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
+; try to get the human-readable name of this game from gGamesListStore
+; or gSlideshowStore
          +LDAY SAVE
+         ldx   #$EA
          jsr   GetGameDisplayName
-         bcs   @exit                 ; not found, so just skip this title
+; if game is not found (C will be set here), it means it can't be played on
+; this machine due to memory or joystick requirements, so we don't display
+; it in slideshows
+         bcs   @actionExit
+; (we don't actually use the display name in the DHGR action slideshow, we
+; just reuse the function for convenience)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          +LDADDR kDHGRActionDirectory

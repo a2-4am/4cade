@@ -180,6 +180,7 @@ RunAttractModule
 ; language card or auxiliary memory.
 
          +LDAY @key
+         ldx   #$60
          jsr   GetGameDisplayName
          bcc   +                     ; if game doesn't exist, skip the demo
          rts

@@ -52,12 +52,16 @@ HGRSingle
 +
          stx   gCurrentlyVisibleSlideshowIndex
 
-         ; check if game exists in the catalog (it might not if it requires a
-         ; joystick and the machine doesn't have one, or if it requires 128K
-         ; but the machine only has 64K)
+; try to get the human-readable name of this game from gGamesListStore
          +LDAY SAVE
+         ldx   #$60
          jsr   GetGameDisplayName
-         bcs   @exit                 ; not found, so just skip this title
+; if game is not found (C will be set here), it means it can't be played on
+; this machine due to memory or joystick requirements, so we don't display
+; it in slideshows
+         bcs   @exit
+; (we don't actually use the display name in the title slideshow, we just
+; reuse the function for convenience)
 
          ; load HGR screenshot at $4000
          +LOAD_FILE kHGRTitleDirectory, SAVE
@@ -79,7 +83,6 @@ HGRSingle
 ;------------------------------------------------------------------------------
 .HGRActionCallback
          +STAY SAVE
-         +STAY @slideshowKey
 
          lda   KBD
          bpl   +
@@ -92,28 +95,17 @@ HGRSingle
          +LOAD_FILE kHGRActionDirectory, SAVE
 
 ; try to get the human-readable name of this game from gGamesListStore
-; and display it in the bottom-left corner
+; or gSlideshowStore
          +LDAY SAVE
+         ldx   #$EA
          jsr   GetGameDisplayName
-         bcc   @foundname
-; if the key is not found, try getting the value of the current record from
-; gSlideshowStore and using that instead
-; (some games have multiple action screenshots, in which case the filename of
-; the action screenshot is not the game name, but the value is)
-         jsr   okvs_get
-         !word gSlideshowStore
-@slideshowKey
-         !word $FDFD                 ; SMC
-         +STAY @key3
-         jsr   okvs_get
-         !word gGamesListStore
-@key3    !word $FDFD                 ; SMC
-         bcs   @actionExit           ; game still not found, bail
-                                     ; (could happen if game can't be played
-                                     ; due to memory or joystick requirements)
-@foundname
+; if game name is not found (C will be set here), it means the game
+; can't be played due to memory or joystick requirements, so we hide
+; it from slideshows
+         bcs   @actionExit
+
+; found the game, display its name in the bottom-left corner
          +STAY SAVE
-@drawname
          ldx   #0
          stx   HTAB
          ldx   #22
