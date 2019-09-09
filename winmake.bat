@@ -34,8 +34,8 @@ if "%1" equ "asm" (
 2>nul md build\FX
 
 2>build\out.txt %ACME% -r build\4cade.lst src\4cade.a
-for /f "tokens=2,3 delims=)" %%q in ('find "RELBASE =" build\out.txt') do set _make=%%q
-%ACME% -DRELBASE=$%_make:~-4% -r build\4cade.lst src\4cade.a
+for /f "tokens=*" %%q in (build\out.txt) do set _make=%%q
+%ACME% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 %ACME% src\fx\fx.cover.fade.a
 %ACME% src\fx\fx.dhgr.fizzle.a
 %ACME% src\fx\fx.dhgr.fizzle.white.a
