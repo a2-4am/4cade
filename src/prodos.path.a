@@ -60,28 +60,31 @@ kFXDirectory
 ; in:    A contains low byte of address of length-prefixed string to append
 ;        Y contains high byte of address of length-prefixed string to append
 ; out:   all registers and flags clobbered
-;        $00/$01 clobbered
+;        $02/$03 (PTR/PTR+1) clobbered
 ;        gPathname updated with concatenated length-prefixed string
 ;------------------------------------------------------------------------------
 SetPath
+kRootDirectory=*+1
          ldx   #0
          stx   gPathname
          ; execution falls through here
 AddToPath
-         +STAY $00
+         +STAY PTR
          ldx   gPathname             ; current pathname length
          ldy   #0
-         lda   ($00),y               ; length of this segment
+         lda   (PTR),y               ; length of this segment
+         beq   @done
          tay
          iny
          sty   @len
          ldy   #$01
--        lda   ($00),y
+-        lda   (PTR),y
          sta   gPathname+1,x
          inx
          iny
 @len=*+1
          cpy   #$FD                  ; SMC
          bcc   -
+@done
          stx   gPathname
          rts

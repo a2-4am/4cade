@@ -68,7 +68,7 @@ kSFXFizzleFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .SHRArtworkCallback
-         +STAY PTR
+         +STAY SAVE
 
          lda   KBD
          bpl   +
@@ -81,7 +81,7 @@ kSFXFizzleFile
          ; load SHR artwork at $2000/main (not aux)
          +LDADDR kSHRArtworkDirectory
          jsr   SetPath
-         +LDAY PTR
+         +LDAY SAVE
          jsr   AddToPath
          jsr   LoadFile
 
