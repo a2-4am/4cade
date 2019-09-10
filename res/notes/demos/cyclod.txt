@@ -1,0 +1,4 @@
+$8B20: AE10C08D2770 -> 10034C0001EA to exit on keypress (context is AD00C0AE10C08D2770)
+$7CED: C0 -> D0 to disable sound (context is B920C0CE4E70D0EF60)
+$7381: 8D2770AD10C0 -> 10034C0001EA to exit on keypress (context is AD00C08D2770AD10C0209587)
+$89EF: 4C5575 -> 4C0001 to exit at end of demo cycle (context is A9018D5D704C5575)

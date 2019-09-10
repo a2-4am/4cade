@@ -25,6 +25,7 @@
  - Beer Run
  - Bellhop
  - Brainteaser Blvd
+ - Cyclod
  - Dig Dug
  - Falcons
  - Labyrinth
