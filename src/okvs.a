@@ -67,8 +67,7 @@
 ;          +1 [word] handle to storage space
 ; out:   $00/$01 clobbered
 ;        $02/$03 clobbered
-;        A,Y=0
-;        X clobbered
+;        all registers clobbered
 ;------------------------------------------------------------------------------
 okvs_init
          +PARAMS_ON_STACK 2
