@@ -81,6 +81,7 @@ RestoreStackNextTime
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
          !source "src/ui.font.a"
+         ; add new files above here so ui.common stays last
          !source "src/ui.common.a"
 MachineStatus
          !byte 0

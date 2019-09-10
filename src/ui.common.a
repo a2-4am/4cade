@@ -58,10 +58,15 @@ ReturnToPlay
          !byte $0D
          !text " to play"
 
-GetOffscreenAddress
+;------------------------------------------------------------------------------
+; GetOffscreenAddress
+; get high byte of HGR page that is currently not showing
+;
 ; in:    none
 ; out:   A = high byte of offscreen HGR page (#$20 or #$40)
 ;        preserves X/Y
+;------------------------------------------------------------------------------
+GetOffscreenAddress
          lda   OffscreenPage
          beq   +
          lda   #$40
@@ -69,12 +74,26 @@ GetOffscreenAddress
 +        lda   #$20
          rts
 
+;------------------------------------------------------------------------------
+; LoadTitleOffscreen
+; load title screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
 LoadTitleOffscreen
-; clobbers all
          +LDADDR .TitleFile
          bne   +                     ; Always branches, because Y is loaded
                                      ; last with the high byte of the address,
                                      ; which is never 0. I miss my 65c02.
+
+;------------------------------------------------------------------------------
+; LoadCoverOffscreen
+; load cover screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
 LoadCoverOffscreen
 ; clobbers all
          +LDADDR .CoverFile
@@ -95,8 +114,14 @@ LoadCoverOffscreen
          !byte 5
          !text "COVER"
 
+;------------------------------------------------------------------------------
+; CoverFade
+; load cover screen and animate per-character fade
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
 CoverFade
-; clobbers all
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage
          lda   OffscreenPage
@@ -113,8 +138,14 @@ CoverFade
          !byte 9
          !text "COVERFADE"
 
+;------------------------------------------------------------------------------
+; DrawSearchBarOffscreen
+; draw 2-line search UI on the HGR page that is not currently showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
 DrawSearchBarOffscreen
-; clobbers all
          LDA   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
@@ -156,10 +187,15 @@ ClearOffscreen
          bne   @a
          rts
 
-ShowOtherPage
+;------------------------------------------------------------------------------
+; ShowOtherPage
+; switch to the HGR page that is not currently showing
+;
 ; in:    none
 ; out:   A = new value of OffscreenPage
 ;        preserves X/Y
+;------------------------------------------------------------------------------
+ShowOtherPage
          jsr   ToggleOffscreenPage
          bne   +
          bit   PAGE2                 ; show page 2
@@ -167,49 +203,20 @@ ShowOtherPage
 +        bit   PAGE1                 ; show page 1
          rts
 
-ToggleOffscreenPage
+;------------------------------------------------------------------------------
+; ToggleOffscreenPage
+; switch the internal variable that tracks which HGR page is showing
+; (does not affect screen)
+;
 ; in:    none
 ; out:   A = new value of OffscreenPage
 ;        preserves X/Y
+;------------------------------------------------------------------------------
+ToggleOffscreenPage
          lda   OffscreenPage
          eor   #$01
          sta   OffscreenPage
          rts
-
-;------------------------------------------------------------------------------
-; WaitForKeyFor30Seconds
-; does what it says on the tin
-;
-; in:    none
-; out:   if user presses a key before the timer runs out, exits with A = key
-;        otherwise exits via MegaAttractMode
-;        X/Y preserved
-;------------------------------------------------------------------------------
-WaitForKeyFor30Seconds
-         lda   KBD
-         bmi   @gotKey               ; if we have a key on entry, exit with it in A
-
-         lda   #$16                  ; initialize timeout counters
-         sta   Timeout
-         sta   Timeout+1
-         sta   Timeout+2
-@loop
-         lda   KBD
-         bmi   @gotKey
-
-         inc   RNDSEED+1             ; these are only ever incremented, never
-         bne   +                     ; reset (may be used as a pseudorandom
-         inc   RNDSEED               ; seed)
-+
-         dec   Timeout               ; these are a 3-byte timeout counter
-         bne   @loop                 ; that counts down from a number set
-         dec   Timeout+1             ; in .ResetInputTimeout and reset
-         bne   @loop                 ; on every keypress (whether or not
-         dec   Timeout+2             ; the key leads to an action)
-         bne   @loop
-         jsr   CoverFade             ; no input for ~30 seconds, switch to
-         jmp   MegaAttractMode       ; mega-attract mode
-@gotKey  rts
 
 ;------------------------------------------------------------------------------
 ; SoftBell
@@ -385,5 +392,38 @@ IsSearchKey
 @goodkey
          ldx   #0
          rts
+
+; /!\ keep this last in the file to ensure it doesn't cross a page boundary /!\
+;------------------------------------------------------------------------------
+; WaitForKeyFor30Seconds
+; does what it says on the tin
+;
+; in:    none
+; out:   if user presses a key before the timer runs out, exits with A = key
+;        otherwise exits via MegaAttractMode
+;        X/Y preserved
+;------------------------------------------------------------------------------
+WaitForKeyFor30Seconds
+         lda   #$16                  ; initialize timeout counters
+         sta   Timeout
+         sta   Timeout+1
+         sta   Timeout+2
+@loop
+         lda   KBD
+         bmi   @gotKey
+
+         inc   RNDSEED+1             ; these are only ever incremented, never
+         bne   +                     ; reset (may be used as a pseudorandom
+         inc   RNDSEED               ; seed)
++
+         dec   Timeout               ; these are a 3-byte timeout counter
+         bne   @loop                 ; that counts down from a number set
+         dec   Timeout+1             ; in .ResetInputTimeout and reset
+         bne   @loop                 ; on every keypress (whether or not
+         dec   Timeout+2             ; the key leads to an action)
+         bne   @loop
+         jsr   CoverFade             ; no input for ~30 seconds, switch to
+         jmp   MegaAttractMode       ; mega-attract mode
+@gotKey  rts
 
 }
