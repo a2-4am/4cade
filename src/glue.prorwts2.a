@@ -86,7 +86,7 @@ LoadFile
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 6 bytes of parameters:
+; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] address of length-prefixed pathname
 ;          +3 [word] address of length-prefixed filename
 ; out:   all flags clobbered
