@@ -106,7 +106,7 @@ LastMover
          !source "src/ui.font.data.a"
          !source "src/ui.font.a"
          !source "src/prodos.impl.a"
-  !if * > $DEFF {
+  !if * > $DFEF {
     !error "code is too large: ends at ", *
 ;  } else {
 ;    !warn "LCRAM2 ends at ", *
