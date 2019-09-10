@@ -16,7 +16,7 @@
 ; Call init() once. Call it again to reset the store to 0 keys.
 ;
 ; Keys are maintained in a singly linked list, so most functions are O(n).
-; len() is O(1) though.
+; len() and append() are O(1) though.
 ;
 ; Key count is stored as a byte, so a store can hold a maximum of 255 keys.
 ;
@@ -47,7 +47,8 @@
 ;
 ; Store
 ;   +0 length (byte)
-;   +1 Record
+;   +1 free space pointer after last record (word)
+;   +3 Record
 ;   ...Record...
 ;   ...Record...
 ;
@@ -75,6 +76,19 @@ okvs_init
          ldy   #0
          tya
          sta   (PTR),y               ; set number of keys
+
+         iny                         ; set initial free space pointer
+         ldx   PTR+1
+         lda   PTR
+         clc
+         adc   #$03
+         bcc   +
+         inx
++
+         sta   (PTR),y
+         iny
+         txa
+         sta   (PTR),y
          rts
 
 ;------------------------------------------------------------------------------
@@ -116,16 +130,18 @@ okvs_append
          clc
          adc   #1
          sta   (PTR),y               ; increment number of keys
-         tax
-         jsr   incptr                ; PTR -> first record
--        dex
-         beq   +
-         jsr   derefptr              ; PTR -> next record
-         clc
-         bcc   -                     ; always branches
-+                                    ; PTR -> new record
-         +LDAY PTR
-         +STAY SAVE                  ; save PTR
+         iny
+         lda   (PTR),y
+         pha
+         iny
+         lda   (PTR),y
+         sta   PTR+1
+         sta   SAVE+1
+         pla
+         sta   PTR
+         sta   SAVE
+                                     ; PTR -> new record
+                                     ; SAVE -> new record
          jsr   incptr
          jsr   incptr                ; PTR -> space for new key
          +LDPARAM 3
@@ -184,6 +200,13 @@ okvs_append
          iny
          lda   SRC+1
          sta   (PTR),y
+         jsr   SetPTRFromStackParams ; update next-free-space pointer in head of okvs
+         ldy   #1
+         lda   SRC
+         sta   (PTR),y
+         iny
+         lda   SRC+1
+         sta   (PTR),y
          rts
 
 ;------------------------------------------------------------------------------
@@ -208,8 +231,12 @@ okvs_get
          lda   (PTR),y
          beq   @fail                 ; no keys, fail immediately
          sta   @maxkeys              ; A = number of keys
+         ldx   #3
+-        jsr   incptr
+         dex
+         bne   -
+                                     ; PTR -> first record
          ldx   #0
-         jsr   incptr                ; PTR -> first record
          +LDPARAM 3
          +STAY SRC                   ; SRC -> key we want to find
          ldy   #0
@@ -270,7 +297,11 @@ okvs_get
 okvs_nth
          +PARAMS_ON_STACK 3
          jsr   SetPTRFromStackParams
-         jsr   incptr                ; PTR -> first record
+         ldx   #3
+-        jsr   incptr
+         dex
+         bne   -
+                                     ; PTR -> first record
          ldy   #3
          lda   (PARAM),y
          tax                         ; X = numeric index of key to get
@@ -355,7 +386,11 @@ okvs_iter_values
          sta   @max
          +LDPARAM 3
          +STAY @callback
-         jsr   incptr                ; PTR -> first record
+         ldx   #3
+-        jsr   incptr
+         dex
+         bne   -
+                                     ; PTR -> first record
          ldx   #0
 @loop
          lda   #2
