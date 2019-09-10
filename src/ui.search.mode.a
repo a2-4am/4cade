@@ -37,9 +37,9 @@ SearchMode
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
-         cmp   #$8B                  ; right arrow switches to browse mode
+         cmp   #$8B                  ; up arrow switches to browse mode
          beq   @arrow
-         cmp   #$95                  ; also up arrow
+         cmp   #$95                  ; also right arrow
          beq   @arrow
          cmp   #$8A                  ; also down arrow
          bne   @notArrow

@@ -287,6 +287,10 @@ ExecuteTransitionAndWait
          bmi   +
          dex
          bpl   -
++        lda   KBD
+         cmp   #$95
+         bne   +
+         bit   CLEARKBD
 +        rts
 
 ;------------------------------------------------------------------------------
