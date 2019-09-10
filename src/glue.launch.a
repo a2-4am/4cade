@@ -173,13 +173,13 @@ gCurrentlyVisibleSlideshowIndex
 Launch
          +READ_RAM2_WRITE_RAM2
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
-         ldx   #1
+         ldx   #$F1
 -        lda   $100,x
          sta   $DF00,x               ; back up stack
          inx
          bne   -
          tsx                         ; back up stack pointer
-         stx   $DF00
+         stx   $DFF0
          lda   #$38                  ; 'sec' opcode to tell |Reenter| to
          sta   RestoreStackNextTime  ; restore the stack and stack pointer
 

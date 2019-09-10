@@ -53,12 +53,12 @@ RestoreStackNextTime
          ; caller.
          lda   #$18                  ; reset to 'clc' opcode so we don't try to
          sta   RestoreStackNextTime  ; restore the same stack twice
-         ldx   #1
+         ldx   #$F1
 -        lda   $DF00,x               ; restore stack
          sta   $100,x
          inx
          bne   -
-         ldx   $DF00                 ; restore stack pointer
+         ldx   $DFF0                 ; restore stack pointer
          txs
          +READ_RAM1_WRITE_RAM1
          rts                         ; and return to caller
