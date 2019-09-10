@@ -329,70 +329,24 @@ okvs_update
 @exit    rts
 
 ;------------------------------------------------------------------------------
-; okvs_iter
+; okvs_iter / okvs_iter_values
 ;
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] handle to storage space
 ;          +3 [word] address of callback
 ; out:   <callback> will be called for each record in the store, in order, with
 ;          X = numeric index of record
-;          A/Y = address of key
+;          A/Y = address of key or value (depends on which entry point you call)
 ;        all registers are clobbered
 ;        all flags clobbered
 ;        $00/$01 clobbered
 ;------------------------------------------------------------------------------
 okvs_iter
-         +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
-         beq   @exit                 ; no keys, exit immediately
-         sta   @max
-         +LDPARAM 3
-         +STAY @callback
-         jsr   incptr                ; PTR -> first record
-         ldx   #0
-@loop    txa
-         pha                         ; save X on stack
-         ldy   PTR+1
-         tya
-         pha
-         lda   PTR
-         pha                         ; save PTR on stack (in case callback clobbers it)
-         clc
-         adc   #2                    ; skip over next-record pointer (2 bytes)
-         bcc   +
-         iny                         ; A/Y -> key
-+
-@callback=*+1
-         jsr   $FDFD                 ; SMC
-         pla
-         sta   PTR
-         pla
-         sta   PTR+1                 ; restore PTR from stack
-         pla
-         tax                         ; restore X from stack
-         jsr   derefptr              ; PTR -> next record
-         inx
-@max=*+1
-         cpx   #$FD                  ; SMC
-         bne   @loop
-@exit    rts
-
-;------------------------------------------------------------------------------
-; okvs_iter_values
-;
-; in:    stack contains 4 bytes of parameters:
-;          +1 [word] handle to storage space
-;          +3 [word] address of callback
-; out:   <callback> will be called for each record in the store, in order, with
-;          X = numeric index of record
-;          A/Y = address of value
-;        all registers are clobbered
-;        all flags clobbered
-;        $00/$01 clobbered
-;------------------------------------------------------------------------------
+         lda   #$D0
+         +HIDE_NEXT_2_BYTES
 okvs_iter_values
+         lda   #$24
+         sta   @branch
          +PARAMS_ON_STACK 4
          jsr   SetPTRFromStackParams
          ldy   #0
@@ -403,11 +357,14 @@ okvs_iter_values
          +STAY @callback
          jsr   incptr                ; PTR -> first record
          ldx   #0
-@loop    ldy   #2
+@loop
+         lda   #2
+@branch  bne   +                     ; SMC
+         ldy   #2
          lda   (PTR),y               ; A = length of key
          clc
          adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
-         sta   @skiplen
++        sta   @skiplen
          txa
          pha                         ; save X on stack
          lda   PTR+1
@@ -416,7 +373,7 @@ okvs_iter_values
          lda   PTR
          pha                         ; save PTR on stack (in case callback clobbers it)
          clc
-@skiplen=*+1                         ; skip over key
+@skiplen=*+1                         ; skip over pointer (and possibly key)
          adc   #$FD                  ; SMC
          bcc   +
          iny                         ; A/Y -> value
