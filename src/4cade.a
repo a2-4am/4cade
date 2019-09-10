@@ -80,7 +80,7 @@ RestoreStackNextTime
          !source "src/textrank.a"
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
-         !source "src/ui.font.a"
+         !source "src/glue.font.a"
          ; add new files above here so ui.common stays last
          !source "src/ui.common.a"
 MachineStatus
@@ -104,9 +104,12 @@ gGamesListStore
 LastMover
 !pseudopc $D600 {
          !source "src/ui.font.data.a"
+         !source "src/ui.font.a"
          !source "src/prodos.impl.a"
   !if * > $DEFF {
     !error "code is too large: ends at ", *
+;  } else {
+;    !warn "LCRAM2 ends at ", *
   }
 }
 EvenLasterMover

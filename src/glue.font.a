@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; hi-res font drawing routines
+;
+; Glue functions that handle bank switching and calling the real font drawing routines
+; that live in LC RAM 2 now.
+;
+; Public functions
+; - DrawPage
+; - Draw40Chars
+; - DrawString
+; - DrawBuffer
+;
+
+DrawPage
+         +READ_RAM2_WRITE_RAM2
+         jsr   DrawPageInternal
+         +READ_RAM1_WRITE_RAM1
+         rts
+
+Draw40Chars
+         +READ_RAM2_WRITE_RAM2
+         jsr   Draw40CharsInternal
+         +READ_RAM1_WRITE_RAM1
+         rts
+
+DrawString
+         +READ_RAM2_WRITE_RAM2
+         jsr   DrawStringInternal
+         +READ_RAM1_WRITE_RAM1
+         rts
+
+DrawBuffer
+         +READ_RAM2_WRITE_RAM2
+         jsr   DrawBufferInternal
+         +READ_RAM1_WRITE_RAM1
+         rts

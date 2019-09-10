@@ -3,14 +3,18 @@
 ;
 ; hi-res font drawing routines
 ;
+; /!\ These live in LC RAM 2 and rely on the font data which is also in LC RAM 2. /!\
+; Code in LC RAM 1 (which is most program code) should call the functions in glue.font
+; which handle bank switching for you.
+;
 ; Public functions
-; - DrawPage
-; - Draw40Chars
-; - DrawString
-; - DrawBuffer
+; - DrawPageInternal
+; - Draw40CharsInternal
+; - DrawStringInternal
+; - DrawBufferInternal
 ;
 
-DrawPage
+DrawPageInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
@@ -51,7 +55,7 @@ DrawPage
          +LDAY PTR
          plp
          php
-         jsr   DrawBuffer
+         jsr   DrawBufferInternal
 @skip    inc   SAVE                  ; skip carriage return
          lda   SAVE                  ; advance PTR to start of next line
          clc
@@ -65,7 +69,7 @@ DrawPage
          plp
          rts
 
-Draw40Chars
+Draw40CharsInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
@@ -76,13 +80,13 @@ Draw40Chars
 ; clobbers A/X/Y
          jsr   +
          ldx   #40
-         jsr   DrawBuffer
+         jsr   DrawBufferInternal
          inc   VTAB
 +        ldx   #0
          stx   HTAB
          rts
 
-DrawString
+DrawStringInternal
 ; A/Y contains address of length-prefixed string
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
@@ -102,7 +106,7 @@ DrawString
          +LDAY PTR
 ; note: execution falls through here
 
-DrawBuffer
+DrawBufferInternal
 ; A/Y contains address of character buffer
 ; X contains buffer length (1..40)
 ; carry bit clear -> draw on page 1
@@ -174,7 +178,6 @@ DrawBuffer
          sta   @row5+1
          sta   @row6+1
          sta   @row7+1
-         +READ_RAM2_WRITE_RAM2
 @loop
 @src     ldy   $FDFD,x
          lda   FontDataRow0,y
@@ -196,5 +199,4 @@ DrawBuffer
          inc   HTAB
          dex
          bpl   @loop
-         +READ_RAM1_WRITE_RAM1
          rts
