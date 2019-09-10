@@ -391,6 +391,7 @@ IsSearchKey
          rts
 @goodkey
          ldx   #0
+ConvenientlyPlacedRTS
          rts
 
 ; /!\ keep this last in the file to ensure it doesn't cross a page boundary /!\
@@ -410,7 +411,7 @@ WaitForKeyFor30Seconds
          sta   Timeout+2
 @loop
          lda   KBD
-         bmi   @gotKey
+         bmi   ConvenientlyPlacedRTS
 
          inc   RNDSEED+1             ; these are only ever incremented, never
          bne   +                     ; reset (may be used as a pseudorandom
@@ -424,6 +425,5 @@ WaitForKeyFor30Seconds
          bne   @loop
          jsr   CoverFade             ; no input for ~30 seconds, switch to
          jmp   MegaAttractMode       ; mega-attract mode
-@gotKey  rts
 
 }
