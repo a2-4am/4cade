@@ -18,7 +18,6 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 SearchMode
-         +READ_RAM1_WRITE_RAM1
          ldx   #$FF
          txs
          stx   SelectedIndex         ; $FF = no game selected
