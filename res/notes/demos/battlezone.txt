@@ -8,6 +8,10 @@ $5576: C0 -> D0 to disable sound (context is AD30C0E8E0ADD085A2A8)
 $0B8E: C0 -> D0 to disable sound (context is AD30C060A5B30AAA)
 $0872: C9A0F0 -> 4C0001 to exit at end of demo cycle (context is 207009C9A0F006C98D)
 $161A: AD61C0 -> 4C0001 to exit on button (context is AD61C01009AD61C030FBA9A0D00D)
-$1632: AD10C0 -> EAEAEA to disable clearing keyboard strobe (context is A9FF8585AD10C0)
-
-still need to patch more buttons and keypresses
+$1632: AD10C0 -> EAEAEA to disable clearing keyboard strobe (context is A9FF8595AD10C0)
+$7661: 4CB576 -> 4C0001 to exit on keypress on title screen (context is AD00C010034CB576)
+$766C: 4CB576 -> 4C0001 to exit on keypress on title screen (context is AD00C010034CB576)
+$7693: 4CB576 -> 4C0001 to exit on keypress on title screen (context is AD00C010034CB576)
+$168F: C98DF016C9A0F0 -> C9FFF0164C0001 to exit on keypress or button press
+$0B6A: C9A0D0 -> 4C0001 to exit on keypress (context is AD00C01016C9A0D007686868684C7C08)
+$73A7: CDFD1A -> 4C0001 to exit on keypress (context is AD00C01008CDFD1AD003)

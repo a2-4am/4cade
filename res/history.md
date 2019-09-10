@@ -21,6 +21,7 @@
  - Alien Munchies
  - Alien Typhoon
  - Axis Assassin
+ - Battlezone
  - Beer Run
  - Bellhop
  - Brainteaser Blvd
