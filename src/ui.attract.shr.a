@@ -22,16 +22,16 @@ SHRSlideshow
          jmp   BlankHGR
 
 SHRSingle
-         +STAY SAVE
+         +STAY @fname
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
          rts
-+
-         +LDAY SAVE
-         jsr   SetPath
-         jsr   .BlankSHR
++        jsr   .BlankSHR
          jsr   LoadFile
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $2000
          jsr   .LoadSHRTransition
          +LDADDR $A000
          jsr   ExecuteTransitionAndWait
@@ -45,15 +45,14 @@ SHRSingle
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 .LoadSHRTransition
-         +LDADDR kSFXFizzleFile
-         +STAY @file
-         +LOAD_FILE kFXDirectory, @file
+         jsr   LoadFile
+         !word kFXDirectory
+         !word kSFXFizzleFile
+         !word $A000
          rts
-@file    !word $FDFD
 kSFXFizzleFile
-         !byte @kSFXFizzleFile_e-*-1
+         !byte 10
          !text "SHR.FIZZLE"
-@kSFXFizzleFile_e
 
 ;------------------------------------------------------------------------------
 ; .SHRArtworkCallback [private]
@@ -68,22 +67,20 @@ kSFXFizzleFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .SHRArtworkCallback
-         +STAY SAVE
-
-         lda   KBD
+         bit   KBD
          bpl   +
          rts
 +
+         +STAY @sfname
          stx   gCurrentlyVisibleSlideshowIndex
 
          jsr   .BlankSHR
 
          ; load SHR artwork at $2000/main (not aux)
-         +LDADDR kSHRArtworkDirectory
-         jsr   SetPath
-         +LDAY SAVE
-         jsr   AddToPath
          jsr   LoadFile
+         !word kSHRArtworkDirectory
+@sfname  !word $FDFD
+         !word $2000
 
          +LDADDR $A000
          jmp   ExecuteTransitionAndWait

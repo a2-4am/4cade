@@ -10,9 +10,10 @@
 
 Credits
 ; clobbers all
-         +LDADDR .CreditsFile
-         jsr   SetPath
-         jsr   LoadFile              ; loads at $8000
+         jsr   LoadFile              ; load credits text into $8000
+         !word kRootDirectory
+         !word .CreditsFile
+         !word $8000
          jsr   ClearOffscreen
          lda   OffscreenPage
          ror                         ; draw on offscreen page

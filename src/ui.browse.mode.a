@@ -97,19 +97,18 @@ BrowseMode
          !word gGamesListStore
 @index   !byte $FD
          +STAY @key
+         +STAY @key2
          jsr   GetOffscreenAddress   ; load new title screenshot offscreen
          sta   +                     ; new title screenshot (offscreen)
-         +LDADDR kHGRTitleDirectory
-         jsr   SetPath
-         +LDAY @key
-         jsr   AddToPath
-         jsr   LoadFileAt
+         jsr   LoadFile
+         !word kHGRTitleDirectory
+@key     !word $FDFD                 ; SMC
          !byte $00
 +        !byte $FD                   ; SMC
 
          jsr   okvs_get
          !word gGamesListStore
-@key     !word $FDFD
+@key2    !word $FDFD
          +STAY SRC                   ; A/Y points to game title (in OKVS)
          ldy   #0                    ; copy game title into search bar buffer
          lda   (SRC),y

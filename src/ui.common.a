@@ -79,10 +79,12 @@ LoadCoverOffscreen
 ; clobbers all
          +LDADDR .CoverFile
 +
-         jsr   SetPath
+         +STAY @fname
          jsr   GetOffscreenAddress
          sta   +
-         jsr   LoadFileAt
+         jsr   LoadFile
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
          !byte $00
 +        !byte $FD                   ; SMC
          rts
@@ -102,12 +104,10 @@ CoverFade
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage
 +
-          ; load transition effect code at $6000
-         +LDADDR kFXDirectory
-         jsr   SetPath
-         +LDADDR @CoverFadeFile
-         jsr   AddToPath
-         jsr   LoadFile
+         jsr   LoadFile              ; load transition effect code at $6000
+         !word kFXDirectory
+         !word @CoverFadeFile
+         !word $6000
          jmp   $6000                 ; exit via loaded code
 @CoverFadeFile
          !byte 9

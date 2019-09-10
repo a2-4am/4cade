@@ -157,14 +157,15 @@ gCurrentlyVisibleSlideshowIndex
          bcs   --
          stx   ProDOS_prefix
 
-         +LDADDR ProDOS_prefix
-         jsr   SetPath
          jsr   LoadFile              ; load the game startup file
+         !word kRootDirectory
+         !word ProDOS_prefix
+         !word 0                     ; use file's default address
 
          pla
          sta   ProDOS_prefix         ; set 'root' directory to the path part
                                      ; of the game startup file we just loaded
-                                     ;  so games can load other files without
+                                     ; so games can load other files without
                                      ; knowing which directory they're in
 
          ; execution falls through here

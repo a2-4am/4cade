@@ -192,10 +192,10 @@ OneTimeSetup
          sta   promote + ProDOS_unit - $bf00
                                      ; save unit while overriding !pseudopc
 
-         +LDADDR kGlobalPrefsFilename
-         jsr   SetPath
-         jsr   LoadFile              ; load preferences file into $8000
-
+         jsr   LoadFile              ; load preferences file into its default address ($8000)
+         !word kRootDirectory
+         !word kGlobalPrefsFilename
+         !word 0
          jsr   ParseKeyValueList     ; parse contents into OKVS data structure into LC RAM bank
          !word gGlobalPrefsStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
@@ -203,10 +203,10 @@ OneTimeSetup
          +LDAY SRC                   ; (SRC) points to free space after the OKVS data structure we just created
          +STAY gGamesListStore       ; save pointer to free space for next store
 
-         +LDADDR @kGameListConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load games list file into $8000
-
+         jsr   LoadFile              ; load games list file into its default address ($8000)
+         !word kRootDirectory
+         !word @kGameListConfFile
+         !word 0
          jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
          !word gGamesListStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000

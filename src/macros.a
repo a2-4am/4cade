@@ -96,25 +96,6 @@
          bit   $C082
 }
 
-!macro   LOAD_FILE .subdirectory, .filename {
-         +LDADDR .subdirectory
-         jsr   SetPath
-         +LDAY .filename
-         jsr   AddToPath
-         jsr   LoadFile
-}
-
-!macro   LOAD_PATH .subdirectory {
-         +LDADDR .subdirectory
-         jsr   SetPath
-}
-
-!macro   LOAD_FILE_IMM .filename {
-         +LDAY .filename
-         jsr   AddToPath
-         jsr   LoadFile
-}
-
 !macro   LOW_ASCII_TO_LOWER {
          cmp   #$41
          bcc   +

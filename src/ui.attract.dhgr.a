@@ -37,9 +37,12 @@ DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvs   +
          rts
-+        jsr   SetPath               ; A/Y point to path
++
+         +STAY @fname
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
 +        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
          +LDADDR $6000
          jsr   ExecuteTransitionAndWait
@@ -56,9 +59,10 @@ DHGRSingle
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 .LoadDHGRTransition
-         +LDADDR kDFXConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load DHGR transition effects list into $8000
+         jsr   LoadFile              ; load DHGR transition effects list into its default address ($8000)
+         !word kRootDirectory
+         !word kDFXConfFile
+         !word 0
          jsr   ParseKeyValueList     ; parse DHGR transition effects list into $6000
          !word gDFXStore
          !word ldrlo2                ; (ldrlo2) points to last load address
@@ -104,10 +108,11 @@ gDFXIndex
 
          jsr   SaveGlobalPreferences ; write prefs store to disk
 
-         ; load transition effect code at $6000
-         +LOAD_FILE kFXDirectory, @dfxkey
+         jsr   LoadFile              ; load transition effect code into $6000
+         !word kFXDirectory
+@dfxkey  !word $FDFD                 ; SMC
+         !word $6000
          rts
-@dfxkey   !word $FDFD
 kDFXConfFile
          !byte @kDFXConfFile_e-*-1
          !text "DFX.CONF"
@@ -126,16 +131,14 @@ kDFXConfFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .DHGRTitleCallback
-         +STAY SAVE
-
-         lda   KBD
+         bit   KBD
          bpl   +
 @exit    rts
 +
+         +STAY @tfname
          stx   gCurrentlyVisibleSlideshowIndex
 
 ; try to get the human-readable name of this game from gGamesListStore
-         +LDAY SAVE
          ldx   #$60
          jsr   GetGameDisplayName
 ; if game is not found (C will be set here), it means it can't be played on
@@ -146,11 +149,10 @@ kDFXConfFile
 ; reuse the function for convenience)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
-         +LDADDR kDHGRTitleDirectory
-         jsr   SetPath
-         +LDAY SAVE
-         jsr   AddToPath
          jsr   LoadDHRFile
+         !word kDHGRTitleDirectory
+@tfname  !word $FDFD
+
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
 
@@ -167,18 +169,16 @@ kDFXConfFile
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
 .DHGRActionCallback
-         +STAY SAVE
-
-         lda   KBD
+         bit   KBD
          bpl   +
 @actionExit
          rts
 +
+         +STAY @afname
          stx   gCurrentlyVisibleSlideshowIndex
 
 ; try to get the human-readable name of this game from gGamesListStore
 ; or gSlideshowStore
-         +LDAY SAVE
          ldx   #$EA
          jsr   GetGameDisplayName
 ; if game is not found (C will be set here), it means it can't be played on
@@ -189,11 +189,10 @@ kDFXConfFile
 ; just reuse the function for convenience)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
-         +LDADDR kDHGRActionDirectory
-         jsr   SetPath
-         +LDAY SAVE
-         jsr   AddToPath
          jsr   LoadDHRFile
+         !word kDHGRActionDirectory
+@afname  !word $FDFD
+
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
 

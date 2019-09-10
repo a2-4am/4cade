@@ -5,7 +5,6 @@
 ;
 ; Public functions
 ; - LoadFile
-; - LoadFileAt
 ; - LoadDHRFile
 ; - SaveSmallFile
 ; - CloseHandles
@@ -13,7 +12,7 @@
 ;
 ; A general note about paths:
 ;
-; LoadFile, LoadFileAt, LoadDHRFile, and SaveSmallFile support subdirectories.
+; LoadFile, LoadDHRFile, and SaveSmallFile support subdirectories.
 ; Directories are delimited by '/' like ProDOS. At program startup, we get the
 ; current directory and save it; that is the PROGRAM ROOT DIRECTORY. All
 ; pathnames are relative to the PROGRAM ROOT DIRECTORY. There is no concept of
@@ -38,58 +37,25 @@ gRootDirectory
 
 ;------------------------------------------------------------------------------
 ; LoadFile
-; Load a file into memory all at once, using ProRWTS2, at the load address
-; specified by the file's ProDOS metadata. Hey, do you have a text file that
-; doesn't have a load address? This routine will happily load it at $0000, and
-; your program will likely crash as a result. So give it a load address as if
-; it were a binary file.
+; Load a file into memory all at once, using ProRWTS2
 ;
 ; supports paths, see note
 ;
-; in:    gPathname contains filename
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] address of length-prefixed pathname
+;          +3 [word] address of length-prefixed filename
+;          +5 [word] address to load file, or 0 to use file's default address
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;        gPathname clobbered
 ;------------------------------------------------------------------------------
 LoadFile
-         +LDADDR gPathname
-         +STAY namlo                 ; set filename
-         +READ_RAM2_WRITE_RAM2
-         jsr   traverse              ; go to subdirectory, set up filename for read
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         lda   #0                    ; 0 = read into main memory
-         sta   auxreq
-         sta   sizelo
-         sta   sizehi                ; 0 = query load address
-         jsr   hddopendir            ; call ProRWTS2
-         lda   ldrlo2
-         sta   ldrlo
-         lda   ldrhi2
-         sta   ldrhi
-         dec   sizehi                ; read entire file (ProRWTS2 will figure out exact size)
-         jsr   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
-         +READ_RAM1_WRITE_RAM1
-         rts
-
-;------------------------------------------------------------------------------
-; LoadFileAt
-; Load a file into memory all at once, using ProRWTS2, at the load address
-; specified by the passed parameter.
-;
-; supports paths, see note
-;
-; in:    gPathname contains filename
-;        stack contains 2 bytes of parameters:
-;        +1 address to load file
-; out:   all flags clobbered
-;        all registers clobbered
-;        gPathname clobbered
-;        stack set to next instruction after parameters
-;------------------------------------------------------------------------------
-LoadFileAt
-         +PARAMS_ON_STACK 2
+         +PARAMS_ON_STACK 6
          +LDPARAM 1
+         jsr   SetPath
+         +LDPARAM 3
+         jsr   AddToPath
+         +LDPARAM 5
          +STAY ldrlo                 ; set load address
          +LDADDR gPathname
          +STAY namlo                 ; set filename
@@ -99,7 +65,14 @@ LoadFileAt
          sta   reqcmd
          lda   #0                    ; 0 = read into main memory
          sta   auxreq
-         lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+         lda   ldrlo+1
+         bne   +                     ; if caller provided a load address, use it
+         sta   sizelo                ; otherwise query the load address from file metadata
+         sta   sizehi                ; 0 = query load address
+         jsr   hddopendir            ; call ProRWTS2
+         +LDAY ldrlo2
+         +STAY ldrlo
++        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
          jsr   hddopendir            ; exit via ProRWTS2
          +READ_RAM1_WRITE_RAM1
@@ -109,17 +82,24 @@ LoadFileAt
 ; LoadDHRFile
 ; load .A2FC file (uncompressed double hi-res graphics) into memory
 ; all at once, using ProRWTS2
-; first $2000 bytes of file are loaded into auxiliary memory $2000..$3FFF
-; second $2000 bytes of file are loaded into main memory $2000..$3FFF
+; first $2000 bytes of file are loaded into auxiliary memory $4000..$5FFF
+; second $2000 bytes of file are loaded into main memory $4000..$4FFF
 ;
 ; supports paths, see note
 ;
-; in:    gPathname contains filename
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] address of length-prefixed pathname
+;          +3 [word] address of length-prefixed filename
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 LoadDHRFile
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         jsr   SetPath
+         +LDPARAM 3
+         jsr   AddToPath
          +LDADDR gPathname
          +STAY namlo                 ; set filename
          +READ_RAM2_WRITE_RAM2
@@ -130,7 +110,7 @@ LoadDHRFile
          lda   #$20
          sta   sizehi
          asl
-         sta   ldrhi
+         sta   ldrhi                 ; into $4000
          lda   #1                    ; 1 = read into aux memory
          sta   auxreq
          lda   #cmdread              ; read (instead of write)
@@ -139,7 +119,7 @@ LoadDHRFile
          lda   #$20                  ; read next $2000 bytes
          sta   sizehi
          asl
-         sta   ldrhi
+         sta   ldrhi                 ; into $4000
          dec   auxreq                ; 0 = read into main memory
          clc                         ; not a subdirectory
          jsr   hddrdwrpart           ; call ProRWTS2

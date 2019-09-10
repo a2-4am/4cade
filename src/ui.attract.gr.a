@@ -19,9 +19,12 @@ GRActionSlideshow
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 GRSingle
-         jsr   SetPath
+         +STAY @fname
          jsr   BlankGR               ; switch to GR mode with initial blank screen
-         jsr   LoadFile              ; load GR screenshot at $6000
+         jsr   LoadFile              ; load GR screenshot into $6000
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $6000
          jsr   .LoadGRTransition     ; load transition effect code at $6400
          +LDADDR $6400
          jsr   ExecuteTransitionAndWait
@@ -58,15 +61,14 @@ BlankGR
 ;        of that, but no promises)
 ;------------------------------------------------------------------------------
 .LoadGRTransition
-         +LDADDR kGRFizzleFile
-         +STAY @file
-         +LOAD_FILE kFXDirectory, @file
+         jsr   LoadFile
+         !word kFXDirectory
+         !word kGRFizzleFile
+         !word $6400
          rts
-@file    !word $FDFD
 kGRFizzleFile
-         !byte @kSFXFizzleFile_e-*-1
+         !byte 9
          !text "GR.FIZZLE"
-@kSFXFizzleFile_e
 
 ;------------------------------------------------------------------------------
 ; .GRActionCallback [private]
@@ -81,29 +83,29 @@ kGRFizzleFile
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 .GRActionCallback
-         +STAY SAVE
-
-         lda   KBD
+         bit   KBD
          bpl   +
 @actionExit
          rts
 +
+         +STAY @fname
          stx   gCurrentlyVisibleSlideshowIndex
 
-; try to get the human-readable name of this game from gGamesListStore
-; or gSlideshowStore
-         +LDAY SAVE
+         ; try to get the human-readable name of this game from gGamesListStore
+         ; or gSlideshowStore
          ldx   #$EA
          jsr   GetGameDisplayName
-; if game is not found (C will be set here), it means it can't be played on
-; this machine due to memory or joystick requirements, so we don't display
-; it in slideshows
+         ; if game is not found (C will be set here), it means it can't be played on
+         ; this machine due to memory or joystick requirements, so we don't display
+         ; it in slideshows
          bcs   @actionExit
-; (we don't actually use the display name in the GR action slideshow, we
-; just reuse the function for convenience)
+         ; (we don't actually use the display name in the GR action slideshow, we
+         ; just reuse the function for convenience)
 
-         ; load GR screenshot at $6000
-         +LOAD_FILE kGRActionDirectory, SAVE
+         jsr   LoadFile              ; load GR screenshot into $6000
+         !word kGRActionDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $6000
 
          +LDADDR $6400
          jmp   ExecuteTransitionAndWait
