@@ -4,7 +4,6 @@
 ; Pseudo-ProDOS environment
 ;
 
-!pseudopc $DA00 {
 ;------------------------------------------------------------------------------
 ; ProDOS_enter
 ; intercept certain ProDOS requests
@@ -547,4 +546,41 @@ ProDOS_prefix=$bfd0
 }
 end_promote
 
-}
+
+;------------------------------------------------------------------------------
+; SaveOrRestoreScreenHoles
+; preserve screen hole contents across demo execution
+; to avoid crashing later on disk access
+;
+; in:    nothing
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+
+SaveOrRestoreScreenHoles
+    lda    #4
+    sta    namhi
+    ldx    #0
+    stx    namlo
+    sta    bloklo
+--  ldy    #$78
+-   lda    (namlo),y
+    pha
+    lda    holey_stuff,x
+holepatch ;sta->lda
+    lda    (namlo),y
+    pla
+    sta    holey_stuff,x
+    inx
+    tya
+    eor    #$80
+    tay
+    bmi    -
+    iny
+    bpl    -
+    inc    namhi
+    dec    bloklo
+    bne    --
+    rts
+holey_stuff
+    !fill  64

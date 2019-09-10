@@ -172,6 +172,7 @@ gCurrentlyVisibleSlideshowIndex
 
 Launch
          +READ_RAM2_WRITE_RAM2
+         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
          ldx   #1
 -        lda   $100,x
          sta   $DF00,x               ; back up stack
