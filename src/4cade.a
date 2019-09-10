@@ -106,10 +106,9 @@ LastMover
          !source "src/ui.font.data.a"
          !source "src/ui.font.a"
          !source "src/prodos.impl.a"
+  LCRAM2_END = *
   !if * > $DFEF {
     !error "code is too large: ends at ", *
-  } else {
-    !warn "LCRAM2 ends at ", *
   }
 }
 EvenLasterMover
@@ -117,6 +116,7 @@ EvenLasterMover
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
+    !warn "LCRAM2 ends at ", LCRAM2_END
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
 }
