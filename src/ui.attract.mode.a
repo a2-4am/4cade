@@ -111,17 +111,15 @@ MiniAttractMode
 
          lda   #0
          sta   @MiniAttractIndex
-
 @loop
-         ; load mini attract mode configuration file into its default address ($8000)
-         jsr   LoadFile
+         jsr   LoadFile              ; load mini attract mode configuration file into $8000
          !word kMiniAttractDirectory
 @fname   !word $FDFD                 ; SMC
-         !word 0
+-        !word $8000
 
          jsr   ParseKeyValueList     ; parse configuration into OKVS data structure at $6000
          !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !word -
          !byte 0
 
          jsr   okvs_len
@@ -212,13 +210,13 @@ RunAttractModule
 
 ; it's a slideshow, so load and parse slideshow configuration file
          pha                         ; save module type
-         jsr   LoadFile              ; load slideshow configuration file into its default address ($4000)
+         jsr   LoadFile              ; load slideshow configuration file into $4000
          !word kAttractModeSlideshowDirectory
 @key2    !word $FDFD                 ; SMC
-         !word 0
+-        !word $4000
          jsr   ParseKeyValueList     ; parse into an OKVS data structure at $0800
          !word gSlideshowStore
-         !word ldrlo2                ; (ldrlo2) points to address of last loaded file, so $4000
+         !word -
          !byte 0
          pla                         ; restore module type
 
@@ -252,13 +250,13 @@ RunAttractModule
 
 LoadAndParseAttractModeConf
 ; TODO refactor launch code then make this private
-         jsr   LoadFile              ; load attract-mode configuration file into its default address ($8000)
+         jsr   LoadFile              ; load attract-mode configuration file into $8000
          !word kRootDirectory
          !word @AttractModeConfFile
-         !word 0
+-        !word $8000
          jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
          !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !word -
          !byte 0
          rts
 @AttractModeConfFile
