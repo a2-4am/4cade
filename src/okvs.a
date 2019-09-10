@@ -142,8 +142,8 @@ okvs_append
          sta   SAVE
                                      ; PTR -> new record
                                      ; SAVE -> new record
-         jsr   incptr
-         jsr   incptr                ; PTR -> space for new key
+         jsr   incptr2
+                                     ; PTR -> space for new key
          +LDPARAM 3
          +STAY SRC                   ; SRC -> new key to copy
          ldy   #0
@@ -231,10 +231,7 @@ okvs_get
          lda   (PTR),y
          beq   @fail                 ; no keys, fail immediately
          sta   @maxkeys              ; A = number of keys
-         ldx   #3
--        jsr   incptr
-         dex
-         bne   -
+         jsr   incptr3
                                      ; PTR -> first record
          ldx   #0
          +LDPARAM 3
@@ -297,10 +294,7 @@ okvs_get
 okvs_nth
          +PARAMS_ON_STACK 3
          jsr   SetPTRFromStackParams
-         ldx   #3
--        jsr   incptr
-         dex
-         bne   -
+         jsr   incptr3
                                      ; PTR -> first record
          ldy   #3
          lda   (PARAM),y
@@ -309,8 +303,7 @@ okvs_nth
 -        jsr   derefptr
          dex
          bne   -
-@found   jsr   incptr
-         jsr   incptr
+@found   jsr   incptr2
          +LDAY PTR
          rts
 
@@ -386,10 +379,7 @@ okvs_iter_values
          sta   @max
          +LDPARAM 3
          +STAY @callback
-         ldx   #3
--        jsr   incptr
-         dex
-         bne   -
+         jsr   incptr3
                                      ; PTR -> first record
          ldx   #0
 @loop
@@ -431,6 +421,8 @@ okvs_iter_values
 ;------------------------------------------------------------------------------
 ; internal functions
 
+incptr3  jsr   incptr
+incptr2  jsr   incptr
 incptr
 ; preserves A and X
          ldy   PTR
