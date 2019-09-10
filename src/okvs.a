@@ -72,20 +72,20 @@
 ;------------------------------------------------------------------------------
 okvs_init
          +PARAMS_ON_STACK 2
-         jsr   SetPTRFromStackParams
-         ldy   #0
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
          tya
-         sta   (PTR),y               ; set number of keys
+         sta   (PTR),y               ; set number of keys in store to 0
 
-         iny                         ; set initial free space pointer
+         iny                         ; set next-free-space pointer to store + 3
          ldx   PTR+1
          lda   PTR
          clc
          adc   #$03
          bcc   +
          inx
-+
-         sta   (PTR),y
++        sta   (PTR),y
          iny
          txa
          sta   (PTR),y
@@ -103,9 +103,10 @@ okvs_init
 ;------------------------------------------------------------------------------
 okvs_len
          +PARAMS_ON_STACK 2
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          rts
 
 ;------------------------------------------------------------------------------
@@ -124,14 +125,15 @@ okvs_len
 ;------------------------------------------------------------------------------
 okvs_append
          +PARAMS_ON_STACK 7
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          clc
          adc   #1
          sta   (PTR),y               ; increment number of keys
          iny
-         lda   (PTR),y
+         lda   (PTR),y               ; get address of next free space
          pha
          iny
          lda   (PTR),y
@@ -200,10 +202,11 @@ okvs_append
          iny
          lda   SRC+1
          sta   (PTR),y
-         jsr   SetPTRFromStackParams ; update next-free-space pointer in head of okvs
+         jsr   GetStoreAddress
+                                     ; PTR -> store
          ldy   #1
          lda   SRC
-         sta   (PTR),y
+         sta   (PTR),y               ; update next-free-space pointer in head
          iny
          lda   SRC+1
          sta   (PTR),y
@@ -226,11 +229,12 @@ okvs_append
 ;------------------------------------------------------------------------------
 okvs_get
          +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          beq   @fail                 ; no keys, fail immediately
-         sta   @maxkeys              ; A = number of keys
+         sta   @maxkeys
          jsr   incptr3
                                      ; PTR -> first record
          ldx   #0
@@ -293,7 +297,8 @@ okvs_get
 ;------------------------------------------------------------------------------
 okvs_nth
          +PARAMS_ON_STACK 3
-         jsr   SetPTRFromStackParams
+         jsr   GetStoreAddress
+                                     ; PTR -> store
          jsr   incptr3
                                      ; PTR -> first record
          ldy   #3
@@ -366,15 +371,16 @@ okvs_update
 ;        $00/$01 clobbered
 ;------------------------------------------------------------------------------
 okvs_iter
-         lda   #$D0
+         lda   #$D0                  ; 'BNE' opcode
          +HIDE_NEXT_2_BYTES
 okvs_iter_values
-         lda   #$24
+         lda   #$24                  ; 'BIT' opcode
          sta   @branch
          +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          beq   @exit                 ; no keys, exit immediately
          sta   @max
          +LDPARAM 3
@@ -383,8 +389,9 @@ okvs_iter_values
                                      ; PTR -> first record
          ldx   #0
 @loop
-         lda   #2
-@branch  bne   +                     ; SMC
+         lda   #2                    ; for iter, skip length = 2
+@branch  bne   +                     ; SMC (iter_values puts a BIT here, so no branch)
+                                     ; for iter_values, skip length = length(key) + 2 + 1
          ldy   #2
          lda   (PTR),y               ; A = length of key
          clc
@@ -432,7 +439,9 @@ incptr
          inc   PTR+1
 +        rts
 
-SetPTRFromStackParams
+GetStoreAddress
+; in:    PARAM = address of stack params (any PARAMS_ON_STACK macro will do this)
+; out:   PTR = address of store (always the first parameter on stack)
 ; preserves X
          ldy   #1
          lda   (PARAM),y
@@ -442,13 +451,14 @@ SetPTRFromStackParams
          sta   PTR+1                 ; PTR -> first parameter on stack
                                      ; execution falls through here
 derefptr
-; preserves X
-         ldy   #0
+; out:   Y = 0
+;        preserves X
+         ldy   #1
          lda   (PTR),y
          pha
-         iny
+         dey
          lda   (PTR),y
-         sta   PTR+1
-         pla
          sta   PTR
+         pla
+         sta   PTR+1
          rts
