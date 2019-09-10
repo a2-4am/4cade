@@ -16,7 +16,7 @@
 ; D000..D3FF - ProRWTS data
 ; D400..D5FF - ProRWTS code
 ; D600..D9FF - HGR font data
-; DA00..DEE6 - ProRWTS glue code
+; DA00..DEE6 - HGR font code & ProRWTS glue code
 ; DEE7..DFEF - unused
 ; DFF0..DFFF - backup of stack (during gameplay and self-running demos)
 ;------------------------------------------------------------------------------
