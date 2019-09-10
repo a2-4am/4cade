@@ -584,3 +584,66 @@ holepatch ;sta->lda
     rts
 holey_stuff
     !fill  64
+
+LoadFileInternal
+         +LDADDR gPathname
+         +STAY namlo                 ; set filename
+         jsr   traverse              ; go to subdirectory, set up filename for read
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   auxreq
+         lda   ldrlo+1
+         bne   +                     ; if caller provided a load address, use it
+         sta   sizelo                ; otherwise query the load address from file metadata
+         sta   sizehi                ; 0 = query load address
+         jsr   hddopendir            ; call ProRWTS2
+         +LDAY ldrlo2
+         +STAY ldrlo
++        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+         sta   sizehi
+         jmp   hddopendir            ; exit via ProRWTS2
+
+LoadDHRFileInternal
+         +LDADDR gPathname
+         +STAY namlo                 ; set filename
+         jsr   traverse              ; go to subdirectory, set up filename for read
+         lda   #$00                  ; read first $2000 bytes
+         sta   sizelo
+         sta   ldrlo
+         lda   #$20
+         sta   sizehi
+         asl
+         sta   ldrhi                 ; into $4000
+         lda   #1                    ; 1 = read into aux memory
+         sta   auxreq
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         jsr   hddopendir            ; call ProRWTS2
+         lda   #$20                  ; read next $2000 bytes
+         sta   sizehi
+         asl
+         sta   ldrhi                 ; into $4000
+         dec   auxreq                ; 0 = read into main memory
+         clc                         ; not a subdirectory
+         jmp   hddrdwrpart           ; call ProRWTS2
+
+SaveSmallFileInternal
+         +LDADDR gPathname
+         +STAY namlo                 ; set filename for ProRWTS2
+         jsr   traverse              ; go to subdirectory, set up filename for read
+         ;;if the write address is always a fixed value then we can discard the query
+         lda   #cmdread              ; read (instead of write)
+         sta   reqcmd
+         lda   #0                    ; 0 = read into main memory
+         sta   sizelo
+         sta   sizehi                ; 0 = query load address
+         jsr   hddopendir            ; call ProRWTS2
+         lda   ldrlo2
+         sta   ldrlo
+         lda   ldrhi2
+         sta   ldrhi
+         lda   #cmdwrite             ; write (instead of read)
+         sta   reqcmd
+         sta   sizelo                ; non-zero
+         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)

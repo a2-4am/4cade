@@ -7,7 +7,6 @@
 ; - LoadFile
 ; - LoadDHRFile
 ; - SaveSmallFile
-; - SaveOrRestoreScreenHoles
 ;
 ; A general note about paths:
 ;
@@ -56,24 +55,8 @@ LoadFile
          jsr   AddToPath
          +LDPARAM 5
          +STAY ldrlo                 ; set load address
-         +LDADDR gPathname
-         +STAY namlo                 ; set filename
          +READ_RAM2_WRITE_RAM2
-         jsr   traverse              ; go to subdirectory, set up filename for read
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         lda   #0                    ; 0 = read into main memory
-         sta   auxreq
-         lda   ldrlo+1
-         bne   +                     ; if caller provided a load address, use it
-         sta   sizelo                ; otherwise query the load address from file metadata
-         sta   sizehi                ; 0 = query load address
-         jsr   hddopendir            ; call ProRWTS2
-         +LDAY ldrlo2
-         +STAY ldrlo
-+        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
-         sta   sizehi
-         jsr   hddopendir            ; exit via ProRWTS2
+         jsr   LoadFileInternal
          +READ_RAM1_WRITE_RAM1
          rts
 
@@ -99,29 +82,8 @@ LoadDHRFile
          jsr   SetPath
          +LDPARAM 3
          jsr   AddToPath
-         +LDADDR gPathname
-         +STAY namlo                 ; set filename
          +READ_RAM2_WRITE_RAM2
-         jsr   traverse              ; go to subdirectory, set up filename for read
-         lda   #$00                  ; read first $2000 bytes
-         sta   sizelo
-         sta   ldrlo
-         lda   #$20
-         sta   sizehi
-         asl
-         sta   ldrhi                 ; into $4000
-         lda   #1                    ; 1 = read into aux memory
-         sta   auxreq
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         jsr   hddopendir            ; call ProRWTS2
-         lda   #$20                  ; read next $2000 bytes
-         sta   sizehi
-         asl
-         sta   ldrhi                 ; into $4000
-         dec   auxreq                ; 0 = read into main memory
-         clc                         ; not a subdirectory
-         jsr   hddrdwrpart           ; call ProRWTS2
+         jsr   LoadDHRFileInternal
          +READ_RAM1_WRITE_RAM1
          rts
 
@@ -143,24 +105,7 @@ SaveSmallFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
-         +LDADDR gPathname
-         +STAY namlo                 ; set filename for ProRWTS2
          +READ_RAM2_WRITE_RAM2
-         jsr   traverse              ; go to subdirectory, set up filename for read
-         ;;if the write address is always a fixed value then we can discard the query
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         lda   #0                    ; 0 = read into main memory
-         sta   sizelo
-         sta   sizehi                ; 0 = query load address
-         jsr   hddopendir            ; call ProRWTS2
-         lda   ldrlo2
-         sta   ldrlo
-         lda   ldrhi2
-         sta   ldrhi
-         lda   #cmdwrite             ; write (instead of read)
-         sta   reqcmd
-         sta   sizelo                ; non-zero
-         jsr   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         jsr   SaveSmallFileInternal
          +READ_RAM1_WRITE_RAM1
          rts

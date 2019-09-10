@@ -108,8 +108,8 @@ LastMover
          !source "src/prodos.impl.a"
   !if * > $DFEF {
     !error "code is too large: ends at ", *
-;  } else {
-;    !warn "LCRAM2 ends at ", *
+  } else {
+    !warn "LCRAM2 ends at ", *
   }
 }
 EvenLasterMover
