@@ -30,8 +30,11 @@
  - Space Eggs
  - Star Blazer
 
-## Bug fixes
+## Enhancements & bug fixes
 
+ - Pressing Space will now also show a game's screenshots, as well as Tab
+ - You can press right arrow to progress through a slideshow without waiting
+ - Startup is noticeably faster
  - Castle Wolfenstein is now the 1984 re-release with updated graphics
  - Mr. Do now shows its own attract mode
  - Mr. Do no longer crashes on level 8
@@ -43,7 +46,6 @@
  - Properly detect VidHD in slot 3
  - Properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
  - No longer crashes after loading a double hi-res screenshot from a SCSI hard drive
- - Pressing Space will now also show a game's screenshots, as well as Tab
  - Small high score files (e.g. Apple Cider Spider) are saved
  - Some double hi-res screenshots were being skipped even if the game was available
  - Disk image is now exactly 32 MB
