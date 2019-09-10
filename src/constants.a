@@ -7,17 +7,16 @@
 ;
 ; LC RAM BANK 1
 ; D000..E4E9 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
-; ...end of data and start of code are approximate, in between is unused...
-; ...if they ever overlap, things will go boom...
-; EA72..FFF9 - main program code
+; ...unused...
+; EBDD..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D5FF - ProRWTS code
 ; D600..D9FF - HGR font data
-; DA00..DEE6 - HGR font code & ProRWTS glue code
-; DEE7..DFEF - unused
+; DA00..DF6C - HGR font code & ProRWTS glue code
+; ...unused...
 ; DFF0..DFFF - backup of stack (during gameplay and self-running demos)
 ;------------------------------------------------------------------------------
 
