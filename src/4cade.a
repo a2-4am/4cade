@@ -105,7 +105,6 @@ LastMover
 !pseudopc $D600 {
          !source "src/ui.font.data.a"
          !source "src/prodos.impl.a"
-!warn *
   !if * > $DEFF {
     !error "code is too large: ends at ", *
   }

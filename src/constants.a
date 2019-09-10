@@ -9,7 +9,7 @@
 ; D000..E4E9 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...end of data and start of code are approximate, in between is unused...
 ; ...if they ever overlap, things will go boom...
-; EA09..FFF9 - main program code
+; EA72..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2

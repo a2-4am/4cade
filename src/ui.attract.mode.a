@@ -199,8 +199,6 @@ RunAttractModule
 @key     !word $FDFD
          !word 0
 
-         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
-
          jmp   Launch                ; will return to caller via |Reenter|
 
 ; not a demo, so maybe a slideshow or single screenshot
