@@ -183,19 +183,20 @@ OneTimeSetup
          jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
          lda   #$91
          sta   holepatch             ; enable restoring of copy from now on
+         lda   $43
+         sta   promote + ProDOS_unit - $bf00
+                                     ; save unit in LC bank 2 while overriding !pseudopc
+
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
          +READ_RAM1_WRITE_RAM1
          +STAY gRootDirectory
 
-         lda   $43
-         sta   promote + ProDOS_unit - $bf00
-                                     ; save unit while overriding !pseudopc
-
          jsr   LoadFile              ; load preferences file into its default address ($8000)
          !word kRootDirectory
          !word kGlobalPrefsFilename
          !word 0
+
          jsr   ParseKeyValueList     ; parse contents into OKVS data structure into LC RAM bank
          !word gGlobalPrefsStore
          !word ldrlo2                ; (ldrlo2) points to last load address, so $8000

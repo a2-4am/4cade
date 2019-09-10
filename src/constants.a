@@ -9,8 +9,8 @@
 ; D000..E500 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...end of data and start of code are approximate, in between is unused...
 ; ...if they ever overlap, things will go boom...
-; E800..FFFB - main program code
-; FFFC..FFFF - reset and other vectors
+; E800..FFF9 - main program code
+; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
