@@ -24,11 +24,10 @@ SearchMode
          stx   SelectedIndex         ; $FF = no game selected
          inx
          stx   OffscreenPage         ; $00 = currently showing HGR page 2
-         jsr   Home                  ; clear screen
+         jsr   Home                  ; clear screen (switches to text mode)
          jsr   .OnInputChanged       ; draw UI on HGR page 1
-         +HGR_MODE                   ; show HGR
+         jsr   HGRMode               ; show HGR screen
          bit   CLEARKBD
-         jsr   ResetInputTimeout
 
 .SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
@@ -46,7 +45,7 @@ SearchMode
 @arrow   ldx   #kInputBrowse
          bne   @InputDispatch        ; always branches
 @notArrow
-         jsr   ResetInputTimeout
+         bit   CLEARKBD
 
          ldy   #kNumBrowseKeys
 -        dey

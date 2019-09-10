@@ -112,17 +112,3 @@
          and   zpCharMask
 +
 }
-
-; does not set page 1 or 2
-!macro   HGR_MODE {
-         bit   $C057
-         bit   $C052
-         bit   $C050
-}
-
-; does not set page 1 or 2
-!macro   GR_MODE {
-         bit   $C056
-         bit   $C052
-         bit   $C050
-}

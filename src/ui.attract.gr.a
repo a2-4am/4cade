@@ -49,7 +49,9 @@ BlankGR
          dex
          bne   @loop
          bit   PAGE1
-         +GR_MODE
+         bit   $C056                 ; set GR mode
+         bit   $C052
+         bit   $C050
          rts
 
 ;------------------------------------------------------------------------------

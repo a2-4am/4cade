@@ -1,4 +1,4 @@
-;license:MIT
+;License:MIT
 ;(c) 2018-9 by 4am
 ;
 ; common UI functions
@@ -9,15 +9,15 @@
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
 ; - DrawSearchBarOffscreen
-; - ClearOffscreen
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
 ; - CoverFade
-; - ResetInputTimeout
 ; - SoftBell
 ; - Home
 ; - BlankHGR
 ; - BlankDHGR
+; - ClearOffscreen
+; - ExecuteTransitionAndWait
 ; - IsSearchKey
 
 ; Public variables
@@ -126,6 +126,36 @@ DrawSearchBarOffscreen
          +LDADDR UILine2
          jmp   Draw40Chars
 
+;------------------------------------------------------------------------------
+; ClearOffscreen
+; clear $2000..$3FFF or $4000..$5FFF, depending on which HGR page is not
+; visible right now
+; does not change HGR mode
+;
+; in:    none
+; out:   $2000..$3FFF or $4000..$5FFF cleared
+;        A = 0
+;        X = 0
+;        Y = 0
+;        Z = 1
+;------------------------------------------------------------------------------
+ClearOffscreen
+         jsr   GetOffscreenAddress
+         +HIDE_NEXT_2_BYTES
+.ClearHGR1
+         lda   #$20
+         sta   @a+2
+         ldx   #$20
+         lda   #$80
+         ldy   #0
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
+
 ShowOtherPage
 ; in:    none
 ; out:   A = new value of OffscreenPage
@@ -146,16 +176,24 @@ ToggleOffscreenPage
          sta   OffscreenPage
          rts
 
-ResetInputTimeout
-; clobbers X, preserves A/Y
-         ldx   #$16
-         stx   Timeout
-         stx   Timeout+1
-         stx   Timeout+2
-         bit   CLEARKBD
-         rts
-
+;------------------------------------------------------------------------------
+; WaitForKeyFor30Seconds
+; does what it says on the tin
+;
+; in:    none
+; out:   if user presses a key before the timer runs out, exits with A = key
+;        otherwise exits via MegaAttractMode
+;        X/Y preserved
+;------------------------------------------------------------------------------
 WaitForKeyFor30Seconds
+         lda   KBD
+         bmi   @gotKey               ; if we have a key on entry, exit with it in A
+
+         lda   #$16                  ; initialize timeout counters
+         sta   Timeout
+         sta   Timeout+1
+         sta   Timeout+2
+@loop
          lda   KBD
          bmi   @gotKey
 
@@ -164,11 +202,11 @@ WaitForKeyFor30Seconds
          inc   RNDSEED               ; seed)
 +
          dec   Timeout               ; these are a 3-byte timeout counter
-         bne   WaitForKeyFor30Seconds; that counts down from a number set
+         bne   @loop                 ; that counts down from a number set
          dec   Timeout+1             ; in .ResetInputTimeout and reset
-         bne   WaitForKeyFor30Seconds; on every keypress (whether or not
+         bne   @loop                 ; on every keypress (whether or not
          dec   Timeout+2             ; the key leads to an action)
-         bne   WaitForKeyFor30Seconds
+         bne   @loop
          jsr   CoverFade             ; no input for ~30 seconds, switch to
          jmp   MegaAttractMode       ; mega-attract mode
 @gotKey  rts
@@ -255,8 +293,7 @@ BlankHGR
          jsr   Home
          jsr   .ClearHGR1            ; clear hi-res screen 1
          bit   PAGE1                 ; show hi-res screen 1 (now blank)
-         +HGR_MODE
-         rts
+         jmp   HGRMode
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
@@ -273,11 +310,31 @@ BlankDHGR
          jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
          sta   SET80VID
-         bit   PAGE1
-         +HGR_MODE
          sta   DHIRESON
+         bit   PAGE1
+         jmp   HGRMode
+
+;------------------------------------------------------------------------------
+; HGRMode
+; twiddles softswitches to set HGR mode (does not set page 1 or 2)
+;
+; in:    none
+; out:   all registers preserved
+;------------------------------------------------------------------------------
+HGRMode
+         bit   $C057
+         bit   $C052
+         bit   $C050
          rts
 
+;------------------------------------------------------------------------------
+; ExecuteTransitionAndWait
+; call transition effect code (address passed in) and wait a period of time
+; or until the user presses a key
+;
+; in:    A/Y = address of transition effect code
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
 ExecuteTransitionAndWait
          +STAY @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
@@ -292,36 +349,6 @@ ExecuteTransitionAndWait
          bne   +
          bit   CLEARKBD
 +        rts
-
-;------------------------------------------------------------------------------
-; ClearOffscreen
-; clear $2000..$3FFF or $4000..$5FFF, depending on which HGR page is not
-; visible right now
-; does not change HGR mode
-;
-; in:    none
-; out:   $2000..$3FFF or $4000..$5FFF cleared
-;        A = 0
-;        X = 0
-;        Y = 0
-;        Z = 1
-;------------------------------------------------------------------------------
-ClearOffscreen
-         jsr   GetOffscreenAddress
-         +HIDE_NEXT_2_BYTES
-.ClearHGR1
-         lda   #$20
-         sta   @a+2
-         ldx   #$20
-         lda   #$80
-         ldy   #0
-@a       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         dex
-         bne   @a
-         rts
 
 ;------------------------------------------------------------------------------
 ; IsSearchKey

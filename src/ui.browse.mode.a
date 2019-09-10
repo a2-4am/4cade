@@ -25,7 +25,7 @@ BrowseMode
 
 .BrowseModeInputLoop
          jsr   WaitForKeyFor30Seconds
-         jsr   ResetInputTimeout
+         bit   CLEARKBD
 
          ldy   #kNumBrowseKeys
 -        dey
