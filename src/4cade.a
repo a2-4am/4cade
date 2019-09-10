@@ -101,11 +101,13 @@ gGamesListStore
          !word Reenter               ; IRQ vector ($FFFE-F)
 }
 LastMover
-;the last routine in this list must define LAST_ADDR to keep track of LC bank 2 use
+!pseudopc $D600 {
          !source "src/ui.font.data.a"
          !source "src/prodos.impl.a"
-!if LAST_ADDR > $DFFF {
-  !error "code is too large: LAST_ADDR = ", LAST_ADDR
+!warn *
+  !if * > $DEFF {
+    !error "code is too large: ends at ", *
+  }
 }
 EvenLasterMover
 !if RELBASE = $2000 {

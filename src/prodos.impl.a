@@ -547,5 +547,4 @@ ProDOS_prefix=$bfd0
 }
 end_promote
 
-LAST_ADDR = *
 }
