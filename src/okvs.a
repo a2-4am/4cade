@@ -12,7 +12,6 @@
 ; - okvs_nth(address, n)                        get key by numeric index
 ; - okvs_iter(address, callback)                iterate through keys
 ; - okvs_iter_values(address, callback)         iterate through values
-; - okvs_as_boolean(value)                      set Z flag based on value
 ;
 ; Call init() once. Call it again to reset the store to 0 keys.
 ;
