@@ -8,7 +8,7 @@
 ; LC RAM BANK 1
 ; D000..E4EC - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EBDD..FFF9 - main program code
+; EC37..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
