@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by 4am & qkumba
 ;
 ; Pseudo-ProDOS environment
 ;
@@ -647,3 +647,63 @@ SaveSmallFileInternal
          sta   reqcmd
          sta   sizelo                ; non-zero
          jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+
+;------------------------------------------------------------------------------
+; Prelaunch
+; code to set up and launch third-party code (either a self-running demo or
+; an actual game)
+; THIS IS NOT A FUNCTION. DO NOT CALL THIS DIRECTLY.
+; must be run from main memory
+; contains multiple entry points
+;
+; in:    for first entry point, none
+;        for second entry point, the game must already be loaded in memory
+;          and ldrlo2/ldrhi2 must be the game entry point
+; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
+;        (not here, but wherever it was copied to in main memory) or by
+;        manually enabling LC RAM then JMP |Reenter|
+;------------------------------------------------------------------------------
+Prelaunch
+; copied to $0100 in main memory
+; main entry point to return to launcher (used by self-running demos, vectors)
+         +READ_RAM1_NO_WRITE
+         jmp   Reenter
+
+!if * != Prelaunch+6 {
+  !error "Prelaunch entry points are messed up"
+}
+; copied to $0106 in main memory
+; main entry point to launch game
+         +READ_ROM_NO_WRITE
+         lda   ldrlo2                ; set up game entry point in stack page
+         ldy   ldrhi2                ; (last load address - 1)
+         sec
+         sbc   #$01
+         bcs   +
+         dey
++
+         +STAY $1FE
+         ldx   #0                    ; wipe zero page
+         txa
+-        sta   $00,x
+         inx
+         bne   -
+         lda   #$65                  ; Initialize 'random' seed. These are
+         sta   RNDSEED               ; arbitrary values. Some games like Pooyan
+         lda   #$02                  ; require these to be non-zero. Ask me
+         sta   RNDSEED+1             ; how long that one took to debug.
+         jsr   ROM_IN0               ; Initialize machine like a cold boot.
+         jsr   ROM_PR0               ; Many games assume a 'clean slate' and
+         jsr   ROM_NORMAL            ; rely on zero page values set by these
+         sta   STOREOFF              ; ROM routines,
+         sta   READMAINMEM           ; e.g. Wavy Navy just prints out text via
+         sta   WRITEMAINMEM          ; $FDED and expects it to work. Having it
+         sta   CLR80VID              ; print all null characters is amusing, in
+         sta   PRIMARYCHARSET        ; a quiet way, but not really helpful.
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
+         bit   CLEARKBD
+         ldx   #$FD                  ; Jump to game entry point via stack pop.
+         txs
+         rts
+End_Prelaunch

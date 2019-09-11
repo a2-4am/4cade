@@ -241,6 +241,7 @@ OneTimeSetup
          cpy   #$03
          bcc   @outer
 
+         +READ_RAM2_WRITE_RAM2
          ldx   #5
 -        lda   Prelaunch,x           ; copy reentry wrapper to bottom of stack
          sta   $100,x                ; (used as reset vector because ][+ always

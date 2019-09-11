@@ -259,7 +259,8 @@ SoftBell
 ; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
 Home
-         lda   MachineStatus
+MachineStatus = *+1
+         lda   #$D1                  ; SMC
          and   #SUPPORTS_SHR
          beq   @noSHR
          lda   NEWVIDEO

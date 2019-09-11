@@ -219,32 +219,42 @@ RunAttractModule
          pla                         ; restore module type
 
 -        and   #$0F                  ; convert ASCII digit to int
-         asl
          tax
-         lda   @slideshows-2,x
+         lda   @slideshowslo-1,x
          sta   @jmp+1
-         lda   @slideshows-1,x
+         lda   @slideshowshi-1,x
          sta   @jmp+2
          +LDAY @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
 
 @dispatchSingle
-         clc
-         adc   #$06
+         adc   #(@singleslo-@slideshowslo)-1
          bne   -                     ; always branches
 
-@slideshows
-         !word HGRTitleSlideshow
-         !word HGRActionSlideshow
-         !word DHGRTitleSlideshow
-         !word DHGRActionSlideshow
-         !word SHRSlideshow
-         !word GRActionSlideshow
-@singles
-         !word HGRSingle
-         !word DHGRSingle
-         !word SHRSingle
-         !word GRSingle
+@slideshowslo
+         !byte <HGRTitleSlideshow
+         !byte <HGRActionSlideshow
+         !byte <DHGRTitleSlideshow
+         !byte <DHGRActionSlideshow
+         !byte <SHRSlideshow
+         !byte <GRActionSlideshow
+@singleslo
+         !byte <HGRSingle
+         !byte <DHGRSingle
+         !byte <SHRSingle
+         !byte <GRSingle
+@slideshowshi
+         !byte >HGRTitleSlideshow
+         !byte >HGRActionSlideshow
+         !byte >DHGRTitleSlideshow
+         !byte >DHGRActionSlideshow
+         !byte >SHRSlideshow
+         !byte >GRActionSlideshow
+@singleshi
+         !byte >HGRSingle
+         !byte >DHGRSingle
+         !byte >SHRSingle
+         !byte >GRSingle
 
 LoadAndParseAttractModeConf
 ; TODO refactor launch code then make this private

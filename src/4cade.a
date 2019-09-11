@@ -83,10 +83,6 @@ RestoreStackNextTime
          !source "src/glue.font.a"
          ; add new files above here so ui.common stays last
          !source "src/ui.common.a"
-MachineStatus
-         !byte 0
-GameCount
-         !byte 0
 gAttractModeStore
 gFXStore
 gDFXStore
