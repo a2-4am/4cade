@@ -1,4 +1,4 @@
-# Revision 2 / serial number TODO
+# Revision 2 / serial number 190914
 
 ## New games
 
@@ -35,11 +35,11 @@
 
 ## Enhancements & bug fixes
 
- - Pressing Space will now also show a game's screenshots, as well as Tab
- - You can press right arrow to progress through a slideshow without waiting
+ - Pressing Space will now show a game's screenshots, as well as Tab
+ - Pressing right arrow will now progress through a slideshow without waiting
  - Startup is noticeably faster
- - Castle Wolfenstein is now the 1984 re-release with updated graphics
- - Mr. Do now shows its own attract mode
+ - Castle Wolfenstein has been upgraded to the 1984 re-release with updated graphics
+ - Mr. Do now shows its own in-game attract mode
  - Mr. Do no longer crashes on level 8
  - Prince of Persia no longer crashes on startup
  - Zaxxon no longer crashes after a game ends
@@ -47,9 +47,9 @@
  - Sneakers demo has corrected graphics
  - Plasmania demo has corrected graphics
  - Properly detect VidHD in slot 3
- - Properly set alternate display mode on IIgs (affected Centipede, Mr. Do, and others)
+ - Properly set alternate display mode on IIgs (fixes Centipede, Mr. Do)
  - No longer crashes after loading a double hi-res screenshot from a SCSI hard drive
- - Small high score files (e.g. Apple Cider Spider) are saved
+ - Small high score files are saved (fixes Apple Cider Spider, Lancaster)
  - Some double hi-res screenshots were being skipped even if the game was available
  - Disk image is now exactly 32 MB
 
