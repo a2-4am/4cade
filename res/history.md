@@ -13,6 +13,7 @@
  - Out Of This World
  - Sea Dragon
  - Seafox
+ - Situation Critical
  - Star Thief
  - The Spy Strikes Back
 
