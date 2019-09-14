@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/BOLO",plain
+*=$14D
+
+    lda #$60
+    sta $8034
+    jsr $4ab0
+    lda #$a5
+    sta $1619
+    sta $11ae
+    jmp $1100

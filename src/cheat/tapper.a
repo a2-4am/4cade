@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/TAPPER",plain
+*=$14D
+
+    lda #$60
+    sta $851
+    jsr $800
+    lda #<cheat
+    sta $248
+    lda #>cheat	
+    sta $249
+    jmp $200
+
+cheat
+    lda #$b5
+    sta $17f0
+    sta $1998
+    jmp $d00

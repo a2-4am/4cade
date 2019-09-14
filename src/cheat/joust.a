@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/JOUST",plain
+*=$14D
+
+    lda #$60
+    sta $85e
+    jsr $800
+    lda #$ad
+    sta $2bc9
+    sta $2b6b
+    jmp $3e00

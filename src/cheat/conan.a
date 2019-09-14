@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/CONAN",plain
+*=$14D
+
+    lda #$60
+    sta $81e
+    jsr $800
+    lda #$60
+    sta $bd40
+    jsr $bc94
+    jsr $5ff8
+    lda #$6c
+    sta $bd40
+    lda #$60
+    sta $6ba2
+    jsr $3ffc
+    jsr $be00
+    lda #$ad
+    sta $19f5
+    sta $1a00
+    sta $1b4e
+    ;;sta $a973
+    jmp $6ba5

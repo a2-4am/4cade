@@ -32,6 +32,7 @@ if "%1" equ "asm" (
 2>nul md build\SS
 2>nul md build\DEMO
 2>nul md build\FX
+2>nul md build\CHEAT
 
 2>build\out.txt %ACME% -r build\4cade.lst src\4cade.a
 for /f "tokens=*" %%q in (build\out.txt) do set _make=%%q
@@ -92,6 +93,7 @@ for /f "tokens=*" %%q in (build\out.txt) do set _make=%%q
 %ACME% src\fx\fx.hgr.star.white.a
 %ACME% src\fx\fx.shr.fizzle.a
 %ACME% src\fx\fx.gr.fizzle.a
+for %%q in (src\cheat\*.a) do %ACME% %%q
 goto :EOF
 )
 
@@ -165,7 +167,9 @@ cscript /nologo bin\extract.js build\po >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build/X" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
+cscript /nologo bin\buildfileinfo.js build\CHEAT "06" "014D" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/CHEAT" "build\CHEAT" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )

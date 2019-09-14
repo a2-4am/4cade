@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/DIG.DUG",plain
+*=$14D
+
+    lda #$60
+    sta $826
+    jsr $800
+    lda #$24
+    sta $a1d9
+    sta $8ca6
+    jmp $8000

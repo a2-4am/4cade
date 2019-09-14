@@ -1,0 +1,13 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/MONTEZUMA",plain
+*=$14d
+
+    lda #$60
+    sta $816
+    jsr $800
+    lda #$a5
+    sta $6d0d
+    jmp $6004

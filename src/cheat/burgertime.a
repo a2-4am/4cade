@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/BURGERTIME",plain
+*=$14d
+
+    lda #$60
+    sta $3f03
+    jsr $3e97
+    lda #$24
+    sta $a433
+    sta $96ea
+    sta $94d1
+    sta $9768
+    jmp $a300

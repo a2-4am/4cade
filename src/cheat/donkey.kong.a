@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/DONKEY.KONG",plain
+*=$14D
+
+    lda #$60
+    sta $3eab
+    jsr $3e36
+    lda #$2c
+    sta $729b
+    sta $6fea
+    jmp $4000
+

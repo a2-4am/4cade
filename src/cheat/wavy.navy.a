@@ -1,0 +1,12 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/WAVY.NAVY",plain
+*=$14d
+
+    lda #$60
+    sta $505d
+    jsr $800
+    dec $1e65
+    jmp $800

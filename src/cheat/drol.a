@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/DROL",plain
+*=$14d
+
+    ldy #(cheat_e-cheat_b)-1
+-   lda cheat_b,y
+    sta $bf70,y
+    dey
+    bpl -
+    lda #$70
+    sta $4091
+    lda #$bf
+    sta $4092
+    rts
+
+cheat_b
+    jsr $be11
+    lda #$24
+    sta $6a22
+    rts
+cheat_e

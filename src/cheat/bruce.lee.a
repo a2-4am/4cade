@@ -1,0 +1,18 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/BRUCE.LEE",plain
+*=$14D
+
+    lda #<cheat
+    sta $b3e
+    lda #>cheat
+    sta $b3f
+    rts
+
+cheat
+    jsr $22a
+    lda #$2c
+    sta $8a7e
+    rts

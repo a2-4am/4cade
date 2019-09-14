@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/MS.PACMAN",plain
+*=$14D
+
+    lda #$60
+    sta $816
+    jsr $800
+    lda #<cheat
+    sta $2007
+    lda #>cheat
+    sta $2008
+    jmp $2000
+
+cheat
+    jsr $38cf
+    lda #$2c
+    sta $87e0
+    sta $97d2
+    rts

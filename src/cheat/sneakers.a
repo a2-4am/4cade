@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/cheat/SNEAKERS",plain
+*=$14D
+
+    lda #$60
+    sta $84c6
+    jsr $3ff8
+    lda #$ad
+    sta $6ed8
+    sta $7f1c
+    jmp $9e00
