@@ -40,9 +40,9 @@ $10  dot, small
 $11  dot, medium
 $12  dot, large
 $13  dot, extra large
-$14
+$14  heart
 $15  times
-$16
+$16  bolt
 $17
 $18
 $19
