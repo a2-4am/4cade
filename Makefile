@@ -21,7 +21,7 @@ ACME=acme
 CADIUS=cadius
 
 asm: md asmfx asmprelaunch
-	$(ACME) -r build/4cade.lst src/4cade.a 2>build/relbase.log
+	$(ACME) src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
 asmfx:
@@ -31,7 +31,6 @@ asmprelaunch:
 	@for f in $(shell ls src/prelaunch/*.a); do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 
 dsk: md asm
-	#$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32767KB >>build/log
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
