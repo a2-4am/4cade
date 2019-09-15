@@ -116,7 +116,8 @@ okvs_len
 ;          +3 [word] address of key
 ;          +5 [word] address of value
 ;          +7 [byte] maximum length of value (or 0 to fit)
-; out:   all registers clobbered
+; out:   X = new number of records (same as calling okvs_len after okvs_append)
+;        A/Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        $04/$05 has the address of the next available byte after the new record
@@ -130,6 +131,7 @@ okvs_append
          lda   (PTR),y               ; A = number of keys in store
          clc
          adc   #1
+         pha                         ; will return this later
          sta   (PTR),y               ; increment number of keys
          iny
          lda   (PTR),y               ; get address of next free space
@@ -201,6 +203,8 @@ okvs_append
          iny
          lda   SRC+1
          sta   (PTR),y
+         pla
+         tax                         ; X = new OKVS length
          jsr   GetStoreAddress
                                      ; PTR -> store
          ldy   #1

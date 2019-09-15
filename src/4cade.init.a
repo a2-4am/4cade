@@ -215,6 +215,10 @@ OneTimeSetup
          !word gGamesListStore
          sta   GameCount
          sta   SAVE
+
+         lda   #$80                  ; TODO make this a pref
+         sta   gCheatsEnabled
+
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          ldy   #0
 @outer

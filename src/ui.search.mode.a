@@ -120,16 +120,17 @@ SearchMode
                                      ; no input, reset params and UI
          lda   #$FF
          sta   SelectedIndex         ; no game selected
-         ldx   #39                   ; reset visible line
--        lda   #0
-         sta   UILine1,x
-         lda   Instructions,x
+         ldx   #39                   ; copy instructions to line 2
+-        lda   Instructions,x
          sta   UILine2,x
          dex
          bpl   -
          jsr   LoadTitleOffscreen
-         jsr   DrawSearchBarOffscreen
-         jsr   ShowOtherPage
+         ldx   #$FF                  ; no game selected
+         jsr   BuildUILine1WithNoDots; build UI line 1 with bars and other shapes
+         ldx   #$FF                  ; no game selected
+         jsr   DrawSearchBarOffscreen; draw everything at once (offscreen)
+         jsr   ShowOtherPage         ; show it all at once
          clc
          rts
 
@@ -199,19 +200,20 @@ SearchMode
          sta   UI_ToPlay,x
          dex
          bpl   -
-         ldx   #40
-         lda   #0
--        sta   UILine1-1,x           ; reset search bar
-         dex
-         bne   -
-         tay
+
+         ldx   SelectedIndex
+         jsr   BuildUILine1WithNoDots; build UI line 1 with bars and other shapes
+
+         ; now add dots to UI line 1 to highlight matched characters
+         ldx   #0
+         ldy   #0
 @dotloop
          iny
          lda   (SRC),y
          +LOW_ASCII_TO_LOWER
          cmp   InputBuffer,x
          bne   +
-         lda   #$11                  ; add dots to highlight matched characters
+         lda   #$11                  ; dot character
          sta   UILine1,y
          inx
          cpx   InputLength           ; if input buffer is exhausted, we're done
@@ -220,6 +222,7 @@ SearchMode
          cpy   SAVE                  ; if game name is exhausted, we're done
          bne   @dotloop
 @doneHighlight
+         ldx   SelectedIndex
          jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
          jmp   ShowOtherPage         ; now show everything at once
 

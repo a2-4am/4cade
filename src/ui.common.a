@@ -142,20 +142,47 @@ CoverFade
 ; DrawSearchBarOffscreen
 ; draw 2-line search UI on the HGR page that is not currently showing
 ;
-; in:    none
+; in:    X = game index, or #$FF if no game is selected
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawSearchBarOffscreen
+         txa
+         pha
          lda   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
-         ror                         ; draw on offscreen page
+         ror                         ; draw line 1 on offscreen page
          +LDADDR UILine1
          jsr   Draw40Chars
          lda   OffscreenPage
-         ror                         ; draw on offscreen page
+         ror                         ; draw line 2 on offscreen page
          +LDADDR UILine2
-         jmp   Draw40Chars
+         jsr   Draw40Chars
+
+         pla
+         bit   gCheatsEnabled
+         bpl   @done                 ; if cheats are not enabled, we're done
+
+         pha
+         tax
+         lda   #20
+         sta   VTAB
+         jsr   BuildCheatLine1
+         lda   OffscreenPage
+         ror
+         +LDADDR gPathname
+         jsr   DrawCenteredString
+
+         inc   VTAB
+         pla
+         tax
+         jsr   BuildCheatLine2
+         lda   OffscreenPage
+         ror
+         +LDADDR gPathname
+         jsr   DrawCenteredString
+
+@done    rts
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen

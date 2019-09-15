@@ -72,6 +72,7 @@ RestoreStackNextTime
          !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
+         !source "src/ui.cheats.a"
          !source "src/prodos.path.a"
          !source "src/glue.launch.a"
          !source "src/glue.prorwts2.a"
@@ -90,7 +91,7 @@ gDFXStore
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
-         !word $D000
+         !word $D100
 gGamesListStore
          !word $FDFD                 ; SMC
          !word Reenter               ; NMI vector ($FFFA-B)

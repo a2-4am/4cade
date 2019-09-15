@@ -9,6 +9,7 @@
 ; Public functions
 ; - DrawPage
 ; - Draw40Chars
+; - DrawCenteredString
 ; - DrawString
 ; - DrawBuffer
 ;
@@ -22,6 +23,12 @@ DrawPage
 Draw40Chars
          +READ_RAM2_WRITE_RAM2
          jsr   Draw40CharsInternal
+         +READ_RAM1_WRITE_RAM1
+         rts
+
+DrawCenteredString
+         +READ_RAM2_WRITE_RAM2
+         jsr   DrawCenteredStringInternal
          +READ_RAM1_WRITE_RAM1
          rts
 

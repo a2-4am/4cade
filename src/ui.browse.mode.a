@@ -130,12 +130,10 @@ GameCount = *+1
          sta   UI_ToPlay,x
          dex
          bpl   -
-         ldx   #40
-         lda   #0
--        sta   UILine1-1,x           ; reset UI line 1
-         dex
-         bne   -
-         jsr   DrawSearchBarOffscreen ; actually draw the search UI (offscreen)
+         ldx   @index
+         jsr   BuildUILine1WithNoDots ; build UI line 1 with bars and other shapes
+         ldx   @index
+         jsr   DrawSearchBarOffscreen ; actually draw the UI (offscreen)
          jmp   ShowOtherPage          ; now show everything at once
 
 ;------------------------------------------------------------------------------

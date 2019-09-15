@@ -66,15 +66,17 @@ ParseGamesList
 @filterOnMemory
          jsr   IncAndGetChar         ; get second filter character ('1' if game requires 128K)
          cmp   #$30                  ; '0' -> no filtering on memory
-         beq   @swallowComma
+         beq   @parseCheatsAvailable
          cmp   #$31                  ; not '0' or '1' -> ignore entire line
          bne   @skipLine
          bit   zpMachineStatus
          bvc   @skipLine             ; game requires 128K but we only have 64K, so ignore entire line
+@parseCheatsAvailable
+         jsr   IncAndGetChar         ; get third character (cheat category, int)
+         and   #$0F
+         pha
 @swallowComma
          jsr   IncAndGetChar
-         cmp   #$2C                  ; ',' delimiter (required)
-         bne   @skipLine
 @gatherKey
          jsr   IncAndGetChar
          cmp   #$3D                  ; '=' ends the key
@@ -100,8 +102,12 @@ ParseGamesList
          !word gKeyLen
          !word gValLen
          !byte 0
-         pla
+                                     ; X = new OKVS length
+         pla                         ; pop saved Y
          tay
+         pla                         ; pop cheat category
+         dex                         ; X = new OKVS length - 1
+         sta   gCheatsAvailable,x
          clc
          bcc   @newkey               ; always branches
 

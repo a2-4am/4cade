@@ -129,15 +129,29 @@ gCurrentlyVisibleSlideshowIndex
          rts
 
 .Go
+; in:    A/Y = lo/hi address of filename
+;        X = game index
          +STAY SAVE
+         +STAY +
 
-         ; TODO check if cheats are enabled and available for this game
+         bit   gCheatsEnabled        ; are cheats enabled?
+         bpl   @noCheats
+         ldy   gCheatsAvailable,x    ; are there any cheats for this game?
+         beq   @noCheats
 
-         jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
-         !word kPrelaunchDirectory
+         jsr   LoadFile              ; cheats are enabled and this game has a prelaunch
+         !word kPrelaunchDirectory   ; file that will set up the cheats, so load that
++        !word $FDFD                 ; SMC
+         !word $0106
+         jmp   @loadedPrelaunch
+
+@noCheats
+         jsr   LoadFile              ; no game-specific prelaunch file, so
+         !word kPrelaunchDirectory   ; load standard prelaunch file instead
          !word kStandardPrelaunch
          !word $0106
 
+@loadedPrelaunch
          ldx   #1                    ; construct path to game's startup file
          sec                         ; which is always /X/game/game
          !byte $2c

@@ -10,6 +10,7 @@
 ; Public functions
 ; - DrawPageInternal
 ; - Draw40CharsInternal
+; - DrawCenteredStringInternal
 ; - DrawStringInternal
 ; - DrawBufferInternal
 ;
@@ -86,6 +87,27 @@ Draw40CharsInternal
          stx   HTAB
          rts
 
+DrawCenteredStringInternal
+; A/Y contains address of length-prefixed string
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; $25 contains textpage line (0..23) (this is the standard VTAB address)
+; clobbers A/X/Y
+; clobbers PTR/PTR+1
+         +STAY PTR
+
+         php
+         ldy   #0
+         lda   (PTR),y
+         sta   HTAB
+         lda   #40
+         sec
+         sbc   HTAB
+         lsr
+         sta   HTAB
+         plp
+         jmp   +
+
 DrawStringInternal
 ; A/Y contains address of length-prefixed string
 ; carry bit clear -> draw on page 1
@@ -97,7 +119,7 @@ DrawStringInternal
          +STAY PTR
 
          ldy   #0
-         lda   (PTR),y
++        lda   (PTR),y
          tax
          inc   PTR
          bne   +

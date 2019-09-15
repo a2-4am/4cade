@@ -20,7 +20,9 @@ ACME=acme
 # https://github.com/mach-kernel/cadius
 CADIUS=cadius
 
-asm: md asmfx asmprelaunch
+asm: md asmlauncher asmfx asmprelaunch
+
+asmlauncher:
 	$(ACME) src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 

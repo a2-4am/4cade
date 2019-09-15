@@ -1,0 +1,145 @@
+BuildUILine1WithNoDots
+; in:    X = game index, or #$FF if no game selected
+; out:   all registers clobbered
+;        UILine1 contains 40-character buffer (not length-prefixed) to print
+         cpx   #$FF
+         beq   +
+         ldy   gCheatsAvailable,x
+         +HIDE_NEXT_2_BYTES
++
+         ldy   #.kCheatsEnabled
+
+         ldx   #40
+         lda   #$00                  ; horizontal bar
+-        sta   UILine1-1,x           ; first, reset entire line to solid bar
+         dex
+         bne   -
+
+         bit   gCheatsEnabled
+         bpl   @done                 ; if cheats are not enabled, we're done
+
+         lda   .kCheatDescriptionLo,y
+         sta   PTR
+         lda   .kCheatDescriptionHi,y
+         sta   PTR+1
+                                     ; (PTR) -> length-prefixed cheat description
+         ldy   #0
+         lda   (PTR),y               ; A = length of cheat description
+         clc
+         adc   #8                    ; extra padding (4 on each side) for string
+         sta   @len
+         lda   #40
+         sec
+         sbc   @len
+         lsr
+         tax
+         lda   #$09                  ; rounded bottom-right character
+         sta   UILine1,x
+         ldy   #1                    ; fill the proper width with spaces
+         lda   #$20                  ; space character
+-        inx
+         sta   UILine1,x
+         iny
+@len=*+1
+         cpy   #$FD                  ; SMC
+         bne   -
+         lda   #$08                  ; rounded bottom-left character
+         sta   UILine1,x
+
+@done    rts
+
+BuildCheatLine1
+; in:    X = game index, or #$FF if no game is selected
+; out:   gPathname contains length-prefixed string to print centered
+;        all registers clobbered
+;        PTR clobbered
+         cpx   #$FF
+         beq   +
+         ldy   gCheatsAvailable,x
+         +HIDE_NEXT_2_BYTES
++
+         ldy   #.kCheatsEnabled
+
+         ldx   #39                   ; reset gPathname+2 to gPathname+41 to
+         lda   #$00                  ; horizontal bar character
+-        sta   gPathname+1,x
+         dex
+         bne   -
+
+         lda   #$06                  ; gPathname+1 = top-left rounded corner character
+         sta   gPathname+1
+
+         lda   .kCheatDescriptionLo,y
+         sta   PTR
+         lda   .kCheatDescriptionHi,y
+         sta   PTR+1
+                                     ; (PTR) -> length-prefixed cheat description
+         ldy   #0
+         lda   (PTR),y               ; A = length of cheat description
+         clc
+         adc   #8                    ; extra padding (4 on each side) for string
+         sta   gPathname             ; gPathname = length
+         tax
+         lda   #$07                  ; gPathname+length = top-right rounded corner character
+         sta   gPathname,x
+         rts
+
+BuildCheatLine2
+; in:    X = game index, or #$FF if no game is selected
+; out:   gPathname contains length-prefixed string to print centered
+;        all registers clobbered
+;        PTR clobbered
+;        SAVE clobbered
+         cpx   #$FF
+         beq   +
+         ldy   gCheatsAvailable,x
+         +HIDE_NEXT_2_BYTES
++
+         ldy   #.kCheatsEnabled
+         lda   .kCheatDescriptionLo,y
+         sta   SAVE
+         lda   .kCheatDescriptionHi,y
+         sta   SAVE+1
+                                     ; (SAVE) -> length-prefixed cheat description
+         +LDADDR .sCheatDescriptionPrefix
+         jsr   SetPath
+         +LDAY SAVE
+         jsr   AddToPath
+         +LDADDR .sCheatDescriptionSuffix
+         jmp   AddToPath
+
+.kCheatsEnabled = 3                  ; index of 'cheats enabled' string in following table
+.kCheatDescriptionLo
+         !byte <.sNoCheats
+         !byte <.sInfiniteLives
+         !byte <.sInfiniteLivesAndWeapons
+         !byte <.sCheatsEnabled
+.kCheatDescriptionHi
+         !byte >.sNoCheats
+         !byte >.sInfiniteLives
+         !byte >.sInfiniteLivesAndWeapons
+         !byte >.sCheatsEnabled
+.sNoCheats
+         !byte 14
+         !text "no cheats yet!"
+.sInfiniteLives
+         !byte 14
+         !text "infinite lives"
+.sInfiniteLivesAndWeapons
+         !byte 24
+         !text "infinite lives & weapons"
+.sCheatsEnabled
+         !byte 14
+         !text "cheats enabled"
+.sCheatDescriptionPrefix
+         !byte 4
+         !byte $03        ; vertical line
+         !text " "
+         !byte $16        ; bolt
+         !text " "
+.sCheatDescriptionSuffix
+         !byte 4
+         !text " "
+         !byte $16        ; bolt
+         !text " "
+         !byte $03        ; vertical line
