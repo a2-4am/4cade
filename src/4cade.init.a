@@ -155,8 +155,8 @@ TOTAL
 REPLAY
          !text   "R E P L A Y"
 LoaderVersion
-         !byte   4
-         !text   "v2.0"
+         !byte   10
+         !text   "v3.0-alpha"
 Loader64K
          !byte   3
          !text   "64K"
@@ -241,13 +241,11 @@ OneTimeSetup
          cpy   #$03
          bcc   @outer
 
-         +READ_RAM2_WRITE_RAM2
          ldx   #5
--        lda   Prelaunch,x           ; copy reentry wrapper to bottom of stack
+-        lda   @ResetVector,x        ; copy reentry wrapper to bottom of stack
          sta   $100,x                ; (used as reset vector because ][+ always
          dex                         ; switches to ROM on Ctrl-Reset)
          bpl   -
-
          inx
          stx   $3F2                  ; page 3 reset vector to ($100)
          inx
@@ -256,8 +254,11 @@ OneTimeSetup
          stx   $3F4
 
          bit   CLEARKBD
-
-         jmp   $100                  ; will jump to |Reentry| in LC RAM bank
+         ; execution falls through here
+@ResetVector
+; main entry point into launcher (also used by self-running demos, vectors)
+         +READ_RAM1_NO_WRITE
+         jmp   Reenter
 
 @kGameListConfFile
          !byte 10

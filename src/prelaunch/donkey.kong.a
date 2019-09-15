@@ -2,8 +2,10 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/DONKEY.KONG",plain
-*=$14D
+!to "build/PRELAUNCH/DONKEY.KONG",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
 
     lda #$60
     sta $3eab
@@ -12,4 +14,3 @@
     sta $729b
     sta $6fea
     jmp $4000
-

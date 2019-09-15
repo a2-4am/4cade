@@ -2,8 +2,10 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/DROL",plain
-*=$14d
+!to "build/PRELAUNCH/DROL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
 
     ldy #(cheat_e-cheat_b)-1
 -   lda cheat_b,y

@@ -129,7 +129,15 @@ gCurrentlyVisibleSlideshowIndex
          rts
 
 .Go
-         +STAY PTR
+         +STAY SAVE
+
+         ; TODO check if cheats are enabled and available for this game
+
+         jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
+         !word kPrelaunchDirectory
+         !word kStandardPrelaunch
+         !word $0106
+
          ldx   #1                    ; construct path to game's startup file
          sec                         ; which is always /X/game/game
          !byte $2c
@@ -137,7 +145,7 @@ gCurrentlyVisibleSlideshowIndex
          clc
          php
          ldy   #0
-         lda   (PTR), y
+         lda   (SAVE), y
          tay
          iny
          sty   @runlength+1
@@ -148,7 +156,7 @@ gCurrentlyVisibleSlideshowIndex
 -        inx
          sta   ProDOS_prefix, x
          iny
-         lda   (PTR), y
+         lda   (SAVE), y
 @runlength
          cpy   #$D1                  ; SMC
          bne   -
@@ -183,11 +191,6 @@ Launch
          lda   #$38                  ; 'sec' opcode to tell |Reenter| to
          sta   RestoreStackNextTime  ; restore the stack and stack pointer
 
-         ldx   #(End_Prelaunch-Prelaunch-1)
--        lda   Prelaunch,x           ; copy pre-launch code to main memory
-         sta   $100,x
-         dex
-         bpl   -
          ldx   #(end_promote-promote-1)
 -        lda   promote,x             ; copy ProDOS shim to main memory
          sta   $bf00,x

@@ -2,8 +2,10 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/DIG.DUG",plain
-*=$14D
+!to "build/PRELAUNCH/DIG.DUG",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
 
     lda #$60
     sta $826

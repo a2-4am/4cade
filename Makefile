@@ -20,65 +20,15 @@ ACME=acme
 # https://github.com/mach-kernel/cadius
 CADIUS=cadius
 
-asm: md
+asm: md asmfx asmprelaunch
 	$(ACME) -r build/4cade.lst src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
-	$(ACME) src/fx/fx.cover.fade.a
-	$(ACME) src/fx/fx.dhgr.fizzle.a
-	$(ACME) src/fx/fx.dhgr.fizzle.white.a
-	$(ACME) src/fx/fx.dhgr.ripple.a
-	$(ACME) src/fx/fx.dhgr.ripple.white.a
-	$(ACME) src/fx/fx.dhgr.iris.a
-	$(ACME) src/fx/fx.dhgr.iris.white.a
-	$(ACME) src/fx/fx.dhgr.radial.a
-	$(ACME) src/fx/fx.dhgr.radial.white.a
-	$(ACME) src/fx/fx.dhgr.radial2.a
-	$(ACME) src/fx/fx.dhgr.radial2.white.a
-	$(ACME) src/fx/fx.dhgr.radial3.a
-	$(ACME) src/fx/fx.dhgr.radial3.white.a
-	$(ACME) src/fx/fx.dhgr.radial4.a
-	$(ACME) src/fx/fx.dhgr.radial4.white.a
-	$(ACME) src/fx/fx.dhgr.radial5.a
-	$(ACME) src/fx/fx.dhgr.radial5.white.a
-	$(ACME) src/fx/fx.dhgr.star.a
-	$(ACME) src/fx/fx.dhgr.star.white.a
-	$(ACME) src/fx/fx.hgr.diagonal.a
-	$(ACME) src/fx/fx.hgr.interlock.ud.a
-	$(ACME) src/fx/fx.hgr.interlock.lr.a
-	$(ACME) src/fx/fx.hgr.spiral.a
-	$(ACME) src/fx/fx.hgr.fourspiral.a
-	$(ACME) src/fx/fx.hgr.fizzle.a
-	$(ACME) src/fx/fx.hgr.bar.dissolve.a
-	$(ACME) src/fx/fx.hgr.block.fizzle.a
-	$(ACME) src/fx/fx.hgr.block.fizzle.white.a
-	$(ACME) src/fx/fx.hgr.2pass.lr.a
-	$(ACME) src/fx/fx.hgr.crystal.a
-	$(ACME) src/fx/fx.hgr.foursquare.white.a
-	$(ACME) src/fx/fx.hgr.onesquare.white.a
-	$(ACME) src/fx/fx.hgr.diamond.a
-	$(ACME) src/fx/fx.hgr.checkerboard.white.a
-	$(ACME) src/fx/fx.hgr.halfblock.fizzle.a
-	$(ACME) src/fx/fx.hgr.halfblock.fizzle.white.a
-	$(ACME) src/fx/fx.hgr.stagger.ud.a
-	$(ACME) src/fx/fx.hgr.stagger.ud.white.a
-	$(ACME) src/fx/fx.hgr.stagger.lr.a
-	$(ACME) src/fx/fx.hgr.stagger.lr.white.a
-	$(ACME) src/fx/fx.hgr.corner.circle.a
-	$(ACME) src/fx/fx.hgr.sunrise.a
-	$(ACME) src/fx/fx.hgr.sunset.a
-	$(ACME) src/fx/fx.hgr.radial.a
-	$(ACME) src/fx/fx.hgr.radial2.a
-	$(ACME) src/fx/fx.hgr.radial3.a
-	$(ACME) src/fx/fx.hgr.radial4.a
-	$(ACME) src/fx/fx.hgr.radial5.a
-	$(ACME) src/fx/fx.hgr.split.ud.intro.a
-	$(ACME) src/fx/fx.hgr.iris.a
-	$(ACME) src/fx/fx.hgr.ripple.a
-	$(ACME) src/fx/fx.hgr.ripple2.a
-	$(ACME) src/fx/fx.hgr.star.a
-	$(ACME) src/fx/fx.hgr.star.white.a
-	$(ACME) src/fx/fx.shr.fizzle.a
-	$(ACME) src/fx/fx.gr.fizzle.a
+
+asmfx:
+	@for f in $(shell ls src/fx/*.a); do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
+
+asmprelaunch:
+	@for f in $(shell ls src/prelaunch/*.a); do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 
 dsk: md asm
 	#$(CADIUS) CREATEVOLUME build/"$(DISK)" "$(VOLUME)" 32767KB >>build/log
@@ -142,6 +92,8 @@ dsk: md asm
 	rm -f build/X/**/PRODOS
 	rm -f build/X/**/LOADER.SYSTEM
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
+	bin/buildfileinfo.py build/PRELAUNCH "06" "0106" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
 
 chd:	dsk
@@ -163,6 +115,7 @@ md:
 	mkdir -p build/SS
 	mkdir -p build/DEMO
 	mkdir -p build/FX
+	mkdir -p build/PRELAUNCH
 
 clean:
 	rm -rf build/ || rm -rf build

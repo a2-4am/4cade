@@ -2,8 +2,10 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/MONTEZUMA",plain
-*=$14d
+!to "build/PRELAUNCH/MONTEZUMA",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
 
     lda #$60
     sta $816

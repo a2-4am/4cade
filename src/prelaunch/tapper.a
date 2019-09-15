@@ -2,15 +2,17 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/TAPPER",plain
-*=$14D
+!to "build/PRELAUNCH/TAPPER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
 
     lda #$60
     sta $851
     jsr $800
     lda #<cheat
     sta $248
-    lda #>cheat	
+    lda #>cheat
     sta $249
     jmp $200
 

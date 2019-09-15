@@ -2,10 +2,13 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/cheat/MR.DO",plain
-*=$14D
+!to "build/PRELAUNCH/MR.DO",plain
+*=$106
 
-    bne cheat3
+    !source "src/prelaunch/common.a"
+
+    clc
+    bcc cheat3
 
 cheat2
     jsr $20d

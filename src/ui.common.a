@@ -146,7 +146,7 @@ CoverFade
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawSearchBarOffscreen
-         LDA   #22                   ; draw visible search bar
+         lda   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
          ror                         ; draw on offscreen page

@@ -52,6 +52,14 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
+kPrelaunchDirectory
+         !byte 10
+         !raw  "PRELAUNCH/"
+
+kStandardPrelaunch
+         !byte 8
+         !raw  "STANDARD"
+
 ;------------------------------------------------------------------------------
 ; SetPath/AddToPath
 ; append a length-prefixed string to gPathname

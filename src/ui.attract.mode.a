@@ -187,6 +187,11 @@ RunAttractModule
 +
          jsr   Home                  ; avoid seeing code load into the HGR page
 
+         jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
+         !word kPrelaunchDirectory
+         !word kStandardPrelaunch
+         !word $0106
+
          ldy   kDemoDirectory
          sty   ProDOS_prefix         ; temporarily set 'root' directory to
 -        lda   kDemoDirectory, y     ; /demos/ directory so demos can can load
