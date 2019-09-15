@@ -19,81 +19,12 @@ set CADIUS=cadius
 
 if "%1" equ "asm" (
 :asm
-2>nul md build
-2>nul md build\po
-2>nul md build\X
-2>nul md build\TITLE.HGR
-2>nul md build\TITLE.DHGR
-2>nul md build\ACTION.HGR
-2>nul md build\ACTION.DHGR
-2>nul md build\ACTION.GR
-2>nul md build\ARTWORK.SHR
-2>nul md build\ATTRACT
-2>nul md build\SS
-2>nul md build\DEMO
-2>nul md build\FX
-2>nul md build\CHEAT
-
-2>build\out.txt %ACME% -r build\4cade.lst src\4cade.a
-for /f "tokens=*" %%q in (build\out.txt) do set _make=%%q
+call :md
+call :asmfx
+call :asmprelaunch
+2>build\relbase.log %ACME% src\4cade.a
+for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 %ACME% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
-%ACME% src\fx\fx.cover.fade.a
-%ACME% src\fx\fx.dhgr.fizzle.a
-%ACME% src\fx\fx.dhgr.fizzle.white.a
-%ACME% src\fx\fx.dhgr.ripple.a
-%ACME% src\fx\fx.dhgr.ripple.white.a
-%ACME% src\fx\fx.dhgr.iris.a
-%ACME% src\fx\fx.dhgr.iris.white.a
-%ACME% src\fx\fx.dhgr.radial.a
-%ACME% src\fx\fx.dhgr.radial.white.a
-%ACME% src\fx\fx.dhgr.radial2.a
-%ACME% src\fx\fx.dhgr.radial2.white.a
-%ACME% src\fx\fx.dhgr.radial3.a
-%ACME% src\fx\fx.dhgr.radial3.white.a
-%ACME% src\fx\fx.dhgr.radial4.a
-%ACME% src\fx\fx.dhgr.radial4.white.a
-%ACME% src\fx\fx.dhgr.radial5.a
-%ACME% src\fx\fx.dhgr.radial5.white.a
-%ACME% src\fx\fx.dhgr.star.a
-%ACME% src\fx\fx.dhgr.star.white.a
-%ACME% src\fx\fx.hgr.diagonal.a
-%ACME% src\fx\fx.hgr.interlock.ud.a
-%ACME% src\fx\fx.hgr.interlock.lr.a
-%ACME% src\fx\fx.hgr.spiral.a
-%ACME% src\fx\fx.hgr.fourspiral.a
-%ACME% src\fx\fx.hgr.fizzle.a
-%ACME% src\fx\fx.hgr.bar.dissolve.a
-%ACME% src\fx\fx.hgr.block.fizzle.a
-%ACME% src\fx\fx.hgr.block.fizzle.white.a
-%ACME% src\fx\fx.hgr.2pass.lr.a
-%ACME% src\fx\fx.hgr.crystal.a
-%ACME% src\fx\fx.hgr.foursquare.white.a
-%ACME% src\fx\fx.hgr.onesquare.white.a
-%ACME% src\fx\fx.hgr.diamond.a
-%ACME% src\fx\fx.hgr.checkerboard.white.a
-%ACME% src\fx\fx.hgr.halfblock.fizzle.a
-%ACME% src\fx\fx.hgr.halfblock.fizzle.white.a
-%ACME% src\fx\fx.hgr.stagger.ud.a
-%ACME% src\fx\fx.hgr.stagger.ud.white.a
-%ACME% src\fx\fx.hgr.stagger.lr.a
-%ACME% src\fx\fx.hgr.stagger.lr.white.a
-%ACME% src\fx\fx.hgr.corner.circle.a
-%ACME% src\fx\fx.hgr.sunrise.a
-%ACME% src\fx\fx.hgr.sunset.a
-%ACME% src\fx\fx.hgr.radial.a
-%ACME% src\fx\fx.hgr.radial2.a
-%ACME% src\fx\fx.hgr.radial3.a
-%ACME% src\fx\fx.hgr.radial4.a
-%ACME% src\fx\fx.hgr.radial5.a
-%ACME% src\fx\fx.hgr.split.ud.intro.a
-%ACME% src\fx\fx.hgr.iris.a
-%ACME% src\fx\fx.hgr.ripple.a
-%ACME% src\fx\fx.hgr.ripple2.a
-%ACME% src\fx\fx.hgr.star.a
-%ACME% src\fx\fx.hgr.star.white.a
-%ACME% src\fx\fx.shr.fizzle.a
-%ACME% src\fx\fx.gr.fizzle.a
-for %%q in (src\cheat\*.a) do %ACME% %%q
 goto :EOF
 )
 
@@ -107,7 +38,6 @@ if "%1" equ "dsk" (
 :dsk
 call :asm
 2>nul del build\log
-rem %CADIUS% CREATEVOLUME "build\%DISK%" "%VOLUME%" 32766KB >>build\log
 1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
@@ -168,8 +98,8 @@ echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
-cscript /nologo bin\buildfileinfo.js build\CHEAT "06" "014D" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/CHEAT" "build\CHEAT" >>build\log
+cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
@@ -181,3 +111,36 @@ goto :EOF
 )
 
 echo usage: %0 clean / asm / dsk / chd
+goto :EOF
+
+:md
+2>nul md build
+2>nul md build\po
+2>nul md build\X
+2>nul md build\TITLE.HGR
+2>nul md build\TITLE.DHGR
+2>nul md build\ACTION.HGR
+2>nul md build\ACTION.DHGR
+2>nul md build\ACTION.GR
+2>nul md build\ARTWORK.SHR
+2>nul md build\ATTRACT
+2>nul md build\SS
+2>nul md build\DEMO
+2>nul md build\FX
+2>nul md build\PRELAUNCH
+goto :EOF
+
+:asmfx
+for %%q in (src\fx\*.a) do (
+  for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
+  set _to=!_to:~0,1!
+  if !_to!==t %ACME% %%q
+)
+goto :EOF
+
+:asmprelaunch
+for %%q in (src\prelaunch\*.a) do (
+  for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
+  set _to=!_to:~0,1!
+  if !_to!==t %ACME% %%q
+)
