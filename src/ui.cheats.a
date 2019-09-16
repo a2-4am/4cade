@@ -4,10 +4,30 @@
 ; cheat-related UI functions
 ;
 ; Public functions:
+; - ToggleCheat
 ; - BuildUILine1WithNoDots
 ; - BuildCheatLine1
 ; - BuildCheatLine2
 ;
+
+ToggleCheat
+; in:    none
+; out:   all registers clobbered
+;        X = 0, Z = 1 (guaranteed by pref_set)
+         lda   gCheatsEnabled
+         eor   #$80
+         sta   gCheatsEnabled
+         beq   +
+         lda   #$B1
+         +HIDE_NEXT_2_BYTES
++        lda   #$B0
+         sta   @val
+         jsr   pref_set
+         !word kCheat
+         !word @pref
+         rts
+@pref    !byte 1
+@val     !byte $FD
 
 BuildUILine1WithNoDots
 ; in:    X = game index, or #$FF if no game selected

@@ -107,6 +107,10 @@ SearchMode
          sec                         ; tell caller to redraw UI
          rts
 
+.OnCheat
+         jsr   ToggleCheat
+         beq   .OnInputChanged       ; always branches because Z=1 on exit from ToggleCheat
+
 .OnSearch
          ldx   InputLength
          cpx   #MaxInputLength
@@ -236,7 +240,8 @@ kInputBrowse   = 3
 kInputTab      = 4
 kInputLaunch   = 5
 kInputCredits  = 6
-kInputError    = 7
+kInputCheat    = 7
+kInputError    = 8
 
 .InputDispatchTableLo
          !byte <.OnSearch
@@ -246,6 +251,7 @@ kInputError    = 7
          !byte <.OnTab
          !byte <.OnLaunch
          !byte <Credits
+         !byte <.OnCheat
          !byte <.OnError
 .InputDispatchTableHi
          !byte >.OnSearch
@@ -255,10 +261,12 @@ kInputError    = 7
          !byte >.OnTab
          !byte >.OnLaunch
          !byte >Credits
+         !byte >.OnCheat
          !byte >.OnError
 
-kNumInputKeys = 8                    ; number of entries in next 2 tables (each)
+kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
 .InputKeys
+         !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $AF                   ; '/' = credits
          !byte $BF                   ; '?' = credits
          !byte $A0                   ; Space = mini attract mode
@@ -270,6 +278,7 @@ kNumInputKeys = 8                    ; number of entries in next 2 tables (each)
          !byte $9B                   ; Esc = clear input buffer (if any)
                                      ;   or switch to mega attract mode
 .InputKeyDispatch
+         !byte kInputCheat
          !byte kInputCredits
          !byte kInputCredits
          !byte kInputTab

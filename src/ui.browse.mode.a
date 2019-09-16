@@ -81,17 +81,21 @@ GameCount = *+1
          ldx   BrowseSelectedIndex
          jsr   PlayGameFromBrowse
          jsr   BlankHGR
-         jmp   +
+         jmp   .ForceBrowseChanged
+
+.OnCheat
+         jsr   ToggleCheat
+         beq   .ForceBrowseChanged   ; always branches because Z=1 on exit from ToggleCheat
 
 .OnTab
          ldx   BrowseSelectedIndex
          jsr   MiniAttractMode
          cmp   #$8D
          beq   .OnLaunch
-+        bit   CLEARKBD
+.ForceBrowseChanged
+         bit   CLEARKBD
          ldx   BrowseSelectedIndex
          ; execution falls through here
-
 .OnBrowseChanged
          stx   @index
          jsr   okvs_nth              ; get the name of the new game
@@ -146,6 +150,7 @@ kBrowseExitToSearch = 3
 kBrowseTab      = 4
 kBrowseLaunch   = 5
 kBrowseCredits  = 6
+kBrowseCheat    = 7
 
 .BrowseDispatchTableLo
          !byte <.OnSearch
@@ -155,6 +160,7 @@ kBrowseCredits  = 6
          !byte <.OnTab
          !byte <.OnLaunch
          !byte <Credits
+         !byte <.OnCheat
 .BrowseDispatchTableHi
          !byte >.OnSearch
          !byte >.OnPrevious
@@ -163,9 +169,11 @@ kBrowseCredits  = 6
          !byte >.OnTab
          !byte >.OnLaunch
          !byte >Credits
+         !byte >.OnCheat
 
-kNumBrowseKeys = 10                  ; number of entries in next 2 tables (each)
+kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
 .BrowseKeys
+         !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $AF                   ; '/' = credits
          !byte $BF                   ; '?' = credits
          !byte $A0                   ; Space = mini attract mode
@@ -177,6 +185,7 @@ kNumBrowseKeys = 10                  ; number of entries in next 2 tables (each)
          !byte $8B                   ; up arrow = previous
          !byte $88                   ; left arrow = previous
 .BrowseKeyDispatch
+         !byte kBrowseCheat
          !byte kBrowseCredits
          !byte kBrowseCredits
          !byte kBrowseTab

@@ -29,11 +29,14 @@ kNextFX
 kNextDFX
          !byte 7
          !raw  "NEXTDFX"
+kCheat
+         !byte 5
+         !raw  "CHEAT"
 
 ;------------------------------------------------------------------------------
 ; pref_get
-; get pref value by pref key, and validate that the pref value exists as a key
-; in another OKVS
+; get pref value by pref key, and optionally validate that the pref value
+; exists as a key in another OKVS
 ;
 ; example usage:
 ;        jsr   pref_get
@@ -47,10 +50,12 @@ kNextDFX
 ;
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] address of length-prefixed pref key
-;          +3 [word] address of OKVS
+;          +3 [word] address of OKVS, or 0
 ;        gGlobalPrefsStore must be initialized (this is done in 4cade.init)
 ; out:   A/Y = address of pref value
 ;        X = index of pref value in passed store
+;        (if OKVS parameter is 0, no validation occurs and X=0 and Z=1 on exit,
+;         some callers rely on this behavior, so don't change it!)
 ;        PARAM clobbered
 ;        PTR clobbered
 ;        SRC clobbered
@@ -68,6 +73,8 @@ pref_get
          !word gGlobalPrefsStore
 @prefkey !word $FDFD                 ; SMC
          bcs   .useDefaultValue      ; if pref key is not found, use default value
+         ldx   @store2+1
+         beq   @done
          +STAY +
          +STAY PTR
          ldy   #0
@@ -84,7 +91,7 @@ pref_get
 @store2  !word $FDFD                 ; SMC
 @n       !byte $FD                   ; SMC
          ldx   @n
-         rts
+@done    rts
 
 ;------------------------------------------------------------------------------
 ; pref_set
@@ -138,6 +145,11 @@ pref_set
          +LDADDR @kFluff3
          jsr     @addString
          +LDADDR kNextDFX
+         jsr     @addStringFromStore
+
+         +LDADDR @kFluff4
+         jsr     @addString
+         +LDADDR kCheat
          jsr     @addStringFromStore
 
          +LDADDR @kEOF
@@ -194,9 +206,12 @@ pref_set
 @kFluff2 !byte @kFluff3-*-1
          !byte $0D
          !raw  "# value=transition effect listed in FX.CONF, or empty",$0D
-@kFluff3 !byte @kEOF-*-1
+@kFluff3 !byte @kFluff4-*-1
          !byte $0D
          !raw  "# value=transition effect listed in DFX.CONF, or empty",$0D
+@kFluff4 !byte @kEOF-*-1
+         !byte $0D
+         !raw  "# value=0 or 1",$0D
 @kEOF    !byte @_-*-1
          !byte $0D
          !raw  "[eof]",$0D
