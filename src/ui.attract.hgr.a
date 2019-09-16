@@ -172,49 +172,23 @@ HGRSingle
          !word -
          !byte 0
 
-         jsr   okvs_get              ; get next HGR transition effect from prefs
-         !word gGlobalPrefsStore
+         jsr   pref_get              ; get HGR transition effect from prefs
          !word kNextFX
-         bcs   @nofx
-         +STAY @fx
-         jsr   okvs_get
          !word gFXStore
-@fx      !word $FDFD                 ; SMC
-         bcc   +
-@nofx    ldx   #0
-+        stx   gFXIndex
+         +STAY @filename             ; A/Y = filename (don't load file yet)
+                                     ; X = index of the transition in FX store
 
-         jsr   okvs_nth              ; get filename of transition effect code
-         !word gFXStore
-gFXIndex
-         !byte 0
-         +STAY @fxkey
+         +LDADDR gFXStore
+         jsr   okvs_next             ; get transition after this one
+         +STAY +
 
-         inc   gFXIndex              ; increment transition effect index
-         jsr   okvs_len
-         !word gFXStore
-         cmp   gFXIndex
-         bne   +
-         lda   #0
-         sta   gFXIndex
-+
-         lda   gFXIndex
-         sta   @nexti
-         jsr   okvs_nth              ; get name of next HGR transition
-         !word gFXStore
-@nexti   !byte $FD                   ; SMC
-         +STAY @nextfx
-
-         jsr   okvs_update           ; save name of next HGR transition in prefs store
-         !word gGlobalPrefsStore
+         jsr   pref_set              ; update prefs store and save to disk
          !word kNextFX
-@nextfx  !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
 
-         jsr   SaveGlobalPreferences ; write prefs store to disk
-
-         jsr   LoadFile              ; load transition effect code into $6000
+         jsr   LoadFile              ; now load transition effect code into $6000
          !word kFXDirectory
-@fxkey   !word $FDFD                 ; SMC
+@filename !word $FDFD                ; SMC
          !word $6000
          rts
 kFXConfFile

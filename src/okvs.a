@@ -10,6 +10,7 @@
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
 ; - okvs_nth(address, n)                        get key by numeric index
+; - okvs_next(address, n)                       get next key by numeric index
 ; - okvs_iter(address, callback)                iterate through keys
 ; - okvs_iter_values(address, callback)         iterate through values
 ;
@@ -288,6 +289,7 @@ okvs_get
 
 ;------------------------------------------------------------------------------
 ; okvs_nth
+; get (N)th key
 ;
 ; in:    stack contains 3 bytes of parameters:
 ;          +1 [word] handle to storage space
@@ -313,6 +315,37 @@ okvs_nth
          bne   -
 @found   jsr   incptr2
          +LDAY PTR
+         rts
+
+;------------------------------------------------------------------------------
+; okvs_next
+; get (N+1)th key, with wraparound
+;
+; in:    A/Y = handle to storage space
+;        X = record index
+; out:   A/Y = lo/hi address of (X+1)th key, or first key if X was the last record
+;        all other registers and flags clobbered
+;        PARAM clobbered
+;        PTR clobbered
+;        SRC clobbered
+;        SAVE clobbered
+;------------------------------------------------------------------------------
+okvs_next
+         +STAY @store1
+         +STAY @store2
+         inx
+         stx   SAVE
+         jsr   okvs_len
+@store1  !word $FDFD                 ; SMC
+         cmp   SAVE
+         beq   +
+         lda   SAVE
+         +HIDE_NEXT_2_BYTES
++        lda   #0
+         sta   @n
+         jsr   okvs_nth
+@store2  !word $FDFD                 ; SMC
+@n       !byte $FD                   ; SMC
          rts
 
 ;------------------------------------------------------------------------------

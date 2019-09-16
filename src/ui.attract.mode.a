@@ -26,59 +26,27 @@ MegaAttractMode
 
          jsr   LoadAndParseAttractModeConf
 
-         jsr   okvs_get              ; get next attract-mode module from prefs
-         !word gGlobalPrefsStore
+         jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
-         bcs   @noattract
-         +STAY @attract
-         jsr   okvs_get
          !word gAttractModeStore
-@attract !word $FDFD                 ; SMC
-         bcc   +
-@noattract
-         ldx   #0
-+        stx   @attractIndex
+         +STAY @mname                ; A/Y = module name
+                                     ; X = index of module in attract store
+         +LDADDR gAttractModeStore
+         jsr   okvs_next             ; get module after this one
+         +STAY +
 
-         jsr   okvs_nth              ; get filename of next attract-mode module
-         !word gAttractModeStore
-@attractIndex
-         !byte 0
-         +STAY @key
-
-         lda   @attractIndex
-         sta   gCurrentAttractIndex
-         inc   @attractIndex         ; increment module index for next time
-         jsr   okvs_len
-         !word gAttractModeStore
-         cmp   @attractIndex
-         bne   +
-         lda   #0
-         sta   @attractIndex
-+
-         lda   @attractIndex
-         sta   @nexti
-         jsr   okvs_nth              ; get name of next attract-mode module
-         !word gAttractModeStore
-@nexti   !byte $FD                   ; SMC
-         +STAY @nextattract
-
-         jsr   okvs_update           ; save name of next attract-mode module in prefs store
-         !word gGlobalPrefsStore
+         jsr   pref_set              ; update prefs store and save to disk
          !word kNextAttract
-@nextattract
-         !word $FDFD                 ; SMC
-
-         jsr   SaveGlobalPreferences ; write prefs store to disk
++        !word $FDFD                 ; SMC
 
          jsr   okvs_get
          !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
+@mname   !word $FDFD                 ; SMC
          +STAY PTR
-
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY @key                  ; A/Y = address of module name
+         +LDAY @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
          bpl   @jmpattract

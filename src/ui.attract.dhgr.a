@@ -68,55 +68,28 @@ DHGRSingle
          !word -
          !byte 0
 
-         jsr   okvs_get              ; get next DHGR transition effect from prefs
-         !word gGlobalPrefsStore
+         jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
-         bcs   @nodfx
-         +STAY @dfx
-         jsr   okvs_get
          !word gDFXStore
-@dfx     !word $FDFD                 ; SMC
-         bcc   +
-@nodfx   ldx   #0
-+        stx   gDFXIndex
+         +STAY @filename             ; A/Y = filename (don't load file yet)
+                                     ; X = index of the transition in DFX store
 
-         jsr   okvs_nth              ; get filename of DHGR transition effect code
-         !word gDFXStore
-gDFXIndex
-         !byte 0
-         +STAY @dfxkey
+         +LDADDR gDFXStore
+         jsr   okvs_next             ; get transition after this one
+         +STAY +
 
-         inc   gDFXIndex             ; increment transition effect index for next time
-         jsr   okvs_len
-         !word gDFXStore
-         cmp   gDFXIndex
-         bne   +
-         lda   #0
-         sta   gDFXIndex
-+
-         lda   gDFXIndex
-         sta   @nexti
-         jsr   okvs_nth              ; get name of next DHGR transition
-         !word gDFXStore
-@nexti   !byte $FD                   ; SMC
-         +STAY @nextdfx
-
-         jsr   okvs_update           ; save name of next DHGR transition in prefs store
-         !word gGlobalPrefsStore
+         jsr   pref_set              ; update prefs store and save to disk
          !word kNextDFX
-@nextdfx !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
 
-         jsr   SaveGlobalPreferences ; write prefs store to disk
-
-         jsr   LoadFile              ; load transition effect code into $6000
+         jsr   LoadFile              ; now load transition effect code into $6000
          !word kFXDirectory
-@dfxkey  !word $FDFD                 ; SMC
+@filename !word $FDFD                ; SMC
          !word $6000
          rts
 kDFXConfFile
-         !byte @kDFXConfFile_e-*-1
+         !byte 8
          !text "DFX.CONF"
-@kDFXConfFile_e
 
 ;------------------------------------------------------------------------------
 ; .DHGRTitleCallback [private]

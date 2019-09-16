@@ -4,11 +4,10 @@
 ; Parser for global preferences file
 ;
 ; Public functions
-; - SaveGlobalPreferences
+; - pref_get
+; - pref_set
 ;
 ; Public constants (all length-prefixed strings)
-; - kGlobalPrefsFilename
-; - kLastPlayed
 ; - kNextAttract
 ; - kNextFX
 ; - kNextDFX
@@ -20,9 +19,7 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kLastPlayed
-         !byte 10
-         !raw  "LASTPLAYED"
+; valid pref keys
 kNextAttract
          !byte 11
          !raw  "NEXTATTRACT"
@@ -34,33 +31,111 @@ kNextDFX
          !raw  "NEXTDFX"
 
 ;------------------------------------------------------------------------------
-; SaveGlobalPreferences
-; save global options and state to file
+; pref_get
+; get pref value by pref key, and validate that the pref value exists as a key
+; in another OKVS
 ;
-; in:    none
-; out:   all registers and flags clobbered
-;        $00/$01/$FE/$FF clobbered
+; example usage:
+;        jsr   pref_get
+;        !word kNextFX
+;        !word gFXStore
+;
+; See above for list of valid pref keys.
+;
+; The OKVS you pass in as the second parameter must have at least 1 record.
+; This is not checked.
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] address of length-prefixed pref key
+;          +3 [word] address of OKVS
+;        gGlobalPrefsStore must be initialized (this is done in 4cade.init)
+; out:   A/Y = address of pref value
+;        X = index of pref value in passed store
+;        PARAM clobbered
+;        PTR clobbered
+;        SRC clobbered
+;        SAVE clobbered
 ;------------------------------------------------------------------------------
-SaveGlobalPreferences
-         +LDADDR kGlobalPrefsBuffer
+pref_get
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY @prefkey
+         +LDPARAM 3
+         +STAY @store1
+         +STAY @store2
+
+         jsr   okvs_get              ; look up pref key in prefs store
+         !word gGlobalPrefsStore
+@prefkey !word $FDFD                 ; SMC
+         bcs   .useDefaultValue      ; if pref key is not found, use default value
+         +STAY +
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         beq   .useDefaultValue      ; if pref value is empty, use default value
+         jsr   okvs_get              ; check whether the pref value exists as a key in the passed-in store
+@store1  !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
+         bcc   +
+.useDefaultValue                     ; find first key in passed store and use that as a default value
+         ldx   #0
++        stx   @n
+         jsr   okvs_nth
+@store2  !word $FDFD                 ; SMC
+@n       !byte $FD                   ; SMC
+         ldx   @n
+         rts
+
+;------------------------------------------------------------------------------
+; pref_set
+; set pref value by pref key, serialize prefs, and write them to disk
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] address of length-prefixed pref key
+;          +3 [word] address of length-prefixed pref value
+; out:   all registers and flags clobbered
+;        PARAM clobbered
+;        PTR clobbered
+;        SRC clobbered
+;        $FE/$FF clobbered
+;------------------------------------------------------------------------------
+pref_set
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY @prefkey
+         +LDPARAM 3
+         +STAY @prefval
+
+         jsr   okvs_update           ; save that in prefs store
+         !word gGlobalPrefsStore
+@prefkey !word $FDFD                 ; SMC
+@prefval !word $FDFD                 ; SMC
+
+         +LDADDR kGlobalPrefsBuffer  ; clear prefs buffer
          +STAY   $FE
+         ldx     #$02
+         ldy     #$00
+         tya
+-        sta     ($FE),y
+         iny
+         bne     -
+         inc     $FF
+         dex
+         bne     -
+         dec     $FF
+         dec     $FF
 
-         +LDADDR @kFluff1
-         jsr     @addString
-         +LDADDR kLastPlayed
-         jsr     @addStringFromStore
-
-         +LDADDR @kFluff2
+         +LDADDR @kFluff1            ; serialize prefs into prefs buffer
          jsr     @addString
          +LDADDR kNextAttract
          jsr     @addStringFromStore
 
-         +LDADDR @kFluff3
+         +LDADDR @kFluff2
          jsr     @addString
          +LDADDR kNextFX
          jsr     @addStringFromStore
 
-         +LDADDR @kFluff4
+         +LDADDR @kFluff3
          jsr     @addString
          +LDADDR kNextDFX
          jsr     @addStringFromStore
@@ -68,7 +143,7 @@ SaveGlobalPreferences
          +LDADDR @kEOF
          jsr     @addString
 
-         +LDADDR kGlobalPrefsFilename
+         +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
          jsr   SetPath
          jsr   SaveSmallFile
          !word kGlobalPrefsBuffer
@@ -115,14 +190,11 @@ SaveGlobalPreferences
          !raw  "# Do not edit by hand.",$0D
          !raw  "# Or do. I'm a comment, not a cop.",$0D
          !byte $0D
-         !raw  "# value=game directory listed in GAMES.CONF, or empty",$0D
+         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0D
 @kFluff2 !byte @kFluff3-*-1
          !byte $0D
-         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0D
-@kFluff3 !byte @kFluff4-*-1
-         !byte $0D
          !raw  "# value=transition effect listed in FX.CONF, or empty",$0D
-@kFluff4 !byte @kEOF-*-1
+@kFluff3 !byte @kEOF-*-1
          !byte $0D
          !raw  "# value=transition effect listed in DFX.CONF, or empty",$0D
 @kEOF    !byte @_-*-1
