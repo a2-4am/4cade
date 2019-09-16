@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ZAXXON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    lda #<cheat
+    sta $208c
+    lda #>cheat
+    sta $208d
+    rts
+
+cheat
+    lda #$bd
+    sta $1a40
+    sta $1a61
+    jmp $200
