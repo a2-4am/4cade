@@ -11,10 +11,10 @@
     sta $208c
     lda #>cheat
     sta $208d
-    rts
+    jmp $2000
 
 cheat
-    lda #$bd
-    sta $1a40
-    sta $1a61
+    ldy #$bd
+    sty $1a40
+    sty $1a61
     jmp $200

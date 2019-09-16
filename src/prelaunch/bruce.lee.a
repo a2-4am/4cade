@@ -8,13 +8,12 @@
     !source "src/prelaunch/common.a"
 
     lda #<cheat
-    sta $b3e
+    sta $b55
     lda #>cheat
-    sta $b3f
-    rts
+    sta $b56
+    jmp $900
 
 cheat
-    jsr $22a
     lda #$2c
     sta $8a7e
-    rts
+    jmp $3800
