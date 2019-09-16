@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ALIEN.AMBUSH",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    lda #$60
+    sta $81c
+    jsr $800
+    dec $5ff5
+    dec $608b
+    jmp $4000

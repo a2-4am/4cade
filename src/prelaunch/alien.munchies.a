@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ALIEN.MUNCHIES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    lda #$60
+    sta $1638
+    jsr $1610
+    lda #$ad
+    sta $10c9
+    sta $be8
+    jmp $833
