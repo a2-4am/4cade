@@ -245,23 +245,7 @@ OneTimeSetup
          cpy   #$03
          bcc   @outer
 
-         ldx   #5
--        lda   @ResetVector,x        ; copy reentry wrapper to bottom of stack
-         sta   $100,x                ; (used as reset vector because ][+ always
-         dex                         ; switches to ROM on Ctrl-Reset)
-         bpl   -
-         inx
-         stx   $3F2                  ; page 3 reset vector to ($100)
-         inx
-         stx   $3F3
-         ldx   #$A4
-         stx   $3F4
-
          bit   CLEARKBD
-         ; execution falls through here
-@ResetVector
-; main entry point into launcher (also used by self-running demos, vectors)
-         +READ_RAM1_NO_WRITE
          jmp   Reenter
 
 @kGameListConfFile
