@@ -26,7 +26,7 @@ BuildUILine1WithNoDots
          ldy   #0
          lda   (PTR),y               ; A = length of cheat description
          clc
-         adc   #8                    ; extra padding (4 on each side) for string
+         adc   #4                    ; extra padding (2 on each side)
          sta   @len
          lda   #40
          sec
@@ -77,7 +77,7 @@ BuildCheatLine1
          ldy   #0
          lda   (PTR),y               ; A = length of cheat description
          clc
-         adc   #8                    ; extra padding (4 on each side) for string
+         adc   #4                    ; extra padding (2 on each side)
          sta   gPathname             ; gPathname = length
          tax
          lda   #$07                  ; gPathname+length = top-right rounded corner character
@@ -120,26 +120,34 @@ BuildCheatLine2
          !byte >.sInfiniteLivesAndWeapons
          !byte >.sCheatsEnabled
 .sNoCheats
-         !byte 14
-         !text "no cheats yet!"
+         !byte 8
+         !text "no cheat"
 .sInfiniteLives
-         !byte 14
+         !byte 18
+         !byte $16        ; bolt
+         !text " "
          !text "infinite lives"
+         !text " "
+         !byte $16        ; bolt
 .sInfiniteLivesAndWeapons
-         !byte 24
+         !byte 28
+         !byte $16        ; bolt
+         !text " "
          !text "infinite lives & weapons"
+         !text " "
+         !byte $16        ; bolt
 .sCheatsEnabled
-         !byte 14
+         !byte 18
+         !byte $16        ; bolt
+         !text " "
          !text "cheats enabled"
+         !text " "
+         !byte $16        ; bolt
 .sCheatDescriptionPrefix
-         !byte 4
+         !byte 2
          !byte $03        ; vertical line
          !text " "
-         !byte $16        ; bolt
-         !text " "
 .sCheatDescriptionSuffix
-         !byte 4
-         !text " "
-         !byte $16        ; bolt
+         !byte 2
          !text " "
          !byte $03        ; vertical line
