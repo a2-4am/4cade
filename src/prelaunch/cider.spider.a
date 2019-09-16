@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/CIDER.SPIDER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $2076
+         jsr   $1FFD      ; decompress
+         lda   #$BD
+         sta   $19C5      ; patch - don't decrease lives
+         sta   $196A      ; patch - don't increase lives
+         jmp   $1000
