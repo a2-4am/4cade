@@ -1,3 +1,14 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; cheat-related UI functions
+;
+; Public functions:
+; - BuildUILine1WithNoDots
+; - BuildCheatLine1
+; - BuildCheatLine2
+;
+
 BuildUILine1WithNoDots
 ; in:    X = game index, or #$FF if no game selected
 ; out:   all registers clobbered
