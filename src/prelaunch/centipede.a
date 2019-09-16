@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/CENTIPEDE",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $0C33
+         jsr   $0C00      ; decompress
+         lda   #$B5
+         sta   $A231      ; patch - don't decrease lives
+         jmp   $A000
