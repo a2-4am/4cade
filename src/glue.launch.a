@@ -73,14 +73,16 @@ GetGameDisplayName
 
 PlayGameFromSearch
 PlayGameFromBrowse
-         stx   @gameIndex
+; in:    X = game index
+         stx   +
          jsr   okvs_nth
          !word gGamesListStore
-@gameIndex
-         !byte $FD                   ; SMC
++        !byte $FD                   ; SMC
+                                     ; A/Y = address of game filename
          jmp   .Go
 
 PlayGameFromAttract
+; in:    none
          jsr   LoadAndParseAttractModeConf
 
          jsr   okvs_nth              ; get filename of current attract-mode module
@@ -91,6 +93,7 @@ gCurrentAttractIndex
          jsr   okvs_get
          !word gAttractModeStore
 @key     !word $FDFD                 ; SMC
+                                     ; A/Y = address of attract mode value (module type)
          +STAY PTR
          ldy   #1
          lda   (PTR),y
@@ -98,7 +101,7 @@ gCurrentAttractIndex
          bne   @playFromSlideshow
 
 ; we reached here by pressing <RETURN> during a self-running demo,
-; which means that @key points to the filename of the game we want to play
+; which means that @key points to the filename of the game we want to play,
          +LDAY @key
          jmp   .Go
 
@@ -116,32 +119,37 @@ gCurrentlyVisibleSlideshowIndex
          !word gGamesListStore
 @sskey   !word $FDFD                 ; SMC
          bcs   +
-         +LDAY @sskey
+         +LDAY @sskey                ; the slideshow key was a game filename, so use that
          jmp   .Go
 +
-; if the key is not found, try getting the value of the current record
-; from gSlideshowStore and using that instead
-; (some games have multiple action screenshots, value points to the key in gGamesListStore)
+; if the key is not found, get the value of the current record
+; from gSlideshowStore instead (some games have multiple action screenshots, so
+; the key is just a unique filename for that screenshot and the value is the
+; actual game filename)
          jsr   okvs_get
          !word gSlideshowStore
 @sskey2  !word $FDFD                 ; SMC
-         bcc   .Go
-         rts
+         ; execution falls through here
 
 .Go
 ; in:    A/Y = lo/hi address of filename
-;        X = game index
          +STAY SAVE
-         +STAY +
 
          bit   gCheatsEnabled        ; are cheats enabled?
          bpl   @noCheats
+
+         +STAY +
+         +STAY @pfile
+         jsr   okvs_get              ; need to get game index from filename to determine
+         !word gGamesListStore       ; whether there are any cheats for this game
++        !word $FDFD                 ; SMC
+                                     ; X = game index
          ldy   gCheatsAvailable,x    ; are there any cheats for this game?
          beq   @noCheats
 
          jsr   LoadFile              ; cheats are enabled and this game has a prelaunch
          !word kPrelaunchDirectory   ; file that will set up the cheats, so load that
-+        !word $FDFD                 ; SMC
+@pfile   !word $FDFD                 ; SMC
          !word $0106
          jmp   @loadedPrelaunch
 
