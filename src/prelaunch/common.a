@@ -1,4 +1,9 @@
+;license:MIT
+;(c) 2019 by 4am
+;
 ; common code used by all prelaunchers
+;
+; you should include this file with a '!source' directive, not assemble it directly
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
