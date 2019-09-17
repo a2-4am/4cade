@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/CYCLOD",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $202A
+         jsr   $2000      ; decompress
+         lda   #$AD
+         sta   $8075      ; patch - don't decrease lives
+         jmp   $8EA6
