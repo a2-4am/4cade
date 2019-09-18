@@ -20,11 +20,11 @@
 
          ldy   #@noHighPartlen
 -        lda   @s_noHighPart,y
-         sta   $6B1,y
+         sta   $6AB,y
          dey
          bpl   -
          bmi   @hang
-@s_noHighPart !scrxor $80,"RUN FROM PARTITION 1-4"
+@s_noHighPart !scrxor $80,"RUN FROM DRIVE 1 OR 2 OF BOOT SLOT"
 @noHighPartlen=(*-@s_noHighPart)-1
 
 +        jsr   Has64K                ; check for 64K (required)
