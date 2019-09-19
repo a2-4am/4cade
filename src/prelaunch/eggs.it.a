@@ -1,0 +1,18 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/EGGS.IT",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $3E58
+         jsr   $3DE9      ; phase 1
+         lda   #$60
+         sta   $B890
+         jsr   $B82C      ; phase 2
+         lda   #$AD
+         sta   $962A      ; patch - don't decrease lives
+         jmp   ($0020)
