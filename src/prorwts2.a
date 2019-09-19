@@ -380,7 +380,6 @@ adjpath         tya
                 lsr
                 tay
                 ldx     DEVADR01HI, y
-!if allow_extend = 1 {
                 cpx     #$c8
                 bcc     set_slot
                 ldx     #$c8
@@ -404,7 +403,6 @@ adjpath         tya
                 ldy     #$ff
                 lda     (bloklo), y
                 beq     -
-}
 
 set_slot        stx     slot + 2
 !if allow_extend = 1 {
@@ -3047,5 +3045,5 @@ hdddataend
   } ;verbose_info
 } ;PASS2
 
-readbuff
+readbuff = $800
 !byte $D3,$C1,$CE,$A0,$C9,$CE,$C3,$AE
