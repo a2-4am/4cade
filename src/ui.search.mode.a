@@ -108,8 +108,7 @@ SearchMode
          rts
 
 .OnCheat
-         lda   #$FF
-         sta   SelectedIndex         ; force reload
+         dec   SelectedIndex         ; force reload (will be reset to correct value in .OnInputChanged)
          jsr   ToggleCheat
          beq   .OnInputChanged       ; always branches because Z=1 on exit from ToggleCheat
 
