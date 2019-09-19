@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CANYON.CLIMBER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    lda #$60
+    sta $8022
+    jsr $67de
+    lda #$a5
+    sta $35c2
+    jmp $3000
