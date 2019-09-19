@@ -28,7 +28,7 @@
 +        sta   $1FE
          sty   $1FF
 
-         !source "src/PRELAUNCH/common.a"
+         !source "src/prelaunch/common.a"
 
          ldx   #$FD                  ; Jump to game entry point via stack pop.
          txs
