@@ -14,23 +14,15 @@ DISK=4cade.2mg
 VOLUME=A.4AM.PACK
 
 # third-party tools required to build
+
 # https://sourceforge.net/projects/acme-crossass/
 ACME=acme
-# https://www.brutaldeluxe.fr/products/crossdevtools/cadius/
-# https://github.com/mach-kernel/cadius
+
+# https://github.com/sicklittlemonkey/cadius
+# version 1.4.0 or later
 CADIUS=cadius
 
-asm: md asmlauncher asmfx asmprelaunch
-
-asmlauncher:
-	$(ACME) src/4cade.a 2>build/relbase.log
-	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
-
-asmfx:
-	@for f in $(shell ls src/fx/*.a); do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
-
-asmprelaunch:
-	@for f in $(shell ls src/prelaunch/*.a); do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
+# some scripts also require Python 3
 
 dsk: md asm
 	cp res/blank.2mg build/"$(DISK)" >>build/log
@@ -88,14 +80,26 @@ dsk: md asm
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	bin/do2po.py res/dsk/ build/po/
 	rsync -a res/dsk/*.po build/po/
-	bin/extract.py build/po/ | sh >>build/log
+	@for f in build/po/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store
-	rm -f build/X/**/PRODOS
-	rm -f build/X/**/LOADER.SYSTEM
+	rm -f build/X/**/PRODOS*
+	rm -f build/X/**/LOADER.SYSTEM*
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
 	bin/buildfileinfo.py build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
+
+asm: md asmlauncher asmfx asmprelaunch
+
+asmlauncher:
+	$(ACME) src/4cade.a 2>build/relbase.log
+	$(ACME) -r build/4cade.lst -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
+
+asmfx:
+	@for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
+
+asmprelaunch:
+	@for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 
 chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
