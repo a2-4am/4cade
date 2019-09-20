@@ -503,7 +503,6 @@ ProDOS_savedY
         lda    #0
         rts
 
-ProDOS_unit
   !if * > $bf30 {
     !error "$BF30 misplaced (",*,")"
   } else {
@@ -511,6 +510,7 @@ ProDOS_unit
         !fill  $bf30-*
     }
   }
+ProDOS_unit
         !byte  $d1
 
 ProDOS_fatal ;only for debugging, will be removed
