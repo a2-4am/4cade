@@ -64,15 +64,13 @@
 ;------------------------------------------------------------------------------
 ; okvs_init
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 okvs_init
-         +PARAMS_ON_STACK 2
-         jsr   GetStoreAddress
+         jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
          tya

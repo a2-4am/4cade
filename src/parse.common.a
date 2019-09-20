@@ -32,8 +32,8 @@ ParseKeyValueList
          +PARAMS_ON_STACK 5
 
          +LDPARAM 1
-         +STAY @store1
          +STAY @store2
+         jsr   okvs_init             ; reset key/value store
 
          +LDPARAM 3
          +STAY $FE
@@ -55,8 +55,6 @@ ParseKeyValueList
          bcs   +
          dey
 +        sty   $FF
-         jsr   okvs_init             ; reset key/value store
-@store1  !word $FDFD                 ; SMC
 
          ldy   #$00                  ; index into ($FE) pointing to current character
 @newkey  ldx   #$00                  ; X = index into current key
