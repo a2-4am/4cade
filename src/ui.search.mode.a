@@ -152,14 +152,12 @@ SearchMode
          dec   InputLength           ; ignore the last key typed
          jmp   .OnError              ; beep and return
 +
-         lda   BestMatchIndex        ; check if the new best match is the same
-         cmp   SelectedIndex         ; as the current best match
+         ldx   BestMatchIndex        ; check if the new best match is the same
+         cpx   SelectedIndex         ; as the current best match
          php                         ; (we'll use this later to skip reloading)
-         sta   SelectedIndex
-         sta   @index
+         stx   SelectedIndex
+         +LDADDR gGamesListStore
          jsr   okvs_nth              ; get the name of the new best match
-         !word gGamesListStore
-@index   !byte $FD
          +STAY @key
          +STAY @key2
          plp

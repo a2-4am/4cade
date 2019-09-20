@@ -68,14 +68,11 @@ MegaAttractMode
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------
 MiniAttractMode
-         stx   +
+         +LDADDR gGamesListStore
+         jsr   okvs_nth
+         +STAY @fname
 
          jsr   BlankHGR
-
-         jsr   okvs_nth
-         !word gGamesListStore
-+        !byte $FD                   ; SMC
-         +STAY @fname
 
          lda   #0
          sta   @MiniAttractIndex
@@ -95,11 +92,10 @@ MiniAttractMode
          cmp   @MiniAttractIndex
          beq   @exit                 ; we've run through all modules, so exit to caller
 
-         lda   @MiniAttractIndex
-         sta   +
+@MiniAttractIndex=*+1
+         ldx   #$FD                  ; SMC
+         +LDADDR gAttractModeStore
          jsr   okvs_nth              ; get the next module on the list
-         !word gAttractModeStore
-+        !byte $FD                   ; SMC
          +STAY @key
 
          jsr   okvs_get              ; get module type
@@ -117,8 +113,6 @@ MiniAttractMode
          lda   KBD
          bpl   @loop
 @exit    rts
-@MiniAttractIndex
-         !byte $FD
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
