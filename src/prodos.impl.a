@@ -21,10 +21,7 @@ ProDOS_enter
 !set CloseHandles = @imp_close
     stx    ProDOS_savedX+1
     sty    ProDOS_savedY+1
-    pha
     jsr    @swap_zp
-    pla
-    tax
     pla
     tay
     pla
@@ -43,14 +40,11 @@ ProDOS_enter
     pha
     tya
     pha
-    php
-    txa
-    pha
 @request
     lda    #$d1
     cmp    #$80
     beq    @do_readblock
-    cmp    #$81 ;I don't remember if I used this, but it's cheap to add
+    cmp    #$81
     beq    @do_writeblock
     cmp    #$c4
     beq    @do_getattrib
@@ -69,9 +63,9 @@ ProDOS_enter
     cmp    #$ce
     beq    @do_seek
     cmp    #$d1
-    beq    @do_eof
-    ;;any others??
-    jmp    ProDOS_fatal
+    ;;bne    @do_fatal
+@do_eof
+    jmp    @imp_eof
 @do_readblock
 @do_writeblock
     jmp    @imp_rdwrblock
@@ -92,8 +86,8 @@ ProDOS_enter
     jmp    @restore_zp
 @do_seek
     jmp    @imp_seek
-@do_eof
-    jmp    @imp_eof
+@do_fatal
+    ;;jmp    ProDOS_fatal
 
 @imp_rdwrblock
     and    #$7f
@@ -345,15 +339,6 @@ ProDOS_enter
 
 @restore_zp
     jsr    @swap_zp
-    pla
-    lsr
-    lsr
-    lsr
-    lsr
-    and    #8
-    plp
-    adc    #0
-    tax
     jmp    ProDOS_exit
 
 @handle
@@ -492,54 +477,52 @@ promote
 !pseudopc $bf00 {
         php
         sei
-        lda    $c012
+        bit    $c083
         !byte  $24
   !if * != $bf06 {
     !error "$BF06 misplaced (",*,")"
   }
         rts ;clock interface, must be RTS on real ProDOS if program uses $20x
 
-        asl
-        lda    $c011
         bit    $c083
-        jmp    ProDOS_LC
-        !text  "4Q"
+        jmp    ProDOS_enter
+ProDOS_exit
+ProDOS_savedX
+        ldx    #$d1
+        plp
+        clc
+        bcc    ProDOS_savedY
   !if * != $bf13 {
     !error "$BF13 misplaced (",*,")"
   }
         !byte  $c1
         !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
-ProDOS_LC
-        bit    $c083
-        jmp    ProDOS_enter
-ProDOS_exit
-        sta    $c082, x
-ProDOS_savedX
-        ldx    #$d1
 ProDOS_savedY
         ldy    #$d1
-        plp
-        clc
-        !byte  $24
-ProDOS_unit
-  !if * != $bf30 {
-    !error "$BF30 misplaced (",*,")"
-  }
-        !byte  $d1
-
+        sta    $c081
         lda    #0
         rts
 
+ProDOS_unit
+  !if * > $bf30 {
+    !error "$BF30 misplaced (",*,")"
+  } else {
+    !if * != $bf30 {
+        !fill  $bf30-*
+    }
+  }
+        !byte  $d1
+
 ProDOS_fatal ;only for debugging, will be removed
-        bit    $c081
-        pha
-        jsr    $fe89
-        jsr    $fe93
-        pla
-        jsr    $fdda
-        jmp    $ff65
-*=$bf58
-        !fill  $18
+;;        bit    $c081
+;;        pha
+;;        jsr    $fe89
+;;        jsr    $fe93
+;;        pla
+;;        jsr    $fdda
+;;        jmp    $ff65
+;;*=$bf58
+;;        !fill  $18 ;filled by init instead
 
 ProDOS_prefix=$bfd0
 ;        !fill  $2e
