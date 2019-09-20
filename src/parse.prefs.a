@@ -67,14 +67,13 @@ pref_get
          +STAY @prefkey
          +LDPARAM 3
          +STAY @store1
-         +STAY @store2
 
          jsr   okvs_get              ; look up pref key in prefs store
          !word gGlobalPrefsStore
 @prefkey !word $FDFD                 ; SMC
          bcs   .useDefaultValue      ; if pref key is not found, use default value
-         ldx   @store2+1
-         beq   @done
+         ldx   @store1+1
+         beq   @done                 ; if no OKVS to validate against, we're done
          +STAY +
          +STAY PTR
          ldy   #0
@@ -83,14 +82,12 @@ pref_get
          jsr   okvs_get              ; check whether the pref value exists as a key in the passed-in store
 @store1  !word $FDFD                 ; SMC
 +        !word $FDFD                 ; SMC
-         bcc   +
-.useDefaultValue                     ; find first key in passed store and use that as a default value
+         bcc   +                     ; found key, continue
+.useDefaultValue                     ; did not find key, use first key in passed store as a default value
          ldx   #0
-+        stx   @n
++
+         +LDAY @store1
          jsr   okvs_nth
-@store2  !word $FDFD                 ; SMC
-@n       !byte $FD                   ; SMC
-         ldx   @n
 @done    rts
 
 ;------------------------------------------------------------------------------

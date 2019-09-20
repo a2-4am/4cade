@@ -177,7 +177,6 @@ HGRSingle
          !word gFXStore
          +STAY @filename             ; A/Y = filename (don't load file yet)
                                      ; X = index of the transition in FX store
-
          +LDADDR gFXStore
          jsr   okvs_next             ; get transition after this one
          +STAY +

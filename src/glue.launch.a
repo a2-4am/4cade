@@ -74,21 +74,19 @@ GetGameDisplayName
 PlayGameFromSearch
 PlayGameFromBrowse
 ; in:    X = game index
-         stx   +
+         +LDADDR gGamesListStore
          jsr   okvs_nth
-         !word gGamesListStore
-+        !byte $FD                   ; SMC
                                      ; A/Y = address of game filename
-         jmp   .Go
+         bne   .Go                   ; always branches
 
 PlayGameFromAttract
 ; in:    none
          jsr   LoadAndParseAttractModeConf
 
+         +LDADDR gAttractModeStore
+gCurrentAttractIndex=*+1
+         ldx   #$FD                  ; set in MegaAttractMode
          jsr   okvs_nth              ; get filename of current attract-mode module
-         !word gAttractModeStore
-gCurrentAttractIndex
-         !byte $FD                   ; set in MegaAttractMode
          +STAY @key
          jsr   okvs_get
          !word gAttractModeStore
@@ -109,10 +107,11 @@ gCurrentAttractIndex
 ; we reached here by pressing <RETURN> during a slideshow
 ; gSlideshowStore is still in memory, and gCurrentlyVisibleSlideshowIndex
 ; is the index into gSlideshowStore of the picture that is being displayed
+         +LDADDR gSlideshowStore
+gCurrentlyVisibleSlideshowIndex=*+1
+         ldx   #$FD                  ; set in HGRTitleCallback, HGRActionCallback, DHGRTitleCallback
          jsr   okvs_nth
          !word gSlideshowStore
-gCurrentlyVisibleSlideshowIndex
-         !byte $FD                   ; set in HGRTitleCallback, HGRActionCallback, DHGRTitleCallback
          +STAY @sskey
          +STAY @sskey2
          jsr   okvs_get

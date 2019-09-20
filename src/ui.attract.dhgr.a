@@ -73,7 +73,6 @@ DHGRSingle
          !word gDFXStore
          +STAY @filename             ; A/Y = filename (don't load file yet)
                                      ; X = index of the transition in DFX store
-
          +LDADDR gDFXStore
          jsr   okvs_next             ; get transition after this one
          +STAY +

@@ -64,15 +64,13 @@
 ;------------------------------------------------------------------------------
 ; okvs_init
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 okvs_init
-         +PARAMS_ON_STACK 2
-         jsr   GetStoreAddress
+         jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
          tya
@@ -94,16 +92,15 @@ okvs_init
 ;------------------------------------------------------------------------------
 ; okvs_len
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   A contains number of keys in this store
-;        X, Y clobbered
+;        X preserved
+;        Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;------------------------------------------------------------------------------
 okvs_len
-         +PARAMS_ON_STACK 2
-         jsr   GetStoreAddress
+         jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
@@ -288,64 +285,52 @@ okvs_get
          rts
 
 ;------------------------------------------------------------------------------
-; okvs_nth
-; get (N)th key
-;
-; in:    stack contains 3 bytes of parameters:
-;          +1 [word] handle to storage space
-;          +3 [byte] numeric index
-; out:   A/Y = lo/hi address of nth key
-;        all other registers and flags clobbered
-;        $00/$01 clobbered
-;        $02/$03 clobbered
-;        $04/$05 clobbered
-;------------------------------------------------------------------------------
-okvs_nth
-         +PARAMS_ON_STACK 3
-         jsr   GetStoreAddress
-                                     ; PTR -> store
-         jsr   incptr3
-                                     ; PTR -> first record
-         ldy   #3
-         lda   (PARAM),y
-         tax                         ; X = numeric index of key to get
-         beq   @found
--        jsr   derefptr
-         dex
-         bne   -
-@found   jsr   incptr2
-         +LDAY PTR
-         rts
-
-;------------------------------------------------------------------------------
 ; okvs_next
 ; get (N+1)th key, with wraparound
 ;
 ; in:    A/Y = handle to storage space
 ;        X = record index
 ; out:   A/Y = lo/hi address of (X+1)th key, or first key if X was the last record
-;        all other registers and flags clobbered
-;        PARAM clobbered
-;        PTR clobbered
-;        SRC clobbered
+;        X = next record index
 ;        SAVE clobbered
+;        see okvs_nth for other exit conditions
 ;------------------------------------------------------------------------------
 okvs_next
-         +STAY @store1
-         +STAY @store2
-         inx
-         stx   SAVE
+         +STAY PARAM
          jsr   okvs_len
-@store1  !word $FDFD                 ; SMC
          cmp   SAVE
-         beq   +
-         lda   SAVE
-         +HIDE_NEXT_2_BYTES
-+        lda   #0
-         sta   @n
-         jsr   okvs_nth
-@store2  !word $FDFD                 ; SMC
-@n       !byte $FD                   ; SMC
+         bne   +
+         ldx   #$FF
++        inx
+         +LDAY PARAM
+         ; execution falls through here
+;------------------------------------------------------------------------------
+; okvs_nth
+; get (N)th key
+;
+; in:    A/Y = handle to storage space
+;        X = record index
+; out:   A/Y = lo/hi address of nth key
+;        X preserved
+;        Z = 0
+;        all other flags clobbered
+;        PTR clobbered
+;------------------------------------------------------------------------------
+okvs_nth
+         jsr   GetStoreAddressFromAY
+                                     ; PTR -> store
+         jsr   incptr3
+                                     ; PTR -> first record
+         txa
+         pha
+         beq   @found
+-        jsr   derefptr
+         dex
+         bne   -
+@found   jsr   incptr2
+         pla
+         tax
+         +LDAY PTR
          rts
 
 ;------------------------------------------------------------------------------
@@ -474,6 +459,10 @@ incptr
          bne   +
          inc   PTR+1
 +        rts
+
+GetStoreAddressFromAY
+         +STAY PTR
+         jmp   derefptr
 
 GetStoreAddress
 ; in:    PARAM = address of stack params (any PARAMS_ON_STACK macro will do this)
