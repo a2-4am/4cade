@@ -184,7 +184,7 @@ OneTimeSetup
 
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
-         +READ_RAM1_WRITE_RAM1
+         jsr   SwitchToBank1
          +STAY gRootDirectory
 
          jsr   LoadFile              ; load preferences file into $8000

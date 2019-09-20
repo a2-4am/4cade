@@ -15,31 +15,26 @@
 ;
 
 DrawPage
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   DrawPageInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 Draw40Chars
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   Draw40CharsInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 DrawCenteredString
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   DrawCenteredStringInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 DrawString
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   DrawStringInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 DrawBuffer
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   DrawBufferInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1

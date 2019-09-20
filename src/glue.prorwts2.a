@@ -55,10 +55,9 @@ LoadFile
          jsr   AddToPath
          +LDPARAM 5
          +STAY ldrlo                 ; set load address
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   LoadFileInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
 ; LoadDHRFile
@@ -82,10 +81,9 @@ LoadDHRFile
          jsr   SetPath
          +LDPARAM 3
          jsr   AddToPath
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   LoadDHRFileInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
 ; SaveSmallFile
@@ -105,7 +103,6 @@ SaveSmallFile
          +PARAMS_ON_STACK 2
          +LDPARAM 1
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   SaveSmallFileInternal
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jmp   SwitchToBank1

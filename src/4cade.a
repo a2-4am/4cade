@@ -108,6 +108,12 @@ gGlobalPrefsStore
          !word $D100
 gGamesListStore
          !word $FDFD                 ; SMC
+SwitchToBank1
+         +READ_RAM1_WRITE_RAM1
+         rts
+SwitchToBank2
+         +READ_RAM2_WRITE_RAM2
+         rts
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
          !word Reenter               ; IRQ vector ($FFFE-F)

@@ -214,7 +214,7 @@ gCurrentlyVisibleSlideshowIndex
          ; execution falls through here
 
 Launch
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
          ldx   #$F1
 -        lda   $100,x
