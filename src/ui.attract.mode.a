@@ -87,8 +87,8 @@ MiniAttractMode
          !word -
          !byte 0
 
+         +LDADDR gAttractModeStore
          jsr   okvs_len
-         !word gAttractModeStore
          cmp   @MiniAttractIndex
          beq   @exit                 ; we've run through all modules, so exit to caller
 

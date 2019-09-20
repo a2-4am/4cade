@@ -206,8 +206,8 @@ OneTimeSetup
          !word gGamesListStore
          !word -
 
+         +LDADDR gGamesListStore
          jsr   okvs_len
-         !word gGamesListStore
          sta   GameCount
          sta   SAVE
 

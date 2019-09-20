@@ -94,16 +94,15 @@ okvs_init
 ;------------------------------------------------------------------------------
 ; okvs_len
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   A contains number of keys in this store
-;        X, Y clobbered
+;        X preserved
+;        Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;------------------------------------------------------------------------------
 okvs_len
-         +PARAMS_ON_STACK 2
-         jsr   GetStoreAddress
+         jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
@@ -295,24 +294,17 @@ okvs_get
 ;        X = record index
 ; out:   A/Y = lo/hi address of (X+1)th key, or first key if X was the last record
 ;        X = next record index
-;        Z = 0
-;        all other flags clobbered
-;        PARAM clobbered
-;        PTR clobbered
 ;        SAVE clobbered
+;        see okvs_nth for other exit conditions
 ;------------------------------------------------------------------------------
 okvs_next
-         +STAY @store1
-         inx
-         stx   SAVE
+         +STAY PARAM
          jsr   okvs_len
-@store1  !word $FDFD                 ; SMC
-         ldx   SAVE
          cmp   SAVE
          bne   +
-         ldx   #0
-+
-         +LDAY @store1
+         ldx   #$FF
++        inx
+         +LDAY PARAM
          ; execution falls through here
 ;------------------------------------------------------------------------------
 ; okvs_nth
