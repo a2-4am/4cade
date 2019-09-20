@@ -20,11 +20,9 @@ set CADIUS=cadius
 if "%1" equ "asm" (
 :asm
 call :md
+call :asmlauncher
 call :asmfx
 call :asmprelaunch
-2>build\relbase.log %ACME% src\4cade.a
-for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
-%ACME% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 goto :EOF
 )
 
@@ -93,7 +91,7 @@ cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 cscript /nologo bin\do2po.js res\dsk build\po
 cscript /nologo bin\rsync.js res\dsk\*.po build\po
-cscript /nologo bin\extract.js build\po >>build\log
+for %%q in (build\po\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
@@ -128,6 +126,12 @@ goto :EOF
 2>nul md build\DEMO
 2>nul md build\FX
 2>nul md build\PRELAUNCH
+goto :EOF
+
+:asmlauncher
+2>build\relbase.log %ACME% src\4cade.a
+for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
+%ACME% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 goto :EOF
 
 :asmfx

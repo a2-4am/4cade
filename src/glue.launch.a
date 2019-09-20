@@ -215,10 +215,10 @@ gCurrentlyVisibleSlideshowIndex=*+1
 Launch
          jsr   SwitchToBank2
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
-         ldx   #$F1
--        lda   $100,x
-         sta   $DF00,x               ; back up stack
-         inx
+         ldy   #$F1
+-        lda   $100,y
+         sta   $DF00,y               ; back up stack
+         iny
          bne   -
          tsx                         ; back up stack pointer
          stx   $DFF0
@@ -230,5 +230,10 @@ Launch
          sta   $bf00,x
          dex
          bpl   -
+         tya
+         ldy   #$18
+-        sta   $bf57,y
+         dey
+         bne   -
          jmp   $106                  ; jump to pre-launch code
 }
