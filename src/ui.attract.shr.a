@@ -48,9 +48,6 @@ SHRSingle
          !word kSFXFizzleFile
          !word $A000
          rts
-kSFXFizzleFile
-         !byte 10
-         !text "SHR.FIZZLE"
 
 ;------------------------------------------------------------------------------
 ; .SHRArtworkCallback [private]

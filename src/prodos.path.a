@@ -60,21 +60,45 @@ kStandardPrelaunch
          !byte 8
          !raw  "STANDARD"
 
+kGlobalPrefsFilename
+         !byte 10
+         !raw  "PREFS.CONF"
+
+kAttractModeConfFile
+         !byte 12
+         !raw  "ATTRACT.CONF"
+
 kFXConfFile
          !byte 7
-         !text "FX.CONF"
+         !raw  "FX.CONF"
 
 kDFXConfFile
          !byte 8
-         !text "DFX.CONF"
+         !raw  "DFX.CONF"
 
 kCreditsFile
          !byte 7
-         !text "CREDITS"
+         !raw  "CREDITS"
+
+kTitleFile
+         !byte 5
+         !raw  "TITLE"
+
+kCoverFile
+         !byte 5
+         !raw  "COVER"
 
 kCoverFadeFile
          !byte 9
-         !text "COVERFADE"
+         !raw  "COVERFADE"
+
+kGRFizzleFile
+         !byte 9
+         !raw  "GR.FIZZLE"
+
+kSFXFizzleFile
+         !byte 10
+         !raw  "SHR.FIZZLE"
 
 ;------------------------------------------------------------------------------
 ; SetPath/AddToPath

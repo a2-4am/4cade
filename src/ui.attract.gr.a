@@ -66,9 +66,6 @@ BlankGR
          !word kGRFizzleFile
          !word $6400
          rts
-kGRFizzleFile
-         !byte 9
-         !text "GR.FIZZLE"
 
 ;------------------------------------------------------------------------------
 ; .GRActionCallback [private]

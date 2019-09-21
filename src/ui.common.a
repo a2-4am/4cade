@@ -111,7 +111,7 @@ GetOffscreenAddress
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-         +LDADDR .TitleFile
+         +LDADDR kTitleFile
          bne   +                     ; Always branches, because Y is loaded
                                      ; last with the high byte of the address,
                                      ; which is never 0. I miss my 65c02.
@@ -125,7 +125,7 @@ LoadTitleOffscreen
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
 ; clobbers all
-         +LDADDR .CoverFile
+         +LDADDR kCoverFile
 +
          +STAY @fname
          jsr   GetOffscreenAddress
@@ -136,12 +136,6 @@ LoadCoverOffscreen
          !byte $00
 +        !byte $FD                   ; SMC
          rts
-.TitleFile
-         !byte 5
-         !text "TITLE"
-.CoverFile
-         !byte 5
-         !text "COVER"
 
 LoadGameTitleOffscreen
 ; in:    X = game index

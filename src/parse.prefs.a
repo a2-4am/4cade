@@ -15,10 +15,6 @@
 
 kGlobalPrefsBuffer = $8000
 
-kGlobalPrefsFilename
-         !byte 10
-         !raw  "PREFS.CONF"
-
 ; valid pref keys
 kNextAttract
          !byte 11
