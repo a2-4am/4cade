@@ -5,20 +5,6 @@
 !to "build/PRELAUNCH/STANDARD",plain
 *=$106
 
-;------------------------------------------------------------------------------
-; Prelaunch
-; code to set up and launch third-party code (either a self-running demo or
-; an actual game)
-; THIS IS NOT A FUNCTION. DO NOT CALL THIS DIRECTLY.
-; must be run from main memory
-;
-; in:    for first entry point, none
-;        for second entry point, the game must already be loaded in memory
-;          and ldrlo2/ldrhi2 must be the game entry point
-; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
-;        (not here, but wherever it was copied to in main memory) or by
-;        manually enabling LC RAM then JMP |Reenter|
-;------------------------------------------------------------------------------
          lda   $59                   ; set up game entry point in stack page
          ldy   $5A                   ; (last ProRWTS load address - 1)
          sec
@@ -33,4 +19,3 @@
          ldx   #$FD                  ; Jump to game entry point via stack pop.
          txs
          rts
-End_Prelaunch
