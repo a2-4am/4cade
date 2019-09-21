@@ -44,28 +44,28 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/DFX.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/CREDITS" >>build/log
 	rsync -aP res/title.hgr/* build/TITLE.HGR >>build/log
-	bin/buildfileinfo.py build/TITLE.HGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.HGR" "build/TITLE.HGR" >>build/log
 	rsync -aP res/title.dhgr/* build/TITLE.DHGR >>build/log
-	bin/buildfileinfo.py build/TITLE.DHGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh build/TITLE.DHGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.DHGR" "build/TITLE.DHGR" >>build/log
 	rsync -aP res/action.hgr/* build/ACTION.HGR >>build/log
-	bin/buildfileinfo.py build/ACTION.HGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh build/ACTION.HGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.HGR" "build/ACTION.HGR" >>build/log
 	rsync -aP res/action.dhgr/* build/ACTION.DHGR >>build/log
-	bin/buildfileinfo.py build/ACTION.DHGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh build/ACTION.DHGR "06" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.DHGR" "build/ACTION.DHGR" >>build/log
 	rsync -aP res/action.gr/* build/ACTION.GR >>build/log
-	bin/buildfileinfo.py build/ACTION.GR "06" "6000" >>build/log
+	bin/buildfileinfo.sh build/ACTION.GR "06" "6000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.GR" "build/ACTION.GR" >>build/log
 	rsync -aP res/artwork.shr/* build/ARTWORK.SHR >>build/log
-	bin/buildfileinfo.py build/ARTWORK.SHR "C1" "2000" >>build/log
+	bin/buildfileinfo.sh build/ARTWORK.SHR "C1" "2000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ARTWORK.SHR" "build/ARTWORK.SHR" >>build/log
 	rsync -aP res/attract/* build/ATTRACT >>build/log
-	bin/buildfileinfo.py build/ATTRACT "04" "8000" >>build/log
+	bin/buildfileinfo.sh build/ATTRACT "04" "8000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ATTRACT" "build/ATTRACT" >>build/log
 	rsync -aP res/ss/* build/SS >>build/log
-	bin/buildfileinfo.py build/SS "04" "4000" >>build/log
+	bin/buildfileinfo.sh build/SS "04" "4000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/SS" "build/SS" >>build/log
 	rsync -aP res/demo/* build/DEMO >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/DEMO" "build/DEMO" >>build/log
@@ -85,7 +85,7 @@ dsk: md asm
 	rm -f build/X/**/PRODOS*
 	rm -f build/X/**/LOADER.SYSTEM*
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
-	bin/buildfileinfo.py build/PRELAUNCH "06" "0106" >>build/log
+	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
 	bin/changebootloader.py build/"$(DISK)" res/proboothd
 
