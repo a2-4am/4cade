@@ -106,14 +106,18 @@ HGRSingle
          !word $4000
 
          ; display game name in the bottom-left corner
-         ldx   #0
-         stx   HTAB
+         ldx   #39
+         lda   #0
+-        sta   UILine1,x
+         dex
+         bpl   -
+         sta   HTAB
          ldx   #22
          stx   VTAB
-         ldy   #0
+         tay
          lda   (SAVE),y
          tax
-         +LDADDR @topline
+         +LDADDR UILine1
          sec
          jsr   DrawBuffer
          ldx   #3
@@ -139,9 +143,6 @@ HGRSingle
 
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
-@topline
-         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 @toprightcorner
          !byte 0,0,7
 @rightline
