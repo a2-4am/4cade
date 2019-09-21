@@ -8,7 +8,6 @@
 ; - PlayGameFromSearch
 ; - PlayGameFromBrowse
 ; - PlayGameFromAttract
-; - Prelaunch
 ; - Launch
 ;
 ; Public variables
@@ -211,7 +210,6 @@ gCurrentlyVisibleSlideshowIndex=*+1
                                      ; knowing which directory they're in
 
          ; execution falls through here
-
 Launch
          jsr   SwitchToBank2
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
