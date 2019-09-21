@@ -87,7 +87,7 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
-	bin/changebootloader.py build/"$(DISK)" res/proboothd
+	bin/changebootloader.sh build/"$(DISK)" res/proboothd
 
 asm: md asmlauncher asmfx asmprelaunch
 
