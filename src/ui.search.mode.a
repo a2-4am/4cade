@@ -126,9 +126,7 @@ SearchMode
          ldx   #$FF
          stx   gGameToLaunch         ; no game selected
          jsr   LoadTitleOffscreen
-         clc
-         jsr   DrawUIOffscreen
-         jsr   ShowOtherPage
+         jsr   DrawUIWithoutDots
          clc
          rts
 
@@ -147,30 +145,14 @@ SearchMode
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
          cpx   gGameToLaunch         ; as the current best match
-         php                         ; (we'll use this later to skip reloading)
          stx   gGameToLaunch
-         +LDADDR gGamesListStore
-         jsr   okvs_nth              ; get the filename of the new best match
-         +STAY @key
-         plp
          bne   +
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
                                      ; we fake switching the 'offscreen' page
                                      ; in order to draw on the visible page.
-         bpl   @skipload             ; always branches
-+
-         jsr   GetOffscreenAddress   ; we have a new best match, so load the
-         sta   +                     ; new title screenshot (offscreen)
-         jsr   LoadFile
-         !word kHGRTitleDirectory
-@key     !word $FDFD                 ; SMC
-         !byte $00
-+        !byte $FD                   ; SMC
-
-@skipload
-         sec
-         jsr   DrawUIOffscreen
-         jmp   ShowOtherPage
+         bpl   @noload               ; (always branches)
++        jsr   LoadGameTitleOffscreen
+@noload  jmp   DrawUI
 
 ;------------------------------------------------------------------------------
 

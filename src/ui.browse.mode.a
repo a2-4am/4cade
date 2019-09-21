@@ -94,21 +94,9 @@ GameCount = *+1
          ldx   gGameToLaunch
          ; execution falls through here
 .OnBrowseChanged
-         +LDADDR gGamesListStore
-         jsr   okvs_nth              ; get the filename of the new game
-         +STAY @key
-
-         jsr   GetOffscreenAddress   ; load new title screenshot offscreen
-         sta   +                     ; new title screenshot (offscreen)
-         jsr   LoadFile
-         !word kHGRTitleDirectory
-@key     !word $FDFD                 ; SMC
-         !byte $00
-+        !byte $FD                   ; SMC
-
-         clc
-         jsr   DrawUIOffscreen
-         jmp   ShowOtherPage
+; in:    X = game index
+         jsr   LoadGameTitleOffscreen
+         jmp   DrawUIWithoutDots
 
 ;------------------------------------------------------------------------------
 

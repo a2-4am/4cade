@@ -8,7 +8,9 @@
 ; - GetOffscreenAddress
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
-; - DrawUIOffscreen
+; - LoadGameTitleOffscreen
+; - DrawBrowseUI
+; - DrawSearchUI
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
 ; - CoverFade
@@ -143,6 +145,20 @@ LoadCoverOffscreen
          !byte 5
          !text "COVER"
 
+LoadGameTitleOffscreen
+; in:    X = game index
+         +LDADDR gGamesListStore
+         jsr   okvs_nth
+         +STAY @fname
+         jsr   GetOffscreenAddress
+         sta   +
+         jsr   LoadFile
+         !word kHGRTitleDirectory
+@fname   !word $FDFD                 ; SMC
+         !byte $00
++        !byte $FD                   ; SMC
+         rts
+
 ;------------------------------------------------------------------------------
 ; CoverFade
 ; load cover screen and animate per-character fade
@@ -168,24 +184,22 @@ CoverFade
          !text "COVERFADE"
 
 ;------------------------------------------------------------------------------
-; DrawUIOffscreen
-; draw 2- or 4-line search/browse UI on the HGR page that is not currently
-; showing
+; DrawUIWithoutDots/DrawUI
+; draw 2- or 4-line UI on the HGR page that is not currently showing, then
+; show that HGR page
 ;
 ; in:    gGameToLaunch = game index, or #$FF if no game is selected
-;        C set = print block cursor after game title and print dots to
-;                highlight matching characters
-;        C clear = don't print either of those things
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
-DrawUIOffscreen
-         php
-         bcc   +                     ; set up cursor printing if caller wanted that
-         lda   #$7F
-         +HIDE_NEXT_2_BYTES
-+
+DrawUIWithoutDots
          lda   #" "
-         sta   @printCursor+1
+         clc
+         bcc   +
+DrawUI
+         lda   #$7F
+         sec
++        sta   @printCursor+1        ; set up cursor printing based on entry point
+         php
 
          ldy   #39
 -        lda   #$00                  ; horizontal bar character
@@ -307,7 +321,7 @@ DrawUIOffscreen
          jsr   Draw40Chars           ; draw UI line 2 on offscreen page
 
          bit   gCheatsEnabled        ; if cheats are disabled, then we're done drawing UI
-         bpl   OffscreenDone
+         bpl   @uidone
                                      ; (SAVE) still points to length-prefixed cheat description
          ldy   #0
          lda   (SAVE),y              ; A = length of cheat description
@@ -346,7 +360,9 @@ DrawUIOffscreen
          inc   VTAB
          plp
          +LDADDR gPathname
-         jmp   DrawCenteredString    ; draw cheat UI line 2
+         jsr   DrawCenteredString    ; draw cheat UI line 2
+
+@uidone  jmp   ShowOtherPage
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen
@@ -376,7 +392,6 @@ ClearOffscreen
          inc   @a+2
          dex
          bne   @a
-OffscreenDone
          rts
 
 ;------------------------------------------------------------------------------
