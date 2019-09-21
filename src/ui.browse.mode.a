@@ -107,7 +107,7 @@ GameCount = *+1
 +        !byte $FD                   ; SMC
 
          clc
-         jsr   DrawSearchBarOffscreen
+         jsr   DrawUIOffscreen
          jmp   ShowOtherPage
 
 ;------------------------------------------------------------------------------

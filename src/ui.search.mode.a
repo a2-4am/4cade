@@ -127,7 +127,7 @@ SearchMode
          stx   gGameToLaunch         ; no game selected
          jsr   LoadTitleOffscreen
          clc
-         jsr   DrawSearchBarOffscreen
+         jsr   DrawUIOffscreen
          jsr   ShowOtherPage
          clc
          rts
@@ -169,7 +169,7 @@ SearchMode
 
 @skipload
          sec
-         jsr   DrawSearchBarOffscreen
+         jsr   DrawUIOffscreen
          jmp   ShowOtherPage
 
 ;------------------------------------------------------------------------------
