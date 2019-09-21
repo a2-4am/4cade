@@ -79,7 +79,10 @@ zpCharMask   = $F1        ; only uesd during init, then clobbered
 gPathname    = $1F00      ; used by SetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
-UILine1      = $1F80
+UILine1      = $1FB0
+UILine2      = $1FD8
+UI_ToPlay    = $1FF7
+
 gValLen      = $1F80
 gVal         = $1F81
 

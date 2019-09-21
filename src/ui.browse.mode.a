@@ -95,9 +95,9 @@ GameCount = *+1
          ; execution falls through here
 .OnBrowseChanged
          +LDADDR gGamesListStore
-         jsr   okvs_nth              ; get the name of the new game
+         jsr   okvs_nth              ; get the filename of the new game
          +STAY @key
-         +STAY @key2
+
          jsr   GetOffscreenAddress   ; load new title screenshot offscreen
          sta   +                     ; new title screenshot (offscreen)
          jsr   LoadFile
@@ -106,34 +106,9 @@ GameCount = *+1
          !byte $00
 +        !byte $FD                   ; SMC
 
-         jsr   okvs_get
-         !word gGamesListStore
-@key2    !word $FDFD
-         +STAY SRC                   ; A/Y points to game title (in OKVS)
-         ldy   #0                    ; copy game title into search bar buffer
-         lda   (SRC),y
-         sta   SAVE                  ; game title length
-         inc   SAVE
--        iny
-         cpy   SAVE
-         bcc   @printTitleChar
-         lda   #" "
-         +HIDE_NEXT_2_BYTES
-@printTitleChar
-         lda   (SRC),y               ; copy game title to UI line 2
-         sta   UILine2,y
-         cpy   #MaxInputLength+1
-         bcc   -
-         ldx   #8
--        lda   ReturnToPlay,x        ; replace games count with 'to play' label
-         sta   UI_ToPlay,x
-         dex
-         bpl   -
-         ldx   gGameToLaunch
-         jsr   BuildUILine1WithNoDots; build UI line 1 with bars and other shapes
-         ldx   gGameToLaunch
-         jsr   DrawSearchBarOffscreen; actually draw the UI (offscreen)
-         jmp   ShowOtherPage         ; now show everything at once
+         clc
+         jsr   DrawSearchBarOffscreen
+         jmp   ShowOtherPage
 
 ;------------------------------------------------------------------------------
 

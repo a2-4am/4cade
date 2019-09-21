@@ -22,7 +22,6 @@
 
 ; Public variables
 ; - OffscreenPage
-; - UILine2
 ; - VisibleGameCount (set during init)
 ;
 
@@ -33,14 +32,6 @@ OffscreenPage
                                      ;     (so offscreen is page 1 @ $2000)
                                      ; 1 = currently showing HGR page 1
                                      ;     (so offscreen is page 2 @ $4000)
-
-UILine2
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0
-UI_ToPlay
-         !byte 0,0,0,0,0,0,0,0,0
 
 Instructions
          !text "[Type to search, "
@@ -134,14 +125,18 @@ CoverFade
 
 ;------------------------------------------------------------------------------
 ; DrawSearchBarOffscreen
-; draw 2-line search UI on the HGR page that is not currently showing
+; draw 2- or 4-line search/browse UI on the HGR page that is not currently
+; showing
 ;
-; in:    X = game index, or #$FF if no game is selected
+; in:    gGameToLaunch = game index, or #$FF if no game is selected
+;        C set = print block cursor after game title and print dots to
+;                highlight matching characters
+;        C clear = don't print either of those things
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawSearchBarOffscreen
-         txa
-         pha
+         jsr   BuildUILine1And2
+
          lda   #22                   ; draw visible search bar
          sta   VTAB
          lda   OffscreenPage
@@ -153,12 +148,9 @@ DrawSearchBarOffscreen
          +LDADDR UILine2
          jsr   Draw40Chars
 
-         pla
          bit   gCheatsEnabled
          bpl   OffscreenDone         ; if cheats are not enabled, we're done
 
-         pha
-         tax
          lda   #20
          sta   VTAB
          jsr   BuildCheatLine1
@@ -168,8 +160,6 @@ DrawSearchBarOffscreen
          jsr   DrawCenteredString
 
          inc   VTAB
-         pla
-         tax
          jsr   BuildCheatLine2
          lda   OffscreenPage
          ror
