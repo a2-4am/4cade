@@ -6,13 +6,11 @@
 ; Public functions
 ; - Credits
 
-!zone {
-
 Credits
 ; clobbers all
          jsr   LoadFile              ; load credits text into $8000
          !word kRootDirectory
-         !word .CreditsFile
+         !word kCreditsFile
          !word $8000
          jsr   ClearOffscreen
          lda   OffscreenPage
@@ -25,7 +23,3 @@ Credits
          jsr   ShowOtherPage         ; back to previous page
          clc                         ; if called from search mode, tell caller not to refresh
          rts
-.CreditsFile
-         !byte 7
-         !text "CREDITS"
-}

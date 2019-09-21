@@ -7,8 +7,6 @@
 ; - BrowseMode
 ;
 
-!zone {
-
 ;------------------------------------------------------------------------------
 ; BrowseMode
 ; main entry point for Browse Mode, which allows the user to browse the game
@@ -21,44 +19,44 @@ BrowseMode
          ldx   #$FF
          txs
 
-.BrowseModeInputLoop
+@BrowseModeInputLoop
          jsr   WaitForKeyFor30Seconds
          bit   CLEARKBD
 
          ldy   #kNumBrowseKeys
 -        dey
          bmi   @noKeyMatch
-         cmp   .BrowseKeys,y
+         cmp   BrowseKeys,y
          bne   -
-         ldx   .BrowseKeyDispatch,y
+         ldx   BrowseKeyDispatch,y
          bne   @BrowseDispatch       ; always branches
 
 @noKeyMatch
          jsr   IsSearchKey
          beq   +
          jsr   SoftBell              ; beep on invalid input
-         jmp   .BrowseModeInputLoop  ; and start over
+         jmp   @BrowseModeInputLoop  ; and start over
 +
          ldx   #kBrowseSearch
          ; execution falls through here
 @BrowseDispatch
-         ldy   .BrowseDispatchTableLo,x
+         ldy   BrowseDispatchTableLo,x
          sty   @j+1
-         ldy   .BrowseDispatchTableHi,x
+         ldy   BrowseDispatchTableHi,x
          sty   @j+2
 @j       jsr   $FDFD                 ; SMC
-         jmp   .BrowseModeInputLoop
+         jmp   @BrowseModeInputLoop
 
-.OnSearch
+OnBrowseSearch
          sta   InputBuffer
          lda   #$01
          sta   InputLength
          jmp   SearchMode
 
-.OnPrevious
+OnBrowsePrevious
          dec   gGameToLaunch
          jmp   +
-.OnNext
+OnBrowseNext
          inc   gGameToLaunch
 +
          ldx   gGameToLaunch
@@ -73,27 +71,28 @@ GameCount = *+1
          bcc   @done
          ldx   #0
 @done    stx   gGameToLaunch
-         jmp   .OnBrowseChanged
+         jmp   OnBrowseChanged
 
-.OnLaunch
+OnBrowseLaunch
          jsr   PlayGame
          jsr   BlankHGR
-         jmp   .ForceBrowseChanged
+         jmp   ForceBrowseChanged
 
-.OnCheat
+OnBrowseCheat
          jsr   ToggleCheat
-         beq   .ForceBrowseChanged   ; always branches because Z=1 on exit from ToggleCheat
+         beq   ForceBrowseChanged    ; always branches because Z=1 on exit from ToggleCheat
 
-.OnTab
+OnBrowseTab
          ldx   gGameToLaunch
          jsr   MiniAttractMode
          cmp   #$8D
-         beq   .OnLaunch
-.ForceBrowseChanged
+         beq   OnBrowseLaunch
+         ; execution falls through here
+ForceBrowseChanged
          bit   CLEARKBD
          ldx   gGameToLaunch
          ; execution falls through here
-.OnBrowseChanged
+OnBrowseChanged
 ; in:    X = game index
          jsr   LoadGameTitleOffscreen
          jmp   DrawUIWithoutDots
@@ -110,27 +109,27 @@ kBrowseLaunch   = 5
 kBrowseCredits  = 6
 kBrowseCheat    = 7
 
-.BrowseDispatchTableLo
-         !byte <.OnSearch
-         !byte <.OnPrevious
-         !byte <.OnNext
+BrowseDispatchTableLo
+         !byte <OnBrowseSearch
+         !byte <OnBrowsePrevious
+         !byte <OnBrowseNext
          !byte <SearchMode
-         !byte <.OnTab
-         !byte <.OnLaunch
+         !byte <OnBrowseTab
+         !byte <OnBrowseLaunch
          !byte <Credits
-         !byte <.OnCheat
-.BrowseDispatchTableHi
-         !byte >.OnSearch
-         !byte >.OnPrevious
-         !byte >.OnNext
+         !byte <OnBrowseCheat
+BrowseDispatchTableHi
+         !byte >OnBrowseSearch
+         !byte >OnBrowsePrevious
+         !byte >OnBrowseNext
          !byte >SearchMode
-         !byte >.OnTab
-         !byte >.OnLaunch
+         !byte >OnBrowseTab
+         !byte >OnBrowseLaunch
          !byte >Credits
-         !byte >.OnCheat
+         !byte >OnBrowseCheat
 
 kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
-.BrowseKeys
+BrowseKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $AF                   ; '/' = credits
          !byte $BF                   ; '?' = credits
@@ -142,7 +141,7 @@ kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
          !byte $95                   ; right arrow = next
          !byte $8B                   ; up arrow = previous
          !byte $88                   ; left arrow = previous
-.BrowseKeyDispatch
+BrowseKeyDispatch
          !byte kBrowseCheat
          !byte kBrowseCredits
          !byte kBrowseCredits
@@ -154,4 +153,3 @@ kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
          !byte kBrowseNext
          !byte kBrowsePrevious
          !byte kBrowsePrevious
-}

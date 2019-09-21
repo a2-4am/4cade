@@ -7,8 +7,6 @@
 ; - SearchMode
 ;
 
-!zone {
-
 ;------------------------------------------------------------------------------
 ; SearchMode
 ; main entry point for Search Mode, which allows the user to search the game
@@ -24,11 +22,11 @@ SearchMode
          inx
          stx   OffscreenPage         ; $00 = currently showing HGR page 2
          jsr   Home                  ; clear screen (switches to text mode)
-         jsr   .OnInputChanged       ; draw UI on HGR page 1
+         jsr   OnInputChanged        ; draw UI on HGR page 1
          jsr   HGRMode               ; show HGR screen
          bit   CLEARKBD
 
-.SearchModeInputLoop
+@SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
 
          ; Don't clear keyboard strobe yet. If the user pressed an arrow key,
@@ -49,9 +47,9 @@ SearchMode
          ldy   #kNumBrowseKeys
 -        dey
          bmi   @noKeyMatch
-         cmp   .InputKeys,y
+         cmp   InputKeys,y
          bne   -
-         ldx   .InputKeyDispatch,y
+         ldx   InputKeyDispatch,y
          bne   @InputDispatch        ; always branches
 
 @noKeyMatch
@@ -63,63 +61,63 @@ SearchMode
          ldx   #kInputSearch
          ; execution falls through here
 @InputDispatch
-         ldy   .InputDispatchTableLo,x
+         ldy   InputDispatchTableLo,x
          sty   @j+1
-         ldy   .InputDispatchTableHi,x
+         ldy   InputDispatchTableHi,x
          sty   @j+2
 @j       jsr   $FDFD                 ; SMC
-         bcc   .SearchModeInputLoop  ; if carry is clear, we're done
+         bcc   @SearchModeInputLoop  ; if carry is clear, we're done
          bcs   SearchMode            ; if carry is set, force full redraw
 
-.OnError
+OnError
          jmp   SoftBell              ; Beep on invalid input and start over.
 
-.OnClear
+OnClear
          ldx   InputLength
          bne   +
-         jsr   CoverFade             ; Esc with no input switches to
-         jmp   MegaAttractMode       ; mega-attract mode
+         jmp   CoverFade             ; Esc with no input transitions to
+                                     ; mega attract mode
 +        ldx   #0                    ; Esc with input clears the input
          stx   InputLength
-         beq   .OnInputChanged       ; always branches
+         beq   OnInputChanged        ; always branches
 
-.OnBack
+OnBack
          ldx   InputLength
-         beq   .OnError
+         beq   OnError
          dec   InputLength
-         jmp   .OnInputChanged
+         jmp   OnInputChanged
 
-.OnTab
+OnTab
          ldx   gGameToLaunch
          cpx   #$FF
-         beq   .OnError
+         beq   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
-         beq   .OnLaunch             ; by pressing Enter, launch the game
+         beq   OnLaunch              ; by pressing Enter, launch the game
          sec                         ; tell caller to redraw UI
          rts
 
-.OnLaunch
+OnLaunch
          ldx   gGameToLaunch
          cpx   #$FF
-         beq   .OnError
+         beq   OnError
          jsr   PlayGame
          sec                         ; tell caller to redraw UI
          rts
 
-.OnCheat
-         dec   gGameToLaunch         ; force reload (will be reset to correct value in .OnInputChanged)
+OnCheat
+         dec   gGameToLaunch         ; force reload (will be reset to correct value in OnInputChanged)
          jsr   ToggleCheat
-         beq   .OnInputChanged       ; always branches because Z=1 on exit from ToggleCheat
+         beq   OnInputChanged        ; always branches because Z=1 on exit from ToggleCheat
 
-.OnSearch
+OnSearch
          ldx   InputLength
          cpx   #MaxInputLength
-         beq   .OnError
+         beq   OnError
          sta   InputBuffer,x
          inc   InputLength
          ; execution falls through here
-.OnInputChanged
+OnInputChanged
          lda   InputLength
          bne   @findMatchingTitle
                                      ; no input, reset params and UI
@@ -141,7 +139,7 @@ SearchMode
          bne   +
                                      ; no matches for this input buffer
          dec   InputLength           ; ignore the last key typed
-         jmp   .OnError              ; beep and return
+         jmp   OnError               ; beep and return
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
          cpx   gGameToLaunch         ; as the current best match
@@ -167,29 +165,29 @@ kInputCredits  = 6
 kInputCheat    = 7
 kInputError    = 8
 
-.InputDispatchTableLo
-         !byte <.OnSearch
-         !byte <.OnClear
-         !byte <.OnBack
+InputDispatchTableLo
+         !byte <OnSearch
+         !byte <OnClear
+         !byte <OnBack
          !byte <BrowseMode
-         !byte <.OnTab
-         !byte <.OnLaunch
+         !byte <OnTab
+         !byte <OnLaunch
          !byte <Credits
-         !byte <.OnCheat
-         !byte <.OnError
-.InputDispatchTableHi
-         !byte >.OnSearch
-         !byte >.OnClear
-         !byte >.OnBack
+         !byte <OnCheat
+         !byte <OnError
+InputDispatchTableHi
+         !byte >OnSearch
+         !byte >OnClear
+         !byte >OnBack
          !byte >BrowseMode
-         !byte >.OnTab
-         !byte >.OnLaunch
+         !byte >OnTab
+         !byte >OnLaunch
          !byte >Credits
-         !byte >.OnCheat
-         !byte >.OnError
+         !byte >OnCheat
+         !byte >OnError
 
 kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
-.InputKeys
+InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $AF                   ; '/' = credits
          !byte $BF                   ; '?' = credits
@@ -201,7 +199,7 @@ kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
          !byte $8D                   ; ENTER = launch current game (if any)
          !byte $9B                   ; Esc = clear input buffer (if any)
                                      ;   or switch to mega attract mode
-.InputKeyDispatch
+InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
          !byte kInputCredits
@@ -211,4 +209,3 @@ kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
          !byte kInputBack
          !byte kInputLaunch
          !byte kInputClear
-}

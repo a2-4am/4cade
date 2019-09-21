@@ -9,8 +9,6 @@
 ; - Launch
 ;
 
-!zone {
-
 GetGameDisplayName
 ; in:    A/Y points to game filename
 ;        X = #$60 if we should only look in gGamesListStore for a match
@@ -173,4 +171,3 @@ Launch
          dey
          bne   -
          jmp   $106                  ; jump to pre-launch code
-}

@@ -13,21 +13,19 @@
 ; - DrawSearchUI
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
-; - CoverFade
 ; - SoftBell
 ; - Home
 ; - BlankHGR
 ; - BlankDHGR
 ; - ClearOffscreen
-; - ExecuteTransitionAndWait
 ; - IsSearchKey
+; - ExecuteTransitionAndWait
+; - CoverFade
 
 ; Public variables
 ; - OffscreenPage
 ; - VisibleGameCount (set during init)
 ;
-
-!zone {
 
 OffscreenPage
          !byte 1                     ; 0 = currently showing HGR page 2
@@ -158,30 +156,6 @@ LoadGameTitleOffscreen
          !byte $00
 +        !byte $FD                   ; SMC
          rts
-
-;------------------------------------------------------------------------------
-; CoverFade
-; load cover screen and animate per-character fade
-;
-; in:    none
-; out:   all flags and registers clobbered
-;------------------------------------------------------------------------------
-CoverFade
-         jsr   LoadCoverOffscreen
-         jsr   ShowOtherPage
-         lda   OffscreenPage
-         bne   +
-         jsr   LoadCoverOffscreen
-         jsr   ShowOtherPage
-+
-         jsr   LoadFile              ; load transition effect code at $6000
-         !word kFXDirectory
-         !word @CoverFadeFile
-         !word $6000
-         jmp   $6000                 ; exit via loaded code
-@CoverFadeFile
-         !byte 9
-         !text "COVERFADE"
 
 ;------------------------------------------------------------------------------
 ; DrawUIWithoutDots/DrawUI
@@ -630,7 +604,17 @@ WaitForKeyFor30Seconds
          bne   @loop                 ; on every keypress (whether or not
          dec   Timeout+2             ; the key leads to an action)
          bne   @loop
-         jsr   CoverFade             ; no input for ~30 seconds, switch to
-         jmp   MegaAttractMode       ; mega-attract mode
-
-}
+         ; execution falls through here
+CoverFade
+         jsr   LoadCoverOffscreen
+         jsr   ShowOtherPage
+         lda   OffscreenPage
+         bne   +
+         jsr   LoadCoverOffscreen
+         jsr   ShowOtherPage
++        jsr   LoadFile              ; load transition effect code at $6000
+         !word kFXDirectory
+         !word kCoverFadeFile
+         !word $6000
+         jsr   $6000                 ; call transition effect
+         jmp   MegaAttractMode       ; exit via mega attract mode

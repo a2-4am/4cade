@@ -9,8 +9,6 @@
 ; - HGRSingle
 ;
 
-!zone {
-
 HGRTitleSlideshow
          jsr   .LoadHGRTransition    ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
@@ -187,7 +185,3 @@ HGRSingle
 @filename !word $FDFD                ; SMC
          !word $6000
          rts
-kFXConfFile
-         !byte 7
-         !text "FX.CONF"
-}

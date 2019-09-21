@@ -9,8 +9,6 @@
 ; - DHGRSingle
 ;
 
-!zone {
-
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvs   +
@@ -86,9 +84,6 @@ DHGRSingle
 @filename !word $FDFD                ; SMC
          !word $6000
          rts
-kDFXConfFile
-         !byte 8
-         !text "DFX.CONF"
 
 ;------------------------------------------------------------------------------
 ; .DHGRTitleCallback [private]
@@ -162,5 +157,3 @@ kDFXConfFile
 
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
-
-}

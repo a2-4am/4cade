@@ -60,6 +60,22 @@ kStandardPrelaunch
          !byte 8
          !raw  "STANDARD"
 
+kFXConfFile
+         !byte 7
+         !text "FX.CONF"
+
+kDFXConfFile
+         !byte 8
+         !text "DFX.CONF"
+
+kCreditsFile
+         !byte 7
+         !text "CREDITS"
+
+kCoverFadeFile
+         !byte 9
+         !text "COVERFADE"
+
 ;------------------------------------------------------------------------------
 ; SetPath/AddToPath
 ; append a length-prefixed string to gPathname

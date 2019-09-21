@@ -8,8 +8,6 @@
 ; - SHRSingle
 ;
 
-!zone {
-
 SHRSlideshow
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
@@ -137,5 +135,3 @@ kSFXFizzleFile
          sta   NEWVIDEO
 
          rts
-
-}

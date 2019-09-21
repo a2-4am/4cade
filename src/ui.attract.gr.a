@@ -8,8 +8,6 @@
 ; - GRSingle
 ;
 
-!zone {
-
 GRActionSlideshow
          jsr   .LoadGRTransition     ; load transition effect code at $6000
          jsr   BlankGR               ; switch GR mode with initial blank screen
@@ -108,5 +106,3 @@ kGRFizzleFile
 
          +LDADDR $6400
          jmp   ExecuteTransitionAndWait
-
-}
