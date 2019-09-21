@@ -34,7 +34,7 @@ dsk: md asm
 	cp res/games.conf build/GAMES.CONF >>build/log
 	cp res/prefs.conf build/PREFS.CONF >>build/log
 	cp res/credits.txt build/CREDITS >>build/log
-	bin/padto 512 build/PREFS.CONF
+	bin/padto.sh 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
