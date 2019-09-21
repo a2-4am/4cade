@@ -297,6 +297,7 @@ okvs_get
 ;------------------------------------------------------------------------------
 okvs_next
          +STAY PARAM
+         stx   SAVE
          jsr   okvs_len
          cmp   SAVE
          bne   +
