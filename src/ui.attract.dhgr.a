@@ -108,17 +108,15 @@ kDFXConfFile
 @exit    rts
 +
          +STAY @tfname
-         stx   gCurrentlyVisibleSlideshowIndex
 
-; try to get the human-readable name of this game from gGamesListStore
+         ; find this game in gGamesListStore
          ldx   #$60
          jsr   GetGameDisplayName
-; if game is not found (C will be set here), it means it can't be played on
-; this machine due to memory or joystick requirements, so we don't display
-; it in slideshows
+         ; if game is not found (C will be set here), it means it can't be played on
+         ; this machine due to memory or joystick requirements, so we don't display
+         ; it in slideshows
          bcs   @exit
-; (we don't actually use the display name in the title slideshow, we just
-; reuse the function for convenience)
+         stx   gGameToLaunch
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile
@@ -147,18 +145,15 @@ kDFXConfFile
          rts
 +
          +STAY @afname
-         stx   gCurrentlyVisibleSlideshowIndex
 
-; try to get the human-readable name of this game from gGamesListStore
-; or gSlideshowStore
+         ; find this game in gGamesListStore or gSlideshowStore
          ldx   #$EA
          jsr   GetGameDisplayName
-; if game is not found (C will be set here), it means it can't be played on
-; this machine due to memory or joystick requirements, so we don't display
-; it in slideshows
+         ; if game name is not found (C will be set here), it means the game
+         ; can't be played due to memory or joystick requirements, so we hide
+         ; it from slideshows
          bcs   @actionExit
-; (we don't actually use the display name in the DHGR action slideshow, we
-; just reuse the function for convenience)
+         stx   gGameToLaunch
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile

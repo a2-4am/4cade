@@ -20,7 +20,7 @@
 SearchMode
          ldx   #$FF
          txs
-         stx   SelectedIndex         ; $FF = no game selected
+         stx   gGameToLaunch         ; $FF = no game selected
          inx
          stx   OffscreenPage         ; $00 = currently showing HGR page 2
          jsr   Home                  ; clear screen (switches to text mode)
@@ -90,7 +90,7 @@ SearchMode
          jmp   .OnInputChanged
 
 .OnTab
-         ldx   SelectedIndex
+         ldx   gGameToLaunch
          cpx   #$FF
          beq   .OnError
          jsr   MiniAttractMode
@@ -100,15 +100,15 @@ SearchMode
          rts
 
 .OnLaunch
-         ldx   SelectedIndex
+         ldx   gGameToLaunch
          cpx   #$FF
          beq   .OnError
-         jsr   PlayGameFromSearch
+         jsr   PlayGame
          sec                         ; tell caller to redraw UI
          rts
 
 .OnCheat
-         dec   SelectedIndex         ; force reload (will be reset to correct value in .OnInputChanged)
+         dec   gGameToLaunch         ; force reload (will be reset to correct value in .OnInputChanged)
          jsr   ToggleCheat
          beq   .OnInputChanged       ; always branches because Z=1 on exit from ToggleCheat
 
@@ -124,7 +124,7 @@ SearchMode
          bne   @findMatchingTitle
                                      ; no input, reset params and UI
          lda   #$FF
-         sta   SelectedIndex         ; no game selected
+         sta   gGameToLaunch         ; no game selected
          ldx   #39                   ; copy instructions to line 2
 -        lda   Instructions,x
          sta   UILine2,x
@@ -153,9 +153,9 @@ SearchMode
          jmp   .OnError              ; beep and return
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
-         cpx   SelectedIndex         ; as the current best match
+         cpx   gGameToLaunch         ; as the current best match
          php                         ; (we'll use this later to skip reloading)
-         stx   SelectedIndex
+         stx   gGameToLaunch
          +LDADDR gGamesListStore
          jsr   okvs_nth              ; get the name of the new best match
          +STAY @key
@@ -204,7 +204,7 @@ SearchMode
          dex
          bpl   -
 
-         ldx   SelectedIndex
+         ldx   gGameToLaunch
          jsr   BuildUILine1WithNoDots; build UI line 1 with bars and other shapes
 
          ; now add dots to UI line 1 to highlight matched characters
@@ -225,7 +225,7 @@ SearchMode
          cpy   SAVE                  ; if game name is exhausted, we're done
          bne   @dotloop
 @doneHighlight
-         ldx   SelectedIndex
+         ldx   gGameToLaunch
          jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
          jmp   ShowOtherPage         ; now show everything at once
 

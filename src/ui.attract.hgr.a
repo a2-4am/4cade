@@ -52,17 +52,15 @@ HGRSingle
 @exit    rts
 +
          +STAY @tfname
-         stx   gCurrentlyVisibleSlideshowIndex
 
-         ; try to get the human-readable name of this game from gGamesListStore
+         ; find this game in gGamesListStore
          ldx   #$60
          jsr   GetGameDisplayName
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   @exit
-         ; (we don't actually use the display name in the title slideshow, we just
-         ; reuse the function for convenience)
+         stx   gGameToLaunch
 
          jsr   LoadFile              ; load HGR screenshot at $4000
          !word kHGRTitleDirectory
@@ -91,10 +89,8 @@ HGRSingle
          rts
 +
          +STAY @afname
-         stx   gCurrentlyVisibleSlideshowIndex
 
-         ; try to get the human-readable name of this game from gGamesListStore
-         ; or gSlideshowStore
+         ; find this game in gGamesListStore or gSlideshowStore
          ldx   #$EA
          jsr   GetGameDisplayName
          ; if game name is not found (C will be set here), it means the game
@@ -104,6 +100,7 @@ HGRSingle
 
          ; found the game
          +STAY SAVE
+         stx   gGameToLaunch
 
          jsr   LoadFile              ; load HGR screenshot at $4000
          !word kHGRActionDirectory

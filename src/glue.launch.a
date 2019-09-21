@@ -5,15 +5,9 @@
 ;
 ; Public functions
 ; - GetGameDisplayName
-; - PlayGameFromSearch
-; - PlayGameFromBrowse
-; - PlayGameFromAttract
+; - PlayGame
 ; - Launch
 ;
-; Public variables
-; - gCurrentAttractIndex             ; [byte] numeric index in gAttractModeStore of current Mega-Attract Module
-; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
-                                     ;        (only valid during slideshows, not updated once a key is pressed)
 
 !zone {
 
@@ -23,6 +17,9 @@ GetGameDisplayName
 ;        X = #$EA if we should also look in gSlideshowStore
 ; out:   C clear if game exists in gGamesListStore, and
 ;          A/Y points to game display name (but see hack notes below)
+;          X = game index, or #$FF if the game doesn't really exist but
+;          we want to return a successful result anyway (really, read the
+;          hack notes, they're important)
 ;        C set if game does not exist (this can happen because slideshows
 ;          list games that require a joystick, but the games list parser
 ;          filters out joystick-only games if the machine doesn't have a
@@ -67,70 +64,16 @@ GetGameDisplayName
          rts
 @forceGoodResult
          +LDAY @key
+         ldx   #$FF
          clc
 @exit    rts
 
-PlayGameFromSearch
-PlayGameFromBrowse
-; in:    X = game index
+PlayGame
+gGameToLaunch=*+1
+         ldx   #$FF                  ; SMC
          +LDADDR gGamesListStore
          jsr   okvs_nth
                                      ; A/Y = address of game filename
-         bne   .Go                   ; always branches
-
-PlayGameFromAttract
-; in:    none
-         jsr   LoadAndParseAttractModeConf
-
-         +LDADDR gAttractModeStore
-gCurrentAttractIndex=*+1
-         ldx   #$FD                  ; set in MegaAttractMode
-         jsr   okvs_nth              ; get filename of current attract-mode module
-         +STAY @key
-         jsr   okvs_get
-         !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
-                                     ; A/Y = address of attract mode value (module type)
-         +STAY PTR
-         ldy   #1
-         lda   (PTR),y
-         and   #$0F
-         bne   @playFromSlideshow
-
-; we reached here by pressing <RETURN> during a self-running demo,
-; which means that @key points to the filename of the game we want to play,
-         +LDAY @key
-         jmp   .Go
-
-@playFromSlideshow
-; we reached here by pressing <RETURN> during a slideshow
-; gSlideshowStore is still in memory, and gCurrentlyVisibleSlideshowIndex
-; is the index into gSlideshowStore of the picture that is being displayed
-         +LDADDR gSlideshowStore
-gCurrentlyVisibleSlideshowIndex=*+1
-         ldx   #$FD                  ; set in HGRTitleCallback, HGRActionCallback, DHGRTitleCallback
-         jsr   okvs_nth
-         !word gSlideshowStore
-         +STAY @sskey
-         +STAY @sskey2
-         jsr   okvs_get
-         !word gGamesListStore
-@sskey   !word $FDFD                 ; SMC
-         bcs   +
-         +LDAY @sskey                ; the slideshow key was a game filename, so use that
-         jmp   .Go
-+
-; if the key is not found, get the value of the current record
-; from gSlideshowStore instead (some games have multiple action screenshots, so
-; the key is just a unique filename for that screenshot and the value is the
-; actual game filename)
-         jsr   okvs_get
-         !word gSlideshowStore
-@sskey2  !word $FDFD                 ; SMC
-         ; execution falls through here
-
-.Go
-; in:    A/Y = lo/hi address of filename
          +STAY SAVE
          +STAY +
          +STAY @pfile
@@ -141,7 +84,7 @@ gCurrentlyVisibleSlideshowIndex=*+1
          ldx   #$40                  ; to flash previous bits of the launcher UI)
          ldy   #$00
          tya
-@clear   sta   $FD00,y
+@clear   sta   $FD00,y               ; SMC
          iny
          bne   @clear
          inc   @clear+2

@@ -20,8 +20,6 @@
 BrowseMode
          ldx   #$FF
          txs
-         ldx   SelectedIndex
-         stx   BrowseSelectedIndex
 
 .BrowseModeInputLoop
          jsr   WaitForKeyFor30Seconds
@@ -58,12 +56,12 @@ BrowseMode
          jmp   SearchMode
 
 .OnPrevious
-         dec   BrowseSelectedIndex
+         dec   gGameToLaunch
          jmp   +
 .OnNext
-         inc   BrowseSelectedIndex
+         inc   gGameToLaunch
 +
-         ldx   BrowseSelectedIndex
+         ldx   gGameToLaunch
          cpx   #$FF
          bne   @notTooSmall
 GameCount = *+1
@@ -74,12 +72,11 @@ GameCount = *+1
          cpx   GameCount
          bcc   @done
          ldx   #0
-@done    stx   BrowseSelectedIndex
+@done    stx   gGameToLaunch
          jmp   .OnBrowseChanged
 
 .OnLaunch
-         ldx   BrowseSelectedIndex
-         jsr   PlayGameFromBrowse
+         jsr   PlayGame
          jsr   BlankHGR
          jmp   .ForceBrowseChanged
 
@@ -88,13 +85,13 @@ GameCount = *+1
          beq   .ForceBrowseChanged   ; always branches because Z=1 on exit from ToggleCheat
 
 .OnTab
-         ldx   BrowseSelectedIndex
+         ldx   gGameToLaunch
          jsr   MiniAttractMode
          cmp   #$8D
          beq   .OnLaunch
 .ForceBrowseChanged
          bit   CLEARKBD
-         ldx   BrowseSelectedIndex
+         ldx   gGameToLaunch
          ; execution falls through here
 .OnBrowseChanged
          +LDADDR gGamesListStore
@@ -132,9 +129,9 @@ GameCount = *+1
          sta   UI_ToPlay,x
          dex
          bpl   -
-         ldx   BrowseSelectedIndex
+         ldx   gGameToLaunch
          jsr   BuildUILine1WithNoDots; build UI line 1 with bars and other shapes
-         ldx   BrowseSelectedIndex
+         ldx   gGameToLaunch
          jsr   DrawSearchBarOffscreen; actually draw the UI (offscreen)
          jmp   ShowOtherPage         ; now show everything at once
 
@@ -194,8 +191,4 @@ kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
          !byte kBrowseNext
          !byte kBrowsePrevious
          !byte kBrowsePrevious
-
-BrowseSelectedIndex
-         !byte $FF
-
 }

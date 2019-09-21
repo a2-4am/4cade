@@ -91,18 +91,15 @@ kGRFizzleFile
          rts
 +
          +STAY @fname
-         stx   gCurrentlyVisibleSlideshowIndex
 
-         ; try to get the human-readable name of this game from gGamesListStore
-         ; or gSlideshowStore
+         ; find this game in gGamesListStore or gSlideshowStore
          ldx   #$EA
          jsr   GetGameDisplayName
-         ; if game is not found (C will be set here), it means it can't be played on
-         ; this machine due to memory or joystick requirements, so we don't display
-         ; it in slideshows
+         ; if game name is not found (C will be set here), it means the game
+         ; can't be played due to memory or joystick requirements, so we hide
+         ; it from slideshows
          bcs   @actionExit
-         ; (we don't actually use the display name in the GR action slideshow, we
-         ; just reuse the function for convenience)
+         stx   gGameToLaunch
 
          jsr   LoadFile              ; load GR screenshot into $6000
          !word kGRActionDirectory

@@ -29,8 +29,6 @@ InputLength
          !byte 0
 InputBuffer
          !text "                         "
-SelectedIndex
-         !byte $FF
 MatchCount
          !byte 0
 BestMatchScore

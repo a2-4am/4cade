@@ -1,12 +1,12 @@
 ;license:MIT
 ;(c) 2018-9 by 4am
 ;
-; Mega Attract Mode - cycle through slideshows and self-running demos
+; Attract Mode - cycle through slideshows and self-running demos
 ;
 ; Public functions
 ; - MegaAttractMode
+; - MiniAttractMode
 ; - RunAttractModule
-; - LoadAndParseAttractModeConf
 
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
@@ -24,7 +24,14 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         jsr   LoadAndParseAttractModeConf
+         jsr   LoadFile              ; load attract-mode configuration file into $8000
+         !word kRootDirectory
+         !word kAttractModeConfFile
+-        !word $8000
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
+         !word gAttractModeStore
+         !word -
+         !byte 0
 
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
@@ -52,7 +59,7 @@ MegaAttractMode
          bpl   @jmpattract
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   @jmpsearch            ; Any other key switches to Search Mode.
-         jsr   PlayGameFromAttract   ; Might return if user hits Ctrl-Reset.
+         jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
 @jmpattract
          jmp   MegaAttractMode
 @jmpsearch
@@ -147,6 +154,10 @@ RunAttractModule
          bcc   +                     ; if game doesn't exist, skip the demo
          rts
 +
+         cpx   #$FF
+         beq   +
+         stx   gGameToLaunch
++
          jsr   Home                  ; avoid seeing code load into the HGR page
 
          jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
@@ -223,17 +234,6 @@ RunAttractModule
          !byte >SHRSingle
          !byte >GRSingle
 
-LoadAndParseAttractModeConf
-; TODO refactor launch code then make this private
-         jsr   LoadFile              ; load attract-mode configuration file into $8000
-         !word kRootDirectory
-         !word @AttractModeConfFile
--        !word $8000
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
-         !word gAttractModeStore
-         !word -
-         !byte 0
-         rts
-@AttractModeConfFile
+kAttractModeConfFile
          !byte 12
          !text "ATTRACT.CONF"
