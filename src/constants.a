@@ -9,7 +9,7 @@
 ; D000..E5F4 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EABC..FFF9 - main program code
+; EAE5..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -79,6 +79,7 @@ zpCharMask   = $F1        ; only uesd during init, then clobbered
 gPathname    = $1F00      ; used by SetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
+UILine1      = $1F80
 gValLen      = $1F80
 gVal         = $1F81
 

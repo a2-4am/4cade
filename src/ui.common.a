@@ -22,7 +22,6 @@
 
 ; Public variables
 ; - OffscreenPage
-; - UILine1
 ; - UILine2
 ; - VisibleGameCount (set during init)
 ;
@@ -35,11 +34,6 @@ OffscreenPage
                                      ; 1 = currently showing HGR page 1
                                      ;     (so offscreen is page 2 @ $4000)
 
-UILine1
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
 UILine2
          !byte 0,0,0,0,0,0,0,0,0,0
          !byte 0,0,0,0,0,0,0,0,0,0
@@ -161,7 +155,7 @@ DrawSearchBarOffscreen
 
          pla
          bit   gCheatsEnabled
-         bpl   @done                 ; if cheats are not enabled, we're done
+         bpl   OffscreenDone         ; if cheats are not enabled, we're done
 
          pha
          tax
@@ -180,9 +174,7 @@ DrawSearchBarOffscreen
          lda   OffscreenPage
          ror
          +LDADDR gPathname
-         jsr   DrawCenteredString
-
-@done    rts
+         jmp   DrawCenteredString
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen
@@ -212,6 +204,7 @@ ClearOffscreen
          inc   @a+2
          dex
          bne   @a
+OffscreenDone
          rts
 
 ;------------------------------------------------------------------------------
