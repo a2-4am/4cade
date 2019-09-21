@@ -75,7 +75,6 @@ gGameToLaunch=*+1
          jsr   okvs_nth
                                      ; A/Y = address of game filename
          +STAY SAVE
-         +STAY +
          +STAY @pfile
 
          jsr   Home                  ; clear screen (clobbers $106, must do now before loading prelaunch code)
@@ -94,10 +93,7 @@ gGameToLaunch=*+1
          bit   gCheatsEnabled        ; are cheats enabled?
          bpl   @noCheats
 
-         jsr   okvs_get              ; need to get game index from filename to determine
-         !word gGamesListStore       ; whether there are any cheats for this game
-+        !word $FDFD                 ; SMC
-                                     ; X = game index
+         ldx   gGameToLaunch
          ldy   gCheatsAvailable,x    ; are there any cheats for this game?
          beq   @noCheats
 
