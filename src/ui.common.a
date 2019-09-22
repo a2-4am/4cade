@@ -184,15 +184,10 @@ DrawUI
 
          +LDADDR gGamesListStore
          jsr   okvs_nth
-         +STAY +                     ; (A/Y) -> game filename
-
-         jsr   okvs_get
-         !word gGamesListStore
-+        !word $FDFD
-         +STAY SRC                   ; (SRC) -> game title
-
+         jsr   okvs_get_current
+                                     ; (PTR) -> game title
          ldy   #0                    ; copy game title into UI line 2
-         lda   (SRC),y
+         lda   (PTR),y
          sta   SAVE                  ; title length
          inc   SAVE
 -        iny
@@ -205,7 +200,7 @@ DrawUI
          lda   #$FD                  ; SMC
          +HIDE_NEXT_2_BYTES
 @printTitleChar
-         lda   (SRC),y
+         lda   (PTR),y
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
@@ -263,7 +258,7 @@ DrawUI
          ldy   #0
 @dotloop
          iny
-         lda   (SRC),y               ; (SRC) still points to game title
+         lda   (PTR),y               ; (PTR) still points to game title
          +LOW_ASCII_TO_LOWER
          cmp   InputBuffer,x
          bne   +

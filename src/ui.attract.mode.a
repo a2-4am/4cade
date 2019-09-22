@@ -103,17 +103,12 @@ MiniAttractMode
          ldx   #$FD                  ; SMC
          +LDADDR gAttractModeStore
          jsr   okvs_nth              ; get the next module on the list
-         +STAY @key
-
-         jsr   okvs_get              ; get module type
-         !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
-         +STAY PTR
-
+         +STAY SAVE
+         jsr   okvs_get_current      ; get module type
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY @key                  ; A/Y = address of module name
+         +LDAY SAVE                  ; A/Y = address of module name
          jsr   RunAttractModule      ; execute the module
 
          inc   @MiniAttractIndex
