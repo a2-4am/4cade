@@ -40,11 +40,13 @@
 @no64Klen=(*-@s_no64K)-1
 
 +        jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
-         jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
-         php
-         bcc   +
+         sec
+         jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
+         bcs   NotGS
          jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
-+        plp
++        sec
+         +HIDE_NEXT_BYTE
+NotGS    clc
          ror   zpMachineStatus
          sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
@@ -145,7 +147,6 @@
 ProRWTSBuffer
          ; these routines will only be called once, from main memory, before relocating to language card
          !source "src/hw.diskcheck.a"
-         !source "src/hw.iigs.a"
          !source "src/hw.vidhd.a"
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
