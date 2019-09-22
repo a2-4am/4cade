@@ -150,9 +150,8 @@ pref_set
 
          +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
          jsr   SetPath
-         jsr   SaveSmallFile
-         !word kGlobalPrefsBuffer
-         rts
+         +LDAY kGlobalPrefsBuffer
+         jmp   SaveSmallFile
 
 @addStringFromStore
          +STAY @key

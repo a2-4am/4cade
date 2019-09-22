@@ -93,15 +93,12 @@ LoadDHRFile
 ;
 ; supports paths, see note
 ;
-; in:    stack contains 2 bytes of parameters:
-;        +1 address of data buffer
+; in:    A/Y points to data buffer
+;        gPathname contains path+filename to write
 ; out:   all flags clobbered
 ;        all registers clobbered
-;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 SaveSmallFile
-         +PARAMS_ON_STACK 2
-         +LDPARAM 1
          +STAY ldrlo                 ; set data buffer address for ProRWTS2
          jsr   SwitchToBank2
          jsr   SaveSmallFileInternal
