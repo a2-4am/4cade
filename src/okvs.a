@@ -412,7 +412,7 @@ okvs_iter_values
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
          beq   @exit                 ; no keys, exit immediately
-         sta   MAX
+         sta   @max
          +LDPARAM 3
          +STAY @callback
          jsr   incptr3
@@ -426,7 +426,7 @@ okvs_iter_values
          lda   (PTR),y               ; A = length of key
          clc
          adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
-+        sta   KEYLEN
++        sta   @skiplen
          txa
          pha                         ; save X on stack
          lda   PTR+1
@@ -435,7 +435,8 @@ okvs_iter_values
          lda   PTR
          pha                         ; save PTR on stack (in case callback clobbers it)
          clc
-         adc   KEYLEN                ; skip over pointer (and possibly key)
+@skiplen=*+1
+         adc   #$FD                  ; SMC skip over pointer (and possibly key)
          bcc   +
          iny                         ; A/Y -> value
 +
@@ -449,7 +450,8 @@ okvs_iter_values
          tax                         ; restore X from stack
          jsr   derefptr              ; PTR -> next record
          inx
-         cpx   MAX
+@max=*+1
+         cpx   #$FD                  ; SMC
          bne   @loop
 @exit    rts
 
