@@ -118,7 +118,7 @@ gGameToLaunch=*+1
          lda   (SAVE), y
          tay
          iny
-         sty   @runlength+1
+         sty   MAX
          ldy   #0
          lda   #'X'
          sta   ProDOS_prefix+1
@@ -127,8 +127,7 @@ gGameToLaunch=*+1
          sta   ProDOS_prefix, x
          iny
          lda   (SAVE), y
-@runlength
-         cpy   #$D1                  ; SMC
+         cpy   MAX
          bne   -
          txa
          plp

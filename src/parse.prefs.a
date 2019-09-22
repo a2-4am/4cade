@@ -174,7 +174,7 @@ pref_set
          beq   ++
          clc
          adc   #$01
-         sta   @len
+         sta   MAX
          iny
 -        lda   ($00),y
          sta   ($FE,x)
@@ -182,8 +182,7 @@ pref_set
          inc   $FE
          bne   +
          inc   $FF
-@len=*+1
-+        cpy   #$FD                  ; SMC
++        cpy   MAX
          bne   -
 ++       rts
 
