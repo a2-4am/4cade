@@ -5,14 +5,13 @@
 ;
 ; Public functions
 ; - GetGameDisplayName
+; - GetGameDisplayNameInActionSlideshow
 ; - PlayGame
 ; - Launch
 ;
 
 GetGameDisplayName
 ; in:    A/Y points to game filename
-;        X = #$60 if we should only look in gGamesListStore for a match
-;        X = #$EA if we should also look in gSlideshowStore
 ; out:   C clear if game exists in gGamesListStore, and
 ;          A/Y points to game display name (but see hack notes below)
 ;          X = game index, or #$FF if the game doesn't really exist but
@@ -22,6 +21,10 @@ GetGameDisplayName
 ;          list games that require a joystick, but the games list parser
 ;          filters out joystick-only games if the machine doesn't have a
 ;          joystick)
+         ldx   #$60
+         +HIDE_NEXT_2_BYTES
+GetGameDisplayNameInActionSlideshow
+         ldx   #$EA
          stx   @maybeExit
          +STAY @key
          +STAY @slideshowKey
