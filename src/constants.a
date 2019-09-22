@@ -9,7 +9,7 @@
 ; D000..E5F4 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EC56..FFF9 - main program code
+; EC79..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -56,6 +56,14 @@ ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
 ROM_PR0 =      $FE93      ; SETVID
 
+; zero page during init ONLY
+zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
+                          ; bit 6 = 1 if machine has 128K
+                          ; bit 5 = 1 if machine has a VidHD card
+                          ; bit 4 = 1 if machine is a IIgs
+                          ; only used during init, then copied to MachineStatus in LC RAM
+zpCharMask   = $F1        ; only uesd during init, then clobbered
+
 ; zero page
 PARAM        = $00        ; word (used by PARAMS_ON_STACK macro, so basically everywhere)
 PTR          = $02        ; word
@@ -65,16 +73,27 @@ SAVE         = $08        ; word
 KEYLEN       = $0A        ; byte
 VALUELEN     = $0B        ; byte
 MAX          = $0C        ; byte
-HTAB         = $24
-VTAB         = $25
+HTAB         = $24        ; byte
+VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
+; textrank
+tmpx         = $E7        ; byte
+remainder    = $E8        ; word
+num1         = $EA        ; word
+num2         = $EC        ; byte
 Timeout      = $ED        ; 3 bytes (used by SearchMode)
-zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
-                          ; bit 6 = 1 if machine has 128K
-                          ; bit 5 = 1 if machine has a VidHD card
-                          ; bit 4 = 1 if machine is a IIgs
-                          ; only used during init, then copied to MachineStatus in LC RAM
-zpCharMask   = $F1        ; only uesd during init, then clobbered
+zpword   =     $F0        ; word
+zpstring =     $F2        ; word
+runningscore=  $F4        ; word
+startat  =     $F6        ; byte
+i        =     $F7        ; byte
+tmp      =     $F8        ; byte
+gamelength=    $F9        ; byte
+firstletter=   $FA        ; byte
+MatchCount =   $FB        ; byte
+BestMatchScore = $FC      ; byte
+BestMatchIndex = $FD      ; byte
+
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
 
