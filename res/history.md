@@ -1,8 +1,16 @@
-# Revision 3 / in progress
+# Revision 3 / unreleased
 
 ## Enhancements & bug fixes
 
+ - Cheat system (press Ctrl-C in search or browse mode to toggle)
+ - 42 games offer cheats
  - Fixed corrupted graphics in Asteroid Blaster
+ - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
+ - Added missing levels in Out Of This World
+ - Removed latent copy protection in Sea Dragon (sneaky sneaky)
+ - Prevent flashes of other game screenshots while loading the game you actually want
+ - Fixed freeze on startup with certain accelerators
+ - Fixed launching from partition 3 or 4
 
 # Revision 2 / serial number 190914
 
