@@ -1,3 +1,9 @@
+# Revision 3 / in progress
+
+## Enhancements & bug fixes
+
+ - Fixed corrupted graphics in Asteroid Blaster
+
 # Revision 2 / serial number 190914
 
 ## New games
