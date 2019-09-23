@@ -499,7 +499,7 @@ ProDOS_savedX
         !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
 ProDOS_savedY
         ldy    #$d1
-        sta    $c081
+        sta    $c082
         lda    #0
         rts
 
