@@ -40,6 +40,9 @@
 @no64Klen=(*-@s_no64K)-1
 
 +        jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   NotGS
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   NotGS
