@@ -304,12 +304,13 @@ okvs_get_current
 ;------------------------------------------------------------------------------
 okvs_next
          +STAY PARAM
+         inx
          stx   SAVE
          jsr   okvs_len
          cmp   SAVE
          bne   +
-         ldx   #$FF
-+        inx
+         ldx   #$00
++
          +LDAY PARAM
          ; execution falls through here
 ;------------------------------------------------------------------------------
