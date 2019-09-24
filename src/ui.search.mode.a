@@ -5,6 +5,7 @@
 ;
 ; Public functions
 ; - SearchMode
+; - IsSearchKey
 ;
 
 ;------------------------------------------------------------------------------
@@ -153,6 +154,40 @@ OnInputChanged
 @noload  jmp   DrawUI
 
 ;------------------------------------------------------------------------------
+; IsSearchKey
+; test whether accumulator contains a key that might trigger a new textrank
+; search
+;
+; in:    A = key
+; out:   A &= 0x7F
+;        Y preserved
+;        X clobbered
+;        Z = 1 if this is a search key
+;        Z = 0 if this is not a search key
+;------------------------------------------------------------------------------
+IsSearchKey
+         and   #$7F                  ; strip high bit for search characters
+         cmp   #$30                  ; control keys and punctuation ignored
+         bcc   @badkey
+         cmp   #$3A                  ; numbers are good input
+         bcc   @goodkey
+         cmp   #$41                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$5B                  ; uppercase letters are good input
+         bcs   +
+         ora   #$20                  ; convert uppercase letters to lowercase
+         bne   @goodkey              ; always branches
+
++        cmp   #$61                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$7B                  ; lowercase letters are good input
+         bcc   @goodkey
+@badkey
+         ldx   #1
+         rts
+@goodkey
+         ldx   #0
+         rts
 
 ; indices into InputDispatchTable
 kInputSearch   = 0

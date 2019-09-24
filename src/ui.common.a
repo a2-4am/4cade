@@ -1,392 +1,23 @@
 ;License:MIT
 ;(c) 2018-9 by 4am
 ;
-; common UI functions
+; miscellaneous UI functions
 ;
 ; Public functions
-; - WaitForKeyFor30Seconds
-; - GetOffscreenAddress
-; - LoadTitleOffscreen
-; - LoadCoverOffscreen
-; - LoadGameTitleOffscreen
-; - DrawUIWithoutDots
-; - DrawUI
-; - ShowOtherPage
-; - ToggleOffscreenPage
 ; - SoftBell
 ; - Home
 ; - BlankHGR
 ; - BlankDHGR
-; - ClearOffscreen
-; - IsSearchKey
 ; - ExecuteTransitionAndWait
+; - WaitForKeyFor30Seconds
 ; - CoverFade
-
-; Public variables
-; - OffscreenPage
-; - VisibleGameCount (set during init)
 ;
-
-OffscreenPage
-         !byte 1                     ; 0 = currently showing HGR page 2
-                                     ;     (so offscreen is page 1 @ $2000)
-                                     ; 1 = currently showing HGR page 1
-                                     ;     (so offscreen is page 2 @ $4000)
-
-Instructions
-         !text "[Type to search, "
-         !byte $15                   ; right arrow character
-         !text " to browse]  "
-VisibleGameCount
-         !text "000 games"
-ReturnToPlay
-         !byte $0D
-         !text " to play"
-
-kCheatsEnabled = 3                  ; index of 'cheats enabled' string in following table
-kCheatDescriptionLo
-         !byte <sNoCheats
-         !byte <sInfiniteLives
-         !byte <sInfiniteLivesAndWeapons
-         !byte <sCheatsEnabled
-kCheatDescriptionHi
-         !byte >sNoCheats
-         !byte >sInfiniteLives
-         !byte >sInfiniteLivesAndWeapons
-         !byte >sCheatsEnabled
-sNoCheats
-         !byte 8
-         !text "no cheat"
-sInfiniteLives
-         !byte 18
-         !byte $16        ; bolt
-         !text " "
-         !text "infinite lives"
-         !text " "
-         !byte $16        ; bolt
-sInfiniteLivesAndWeapons
-         !byte 28
-         !byte $16        ; bolt
-         !text " "
-         !text "infinite lives & weapons"
-         !text " "
-         !byte $16        ; bolt
-sCheatsEnabled
-         !byte 18
-         !byte $16        ; bolt
-         !text " "
-         !text "cheats enabled"
-         !text " "
-         !byte $16        ; bolt
-sCheatDescriptionPrefix
-         !byte 2
-         !byte $03        ; vertical line
-         !text " "
-sCheatDescriptionSuffix
-         !byte 2
-         !text " "
-         !byte $03        ; vertical line
-
-;------------------------------------------------------------------------------
-; GetOffscreenAddress
-; get high byte of HGR page that is currently not showing
-;
-; in:    none
-; out:   A = high byte of offscreen HGR page (#$20 or #$40)
-;        preserves X/Y
-;------------------------------------------------------------------------------
-GetOffscreenAddress
-         lda   OffscreenPage
-         beq   +
-         lda   #$40
-         rts
-+        lda   #$20
-         rts
-
-;------------------------------------------------------------------------------
-; LoadTitleOffscreen
-; load title screen in the HGR page that is currently not showing
-;
-; in:    none
-; out:   all flags and registers clobbered
-;------------------------------------------------------------------------------
-LoadTitleOffscreen
-         +LDADDR kTitleFile
-         bne   +                     ; Always branches, because Y is loaded
-                                     ; last with the high byte of the address,
-                                     ; which is never 0. I miss my 65c02.
-
-;------------------------------------------------------------------------------
-; LoadCoverOffscreen
-; load cover screen in the HGR page that is currently not showing
-;
-; in:    none
-; out:   all flags and registers clobbered
-;------------------------------------------------------------------------------
-LoadCoverOffscreen
-; clobbers all
-         +LDADDR kCoverFile
-+
-         +STAY @fname
-         jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFile
-         !word kRootDirectory
-@fname   !word $FDFD                 ; SMC
-         !byte $00
-+        !byte $FD                   ; SMC
-         rts
-
-LoadGameTitleOffscreen
-; in:    X = game index
-         +LDADDR gGamesListStore
-         jsr   okvs_nth
-         +STAY @fname
-         jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFile
-         !word kHGRTitleDirectory
-@fname   !word $FDFD                 ; SMC
-         !byte $00
-+        !byte $FD                   ; SMC
-         rts
-
-;------------------------------------------------------------------------------
-; DrawUIWithoutDots/DrawUI
-; draw 2- or 4-line UI on the HGR page that is not currently showing, then
-; show that HGR page
-;
-; in:    gGameToLaunch = game index, or #$FF if no game is selected
-; out:   all flags and registers clobbered
-;------------------------------------------------------------------------------
-DrawUIWithoutDots
-         lda   #" "
-         clc
-         bcc   +
-DrawUI
-         lda   #$7F
-         sec
-+        sta   @printCursor+1        ; set up cursor printing based on entry point
-         php
-
-         ldy   #39
--        lda   #$00                  ; horizontal bar character
-         sta   UILine1,y             ; reset UI line 1 to solid bar
-         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
-         lda   Instructions,y
-         sta   UILine2,y             ; copy instructions to UI line 2
-         dey
-         bpl   -
-
-         ldx   gGameToLaunch
-         cpx   #$FF                  ; if no game, nothing more to do on UI line 2
-         beq   @doneWithLine2
-
-         +LDADDR gGamesListStore
-         jsr   okvs_nth
-         jsr   okvs_get_current
-                                     ; (PTR) -> game title
-         ldy   #0                    ; copy game title into UI line 2
-         lda   (PTR),y
-         sta   SAVE                  ; title length
-         inc   SAVE
--        iny
-         cpy   SAVE
-         bcc   @printTitleChar
-         beq   @printCursor
-         lda   #" "
-         +HIDE_NEXT_2_BYTES
-@printCursor
-         lda   #$FD                  ; SMC
-         +HIDE_NEXT_2_BYTES
-@printTitleChar
-         lda   (PTR),y
-         sta   UILine2,y
-         cpy   #MaxInputLength+1
-         bcc   -
-
-         ldx   #8                    ; replace games count with 'to play' label
--        lda   ReturnToPlay,x
-         sta   UI_ToPlay,x
-         dex
-         bpl   -
-
-@doneWithLine2
-         bit   gCheatsEnabled
-         bpl   @maybeDrawDots        ; if cheat mode is disabled, we don't need
-                                     ; any curves or spaces on UI line 1
-         ldx   gGameToLaunch
-         ldy   gCheatsAvailable,x
-         cpx   #$FF
-         bne   +
-         ldy   #kCheatsEnabled
-+
-         lda   kCheatDescriptionLo,y
-         sta   SAVE
-         lda   kCheatDescriptionHi,y
-         sta   SAVE+1
-                                     ; (SAVE) -> length-prefixed string
-                                     ; (game-specific description or 'cheats enabled' message)
-         ldy   #0
-         lda   (SAVE),y              ; A = string length
-         clc
-         adc   #4                    ; extra padding (2 on each side)
-         sta   @len
-         lda   #40
-         sec
-         sbc   @len
-         lsr
-         tax
-         lda   #$09                  ; rounded bottom-right character
-         sta   UILine1,x
-         ldy   #1                    ; fill the proper width with spaces
-         lda   #$20                  ; space character
--        inx
-         sta   UILine1,x
-         iny
-@len=*+1
-         cpy   #$FD                  ; SMC
-         bne   -
-         lda   #$0C                  ; rounded bottom-left character
-         sta   UILine1,x
-
-@maybeDrawDots
-         plp
-         bcc   @doneHighlight        ; if caller asked for no dots, then we're done building UI line 1
-
-         ldx   #0
-         ldy   #0
-@dotloop
-         iny
-         lda   (PTR),y               ; (PTR) still points to game title
-         +LOW_ASCII_TO_LOWER
-         cmp   InputBuffer,x
-         bne   +
-         lda   #$11                  ; dot character
-         sta   UILine1,y
-         inx
-         cpx   InputLength           ; if input buffer is exhausted, we're done drawing dots
-         beq   @doneHighlight
-+        inc   HTAB
-         cpy   SAVE                  ; if game name is exhausted, we're done drawing dots
-         bne   @dotloop
-@doneHighlight
-
-         lda   #22
-         sta   VTAB
-         lda   OffscreenPage
-         ror
-         php
-         +LDADDR UILine1
-         jsr   Draw40Chars           ; draw UI line 1 on offscreen page
-         plp
-         +LDADDR UILine2
-         jsr   Draw40Chars           ; draw UI line 2 on offscreen page
-
-         bit   gCheatsEnabled        ; if cheats are disabled, then we're done drawing UI
-         bpl   @uidone
-                                     ; (SAVE) still points to length-prefixed cheat description
-         ldy   #0
-         lda   (SAVE),y              ; A = length of cheat description
-         clc
-         adc   #4                    ; extra padding (2 on each side)
-         sta   gPathname             ; gPathname = length
-         tax
-         lda   #$07                  ; gPathname+length = top-right rounded corner character
-         sta   gPathname,x
-         lda   #$06                  ; gPathname+1 = top-left rounded corner character
-         sta   gPathname+1
-         lda   #20
-         sta   VTAB
-         lda   OffscreenPage
-         ror
-         php
-         +LDADDR gPathname
-         jsr   DrawCenteredString    ; draw cheat UI line 1
-
-         ldx   gGameToLaunch
-         ldy   gCheatsAvailable,x
-         cpx   #$FF
-         bne   +
-         ldy   #kCheatsEnabled
-+        lda   kCheatDescriptionLo,y
-         sta   SAVE
-         lda   kCheatDescriptionHi,y
-         sta   SAVE+1
-                                     ; (SAVE) -> length-prefixed cheat description
-         +LDADDR sCheatDescriptionPrefix
-         jsr   SetPath
-         +LDAY SAVE
-         jsr   AddToPath
-         +LDADDR sCheatDescriptionSuffix
-         jsr   AddToPath
-         inc   VTAB
-         plp
-         +LDADDR gPathname
-         jsr   DrawCenteredString    ; draw cheat UI line 2
-
-@uidone  jmp   ShowOtherPage
-
-;------------------------------------------------------------------------------
-; ClearOffscreen
-; clear $2000..$3FFF or $4000..$5FFF, depending on which HGR page is not
-; visible right now
-; does not change HGR mode
-;
-; in:    none
-; out:   $2000..$3FFF or $4000..$5FFF cleared
-;        A = 0
-;        X = 0
-;        Y = 0
-;        Z = 1
-;------------------------------------------------------------------------------
-ClearOffscreen
-         jsr   GetOffscreenAddress
-         +HIDE_NEXT_2_BYTES
-.ClearHGR1
-         lda   #$20
-         sta   @a+2
-         ldx   #$20
-         lda   #$80
-         ldy   #0
-@a       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         dex
-         bne   @a
-         rts
-
-;------------------------------------------------------------------------------
-; ShowOtherPage
-; switch to the HGR page that is not currently showing
-;
-; in:    none
-; out:   A = new value of OffscreenPage
-;        preserves X/Y
-;------------------------------------------------------------------------------
-ShowOtherPage
-         jsr   ToggleOffscreenPage
-         bne   +
-         bit   PAGE2                 ; show page 2
-         rts
-+        bit   PAGE1                 ; show page 1
-         rts
-
-;------------------------------------------------------------------------------
-; ToggleOffscreenPage
-; switch the internal variable that tracks which HGR page is showing
-; (does not affect screen)
-;
-; in:    none
-; out:   A = new value of OffscreenPage
-;        preserves X/Y
-;------------------------------------------------------------------------------
-ToggleOffscreenPage
-         lda   OffscreenPage
-         eor   #$01
-         sta   OffscreenPage
-         rts
+; Public variables:
+; - MachineStatus
+;      bit 4 = 1 if IIgs
+;      bit 5 = 1 if VidHD
+;      bit 6 = 1 if 128K
+;      bit 7 = 1 if joystick
 
 ;------------------------------------------------------------------------------
 ; SoftBell
@@ -469,9 +100,9 @@ MachineStatus = *+1
 ;------------------------------------------------------------------------------
 BlankDHGR
          jsr   Home
-         jsr   .ClearHGR1            ; clear hi-res screen 1
+         jsr   ClearHGR1             ; clear hi-res screen 1
          sta   WRITEAUXMEM
-         jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
+         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
          sta   SET80VID
          sta   DHIRESON
@@ -488,7 +119,7 @@ BlankDHGR
 ;------------------------------------------------------------------------------
 BlankHGR
          jsr   Home
-         jsr   .ClearHGR1            ; clear hi-res screen 1
+         jsr   ClearHGR1             ; clear hi-res screen 1
          bit   PAGE1                 ; show hi-res screen 1 (now blank)
          ; execution falls through here
 ;------------------------------------------------------------------------------
@@ -523,44 +154,8 @@ ExecuteTransitionAndWait
          bpl   -
 +        lda   KBD
          cmp   #$95
-         bne   +
+         bne   ConvenientlyPlacedRTS
          bit   CLEARKBD
-+        rts
-
-;------------------------------------------------------------------------------
-; IsSearchKey
-; test whether accumulator contains a key that might trigger a new textrank
-; search
-;
-; in:    A = key
-; out:   A &= 0x7F
-;        Y preserved
-;        X clobbered
-;        Z = 1 if this is a search key
-;        Z = 0 if this is not a search key
-;------------------------------------------------------------------------------
-IsSearchKey
-         and   #$7F                  ; strip high bit for search characters
-         cmp   #$30                  ; control keys and punctuation ignored
-         bcc   @badkey
-         cmp   #$3A                  ; numbers are good input
-         bcc   @goodkey
-         cmp   #$41                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$5B                  ; uppercase letters are good input
-         bcs   +
-         ora   #$20                  ; convert uppercase letters to lowercase
-         bne   @goodkey              ; always branches
-
-+        cmp   #$61                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$7B                  ; lowercase letters are good input
-         bcc   @goodkey
-@badkey
-         ldx   #1
-         rts
-@goodkey
-         ldx   #0
 ConvenientlyPlacedRTS
          rts
 
@@ -571,8 +166,8 @@ ConvenientlyPlacedRTS
 ;
 ; in:    none
 ; out:   if user presses a key before the timer runs out, exits with A = key
-;        otherwise exits via MegaAttractMode
-;        X/Y preserved
+;          and X/Y preserved
+;        otherwise exits via MegaAttractMode and everything is clobbered
 ;------------------------------------------------------------------------------
 WaitForKeyFor30Seconds
          lda   #$16                  ; initialize timeout counters
