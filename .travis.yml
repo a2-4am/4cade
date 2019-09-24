@@ -1,8 +1,16 @@
-os: linux 
-
 language: minimal
 
-before_install:
+os: linux 
+
+sudo: required
+
+dist: trusty
+
+install:
   - wget https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
   - sudo apt-get update -q
-  - sudo apt-get acme -y
+  - sudo apt-get install acme -y
+  - sudo ln -s ./cadius-linux /usr/local/bin/cadius
+
+script:
+  - make dsk
