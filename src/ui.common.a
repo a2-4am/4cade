@@ -9,8 +9,8 @@
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
 ; - LoadGameTitleOffscreen
-; - DrawBrowseUI
-; - DrawSearchUI
+; - DrawUIWithoutDots
+; - DrawUI
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
 ; - SoftBell
