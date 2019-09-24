@@ -11,14 +11,13 @@ ToggleCheat
 ; in:    none
 ; out:   all registers clobbered
 ;        X = 0, Z = 1 (guaranteed by pref_set)
+         ldx   #$B0
          lda   gCheatsEnabled
          eor   #$80
          sta   gCheatsEnabled
          beq   +
-         lda   #$B1
-         +HIDE_NEXT_2_BYTES
-+        lda   #$B0
-         sta   @val
+         inx
++        stx   @val
          jsr   pref_set
          !word kCheat
          !word @pref
