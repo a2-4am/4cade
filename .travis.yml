@@ -5,19 +5,13 @@ os: linux
 sudo: required
 
 dist: trusty
-
-env:
-  global:
-      - travis_apt_get_options='--allow-unauthenticated'
-
 addons:
   apt:
     sources:
       - debian-sid
-    packages:
-      - acme
 
 install:
+  - sudo apt-get install acme --allow-unauthenticated
   - wget https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
   - chmod +x cadius-linux
   - sudo ln -s ./cadius-linux /usr/local/bin/cadius
