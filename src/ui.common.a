@@ -35,7 +35,7 @@ OffscreenPage
 
 Instructions
          !text "[Type to search, "
-         !byte $0B
+         !byte $15                   ; right arrow character
          !text " to browse]  "
 VisibleGameCount
          !text "000 games"
@@ -247,7 +247,7 @@ DrawUI
 @len=*+1
          cpy   #$FD                  ; SMC
          bne   -
-         lda   #$08                  ; rounded bottom-left character
+         lda   #$0C                  ; rounded bottom-left character
          sta   UILine1,x
 
 @maybeDrawDots
