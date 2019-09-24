@@ -1,3 +1,7 @@
+os: linux 
+
+language: minimal
+
 before_install:
   - wget https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
   - sudo apt-get update -q
