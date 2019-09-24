@@ -11,6 +11,7 @@
  - Prevent flashes of other game screenshots while loading the game you actually want
  - Fixed freeze on startup with certain accelerators
  - Fixed launching from partition 3 or 4
+ - Fixed crashes on II+
 
 # Revision 2 / serial number 190914
 
