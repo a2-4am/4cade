@@ -183,7 +183,7 @@ pref_set
          clc
          adc   $FE
          sta   $FE
-         bne   +
+         bcc   +
          inc   $FF
 +        rts
 
