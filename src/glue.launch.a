@@ -76,7 +76,7 @@ gGameToLaunch=*+1
          jsr   okvs_nth
                                      ; A/Y = address of game filename
          +STAY SAVE
-         +STAY @pfile
+         +STAY @pfile                ; assume we're loading a game-specific prelaunch file
 
          jsr   Home                  ; clear screen (clobbers $106, must do now before loading prelaunch code)
          lda   #$20                  ; clear both hi-res pages
@@ -98,15 +98,12 @@ gGameToLaunch=*+1
          ldy   gCheatsAvailable,x    ; are there any cheats for this game?
          bne   @Cheats
 @noCheats
-         lda   #<kStandardPrelaunch  ; no game-specific prelaunch file, so
-         sta   @pfile
-         lda   #>kStandardPrelaunch  ; load standard prelaunch file instead
-         sta   @pfile+1
-
+         +LDADDR kStandardPrelaunch  ; no game-specific prelaunch file, so
+         +STAY @pfile                ; load standard prelaunch file instead
 @Cheats
-         jsr   LoadFile              ; cheats are enabled and this game has a prelaunch
-         !word kPrelaunchDirectory   ; file that will set up the cheats, so load that
-@pfile   !word $FDFD                 ; SMC
+         jsr   LoadFile              ; if cheats are enabled and this game has a prelaunch
+         !word kPrelaunchDirectory   ; file that will set up the cheats, load that, otherwise
+@pfile   !word $FDFD                 ; load the standard prelaunch file
          !word $0106
 
          ldx   #1                    ; construct path to game's startup file

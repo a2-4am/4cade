@@ -28,11 +28,11 @@ $04  vertical circuit path endpoint with rounded top
 $05  vertical circuit path endpoint with rounded bottom
 $06  rounded top-left quadrant circuit path
 $07  rounded top-right quadrant circuit path
-$08  rounded bottom-left quadrant circuit path
+$08  left arrow
 $09  rounded bottom-right quadrant circuit path
-$0A
-$0B  right arrow
-$0C
+$0A  (TODO down arrow)
+$0B  (TODO up arrow)
+$0C  rounded bottom-left quadrant circuit path
 $0D  carriage return symbol
 $0E
 $0F
@@ -41,9 +41,9 @@ $11  dot, medium
 $12  dot, large
 $13  dot, extra large
 $14  heart
-$15  times
+$15  right arrow
 $16  bolt
-$17
+$17  times
 $18
 $19
 $1A

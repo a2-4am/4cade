@@ -163,8 +163,7 @@ pref_set
 @key     !word $FDFD                 ; SMC
          jsr   @addString
          +LDADDR @kLF
-         jmp   @addString
-
+         ; execution falls through here
 @addString
          +STAY $00
          ldy   #0
@@ -179,11 +178,12 @@ pref_set
          iny
          cpy   MAX
          bne   -
+         dey
          tya
          clc
          adc   $FE
          sta   $FE
-         bne   +
+         bcc   +
          inc   $FF
 +        rts
 
