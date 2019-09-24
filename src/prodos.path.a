@@ -119,13 +119,13 @@ kRootDirectory=*+1
          ; execution falls through here
 AddToPath
          +STAY PTR
-         ldx   gPathname             ; current pathname length
          ldy   #0
          lda   (PTR),y               ; length of this segment
          beq   @done
          tay
          iny
          sty   MAX
+         ldx   gPathname             ; current pathname length
          ldy   #$01
 -        lda   (PTR),y
          sta   gPathname+1,x
@@ -133,6 +133,6 @@ AddToPath
          iny
          cpy   MAX
          bcc   -
-@done
          stx   gPathname
+@done
          rts

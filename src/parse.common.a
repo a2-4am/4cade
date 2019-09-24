@@ -33,35 +33,23 @@ ParseKeyValueList
 
          +LDPARAM 1
          +STAY @store2
-         jsr   okvs_init             ; reset key/value store
-
-         +LDPARAM 3
-         +STAY $FE
-
+         jsr   SetKeyPtr
          ldy   #5
          lda   (PARAM),y
          sta   @maxLength
 
-         ldy   #0
-         lda   ($FE),y
-         pha
-         iny
-         lda   ($FE),y
-         tay
-         pla
-         sec
-         sbc   #$01
-         sta   $FE
-         bcs   +
-         dey
-+        sty   $FF
-
          ldy   #$00                  ; index into ($FE) pointing to current character
 @newkey  ldx   #$00                  ; X = index into current key
          stx   gValLen               ; initialize value length (in case this line has no value)
+         beq   @emptyline            ; always branches
+@skipLine                            ; skip to CR
+         jsr   IncAndGetChar
+         cmp   #$0D                  ; CR
+         bne   @skipLine
+@emptyline
          jsr   IncAndGetChar
          cmp   #$0D                  ; CR in first position (blank line) -> no key
-         beq   @newkey
+         beq   @emptyline
          cmp   #$23                  ; '#' starts a comment -> no key, skip to CR
          beq   @skipLine
          cmp   #$5B                  ; '[' ends the parsing
@@ -105,11 +93,31 @@ ParseKeyValueList
          clc
          bcc   @newkey               ; always branches
 
-@skipLine                            ; skip to CR
-         jsr   IncAndGetChar
-         cmp   #$0D                  ; CR
-         bne   @skipLine
-         beq   @newkey               ; always branches
+;------------------------------------------------------------------------------
+; SetKeyPtr
+;
+; in:    PARAM set
+; out:   okvs initialised
+;        ($FE) -> buffer
+;------------------------------------------------------------------------------
+SetKeyPtr
+         jsr   okvs_init             ; reset key/value store
+
+         +LDPARAM 3
+         +STAY $FE
+
+         ldy   #1
+         lda   ($FE),y
+         tax
+         dey
+         lda   ($FE),y
+         bne   +
+         dex
+         stx   $FF
++        tax
+         dex
+         stx   $FE
+         rts
 
 ;------------------------------------------------------------------------------
 ; IncAndGetChar

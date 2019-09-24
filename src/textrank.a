@@ -59,10 +59,9 @@ TextRankCallback
          cmp   InputLength
          bcc   ++
          sta   gamelength
-         lda   #0
-         sta   runningscore
-         sta   runningscore+1
-         ldy   #1
+         sty   runningscore
+         sty   runningscore+1
+         iny
          sty   startat
 -        sty   i
          lda   (zpword),y

@@ -133,8 +133,7 @@ MiniAttractMode
 RunAttractModule
          +STAY @key
          +STAY @key2
-         txa
-         cmp   #$30
+         cpx   #$30
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
@@ -175,6 +174,7 @@ RunAttractModule
 
 ; not a demo, so maybe a slideshow or single screenshot
 @NotDemo
+         txa
          cmp   #$41                  ; numbers are slideshow modules,
          bcs   @dispatchSingle       ; letters are single files
 

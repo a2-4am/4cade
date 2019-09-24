@@ -96,21 +96,19 @@ gGameToLaunch=*+1
 
          ldx   gGameToLaunch
          ldy   gCheatsAvailable,x    ; are there any cheats for this game?
-         beq   @noCheats
+         bne   @Cheats
+@noCheats
+         lda   #<kStandardPrelaunch  ; no game-specific prelaunch file, so
+         sta   @pfile
+         lda   #>kStandardPrelaunch  ; load standard prelaunch file instead
+         sta   @pfile+1
 
+@Cheats
          jsr   LoadFile              ; cheats are enabled and this game has a prelaunch
          !word kPrelaunchDirectory   ; file that will set up the cheats, so load that
 @pfile   !word $FDFD                 ; SMC
          !word $0106
-         jmp   @loadedPrelaunch
 
-@noCheats
-         jsr   LoadFile              ; no game-specific prelaunch file, so
-         !word kPrelaunchDirectory   ; load standard prelaunch file instead
-         !word kStandardPrelaunch
-         !word $0106
-
-@loadedPrelaunch
          ldx   #1                    ; construct path to game's startup file
          sec                         ; which is always /X/game/game
          !byte $2c

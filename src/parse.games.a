@@ -29,30 +29,19 @@ ParseGamesList
 
          +LDPARAM 1
          +STAY @store2
-         jsr   okvs_init             ; reset key/value store
-
-         +LDPARAM 3
-         +STAY $FE
-
-         ldy   #0
-         lda   ($FE),y
-         pha
-         iny
-         lda   ($FE),y
-         tay
-         pla
-         sec
-         sbc   #$01
-         sta   $FE
-         bcs   +
-         dey
-+        sty   $FF
+         jsr   SetKeyPtr
 
          ldy   #$00                  ; index into ($FE) pointing to current character
+         beq   @newkey               ; always branches
+@skipLine                            ; skip to CR
+         jsr   IncAndGetChar
+         cmp   #$0D                  ; CR
+         bne   @skipLine
 @newkey  ldx   #$00                  ; X = index into current key
+@emptyline
          jsr   IncAndGetChar         ; get first filter character ('1' if game requires joystick)
          cmp   #$0D                  ; ignore blank line
-         beq   @newkey
+         beq   @emptyline
          cmp   #$5B                  ; '[' ends the parsing
          beq   @exit
          cmp   #$30                  ; '0' -> no filtering on joystick
@@ -108,11 +97,5 @@ ParseGamesList
          sta   gCheatsAvailable,x
          clc
          bcc   @newkey               ; always branches
-
-@skipLine                            ; skip to CR
-         jsr   IncAndGetChar
-         cmp   #$0D                  ; CR
-         bne   @skipLine
-         beq   @newkey               ; always branches
 
 @exit    rts

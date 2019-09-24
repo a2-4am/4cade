@@ -133,14 +133,13 @@ okvs_append
          sta   (PTR),y               ; increment number of keys
          iny
          lda   (PTR),y               ; get address of next free space
-         pha
+         tax
          iny
          lda   (PTR),y
          sta   PTR+1
          sta   SAVE+1
-         pla
-         sta   PTR
-         sta   SAVE
+         stx   PTR
+         stx   SAVE
                                      ; PTR -> new record
                                      ; SAVE -> new record
          jsr   incptr2
@@ -149,10 +148,9 @@ okvs_append
          +STAY SRC                   ; SRC -> new key to copy
          ldy   #0
          lda   (SRC),y
-         clc
-         adc   #1
-         sta   KEYLEN
          tay
+         iny
+         sty   KEYLEN
 -        dey                         ; copy new key
          lda   (SRC),y
          sta   (PTR),y
@@ -170,13 +168,12 @@ okvs_append
          +STAY SRC                   ; SRC -> new value to copy
          ldy   #7
          lda   (PARAM),y             ; get max length of value
-         bne   +
-         ldy   #0
-         lda   (SRC),y               ; no max, use actual length instead
-         clc
-         adc   #1
-+        sta   VALUELEN
          tay
+         bne   +
+         lda   (SRC),y               ; no max, use actual length instead
+         tay
+         iny
++        sty   VALUELEN
 -        dey
          lda   (SRC),y
          sta   (PTR),y
@@ -203,12 +200,11 @@ okvs_append
          tax                         ; X = new OKVS length
          jsr   GetStoreAddress
                                      ; PTR -> store
-         ldy   #1
-         lda   SRC
+         ldy   #2
+-        lda   SRC-1,y
          sta   (PTR),y               ; update next-free-space pointer in head
-         iny
-         lda   SRC+1
-         sta   (PTR),y
+         dey
+         bne   -
          rts
 
 ;------------------------------------------------------------------------------
@@ -307,9 +303,9 @@ okvs_next
          inx
          stx   SAVE
          jsr   okvs_len
-         cmp   SAVE
+         eor   SAVE
          bne   +
-         ldx   #$00
+         tax
 +
          +LDAY PARAM
          ; execution falls through here
@@ -331,14 +327,14 @@ okvs_nth
          jsr   incptr3
                                      ; PTR -> first record
          txa
-         pha
          beq   @found
+         pha
 -        jsr   derefptr
          dex
          bne   -
-@found   jsr   incptr2
          pla
          tax
+@found   jsr   incptr2
          +LDAY PTR
          rts
 
@@ -462,10 +458,8 @@ okvs_iter_values
 incptr3  jsr   incptr
 incptr2  jsr   incptr
 incptr
-; preserves A and X
-         ldy   PTR
-         iny
-         sty   PTR
+; preserves A, X, and Y
+         inc   PTR
          bne   +
          inc   PTR+1
 +        rts

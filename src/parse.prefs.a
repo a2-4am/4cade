@@ -167,23 +167,25 @@ pref_set
 
 @addString
          +STAY $00
-         ldx   #0
          ldy   #0
          lda   ($00),y
-         beq   ++
-         clc
-         adc   #$01
-         sta   MAX
+         beq   +
+         tax
+         inx
+         stx   MAX
          iny
 -        lda   ($00),y
-         sta   ($FE,x)
-+        iny
-         inc   $FE
+         sta   ($FE),y
+         iny
+         cpy   MAX
+         bne   -
+         tya
+         clc
+         adc   $FE
+         sta   $FE
          bne   +
          inc   $FF
-+        cpy   MAX
-         bne   -
-++       rts
++        rts
 
 @kEquals !byte 1
          !raw  "="
