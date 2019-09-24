@@ -6,6 +6,10 @@ sudo: required
 
 dist: trusty
 
+env:
+  global:
+      - travis_apt_get_options='--allow-unauthenticated'
+
 addons:
   apt:
     sources:
