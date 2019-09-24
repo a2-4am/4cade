@@ -4,15 +4,12 @@ os: linux
 
 sudo: required
 
-dist: trusty
+dist: bionic
+
 addons:
   apt:
     sources:
       - debian-sid
-
-before-install:
-  - sudo apt-get update 
-  - sudo apt-get install -y dpkg  
 
 install:
 
