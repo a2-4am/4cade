@@ -9,8 +9,8 @@
 
 ToggleCheat
 ; in:    none
-; out:   all registers clobbered
-;        X = 0, Z = 1 (guaranteed by pref_set)
+; out:   X = 0, Z = 1 (guaranteed by pref_set)
+;        all other registers and flags clobbered
          ldx   #$B0
          lda   gCheatsEnabled
          eor   #$80
