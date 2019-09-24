@@ -179,6 +179,7 @@ pref_set
          iny
          cpy   MAX
          bne   -
+         dey
          tya
          clc
          adc   $FE
