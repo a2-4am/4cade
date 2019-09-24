@@ -170,16 +170,12 @@ pref_set
          lda   ($00),y
          beq   +
          tax
-         inx
-         stx   MAX
-         iny
+         tay
 -        lda   ($00),y
-         sta   ($FE),y
-         iny
-         cpy   MAX
-         bne   -
          dey
-         tya
+         sta   ($FE),y
+         bne   -
+         txa
          clc
          adc   $FE
          sta   $FE
