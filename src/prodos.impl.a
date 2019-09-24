@@ -630,3 +630,27 @@ SaveSmallFileInternal
          sta   reqcmd
          sta   sizelo                ; non-zero
          jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+
+LaunchInternal
+         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
+         ldy   #$F1
+-        lda   $100,y
+         sta   $DF00,y               ; back up stack
+         iny
+         bne   -
+         tsx                         ; back up stack pointer
+         stx   $DFF0
+         lda   #$38                  ; 'sec' opcode to tell |Reenter| to
+         sta   RestoreStackNextTime  ; restore the stack and stack pointer
+
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy ProDOS shim to main memory
+         sta   $bf00,x
+         dex
+         bpl   -
+         tya
+         ldy   #$18
+-        sta   $bf57,y
+         dey
+         bne   -
+         jmp   $106                  ; jump to pre-launch code
