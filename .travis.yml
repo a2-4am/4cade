@@ -23,7 +23,7 @@ script:
 
 deploy:
   provider: releases
-  api_key: "GITHUB OAUTH TOKEN"
+  api_key: $GITHUB_OAUTH_TOKEN
   file: "build/4cade.2mg"
   skip_cleanup: true
   draft: true
