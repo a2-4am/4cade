@@ -20,3 +20,10 @@ install:
 
 script:
   - make dsk
+
+deploy:
+  provider: releases
+  api_key: "GITHUB OAUTH TOKEN"
+  file: "build/4cade.2mg"
+  skip_cleanup: true
+  draft: true
