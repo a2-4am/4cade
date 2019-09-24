@@ -8,8 +8,10 @@ dist: trusty
 
 install:
   - wget https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
+  - chmod +x cadius-linux
   - sudo apt-get update -q
-  - sudo apt-get install acme -y
+  - wget http://ftp.br.debian.org/debian/pool/main/a/acme/acme_0.96.4-3_amd64.deb
+  - sudo dpkg -i ./acme_0.96.4-3_amd64.deb
   - sudo ln -s ./cadius-linux /usr/local/bin/cadius
 
 script:
