@@ -4,6 +4,7 @@
 
  - Cheat system (press Ctrl-C in search or browse mode to toggle)
  - 42 games offer cheats
+ - Added Quick Start Guide
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Added missing levels in Out Of This World
