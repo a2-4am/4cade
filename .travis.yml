@@ -13,7 +13,7 @@ addons:
 
 env:
   global:
-  - APT_GET_OPTIONS: "--no-install-recommends --allow-unauthenticated --no-upgrade" 
+  - APT_GET_OPTIONS: "'--no-install-recommends --allow-unauthenticated --no-upgrade'" 
 
 install:
   - sudo apt-get install $APT_GET_OPTIONS mame-tools 
