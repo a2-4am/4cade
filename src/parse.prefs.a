@@ -163,27 +163,23 @@ pref_set
 @key     !word $FDFD                 ; SMC
          jsr   @addString
          +LDADDR @kLF
-         jmp   @addString
-
+         ; execution falls through here
 @addString
          +STAY $00
          ldy   #0
          lda   ($00),y
          beq   +
          tax
-         inx
-         stx   MAX
-         iny
+         tay
 -        lda   ($00),y
+         dey
          sta   ($FE),y
-         iny
-         cpy   MAX
          bne   -
-         tya
+         txa
          clc
          adc   $FE
          sta   $FE
-         bne   +
+         bcc   +
          inc   $FF
 +        rts
 

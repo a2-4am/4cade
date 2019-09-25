@@ -80,6 +80,8 @@ ResetVector                          ; 6 bytes, copied to $100
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"
          !source "src/ui.browse.mode.a"
+         !source "src/ui.overlay.a"
+         !source "src/ui.offscreen.a"
          !source "src/ui.credits.a"
          !source "src/ui.attract.mode.a"
          !source "src/ui.attract.hgr.a"
