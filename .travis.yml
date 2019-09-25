@@ -13,9 +13,10 @@ addons:
 
 env:
   global:
-  - APT_GET_OPTIONS: "'--no-install-recommends --allow-unauthenticated --no-upgrade'" 
+    - APT_GET_OPTIONS: "'--no-install-recommends --allow-unauthenticated --no-upgrade'" 
 
 install:
+  - sudo apt-get install $APT_GET_OPTIONS localepurge
   - sudo apt-get install $APT_GET_OPTIONS mame-tools 
   - sudo apt-get install $APT_GET_OPTIONS acme 
   - wget -O ./cadius https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
