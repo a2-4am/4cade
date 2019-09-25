@@ -12,18 +12,20 @@ addons:
       - debian-sid
 
 install:
-
+  - sudo apt-get install mame-tools
   - sudo apt-get install acme --allow-unauthenticated
   - wget -O ./cadius https://github.com/mach-kernel/cadius/releases/download/1.4.2/cadius-linux
   - chmod +x ./cadius
   - export PATH=$PATH:.
 
 script:
-  - make dsk
+  - make dsk chd
 
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
-  file: "build/4cade.2mg"
+  file: 
+    - "build/4cade.2mg"
+    - "build/4cade.chd"
   skip_cleanup: true
   draft: true
