@@ -136,3 +136,7 @@ AddToPath
          stx   gPathname
 @done
          rts
+
+!if >kTitleFile != >kCoverFile {
+  !error ">kTitleFile != >kCoverFile, uncomment LoadTitleOffscreen block in ui.offscreen and disable this check"
+}
