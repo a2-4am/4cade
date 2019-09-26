@@ -15,6 +15,8 @@ script:
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
+  tag_name: $TRAVIS_TAG
+  target_commitish: $TRAVIS_COMMIT
   file: 
     - "build/4cade.2mg"
     - "build/4cade.2mg.chd"
