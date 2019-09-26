@@ -89,9 +89,7 @@ cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
-cscript /nologo bin\do2po.js res\dsk build\po
-cscript /nologo bin\rsync.js res\dsk\*.po build\po
-for %%q in (build\po\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
+for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
