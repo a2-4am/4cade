@@ -1,20 +1,20 @@
 os: osx 
 
 install:
-  - HOMEBREW_NO_AUTO_UPDATE=1 brew install acme
+  - HOMEBREW_NO_AUTO_UPDATE=1 brew install acme mame
   - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.4_mac.zip
-  - unzip Cadius_v1.4_mac.zip
+  - unzip ./Cadius_v1.4_mac.zip
   - chmod +x ./cadius
-  - export PATH=$PATH:.;
+  - export PATH=$PATH:.
 
 script:
-  - make dsk
+  - make dsk chd
 
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
   file: 
     - "build/4cade.2mg"
-#    - "build/4cade.2mg.chd"
+    - "build/4cade.2mg.chd"
   skip_cleanup: true
   draft: true
