@@ -20,6 +20,7 @@ deploy:
     - "build/4cade.2mg.chd"
   skip_cleanup: true
   draft: true
+  overwrite: true
   on:
     branch: master
  
