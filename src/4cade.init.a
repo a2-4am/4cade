@@ -213,9 +213,7 @@ OneTimeSetup
          +LDADDR gGamesListStore
          jsr   okvs_len
          sta   GameCount
-         tax
-         dex
-         stx   SAVE
+         sta   SAVE
 
          jsr   pref_get              ; see if cheats are enabled by default
          !word kCheat
