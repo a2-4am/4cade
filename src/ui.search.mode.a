@@ -8,6 +8,23 @@
 ; - IsSearchKey
 ;
 
+.noKeyMatch
+         jsr   IsSearchKey
+         beq   .foundSearchKey
+         ldx   #kInputError
+         +HIDE_NEXT_2_BYTES
+.foundSearchKey
+         ldx   #kInputSearch
+         ; execution falls through here
+.InputDispatch
+         ldy   InputDispatchTableLo,x
+         sty   .j+1
+         ldy   InputDispatchTableHi,x
+         sty   .j+2
+.j       jsr   $FDFD                 ; SMC
+         bcc   .SearchModeInputLoop  ; if carry is clear, we're done
+         ; fall through to force full redraw
+
 ;------------------------------------------------------------------------------
 ; SearchMode
 ; main entry point for Search Mode, which allows the user to search the game
@@ -27,66 +44,41 @@ SearchMode
          jsr   HGRMode               ; show HGR screen
          bit   CLEARKBD
 
-@SearchModeInputLoop
+.SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
 
          ; Don't clear keyboard strobe yet. If the user pressed an arrow key,
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
-         cmp   #$8B                  ; up arrow switches to browse mode
-         beq   @arrow
-         cmp   #$95                  ; also right arrow
-         beq   @arrow
-         cmp   #$8A                  ; also down arrow
+         jsr   IsUpDownOrRightArrow
          bne   @notArrow
-@arrow   ldx   #kInputBrowse
-         bne   @InputDispatch        ; always branches
+         ldx   #kInputBrowse
+         bne   .InputDispatch        ; always branches
 @notArrow
          bit   CLEARKBD
 
          ldy   #kNumBrowseKeys
 -        dey
-         bmi   @noKeyMatch
+         bmi   .noKeyMatch
          cmp   InputKeys,y
          bne   -
          ldx   InputKeyDispatch,y
-         bne   @InputDispatch        ; always branches
-
-@noKeyMatch
-         jsr   IsSearchKey
-         beq   @foundSearchKey
-         ldx   #kInputError
-         +HIDE_NEXT_2_BYTES
-@foundSearchKey
-         ldx   #kInputSearch
-         ; execution falls through here
-@InputDispatch
-         ldy   InputDispatchTableLo,x
-         sty   @j+1
-         ldy   InputDispatchTableHi,x
-         sty   @j+2
-@j       jsr   $FDFD                 ; SMC
-         bcc   @SearchModeInputLoop  ; if carry is clear, we're done
-         bcs   SearchMode            ; if carry is set, force full redraw
-
-OnError
-         jmp   SoftBell              ; Beep on invalid input and start over.
+         bne   .InputDispatch        ; always branches
 
 OnClear
          ldx   InputLength
          bne   +
          jmp   CoverFade             ; Esc with no input transitions to
                                      ; mega attract mode
-+        ldx   #0                    ; Esc with input clears the input
-         stx   InputLength
-         beq   OnInputChanged        ; always branches
-
 OnBack
          ldx   InputLength
          beq   OnError
-         dec   InputLength
-         jmp   OnInputChanged
+         +HIDE_NEXT_2_BYTES
++        ldx   #1                    ; Esc with input clears the input
+         dex
+         stx   InputLength
+         bpl   OnInputChanged        ; always branches
 
 OnTab
          ldx   gGameToLaunch
@@ -94,15 +86,15 @@ OnTab
          beq   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
-         beq   OnLaunch              ; by pressing Enter, launch the game
-         sec                         ; tell caller to redraw UI
-         rts
+         bne   .req_redraw           ; by pressing Enter, launch the game
 
 OnLaunch
          ldx   gGameToLaunch
          cpx   #$FF
          beq   OnError
          jsr   PlayGame
+
+.req_redraw
          sec                         ; tell caller to redraw UI
          rts
 
@@ -140,7 +132,10 @@ OnInputChanged
          bne   +
                                      ; no matches for this input buffer
          dec   InputLength           ; ignore the last key typed
-         jmp   OnError               ; beep and return
+
+OnError
+         jmp   SoftBell              ; Beep on invalid input and start over.
+
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
          cpx   gGameToLaunch         ; as the current best match
@@ -176,7 +171,9 @@ IsSearchKey
          cmp   #$5B                  ; uppercase letters are good input
          bcs   +
          ora   #$20                  ; convert uppercase letters to lowercase
-         bne   @goodkey              ; always branches
+@goodkey
+         ldx   #0
+         rts
 
 +        cmp   #$61                  ; more punctuation (also ignored)
          bcc   @badkey
@@ -185,9 +182,14 @@ IsSearchKey
 @badkey
          ldx   #1
          rts
-@goodkey
-         ldx   #0
-         rts
+
+IsUpDownOrRightArrow
+         cmp   #$8B                  ; up arrow
+         beq   @done
+         cmp   #$95                  ; right arrow
+         beq   @done
+         cmp   #$8A                  ; down arrow
+@done    rts
 
 ; indices into InputDispatchTable
 kInputSearch   = 0
@@ -196,9 +198,10 @@ kInputBack     = 2
 kInputBrowse   = 3
 kInputTab      = 4
 kInputLaunch   = 5
-kInputCredits  = 6
-kInputCheat    = 7
-kInputError    = 8
+kInputHelp     = 6
+kInputCredits  = 7
+kInputCheat    = 8
+kInputError    = 9
 
 InputDispatchTableLo
          !byte <OnSearch
@@ -207,6 +210,7 @@ InputDispatchTableLo
          !byte <BrowseMode
          !byte <OnTab
          !byte <OnLaunch
+         !byte <Help
          !byte <Credits
          !byte <OnCheat
          !byte <OnError
@@ -217,15 +221,17 @@ InputDispatchTableHi
          !byte >BrowseMode
          !byte >OnTab
          !byte >OnLaunch
+         !byte >Help
          !byte >Credits
          !byte >OnCheat
          !byte >OnError
 
-kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
+kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
-         !byte $AF                   ; '/' = credits
-         !byte $BF                   ; '?' = credits
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
          !byte $89                   ; TAB = mini attract mode
          !byte $88                   ; left arrow = delete (may as well, since
@@ -237,7 +243,8 @@ InputKeys
 InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
-         !byte kInputCredits
+         !byte kInputHelp
+         !byte kInputHelp
          !byte kInputTab
          !byte kInputTab
          !byte kInputBack

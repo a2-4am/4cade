@@ -6,6 +6,7 @@
 ; - GetOffscreenAddress
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
+; - LoadHelpOffscreen
 ; - LoadGameTitleOffscreen
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
@@ -46,10 +47,25 @@ GetOffscreenAddress
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-         +LDADDR kTitleFile
-         bne   +                     ; Always branches, because Y is loaded
-                                     ; last with the high byte of the address,
-                                     ; which is never 0. I miss my 65c02.
+;;!if >kTitleFile = >kCoverFile {
+         lda   #<kTitleFile
+         +HIDE_NEXT_2_BYTES
+;;} else {
+;;         +LDADDR kTitleFile
+;;         bne   +                     ; Always branches, because Y is loaded
+;;                                     ; last with the high byte of the address,
+;;                                     ; which is never 0. I miss my 65c02.
+;;}
+;------------------------------------------------------------------------------
+; LoadHelpOffscreen
+; load help screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+LoadHelpOffscreen
+         +LDADDR kHelpFile
+         bne   LoadOffscreenFromAY   ; always branches
 
 ;------------------------------------------------------------------------------
 ; LoadCoverOffscreen
@@ -59,9 +75,8 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
-; clobbers all
          +LDADDR kCoverFile
-+
+LoadOffscreenFromAY
          +STAY @fname
          jsr   GetOffscreenAddress
          sta   +
@@ -103,7 +118,7 @@ ClearOffscreen
          jsr   GetOffscreenAddress
          +HIDE_NEXT_2_BYTES
 ClearHGR1
-         lda   #$20
+         lda   #$20                  ; note to self: LDX #$20 can't move here
          sta   @a+2
          ldx   #$20
          lda   #$80

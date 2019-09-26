@@ -41,7 +41,7 @@ FirstMover
 Reenter
          cld
          cli
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
          jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
          ldx   #5
@@ -71,6 +71,7 @@ RestoreStackNextTime
          bne   -
          ldx   $DFF0                 ; restore stack pointer
          txs
+SwitchToBank1
          +READ_RAM1_WRITE_RAM1
          rts                         ; and return to caller
 ResetVector                          ; 6 bytes, copied to $100
@@ -110,9 +111,6 @@ gGlobalPrefsStore
          !word $D100
 gGamesListStore
          !word $FDFD                 ; SMC
-SwitchToBank1
-         +READ_RAM1_WRITE_RAM1
-         rts
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts

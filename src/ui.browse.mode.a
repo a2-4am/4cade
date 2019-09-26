@@ -23,6 +23,18 @@ BrowseMode
          jsr   WaitForKeyFor30Seconds
          bit   CLEARKBD
 
+; indices into BrowseDispatchTable below
+kBrowseSearch   = 0
+kBrowsePrevious = 1
+kBrowseNext     = 2
+kBrowseExitToSearch = 3
+kBrowseTab      = 4
+kBrowseLaunch   = 5
+kBrowseHelp     = 6
+kBrowseCredits  = 7
+kBrowseCheat    = 8
+kSoftBell       = 9
+
          ldy   #kNumBrowseKeys
 -        dey
          bmi   @noKeyMatch
@@ -34,10 +46,14 @@ BrowseMode
 @noKeyMatch
          jsr   IsSearchKey
          beq   +
-         jsr   SoftBell              ; beep on invalid input
-         jmp   @BrowseModeInputLoop  ; and start over
+         ldx   #kSoftBell            ; beep on invalid input
+!if kBrowseSearch > 0 {
+         +HIDE_NEXT_2_BYTES
 +
          ldx   #kBrowseSearch
+} else {
++
+}
          ; execution falls through here
 @BrowseDispatch
          ldy   BrowseDispatchTableLo,x
@@ -99,16 +115,6 @@ OnBrowseChanged
 
 ;------------------------------------------------------------------------------
 
-; indices into BrowseDispatchTable
-kBrowseSearch   = 0
-kBrowsePrevious = 1
-kBrowseNext     = 2
-kBrowseExitToSearch = 3
-kBrowseTab      = 4
-kBrowseLaunch   = 5
-kBrowseCredits  = 6
-kBrowseCheat    = 7
-
 BrowseDispatchTableLo
          !byte <OnBrowseSearch
          !byte <OnBrowsePrevious
@@ -116,8 +122,10 @@ BrowseDispatchTableLo
          !byte <SearchMode
          !byte <OnBrowseTab
          !byte <OnBrowseLaunch
+         !byte <Help
          !byte <Credits
          !byte <OnBrowseCheat
+         !byte <SoftBell
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -125,14 +133,17 @@ BrowseDispatchTableHi
          !byte >SearchMode
          !byte >OnBrowseTab
          !byte >OnBrowseLaunch
+         !byte >Help
          !byte >Credits
          !byte >OnBrowseCheat
+         !byte >SoftBell
 
-kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
+kNumBrowseKeys = 12                  ; number of entries in next 2 tables (each)
 BrowseKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
-         !byte $AF                   ; '/' = credits
-         !byte $BF                   ; '?' = credits
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
          !byte $89                   ; TAB = mini attract mode
          !byte $8D                   ; ENTER = launch current game
@@ -144,7 +155,8 @@ BrowseKeys
 BrowseKeyDispatch
          !byte kBrowseCheat
          !byte kBrowseCredits
-         !byte kBrowseCredits
+         !byte kBrowseHelp
+         !byte kBrowseHelp
          !byte kBrowseTab
          !byte kBrowseTab
          !byte kBrowseLaunch

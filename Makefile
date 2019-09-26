@@ -22,8 +22,6 @@ ACME=acme
 # version 1.4.0 or later
 CADIUS=cadius
 
-# some scripts also require Python 3
-
 dsk: md asm
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
@@ -37,6 +35,7 @@ dsk: md asm
 	bin/padto.sh 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/HELP" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/GAMES.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/ATTRACT.CONF" >>build/log
@@ -78,9 +77,7 @@ dsk: md asm
 	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
-	bin/do2po.py res/dsk/ build/po/
-	rsync -a res/dsk/*.po build/po/
-	@for f in build/po/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
+	@for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store
 	rm -f build/X/**/PRODOS*
 	rm -f build/X/**/LOADER.SYSTEM*

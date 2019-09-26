@@ -169,16 +169,15 @@ pref_set
          ldy   #0
          lda   ($00),y
          beq   +
-         tax
          tay
+         clc
+         adc   $FE
+         tax
 -        lda   ($00),y
          dey
          sta   ($FE),y
          bne   -
-         txa
-         clc
-         adc   $FE
-         sta   $FE
+         stx   $FE
          bcc   +
          inc   $FF
 +        rts
