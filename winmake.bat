@@ -48,6 +48,7 @@ call :asm
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
@@ -89,9 +90,7 @@ cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
-cscript /nologo bin\do2po.js res\dsk build\po
-cscript /nologo bin\rsync.js res\dsk\*.po build\po
-for %%q in (build\po\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
+for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 echo y|1>nul 2>nul del /s build\X\.DS_Store
 echo y|1>nul 2>nul del /s build\X\PRODOS
 echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM

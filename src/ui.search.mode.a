@@ -51,13 +51,9 @@ SearchMode
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
-         cmp   #$8B                  ; up arrow switches to browse mode
-         beq   @arrow
-         cmp   #$95                  ; also right arrow
-         beq   @arrow
-         cmp   #$8A                  ; also down arrow
+         jsr   IsUpDownOrRightArrow
          bne   @notArrow
-@arrow   ldx   #kInputBrowse
+         ldx   #kInputBrowse
          bne   .InputDispatch        ; always branches
 @notArrow
          bit   CLEARKBD
@@ -187,6 +183,14 @@ IsSearchKey
          ldx   #1
          rts
 
+IsUpDownOrRightArrow
+         cmp   #$8B                  ; up arrow
+         beq   @done
+         cmp   #$95                  ; right arrow
+         beq   @done
+         cmp   #$8A                  ; down arrow
+@done    rts
+
 ; indices into InputDispatchTable
 kInputSearch   = 0
 kInputClear    = 1
@@ -194,9 +198,10 @@ kInputBack     = 2
 kInputBrowse   = 3
 kInputTab      = 4
 kInputLaunch   = 5
-kInputCredits  = 6
-kInputCheat    = 7
-kInputError    = 8
+kInputHelp     = 6
+kInputCredits  = 7
+kInputCheat    = 8
+kInputError    = 9
 
 InputDispatchTableLo
          !byte <OnSearch
@@ -205,6 +210,7 @@ InputDispatchTableLo
          !byte <BrowseMode
          !byte <OnTab
          !byte <OnLaunch
+         !byte <Help
          !byte <Credits
          !byte <OnCheat
          !byte <OnError
@@ -215,15 +221,17 @@ InputDispatchTableHi
          !byte >BrowseMode
          !byte >OnTab
          !byte >OnLaunch
+         !byte >Help
          !byte >Credits
          !byte >OnCheat
          !byte >OnError
 
-kNumInputKeys = 9                    ; number of entries in next 2 tables (each)
+kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
-         !byte $AF                   ; '/' = credits
-         !byte $BF                   ; '?' = credits
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
          !byte $89                   ; TAB = mini attract mode
          !byte $88                   ; left arrow = delete (may as well, since
@@ -235,7 +243,8 @@ InputKeys
 InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
-         !byte kInputCredits
+         !byte kInputHelp
+         !byte kInputHelp
          !byte kInputTab
          !byte kInputTab
          !byte kInputBack
