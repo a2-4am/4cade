@@ -6,6 +6,7 @@
 ; - GetOffscreenAddress
 ; - LoadTitleOffscreen
 ; - LoadCoverOffscreen
+; - LoadHelpOffscreen
 ; - LoadGameTitleOffscreen
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
@@ -56,6 +57,17 @@ LoadTitleOffscreen
 ;;                                     ; which is never 0. I miss my 65c02.
 ;;}
 ;------------------------------------------------------------------------------
+; LoadHelpOffscreen
+; load help screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+LoadHelpOffscreen
+         +LDADDR kHelpFile
+         bne   LoadOffscreenFromAY   ; always branches
+
+;------------------------------------------------------------------------------
 ; LoadCoverOffscreen
 ; load cover screen in the HGR page that is currently not showing
 ;
@@ -63,9 +75,8 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
-; clobbers all
          +LDADDR kCoverFile
-+
+LoadOffscreenFromAY
          +STAY @fname
          jsr   GetOffscreenAddress
          sta   +

@@ -10,7 +10,6 @@ You will need
  - [Xcode command line tools](https://www.google.com/search?q=xcode+command+line+tools)
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [sicklittlemonkey's Cadius fork](https://github.com/sicklittlemonkey/cadius)
- - [Python 3](https://www.python.org)
 
 Then open a terminal window and type
 
@@ -36,6 +35,3 @@ C:\> CD 4CADE
 C:\4cade> WINMAKE
 ```
 If all goes well, the `BUILD\` subdirectory will contain a `4CADE.2MG` image which can be mounted in emulators like [AppleWin](https://github.com/AppleWin/AppleWin).
-
-## Navigating the code
-

@@ -80,6 +80,10 @@ kCreditsFile
          !byte 7
          !raw  "CREDITS"
 
+kHelpFile
+         !byte 4
+         !raw  "HELP"
+
 kTitleFile
          !byte 5
          !raw  "TITLE"

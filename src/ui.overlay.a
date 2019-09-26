@@ -13,9 +13,7 @@
 ;
 
 Instructions
-         !text "[Type to search, "
-         !byte $15                   ; right arrow character
-         !text " to browse]  "
+         !text "[Type to search, ? for help ]  "
 VisibleGameCount
          !text "000 games"
 ReturnToPlay
