@@ -48,6 +48,7 @@ call :asm
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
