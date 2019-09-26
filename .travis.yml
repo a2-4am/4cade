@@ -1,16 +1,15 @@
-language: minimal
-
-os: windows 
+os: osx 
 
 install:
-  - wget https://netix.dl.sourceforge.net/project/acme-crossass/win32/acme0.96.4win.zip
-  - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.1.zip
-  - 7z e acme0.96.4win.zip
-  - 7z e Cadius_v1.1.zip
-  - set PATH=%PATH%;.;.\acme0.96.4win\acme;
+  - brew install acme
+  - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.1_mac.zip
+  - unzip Cadius_v1.1_mac.zip
+  - ln -s ./Cadius_v1.1_mac/Cadius_v1.1/Cadius ./cadius_v1.1_mac/Cadius_v1.1/cadius
+  - chmod +x ./cadius_v1.1_mac/Cadius_v1.1/cadius
+  - export PATH=$PATH:./Cadius_v1.1_mac/Cadius_v1.1;
 
 script:
-  - winmake dsk
+  - make dsk
 
 deploy:
   provider: releases
