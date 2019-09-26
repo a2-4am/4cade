@@ -23,6 +23,17 @@ BrowseMode
          jsr   WaitForKeyFor30Seconds
          bit   CLEARKBD
 
+; indices into BrowseDispatchTable below
+kBrowseSearch   = 0
+kBrowsePrevious = 1
+kBrowseNext     = 2
+kBrowseExitToSearch = 3
+kBrowseTab      = 4
+kBrowseLaunch   = 5
+kBrowseCredits  = 6
+kBrowseCheat    = 7
+kSoftBell       = 8
+
          ldy   #kNumBrowseKeys
 -        dey
          bmi   @noKeyMatch
@@ -34,10 +45,14 @@ BrowseMode
 @noKeyMatch
          jsr   IsSearchKey
          beq   +
-         jsr   SoftBell              ; beep on invalid input
-         jmp   @BrowseModeInputLoop  ; and start over
+         ldx   #kSoftBell            ; beep on invalid input
+!if kBrowseSearch > 0 {
+         +HIDE_NEXT_2_BYTES
 +
          ldx   #kBrowseSearch
+} else {
++
+}
          ; execution falls through here
 @BrowseDispatch
          ldy   BrowseDispatchTableLo,x
@@ -99,16 +114,6 @@ OnBrowseChanged
 
 ;------------------------------------------------------------------------------
 
-; indices into BrowseDispatchTable
-kBrowseSearch   = 0
-kBrowsePrevious = 1
-kBrowseNext     = 2
-kBrowseExitToSearch = 3
-kBrowseTab      = 4
-kBrowseLaunch   = 5
-kBrowseCredits  = 6
-kBrowseCheat    = 7
-
 BrowseDispatchTableLo
          !byte <OnBrowseSearch
          !byte <OnBrowsePrevious
@@ -118,6 +123,7 @@ BrowseDispatchTableLo
          !byte <OnBrowseLaunch
          !byte <Credits
          !byte <OnBrowseCheat
+         !byte <SoftBell
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -127,6 +133,7 @@ BrowseDispatchTableHi
          !byte >OnBrowseLaunch
          !byte >Credits
          !byte >OnBrowseCheat
+         !byte >SoftBell
 
 kNumBrowseKeys = 11                  ; number of entries in next 2 tables (each)
 BrowseKeys

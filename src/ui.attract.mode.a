@@ -18,7 +18,7 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 MegaAttractMode
-         +READ_RAM1_WRITE_RAM1
+         jsr   SwitchToBank1
          ldx   #$FF
          txs
 
