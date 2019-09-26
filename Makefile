@@ -35,6 +35,7 @@ dsk: md asm
 	bin/padto.sh 512 build/PREFS.CONF
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/HELP" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/GAMES.CONF" >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/ATTRACT.CONF" >>build/log
