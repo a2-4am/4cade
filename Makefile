@@ -22,8 +22,6 @@ ACME=acme
 # version 1.4.0 or later
 CADIUS=cadius
 
-# some scripts also require Python 3
-
 dsk: md asm
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
