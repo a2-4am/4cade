@@ -1,7 +1,7 @@
 os: osx 
 
 install:
-  - brew install acme
+  - HOMEBREW_NO_AUTO_UPDATE=1 brew install acme
   - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.1_mac.zip
   - unzip Cadius_v1.1_mac.zip
   - ln -s ./Cadius_v1.1_mac/Cadius_v1.1/Cadius ./cadius_v1.1_mac/Cadius_v1.1/cadius
