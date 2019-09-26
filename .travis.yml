@@ -1,5 +1,7 @@
 os: osx 
 
+osx_image: xcode9.4
+
 install:
   - HOMEBREW_NO_AUTO_UPDATE=1 brew install acme rom-tools
   - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.4_mac.zip
@@ -18,3 +20,6 @@ deploy:
     - "build/4cade.2mg.chd"
   skip_cleanup: true
   draft: true
+  on:
+    branch: master
+ 
