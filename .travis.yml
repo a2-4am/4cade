@@ -4,9 +4,9 @@ install:
   - HOMEBREW_NO_AUTO_UPDATE=1 brew install acme
   - wget https://www.brutaldeluxe.fr/products/crossdevtools/cadius/Cadius_v1.1_mac.zip
   - unzip Cadius_v1.1_mac.zip
-  - ln -s ./Cadius_v1.1_mac/Cadius_v1.1/Cadius ./cadius_v1.1_mac/Cadius_v1.1/cadius
-  - chmod +x ./cadius_v1.1_mac/Cadius_v1.1/cadius
-  - export PATH=$PATH:./Cadius_v1.1_mac/Cadius_v1.1;
+  - mv ./Cadius_v1.1/Cadius ./Cadius_v1.1/cadius
+  - chmod +x ./Cadius_v1.1/cadius
+  - export PATH=$PATH:./Cadius_v1.1;
 
 script:
   - make dsk
