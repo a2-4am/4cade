@@ -1,5 +1,8 @@
+# Mac build because Windows builds are broken on Travis CI for now  
+# and Linux version of Cadius produces invalid disk images
 os: osx 
 
+# Fixing Mac version to v10.13 in order to avoid Brew missing formulae in future versions
 osx_image: xcode9.4
 
 install:
@@ -14,6 +17,8 @@ script:
 
 deploy:
   provider: releases
+  # GITHUB_OAUTH_TOKEN : Travis CI secure variable containing a GitHub Personal Access Token
+  #                      with "repo" and "read:repo_hook" scopes
   api_key: $GITHUB_OAUTH_TOKEN
   file: 
     - "build/4cade.2mg"
