@@ -1,0 +1,73 @@
+;License:MIT
+;(c) 2018-9 by 4am
+;
+; functions for animated title screens
+;
+; - MaybeAnimateTitle
+;
+
+MaybeAnimateTitle
+         lda   OffscreenPage
+         bne   +
+         lda   #$5F
+         +HIDE_NEXT_2_BYTES
++        lda   #$3F
+         sta   SAVE+1
+         lda   #$FD
+         sta   SAVE
+         ldy   #0
+         lda   (SAVE),y              ; see if there is a hidden JMP to an
+         cmp   #$4C                  ; animation routine for this screen
+         beq   +
+         rts
++
+         ldx   #$20                  ; copy new HGR screen to the other
+         ldy   #$40
+         lda   OffscreenPage
+         beq   +
+         stx   @a+2
+         sty   @b+2
+         jmp   ++
++        sty   @a+2
+         stx   @b+2
+++       ldx   #$20
+         ldy   #0
+@a       lda   $FD00,y               ; SMC
+@b       sta   $FD00,y               ; SMC
+         iny
+         bne   @a
+         inc   @a+2
+         inc   @b+2
+         dex
+         bne   @a
+
+         +LDADDR gGamesListStore     ; if so, load the animation routine
+         ldx   gGameToLaunch         ; which is stored in a subdirectory
+         jsr   okvs_nth              ; and keyed off the current game's
+         +STAY @fname                ; filename
+         jsr   LoadFile
+         !word kAnimatedTitleDirectory
+@fname   !word $FDFD
+         !word 0
+
+         ldy   kAnimatedTitleDirectory
+         sty   ProDOS_prefix         ; temporarily set 'root' directory to
+-        lda   kAnimatedTitleDirectory,y;/title.animated/ so animation file
+         sta   ProDOS_prefix, y      ; can load other files in the same subdirectory
+         dey
+         bne   -
+
+         ldx   #5                    ; copy prelaunch code
+-        lda   @titleAnimPrelaunch,x
+         sta   $106,x
+         dex
+         bpl   -
+
+         jsr   Launch
+         jsr   ResyncPage
+         clc                         ; tell caller not to refresh screen
+         rts
+
+@titleAnimPrelaunch
+         bit   $C082
+         jmp   (SAVE)

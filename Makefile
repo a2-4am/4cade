@@ -68,6 +68,8 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/SS" "build/SS" >>build/log
 	rsync -aP res/demo/* build/DEMO >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/DEMO" "build/DEMO" >>build/log
+	rsync -aP res/title.animated/* build/TITLE.ANIMATED >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.ANIMATED" "build/TITLE.ANIMATED" >>build/log
 	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build/log
 	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build/log
 	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build/log
@@ -113,6 +115,7 @@ md:
 	mkdir -p build/ACTION.DHGR
 	mkdir -p build/ACTION.GR
 	mkdir -p build/ARTWORK.SHR
+	mkdir -p build/TITLE.ANIMATED
 	mkdir -p build/ATTRACT
 	mkdir -p build/SS
 	mkdir -p build/DEMO
