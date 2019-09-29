@@ -14,7 +14,7 @@
 ;        A=0, X and Y preserved
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
-packet = first_zp ;word
+ipacket = first_zp ;word
 buffer = first_zp+2 ;word
 
 ProDOS_enter
@@ -31,9 +31,9 @@ ProDOS_enter
          jsr   @fetchbyte
          sta   @request+1
          jsr   @fetchbyte
-         sta   packet
+         sta   ipacket
          jsr   @fetchbyte
-         sta   packet+1
+         sta   ipacket+1
          lda   @fetchaddr+2
          pha
          lda   @fetchaddr+1
@@ -98,19 +98,19 @@ ProDOS_enter
          ldy   #2
          jsr   @setbuffer
          iny
-         lda   (packet), y
+         lda   (ipacket), y
          tax
          iny
-         lda   (packet), y
+         lda   (ipacket), y
 @rdwrop
          ldy   #$d1                  ; SMC
          jsr   hddseekrd+2
          bcc   @jmp_zp2 ;always
 
 @imp_getattrib
-         lda   packet+1
+         lda   ipacket+1
          pha
-         lda   packet
+         lda   ipacket
          pha
          ldx   #namlo
          jsr   @setbuffer1
@@ -120,25 +120,25 @@ ProDOS_enter
          lda   #$10
          sta   attribpatch
          pla
-         sta   packet
+         sta   ipacket
          pla
-         sta   packet+1
+         sta   ipacket+1
          ldy   #5
          lda   ldrlo2
-         sta   (packet), y
+         sta   (ipacket), y
          iny
          lda   ldrlo2+1
-         sta   (packet), y
+         sta   (ipacket), y
          ldy   #$13
          lda   (bloklo), y
          tax
          iny
          lda   (bloklo), y
          ldy   #9
-         sta   (packet), y
+         sta   (ipacket), y
          txa
          dey
-         sta   (packet), y
+         sta   (ipacket), y
 @jmp_zp2
          jmp   @restore_zp
 
@@ -173,12 +173,12 @@ ProDOS_enter
 @handles
          ldx   #0
          iny
-         lda   (packet), y
+         lda   (ipacket), y
          sta   @handle-1, x
          jsr   @patch_buffer
          iny
          lda   #1
-         sta   (packet), y
+         sta   (ipacket), y
          lda   #0
          sta   reqcmd
          sta   sizehi
@@ -252,20 +252,20 @@ ProDOS_enter
          jsr   hddrdwrpart
          ldy   #6
          lda   sizelo2
-         sta   (packet), y
+         sta   (ipacket), y
          iny
          lda   sizehi2
-         sta   (packet), y
+         sta   (ipacket), y
 @jmp_zp
          jmp   @restore_zp
 
 @imp_eof
          ldy   #2
          lda   bleftlo
-         sta   (packet), y
+         sta   (ipacket), y
          iny
          lda   blefthi
-         sta   (packet), y
+         sta   (ipacket), y
          bcs   @restore_zp ;always
 
 @imp_close
@@ -305,7 +305,7 @@ ProDOS_enter
 
 @set_rdwrbuff
          ldy   #1
-         lda   (packet), y
+         lda   (ipacket), y
          tax
          lda   @handle-1, x
          jsr   @patch_buffer
@@ -319,10 +319,10 @@ ProDOS_enter
          ldy   #1
 
 @setbuffer
-         lda   (packet), y
+         lda   (ipacket), y
          sta   $0,x
          iny
-         lda   (packet), y
+         lda   (ipacket), y
          sta   $1,x
          rts
 
@@ -628,7 +628,7 @@ SaveSmallFileInternal
          sta   ldrhi
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd
-         sta   sizelo                ; non-zero
+         sta   sizehi                ; 512 bytes
          jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
 
 LaunchInternal
