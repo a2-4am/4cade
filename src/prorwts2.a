@@ -16,7 +16,7 @@ ver_02 = 1
                 verbose_info = 0        ;set to 1 to enable display of memory usage
                 enable_floppy = 0       ;set to 1 to enable floppy drive support
                 poll_drive   = 0        ;set to 1 to check if disk is in drive, recommended if allow_multi is enabled
-                allow_extend = 0        ;enable support for more than four partitions (note: it has overhead)
+                allow_extend = 1        ;enable support for more than two MicroDrive (or more than four CFFA) partitions
                 override_adr = 1        ;set to 1 to require an explicit load address
                 aligned_read = 0        ;set to 1 if all reads can be a multiple of block size
                 enable_readseq=0        ;set to 1 to enable reading multiple sequential times from the same file without seek
@@ -372,7 +372,7 @@ adjpath         tya
                 bne     readblock
                 pla
 
-                ;unit to slot for SmartPort interface
+                ;unit to slot for ProDOS interface
 
 +++             pla
                 lsr
@@ -380,8 +380,19 @@ adjpath         tya
                 lsr
                 tay
                 ldx     DEVADR01HI, y
+!if (enable_floppy + allow_extend) > 0 {
                 cpx     #$c8
                 bcc     set_slot
+  !if enable_floppy = 1 {
+                php
+                lsr
+                ora     #$c0
+                tax
+                plp
+  } else { ;enable_floppy = 0
+
+                ;find SmartPort device for basic MicroDrive support
+
                 ldx     #$c8
 -               dex
                 stx     blokhi
@@ -403,6 +414,8 @@ adjpath         tya
                 ldy     #$ff
                 lda     (bloklo), y
                 beq     -
+  } ;enable_floppy
+} ;enable_floppy or allow_extend
 
 set_slot        stx     slot + 2
 !if allow_extend = 1 {
@@ -419,7 +432,9 @@ slot            ldx     $cfff
 } ;enable_floppy
                 stx     unrentry2 + 1
 !if allow_extend = 1 {
-                ;use ProDOS entrypoint instead
+                bcc     bankram
+
+                ;use SmartPort entrypoint instead
 
                 inx
                 inx
@@ -441,9 +456,9 @@ slot            ldx     $cfff
                 !byte   $80
                 !word   x80_parms
                 bcc     + ;always
-iterunit        inc     iterunit + 1
+iterunit        inc     unrunit2
 
-                ;enable use of ProDOS SmartPort entrypoint
+                ;enable use of SmartPort entrypoint
 
                 lda     #$2c
                 sta     unrentry2
@@ -2075,10 +2090,8 @@ hddnextent      ldy     #0
                 and     #$0f
                 tax
                 inx
--               cmp     (namlo), y
-                beq     hddfoundname
-                ora     #$80
-                cmp     (namlo), y
+-               eor     (namlo), y
+                asl
                 beq     hddfoundname
 
                 ;match failed, check if any directory entries remain
@@ -2135,20 +2148,8 @@ hddfoundname    iny
                 ldy     reqcmd
                 cpy     #cmdwrite ;control carry instead of zero
                 bne     +
-
-                ;round requested size up to nearest block if writing
-
-                lda     sizelo
-                adc     #$fe
-                lda     sizehi
-                adc     #1
-                and     #$fe
-                sta     sizehi
     !if aligned_read = 0 {
                 stx     sizelo
-      !if bounds_check = 1 {
-                sec
-      } ;bounds_check
     } ;aligned_read
 +
   } ;enable_write
@@ -2851,7 +2852,7 @@ packet          !byte   3
 unrunit2 = unrelochdd + (* - reloc)
                 !byte   0
                 !word   readbuff + $200
-                !word   2
+                !byte   2, 0, 0
 } ;allow_extend
 
 !if rwts_mode = 1 {
