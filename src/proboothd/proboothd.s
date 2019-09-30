@@ -117,7 +117,8 @@ seekread        stx bloklo
                 sty blokhi
 entry           jmp $d1d1
 
-fakeMLI         pla
+fakeMLI         beq readblk
+retcall         pla
                 tax
                 inx
                 inx
@@ -125,6 +126,12 @@ fakeMLI         pla
                 txa
                 pha
                 rts
+readblk         dey
+                dey
+                sty adrhi
+                tay
+                jsr seekread
+                bcc retcall
 fakeMLI_e
 
 filename        !byte filename_e - filename_b
