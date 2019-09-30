@@ -56,20 +56,21 @@ Reenter
          ldx   #$A4
          stx   $3F4
 RestoreStackNextTime
-         clc                         ; SMC
-         bcc   SearchMode            ; not an unconditional branch because code
-                                     ; might change the 'clc' just before it
+         bne   SearchMode            ; (SMC) not an unconditional branch because code
+                                     ; might change the branch target to the next opcode
          ; If we fall through to here, it's because we backed up the stack and
          ; stack pointer and wanted this routine to restore it and return to
          ; caller.
-         lda   #$18                  ; reset to 'clc' opcode so we don't try to
-         sta   RestoreStackNextTime  ; restore the same stack twice
+         lda   #(SearchMode - RestoreStackNextTime) - 2
+                                     ; reset to branch so we don't try to
+         sta   RestoreStackNextTime + 1
+                                     ; restore the same stack twice
          ldx   #$F1
--        lda   $DF00,x               ; restore stack
+-        lda   STACKBASE - $F0,x     ; restore stack
          sta   $100,x
          inx
          bne   -
-         ldx   $DFF0                 ; restore stack pointer
+         ldx   STACKBASE             ; restore stack pointer
          txs
 SwitchToBank1
          +READ_RAM1_WRITE_RAM1
@@ -119,21 +120,52 @@ SwitchToBank2
          !word Reenter               ; IRQ vector ($FFFE-F)
 }
 LastMover
-!pseudopc $D600 {
+!if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f0) {
+  ; in the unlikely event that a bit over 16 bytes are left in the page
+  ; then use it for the stack
+  STACKBASE = (hdddataend + 15) and -16
+  FONTSRC = *
+  !pseudopc STACKBASE + 16 {
+    FONTDST = *
          !source "src/ui.font.data.a"
+    COPYDST = *
+    COPYSRC = LastMover + COPYDST - FONTDST
          !source "src/ui.font.a"
          !source "src/prodos.impl.a"
-  LCRAM2_END = *
-  !if * > $DFEF {
-    !error "code is too large: ends at ", *
+    LCRAM2_END = *
+    !if * > $E000 {
+      !error "code is too large: ends at ", *
+    }
+  }
+EvenLasterMover
+} else {
+  ; otherwise place stack after code
+  ; and begin font on the next page
+  COPYSRC = *
+  !pseudopc hdddataend {
+    COPYDST = *
+         !source "src/prodos.impl.a"
+         !source "src/ui.font.a"
+    STACKBASE = *
+    LCRAM2_END = STACKBASE + 16
+    FONTDST = (LCRAM2_END + 255) and -256
+  }
+EvenLasterMover
+  FONTSRC = *
+  !pseudopc FONTDST {
+         !source "src/ui.font.data.a"
+    !if * > $E000 {
+      !error "code is too large: ends at ", *
+    }
   }
 }
-EvenLasterMover
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "LCRAM2 ends at ", LCRAM2_END
+    !warn "ProRWTS ends at ", hddcodeend - 1
+    !warn "STACK at ", STACKBASE
+    !warn "LCRAM2 ends at ", LCRAM2_END - 1
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
 }

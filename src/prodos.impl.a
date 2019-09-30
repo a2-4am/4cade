@@ -635,13 +635,13 @@ LaunchInternal
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
          ldy   #$F1
 -        lda   $100,y
-         sta   $DF00,y               ; back up stack
+         sta   STACKBASE - $F0,y               ; back up stack
          iny
          bne   -
          tsx                         ; back up stack pointer
-         stx   $DFF0
-         lda   #$38                  ; 'sec' opcode to tell |Reenter| to
-         sta   RestoreStackNextTime  ; restore the stack and stack pointer
+         stx   STACKBASE
+         sty   RestoreStackNextTime + 1
+                                     ; tell |Reenter| to restore the stack and stack pointer
 
          ldx   #(end_promote-promote-1)
 -        lda   promote,x             ; copy ProDOS shim to main memory
