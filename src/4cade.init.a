@@ -121,9 +121,20 @@ NotGS    clc
          inc   @FM+5
          bne   @FM
 
-+        ldy   #>(255 + EvenLasterMover - LastMover)
-@LM      lda   LastMover,x           ; relocate font data to $D600 in RAM bank 2
-         sta   $D600,x               ; and pseudo-ProDOS to $DA00 in RAM bank 2
+         ldy   #4
+@ELM     lda   FONTSRC,x
+                                     ; relocate font data to RAM bank 2
+         sta   FONTDST,x
+         inx
+         bne   @ELM
+         inc   @ELM+2
+         inc   @ELM+5
+         dey
+         bne   @ELM
+
+         ldy   #>(255 + EvenLasterMover - LastMover)
+@LM      lda   COPYSRC,x             ; relocate pseudo-ProDOS to RAM bank 2
+         sta   COPYDST,x
          inx
          bne   @LM
          inc   @LM+2

@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GREMLINS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $0866
+         jsr   $0800      ; decompress
+         lda   #$A5
+         sta   $54B2      ; patch - don't decrease lives
+         sta   $5165      ; patch - don't increase lives
+         lda   #$BD
+         sta   $54B6      ; patch - don't decrease lives
+         sta   $5162      ; patch - don't increase lives
+         jmp   $4000
