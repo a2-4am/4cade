@@ -9,7 +9,7 @@
 
  - Added help screen (press ? in search or browse mode to show)
  - Added global cheat mode (press Ctrl-C in search or browse mode to toggle)
- - Added 43 game cheats
+ - Added 44 game cheats
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Added missing levels in Out Of This World
