@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GOLD.RUSH",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $36F3
+         jsr   $0800      ; decompress
+         lda   #$AD
+         sta   $13EE      ; patch - don't decrease lives
+                          ; (game increases lives but caps at 9, so no further patches)
+         jmp   $0B00
