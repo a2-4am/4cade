@@ -3,6 +3,7 @@
 ## New games
 
  - Flight Simulator II (replaces Flight Simulator I)
+ - Short Circuit
 
 ## Enhancements & bug fixes
 
