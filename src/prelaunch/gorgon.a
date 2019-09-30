@@ -1,0 +1,18 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GORGON",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $8237
+         jsr   $3FFD      ; decompress
+         lda   #$60
+         sta   $B845
+         jsr   $B837
+         lda   #$A5
+         sta   $A5B0      ; patch - don't decrease lives
+         jmp   $A720
