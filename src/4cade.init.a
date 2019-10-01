@@ -180,7 +180,14 @@ OneTimeSetup
          jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
          lda   #$91
          sta   holepatch             ; enable restoring of copy from now on
-         lda   $43
+         ldy   #$0b
+CopyDevs
+         lda   $BF13,y
+         sta   promote + $13,y
+         dey
+         bpl   CopyDevs
+
+         lda   $BF30
          sta   promote + ProDOS_unit - $bf00
                                      ; save unit in LC bank 2 while overriding !pseudopc
 
