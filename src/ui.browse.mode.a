@@ -111,7 +111,8 @@ ForceBrowseChanged
 OnBrowseChanged
 ; in:    X = game index
          jsr   LoadGameTitleOffscreen
-         jmp   DrawUIWithoutDots
+         jsr   DrawUIWithoutDots
+         jmp   MaybeAnimateTitle
 
 ;------------------------------------------------------------------------------
 

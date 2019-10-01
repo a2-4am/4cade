@@ -146,7 +146,8 @@ OnError
                                      ; in order to draw on the visible page.
          bpl   @noload               ; (always branches)
 +        jsr   LoadGameTitleOffscreen
-@noload  jmp   DrawUI
+@noload  jsr   DrawUI
+         jmp   MaybeAnimateTitle
 
 ;------------------------------------------------------------------------------
 ; IsSearchKey

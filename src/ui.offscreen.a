@@ -8,6 +8,7 @@
 ; - LoadCoverOffscreen
 ; - LoadHelpOffscreen
 ; - LoadGameTitleOffscreen
+; - ResyncPage
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
 ; - ClearOffscreen
@@ -47,15 +48,15 @@ GetOffscreenAddress
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-;;!if >kTitleFile = >kCoverFile {
+!if >kTitleFile = >kCoverFile {
          lda   #<kTitleFile
          +HIDE_NEXT_2_BYTES
-;;} else {
-;;         +LDADDR kTitleFile
-;;         bne   +                     ; Always branches, because Y is loaded
-;;                                     ; last with the high byte of the address,
-;;                                     ; which is never 0. I miss my 65c02.
-;;}
+} else {
+         +LDADDR kTitleFile
+         bne   +                     ; Always branches, because Y is loaded
+                                     ; last with the high byte of the address,
+                                     ; which is never 0. I miss my 65c02.
+}
 ;------------------------------------------------------------------------------
 ; LoadHelpOffscreen
 ; load help screen in the HGR page that is currently not showing
@@ -130,6 +131,10 @@ ClearHGR1
          dex
          bne   @a
          rts
+
+ResyncPage
+         jsr   ToggleOffscreenPage
+         ; execution falls through here
 
 ;------------------------------------------------------------------------------
 ; ShowOtherPage

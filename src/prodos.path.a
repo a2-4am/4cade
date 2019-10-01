@@ -16,6 +16,10 @@ kDHGRTitleDirectory
          !byte 11
          !raw  "TITLE.DHGR/"
 
+kAnimatedTitleDirectory
+         !byte 15
+         !raw  "TITLE.ANIMATED/"
+
 kHGRActionDirectory
          !byte 11
          !raw  "ACTION.HGR/"
@@ -141,6 +145,6 @@ AddToPath
 @done
          rts
 
-!if >kTitleFile != >kCoverFile {
-  !error ">kTitleFile != >kCoverFile, uncomment LoadTitleOffscreen block in ui.offscreen and disable this check"
-}
+;!if >kTitleFile != >kCoverFile {
+;  !error ">kTitleFile != >kCoverFile, uncomment LoadTitleOffscreen block in ui.offscreen and disable this check"
+;}

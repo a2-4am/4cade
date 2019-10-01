@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/LANCASTER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    lda #<cheat
+    sta $10da
+    lda #>cheat
+    sta $10db
+    jmp $1000
+
+cheat
+    lda #$ad
+    sta $1661
+    sta $1476
+    jmp $1000

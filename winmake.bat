@@ -81,6 +81,8 @@ cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
 cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build\DEMO" >>build\log
+cscript /nologo bin\rsync.js res\title.animated\* build\TITLE.ANIMATED >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "build\TITLE.ANIMATED" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
@@ -120,6 +122,7 @@ goto :EOF
 2>nul md build\ACTION.DHGR
 2>nul md build\ACTION.GR
 2>nul md build\ARTWORK.SHR
+2>nul md build\TITLE.ANIMATED
 2>nul md build\ATTRACT
 2>nul md build\SS
 2>nul md build\DEMO
