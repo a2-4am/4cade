@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/HERO",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $4028
+         jsr   $4000      ; decompress
+         lda   #$A5
+         sta   $6387      ; patch - don't decrease lives after dying
+         lda   #$2C
+         sta   $717E      ; patch - don't call routine that decreases bombs after planting one
+                          ; (routine needs to decrease bombs because it's called at the end of each level
+                          ; to give you a bonus for each bomb left, so instead we patch one caller but
+                          ; not the other so you can plant a bomb without using up a bomb then get the
+                          ; maximum 'unused bombs' bonus and advance to the next level)
+         jmp   $6000
