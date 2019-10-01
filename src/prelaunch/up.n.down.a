@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/UP.N.DOWN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         ldx   #7         ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
+-        lda   patch,x
+         sta   $F8,x
+         dex
+         bpl   -
+         lda   #$F8       ; call patch instead of $200
+         sta   $4061
+         lda   #$00
+         sta   $4062
+         jmp   $2DC2
+patch
+         lda   #$B5
+         sta   $0912      ; patch - don't decrease lives
+         jmp   $0200      ; continue with load
