@@ -19,7 +19,7 @@
 ;
 
 OffscreenPage
-         !byte 1                     ; 0 = currently showing HGR page 2
+         !byte 0                     ; 0 = currently showing HGR page 2
                                      ;     (so offscreen is page 1 @ $2000)
                                      ; 1 = currently showing HGR page 1
                                      ;     (so offscreen is page 2 @ $4000)
