@@ -114,7 +114,8 @@ MiniAttractMode
          inc   @MiniAttractIndex
          lda   KBD
          bpl   @loop
-@exit    rts
+@exit    bit   CLEARKBD
+         rts
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
