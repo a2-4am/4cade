@@ -41,6 +41,10 @@ SearchMode
          jsr   OnInputChanged        ; draw UI offscreen
          jsr   HGRMode               ; show HGR screen
          jsr   ResyncPage
+         lda   KBD
+         jsr   IsSearchKey
+         beq   .SearchModeInputLoop
+         bit   CLEARKBD
 
 .SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
