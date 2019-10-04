@@ -116,6 +116,8 @@ gGamesListStore
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
+MachineStatus
+         !byte 0                     ; SMC, fixed location for games to check it
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
          !word Reenter               ; IRQ vector ($FFFE-F)
