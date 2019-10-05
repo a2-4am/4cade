@@ -7,9 +7,13 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $4028
          jsr   $4000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$A5
          sta   $6387      ; patch - don't decrease lives after dying
          lda   #$2C
@@ -18,4 +22,6 @@
                           ; to give you a bonus for each bomb left, so instead we patch one caller but
                           ; not the other so you can plant a bomb without using up a bomb then get the
                           ; maximum 'unused bombs' bonus and advance to the next level)
++
+         +DISABLE_ACCEL
          jmp   $6000

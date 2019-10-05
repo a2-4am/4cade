@@ -7,6 +7,9 @@
 
          !source "src/prelaunch/common.a"
 
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+1
          ldx   #7         ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
          sta   $F8,x
@@ -18,6 +21,9 @@
          sta   $4062
          jmp   $2DC2
 patch
+         lda   #0         ; SMC
+         beq   +
          lda   #$B5
          sta   $0912      ; patch - don't decrease lives
++
          jmp   $0200      ; continue with load

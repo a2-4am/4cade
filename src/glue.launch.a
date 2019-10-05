@@ -94,19 +94,9 @@ gGameToLaunch=*+1
          dex
          bne   @clear
 
-         bit   gCheatsEnabled        ; are cheats enabled?
-         bpl   @noCheats
-
-         ldx   gGameToLaunch
-         ldy   gCheatsAvailable,x    ; are there any cheats for this game?
-         bne   @Cheats
-@noCheats
-         +LDADDR kStandardPrelaunch  ; no game-specific prelaunch file, so
-         +STAY @pfile                ; load standard prelaunch file instead
-@Cheats
-         jsr   LoadFile              ; if cheats are enabled and this game has a prelaunch
-         !word kPrelaunchDirectory   ; file that will set up the cheats, load that, otherwise
-@pfile   !word $FDFD                 ; load the standard prelaunch file
+         jsr   LoadFile              ; load this game's prelaunch file at $106
+         !word kPrelaunchDirectory
+@pfile   !word $FDFD
          !word $0106
 
          ldx   #1                    ; construct path to game's startup file

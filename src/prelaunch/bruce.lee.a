@@ -7,13 +7,19 @@
 
     !source "src/prelaunch/common.a"
 
-    lda #<cheat
-    sta $b55
-    lda #>cheat
-    sta $b56
-    jmp $900
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   cheat+1
+         lda   #<cheat
+         sta   $b55
+         lda   #>cheat
+         sta   $b56
+         jmp   $900
 
 cheat
-    lda #$2c
-    sta $8a7e
-    jmp $3800
+         lda   #0         ; SMC (will be non-zero if cheats are enabled)
+         beq   +
+         lda   #$2c
+         sta   $8a7e
++
+         jmp   $3800

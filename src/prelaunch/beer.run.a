@@ -7,12 +7,18 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $2065
          jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$AD
          sta   $1E20      ; patch - don't decrease lives
          sta   $6D5C      ; patch - don't increase lives
          sta   $7354      ; patch - don't increase lives
          sta   $7D5C      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
          jmp   $BB00

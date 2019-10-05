@@ -7,10 +7,16 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $36F3
          jsr   $0800      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$AD
          sta   $13EE      ; patch - don't decrease lives
                           ; (game increases lives but caps at 9, so no further patches)
++
+         +DISABLE_ACCEL
          jmp   $0B00

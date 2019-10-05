@@ -7,10 +7,16 @@
 
     !source "src/prelaunch/common.a"
 
-    lda #$60
-    sta $826
-    jsr $800
-    lda #$24
-    sta $a1d9
-    sta $8ca6
-    jmp $8000
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $826
+         jsr   $800       ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$24
+         sta   $a1d9
+         sta   $8ca6
++
+         +DISABLE_ACCEL
+         jmp   $8000

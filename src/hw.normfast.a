@@ -1,5 +1,12 @@
 ;;; NORMFAST Disable/enable Apple II compatible accelerator
 ;
+; Release 7 2019-10-04 No functional changes to the
+; acceleration routines, but for Total Replay, we split the
+; machine identification code from the (de)acceleration code,
+; because we can do the ID part once at program startup (when
+; ROM is easily available), then (de)accelerate repeatedly
+; from the language card.
+;
 ; Release 6 2017-10-05 Fix Mac IIe card check
 ;
 ; Release 5 2017-09-27 Add Macintosh IIe Card. Addon
@@ -50,7 +57,7 @@
 
 ; addresses are lowercase, constant values are in CAPS
 
-RELEASE         =    6       ; our version
+RELEASE         =    7       ; our version
 
 romid           =    $FBB3
 ; $38=][, $EA=][+, $06=//e compatible
@@ -124,88 +131,99 @@ zc_enable       =    $C05B
 
 iobase          =    $C000   ; easily confused with kbd
 
-DisableAccelerator
-        ; disable accelerator
-        lda     #1
-        !byte   $2C     ; BIT <ABSOLUTE>, hide next lda #
-EnableAccelerator
-        ; enable accelerator
-        lda     #0
+BuildAcceleratorFunction
+; in:    none
+; out:   A/Y points to lo/hi address of code block
+;        X contains length of code block
 
-        ldx     #RELEASE ; our release number
+         ;; first check built-in accelerators
+         ldx   romid
+         cpx   #ROMID_IIECOMPAT
+         bne   build_addon   ; not a //e
 
-        ;; first check built-in accelerators
-
-        ldx     romid
-        cpx     #ROMID_IIECOMPAT
-        bne     addon   ; not a //e
-
-        ldx     romid_ec
-        beq     iic     ; //c family
+         ldx   romid_ec
+         beq   iic     ; //c family
 
         ; not worth the bytes for enhanced //e check
-        ldx     irq+1
-        cpx     #l128irqpage
-        bne     gscheck
+         ldx   irq+1
+         cpx   #l128irqpage
+         bne   gscheck
 
         ; a Laser 128, hopefully harmless on a non EX
 
-        ldy     #EX_3MHZMASK ; phew, all needed bits set
-        ldx     #<(ex_cfg)
-
-;; setspeed - set 1Mhz with AND and fast with OR
-;
-; A = lsb set for normal speed
-; X = low byte address of speed location
-; Y = OR mask for fast
-
-setspeed
-        lsr
-        tya
-        bcs     setnorm
-        ora     iobase,x
-        bne     setsta  ; always
-
-setnorm
-        eor     #$FF
-        and     iobase,x
-setsta
-        sta     iobase,x
-        rts
+         ldy   #EX_3MHZMASK ; phew, all needed bits set
+         ldx   #<(ex_cfg)
 
 gscheck
-        pha
-        sec
-        jsr     idroutine
-        pla
-        bcs     maccheck ; not a gs
+         pha
+         sec
+         jsr   idroutine
+         pla
+         bcs   maccheck ; not a gs
 
         ; set IIGS speed
 
-        ldy     #GS_FAST
-        ldx     #<(gsspeed)
-        bne     setspeed ; always
+         ldy   #GS_FAST
+         ldx   #<(gsspeed)
+         bne   build_setspeed ; always branches
 
 maccheck
-        ldx     romid_maciie_2
-        cpx     #2
-        bne     addon   ; no built-in accelerator
+         ldx   romid_maciie_2
+         cpx   #2
+         bne   build_addon   ; no built-in accelerator
 
         ; the IIe Card in a Mac
 
-        ldy     #MACIIE_FAST
-        ldx     #<(maciie)
-        bne     setspeed ; always
+         ldy   #MACIIE_FAST
+         ldx   #<(maciie)
+         bne   build_setspeed ; always branches
 
 iic
-        ldx     romid_c
-        cpx     #ROMID_CPLUS
-        bne     addon   ; not a //c+, eventually hit Zip
+         ldx   romid_c
+         cpx   #ROMID_CPLUS
+         bne   build_addon ; not a //c+, eventually hit Zip
 
+         lda   #<iicplus
+         ldy   #>iicplus
+         ldx   #(end_iicplus-iicplus)
+         rts
+
+build_setspeed
+         stx   setspeed_x
+         sty   setspeed_y
+         lda   #<setspeed
+         ldy   #>setspeed
+         ldx   #(end_setspeed-setspeed)
+         rts
+
+build_addon
+         lda   #<addon
+         ldy   #>addon
+         ldx   #(end_addon-addon)
+         rts
+
+;-----------------------------------------------------------
+; 3 distinct accelerator functions
+;
+; Only 1 of these will be required on any particular machine.
+;
+; Each has 2 entry points, +0 to disable acceleration and
+; +3 to enable acceleration.
+;
+; setspeed must be self-modified before use (setspeed_x and
+; setspeed_y).
+;
+;-----------------------------------------------------------
+
+; Function #1: Apple IIc+
+iicplus
 ; Set //c+ speed. Uses the horrible firmware in case other
 ; code works "by the book", that is can check and set
 ; whether the accelerator is enabled.
 ; The //c+ is otherwise Zip compatible.
+        lda     #1        ; disable accelerator entry point
+        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
+        lda     #0        ; enable accelerator entry point
 
 !cpu 65C02                      ; only used for //c+
         inc            ; 65C02 $1A
@@ -213,75 +231,105 @@ iic
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
-        ldx     $0
-        php     
-        sei             ; timing sensitive
-        pha             ; action after CGGA_UNLOCK
+         ldx   $0
+         php
+         sei             ; timing sensitive
+         pha             ; action after CGGA_UNLOCK
 
-        lda     #CGGA_UNLOCK  ; unlock to change
-        pha
-        jsr     cgga
+         lda   #CGGA_UNLOCK  ; unlock to change
+         pha
+         jsr   cgga
 
-        jsr     cgga    ; disable/enable
+         jsr   cgga    ; disable/enable
 
-        lda     #CGGA_LOCK    ; should lock after a change
-        pha
-        jsr     cgga
+         lda   #CGGA_LOCK    ; should lock after a change
+         pha
+         jsr   cgga
 
-        plp             ; restore interrupt state
-        stx     $0
-        rts
+         plp             ; restore interrupt state
+         stx   $0
+         rts
+end_iicplus
 
-;; At this point, the computer does not have a built-in
-;; accelerator
+; Function #2: IIgs, Laser 128EX, or IIe card
+;; setspeed - set 1Mhz with AND and fast with OR
 ;
-; Previous versions had tested fc_enable, which was not
-; enough. Running low on space so just set blindly.
+; A = lsb set for normal speed
+; X = low byte address of speed location
+; Y = OR mask for fast
+setspeed
+        lda     #1        ; disable accelerator entry point
+        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
+        lda     #0        ; enable accelerator entry point
 
+setspeed_x=*+1
+         ldx   #$FD       ; SMC
+setspeed_y=*+1
+         ldy   #$FD       ; SMC
+         lsr
+         tya
+         bcs   setnorm
+         ora   iobase,x
+         bne   setsta     ; always branches
+setnorm
+         eor   #$FF
+         and   iobase,x
+setsta
+         sta   iobase,x
+         rts
+end_setspeed
+
+; Function #3: Card-based accelerator (TransWarp, ZipChip,
+; FastChip, &c.)
+; We blindly set switches for all known cards.
 addon
-        ; TransWarp I
+        lda     #1        ; disable accelerator entry point
+        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
+        lda     #0        ; enable accelerator entry point
 
-        sta     tw1_speed
+        ; TransWarp I
+         sta   tw1_speed
 
         ; Zip Chip
 
-        tay
-        eor     #1
-        tax
-        lda     #ZC_UNLOCK
-        php
-        sei             ; timing sensitive
-        sta     zc_lock
-        sta     zc_lock
-        sta     zc_lock
-        sta     zc_lock
-        lsr             ; not ZC_LOCK or ZC_UNLOCK
-        sta     zc_lock,x  ; disable/enable
-        lda     #ZC_LOCK
-        sta     zc_lock
+         tay
+         eor   #1
+         tax
+         lda   #ZC_UNLOCK
+         php
+         sei             ; timing sensitive
+         sta   zc_lock
+         sta   zc_lock
+         sta   zc_lock
+         sta   zc_lock
+         lsr             ; not ZC_LOCK or ZC_UNLOCK
+         sta   zc_lock,x  ; disable/enable
+         lda   #ZC_LOCK
+         sta   zc_lock
 
         ;; current products are subject to change so do
         ;; these last
 
         ; trademarked accelerator from Germany
 
-        sta     uw_fast,y ; value does not matter
+         sta   uw_fast,y ; value does not matter
 
         ; FASTChip
 
-        ldx     #FC_1MHZ
-        tya
-        bne     fcset
-        ldx     #FC_ON  ; enable set speed?
+         ldx   #FC_1MHZ
+         tya
+         bne   fcset
+         ldx   #FC_ON  ; enable set speed?
 fcset
-        lda     #FC_UNLOCK
-        sta     fc_lock
-        sta     fc_lock
-        sta     fc_lock
-        sta     fc_lock
-        sta     fc_enable
-        stx     fc_speed
-        lda     #FC_LOCK
-        sta     fc_lock
-        plp             ; restore interrupt state
-        rts
+         lda   #FC_UNLOCK
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_enable
+         stx   fc_speed
+         lda   #FC_LOCK
+         sta   fc_lock
+         plp             ; restore interrupt state
+         rts
+end_addon
