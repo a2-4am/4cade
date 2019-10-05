@@ -6,17 +6,17 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E5F4 - persistent data structures (per-game cheat categories,
+; D000..E611 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; ECA0..FFF9 - main program code
+; EBE4..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D5F7 - ProRWTS code
 ; D5F8..DB52 - HGR font code & ProRWTS glue code
-; DB53..DB62 - backup of stack (during gameplay and self-running demos)
+; DB53..DB6E - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB6..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data

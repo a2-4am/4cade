@@ -106,12 +106,16 @@ OnBrowseTab
          ; execution falls through here
 ForceBrowseChanged
          bit   CLEARKBD
-         ldx   gGameToLaunch
          ; execution falls through here
 OnBrowseChanged
-; in:    X = game index
+; in:    gGameToLaunch = game index
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+         ldx   gGameToLaunch
          jsr   LoadGameTitleOffscreen
          jsr   DrawUIWithoutDots
+         jsr   SwitchToBank2
+         jsr   DisableAcceleratorAndSwitchToBank1
          jmp   MaybeAnimateTitle
 
 ;------------------------------------------------------------------------------

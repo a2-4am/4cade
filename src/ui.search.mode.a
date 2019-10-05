@@ -124,6 +124,9 @@ OnInputChanged
          rts
 
 @findMatchingTitle
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+
          jsr   ResetTextRank
 
          jsr   okvs_iter_values      ; iterate through all game titles
@@ -136,6 +139,8 @@ OnInputChanged
          dec   InputLength           ; ignore the last key typed
 
 OnError
+         jsr   SwitchToBank2
+         jsr   DisableAcceleratorAndSwitchToBank1
          jmp   SoftBell              ; Beep on invalid input and start over.
 
 +
@@ -149,6 +154,8 @@ OnError
          bpl   @noload               ; (always branches)
 +        jsr   LoadGameTitleOffscreen
 @noload  jsr   DrawUI
+         jsr   SwitchToBank2
+         jsr   DisableAcceleratorAndSwitchToBank1
          jsr   MaybeAnimateTitle
          clc
          rts

@@ -654,3 +654,11 @@ LaunchInternal
          dey
          bne   -
          jmp   $106                  ; jump to pre-launch code
+
+EnableAcceleratorAndSwitchToBank1
+         jsr   EnableAccelerator
+         jmp   SwitchToBank1
+
+DisableAcceleratorAndSwitchToBank1
+         jsr   DisableAccelerator
+         jmp   SwitchToBank1
