@@ -16,7 +16,7 @@
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
 HasVidHDCard
-         ldx   #$c7
+         ldx   #$C7
 @slotLoop
          stx   @byteLoop+2
          ldy   #$02
@@ -26,12 +26,46 @@ HasVidHDCard
          bne   @nextSlot
          dey
          bpl   @byteLoop
+@found
          sec                         ; found
          rts
 @nextSlot
          dex
-         cpx   #$c0
+         cpx   #$C0
          bne   @slotLoop
+
+         ; check for a slot where the Cx00 page is all zeroes
+         ; and the devsel bytes are also all zeroes, which
+         ; indicates that VidHD is probably present but is in
+         ; passive mode because some other card is hogging DMA
+         ldx   #$C7
+@passiveSlotLoop
+         stx   @passiveByteLoop+2
+         ldy   #0
+@passiveByteLoop
+         lda   $FD00, y              ; SMC (high byte)
+         bne   @passiveNextSlot
+         iny
+         bpl   @passiveByteLoop
+         txa
+         and   #$0F                  ; A = $01..$07
+         asl
+         asl
+         asl
+         asl                         ; A = $10..$70
+         ora   #$80                  ; A = $90..$F0
+         sta   @devselLoop+1
+         ldy   #$0F
+@devselLoop
+         lda   $C0FD, y              ; SMC (low byte)
+         bne   @passiveNextSlot
+         dey
+         bpl   @devselLoop
+         bmi   @found                ; always branches
+@passiveNextSlot
+         dex
+         cpx   #$C0
+         bne   @passiveSlotLoop
          clc                         ; not found
          rts
 @kVidHDMagicBytes
