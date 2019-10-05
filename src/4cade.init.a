@@ -27,7 +27,9 @@
 @s_no64K !scrxor $80,"REQUIRES 64K"
 @no64Klen=(*-@s_no64K)-1
 
-+        jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
++
+         lda   #0
+         sta   zpMachineStatus
          lda   ROM_MACHINEID
          cmp   #$06
          bne   NotGS
@@ -50,6 +52,7 @@ NotGS    clc
                                      ;     bit 5 = 1 if VidHD
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
+                                     ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
 
          lda   ROM_MACHINEID
          cmp   #$06
@@ -142,6 +145,16 @@ NotGS    clc
          dey
          bne   @LM
 
+         jsr   BuildAcceleratorFunction
+         +STAY @accelSrc
+         dex
+-
+@accelSrc=*+1
+         lda   $FDFD,x               ; copy (de)acceleration functions to RAM bank 2
+         sta   DisableAccelerator,x
+         dex
+         bpl   -
+
          jmp   OneTimeSetup
 
          ; ProRWTS2 has its own function to relocate itself
@@ -151,7 +164,6 @@ ProRWTSBuffer
          !source "src/hw.vidhd.a"
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
-         !source "src/hw.normfast.a"
 TOTAL
          !text   "T O T A L"
 REPLAY
@@ -172,11 +184,12 @@ Loader128KAndJoystick
          !byte   15
          !text   "joystick + 128K"
 
+         !source "src/hw.normfast.a"
          !source "src/parse.games.a"
 
 OneTimeSetup
          lda   zpMachineStatus
-         sta   MachineStatus         ; save machine status
+         sta   MachineStatus         ; save machine status in LC RAM
          jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
          lda   #$91
          sta   holepatch             ; enable restoring of copy from now on
@@ -227,10 +240,11 @@ CopyDevs
          ldy   #1
          lda   (PTR),y               ; A = #$B1 or #$B0
          and   #1                    ; A = #$01 or #$00
-         clc
-         ror
-         ror                         ; A = #$80 or #$00
-         sta   gCheatsEnabled
+         asl
+         asl
+         asl                         ; A = #$08 or #$00
+         ora   MachineStatus
+         sta   MachineStatus         ; set bit 3 of MachineStatus
 
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          dey                         ; Y = 0

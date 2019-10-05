@@ -12,9 +12,10 @@ ToggleCheat
 ; out:   X = 0, Z = 1 (guaranteed by pref_set)
 ;        all other registers and flags clobbered
          ldx   #$B0
-         lda   gCheatsEnabled
-         eor   #$80
-         sta   gCheatsEnabled
+         lda   MachineStatus
+         eor   #CHEATS_ENABLED
+         sta   MachineStatus
+         and   #CHEATS_ENABLED
          beq   +
          inx
 +        stx   @val

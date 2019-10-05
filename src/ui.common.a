@@ -12,12 +12,6 @@
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
 ;
-; Public variables:
-; - MachineStatus
-;      bit 4 = 1 if IIgs
-;      bit 5 = 1 if VidHD
-;      bit 6 = 1 if 128K
-;      bit 7 = 1 if joystick
 
 ;------------------------------------------------------------------------------
 ; SoftBell
@@ -60,8 +54,7 @@ SoftBell
 ; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
 Home
-MachineStatus = *+1
-         lda   #$D1                  ; SMC
+         lda   MachineStatus
          and   #SUPPORTS_SHR
          beq   @noSHR
          lda   NEWVIDEO

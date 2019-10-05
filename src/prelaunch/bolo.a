@@ -7,10 +7,14 @@
 
     !source "src/prelaunch/common.a"
 
-    lda #$60
-    sta $8034
-    jsr $4ab0
-    lda #$a5
-    sta $1619
-    sta $11ae
-    jmp $1100
+         lda   #$60
+         sta   $8034
+         jsr   $4ab0      ; decompress and show title
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1619
+         sta   $11ae
++
+         jmp   $1100

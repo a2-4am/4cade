@@ -13,6 +13,10 @@
          lda   #$60
          sta   $B845
          jsr   $B837
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$A5
          sta   $A5B0      ; patch - don't decrease lives
++
          jmp   $A720

@@ -13,8 +13,12 @@
          lda   #$60
          sta   $BD40
          jsr   $BD1D      ; decompress 2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$AD
          sta   $69DC      ; patch - don't decrease lives
          sta   $6C9A      ; patch - don't increase lives
          sta   $6C9D      ; patch - don't increase lives
++
          jmp   $7200

@@ -7,14 +7,20 @@
 
     !source "src/prelaunch/common.a"
 
-    lda #<cheat
-    sta $208c
-    lda #>cheat
-    sta $208d
-    jmp $2000
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   cheat+1
+         lda   #<cheat
+         sta   $208c
+         lda   #>cheat
+         sta   $208d
+         jmp   $2000
 
 cheat
-    ldy #$bd
-    sty $1a40
-    sty $1a61
-    jmp $200
+         ldy   #0         ; SMC
+         beq   +
+         ldy   #$bd
+         sty   $1a40
+         sty   $1a61
++
+         jmp   $200

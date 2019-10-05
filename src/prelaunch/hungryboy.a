@@ -7,12 +7,20 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+2
          lda   #<patch
          sta   $0814
          lda   #>patch
          sta   $080D
          jmp   $0800      ; decompress
 patch    nop
+         lda   #0         ; SMC (will be non-zero if cheats are enabled)
+         beq   +
          lda   #$A5
          sta   $70F4      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
          jmp   $94E0

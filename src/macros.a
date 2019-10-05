@@ -77,6 +77,10 @@
          bit   $C08B
 }
 
+!macro   READ_RAM2_NO_WRITE {
+         bit   $C080
+}
+
 !macro   READ_RAM2_WRITE_RAM2 {
          bit   $C083
          bit   $C083
@@ -111,4 +115,23 @@
          bcc   +
          and   zpCharMask
 +
+}
+
+; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
+!macro   ENABLE_ACCEL {
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         +READ_ROM_NO_WRITE
+}
+
+!macro   DISABLE_ACCEL {
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MACHINE_STATUS {
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
 }

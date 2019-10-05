@@ -125,8 +125,9 @@ DrawUI
          bpl   -
 
 @doneWithLine2
-         bit   gCheatsEnabled
-         bpl   @maybeDrawDots        ; if cheat mode is disabled, we don't need
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   @maybeDrawDots        ; if cheat mode is disabled, we don't need
                                      ; any curves or spaces on UI line 1
          ldx   gGameToLaunch
          ldy   gCheatsAvailable,x
@@ -196,8 +197,10 @@ DrawUI
          +LDADDR UILine2
          jsr   Draw40Chars           ; draw UI line 2 on offscreen page
 
-         bit   gCheatsEnabled        ; if cheats are disabled, then we're done drawing UI
-         bpl   @uidone
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   @uidone               ; if cheats are disabled, then we're done drawing UI
+
                                      ; (SAVE) still points to length-prefixed cheat description
          ldy   #0
          lda   (SAVE),y              ; A = length of cheat description
