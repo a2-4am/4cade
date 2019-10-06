@@ -16,6 +16,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $7801
          lda   #$AD
          sta   $962A      ; patch - don't decrease lives
 +

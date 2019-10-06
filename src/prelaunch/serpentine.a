@@ -25,8 +25,8 @@ patch
 cheat=*+1
          lda   #0         ; SMC
          beq   +
+                          ; lives in $D8 (capped at 3)
          lda   #$A5
          sta   $868F      ; patch - don't decrease lives
-                          ; lives are capped at 3 so no further patches
 +
          jmp   $0800

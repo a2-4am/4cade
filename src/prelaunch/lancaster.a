@@ -19,6 +19,7 @@
 cheat
          lda   #0         ; SMC (will be non-zero if cheats are enabled)
          beq   +
+                          ; lives in $0ED7
          lda   #$ad
          sta   $1661
          sta   $1476

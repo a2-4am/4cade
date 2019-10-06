@@ -2,22 +2,23 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/LAZER.SILK",plain
+!to "build/PRELAUNCH/JUMPMAN",plain
 *=$106
 
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $404B
+         sta   $406E
          jsr   $4000      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
-                          ; lives in $CE
+                          ; lives in $B7
          lda   #$A5
-         sta   $7BA0      ; patch - don't decrease lives
-         sta   $806A      ; patch - don't increase lives
+         sta   $8FF3      ; patch - don't decrease lives
+         sta   $93B1      ; patch - don't decrease lives
+         sta   $A598      ; patch - don't increase lives
 +
          +DISABLE_ACCEL
-         jmp   ($0020)
+         jmp   $8000

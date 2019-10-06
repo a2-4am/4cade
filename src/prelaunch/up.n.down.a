@@ -23,6 +23,7 @@
 patch
          lda   #0         ; SMC
          beq   +
+                          ; lives in $1B,X (X=0/1 for player 1/2)
          lda   #$B5
          sta   $0912      ; patch - don't decrease lives
 +

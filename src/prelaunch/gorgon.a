@@ -7,6 +7,7 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $8237
          jsr   $3FFD      ; decompress
@@ -16,7 +17,9 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $70
          lda   #$A5
          sta   $A5B0      ; patch - don't decrease lives
 +
+         +DISABLE_ACCEL
          jmp   $A720

@@ -18,6 +18,7 @@
 patch
          lda   #0         ; SMC (will be non-zero if cheat mode is enabled)
          beq   +
+                          ; lives in $10
          lda   #$A5
          sta   $5846      ; patch - don't decrease lives
 +

@@ -14,6 +14,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $76 and $084A,X (0/1 for player 1/2)
          lda   #$A5
          sta   $54B2      ; patch - don't decrease lives
          sta   $5165      ; patch - don't increase lives
