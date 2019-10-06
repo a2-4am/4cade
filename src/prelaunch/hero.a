@@ -14,6 +14,8 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $28 (capped at 6)
+                          ; bombs in $29
          lda   #$A5
          sta   $6387      ; patch - don't decrease lives after dying
          lda   #$2C

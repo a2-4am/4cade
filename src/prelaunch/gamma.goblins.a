@@ -14,6 +14,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $06FE
          lda   #$AD
          sta   $4EF3      ; patch - don't decrease lives
          lda   #$00

@@ -14,6 +14,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $B7
          lda   #$A5
          sta   $8FF3      ; patch - don't decrease lives
          sta   $93B1      ; patch - don't decrease lives

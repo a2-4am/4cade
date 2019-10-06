@@ -19,6 +19,7 @@
 patch    nop
          lda   #0         ; SMC (will be non-zero if cheats are enabled)
          beq   +
+                          ; lives in $B6
          lda   #$A5
          sta   $70F4      ; patch - don't decrease lives
 +

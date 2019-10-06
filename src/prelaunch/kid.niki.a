@@ -13,6 +13,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $084A
          lda   #$AD
          sta   $BD34      ; patch - don't decrease lives
 +
