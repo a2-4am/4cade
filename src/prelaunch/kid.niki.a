@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/KID.NIKI",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $6069
+         jsr   $5FF2      ; load assets
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $BD34      ; patch - don't decrease lives
++
+         jmp   $61E3
