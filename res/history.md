@@ -11,7 +11,7 @@
 
  - Added help screen (press ? in search or browse mode to show)
  - Added global cheat mode (press Ctrl-C in search or browse mode to toggle)
- - Added 54 game cheats
+ - Added 55 game cheats
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Fixed Axis Assassin demo hanging on IIgs
