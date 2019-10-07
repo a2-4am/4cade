@@ -18,6 +18,8 @@
          jsr   Has64K                ; check for 64K (required)
          bcs   @no64K
          jsr   DisableAccelerator    ; set to 1 MHz (supports IIgs and many common accelerator cards)
+         jsr   HasMockingboard       ; check for Mockingboard (allows for patching games that do not have slot detect/config)
+         ror   zpMachineStatus         
          jsr   IsGS                  ; check for IIgs (allows super hi-res artwork)
          ror   zpMachineStatus
          sta   SETC3ROM
@@ -27,7 +29,8 @@
          jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
          ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
-         ror   zpMachineStatus       ; now bit 4 = 1 if IIgs
+         ror   zpMachineStatus       ; now bit 3 = 1 if Mockingboard
+                                     ;     bit 4 = 1 if IIgs
                                      ;     bit 5 = 1 if VidHD
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
@@ -76,6 +79,7 @@ ProRWTSBuffer
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.normfast.a"
+         !source "src/hw.mockingboard.a"
 *=ProRWTSBuffer+512                  ; ProRWTS needs a 512-byte buffer for its init function
                                      ; so we reuse as much of the 1-time code as possible
                                      ; and fill the rest with zeros
