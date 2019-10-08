@@ -4,7 +4,6 @@
 ; ProRWTS2 glue functions
 ;
 ; Public functions
-; - SaveSmallFile
 ; - LoadFile
 ; - LoadDHRFile
 ;
@@ -32,26 +31,6 @@
 ;
 ; 'FX/RIPPLE' points to a file named 'RIPPLE' in a directory named 'FX' in the
 ; PROGRAM ROOT DIRECTORY.
-
-         ; /!\ execution falls through from parse.perfs/pref_set
-;------------------------------------------------------------------------------
-; SaveSmallFile
-; Save a file into memory all at once, using ProRWTS2.
-; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
-; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
-;
-; supports paths, see note
-;
-; in:    A/Y points to data buffer
-;        gPathname contains path+filename to write
-; out:   all flags clobbered
-;        all registers clobbered
-;------------------------------------------------------------------------------
-SaveSmallFile
-         +STAY ldrlo                 ; set data buffer address for ProRWTS2
-         jsr   SwitchToBank2
-         jsr   SaveSmallFileInternal
-         jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
 ; LoadFile

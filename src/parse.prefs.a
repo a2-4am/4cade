@@ -6,6 +6,7 @@
 ; Public functions
 ; - pref_get
 ; - pref_set
+; - SaveSmallFile
 ;
 ; Public constants (all length-prefixed strings)
 ; - kNextAttract
@@ -205,3 +206,21 @@ pref_set
          jsr   SetPath
          +LDAY kGlobalPrefsBuffer
          ; /!\ execution falls through here to glue.prorwts/SaveSmallFile
+;------------------------------------------------------------------------------
+; SaveSmallFile
+; Save a file into memory all at once, using ProRWTS2.
+; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
+; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
+;
+; supports paths, see note
+;
+; in:    A/Y points to data buffer
+;        gPathname contains path+filename to write
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+SaveSmallFile
+         +STAY ldrlo                 ; set data buffer address for ProRWTS2
+         jsr   SwitchToBank2
+         jsr   SaveSmallFileInternal
+         jmp   SwitchToBank1
