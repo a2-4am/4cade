@@ -21,7 +21,7 @@ DHGRTitleSlideshow
          !word gSlideshowStore
          !word DHGRTitleCallback     ; address of callback (called on each file)
          beq   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
-                                     ; (always branches)
+                                     ; (always branches because Z=1 on exit of okvs_iter)
 
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
@@ -32,7 +32,7 @@ DHGRActionSlideshow
          !word gSlideshowStore
          !word DHGRActionCallback    ; address of callback (called on each file)
          beq   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
-                                     ; (always branches)
+                                     ; (always branches because Z=1 on exit of okvs_iter)
 
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
