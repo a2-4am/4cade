@@ -99,7 +99,6 @@ OnBrowseCheat
          beq   ForceBrowseChanged    ; always branches because Z=1 on exit from ToggleCheat
 
 OnBrowseTab
-         ldx   gGameToLaunch
          jsr   MiniAttractMode
          cmp   #$8D
          beq   OnBrowseLaunch
@@ -111,7 +110,6 @@ OnBrowseChanged
 ; in:    gGameToLaunch = game index
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
-         ldx   gGameToLaunch
          jsr   LoadGameTitleOffscreen
          jsr   DrawUIWithoutDots
          jsr   SwitchToBank2

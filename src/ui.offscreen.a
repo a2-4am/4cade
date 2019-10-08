@@ -89,17 +89,16 @@ LoadOffscreenFromAY
          rts
 
 LoadGameTitleOffscreen
-; in:    X = game index
-         +LDADDR gGamesListStore
-         jsr   okvs_nth
-         +STAY @fname
+; in:    gGameToLaunch = index into gGamesListStore
+         jsr   GetGameToLaunch
+         +STAY +
          jsr   GetOffscreenAddress
-         sta   +
+         sta   ++
          jsr   LoadFile
          !word kHGRTitleDirectory
-@fname   !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
          !byte $00
-+        !byte $FD                   ; SMC
+++       !byte $FD                   ; SMC
          rts
 
 ;------------------------------------------------------------------------------

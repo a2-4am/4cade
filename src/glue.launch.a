@@ -4,6 +4,7 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
+; - GetGameToLaunch
 ; - GetGameInfo
 ; - GetGameInfoInActionSlideshow
 ; - PlayGame
@@ -12,6 +13,14 @@
 ; Public variables:
 ; - gGameToLaunch - 0-based index into gGamesListStore
 ;
+
+GetGameToLaunch
+; in:    gGameToLaunch = index into gGamesListStore
+; out:   A/Y points to game filename
+gGameToLaunch=*+1
+         ldx   #$FF                  ; SMC
+         +LDADDR gGamesListStore
+         jmp   okvs_nth
 
 GetGameInfo
 ; in:    A/Y points to game filename
@@ -73,10 +82,7 @@ GetGameInfoInActionSlideshow
 @exit    rts
 
 PlayGame
-gGameToLaunch=*+1
-         ldx   #$FF                  ; SMC
-         +LDADDR gGamesListStore
-         jsr   okvs_nth
+         jsr   GetGameToLaunch
                                      ; A/Y = address of game filename
          +STAY SAVE
          +STAY @pfile                ; assume we're loading a game-specific prelaunch file

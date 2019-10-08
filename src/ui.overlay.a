@@ -95,8 +95,7 @@ DrawUI
          cpx   #$FF                  ; if no game, nothing more to do on UI line 2
          beq   @doneWithLine2
 
-         +LDADDR gGamesListStore
-         jsr   okvs_nth
+         jsr   GetGameToLaunch
          jsr   okvs_get_current
                                      ; (PTR) -> game title
          ldy   #0                    ; copy game title into UI line 2
