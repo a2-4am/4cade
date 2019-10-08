@@ -104,9 +104,9 @@ LoadGameTitleOffscreen
 ;
 ; in:    none
 ; out:   $2000..$3FFF or $4000..$5FFF cleared
-;        A = 0
-;        X = 0
-;        Y = 0
+;        A = #$80
+;        X = #$00
+;        Y = #$00
 ;        Z = 1
 ;------------------------------------------------------------------------------
 ClearOffscreen
