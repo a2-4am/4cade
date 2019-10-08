@@ -32,7 +32,7 @@ Has64K
 ; out:   C set if 128K detected
 ;        C clear if 128K not detected
 ;        all other flags and registers clobbered
-;        zp $80-$9F clobbered
+;        zp $80-$D2 clobbered
 ;        ROM in memory (not LC RAM bank)
 ;
 ; adapted from "Prince of Persia" by Jordan Mechner
@@ -50,6 +50,9 @@ Has128K
          ldx   #@checklen
 -        lda   @checker,x
          sta   $80,x
+         sta   SETAUXZP              ; also copy to aux zp in case we pass
+         sta   $80,x
+         sta   CLRAUXZP
          dex
          bpl   -
          jmp   $80                   ; check if auxmem actually works
@@ -57,21 +60,41 @@ Has128K
          lda   #$EE
          sta   WRITEAUXMEM
          sta   READAUXMEM
-         sta   $0C00
+@x1      sta   $0C00
          sta   $0800
-         lda   $0C00
+@x2      lda   $0C00
          cmp   #$EE
          bne   @no
-         asl   $0C00
+@x3      asl   $0C00
          asl
-         cmp   $0C00
+@x4      cmp   $0C00
          bne   @no
          cmp   $0800
-         bne   @yes
-@no      clc
-         +HIDE_NEXT_BYTE
+         beq   @no
+
+         ; now test the rest of memory, and bank 2 of LC
+
+         clc
+         lda   <($80+(@x1-@checker)+2)
+         adc   #$20
+         bcs   @finish
+@x5      sta   <($80+(@x1-@checker)+2)
+         sta   <($80+(@x2-@checker)+2)
+         sta   <($80+(@x3-@checker)+2)
+         sta   <($80+(@x4-@checker)+2)
+         cmp   #$CC
+         bne   @checker
+         sta   SETAUXZP
+         +READ_RAM2_WRITE_RAM2
+         lda   #$D0
+         bne   @x5                    ; always
+
 @yes     sec
+         +HIDE_NEXT_BYTE
+@no      clc
 @finish  sta   WRITEMAINMEM
          sta   READMAINMEM
+         sta   CLRAUXZP
+         +READ_ROM_NO_WRITE
          rts
 @checklen=*-@checker
