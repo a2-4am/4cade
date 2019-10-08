@@ -146,4 +146,4 @@ DHGRActionCallback
 +        !word $FDFD
 
          +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
+         ; /!\ execution falls through to ui.wait/ExecuteTransitionAndWait

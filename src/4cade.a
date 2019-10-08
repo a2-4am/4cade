@@ -92,7 +92,6 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.overlay.a"
          !source "src/ui.offscreen.a"
          !source "src/ui.attract.mode.a"
-         !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
 
@@ -109,8 +108,12 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/parse.prefs.a"            ; \__ execution falls through
          !source "src/glue.prorwts2.a"          ; /
 
-         ; add new files above here so ui.common stays last
          !source "src/ui.common.a"
+
+         ; add new files above here so ui.wait stays last
+
+         !source "src/ui.attract.dhgr.a"        ; \-- execution falls through
+         !source "src/ui.wait.a"                ; /
 gAttractModeStore
 gFXStore
 gDFXStore
