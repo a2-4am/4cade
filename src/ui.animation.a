@@ -7,6 +7,7 @@
 ;
 
 MaybeAnimateTitle
+; out:   C clear
          lda   OffscreenPage
          bne   +
          lda   #$5F
@@ -18,9 +19,7 @@ MaybeAnimateTitle
          ldy   #0
          lda   (SAVE),y              ; see if there is a hidden JMP to an
          cmp   #$4C                  ; animation routine for this screen
-         beq   +
-         rts
-+
+         bne   @exit
          ldx   #$20                  ; copy new HGR screen to the other
          ldy   #$40
          lda   OffscreenPage
@@ -65,7 +64,7 @@ MaybeAnimateTitle
 
          jsr   Launch
          jsr   ResyncPage
-         clc                         ; tell caller not to refresh screen
+@exit    clc                         ; tell caller not to refresh screen
          rts
 
 @titleAnimPrelaunch

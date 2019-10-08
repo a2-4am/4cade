@@ -156,9 +156,7 @@ OnError
 @noload  jsr   DrawUI
          jsr   SwitchToBank2
          jsr   DisableAcceleratorAndSwitchToBank1
-         jsr   MaybeAnimateTitle
-         clc
-         rts
+         jmp   MaybeAnimateTitle
 
 ;------------------------------------------------------------------------------
 ; IsSearchKey
