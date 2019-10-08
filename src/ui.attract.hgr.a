@@ -128,7 +128,7 @@ HGRActionCallback
          bcs   HGRRTS
 
          ; found the game
-         +STAY SAVE
+         +STAY SAVE                  ; (SAVE) -> game title
          stx   gGameToLaunch
 
          jsr   LoadFile              ; load HGR screenshot at $4000
