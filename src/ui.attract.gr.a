@@ -65,7 +65,7 @@ BlankGR
          !word kFXDirectory
          !word kGRFizzleFile
          !word $6400
-         rts
+-        rts
 
 ;------------------------------------------------------------------------------
 ; .GRActionCallback [private]
@@ -81,22 +81,20 @@ BlankGR
 ;------------------------------------------------------------------------------
 .GRActionCallback
          bit   KBD
-         bpl   +
-@actionExit
-         rts
-+
-         +STAY @fname
+         bmi   -
+
+         +STAY +
 
          jsr   GetGameDisplayNameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
-         bcs   @actionExit
+         bcs   -
          stx   gGameToLaunch
 
          jsr   LoadFile              ; load GR screenshot into $6000
          !word kGRActionDirectory
-@fname   !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
          !word $6000
 
          +LDADDR $6400

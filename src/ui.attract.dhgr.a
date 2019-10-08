@@ -12,42 +12,39 @@
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvs   +
-         rts
-+        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
+-        rts
++        jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word .DHGRTitleCallback    ; address of callback (called on each file)
+         !word DHGRTitleCallback     ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvs   +
-         rts
-+        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
+         bvc   -
+         jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
-         !word .DHGRActionCallback   ; address of callback (called on each file)
+         !word DHGRActionCallback    ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
-         bvs   +
-         rts
-+
-         +STAY @fname
+         bvc   -
+         +STAY +
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
          !word kRootDirectory
-@fname   !word $FDFD                 ; SMC
-+        jsr   .LoadDHGRTransition   ; load transition effect code at $6000
++        !word $FDFD                 ; SMC
+         jsr   LoadDHGRTransition    ; load transition effect code at $6000
          +LDADDR $6000
          jsr   ExecuteTransitionAndWait
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
-; .LoadDHGRTransition [private]
+; LoadDHGRTransition [private]
 ; looks up name of next DHGR transition effect in DFX.CONF and loads that file
 ; at $6000
 
@@ -56,7 +53,7 @@ DHGRSingle
 ; out:   all registers and flags clobbered
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
-.LoadDHGRTransition
+LoadDHGRTransition
          jsr   LoadFile              ; load DHGR transition effects list into $8000
          !word kRootDirectory
          !word kDFXConfFile
@@ -69,7 +66,7 @@ DHGRSingle
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
          !word gDFXStore
-         +STAY @filename             ; A/Y = filename (don't load file yet)
+         +STAY ++                    ; A/Y = filename (don't load file yet)
                                      ; X = index of the transition in DFX store
          +LDADDR gDFXStore
          jsr   okvs_next             ; get transition after this one
@@ -81,12 +78,12 @@ DHGRSingle
 
          jsr   LoadFile              ; now load transition effect code into $6000
          !word kFXDirectory
-@filename !word $FDFD                ; SMC
+++       !word $FDFD                ; SMC
          !word $6000
-         rts
+-        rts
 
 ;------------------------------------------------------------------------------
-; .DHGRTitleCallback [private]
+; DHGRTitleCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR title screenshot
 
@@ -97,30 +94,29 @@ DHGRSingle
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
-.DHGRTitleCallback
+DHGRTitleCallback
          bit   KBD
-         bpl   +
-@exit    rts
-+
-         +STAY @tfname
+         bmi   -
+
+         +STAY +
 
          jsr   GetGameDisplayName
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
-         bcs   @exit
+         bcs   -
          stx   gGameToLaunch
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile
          !word kDHGRTitleDirectory
-@tfname  !word $FDFD
++        !word $FDFD
 
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
-; .DHGRActionCallback [private]
+; DHGRActionCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single DHGR action screenshot
 
@@ -131,25 +127,23 @@ DHGRSingle
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;        $2000..$5FFF/aux clobbered
 ;------------------------------------------------------------------------------
-.DHGRActionCallback
+DHGRActionCallback
          bit   KBD
-         bpl   +
-@actionExit
-         rts
-+
-         +STAY @afname
+         bmi   -
+
+         +STAY +
 
          jsr   GetGameDisplayNameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
-         bcs   @actionExit
+         bcs   -
          stx   gGameToLaunch
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile
          !word kDHGRActionDirectory
-@afname  !word $FDFD
++        !word $FDFD
 
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
