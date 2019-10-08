@@ -9,7 +9,7 @@
 
 ;------------------------------------------------------------------------------
 ; ParseGamesList
-; parse buffer with AB,KEY=VALUE lines of text into an okvs
+; parse buffer with ABC,KEY=VALUE lines of text into an okvs
 ; keys and values limited to 127 characters, which should be enough for anyone
 ; '[' character at beginning of line ends the parsing
 ; (see games.conf file for more format information)
