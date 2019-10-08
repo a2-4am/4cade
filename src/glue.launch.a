@@ -4,8 +4,8 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
-; - GetGameDisplayName
-; - GetGameDisplayNameInActionSlideshow
+; - GetGameInfo
+; - GetGameInfoInActionSlideshow
 ; - PlayGame
 ; - Launch
 ;
@@ -13,7 +13,7 @@
 ; - gGameToLaunch - 0-based index into gGamesListStore
 ;
 
-GetGameDisplayName
+GetGameInfo
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
 ;          A/Y points to game display name (but see hack notes below)
@@ -26,7 +26,7 @@ GetGameDisplayName
 ;          joystick)
          ldx   #$60
          +HIDE_NEXT_2_BYTES
-GetGameDisplayNameInActionSlideshow
+GetGameInfoInActionSlideshow
          ldx   #$EA
          stx   @maybeExit
          +STAY @key
