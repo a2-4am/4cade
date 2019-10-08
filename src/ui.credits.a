@@ -21,9 +21,9 @@ Credits
          jsr   DrawPage              ; draw credits
          jsr   ShowOtherPage         ; show credits
          jsr   WaitForKeyFor30Seconds; wait
-         bit   CLEARKBD              ; don't care about key
+--       bit   CLEARKBD              ; don't care about key
          jsr   ShowOtherPage         ; back to previous page
-         clc                         ; if called from search mode, tell caller not to refresh
+-        clc                         ; if called from search mode, tell caller not to refresh
          rts
 
 Help
@@ -31,18 +31,13 @@ Help
          jsr   LoadHelpOffscreen
          jsr   ShowOtherPage
          jsr   WaitForKeyFor30Seconds
-         cmp   #$83
-         beq   @exitWithoutShowingOtherPage
-         jsr   IsUpDownOrRightArrow
-         beq   @exitWithoutShowingOtherPage
          cmp   #$88
-         beq   @exitViaBrowse
+         beq   +
+         cmp   #$83
+         beq   -
+         jsr   IsUpDownOrRightArrow
+         beq   -
          jsr   IsSearchKey
-         beq   @exitWithoutShowingOtherPage
-         bit   CLEARKBD
-         jsr   ShowOtherPage
-@exitWithoutShowingOtherPage
-         clc
-         rts
-@exitViaBrowse
-         jmp   BrowseMode
+         beq   -
+         bne   --
++        jmp   BrowseMode
