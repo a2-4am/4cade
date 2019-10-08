@@ -14,7 +14,7 @@
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvs   +
--        rts
+DHGRRTS  rts
 +        jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
@@ -25,7 +25,7 @@ DHGRTitleSlideshow
 
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvc   -
+         bvc   DHGRRTS
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
@@ -36,7 +36,7 @@ DHGRActionSlideshow
 
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
-         bvc   -
+         bvc   DHGRRTS
          +STAY +
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
