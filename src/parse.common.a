@@ -17,7 +17,7 @@
 ; '#' character at beginning of line is a comment, entire line is ignored
 ; '[' character at beginning of line exits the parser
 ;
-; in:    stack contains 4 bytes of parameters:
+; in:    stack contains 5 bytes of parameters:
 ;          +1 [word] handle to storage space for okvs
 ;          +3 [word] handle to buffer containing contents of text file
 ;          +5 [byte] max length for okvs records (or 0)
