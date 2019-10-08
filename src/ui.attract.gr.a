@@ -65,7 +65,7 @@ BlankGR
          !word kFXDirectory
          !word kGRFizzleFile
          !word $6400
--        rts
+GRRTS    rts
 
 ;------------------------------------------------------------------------------
 ; .GRActionCallback [private]
@@ -81,7 +81,7 @@ BlankGR
 ;------------------------------------------------------------------------------
 .GRActionCallback
          bit   KBD
-         bmi   -
+         bmi   GRRTS
 
          +STAY +
 
@@ -89,7 +89,7 @@ BlankGR
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
-         bcs   -
+         bcs   GRRTS
          stx   gGameToLaunch
 
          jsr   LoadFile              ; load GR screenshot into $6000
