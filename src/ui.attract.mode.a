@@ -95,7 +95,7 @@ MiniAttractMode
          +LDADDR gAttractModeStore
          jsr   okvs_len
          cmp   @MiniAttractIndex
-         beq   @exit                 ; we've run through all modules, so exit to caller
+         beq   ATTRTS                ; we've run through all modules, so exit to caller
 
 @MiniAttractIndex=*+1
          ldx   #$FD                  ; SMC
@@ -112,7 +112,7 @@ MiniAttractMode
          inc   @MiniAttractIndex
          lda   KBD
          bpl   @loop
-@exit    rts
+ATTRTS   rts
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
@@ -142,9 +142,7 @@ RunAttractModule
 
          +LDAY @key
          jsr   GetGameInfo
-         bcc   +                     ; if game doesn't exist, skip the demo
-         rts
-+
+         bcs   ATTRTS                ; if game doesn't exist, skip the demo
          cpx   #$FF
          beq   +
          stx   gGameToLaunch
