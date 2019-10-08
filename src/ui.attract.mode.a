@@ -75,8 +75,7 @@ MiniAttractMode
          +STAY +
 
          jsr   BlankHGR
-
-         lda   #0
+                                     ; A = 0
          sta   @MiniAttractIndex
 @loop
          jsr   LoadFile              ; load mini attract mode configuration file into $8000

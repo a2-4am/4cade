@@ -52,6 +52,7 @@ DHGRSingle
 ;
 ; in:    none
 ; out:   text page clobbered (but screen holes preserved)
+;        A/X/Y=0 (guaranteed by ClearHGR1)
 ;        $2000..$3FFF cleared
 ;------------------------------------------------------------------------------
 BlankHGR
