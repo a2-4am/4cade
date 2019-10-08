@@ -12,7 +12,7 @@ SHRSlideshow
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          bne   +
--        rts
+SHRRTS   rts
 +        jsr   LoadSHRTransition
          jsr   okvs_iter
          !word gSlideshowStore
@@ -23,7 +23,7 @@ SHRSingle
          +STAY +
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
-         beq   -
+         beq   SHRRTS
          jsr   BlankSHR
          jsr   LoadFile
          !word kRootDirectory
@@ -62,16 +62,15 @@ LoadSHRTransition
 ;------------------------------------------------------------------------------
 SHRArtworkCallback
          bit   KBD
-         bpl   +
--        rts
-+
+         bmi   SHRRTS
+
          +STAY @sfname
 
          jsr   GetGameInfo
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
-         bcs   -
+         bcs   SHRRTS
          stx   gGameToLaunch
 
          jsr   BlankSHR
