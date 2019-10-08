@@ -11,6 +11,7 @@
 ; - kNextAttract
 ; - kNextFX
 ; - kNextDFX
+; - kCheat
 ;
 
 kGlobalPrefsBuffer = $8000
