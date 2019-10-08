@@ -117,7 +117,7 @@ HGRTitleCallback
 ;------------------------------------------------------------------------------
 HGRActionCallback
          bit   KBD
-         bmi   -
+         bmi   HGRRTS
 
          +STAY +
 
@@ -125,7 +125,7 @@ HGRActionCallback
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
-         bcs   -
+         bcs   HGRRTS
 
          ; found the game
          +STAY SAVE
