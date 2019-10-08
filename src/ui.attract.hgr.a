@@ -69,7 +69,7 @@ LoadHGRTransition
          !word kFXDirectory
 ++       !word $FDFD                ; SMC
          !word $6000
--        rts
+HGRRTS   rts
 
 ;------------------------------------------------------------------------------
 ; HGRTitleCallback [private]
@@ -84,7 +84,7 @@ LoadHGRTransition
 ;------------------------------------------------------------------------------
 HGRTitleCallback
          bit   KBD
-         bmi   -
+         bmi   HGRRTS
 
          +STAY +
 
@@ -92,7 +92,7 @@ HGRTitleCallback
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
-         bcs   -
+         bcs   HGRRTS
          stx   gGameToLaunch
 
          jsr   LoadFile              ; load HGR screenshot at $4000
