@@ -14,6 +14,12 @@
 ; - DrawBuffer
 ;
 
+         ; /!\ execution falls through from ui.attract.hgr/HGRActionCallback
+DrawString
+         jsr   SwitchToBank2
+         jsr   DrawStringInternal
+         jmp   SwitchToBank1
+
 DrawPage
          jsr   SwitchToBank2
          jsr   DrawPageInternal
@@ -27,11 +33,6 @@ Draw40Chars
 DrawCenteredString
          jsr   SwitchToBank2
          jsr   DrawCenteredStringInternal
-         jmp   SwitchToBank1
-
-DrawString
-         jsr   SwitchToBank2
-         jsr   DrawStringInternal
          jmp   SwitchToBank1
 
 DrawBuffer

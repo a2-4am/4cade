@@ -5,8 +5,68 @@
 ;
 ; Public functions
 ; - SearchMode
-; - IsSearchKey
 ;
+
+; indices into InputDispatchTable
+kInputSearch   = 0
+kInputClear    = 1
+kInputBack     = 2
+kInputBrowse   = 3
+kInputTab      = 4
+kInputLaunch   = 5
+kInputHelp     = 6
+kInputCredits  = 7
+kInputCheat    = 8
+kInputError    = 9
+
+InputDispatchTableLo
+         !byte <OnSearch
+         !byte <OnClear
+         !byte <OnBack
+         !byte <BrowseMode
+         !byte <OnTab
+         !byte <OnLaunch
+         !byte <Help
+         !byte <Credits
+         !byte <OnCheat
+         !byte <OnError
+InputDispatchTableHi
+         !byte >OnSearch
+         !byte >OnClear
+         !byte >OnBack
+         !byte >BrowseMode
+         !byte >OnTab
+         !byte >OnLaunch
+         !byte >Help
+         !byte >Credits
+         !byte >OnCheat
+         !byte >OnError
+
+kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
+InputKeys
+         !byte $83                   ; Ctrl-C = toggle cheat mode
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
+         !byte $A0                   ; Space = mini attract mode
+         !byte $89                   ; TAB = mini attract mode
+         !byte $88                   ; left arrow = delete (may as well, since
+                                     ;   popular emulators remap this anyway)
+         !byte $FF                   ; backspace = delete
+         !byte $8D                   ; ENTER = launch current game (if any)
+         !byte $9B                   ; Esc = clear input buffer (if any)
+                                     ;   or switch to mega attract mode
+InputKeyDispatch
+         !byte kInputCheat
+         !byte kInputCredits
+         !byte kInputHelp
+         !byte kInputHelp
+         !byte kInputTab
+         !byte kInputTab
+         !byte kInputBack
+         !byte kInputBack
+         !byte kInputLaunch
+         !byte kInputClear
 
 .noKeyMatch
          jsr   IsSearchKey
@@ -15,7 +75,7 @@
          +HIDE_NEXT_2_BYTES
 .foundSearchKey
          ldx   #kInputSearch
-         ; execution falls through here
+         ; execution falls through here to .InputDispatch
 .InputDispatch
          ldy   InputDispatchTableLo,x
          sty   .j+1
@@ -111,10 +171,10 @@ OnSearch
          beq   OnError
          sta   InputBuffer,x
          inc   InputLength
-         ; execution falls through here
+         ; execution falls through here to OnInputChanged
 OnInputChanged
          lda   InputLength
-         bne   @findMatchingTitle
+         bne   FindMatchingTitle
                                      ; no input, reset params and UI
          ldx   #$FF
          stx   gGameToLaunch         ; no game selected
@@ -123,7 +183,7 @@ OnInputChanged
          clc
          rts
 
-@findMatchingTitle
+FindMatchingTitle
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
 
@@ -156,108 +216,4 @@ OnError
 @noload  jsr   DrawUI
          jsr   SwitchToBank2
          jsr   DisableAcceleratorAndSwitchToBank1
-         jmp   MaybeAnimateTitle
-
-;------------------------------------------------------------------------------
-; IsSearchKey
-; test whether accumulator contains a key that might trigger a new textrank
-; search
-;
-; in:    A = key
-; out:   A &= 0x7F
-;        Y preserved
-;        X clobbered
-;        Z = 1 if this is a search key
-;        Z = 0 if this is not a search key
-;------------------------------------------------------------------------------
-IsSearchKey
-         and   #$7F                  ; strip high bit for search characters
-         cmp   #$30                  ; control keys and punctuation ignored
-         bcc   @badkey
-         cmp   #$3A                  ; numbers are good input
-         bcc   @goodkey
-         cmp   #$41                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$5B                  ; uppercase letters are good input
-         bcs   +
-         ora   #$20                  ; convert uppercase letters to lowercase
-@goodkey
-         ldx   #0
-         rts
-
-+        cmp   #$61                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$7B                  ; lowercase letters are good input
-         bcc   @goodkey
-@badkey
-         ldx   #1
-         rts
-
-IsUpDownOrRightArrow
-         cmp   #$8B                  ; up arrow
-         beq   @done
-         cmp   #$95                  ; right arrow
-         beq   @done
-         cmp   #$8A                  ; down arrow
-@done    rts
-
-; indices into InputDispatchTable
-kInputSearch   = 0
-kInputClear    = 1
-kInputBack     = 2
-kInputBrowse   = 3
-kInputTab      = 4
-kInputLaunch   = 5
-kInputHelp     = 6
-kInputCredits  = 7
-kInputCheat    = 8
-kInputError    = 9
-
-InputDispatchTableLo
-         !byte <OnSearch
-         !byte <OnClear
-         !byte <OnBack
-         !byte <BrowseMode
-         !byte <OnTab
-         !byte <OnLaunch
-         !byte <Help
-         !byte <Credits
-         !byte <OnCheat
-         !byte <OnError
-InputDispatchTableHi
-         !byte >OnSearch
-         !byte >OnClear
-         !byte >OnBack
-         !byte >BrowseMode
-         !byte >OnTab
-         !byte >OnLaunch
-         !byte >Help
-         !byte >Credits
-         !byte >OnCheat
-         !byte >OnError
-
-kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
-InputKeys
-         !byte $83                   ; Ctrl-C = toggle cheat mode
-         !byte $A6                   ; '&' = credits
-         !byte $AF                   ; '/' = help
-         !byte $BF                   ; '?' = help
-         !byte $A0                   ; Space = mini attract mode
-         !byte $89                   ; TAB = mini attract mode
-         !byte $88                   ; left arrow = delete (may as well, since
-                                     ;   popular emulators remap this anyway)
-         !byte $FF                   ; backspace = delete
-         !byte $8D                   ; ENTER = launch current game (if any)
-         !byte $9B                   ; Esc = clear input buffer (if any)
-                                     ;   or switch to mega attract mode
-InputKeyDispatch
-         !byte kInputCheat
-         !byte kInputCredits
-         !byte kInputHelp
-         !byte kInputHelp
-         !byte kInputTab
-         !byte kInputTab
-         !byte kInputBack
-         !byte kInputBack
-         !byte kInputLaunch
-         !byte kInputClear
+         ; /!\ execution falls through to ui.animation/MaybeAnimateTitle

@@ -8,6 +8,8 @@
 ; - Home
 ; - BlankHGR
 ; - BlankDHGR
+; - IsSearchKey
+; - IsUpDownOrRightArrow
 ; - ExecuteTransitionAndWait
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
@@ -114,7 +116,7 @@ BlankHGR
          jsr   Home
          jsr   ClearHGR1             ; clear hi-res screen 1
          bit   PAGE1                 ; show hi-res screen 1 (now blank)
-         ; execution falls through here
+         ; /!\execution falls through here to HGRMode
 ;------------------------------------------------------------------------------
 ; HGRMode
 ; twiddles softswitches to set HGR mode (does not set page 1 or 2)
@@ -127,6 +129,49 @@ HGRMode
          bit   $C052
          bit   $C050
          rts
+
+;------------------------------------------------------------------------------
+; IsSearchKey
+; test whether accumulator contains a key that might trigger a new textrank
+; search
+;
+; in:    A = key
+; out:   A &= 0x7F
+;        Y preserved
+;        X clobbered
+;        Z = 1 if this is a search key
+;        Z = 0 if this is not a search key
+;------------------------------------------------------------------------------
+IsSearchKey
+         and   #$7F                  ; strip high bit for search characters
+         cmp   #$30                  ; control keys and punctuation ignored
+         bcc   @badkey
+         cmp   #$3A                  ; numbers are good input
+         bcc   @goodkey
+         cmp   #$41                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$5B                  ; uppercase letters are good input
+         bcs   +
+         ora   #$20                  ; convert uppercase letters to lowercase
+@goodkey
+         ldx   #0
+         rts
+
++        cmp   #$61                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$7B                  ; lowercase letters are good input
+         bcc   @goodkey
+@badkey
+         ldx   #1
+         rts
+
+IsUpDownOrRightArrow
+         cmp   #$8B                  ; up arrow
+         beq   @done
+         cmp   #$95                  ; right arrow
+         beq   @done
+         cmp   #$8A                  ; down arrow
+@done    rts
 
 ;------------------------------------------------------------------------------
 ; ExecuteTransitionAndWait
@@ -181,7 +226,7 @@ WaitForKeyFor30Seconds
          bne   @loop
          dec   Timeout+2
          bne   @loop
-         ; execution falls through here
+         ; /!\ execution falls through here to CoverFade
 CoverFade
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage

@@ -174,4 +174,4 @@ HGRActionCallback
          sta   gPathname,y
          +LDADDR gPathname
          sec
-         jmp   DrawString
+         ; /!\ execution falls through to glue.font/DrawString

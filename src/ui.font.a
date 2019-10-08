@@ -126,7 +126,7 @@ DrawStringInternal
          inc   PTR+1
 +
          +LDAY PTR
-; note: execution falls through here
+         ; /!\ execution falls through here to DrawBufferInternal
 
 DrawBufferInternal
 ; A/Y contains address of character buffer

@@ -308,7 +308,7 @@ okvs_next
          tax
 +
          +LDAY PARAM
-         ; execution falls through here
+         ; /!\ execution falls through here to okvs_nth
 ;------------------------------------------------------------------------------
 ; okvs_nth
 ; get (N)th key

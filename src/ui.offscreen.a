@@ -134,8 +134,7 @@ ClearHGR1
 
 ResyncPage
          jsr   ToggleOffscreenPage
-         ; execution falls through here
-
+         ; /!\ execution falls through here to ShowOtherPage
 ;------------------------------------------------------------------------------
 ; ShowOtherPage
 ; switch to the HGR page that is not currently showing

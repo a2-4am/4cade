@@ -42,7 +42,8 @@ Reenter
          cld
          cli
          jsr   SwitchToBank2
-         jsr   DisableAccelerator
+         jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
+                                     ; which restores default speed on Ctrl-Reset)
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
          jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
          ldx   #5
@@ -81,27 +82,33 @@ ResetVector                          ; 6 bytes, copied to $100
          jmp   Reenter
 
          ; these routines will only be called after relocating to language card
-         !source "src/ui.search.mode.a"
-         !source "src/ui.browse.mode.a"
+         !source "src/ui.search.mode.a"         ; \__ execution falls through
+         !source "src/ui.animation.a"           ; /
+
+         !source "src/ui.credits.a"             ; \__ execution falls through
+         !source "src/ui.browse.mode.a"         ; /
+
          !source "src/prodos.path.a"
          !source "src/ui.overlay.a"
          !source "src/ui.offscreen.a"
-         !source "src/ui.animation.a"
-         !source "src/ui.credits.a"
          !source "src/ui.attract.mode.a"
-         !source "src/ui.attract.hgr.a"
          !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
+
+         !source "src/ui.attract.hgr.a"         ; \__ execution falls through
+         !source "src/glue.font.a"              ; /
+
          !source "src/ui.cheats.a"
          !source "src/glue.launch.a"
-         !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
          !source "src/wait.a"
          !source "src/textrank.a"
          !source "src/parse.common.a"
-         !source "src/parse.prefs.a"
-         !source "src/glue.font.a"
+
+         !source "src/parse.prefs.a"            ; \__ execution falls through
+         !source "src/glue.prorwts2.a"          ; /
+
          ; add new files above here so ui.common stays last
          !source "src/ui.common.a"
 gAttractModeStore

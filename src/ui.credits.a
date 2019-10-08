@@ -32,7 +32,7 @@ Help
          jsr   ShowOtherPage
          jsr   WaitForKeyFor30Seconds
          cmp   #$88
-         beq   +
+         beq   BrowseMode
          cmp   #$83
          beq   -
          jsr   IsUpDownOrRightArrow
@@ -40,4 +40,3 @@ Help
          jsr   IsSearchKey
          beq   -
          bne   --
-+        jmp   BrowseMode

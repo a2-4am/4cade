@@ -6,6 +6,7 @@
 ; - MaybeAnimateTitle
 ;
 
+         ; /!\ execution falls through from ui.search.mode/FindMatchingTitle
 MaybeAnimateTitle
 ; out:   C clear
          lda   OffscreenPage
