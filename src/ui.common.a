@@ -175,11 +175,11 @@ WaitForKeyFor30Seconds
          bne   +                     ; reset (may be used as a pseudorandom
          inc   RNDSEED               ; seed)
 +
-         dec   Timeout               ; these are a 3-byte timeout counter
-         bne   @loop                 ; that counts down from a number set
-         dec   Timeout+1             ; in .ResetInputTimeout and reset
-         bne   @loop                 ; on every keypress (whether or not
-         dec   Timeout+2             ; the key leads to an action)
+         dec   Timeout
+         bne   @loop
+         dec   Timeout+1
+         bne   @loop
+         dec   Timeout+2
          bne   @loop
          ; execution falls through here
 CoverFade
