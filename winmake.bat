@@ -149,4 +149,5 @@ for %%q in (src\prelaunch\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
+for %%q in (res\title.hgr\*) do if not exist build\prelaunch\%%~nq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nq
 )
