@@ -5,7 +5,6 @@
 ;
 ; Public functions
 ; - Home
-; - BlankHGR
 ; - BlankDHGR
 ; - IsSearchKey
 ; - IsUpDownOrRightArrow
@@ -66,32 +65,6 @@ BlankDHGR
          sta   DHIRESON
          bit   PAGE1
          jmp   HGRMode
-
-;------------------------------------------------------------------------------
-; BlankHGR
-; clear and show HGR page 1 without flickering
-;
-; in:    none
-; out:   text page clobbered (but screen holes preserved)
-;        $2000..$3FFF cleared
-;------------------------------------------------------------------------------
-BlankHGR
-         jsr   Home
-         jsr   ClearHGR1             ; clear hi-res screen 1
-         bit   PAGE1                 ; show hi-res screen 1 (now blank)
-         ; /!\execution falls through here to HGRMode
-;------------------------------------------------------------------------------
-; HGRMode
-; twiddles softswitches to set HGR mode (does not set page 1 or 2)
-;
-; in:    none
-; out:   all registers preserved
-;------------------------------------------------------------------------------
-HGRMode
-         bit   $C057
-         bit   $C052
-         bit   $C050
-         rts
 
 ;------------------------------------------------------------------------------
 ; IsSearchKey

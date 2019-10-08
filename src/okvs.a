@@ -393,7 +393,8 @@ okvs_update
 ;          X = numeric index of record
 ;          A/Y = address of key or value (depends on which entry point you call)
 ;        all registers are clobbered
-;        all flags clobbered
+;        Z=1
+;        all other flags clobbered
 ;        PARAM clobbered
 ;        PTR clobbered
 ;------------------------------------------------------------------------------
