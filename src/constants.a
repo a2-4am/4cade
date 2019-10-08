@@ -63,7 +63,7 @@ zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 5 = 1 if machine has a VidHD card
                           ; bit 4 = 1 if machine is a IIgs
                           ; only used during init, then copied to MachineStatus in LC RAM
-zpCharMask   = $F1        ; only uesd during init, then clobbered
+zpCharMask   = $F1        ; only used during init, then clobbered
 
 ; zero page
 PARAM        = $00        ; word (used by PARAMS_ON_STACK macro, so basically everywhere)
