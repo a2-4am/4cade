@@ -13,9 +13,8 @@
 
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvs   +
-DHGRRTS  rts
-+        jsr   LoadDHGRTransition    ; load transition effect code at $6000
+         bvc   DHGRRTS
+         jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
          !word gSlideshowStore
@@ -71,7 +70,7 @@ HGRMode
          bit   $C057
          bit   $C052
          bit   $C050
-         rts
+DHGRRTS  rts
 
 ;------------------------------------------------------------------------------
 ; LoadDHGRTransition [private]
@@ -110,7 +109,7 @@ LoadDHGRTransition
          !word kFXDirectory
 ++       !word $FDFD                ; SMC
          !word $6000
--        rts
+         rts
 
 ;------------------------------------------------------------------------------
 ; DHGRTitleCallback [private]
@@ -126,7 +125,7 @@ LoadDHGRTransition
 ;------------------------------------------------------------------------------
 DHGRTitleCallback
          bit   KBD
-         bmi   -
+         bmi   DHGRRTS
 
          +STAY +
 
@@ -159,7 +158,7 @@ DHGRTitleCallback
 ;------------------------------------------------------------------------------
 DHGRActionCallback
          bit   KBD
-         bmi   -
+         bmi   DHGRRTS
 
          +STAY +
 
