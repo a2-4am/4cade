@@ -5,6 +5,7 @@
 ;
 ; Public functions
 ; - SearchMode
+; - SoftBell
 ;
 
 ; indices into InputDispatchTable
@@ -201,7 +202,39 @@ FindMatchingTitle
 OnError
          jsr   SwitchToBank2
          jsr   DisableAcceleratorAndSwitchToBank1
-         jmp   SoftBell              ; Beep on invalid input and start over.
+         ; /!\ execution falls through to SoftBell
+;------------------------------------------------------------------------------
+; SoftBell
+; yell at the user, but, like, gently
+;
+; in:    none
+; out:   C clear
+;        Y preserved
+;        A=0
+;        X=0
+;        all flags preserved
+;------------------------------------------------------------------------------
+SoftBell
+         ldx   #32
+-        lda   #2
+         jsr   @wait
+         bit   SPEAKER
+         lda   #33
+         jsr   @wait
+         bit   SPEAKER
+         dex
+         bne   -
+         clc
+         rts
+@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
+         sec
+--       pha
+-        sbc   #1
+         bne   -
+         pla
+         sbc   #1
+         bne   --
+         rts
 
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
