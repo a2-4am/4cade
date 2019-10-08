@@ -56,14 +56,11 @@ MegaAttractMode
          +LDAY @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
-         bpl   @jmpattract
+         bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
-         bne   @jmpsearch            ; Any other key switches to Search Mode.
+         bne   +                     ; Any other key switches to Search Mode.
          jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
-@jmpattract
-         jmp   MegaAttractMode
-@jmpsearch
-         jmp   SearchMode
++        jmp   SearchMode
 
 ;------------------------------------------------------------------------------
 ; MiniAttractMode
