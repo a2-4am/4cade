@@ -36,33 +36,33 @@ sNoCheats
          !text "no cheat"
 sInfiniteLives
          !byte 18
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
          !text " "
          !text "infinite lives"
          !text " "
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
 sInfiniteLivesAndWeapons
          !byte 28
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
          !text " "
          !text "infinite lives & weapons"
          !text " "
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
 sCheatsEnabled
          !byte 18
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
          !text " "
          !text "cheats enabled"
          !text " "
-         !byte $16        ; bolt
+         !byte $16        ; bolt character
 sCheatDescriptionPrefix
          !byte 2
-         !byte $03        ; vertical line
+         !byte $03        ; vertical line character
          !text " "
 sCheatDescriptionSuffix
          !byte 2
          !text " "
-         !byte $03        ; vertical line
+         !byte $03        ; vertical line character
 
 ;------------------------------------------------------------------------------
 ; DrawUIWithoutDots/DrawUI
