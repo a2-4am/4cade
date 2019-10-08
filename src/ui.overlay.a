@@ -32,35 +32,35 @@ kCheatDescriptionHi
          !byte >sInfiniteLivesAndWeapons
          !byte >sCheatsEnabled
 sNoCheats
-         !byte 8
+         !byte 8          ; length
          !text "no cheat"
 sInfiniteLives
-         !byte 18
+         !byte 18         ; length
          !byte $16        ; bolt character
          !text " "
          !text "infinite lives"
          !text " "
          !byte $16        ; bolt character
 sInfiniteLivesAndWeapons
-         !byte 28
+         !byte 28         ; length
          !byte $16        ; bolt character
          !text " "
          !text "infinite lives & weapons"
          !text " "
          !byte $16        ; bolt character
 sCheatsEnabled
-         !byte 18
+         !byte 18         ; length
          !byte $16        ; bolt character
          !text " "
          !text "cheats enabled"
          !text " "
          !byte $16        ; bolt character
 sCheatDescriptionPrefix
-         !byte 2
+         !byte 2          ; length
          !byte $03        ; vertical line character
          !text " "
 sCheatDescriptionSuffix
-         !byte 2
+         !byte 2          ; length
          !text " "
          !byte $03        ; vertical line character
 
