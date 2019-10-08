@@ -9,7 +9,7 @@
 ; D000..E611 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EC22..FFF9 - main program code
+; EC23..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
