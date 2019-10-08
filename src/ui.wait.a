@@ -27,10 +27,9 @@ ExecuteTransitionAndWait
          bpl   -
 +        lda   KBD
          cmp   #$95
-         bne   ConvenientlyPlacedRTS
+         bne   WAITRTS
          bit   CLEARKBD
-ConvenientlyPlacedRTS
-         rts
+WAITRTS  rts
 
 ; /!\ keep this last in the file to ensure it doesn't cross a page boundary /!\
 ;------------------------------------------------------------------------------
@@ -49,7 +48,7 @@ WaitForKeyFor30Seconds
          sta   Timeout+2
 @loop
          lda   KBD
-         bmi   ConvenientlyPlacedRTS
+         bmi   WAITRTS
 
          inc   RNDSEED+1             ; these are only ever incremented, never
          bne   +                     ; reset (may be used as a pseudorandom
