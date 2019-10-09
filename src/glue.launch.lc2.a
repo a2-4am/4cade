@@ -1,0 +1,23 @@
+LaunchInternal
+         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
+         ldy   #$F1
+-        lda   $100,y
+         sta   STACKBASE - $F0,y               ; back up stack
+         iny
+         bne   -
+         tsx                         ; back up stack pointer
+         stx   STACKBASE
+         sty   RestoreStackNextTime + 1
+                                     ; tell |Reenter| to restore the stack and stack pointer
+
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy ProDOS shim to main memory
+         sta   $bf00,x
+         dex
+         bpl   -
+         tya
+         ldy   #$18
+-        sta   $bf57,y
+         dey
+         bne   -
+         jmp   $106                  ; jump to pre-launch code

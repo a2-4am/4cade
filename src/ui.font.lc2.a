@@ -1,0 +1,224 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; hi-res font drawing routines
+;
+; /!\ These live in LC RAM 2 and rely on the font data which is also in LC RAM 2. /!\
+; Code in LC RAM 1 (which is most program code) should call the functions in glue.font
+; which handle bank switching for you.
+;
+; Public functions
+; - DrawPageInternal
+; - Draw40CharsInternal
+; - DrawCenteredStringInternal
+; - DrawStringInternal
+; - DrawBufferInternal
+;
+
+DrawPageInternal
+; A/Y contains address of character buffer
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; drawing starts at VTAB 0, HTAB 0
+; clobbers PTR
+; clobbers A/X/Y
+; preserves all flags, by a quirk of implementation
+         php
+         ldx   #0
+         stx   VTAB
+         +STAY PTR
+@drawLine
+         ldy   #0
+         sty   HTAB
+@parseLine
+         lda   (PTR),y
+         cmp   #$5B                  ; '[' at beginning on line
+         bne   +                     ; ends the parsing
+         tya
+         beq   @donePage
++        cmp   #$0D
+         beq   @doneParsingLine
+         cmp   #$2A
+         bne   +
+         lda   #$10
+         sta   (PTR),y               ; asterisk -> dot, small
++        cmp   #$7E
+         bne   +
+         lda   #$11
+         sta   (PTR),y               ; tilde -> dot, medium
++        iny
+         bne   @parseLine
+@doneParsingLine
+         sty   SAVE
+         cpy   #0
+         beq   @skip
+         ldx   SAVE
+         +LDAY PTR
+         plp
+         php
+         jsr   DrawBufferInternal
+@skip    inc   SAVE                  ; skip carriage return
+         lda   SAVE                  ; advance PTR to start of next line
+         clc
+         adc   PTR
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++        inc   VTAB                  ; this will print 255 lines if you give it
+         bne   @drawLine             ; 255 lines, so don't do that
+@donePage
+         plp
+         rts
+
+Draw40CharsInternal
+; A/Y contains address of character buffer
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; $25 contains textpage line (0..23) (this is the standard VTAB address)
+; drawing starts at HTAB 0
+; increments VTAB
+; sets HTAB to 0 on exit
+; clobbers A/X/Y
+         jsr   +
+         ldx   #40
+         jsr   DrawBufferInternal
+         inc   VTAB
++        ldx   #0
+         stx   HTAB
+         rts
+
+DrawCenteredStringInternal
+; A/Y contains address of length-prefixed string
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; $25 contains textpage line (0..23) (this is the standard VTAB address)
+; clobbers A/X/Y
+; clobbers PTR/PTR+1
+         +STAY PTR
+
+         php
+         ldy   #0
+         lda   (PTR),y
+         sta   HTAB
+         lda   #40
+         sec
+         sbc   HTAB
+         lsr
+         sta   HTAB
+         plp
+         jmp   +
+
+DrawStringInternal
+; A/Y contains address of length-prefixed string
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; $24 contains starting column (0..39) (this is the standard HTAB address)
+; $25 contains textpage line (0..23) (this is the standard VTAB address)
+; clobbers A/X/Y
+; clobbers PTR/PTR+1
+         +STAY PTR
+
+         ldy   #0
++        lda   (PTR),y
+         tax
+         inc   PTR
+         bne   +
+         inc   PTR+1
++
+         +LDAY PTR
+         ; /!\ execution falls through here to DrawBufferInternal
+
+DrawBufferInternal
+; A/Y contains address of character buffer
+; X contains buffer length (1..40)
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; characters MUST have high bit off (0x00..0x7F)
+; special characters (0x00..0x1F) will be drawn
+; $24 contains starting column (0..39) (this is the standard HTAB address)
+; $25 contains textpage line (0..23) (this is the standard VTAB address)
+; all characters are drawn on the same line
+; HTAB is incremented for each character
+; VTAB is NOT incremented
+; clobbers A/X/Y
+         +STAY @src+1
+         bcs   +
+         lda   #$00
+         +HIDE_NEXT_2_BYTES
++
+         lda   #$60
+         sta   @pagemask
+         dex
+         lda   VTAB
+         asl
+         asl
+         asl
+; routine to calculate memory address within HGR page
+; and self-modify addresses within draw loop that follows
+; (routine clobbers A and Y but preserves X)
+         asl
+         tay
+         and   #$F0
+         bpl   @calc1
+         ora   #$05
+@calc1   bcc   @calc2
+         ora   #$0A
+@calc2   asl
+         asl
+         sta   @hgrlo+1
+         tya
+         and   #$0E
+         adc   #$10
+         asl   @hgrlo+1
+         rol
+@pagemask=*+1
+         eor   #$FD                  ; SMC (0=hi-res page 1, #$60=hi-res page 2)
+         sta   @row0+2
+         clc
+         adc   #$04
+         sta   @row1+2
+         adc   #$04
+         sta   @row2+2
+         adc   #$04
+         sta   @row3+2
+         adc   #$04
+         sta   @row4+2
+         adc   #$04
+         sta   @row5+2
+         adc   #$04
+         sta   @row6+2
+         adc   #$04
+         sta   @row7+2
+@hgrlo   lda   #$FD
+         clc
+         adc   HTAB
+         sta   @row0+1
+         sta   @row1+1
+         sta   @row2+1
+         sta   @row3+1
+         sta   @row4+1
+         sta   @row5+1
+         sta   @row6+1
+         sta   @row7+1
+@loop
+@src     ldy   $FDFD,x
+         lda   FontDataRow0,y
+@row0    sta   $FDFD,x
+         lda   FontDataRow1,y
+@row1    sta   $FDFD,x
+         lda   FontDataRow2,y
+@row2    sta   $FDFD,x
+         lda   FontDataRow3,y
+@row3    sta   $FDFD,x
+         lda   FontDataRow4,y
+@row4    sta   $FDFD,x
+         lda   FontDataRow5,y
+@row5    sta   $FDFD,x
+         lda   FontDataRow6,y
+@row6    sta   $FDFD,x
+         lda   FontDataRow7,y
+@row7    sta   $FDFD,x
+         inc   HTAB
+         dex
+         bpl   @loop
+         rts

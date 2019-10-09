@@ -89,7 +89,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.browse.mode.a"         ; /
 
          !source "src/ui.attract.hgr.a"         ; \__ execution falls through
-         !source "src/glue.font.a"              ; /
+         !source "src/ui.font.a"                ; /
 
          !source "src/prodos.path.a"
          !source "src/ui.overlay.a"
@@ -149,11 +149,13 @@ LastMover
   FONTSRC = *
   !pseudopc STACKBASE + 16 {
     FONTDST = *
-         !source "src/ui.font.data.a"
+         !source "src/ui.font.data.lc2.a"
     COPYDST = *
     COPYSRC = LastMover + COPYDST - FONTDST
-         !source "src/ui.font.a"
-         !source "src/prodos.impl.a"
+         !source "src/ui.font.lc2.a"
+         !source "src/prodos.impl.lc2.a"
+         !source "src/glue.prorwts2.lc2.a"
+         !source "src/glue.launch.lc2.a"
     LCRAM2_END = *
     !if * > $E000 {
       !error "code is too large: ends at ", *
@@ -166,8 +168,10 @@ EvenLasterMover
   COPYSRC = *
   !pseudopc hdddataend {
     COPYDST = *
-         !source "src/prodos.impl.a"
-         !source "src/ui.font.a"
+         !source "src/prodos.impl.lc2.a"
+         !source "src/ui.font.lc2.a"
+         !source "src/glue.prorwts2.lc2.a"
+         !source "src/glue.launch.lc2.a"
     STACKBASE = *
     LCRAM2_END = STACKBASE + 16
     FONTDST = (LCRAM2_END + 255) and -256
@@ -175,7 +179,7 @@ EvenLasterMover
 EvenLasterMover
   FONTSRC = *
   !pseudopc FONTDST {
-         !source "src/ui.font.data.a"
+         !source "src/ui.font.data.lc2.a"
     !if * > $E000 {
       !error "code is too large: ends at ", *
     }
