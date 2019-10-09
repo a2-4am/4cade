@@ -9,29 +9,22 @@
          ; /!\ execution falls through from ui.search.mode/FindMatchingTitle
 MaybeAnimateTitle
 ; out:   C clear
-         lda   OffscreenPage
+         lda   #$3F
+         ldy   OffscreenPage
          bne   +
-         lda   #$5F
-         +HIDE_NEXT_2_BYTES
-+        lda   #$3F
-         sta   SAVE+1
+         eor   #$60
++        sta   SAVE+1
+         and   #$60
+         sta   @a+2
+         eor   #$60
+         sta   @b+2
          lda   #$FD
          sta   SAVE
          ldy   #0
          lda   (SAVE),y              ; see if there is a hidden JMP to an
          cmp   #$4C                  ; animation routine for this screen
          bne   @exit
-         ldx   #$20                  ; copy new HGR screen to the other
-         ldy   #$40
-         lda   OffscreenPage
-         beq   +
-         stx   @a+2
-         sty   @b+2
-         jmp   ++
-+        sty   @a+2
-         stx   @b+2
-++       ldx   #$20
-         ldy   #0
+         ldx   #$20
 @a       lda   $FD00,y               ; SMC
 @b       sta   $FD00,y               ; SMC
          iny

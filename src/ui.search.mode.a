@@ -74,8 +74,15 @@ InputKeyDispatch
          beq   .foundSearchKey
          ldx   #kInputError
          +HIDE_NEXT_2_BYTES
+.IsArrow
+         ldx   #kInputBrowse
+!if kInputSearch > 0 {
+         +HIDE_NEXT_2_BYTES
 .foundSearchKey
          ldx   #kInputSearch
+} else {
+.foundSearchKey
+}
          ; execution falls through here to .InputDispatch
 .InputDispatch
          ldy   InputDispatchTableLo,x
@@ -115,10 +122,7 @@ SearchMode
          ; that mode finds and dispatches the arrow key.
 
          jsr   IsUpDownOrRightArrow
-         bne   @notArrow
-         ldx   #kInputBrowse
-         bne   .InputDispatch        ; always branches
-@notArrow
+         beq   .IsArrow
          bit   CLEARKBD
 
          ldy   #kNumBrowseKeys

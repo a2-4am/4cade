@@ -73,13 +73,12 @@ sCheatDescriptionSuffix
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawUIWithoutDots
-         lda   #" "
-         clc
-         bcc   +
+         lda   #" " * 2
+         +HIDE_NEXT_2_BYTES
 DrawUI
-         lda   #$7F
-         sec
-+        sta   @printCursor+1        ; set up cursor printing based on entry point
+         lda   #$FF                  ; #$7F * 2
+         lsr
+         sta   @printCursor+1        ; set up cursor printing based on entry point
          php
 
          ldy   #39
