@@ -7,13 +7,6 @@
 ; Code in LC RAM 1 (which is most program code) should call the functions in ui.font
 ; which handle bank switching for you.
 ;
-; Public functions
-; - DrawPageInternal
-; - Draw40CharsInternal
-; - DrawCenteredStringInternal
-; - DrawStringInternal
-; - DrawBufferInternal
-;
 
 DrawPageInternal
 ; A/Y contains address of character buffer

@@ -18,7 +18,6 @@
 ; - OffscreenPage
 ;
 
-
 ;------------------------------------------------------------------------------
 ; GetOffscreenAddress
 ; get high byte of HGR page that is currently not showing
