@@ -105,35 +105,47 @@ PlayGame
 @pfile   !word $FDFD
          !word $0106
 
-         ldx   #1                    ; construct path to game's startup file
-         sec                         ; which is always /X/game/game
-         !byte $2c
---       pha
-         clc
-         php
-         ldy   #0
-         lda   (SAVE), y
-         tay
-         iny
-         sty   MAX
-         ldy   #0
-         lda   #'X'
-         sta   ProDOS_prefix+1
-         lda   #'/'
--        inx
-         sta   ProDOS_prefix, x
-         iny
-         lda   (SAVE), y
-         cpy   MAX
-         bne   -
-         txa
-         plp
-         bcs   --
-         stx   ProDOS_prefix
+         ; we start by placing the subdirectory name at gPathname+kGameDirectoryLen
+         ; to leave room for the GameDirectory name as the parent
 
+         lda   #kGameDirectoryLen
+         sta   gPathname
+         +LDAY SAVE
+         jsr   AddToPath
+
+         ; then we save the length of the resulting string without the count byte
+
+         ldx   gPathname
+         dex
+         txa
+         pha
+
+         ; attach the separator
+
+         inc   gPathname
+         lda   #'/'
+         sta   gPathname+1,x
+
+         ; then attach the game name
+
+         +LDAY SAVE
+         jsr   AddToPath
+
+         ; don't look while I do this
+         ; we "place" a string at gPathname+kGameDirectoryLen
+         ; whose length is the subdirectory name and game name
+         ; then we load it
+         ; the load sets the path to the GameDirectory
+         ; and then finds the subdirectory name and game name right after it
+         ; and attaches it to the path by overwriting the count byte
+
+         sec
+         lda   gPathname
+         sbc   #kGameDirectoryLen
+         sta   gPathname+kGameDirectoryLen
          jsr   LoadFile              ; load the game startup file
-         !word kRootDirectory
-         !word ProDOS_prefix
+         !word kGameDirectory
+         !word gPathname+kGameDirectoryLen
          !word 0                     ; use file's default address
 
          pla

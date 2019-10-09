@@ -42,13 +42,6 @@ MaybeAnimateTitle
 +        !word $FDFD
          !word 0
 
-         ldy   kAnimatedTitleDirectory
-         sty   ProDOS_prefix         ; temporarily set 'root' directory to
--        lda   kAnimatedTitleDirectory,y;/title.animated/ so animation file
-         sta   ProDOS_prefix, y      ; can load other files in the same subdirectory
-         dey
-         bne   -
-
          ldx   #5                    ; copy prelaunch code
 -        lda   @titleAnimPrelaunch,x
          sta   $106,x

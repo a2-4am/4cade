@@ -51,6 +51,7 @@ kDemoDirectory
 kGameDirectory
          !byte 2
          !raw  "X/"
+kGameDirectoryLen = 3 ; we need this elsewhere
 
 kFXDirectory
          !byte 3
@@ -144,7 +145,3 @@ AddToPath
          stx   gPathname
 @done
          rts
-
-;!if >kTitleFile != >kCoverFile {
-;  !error ">kTitleFile != >kCoverFile, uncomment LoadTitleOffscreen block in ui.offscreen and disable this check"
-;}

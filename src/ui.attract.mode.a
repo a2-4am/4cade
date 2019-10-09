@@ -150,13 +150,6 @@ RunAttractModule
          !word kStandardPrelaunch
          !word $0106
 
-         ldy   kDemoDirectory
-         sty   ProDOS_prefix         ; temporarily set 'root' directory to
--        lda   kDemoDirectory, y     ; /demos/ directory so demos can can load
-         sta   ProDOS_prefix, y      ; other resources in the same directory
-         dey
-         bne   -
-
          jsr   LoadFile              ; load self-running demo into its default address (varies)
          !word kDemoDirectory
 @key     !word $FDFD

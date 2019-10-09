@@ -9,7 +9,7 @@
 ; D000..E611 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EC41..FFF9 - main program code
+; EC5F..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -99,7 +99,7 @@ BestMatchIndex = $FD      ; byte
 ;              $FF        ; used by ParseGamesList
 
 ; main memory
-gPathname    = $1F00      ; used by SetPath/AddToPath
+gPathname    = $BFD0      ; used by SetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
 UILine1      = $1FB0

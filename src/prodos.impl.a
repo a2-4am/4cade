@@ -524,7 +524,7 @@ ProDOS_fatal ;only for debugging, will be removed
 ;;*=$bf58
 ;;      !fill $18 ;filled by init instead
 
-ProDOS_prefix=$bfd0
+ProDOS_prefix=gPathname
 ;       !fill $2e
 }
 end_promote
