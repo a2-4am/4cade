@@ -1,7 +1,7 @@
 ;license:MIT
 ;(c) 2018-9 by 4am & qkumba
 ;
-; ProRWTS2 glue functions
+; Functions to launch games and self-running demos
 ;
 ; /!\ These live in LC RAM 2 and rely on the ProRWTS code which is also in LC RAM 2. /!\
 ; Code in LC RAM 1 (which is most program code) should call the functions in glue.launch
