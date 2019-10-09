@@ -52,6 +52,8 @@ Has128K
          sta   $80,x
          sta   SETAUXZP              ; also copy to aux zp in case we pass
          sta   $80,x
+         cmp   $80,x
+         bne   @no
          sta   CLRAUXZP
          dex
          bpl   -
