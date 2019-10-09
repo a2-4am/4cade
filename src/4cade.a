@@ -156,6 +156,7 @@ LastMover
          !source "src/prodos.impl.lc2.a"
          !source "src/glue.prorwts2.lc2.a"
          !source "src/glue.launch.lc2.a"
+         !source "src/hw.accel.lc2.a"
     LCRAM2_END = *
     !if * > $E000 {
       !error "code is too large: ends at ", *
@@ -172,6 +173,7 @@ EvenLasterMover
          !source "src/ui.font.lc2.a"
          !source "src/glue.prorwts2.lc2.a"
          !source "src/glue.launch.lc2.a"
+         !source "src/hw.accel.lc2.a"
     STACKBASE = *
     LCRAM2_END = STACKBASE + 16
     FONTDST = (LCRAM2_END + 255) and -256

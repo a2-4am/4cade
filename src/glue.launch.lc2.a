@@ -1,3 +1,12 @@
+;license:MIT
+;(c) 2018-9 by 4am & qkumba
+;
+; ProRWTS2 glue functions
+;
+; /!\ These live in LC RAM 2 and rely on the ProRWTS code which is also in LC RAM 2. /!\
+; Code in LC RAM 1 (which is most program code) should call the functions in glue.launch
+; which handle bank switching for you.
+
 LaunchInternal
          jsr   SaveOrRestoreScreenHoles ; save screen hole contents
          ldy   #$F1

@@ -1,11 +1,24 @@
-;;; NORMFAST Disable/enable Apple II compatible accelerator
+;license:MIT
+;(c) 2019 by 4am & qkumba
 ;
-; Release 7 2019-10-04 No functional changes to the
-; acceleration routines, but for Total Replay, we split the
-; machine identification code from the (de)acceleration code,
-; because we can do the ID part once at program startup (when
-; ROM is easily available), then (de)accelerate repeatedly
-; from the language card.
+; Functions to enable and disable acceleration on various
+; Apple II models, cards, and environments
+;
+; Forked from NORMFAST Release 6 (see changelog below)
+;
+; No functional changes to the acceleration routines, but for
+; Total Replay, we split the machine identification code from
+; the (de)acceleration code, because we can do the ID part once
+; at program startup (when ROM is easily available), then
+; (de)accelerate repeatedly from the language card (when ROM
+; is switched out).
+;
+; --------------------------------------------------------------
+;
+; Original changelog and documentation:
+;
+;;; NORMFAST Disable/enable Apple II compatible accelerator
+; (no copyright info given)
 ;
 ; Release 6 2017-10-05 Fix Mac IIe card check
 ;
@@ -56,8 +69,6 @@
 ; in mind.
 
 ; addresses are lowercase, constant values are in CAPS
-
-RELEASE         =    7       ; our version
 
 romid           =    $FBB3
 ; $38=][, $EA=][+, $06=//e compatible

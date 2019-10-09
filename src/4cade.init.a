@@ -186,7 +186,7 @@ Loader128KAndJoystick
          !byte   15
          !text   "joystick + 128K"
 
-         !source "src/hw.normfast.a"
+         !source "src/hw.accel.a"
          !source "src/parse.games.a"
 
 OneTimeSetup
