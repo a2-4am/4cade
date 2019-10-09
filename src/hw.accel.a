@@ -164,7 +164,7 @@ BuildAcceleratorFunction
 
          ldy   #EX_3MHZMASK ; phew, all needed bits set
          ldx   #<(ex_cfg)
-         jmp   build_setspeed
+         bne   build_setspeed ; always branches
 
 gscheck
          pha
