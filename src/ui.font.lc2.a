@@ -4,7 +4,7 @@
 ; hi-res font drawing routines
 ;
 ; /!\ These live in LC RAM 2 and rely on the font data which is also in LC RAM 2. /!\
-; Code in LC RAM 1 (which is most program code) should call the functions in glue.font
+; Code in LC RAM 1 (which is most program code) should call the functions in ui.font
 ; which handle bank switching for you.
 ;
 ; Public functions
