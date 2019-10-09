@@ -113,18 +113,17 @@ PlayGame
          +LDAY SAVE
          jsr   AddToPath
 
-         ; then we save the length of the resulting string without the count byte
-
-         ldx   gPathname
-         dex
-         txa
-         pha
-
          ; attach the separator
 
          inc   gPathname
          lda   #'/'
          sta   gPathname+1,x
+
+         ; then we save the length of the resulting string without the count byte
+
+         dex
+         txa
+         pha
 
          ; then attach the game name
 
