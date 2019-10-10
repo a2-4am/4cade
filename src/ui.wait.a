@@ -84,3 +84,6 @@ CoverFade
          !word $6000
          jsr   $6000                 ; call transition effect
          jmp   MegaAttractMode       ; exit via mega attract mode
+!if (RELBASE != $2000) and (>WaitForKeyFor30Seconds != >*) {
+  !error "WaitForKeyFor30Seconds crossed a page (", WaitForKeyFor30Seconds, " to ", *
+}
