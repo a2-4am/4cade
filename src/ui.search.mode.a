@@ -149,7 +149,7 @@ OnBack
 
 OnTab
          ldx   gGameToLaunch
-         cpx   #$FF
+         inx
          beq   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
@@ -157,7 +157,7 @@ OnTab
 
 OnLaunch
          ldx   gGameToLaunch
-         cpx   #$FF
+         inx
          beq   OnError
          jsr   PlayGame
 
@@ -178,10 +178,10 @@ OnSearch
          inc   InputLength
          ; execution falls through here to OnInputChanged
 OnInputChanged
-         lda   InputLength
+         ldx   InputLength
          bne   FindMatchingTitle
                                      ; no input, reset params and UI
-         ldx   #$FF
+         dex
          stx   gGameToLaunch         ; no game selected
          jsr   LoadTitleOffscreen
          jsr   DrawUIWithoutDots
@@ -243,14 +243,12 @@ SoftBell
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
          cpx   gGameToLaunch         ; as the current best match
-         stx   gGameToLaunch
          bne   +
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
                                      ; we fake switching the 'offscreen' page
                                      ; in order to draw on the visible page.
          bpl   @noload               ; (always branches)
-+        jsr   LoadGameTitleOffscreen
++        stx   gGameToLaunch
+         jsr   LoadGameTitleOffscreen
 @noload  jsr   DrawUI
-         jsr   SwitchToBank2
-         jsr   DisableAcceleratorAndSwitchToBank1
          ; /!\ execution falls through to ui.animation/MaybeAnimateTitle

@@ -70,24 +70,25 @@ OnBrowseSearch
          jmp   SearchMode
 
 OnBrowsePrevious
-         dec   gGameToLaunch
-         jmp   +
-OnBrowseNext
-         inc   gGameToLaunch
-+
          ldx   gGameToLaunch
-         cpx   #$FF
-         bne   @notTooSmall
-GameCount = *+1
-         ldx   #$D1                  ; SMC
+         bne   .decindex
+         ldx   GameCount
+
+.decindex
          dex
-         bne   @done                 ; always branches
-@notTooSmall
-         cpx   GameCount
-         bcc   @done
-         ldx   #0
-@done    stx   gGameToLaunch
+
+.setindex
+         stx   gGameToLaunch
          jmp   OnBrowseChanged
+
+OnBrowseNext
+         ldx   gGameToLaunch
+         inx
+GameCount = *+1
+         cpx   #$D1                  ; SMC
+         bne   .setindex
+         ldx   #0
+         beq   .setindex             ; branch always
 
 OnBrowseLaunch
          jsr   PlayGame
@@ -112,8 +113,6 @@ OnBrowseChanged
          jsr   EnableAcceleratorAndSwitchToBank1
          jsr   LoadGameTitleOffscreen
          jsr   DrawUIWithoutDots
-         jsr   SwitchToBank2
-         jsr   DisableAcceleratorAndSwitchToBank1
          jmp   MaybeAnimateTitle
 
 ;------------------------------------------------------------------------------

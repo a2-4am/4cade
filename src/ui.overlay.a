@@ -91,27 +91,26 @@ DrawUI
          bpl   -
 
          ldx   gGameToLaunch
-         cpx   #$FF                  ; if no game, nothing more to do on UI line 2
+         inx                         ; if no game, nothing more to do on UI line 2
          beq   @doneWithLine2
 
          jsr   GetGameToLaunch
          jsr   okvs_get_current
                                      ; (PTR) -> game title
-         ldy   #0                    ; copy game title into UI line 2
-         lda   (PTR),y
+         lda   (PTR),y               ; copy game title into UI line 2
          sta   SAVE                  ; title length
          inc   SAVE
 -        iny
-         cpy   SAVE
-         bcc   @printTitleChar
-         beq   @printCursor
-         lda   #" "
-         +HIDE_NEXT_2_BYTES
 @printCursor
          lda   #$FD                  ; SMC
+         cpy   SAVE
+         bcc   @printTitleChar
+         beq   @printChar
+         lda   #" "
          +HIDE_NEXT_2_BYTES
 @printTitleChar
          lda   (PTR),y
+@printChar
          sta   UILine2,y
          cpy   #MaxInputLength+1
          bcc   -
@@ -127,16 +126,7 @@ DrawUI
          and   #CHEATS_ENABLED
          beq   @maybeDrawDots        ; if cheat mode is disabled, we don't need
                                      ; any curves or spaces on UI line 1
-         ldx   gGameToLaunch
-         ldy   gCheatsAvailable,x
-         cpx   #$FF
-         bne   +
-         ldy   #kCheatsEnabled
-+
-         lda   kCheatDescriptionLo,y
-         sta   SAVE
-         lda   kCheatDescriptionHi,y
-         sta   SAVE+1
+         jsr   CheckCheats
                                      ; (SAVE) -> length-prefixed string
                                      ; (game-specific description or 'cheats enabled' message)
          ldy   #0
@@ -171,7 +161,7 @@ DrawUI
 @dotloop
          iny
          lda   (PTR),y               ; (PTR) still points to game title
-         +LOW_ASCII_TO_LOWER
+         ora   #$20                  ; force lower-case always
          cmp   InputBuffer,x
          bne   +
          lda   #$11                  ; dot character
@@ -218,15 +208,7 @@ DrawUI
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 1
 
-         ldx   gGameToLaunch
-         ldy   gCheatsAvailable,x
-         cpx   #$FF
-         bne   +
-         ldy   #kCheatsEnabled
-+        lda   kCheatDescriptionLo,y
-         sta   SAVE
-         lda   kCheatDescriptionHi,y
-         sta   SAVE+1
+         jsr   CheckCheats
                                      ; (SAVE) -> length-prefixed cheat description
          +LDADDR sCheatDescriptionPrefix
          jsr   SetPath
@@ -240,3 +222,16 @@ DrawUI
          jsr   DrawCenteredString    ; draw cheat UI line 2
 
 @uidone  jmp   ShowOtherPage
+
+CheckCheats
+         ldy   #kCheatsEnabled
+         ldx   gGameToLaunch
+         inx
+         beq   +
+         ldy   gCheatsAvailable,x
++
+         lda   kCheatDescriptionLo,y
+         sta   SAVE
+         lda   kCheatDescriptionHi,y
+         sta   SAVE+1
+         rts

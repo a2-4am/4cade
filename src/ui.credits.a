@@ -38,5 +38,5 @@ Help
          jsr   IsUpDownOrRightArrow
          beq   -
          jsr   IsSearchKey
-         beq   -
          bne   --
+         rts

@@ -110,16 +110,8 @@ BlankSHR
          sta   SHADOW
 
          lda   #$20                  ; clear $2000..$9FFF in auxmem
-         sta   @a+2
          ldx   #$80
-         lda   #0
-         tay
-@a       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         dex
-         bne   @a
+         jsr   ClearMem
 
          sta   WRITEMAINMEM          ; writes go to main memory
 

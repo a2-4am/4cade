@@ -118,7 +118,6 @@ kSFXFizzleFile
 ;        Y contains high byte of address of length-prefixed string to append
 ; out:   all registers and flags clobbered
 ;        $02/$03 (PTR/PTR+1) clobbered
-;        MAX clobbered
 ;        gPathname updated with concatenated length-prefixed string
 ;------------------------------------------------------------------------------
 SetPath
@@ -133,14 +132,15 @@ AddToPath
          beq   @done
          tay
          iny
-         sty   MAX
+         sty   @max
          ldx   gPathname             ; current pathname length
          ldy   #$01
 -        lda   (PTR),y
          sta   gPathname+1,x
          inx
          iny
-         cpy   MAX
+@max = *+1
+         cpy   #$D1                  ; SMC
          bcc   -
          stx   gPathname
 @done

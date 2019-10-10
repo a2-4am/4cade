@@ -8,6 +8,9 @@
 
          ; /!\ execution falls through from ui.search.mode/FindMatchingTitle
 MaybeAnimateTitle
+         jsr   SwitchToBank2
+         jsr   DisableAcceleratorAndSwitchToBank1
+
 ; out:   C clear
          lda   #$3F
          ldy   OffscreenPage

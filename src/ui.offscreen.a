@@ -13,6 +13,7 @@
 ; - ToggleOffscreenPage
 ; - ClearOffscreen
 ; - ClearHGR1
+; - ClearMem
 ;
 ; Public variables
 ; - OffscreenPage
@@ -27,16 +28,14 @@
 ;        preserves X/Y
 ;------------------------------------------------------------------------------
 GetOffscreenAddress
+         lda   #$40
 OffscreenPage = * + 1
-         lda   #$00                  ; SMC
+         bne   +                     ; SMC
                                      ; 0 = currently showing HGR page 2
                                      ;     (so offscreen is page 1 @ $2000)
                                      ; 1 = currently showing HGR page 1
                                      ;     (so offscreen is page 2 @ $4000)
-         beq   +
-         lda   #$40
-         rts
-+        lda   #$20
++        lsr
          rts
 
 ;------------------------------------------------------------------------------
@@ -113,8 +112,9 @@ ClearOffscreen
          +HIDE_NEXT_2_BYTES
 ClearHGR1
          lda   #$20                  ; note to self: LDX #$20 can't move here
-         sta   @a+2
          ldx   #$20
+ClearMem
+         sta   @a+2
          lda   #$80
          ldy   #0
 @a       sta   $2000,y

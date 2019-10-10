@@ -4,11 +4,35 @@
 ; miscellaneous UI functions
 ;
 ; Public functions
+; - ClearScreens
 ; - Home
 ; - BlankDHGR
 ; - IsSearchKey
 ; - IsUpDownOrRightArrow
 ;
+
+;------------------------------------------------------------------------------
+; ClearScreens
+; clear and display text screen and then clear both hires screens
+; (in this order so that the erasing isn't visible)
+;
+; in:    none
+; out:   $0106..$011F clobbered
+;------------------------------------------------------------------------------
+ClearScreens
+         jsr   Home
+         lda   #$20                  ; clear both hi-res pages
+         sta   @clear+2              ; (in case game loader shows them, we don't want
+         ldx   #$40                  ; to flash previous bits of the launcher UI)
+         ldy   #$00
+         tya
+@clear   sta   $FD00,y               ; SMC
+         iny
+         bne   @clear
+         inc   @clear+2
+         dex
+         bne   @clear
+         rts
 
 ;------------------------------------------------------------------------------
 ; Home
@@ -75,7 +99,7 @@ BlankDHGR
 ; out:   A &= 0x7F
 ;        Y preserved
 ;        X clobbered
-;        Z = 1 if this is a search key
+;        Z = 1 and C = 0 if this is a search key
 ;        Z = 0 if this is not a search key
 ;------------------------------------------------------------------------------
 IsSearchKey

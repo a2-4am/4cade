@@ -143,7 +143,8 @@ RunAttractModule
          beq   +
          stx   gGameToLaunch
 +
-         jsr   Home                  ; avoid seeing code load into the HGR page
+         jsr   ClearScreens          ; avoid seeing code load into the HGR page
+                                     ; (clobbers $106, must do now before loading prelaunch code)
 
          jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
          !word kPrelaunchDirectory

@@ -30,8 +30,7 @@ HGRSingle
 @fname   !word $FDFD                 ; SMC
          !word $4000
          jsr   LoadHGRTransition     ; load transition effect code at $6000
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
+         jmp   .transition
 
 ;------------------------------------------------------------------------------
 ; LoadHGRTransition [private]
@@ -100,8 +99,7 @@ HGRTitleCallback
 +        !word $FDFD                 ; SMC
          !word $4000
 
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
+         jmp   .transition
 
 ;------------------------------------------------------------------------------
 ; HGRActionCallback [private]
@@ -160,6 +158,7 @@ HGRActionCallback
          lda   #3                    ; solid vertical bar character
          jsr   @drawline
 
+.transition
          +LDADDR $6000
          jmp   ExecuteTransitionAndWait
 @resetline

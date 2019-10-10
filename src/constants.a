@@ -9,7 +9,7 @@
 ; D000..E611 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EC5F..FFF9 - main program code
+; ECA6..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -71,9 +71,6 @@ PTR          = $02        ; word
 SRC          = $04        ; word
 DEST         = $06        ; word
 SAVE         = $08        ; word
-KEYLEN       = $0A        ; byte
-VALUELEN     = $0B        ; byte
-MAX          = $0C        ; byte
 HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word

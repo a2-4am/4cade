@@ -87,18 +87,8 @@ PlayGame
          +STAY SAVE
          +STAY @pfile                ; assume we're loading a game-specific prelaunch file
 
-         jsr   Home                  ; clear screen (clobbers $106, must do now before loading prelaunch code)
-         lda   #$20                  ; clear both hi-res pages
-         sta   @clear+2              ; (in case game loader shows them, we don't want
-         ldx   #$40                  ; to flash previous bits of the launcher UI)
-         ldy   #$00
-         tya
-@clear   sta   $FD00,y               ; SMC
-         iny
-         bne   @clear
-         inc   @clear+2
-         dex
-         bne   @clear
+         jsr   ClearScreens          ; avoid seeing code load into the HGR page
+                                     ; (clobbers $106, must do now before loading prelaunch code)
 
          jsr   LoadFile              ; load this game's prelaunch file at $106
          !word kPrelaunchDirectory
