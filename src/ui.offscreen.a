@@ -46,10 +46,8 @@ OffscreenPage = * + 1
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-         +LDADDR kTitleFile
-         bne   LoadOffscreenFromAY   ; Always branches, because Y is loaded
-                                     ; last with the high byte of the address,
-                                     ; which is never 0. I miss my 65c02.
+         lda   #<kTitleFile
+         +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadHelpOffscreen
 ; load help screen in the HGR page that is currently not showing
@@ -58,9 +56,8 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadHelpOffscreen
-         +LDADDR kHelpFile
-         bne   LoadOffscreenFromAY   ; always branches
-
+         lda   #<kHelpFile
+         +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadCoverOffscreen
 ; load cover screen in the HGR page that is currently not showing
@@ -69,14 +66,15 @@ LoadHelpOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
-         +LDADDR kCoverFile
+         lda   #<kCoverFile
 LoadOffscreenFromAY
-         +STAY @fname
+         sta   @fname
          jsr   GetOffscreenAddress
          sta   +
          jsr   LoadFile
          !word kRootDirectory
-@fname   !word $FDFD                 ; SMC
+@fname   !byte $FD                   ; SMC
+         !byte >kCoverFile           ; all of these are on the same page
          !byte $00
 +        !byte $FD                   ; SMC
          rts

@@ -73,9 +73,6 @@ InputKeyDispatch
          jsr   IsSearchKey
          beq   .foundSearchKey
          ldx   #kInputError
-         +HIDE_NEXT_2_BYTES
-.IsArrow
-         ldx   #kInputBrowse
 !if kInputSearch > 0 {
          +HIDE_NEXT_2_BYTES
 .foundSearchKey
@@ -121,8 +118,9 @@ SearchMode
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
+         ldx   #kInputBrowse
          jsr   IsUpDownOrRightArrow
-         beq   .IsArrow
+         beq   .InputDispatch
          bit   CLEARKBD
 
          ldy   #kNumBrowseKeys
@@ -134,16 +132,15 @@ SearchMode
          bne   .InputDispatch        ; always branches
 
 OnClear
-         ldx   InputLength
+         ldx   #1                    ; Esc with input clears the input
+         ldy   InputLength
          bne   +
          jmp   CoverFade             ; Esc with no input transitions to
                                      ; mega attract mode
 OnBack
          ldx   InputLength
          beq   OnError
-         +HIDE_NEXT_2_BYTES
-+        ldx   #1                    ; Esc with input clears the input
-         dex
++        dex
          stx   InputLength
          bpl   OnInputChanged        ; always branches
 
