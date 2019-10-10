@@ -7,6 +7,15 @@
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
 
+ExecuteTransitionAt6000AndWait
+         ldy   #$60
+         +HIDE_NEXT_2_BYTES
+ExecuteTransitionAt6400AndWait
+         ldy   #$64
+         +HIDE_NEXT_2_BYTES
+ExecuteTransitionAtA000AndWait
+         ldy   #$A0
+
          ; /!\ execution falls through here from ui.attract.dhgr/DHGRActionCallback
 ;------------------------------------------------------------------------------
 ; ExecuteTransitionAndWait
@@ -17,6 +26,7 @@
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 ExecuteTransitionAndWait
+         lda   #0
          +STAY @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
          ldx   #$20                  ; picture is showing so now we wait

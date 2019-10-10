@@ -226,7 +226,7 @@ DrawUI
 CheckCheats
          ldy   #kCheatsEnabled
          ldx   gGameToLaunch
-         inx
+         cpx   #$FF
          beq   +
          ldy   gCheatsAvailable,x
 +

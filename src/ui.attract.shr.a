@@ -30,8 +30,7 @@ SHRSingle
 +        !word $FDFD                 ; SMC
          !word $2000
          jsr   LoadSHRTransition
-         +LDADDR $A000
-         jsr   ExecuteTransitionAndWait
+         jsr   ExecuteTransitionAtA000AndWait
          jmp   BlankHGR
 
 ;------------------------------------------------------------------------------
@@ -81,8 +80,7 @@ SHRArtworkCallback
 @sfname  !word $FDFD
          !word $2000
 
-         +LDADDR $A000
-         jmp   ExecuteTransitionAndWait
+         jmp   ExecuteTransitionAtA000AndWait
 
 ;------------------------------------------------------------------------------
 ; .BlankSHR [private]

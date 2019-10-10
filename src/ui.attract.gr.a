@@ -24,8 +24,7 @@ GRSingle
 @fname   !word $FDFD                 ; SMC
          !word $6000
          jsr   .LoadGRTransition     ; load transition effect code at $6400
-         +LDADDR $6400
-         jsr   ExecuteTransitionAndWait
+         jsr   ExecuteTransitionAt6400AndWait
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
@@ -97,5 +96,4 @@ GRRTS    rts
 +        !word $FDFD                 ; SMC
          !word $6000
 
-         +LDADDR $6400
-         jmp   ExecuteTransitionAndWait
+         jmp   ExecuteTransitionAt6400AndWait

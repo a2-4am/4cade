@@ -42,8 +42,7 @@ DHGRSingle
          !word kRootDirectory
 +        !word $FDFD                 ; SMC
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
-         +LDADDR $6000
-         jsr   ExecuteTransitionAndWait
+         jsr   ExecuteTransitionAt6000AndWait
          ; switch back to HGR mode with initial blank screen on exit
          ; /!\ execution falls through here to BlankHGR
 ;------------------------------------------------------------------------------
@@ -142,8 +141,7 @@ DHGRTitleCallback
          !word kDHGRTitleDirectory
 +        !word $FDFD
 
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
+         jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
 ; DHGRActionCallback [private]
@@ -175,5 +173,4 @@ DHGRActionCallback
          !word kDHGRActionDirectory
 +        !word $FDFD
 
-         +LDADDR $6000
-         ; /!\ execution falls through to ui.wait/ExecuteTransitionAndWait
+         ; /!\ execution falls through to ui.wait/ExecuteTransitionAt6000AndWait

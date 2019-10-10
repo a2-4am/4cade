@@ -85,7 +85,7 @@ PlayGame
          jsr   GetGameToLaunch
                                      ; A/Y = address of game filename
          +STAY SAVE
-         +STAY @pfile                ; assume we're loading a game-specific prelaunch file
+         +STAY @pfile
 
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
