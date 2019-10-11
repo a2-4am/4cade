@@ -15,7 +15,7 @@
  - Added 63 game cheats
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
- - Fixed Axis Assassin demo hanging on IIgs
+ - Fixed Axis Assassin demo hanging on Apple IIgs
  - Fixed a crash in Agent USA
  - Added missing levels in Out Of This World
  - Removed latent copy protection in Sea Dragon (sneaky sneaky)
@@ -24,6 +24,7 @@
  - Detect VidHD in passive mode
  - Fixed a freeze on startup with certain accelerators
  - Fixed a crash on Apple ][+
+ - Fixed choppy sound in some games on Apple IIgs
  - Fixed launching from MicroDrive partition 3+
  - Fixed launching from CFFA 3000 partition 5+
  - Fixed launching from RamFAST "GS/OS partitions"
