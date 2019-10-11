@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/TUBEWAY",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6C30
+         jsr   $4EC6      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A5
+         sta   $9083      ; patch - don't decrease lives
+         sta   $A1FA      ; patch - don't increase lives
+         sta   $A735      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $9000
