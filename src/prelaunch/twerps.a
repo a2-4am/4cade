@@ -12,7 +12,7 @@
          sta   patch+1
          ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
-         sta   $100-end_patch+patch,x
+         sta   <($100-end_patch+patch),x
          dex
          bpl   -
          lda   #($100-end_patch+patch)
