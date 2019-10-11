@@ -151,18 +151,17 @@ ProDOS_enter
          iny
          tya
          pha
-         dey
 @copy_prefix
-         lda   ProDOS_prefix, y
-         iny
+         lda   ProDOS_prefix-1, y
          sta   (buffer), y
-         dey
          dey
          bne   @copy_prefix
          pla
          sta   (buffer), y
+         tay
          lda   #'/'
-         iny
+         sta   (buffer), y
+         ldy   #1
          sta   (buffer), y
          bne   @jmp_zp2
 
