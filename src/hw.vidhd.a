@@ -45,8 +45,8 @@ HasVidHDCard
 @passiveByteLoop
          lda   $FD00, y              ; SMC (high byte)
          bne   @passiveNextSlot
-         iny
-         bpl   @passiveByteLoop
+         dey
+         bne   @passiveByteLoop
          txa
          and   #$0F                  ; A = $01..$07
          asl
