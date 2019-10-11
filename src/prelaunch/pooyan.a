@@ -14,6 +14,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
+                          ; lives in $0F82,X (X=0/1 for player 1/2)
          lda   #$BD
          sta   $7D7E      ; patch - don't decrease lives
          sta   $7D9A      ; patch - don't decrease lives

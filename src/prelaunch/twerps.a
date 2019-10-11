@@ -23,6 +23,7 @@
 patch
          lda   #0         ; SMC
          beq   +
+                          ; lives in $14FE
          lda   #$AD
          sta   $0640      ; patch - don't decrease lives
          sta   $0774      ; patch - don't decrease lives
