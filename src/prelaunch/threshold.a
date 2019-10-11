@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/THRESHOLD",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+1
+         ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
+-        lda   patch,x
+         sta   $100-end_patch+patch,x
+         dex
+         bpl   -
+         lda   #($100-end_patch+patch)
+         sta   $39F4
+         lda   #$00
+         sta   $39F5
+         jmp   $0800      ; decompress
+patch
+         lda   #0         ; SMC
+         beq   +
+                          ; lives in $778F
+         lda   #$AD
+         sta   $45B0      ; patch - don't decrease lives
+         sta   $7ECD      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $6B00
+end_patch
