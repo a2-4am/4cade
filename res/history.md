@@ -16,6 +16,7 @@
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Fixed Axis Assassin demo hanging on IIgs
+ - Fixed a crash in Agent USA
  - Added missing levels in Out Of This World
  - Removed latent copy protection in Sea Dragon (sneaky sneaky)
  - Enable fast machine speed or accelerator (if available) to speed up searching, browsing, and game launching
