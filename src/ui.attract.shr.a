@@ -98,7 +98,7 @@ BlankSHR
          jsr   Home
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on linearize
-         ora   #$40
+         ora   #%01000000
          sta   NEWVIDEO
 
          sta   WRITEAUXMEM           ; writes go to auxmem
@@ -114,7 +114,7 @@ BlankSHR
          sta   WRITEMAINMEM          ; writes go to main memory
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on SHR mode
-         ora   #$81
+         ora   #%10000001
          sta   NEWVIDEO
 
          rts
