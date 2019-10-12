@@ -33,3 +33,4 @@
          jsr   ROM_HOME
 
          bit   CLEARKBD
+         sei

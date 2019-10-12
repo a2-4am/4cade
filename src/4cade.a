@@ -40,7 +40,7 @@ FirstMover
 ;------------------------------------------------------------------------------
 Reenter
          cld
-         sei
+         cli
          jsr   SwitchToBank2
          jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
                                      ; which restores default speed on Ctrl-Reset)
