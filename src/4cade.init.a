@@ -171,8 +171,8 @@ TOTAL
 REPLAY
          !text   "R E P L A Y"
 LoaderVersion
-         !byte   10
-         !text   "v3.0-alpha"
+         !byte   12
+         !text   "v3.0-alpha.1"
 Loader64K
          !byte   3
          !text   "64K"
