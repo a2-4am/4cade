@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/CHAMP.LODERUN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $1F74
+         jsr   $1F00      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $7D, capped at 255
+         lda   #$FF
+         sta   $60DD      ; start with 255 lives
+         lda   #$A5
+         sta   $61AB      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $6000
