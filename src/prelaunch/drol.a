@@ -7,6 +7,9 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4079
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   store-$BF70+cheat_b+1
@@ -21,7 +24,10 @@
          sta   $4216
          lda   #$bf
          sta   $4217
-         jmp   $4000
+         jsr   $4000
+         jsr   $40e0
+         +DISABLE_ACCEL
+         jmp   $407c
 
 cheat_b !pseudopc $bf70 {
          pla
