@@ -7,19 +7,50 @@
 
     !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         sta   cheat+1
-         lda   #<cheat
-         sta   $b55
-         lda   #>cheat
-         sta   $b56
-         jmp   $900
+         +READ_RAM2_NO_WRITE
+         jmp   ++
 
-cheat
-         lda   #0         ; SMC (will be non-zero if cheats are enabled)
-         beq   +
+!if * < $140 {
+  !error "game will overwrite ", $140 - *, " bytes"
+}
+cheat1
          lda   #$2c
          sta   $8a7e
-+
+cheat2
+         lda   $c083
+         jsr   DisableAccelerator
+lcpatch
+         lda   $c08b
          jmp   $3800
+
+++
+         jsr   EnableAccelerator
+         lda   #$4c
+         sta   $b21
+         lda   #<callback
+         sta   $b22
+         lda   #>callback
+         sta   $b23
+         ldx   #<cheat2
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #<cheat1
++        stx   $b55
+         lda   #>cheat1
+         sta   $b56
+         bit   MachineStatus
+         bvs   +
+         lda   #$82
+         sta   lcpatch+1
++
+         +READ_ROM_NO_WRITE
+         jmp   $900
+
+callback
+         +DISABLE_ACCEL
+         jsr   $7f8
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         +READ_RAM1_WRITE_RAM1
+         jmp   $b24
