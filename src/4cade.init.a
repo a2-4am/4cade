@@ -83,6 +83,17 @@ NotGS    clc
          dey
          bne   -
 
+!ifndef RELEASE {
+         lda   #$D6
+         sta   $28
+         lda   #$07
+         sta   $29
+         lda   LoaderBuild
+         ldx   LoaderBuild+1
+         ldy   #0
+         jsr   PrintAsDecimal
+}
+
          bit   zpMachineStatus
          bvc   ++
          bpl   +
@@ -170,9 +181,17 @@ TOTAL
          !text   "T O T A L"
 REPLAY
          !text   "R E P L A Y"
+!ifndef RELEASE {
+LoaderVersion
+         !byte   5
+         !text   "build"
+LoaderBuild
+         !word   BUILDNUMBER
+} else {
 LoaderVersion
          !byte   12
-         !text   "v3.0-alpha.1"
+         !text   "v3.0-alpha.2"
+}
 Loader64K
          !byte   3
          !text   "64K"
@@ -185,6 +204,29 @@ Loader128K
 Loader128KAndJoystick
          !byte   15
          !text   "joystick + 128K"
+
+PrintAsDecimal
+         jsr   $FF4A
+--       lda   #$00
+         clv
+         ldx   #$18
+-        cmp   #$05
+         bcc   +
+         sbc   #$85
+         sec
++        rol   $45
+         rol   $46
+         rol   $47
+         rol
+         dex
+         bne   -
+         pha
+         lda   #$FD
+         pha
+         lda   #$E1
+         pha
+         bvs   --
+         rts
 
          !source "src/hw.accel.a"
          !source "src/parse.games.a"
