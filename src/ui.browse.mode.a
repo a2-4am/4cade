@@ -71,8 +71,16 @@ OnBrowseSearch
 
 OnBrowsePrevious
          ldx   gGameToLaunch
+         inx                         ; Slightly pathological case: there may be no
+                                     ; current game by the time we get here, e.g.
+                                     ; if we entered browse mode by pressing left
+                                     ; or up arrow from the global help screen.
+                                     ; In this case, pretend we were at game 0 and
+                                     ; continue with the key handler logic.
+         beq   +
+         dex
          bne   .decindex
-         ldx   GameCount
++        ldx   GameCount
 
 .decindex
          dex
