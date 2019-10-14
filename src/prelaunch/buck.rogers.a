@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BUCK.ROGERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4083
+         jsr   $4000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $7ff       ; patch - don't increase lives
+         sta   $803       ; patch - don't decrease lives
+         sta   $998       ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $400

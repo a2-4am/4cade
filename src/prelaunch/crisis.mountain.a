@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CRISIS.MOUNTAIN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $207b
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $c14       ; patch - don't increase lives
+         sta   $1af0      ; patch - don't decrease lives
+         sta   $1b49      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $4000
