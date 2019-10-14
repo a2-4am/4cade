@@ -3,10 +3,14 @@
 ;
 ; UI functions for doing things then waiting, or waiting then doing things
 ;
+; - ExecuteTransitionAt6000AndWait
+; - ExecuteTransitionAt6400AndWait
+; - ExecuteTransitionAtA000AndWait
 ; - ExecuteTransitionAndWait
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
 
+         ; /!\ execution falls through here from ui.attract.dhgr/DHGRActionCallback
 ExecuteTransitionAt6000AndWait
          ldy   #$60
          +HIDE_NEXT_2_BYTES
@@ -15,8 +19,7 @@ ExecuteTransitionAt6400AndWait
          +HIDE_NEXT_2_BYTES
 ExecuteTransitionAtA000AndWait
          ldy   #$A0
-
-         ; /!\ execution falls through here from ui.attract.dhgr/DHGRActionCallback
+         ; /!\ execution falls through here to ExecuteTransitionAndWait
 ;------------------------------------------------------------------------------
 ; ExecuteTransitionAndWait
 ; call transition effect code (address passed in) and wait a period of time
@@ -41,7 +44,6 @@ ExecuteTransitionAndWait
          bit   CLEARKBD
 WAITRTS  rts
 
-; /!\ keep this last in the file to ensure it doesn't cross a page boundary /!\
 ;------------------------------------------------------------------------------
 ; WaitForKeyFor30Seconds
 ; does what it says on the tin
@@ -71,6 +73,13 @@ WaitForKeyFor30Seconds
          dec   Timeout+2
          bne   @loop
          ; /!\ execution falls through here to CoverFade
+;------------------------------------------------------------------------------
+; CoverFade
+; load cover file and execute a specific transition effect on it
+;
+; in:    none
+; out:   exits via MegaAttractMode and everything is clobbered
+;------------------------------------------------------------------------------
 CoverFade
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage

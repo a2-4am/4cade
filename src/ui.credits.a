@@ -8,8 +8,15 @@
 ; - Help
 ;
 
+;------------------------------------------------------------------------------
+; Credits
+; display credits page and wait
+;
+; in:    none
+; out:   C clear
+;        all other flags and registers clobbered
+;------------------------------------------------------------------------------
 Credits
-; clobbers all
          jsr   LoadFile              ; load credits text into $8000
          !word kRootDirectory
          !word kCreditsFile
@@ -26,8 +33,16 @@ Credits
 -        clc                         ; if called from search mode, tell caller not to refresh
          rts
 
+;------------------------------------------------------------------------------
+; Help
+; display global help page and wait
+;
+; in:    none
+; out:   if user presses an arrow key within 30 seconds, this exits via BrowseMode
+;        otherwise this returns to caller with
+;          C clear, all other flags and registers clobbered
+;------------------------------------------------------------------------------
 Help
-; clobbers all
          jsr   LoadHelpOffscreen
          jsr   ShowOtherPage
          jsr   WaitForKeyFor30Seconds

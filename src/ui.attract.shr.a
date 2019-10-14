@@ -8,6 +8,17 @@
 ; - SHRSingle
 ;
 
+;------------------------------------------------------------------------------
+; SHRSlideshow
+; execute a slideshow of super hi-res artwork
+;
+; safe to call if machine can not display super hi-res graphics (does nothing
+; and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode reset to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
 SHRSlideshow
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
@@ -19,6 +30,17 @@ SHRRTS   rts
          !word SHRArtworkCallback
          jmp   BlankHGR
 
+;------------------------------------------------------------------------------
+; SHRSlideshow
+; display a single super hi-res artwork
+;
+; safe to call if machine can not display super hi-res graphics (does nothing
+; and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode reset to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
 SHRSingle
          +STAY +
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
@@ -48,7 +70,7 @@ LoadSHRTransition
          rts
 
 ;------------------------------------------------------------------------------
-; .SHRArtworkCallback [private]
+; SHRArtworkCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single SHR graphic
 
@@ -83,7 +105,7 @@ SHRArtworkCallback
          jmp   ExecuteTransitionAtA000AndWait
 
 ;------------------------------------------------------------------------------
-; .BlankSHR [private]
+; BlankSHR [private]
 ; clear and show SHR mode without flickering
 ;
 ; in:    Machine is a IIgs or has a VidHD card that responds appropriately to

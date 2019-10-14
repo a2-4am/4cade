@@ -8,6 +8,14 @@
 ; - GRSingle
 ;
 
+;------------------------------------------------------------------------------
+; GRActionSlideshow
+; display a slideshow of lo-res action screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen
+;------------------------------------------------------------------------------
 GRActionSlideshow
          jsr   .LoadGRTransition     ; load transition effect code at $6000
          jsr   BlankGR               ; switch GR mode with initial blank screen
@@ -16,6 +24,14 @@ GRActionSlideshow
          !word .GRActionCallback     ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
+;------------------------------------------------------------------------------
+; GRSingle
+; display a single lo-res screenshot, with transition effect
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen
+;------------------------------------------------------------------------------
 GRSingle
          +STAY @fname
          jsr   BlankGR               ; switch to GR mode with initial blank screen
@@ -33,6 +49,7 @@ GRSingle
 ;
 ; in:    none
 ; out:   text page clobbered
+;        graphics mode set to display lo-res screen
 ;------------------------------------------------------------------------------
 BlankGR
          ldx   #$04

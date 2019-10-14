@@ -11,6 +11,16 @@
 ; - HGRMode
 ;
 
+;------------------------------------------------------------------------------
+; DHGRTitleSlideshow
+; execute a slideshow of double hi-res title screenshots
+;
+; safe to call if machine only has 64K (does nothing and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode reset to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvc   DHGRRTS
@@ -22,6 +32,16 @@ DHGRTitleSlideshow
          beq   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
                                      ; (always branches because Z=1 on exit of okvs_iter)
 
+;------------------------------------------------------------------------------
+; DHGRActionSlideshow
+; execute a slideshow of double hi-res action screenshots
+;
+; safe to call if machine only has 64K (does nothing and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode reset to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
          bvc   DHGRRTS
@@ -33,6 +53,16 @@ DHGRActionSlideshow
          beq   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
                                      ; (always branches because Z=1 on exit of okvs_iter)
 
+;------------------------------------------------------------------------------
+; DHGRSingle
+; display a single double hi-res screenshot, with transition effect
+;
+; safe to call if machine only has 64K (does nothing and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode reset to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvc   DHGRRTS

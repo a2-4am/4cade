@@ -9,6 +9,14 @@
 ; - HGRSingle
 ;
 
+;------------------------------------------------------------------------------
+; HGRTitleSlideshow
+; execute a slideshow of hi-res title screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
 HGRTitleSlideshow
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
@@ -16,6 +24,14 @@ HGRTitleSlideshow
          !word HGRTitleCallback      ; address of callback (called on each file)
          rts                         ; exit with last picture still visible
 
+;------------------------------------------------------------------------------
+; HGRActionSlideshow
+; execute a slideshow of hi-res action screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
 HGRActionSlideshow
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
@@ -23,6 +39,14 @@ HGRActionSlideshow
          !word HGRActionCallback     ; address of callback (called on each file)
          rts                         ; exit with last picture still visible
 
+;------------------------------------------------------------------------------
+; HGRSingle
+; display a single hi-res screenshot, with transition effect
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
 HGRSingle
          +STAY @fname
          jsr   LoadFile              ; load HGR screenshot at $4000
