@@ -16,6 +16,9 @@ set ACME=acme
 rem https://www.brutaldeluxe.fr/products/crossdevtools/cadius/
 rem https://github.com/mach-kernel/cadius
 set CADIUS=cadius
+rem https://github.com/
+set GIT=git
+
 
 if "%1" equ "asm" (
 :asm
@@ -131,9 +134,11 @@ goto :EOF
 goto :EOF
 
 :asmlauncher
-2>build\relbase.log %ACME% src\4cade.a
+1>build\buildnum.log git rev-list --count HEAD
+for /f "tokens=*" %%q in (build\buildnum.log) do set _build=%%q
+2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src\4cade.a
 for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
-%ACME% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
+%ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 goto :EOF
 
 :asmfx

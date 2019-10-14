@@ -205,6 +205,7 @@ Loader128KAndJoystick
          !byte   15
          !text   "joystick + 128K"
 
+!ifndef RELEASE {
 PrintAsDecimal
          jsr   $FF4A
 --       lda   #$00
@@ -227,6 +228,7 @@ PrintAsDecimal
          pha
          bvs   --
          rts
+}
 
          !source "src/hw.accel.a"
          !source "src/parse.games.a"
