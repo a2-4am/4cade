@@ -8,7 +8,7 @@ rem
 
 setlocal enabledelayedexpansion
 set DISK=4cade.2mg
-set VOLUME=A.4AM.PACK
+set VOLUME=TOTAL.REPLAY
 
 rem third-party tools required to build (must be in path)
 rem https://sourceforge.net/projects/acme-crossass/

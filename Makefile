@@ -11,7 +11,7 @@
 #
 
 DISK=4cade.2mg
-VOLUME=A.4AM.PACK
+VOLUME=TOTAL.REPLAY
 
 # third-party tools required to build
 
