@@ -8,22 +8,6 @@
     !source "src/prelaunch/common.a"
 
          +READ_RAM2_NO_WRITE
-         jmp   ++
-
-!if * < $140 {
-  !error "game will overwrite ", $140 - *, " bytes"
-}
-cheat1
-         lda   #$2c
-         sta   $8a7e
-cheat2
-         lda   $c083
-         jsr   DisableAccelerator
-lcpatch
-         lda   $c08b
-         jmp   $3800
-
-++
          jsr   EnableAccelerator
          lda   #$4c
          sta   $b21
@@ -39,6 +23,10 @@ lcpatch
 +        stx   $b55
          lda   #>cheat1
          sta   $b56
+-        lda   cheat, x
+         sta   $300, x
+         inx
+         bpl   -
          bit   MachineStatus
          bvs   +
          lda   #$82
@@ -54,3 +42,16 @@ callback
          jsr   EnableAccelerator
          +READ_RAM1_WRITE_RAM1
          jmp   $b24
+
+cheat !pseudopc $300 {
+cheat1
+         lda   #$2c
+         sta   $8a7e
+cheat2
+         lda   $c083
+         jsr   DisableAccelerator
+lcpatch
+         lda   $c08b
+         jmp   $3800
+cheat_e
+}
