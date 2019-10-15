@@ -1,0 +1,110 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/LR.BY.PIXEL",plain
+*=$6000
+
+maskindex = $fd
+row = $fe
+col = $ff
+
+@jump
+         jmp   @copy                 ; skip clear the first time
+
+         ;clear
+         lda   #$27
+         sta   col
+@clearcolloop
+         lda   #$06
+         sta   maskindex
+@clearmaskloop
+         ldx   maskindex
+         lda   clearmasks,x
+         sta   @clearmask
+         lda   #$17
+         sta   row
+@clearrowloop
+         lda   row
+         asl
+         asl
+         asl
+         jsr   HGRCalc
+         clc
+         ldx   #$08
+         ldy   col
+@clearblockloop
+         lda   ($26),y
+@clearmask=*+1
+         and   #$FD                  ; SMC
+         sta   ($26),y
+         lda   $27
+         adc   #4
+         sta   $27
+         dex
+         bne   @clearblockloop
+         dec   row
+         bpl   @clearrowloop
+         lda   #8
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         dec   maskindex
+         bpl   @clearmaskloop
+         dec   col
+         bpl   @clearcolloop
+
+@copy
+         lda   #$2C                  ; BIT opcode
+         sta   @jump                 ; don't skip clear after first time
+
+         ; copy
+         lda   #$00
+         sta   col
+@colloop
+         lda   #$06
+         sta   maskindex
+@maskloop
+         ldx   maskindex
+         lda   copymasks,x
+         sta   @mask
+         lda   #$17
+         sta   row
+@rowloop
+         lda   row
+         asl
+         asl
+         asl
+         jsr   HGRCalc
+         clc
+         ldx   #$08
+         ldy   col
+@blockloop
+         lda   ($3c),y
+@mask=*+1
+         and   #$FD                  ; SMC
+         sta   ($26),y
+         lda   $27
+         adc   #4
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @blockloop
+         dec   row
+         bpl   @rowloop
+         lda   #8
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         dec   maskindex
+         bpl   @maskloop
+         inc   col
+         lda   col
+         cmp   #40
+         bne   @colloop
+@exit    rts
+clearmasks
+         !byte $80,$81,$83,$87,$8F,$9F,$BF
+copymasks
+         !byte $FF,$BF,$9F,$8F,$87,$83,$81
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
