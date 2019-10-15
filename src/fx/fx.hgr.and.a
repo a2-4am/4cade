@@ -1,0 +1,44 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/AND",plain
+*=$6000
+
+i = $ff
+
+         lda   #$06
+         sta   i
+@outerloop
+         dec   i
+         bpl   +
+@exit    rts
++        ldx   i
+         lda   masks,x
+         sta   @mask
+         ldx   #$40
+         stx   @src
+         ldx   #$20
+         stx   @dest
+         ldy   #0
+@innerloop
+@src=*+2
+         lda   $FD00,y               ; SMC
+@mask=*+1
+         and   #$FD                  ; SMC
+@dest=*+2
+         sta   $FD00,y               ; SMC
+         iny
+         bne   @innerloop
+         inc   @src
+         inc   @dest
+         dex
+         bne   @innerloop
+         lda   #$30
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         bpl   @outerloop            ; always branches
+masks
+         !byte $FF,$BF,$9F,$8F,$87,$83,$81
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
