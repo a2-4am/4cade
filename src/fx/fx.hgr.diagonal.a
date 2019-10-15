@@ -5,41 +5,92 @@
 !to "build/FX/DIAGONAL",plain
 *=$6000
 
+row=$FA
+col=$FB
+tmp=$FF
+
+         jmp   Start
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+
+Start
          lda   #$27
-         sta   $FB
-         lda   #$2F
-         sta   $FA
+         sta   col
+         lda   #$17
+         sta   row
          sta   $FC
-@loop    lda   $FA
+@loop    ldy   col
+         lda   row
          bpl   +
          lda   #$00
-+        ldy   $FB
-         jsr   HGRHalfBlockCopy
-         dec   $FB
-         inc   $FA
-         lda   $FB
-         bmi   +
-         lda   $FA
-         cmp   #$30
++        pha
+         jsr   HGRDiagonalBlockCopyWithGuards
+         pla
+         iny
+         cpy   #$28
+         bcs   +
+         jsr   HGRBlockCopy
++        dec   col
+         inc   row
+         lda   row
+         cmp   #$18
          bne   @loop
-+        dec   $FC
-         lda   #$27
-         sta   $FB
-         lda   $FC
-         sta   $FA
-         bpl   @loop
-         lda   $C000
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
          bmi   @exit
+         dec   $FC
+         lda   #$27
+         sta   col
+         lda   $FC
+         sta   row
+         bpl   @loop
          lda   #$00
-         sta   $FA
+         sta   row
          sec
          sbc   $FC
          sta   $FD
-         lda   $FB
+         lda   col
          sec
          sbc   $FD
-         sta   $FB
-         bpl   @loop
+         sta   col
+         cmp   #$FE
+         bne   @loop
 @exit    rts
 
-         !source "src/fx/fx.hgr.common.a"
+HGRDiagonalBlockCopyWithGuards
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$FF
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         asl
+         asl
+         asl
+         +HGR_CALC
+         clc
+         tya
+         bmi   @exit
+         ldx   #$07
+@loop
+         lda   ($26),y
+         and   sourcemasks,x
+         sta   tmp
+         lda   ($3c),y
+         and   copymasks,x
+         ora   tmp
+         sta   ($26),y
+         lda   $27
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bpl   @loop
+@exit    rts
+sourcemasks
+         !byte $00,$01,$03,$07,$0F,$1F,$3F,$7F
+copymasks
+         !byte $FF,$FE,$FC,$F8,$F0,$E0,$C0,$80
