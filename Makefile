@@ -26,60 +26,25 @@ dsk: md asm
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
-	cp res/attract.conf build/ATTRACT.CONF >>build/log
-	cp res/dfx.conf build/DFX.CONF >>build/log
-	cp res/fx.conf build/FX.CONF >>build/log
-	cp res/games.conf build/GAMES.CONF >>build/log
-	cp res/prefs.conf build/PREFS.CONF >>build/log
-	cp res/credits.txt build/CREDITS >>build/log
-	bin/padto.sh 512 build/PREFS.CONF
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/TITLE" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/COVER" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "res/HELP" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/PREFS.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/GAMES.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/ATTRACT.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/FX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/DFX.CONF" >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/CREDITS" >>build/log
-	rsync -aP res/title.hgr/* build/TITLE.HGR >>build/log
+	for f in res/*.conf; do rsync -aP "$$f" build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
+	rsync -aP res/credits.txt build/CREDITS >>build/log
+	bin/padto.sh 512 build/PREFS.CONF >>build/log
+	for f in res/TITLE res/COVER res/HELP build/*.CONF build/CREDITS; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	for f in res/title.hgr res/title.dhgr res/action.hgr res/action.dhgr res/action.gr res/artwork.shr res/attract res/ss res/demo res/title.animated; do rsync -aP "$$f"/* build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
 	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.HGR" "build/TITLE.HGR" >>build/log
-	rsync -aP res/title.dhgr/* build/TITLE.DHGR >>build/log
 	bin/buildfileinfo.sh build/TITLE.DHGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.DHGR" "build/TITLE.DHGR" >>build/log
-	rsync -aP res/action.hgr/* build/ACTION.HGR >>build/log
 	bin/buildfileinfo.sh build/ACTION.HGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.HGR" "build/ACTION.HGR" >>build/log
-	rsync -aP res/action.dhgr/* build/ACTION.DHGR >>build/log
 	bin/buildfileinfo.sh build/ACTION.DHGR "06" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.DHGR" "build/ACTION.DHGR" >>build/log
-	rsync -aP res/action.gr/* build/ACTION.GR >>build/log
 	bin/buildfileinfo.sh build/ACTION.GR "06" "6000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ACTION.GR" "build/ACTION.GR" >>build/log
-	rsync -aP res/artwork.shr/* build/ARTWORK.SHR >>build/log
 	bin/buildfileinfo.sh build/ARTWORK.SHR "C1" "2000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ARTWORK.SHR" "build/ARTWORK.SHR" >>build/log
-	rsync -aP res/attract/* build/ATTRACT >>build/log
 	bin/buildfileinfo.sh build/ATTRACT "04" "8000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/ATTRACT" "build/ATTRACT" >>build/log
-	rsync -aP res/ss/* build/SS >>build/log
 	bin/buildfileinfo.sh build/SS "04" "4000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/SS" "build/SS" >>build/log
-	rsync -aP res/demo/* build/DEMO >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/DEMO" "build/DEMO" >>build/log
-	rsync -aP res/title.animated/* build/TITLE.ANIMATED >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/TITLE.ANIMATED" "build/TITLE.ANIMATED" >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build/log
-	$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build/log
+	for f in build/TITLE.* build/ACTION.* build/ARTWORK.* build/ATTRACT build/SS build/DEMO build/TITLE.ANIMATED; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
+	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
 	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
-	@for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
+	for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store
 	rm -f build/X/**/PRODOS*
 	rm -f build/X/**/LOADER.SYSTEM*
@@ -95,11 +60,11 @@ asmlauncher:
 	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
 asmfx:
-	@for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
+	for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 
 asmprelaunch:
-	@for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
-	@for f in res/title.hgr/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
+	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
+	for f in res/title.hgr/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
 chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
