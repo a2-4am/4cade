@@ -1,0 +1,105 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/MEETINTHEMIDDLE",plain
+*=$6000
+
+tmp = $fb
+maskindex = $fc
+row = $fd
+col1 = $fe
+col2 = $ff
+
+         lda   #0
+         sta   col1
+         lda   #39
+         sta   col2
+@colloop
+         lda   #6
+         sta   maskindex
+@maskloop
+         ldx   maskindex
+         lda   copymasks1,x
+         sta   @copymask1
+         eor   #%11111111
+         sta   @sourcemask1
+         lda   copymasks2,x
+         sta   @copymask2
+         eor   #%11111111
+         sta   @sourcemask2
+
+         lda   #23
+         sta   row
+@rowloop
+         lda   row
+         asl
+         asl
+         asl
+         jsr   HGRCalc
+         clc
+         ldx   #8
+@blockloop
+         ldy   col1
+         lda   ($26),y
+@sourcemask1=*+1
+         and   #0                    ; SMC
+         sta   tmp
+         lda   ($3c),y
+@copymask1=*+1
+         and   #0                    ; SMC
+         ora   tmp
+         sta   ($26),y
+
+         ldy   col2
+         lda   ($26),y
+@sourcemask2=*+1
+         and   #0                    ; SMC
+         sta   tmp
+         lda   ($3c),y
+@copymask2=*+1
+         and   #0                    ; SMC
+         ora   tmp
+         sta   ($26),y
+
+         lda   $27
+         adc   #4
+         sta   $27
+         eor   #$60
+         sta   $3d
+         dex
+         bne   @blockloop
+
+         dec   row
+         bpl   @rowloop
+
+         lda   #1
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         dec   maskindex
+         bpl   @maskloop
+         inc   col1
+         dec   col2
+         lda   col1
+         cmp   #20
+         bne   @colloop
+@exit    rts
+copymasks1
+         !byte %11111111
+         !byte %10111111
+         !byte %10011111
+         !byte %10001111
+         !byte %10000111
+         !byte %10000011
+         !byte %10000001
+copymasks2
+         !byte %11111111
+         !byte %11111110
+         !byte %11111100
+         !byte %11111000
+         !byte %11110000
+         !byte %11100000
+         !byte %11000000
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
