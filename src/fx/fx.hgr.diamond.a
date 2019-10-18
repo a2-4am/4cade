@@ -35,12 +35,9 @@ counter = $ff
 +        cpy   #40
          bcs   -
          ; do corner 1
-         sty   y
          +SWITCH_TO_MASKS sourcemasks1, copymasks1
-         ldy   y
          lda   row
          jsr   HGRBlockCopyWithMask
-         sty   y
          ; do corner 2 (same row, opposing col)
          +SWITCH_TO_MASKS sourcemasks2, copymasks2
          lda   #39
@@ -70,8 +67,8 @@ counter = $ff
          ldy   y
 @skip1
          iny
-         ; now check if *this* column is visible
          sty   y
+         ; now check if *this* column is visible
          bpl   +
 -        jmp   @skip2
 +        cpy   #40

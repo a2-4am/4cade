@@ -57,6 +57,18 @@
          sty   .ptr+1
 }
 
+!macro  LBPL .target {
+         bmi   +
+         jmp   .target
++
+}
+
+!macro  LBNE .target {
+         beq   +
+         jmp   .target
++
+}
+
 ; use BIT to swallow the following 1-byte opcode
 !macro   HIDE_NEXT_BYTE {
          !byte $24

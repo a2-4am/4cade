@@ -32,11 +32,22 @@
          sta   $3d
 }
 
+!macro RESET_HGR_CALC {
+         lda   $27
+         sec
+         sbc   #$20
+         sta   $27
+         eor   #$60
+         sta   $3d
+}
+
 !macro SWITCH_TO_MASKS .source, .copy {
+         sty   $00
          +LDADDR .source
          jsr   SetSourceMask
          +LDADDR .copy
          jsr   SetCopyMask
+         ldy   $00
 }
 
 !macro INIT_MASKS .source, .copy {

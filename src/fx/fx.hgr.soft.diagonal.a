@@ -1,0 +1,181 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/SOFT.DIAGONAL",plain
+*=$6000
+
+y = $fc
+row = $fd
+col = $fe
+counter = $ff
+
+         !source "src/fx/macros.a"
+
+!macro IS_OFFSCREEN {
+         tya
+         bpl   +
+         sec
+         bcs   ++
++        cpy   #40
+++
+}
+
+         +INIT_MASKS sourcemasks1, copymasks1
+         +INIT_MASKS sourcemasks2, copymasks2
+         +INIT_MASKS sourcemasks3, copymasks3
+         +INIT_MASKS sourcemasks4, copymasks4
+         +INIT_MASKS sourcemasks5, copymasks5
+         +INIT_MASKS sourcemasks6, copymasks6
+
+         lda   #70
+         sta   counter
+
+         lda   #39
+         sta   col
+ColLoop
+         lda   #23
+         sta   row
+         ldy   col
+         sty   y
+RowLoop
+         lda   row
+         asl
+         asl
+         asl
+         +HGR_CALC
+         +IS_OFFSCREEN
+         bcs   @block2
+         +SWITCH_TO_MASKS sourcemasks1, copymasks1
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block2
+         iny
+         +IS_OFFSCREEN
+         bcs   @block3
+         +SWITCH_TO_MASKS sourcemasks2, copymasks2
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block3
+         iny
+         +IS_OFFSCREEN
+         bcs   @block4
+         +SWITCH_TO_MASKS sourcemasks3, copymasks3
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block4
+         iny
+         +IS_OFFSCREEN
+         bcs   @block5
+         +SWITCH_TO_MASKS sourcemasks4, copymasks4
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block5
+         iny
+         +IS_OFFSCREEN
+         bcs   @block6
+         +SWITCH_TO_MASKS sourcemasks5, copymasks5
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block6
+         iny
+         +IS_OFFSCREEN
+         bcs   @block7
+         +SWITCH_TO_MASKS sourcemasks6, copymasks6
+         lda   row
+         jsr   HGRBlockCopyWithMaskNoRecalc
+         +RESET_HGR_CALC
+@block7
+         iny
+         +IS_OFFSCREEN
+         bcs   @nextrow
+         lda   row
+         jsr   HGRBlockCopyNoRecalc
+         +RESET_HGR_CALC
+@nextrow
+         ldy   y
+         iny
+         sty   y
+         dec   row
+         +LBPL RowLoop
+         lda   $c000
+         bmi   @exit
+         dec   col
+         dec   counter
+         +LBNE ColLoop
+@exit    rts
+
+sourcemasks1
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks2
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks3
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks4
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks5
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks6
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+copymasks1
+         !byte %10000000
+         !byte %10000000
+         !byte %10000000
+         !byte %10001000
+         !byte %10001000
+         !byte %10000000
+         !byte %10000000
+         !byte %10000000
+copymasks2
+         !byte %10000000
+         !byte %10000000
+         !byte %10010100
+         !byte %10001000
+         !byte %10001000
+         !byte %10010100
+         !byte %10000000
+         !byte %10000000
+copymasks3
+         !byte %10000000
+         !byte %10000000
+         !byte %10011100
+         !byte %10011100
+         !byte %10011100
+         !byte %10011100
+         !byte %10000000
+         !byte %10000000
+copymasks4
+         !byte %10000000
+         !byte %10101010
+         !byte %10011100
+         !byte %10111110
+         !byte %10011100
+         !byte %10011100
+         !byte %10101010
+         !byte %10000000
+copymasks5
+         !byte %10000000
+         !byte %10111110
+         !byte %10111110
+         !byte %10111110
+         !byte %10111110
+         !byte %10111110
+         !byte %10111110
+         !byte %10000000
+copymasks6
+         !byte %11010101
+         !byte %10111110
+         !byte %11111111
+         !byte %10111110
+         !byte %11111111
+         !byte %10111110
+         !byte %10111110
+         !byte %11010101
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
