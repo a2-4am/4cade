@@ -33,11 +33,7 @@ HGRBlockCopyNoRecalc
 @loop
          lda   ($3c),y
          sta   ($26),y
-         lda   $27
-         adc   #$04
-         sta   $27
-         eor   #$60
-         sta   $3d
+         +HGR_INC_WITHIN_BLOCK
          dex
          bne   @loop
          rts

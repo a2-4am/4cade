@@ -24,6 +24,7 @@
          sta   $3c
 }
 
+; /!\ C must be clear before using this macro
 !macro HGR_INC_WITHIN_BLOCK {
          lda   $27
          adc   #$04
