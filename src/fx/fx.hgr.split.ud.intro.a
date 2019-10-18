@@ -5,7 +5,7 @@
 !to "build/FX/SPLIT.UD.INTRO",plain
 *=$6000
 
-         !source "src/fx/fx.hgr.macros.a"
+         !source "src/fx/macros.a"
 
 col1 = $FE
 col2 = $FF

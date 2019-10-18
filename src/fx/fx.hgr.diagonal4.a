@@ -5,18 +5,15 @@
 !to "build/FX/DIAGONAL4",plain
 *=$6000
 
-counter = $fc
 row = $fd
 col = $fe
-tmp = $ff
+counter = $ff
 
-         ldx   #7
--        lda   copymasks,x
-         eor   #%11111111
-         sta   sourcemasks,x
-         dex
-         bpl   -
-         lda   #(40+24)
+         !source "src/fx/macros.a"
+
+         +INIT_MASKS sourcemasks, copymasks
+
+         lda   #64        ; 40 + 24
          sta   counter
 
          lda   #39
@@ -31,7 +28,7 @@ tmp = $ff
          cpy   #40
          bcs   +
          lda   row
-         jsr   HGRDiagonalBlockCopyWithGuards
+         jsr   HGRBlockCopyWithMask
 +        iny
          bmi   +
          cpy   #40
@@ -51,38 +48,8 @@ tmp = $ff
          bne   @colloop
 @exit    rts
 
-HGRDiagonalBlockCopyWithGuards
-; in:    A = HGR row / 8 (0x00..0x17)
-;        Y = HGR column (0x00..0x27)
-; out:   Y preserved
-;        A/X clobbered
-;        tmp clobbered
-         asl
-         asl
-         asl
-         jsr   HGRCalc
-         clc
-         tya
-         bmi   @exit
-         ldx   #7
-@loop
-         lda   ($26),y
-         and   sourcemasks,x
-         sta   tmp
-         lda   ($3c),y
-         and   copymasks,x
-         ora   tmp
-         sta   ($26),y
-         lda   $27
-         adc   #$04
-         sta   $27
-         eor   #$60
-         sta   $3d
-         dex
-         bpl   @loop
-@exit    rts
 sourcemasks
-         !byte 0,0,0,0,0,0,0,0       ; SMC, will be copymasks EOR #$FF
+         !byte 0,0,0,0,0,0,0,0       ; SMC
 copymasks
          !byte %10000000
          !byte %11000000

@@ -1,4 +1,6 @@
-!ifndef MACROS {
+!ifndef _HGRMACROS_ {
+         !source "src/macros.a"
+
 !macro HGR_CALC {
          asl
          tax
@@ -30,5 +32,17 @@
          sta   $3d
 }
 
-MACROS=*
+!macro SWITCH_TO_MASKS .source, .copy {
+         +LDADDR .source
+         jsr   SetSourceMask
+         +LDADDR .copy
+         jsr   SetCopyMask
+}
+
+!macro INIT_MASKS .source, .copy {
+         +SWITCH_TO_MASKS .source, .copy
+         jsr   BuildSourceMaskFromCopyMask
+}
+
+_HGRMACROS_=*
 }
