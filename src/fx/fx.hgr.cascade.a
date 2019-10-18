@@ -1,0 +1,99 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/FX/CASCADE",plain
+*=$6000
+
+         ldx   #191
+
+---      lda   #$40
+         sta   $e6
+         lsr
+         sta   $29
+         jsr   vposn
+         lsr   $e6
+
+         ldy   #$27
+-        lda   ($26), y
+         sta   $2000, y
+         dey
+         bpl   -
+
+         stx   maxline + 1
+
+         ldx   #0
+         stx   $28
+         beq   + ;always
+
+--       lda   $26
+         sta   $28
+         lda   $27
+         sta   $29
++        inx
+         jsr   vposn
+
+         ldy   #$27
+-        lda   ($28), y
+         sta   ($26), y
+         dey
+         bpl   -
+
+maxline
+         cpx   #$d1 ;SMC
+         bne   --
+
+         ldy  #5
+
+--       tya
+         pha
+         dex
+         jsr   vposn
+
+         lda   $26
+         sta   $28
+         lda   $27
+         eor   #$60
+         sta   $29
+
+         ldy   #$27
+-        lda   ($28), y
+         sta   ($26), y
+         dey
+         bpl   -
+
+         pla
+         tay
+         dey
+         bne   --
+
+         txa
+         beq   done
+         dex
+         lda   $c000
+         bpl   ---
+
+vposn    txa
+         pha
+         and   #$c0
+         sta   $26
+         lsr
+         lsr
+         ora   $26
+         sta   $26
+         pla
+         sta   $27
+         asl
+         asl
+         asl
+         rol   $27
+         asl
+         rol   $27
+         asl
+         ror   $26
+         lda   $27
+         and   #$1f
+         ora   $e6
+         sta   $27
+
+done     rts
