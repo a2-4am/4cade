@@ -62,10 +62,8 @@ HGRDiagonalBlockCopyWithGuards
 ; in:    A = HGR row / 8 (0x00..0x17)
 ;        Y = HGR column (0x00..0x27)
 ; out:   Y preserved
-;        X = #$FF
-;        Z set
-;        C clear
-;        all other flags and registers clobbered
+;        A/X clobbered
+;        tmp clobbered
          asl
          asl
          asl
