@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/SOFT.DIAGONAL",plain
+!to "build/FX/SOFT.L",plain
 *=$6000
 
 y = $fc
@@ -28,7 +28,7 @@ counter = $ff
          +INIT_MASKS sourcemasks5, copymasks5
          +INIT_MASKS sourcemasks6, copymasks6
 
-         lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
+         lda   #(40+7-1)  ; columns + blocks per row - 1
          sta   counter
 
          lda   #39
@@ -36,8 +36,6 @@ counter = $ff
 ColLoop
          lda   #23
          sta   row
-         ldy   col
-         sty   y
 RowLoop
          ; [speedopt] calculate HGR base addresses once per row
          lda   row
@@ -46,7 +44,7 @@ RowLoop
          asl
          +HGR_CALC
 
-         ldy   y
+         ldy   col
          +IS_Y_OFFSCREEN
          bcs   @block2
 
@@ -177,9 +175,6 @@ RowLoop
 
          ; don't need RESET_HGR_CALC here because we're done with this row
 @nextrow
-         ldy   y
-         iny
-         sty   y
          dec   row
          +LBPL RowLoop
          lda   $c000
