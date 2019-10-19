@@ -56,5 +56,15 @@
          jsr   BuildSourceMaskFromCopyMask
 }
 
+; must set N flag based on Y immediately before using this macro
+; e.g. LDY, INY, DEY, TYA
+!macro IS_Y_OFFSCREEN {
+         bpl   +
+         sec
+         bcs   ++
++        cpy   #40
+++
+}
+
 _HGRMACROS_=*
 }

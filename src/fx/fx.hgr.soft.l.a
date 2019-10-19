@@ -12,15 +12,6 @@ counter = $ff
 
          !source "src/fx/macros.a"
 
-; must LDY or INY immediately before this
-!macro IS_Y_OFFSCREEN {
-         bpl   +
-         sec
-         bcs   ++
-+        cpy   #40
-++
-}
-
          +INIT_MASKS sourcemasks1, copymasks1
          +INIT_MASKS sourcemasks2, copymasks2
          +INIT_MASKS sourcemasks3, copymasks3
