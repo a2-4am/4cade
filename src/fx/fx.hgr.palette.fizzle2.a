@@ -2,7 +2,7 @@
 ;(c) 2017-2019 by qkumba and 4am
 
 !cpu 6502
-!to "build/FX/PALETTE.FIZZLE",plain
+!to "build/FX/PALETTE.FIZZLE2",plain
 *=$6000
 
 sourcemask_even = $f0
@@ -14,13 +14,13 @@ copymask_odd = $f3
 
          ;init masks
 
-         lda   #%00101010
-         sta   sourcemask_even
-         lda   #%11010101
-         sta   copymask_even
          lda   #%01010101
-         sta   sourcemask_odd
+         sta   sourcemask_even
          lda   #%10101010
+         sta   copymask_even
+         lda   #%00101010
+         sta   sourcemask_odd
+         lda   #%11010101
          sta   copymask_odd
 
 @outerloop
