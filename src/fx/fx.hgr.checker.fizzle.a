@@ -2,7 +2,7 @@
 ;(c) 2017-2019 by qkumba and 4am
 
 !cpu 6502
-!to "build/FX/PALETTE.FIZZLE2",plain
+!to "build/FX/CHECKER.FIZZLE",plain
 *=$6000
 
 sourcemask_even = $f0
@@ -14,13 +14,13 @@ copymask_odd = $f3
 
          ;init masks
 
-         lda   #%01010101
+         lda   #%01111111
          sta   sourcemask_even
-         lda   #%10101010
+         lda   #%10000000
          sta   copymask_even
-         lda   #%00101010
+         lda   #%00000000
          sta   sourcemask_odd
-         lda   #%11010101
+         lda   #%11111111
          sta   copymask_odd
 
 @outerloop
@@ -68,8 +68,14 @@ copymask_odd = $f3
          ;copy pixel from other page to this page
          ldy   #0
          lda   $26
-         ror
-         bcs   @odd
+         and   #1
+         sta   $00
+         lda   $26
+         rol
+         rol
+         and   #1
+         eor   $00
+         bne   @odd
          lda   ($26),y
          and   sourcemask_even
          sta   $00
