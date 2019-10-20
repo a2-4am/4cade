@@ -23,10 +23,7 @@ HGRBlockCopy
 ;        Z set
 ;        C clear
 ;        all other flags and registers clobbered
-         asl
-         asl
-         asl
-         +HGR_CALC
+         +HGR_ROW_CALC
 HGRBlockCopyNoRecalc
          clc
          ldx   #$08
@@ -46,10 +43,7 @@ HGRBlockToWhite
 ;        Z set
 ;        C clear
 ;        all other flags and registers clobbered
-         asl
-         asl
-         asl
-         +HGR_CALC
+         +HGR_ROW_CALC
          clc
          ldx   #$08
 @loop
@@ -141,10 +135,7 @@ HGRBlockCopyWithMask
 ; out:   Y preserved
 ;        A/X clobbered
 ;        $00 clobbered
-         asl
-         asl
-         asl
-         +HGR_CALC
+         +HGR_ROW_CALC
 HGRBlockCopyWithMaskNoRecalc
          ldx   #7
 HGRBlockCopyWithMasksLoop
