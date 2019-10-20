@@ -7,7 +7,8 @@
 
          ldx   #191
 
----      lda   #$40
+---      jsr   WaitForVBL
+         lda   #$40
          sta   $e6
          lsr
          sta   $29
@@ -97,3 +98,5 @@ vposn    txa
          sta   $27
 
 done     rts
+
+         !source "src/fx/hw.vbl.a"

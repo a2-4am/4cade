@@ -22,6 +22,7 @@ counter = $ff
          lda   #23
          sta   row
          ldy   col
+         jsr   WaitForVBL
 @rowloop
          tya
          bmi   +
@@ -60,3 +61,4 @@ copymasks
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

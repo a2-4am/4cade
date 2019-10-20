@@ -18,6 +18,7 @@ col2 = $ff
 @colloop
          lda   #6
          sta   maskindex
+         jsr   WaitForVBL
 @maskloop
          ldx   maskindex
          lda   copymasks1,x
@@ -103,3 +104,4 @@ copymasks2
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

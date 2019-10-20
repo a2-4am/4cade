@@ -1,6 +1,37 @@
 !ifndef _HGRMACROS_ {
          !source "src/macros.a"
 
+; .lo, .page1hi, .page2hi will each be filled with $C0 bytes
+; based on routine by John Brooks
+; posted on comp.sys.apple2 on 2018-07-11
+; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
+!macro BUILD_HGR_LOOKUP_TABLES .hgrlo, .hgr1hi, .hgr2hi {
+         ldx   #0
+-        txa
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlo,x
+         txa
+         and   #7
+         rol
+         asl   .hgrlo,x
+         rol
+         clc
+         adc   #$20
+         sta   .hgr1hi,x
+         eor   #$60
+         sta   .hgr2hi,x
+         inx
+         cpx   #$C0
+         bne   -
+}
+
 !macro HGR_CALC {
          asl
          tax

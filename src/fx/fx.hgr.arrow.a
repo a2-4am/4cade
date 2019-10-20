@@ -25,6 +25,7 @@ ColLoop
          sta   row
          ldy   col
          sty   y
+         jsr   WaitForVBL
 RowLoop
          ; check if this column is visible
          ldy   y
@@ -93,3 +94,4 @@ copymasks4
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

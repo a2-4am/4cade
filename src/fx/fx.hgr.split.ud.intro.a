@@ -39,6 +39,7 @@ row2 = $FF
          sta   row2
 
 @outerloop
+         jsr   WaitForVBL
          lda   row1
          bmi   @skiptopwhite
          asl
@@ -122,3 +123,4 @@ row2 = $FF
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

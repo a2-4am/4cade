@@ -10,8 +10,13 @@ row = $fd
 col = $fe
 counter = $ff
 
+hgrlo = $8000
+hgr1hi = $80C0
+hgr2hi = $8180
+
          !source "src/fx/macros.a"
 
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi, hgr2hi
          +INIT_MASKS sourcemasks1, copymasks1
          +INIT_MASKS sourcemasks4, copymasks4
 
@@ -25,18 +30,27 @@ ColLoop
          sta   row
          ldy   col
          sty   y
+         jsr   WaitForVBL
+
 RowLoop
+         ; do top half of arrow
+         lda   row
+         asl
+         asl
+         asl
+         tax
+         lda   hgrlo,x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi,x
+         sta   $27
+         lda   hgr2hi,x
+         sta   $3d
+
          ; check if this column is visible
          ldy   y
          +IS_Y_OFFSCREEN
-         +LBCS Skip1
-
-         ; do top half of arrow (part 1 of 2)
-         lda   row
-         asl
-         asl
-         asl
-         +HGR_CALC
+         bcs   TopSkip1
 
          ldx   #7
 -        lda   ($26),y
@@ -50,42 +64,11 @@ RowLoop
          +HGR_INC_WITHIN_BLOCK
          dex
          bpl   -
-
-         ; do bottom half of arrow (opposing row, same col)
-         lda   #23
-         sec
-         sbc   row
-         asl
-         asl
-         asl
-         +HGR_CALC
-
-         ldx   #7
--        lda   ($26),y
-         and   sourcemasks4,x
-         sta   $00
-         lda   #$FF
-         and   copymasks4,x
-         ora   $00
-         sta   ($26),y
-         clc
-         +HGR_INC_WITHIN_BLOCK
-         dex
-         bpl   -
-
-Skip1
-         ; now check if *this* column is visible
+         +RESET_HGR_CALC
+TopSkip1
          iny
-         sty   y
          +IS_Y_OFFSCREEN
-         +LBCS Skip2
-
-         ; do top half of arrow (part 2 of 2)
-         lda   row
-         asl
-         asl
-         asl
-         +HGR_CALC
+         bcs   TopSkip2
 
          ldx   #7
 -        lda   #$FF
@@ -99,7 +82,15 @@ Skip1
          +HGR_INC_WITHIN_BLOCK
          dex
          bpl   -
+         +RESET_HGR_CALC
+TopSkip2
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   BottomHalf
+         lda   row
+         jsr   HGRBlockCopyNoRecalc
 
+BottomHalf
          ; do bottom half of arrow (opposing row, same col)
          lda   #23
          sec
@@ -107,7 +98,37 @@ Skip1
          asl
          asl
          asl
-         +HGR_CALC
+         tax
+         lda   hgrlo,x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi,x
+         sta   $27
+         lda   hgr2hi,x
+         sta   $3d
+
+         ldy   y
+         +IS_Y_OFFSCREEN
+         bcs   BottomSkip1
+
+         ldx   #7
+-        lda   ($26),y
+         and   sourcemasks4,x
+         sta   $00
+         lda   #$FF
+         and   copymasks4,x
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         +RESET_HGR_CALC
+
+BottomSkip1
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   BottomSkip2
 
          ldx   #7
 -        lda   #$FF
@@ -121,24 +142,21 @@ Skip1
          +HGR_INC_WITHIN_BLOCK
          dex
          bpl   -
-
-Skip2
-         ; now check if *this* column is visible
+         +RESET_HGR_CALC
+BottomSkip2
          iny
          +IS_Y_OFFSCREEN
          bcs   NextRow
 
-         ; do top half copy
-         lda   row
-         jsr   HGRBlockCopy
-
-         ; do bottom half copy
          lda   #23
          sec
          sbc   row
-         jsr   HGRBlockCopy
+         jsr   HGRBlockCopyNoRecalc
 
 NextRow
+         ldy   y
+         iny
+         sty   y
          dec   row
          +LBPL RowLoop
          lda   $c000
@@ -173,3 +191,4 @@ copymasks4
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

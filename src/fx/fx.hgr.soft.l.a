@@ -27,6 +27,7 @@ counter = $ff
 ColLoop
          lda   #23
          sta   row
+         jsr   WaitForVBL
 RowLoop
          ; [speedopt] calculate HGR base addresses once per row
          lda   row
@@ -244,3 +245,4 @@ copymasks6
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"
