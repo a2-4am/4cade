@@ -1,0 +1,58 @@
+;license:MIT
+; By Andrew Roughan
+;   in the style of 4am for Total Replay
+;
+; Mockingboard support functions
+;
+
+;------------------------------------------------------------------------------
+; HasMockingboard
+; detect Mockingboard card by searching for 6522 timers across all slots
+; access 6522 timers with deterministic cycle counts
+;
+;   based on prior art in Mockingboard Developers Toolkit
+;   with optimisation from deater/french touch
+;   also takes into account FastChip //e clock difference
+;
+; in:    none
+;        accelerators should be off
+; out:   C set if Mockingboard found in any slot
+;        if card was found, X = #$Cn where n is the slot number of the card
+;        C clear if no Mockingboard found
+;        other flags clobbered
+;        zp $80-$82 clobbered
+;        A/Y clobbered
+;------------------------------------------------------------------------------
+HasMockingboard
+         lda   #$00
+         sta   $80
+         ldx   #$C7
+@slotLoop
+         stx   $81
+         ldy   #$04                  ; 6522 #1 $Cx04
+         jsr   timercheck
+         bne   @nextSlot
+         ldy   #$84                  ; 6522 #2 $Cx84
+         jsr   timercheck
+         bne   @nextSlot
+@found
+         sec                         ; found
+         rts
+@nextSlot
+         dex
+         cpx   #$C0
+         bne   @slotLoop
+
+         clc                         ; not found
+         rts
+
+timercheck
+         lda   ($80),y               ; read 6522 timer low byte
+         sta   $82
+         lda   ($80),y               ; second time 
+         sec
+         sbc   $82
+         cmp   #$F8                  ; looking for (-)8 cycles between reads
+         beq   +
+         cmp   #$F7                  ; FastChip //e clock is different
++        rts
