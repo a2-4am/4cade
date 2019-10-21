@@ -12,6 +12,7 @@
 ;
 ;   based on prior art in Mockingboard Developers Toolkit
 ;   with optimisation from deater/french touch
+;   also takes into account FastChip //e clock difference
 ;
 ; in:    none
 ;        accelerators should be off
@@ -52,4 +53,6 @@ timercheck
          sec
          sbc   $82
          cmp   #$F8                  ; looking for (-)8 cycles between reads
-         rts
+         beq   +
+         cmp   #$F7                  ; FastChip //e clock is different
++        rts
