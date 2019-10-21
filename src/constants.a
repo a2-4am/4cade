@@ -6,18 +6,20 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E300 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
-; ...end of data and start of code are approximate, in between is unused...
-; ...if they ever overlap, things will go boom...
-; E600..FFFB - main program code
-; FFFC..FFFF - reset and other vectors
+; D000..E611 - persistent data structures (per-game cheat categories,
+;              gGlobalPrefsStore, gGamesListStore)
+; ...unused...
+; ECC8..FFF9 - main program code
+; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D5FF - ProRWTS code
-; D600..D9FF - HGR font data
-; DA00..DEFF - unused
-; DF00..DFFF - backup of stack (during gameplay and self-running demos)
+; D400..D5F7 - ProRWTS code
+; D5F8..DB52 - HGR font code & ProRWTS glue code
+; DB53..DB6E - backup of stack (during gameplay and self-running demos)
+; ...unused...
+; DBB6..DBFF - (de)acceleration function
+; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
 ; soft switches
@@ -47,6 +49,7 @@ DHIRESOFF =    $C05F      ; double hi-res off switch
 ; ROM routines and addresses
 ; (prefixed because so much of the program runs from LC RAM, so don't call
 ; these without thinking about memory banks first)
+ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
 ROM_HOME =     $FC58
@@ -54,30 +57,65 @@ ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
 ROM_PR0 =      $FE93      ; SETVID
 
-; zero page
-PARAM        = $00        ; used by PARAMS_ON_STACK macro, so basically everywhere
-PTR          = $02
-SRC          = $04
-DEST         = $06
-SAVE         = $08
-HTAB         = $24
-VTAB         = $25
-RNDSEED      = $4E        ; word
-Timeout      = $ED        ; 3 bytes (used by SearchMode)
+; zero page during init ONLY
 zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
                           ; bit 5 = 1 if machine has a VidHD card
                           ; bit 4 = 1 if machine is a IIgs
                           ; only used during init, then copied to MachineStatus in LC RAM
+zpCharMask   = $F1        ; only used during init, then clobbered
+
+; zero page
+PARAM        = $00        ; word (used by PARAMS_ON_STACK macro, so basically everywhere)
+PTR          = $02        ; word
+SRC          = $04        ; word
+DEST         = $06        ; word
+SAVE         = $08        ; word
+HTAB         = $24        ; byte
+VTAB         = $25        ; byte
+RNDSEED      = $4E        ; word
+; textrank
+tmpx         = $E7        ; byte
+remainder    = $E8        ; word
+num1         = $EA        ; word
+num2         = $EC        ; byte
+Timeout      = $ED        ; 3 bytes (used by SearchMode)
+zpword   =     $F0        ; word
+zpstring =     $F2        ; word
+runningscore=  $F4        ; word
+startat  =     $F6        ; byte
+i        =     $F7        ; byte
+tmp      =     $F8        ; byte
+gamelength=    $F9        ; byte
+firstletter=   $FA        ; byte
+MatchCount =   $FB        ; byte
+BestMatchScore = $FC      ; byte
+BestMatchIndex = $FD      ; byte
+
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
 
 ; main memory
-gPathname    = $1F00      ; used by SetPath/AddToPath
+gPathname    = $BFD0      ; used by SetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
+UILine1      = $1FB0
+UILine2      = $1FD8
+UI_ToPlay    = $1FF7
+
 gValLen      = $1F80
 gVal         = $1F81
 
-; actual constants
-SUPPORTS_SHR = %00110000  ; AND mask for MachineStatus
+; LC RAM 1
+gCheatsAvailable   = $D000  ; master cheats table, indexed by game index in gGamesListStore
+                            ; 1 byte per game, so max size = 256 games
+MockingboardSlot   = $FFF8
+MachineStatus      = $FFF9
+
+; LC RAM 2
+DisableAccelerator = $DBB6
+EnableAccelerator  = DisableAccelerator+3
+
+; AND masks for MachineStatus
+SUPPORTS_SHR   = %00110000
+CHEATS_ENABLED = %00001000
