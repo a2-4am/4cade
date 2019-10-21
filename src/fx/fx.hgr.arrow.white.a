@@ -12,11 +12,10 @@ counter = $ff
 
 hgrlo = $8000
 hgr1hi = $80C0
-hgr2hi = $8180
 
          !source "src/fx/macros.a"
 
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi, hgr2hi
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +INIT_MASKS sourcemasks1, copymasks1
          +INIT_MASKS sourcemasks4, copymasks4
 
@@ -44,7 +43,7 @@ RowLoop
          sta   $3c
          lda   hgr1hi,x
          sta   $27
-         lda   hgr2hi,x
+         eor   #$60
          sta   $3d
 
          ; check if this column is visible
@@ -104,7 +103,7 @@ BottomHalf
          sta   $3c
          lda   hgr1hi,x
          sta   $27
-         lda   hgr2hi,x
+         eor   #$60
          sta   $3d
 
          ldy   y
