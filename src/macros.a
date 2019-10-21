@@ -57,6 +57,18 @@
          sty   .ptr+1
 }
 
+!macro  LBPL .target {
+         bmi   +
+         jmp   .target
++
+}
+
+!macro  LBNE .target {
+         beq   +
+         jmp   .target
++
+}
+
 ; use BIT to swallow the following 1-byte opcode
 !macro   HIDE_NEXT_BYTE {
          !byte $24
@@ -75,6 +87,10 @@
 !macro   READ_RAM1_WRITE_RAM1 {
          bit   $C08B
          bit   $C08B
+}
+
+!macro   READ_RAM2_NO_WRITE {
+         bit   $C080
 }
 
 !macro   READ_RAM2_WRITE_RAM2 {
@@ -96,25 +112,6 @@
          bit   $C082
 }
 
-!macro   LOAD_FILE .subdirectory, .filename {
-         +LDADDR .subdirectory
-         jsr   SetPath
-         +LDAY .filename
-         jsr   AddToPath
-         jsr   LoadFile
-}
-
-!macro   LOAD_PATH .subdirectory {
-         +LDADDR .subdirectory
-         jsr   SetPath
-}
-
-!macro   LOAD_FILE_IMM .filename {
-         +LDAY .filename
-         jsr   AddToPath
-         jsr   LoadFile
-}
-
 !macro   LOW_ASCII_TO_LOWER {
          cmp   #$41
          bcc   +
@@ -124,16 +121,36 @@
 +
 }
 
-; does not set page 1 or 2
-!macro   HGR_MODE {
-         bit   $C057
-         bit   $C052
-         bit   $C050
+; requires setting zpCharMask in zero page to #$FF or #$DF before use
+!macro   FORCE_UPPERCASE_IF_REQUIRED {
+         cmp   #$E1
+         bcc   +
+         and   zpCharMask
++
 }
 
-; does not set page 1 or 2
-!macro   GR_MODE {
-         bit   $C056
-         bit   $C052
-         bit   $C050
+; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
+!macro   ENABLE_ACCEL {
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         +READ_ROM_NO_WRITE
+}
+
+!macro   DISABLE_ACCEL {
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MACHINE_STATUS {
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARDSLOT {
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         ldx   MockingboardSlot
+         +READ_ROM_NO_WRITE
 }
