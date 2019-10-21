@@ -57,14 +57,20 @@
          sty   .ptr+1
 }
 
-!macro  LBPL .target {
+!macro   LBPL .target {
          bmi   +
          jmp   .target
 +
 }
 
-!macro  LBNE .target {
+!macro   LBNE .target {
          beq   +
+         jmp   .target
++
+}
+
+!macro   LBCS .target {
+         bcc   +
          jmp   .target
 +
 }

@@ -53,6 +53,6 @@ timercheck
          sec
          sbc   $82
          cmp   #$F8                  ; looking for (-)8 cycles between reads
-         beq   +
+		 beq   +
          cmp   #$F7                  ; FastChip //e clock is different
-+        rts
+         rts
