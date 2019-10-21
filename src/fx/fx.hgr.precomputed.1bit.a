@@ -1,0 +1,245 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+src1           = $F0      ; word
+dest1          = $F2      ; word
+src2           = $F4      ; word
+dest2          = $F6      ; word
+input          = $FE      ; word
+
+copymasks      = $0200    ; $100 bytes but sparse, index is 0..6 but in high 3 bits, so $00, $20, $40, $60, $80, $A0, $C0
+sourcemasks    = $0201    ; same as copymasks
+mirror_copymasks = $0202
+mirror_sourcemasks = $0203
+hgrlo          = $0300    ; $C0 bytes
+mirror_cols    = $BD58    ; $28 bytes
+mirror_rows    = $BD80    ; $C0 bytes
+hgr1hi         = $BE40    ; $C0 bytes
+
+         !source "src/fx/macros.a"
+
+!macro FX_PRECOMPUTED_1BIT .coords {
+         ; build lookup tables for base address of HGR rows
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+
+         ; build lookup table to get $27-y for y in $00..$27
+         ldx   #$27
+         ldy   #$00
+-        tya
+         sta   mirror_cols,x
+         iny
+         dex
+         bpl   -
+
+         ; build lookup table to get $BF-x for x in $00..$BF
+         ldx   #$BF
+         ldy   #$00
+-        tya
+         sta   mirror_rows,x
+         dex
+         iny
+         cpy   #$C0
+         bne   -
+
+         ; build sparse lookup tables for bitmasks
+         lda   #%10000001
+         sta   copymasks
+         sta   mirror_copymasks+$C0
+         eor   #%11111111
+         sta   sourcemasks
+         sta   mirror_sourcemasks+$C0
+
+         lda   #%10000010
+         sta   copymasks+$20
+         sta   mirror_copymasks+$A0
+         eor   #%11111111
+         sta   sourcemasks+$20
+         sta   mirror_sourcemasks+$A0
+
+         lda   #%10000100
+         sta   copymasks+$40
+         sta   mirror_copymasks+$80
+         eor   #%11111111
+         sta   sourcemasks+$40
+         sta   mirror_sourcemasks+$80
+
+         lda   #%10001000
+         sta   copymasks+$60
+         sta   mirror_copymasks+$60
+         eor   #%11111111
+         sta   sourcemasks+$60
+         sta   mirror_sourcemasks+$60
+
+         lda   #%10010000
+         sta   copymasks+$80
+         sta   mirror_copymasks+$40
+         eor   #%11111111
+         sta   sourcemasks+$80
+         sta   mirror_sourcemasks+$40
+
+         lda   #%10100000
+         sta   copymasks+$A0
+         sta   mirror_copymasks+$20
+         eor   #%11111111
+         sta   sourcemasks+$A0
+         sta   mirror_sourcemasks+$20
+
+         lda   #%11000000
+         sta   copymasks+$C0
+         sta   mirror_copymasks
+         eor   #%11111111
+         sta   sourcemasks+$C0
+         sta   mirror_sourcemasks
+
+         ; set up pointer to input data
+         lda   #<.coords
+         sta   input
+         lda   #>.coords
+         sta   input+1
+
+         jmp   InputLoop
+Exit1    rts
+
+InputLoop
+         ldy   #0
+         lda   (input),y             ; first value: HGR row (only 0..95 will be in input array)
+         bmi   Exit1                 ; if > 127 then we're done
+         pha
+         tax
+         lda   hgrlo,x
+         sta   dest1
+         sta   src1
+         lda   hgr1hi,x
+         sta   dest1+1
+         eor   #$60
+         sta   src1+1
+         inx
+         lda   hgrlo,x
+         sta   dest2
+         sta   src2
+         lda   hgr1hi,x
+         sta   dest2+1
+         eor   #$60
+         sta   src2+1
+         iny
+         lda   (input),y
+         pha
+         and   #%00011111            ; second value: low 5 bits = byte offset within the row
+         tay
+         pla
+         and   #%11100000            ; second value: high 3 bits = index into tables to find bitmasks
+         tax
+
+         ; main 1x2 block in top-left quadrant
+
+         lda   (dest1),y
+         and   sourcemasks,x
+         sta   $00
+         lda   (src1),y
+;         lda   #$FF
+         and   copymasks,x
+         ora   $00
+         sta   (dest1),y
+         lda   (dest2),y
+         and   sourcemasks,x
+         sta   $00
+         lda   (src2),y
+;         lda   #$FF
+         and   copymasks,x
+         ora   $00
+         sta   (dest2),y
+
+         ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
+
+         lda   mirror_cols,y
+         tay
+         lda   (dest1),y
+         and   mirror_sourcemasks,x
+         sta   $00
+         lda   (src1),y
+;         lda   #$FF
+         and   mirror_copymasks,x
+         ora   $00
+         sta   (dest1),y
+         lda   (dest2),y
+         and   mirror_sourcemasks,x
+         sta   $00
+         lda   (src2),y
+;         lda   #$FF
+         and   mirror_copymasks,x
+         ora   $00
+         sta   (dest2),y
+
+         ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
+
+         stx   $00
+         pla
+         tax
+         lda   mirror_rows,x
+         tax
+         lda   hgrlo,x
+         sta   dest1
+         sta   src1
+         lda   hgr1hi,x
+         sta   dest1+1
+         eor   #$60
+         sta   src1+1
+         dex
+         lda   hgrlo,x
+         sta   dest2
+         sta   src2
+         lda   hgr1hi,x
+         sta   dest2+1
+         eor   #$60
+         sta   src2+1
+         ldx   $00
+         lda   (dest1),y
+         and   mirror_sourcemasks,x
+         sta   $00
+         lda   (src1),y
+;         lda   #$FF
+         and   mirror_copymasks,x
+         ora   $00
+         sta   (dest1),y
+         lda   (dest2),y
+         and   mirror_sourcemasks,x
+         sta   $00
+         lda   (src2),y
+;         lda   #$FF
+         and   mirror_copymasks,x
+         ora   $00
+         sta   (dest2),y
+
+         ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
+
+         lda   mirror_cols,y
+         tay
+         lda   (dest1),y
+         and   sourcemasks,x
+         sta   $00
+         lda   (src1),y
+;         lda   #$FF
+         and   copymasks,x
+         ora   $00
+         sta   (dest1),y
+         lda   (dest2),y
+         and   sourcemasks,x
+         sta   $00
+         lda   (src2),y
+;         lda   #$FF
+         and   copymasks,x
+         ora   $00
+         sta   (dest2),y
+
+         bit   $c000
+         bmi   Exit2
+
+         inc   input
+         bne   +
+         inc   input+1
++        inc   input
+         +LBNE InputLoop
+         inc   input+1
+         +LBNE InputLoop
+Exit2
+}
