@@ -41,51 +41,76 @@ FirstMover
 Reenter
          cld
          cli
-         +READ_RAM2_WRITE_RAM2
+         jsr   SwitchToBank2
+         jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
+                                     ; which restores default speed on Ctrl-Reset)
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
          jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
+         ldx   #5
+-        lda   ResetVector,x         ; copy reentry wrapper to bottom of stack
+         sta   $100,x                ; (used as reset vector because ][+ always
+         dex                         ; switches to ROM on Ctrl-Reset)
+         bpl   -
+         inx
+         stx   $3F2                  ; page 3 reset vector to ($100)
+         inx
+         stx   $3F3
+         ldx   #$A4
+         stx   $3F4
 RestoreStackNextTime
-         clc                         ; SMC
-         bcc   SearchMode            ; not an unconditional branch because code
-                                     ; might change the 'clc' just before it
+         bne   SearchMode            ; (SMC) not an unconditional branch because code
+                                     ; might change the branch target to the next opcode
          ; If we fall through to here, it's because we backed up the stack and
          ; stack pointer and wanted this routine to restore it and return to
          ; caller.
-         lda   #$18                  ; reset to 'clc' opcode so we don't try to
-         sta   RestoreStackNextTime  ; restore the same stack twice
-         ldx   #1
--        lda   $DF00,x               ; restore stack
+         lda   #(SearchMode - RestoreStackNextTime) - 2
+                                     ; reset to branch so we don't try to
+         sta   RestoreStackNextTime + 1
+                                     ; restore the same stack twice
+         ldx   #$F1
+-        lda   STACKBASE - $F0,x     ; restore stack
          sta   $100,x
          inx
          bne   -
-         ldx   $DF00                 ; restore stack pointer
+         ldx   STACKBASE             ; restore stack pointer
          txs
+SwitchToBank1
          +READ_RAM1_WRITE_RAM1
          rts                         ; and return to caller
+ResetVector                          ; 6 bytes, copied to $100
+         +READ_RAM1_NO_WRITE
+         jmp   Reenter
 
          ; these routines will only be called after relocating to language card
-         !source "src/ui.search.mode.a"
-         !source "src/ui.browse.mode.a"
-         !source "src/ui.credits.a"
+         !source "src/ui.search.mode.a"         ; \__ execution falls through
+         !source "src/ui.animation.a"           ; /
+
+         !source "src/ui.credits.a"             ; \__ execution falls through
+         !source "src/ui.browse.mode.a"         ; /
+
+         !source "src/ui.attract.hgr.a"         ; \__ execution falls through
+         !source "src/ui.font.a"                ; /
+
+         !source "src/ui.overlay.a"
+         !source "src/ui.offscreen.a"
          !source "src/ui.attract.mode.a"
-         !source "src/ui.attract.hgr.a"
-         !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
-         !source "src/prodos.path.a"
+
+         !source "src/ui.cheats.a"
          !source "src/glue.launch.a"
-         !source "src/glue.prorwts2.a"
          !source "src/okvs.a"
          !source "src/wait.a"
          !source "src/textrank.a"
          !source "src/parse.common.a"
          !source "src/parse.prefs.a"
-         !source "src/ui.font.a"
+         !source "src/glue.prorwts2.a"
          !source "src/ui.common.a"
-MachineStatus
-         !byte 0
-GameCount
-         !byte 0
+
+         ; add new files above here so ui.wait stays last
+
+         !source "src/ui.attract.dhgr.a"        ; \-- execution falls through
+         !source "src/ui.wait.a"                ; /
 gAttractModeStore
 gFXStore
 gDFXStore
@@ -93,19 +118,87 @@ gDFXStore
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
-         !word $D000
+         !word $D100
 gGamesListStore
          !word $FDFD                 ; SMC
+SwitchToBank2
+         +READ_RAM2_WRITE_RAM2
+         rts
+         !source "src/prodos.path.a" ; paths end up on the same page
+
+; MockingboardSlot (label is in constants.a so prelaunchers can use it)
+;      slot number where Mockingboard was detected + $C0
+;      #$00 if no Mockingboard detected
+         !byte $FD                   ; MockingboardSlot ($FFF8)
+; MachineStatus (label is in constants.a so prelaunchers can use it)
+;      7 6 5 4 3 2 1 0
+;      | | | | | | | +- bit 0 reserved
+;      | | | | | | +--- bit 1 reserved
+;      | | | | | +----- bit 2 reserved
+;      | | | | +------- bit 3 = 1 if cheats are enabled
+;      | | | +--------- bit 4 = 1 if IIgs
+;      | | +----------- bit 5 = 1 if VidHD
+;      | +------------- bit 6 = 1 if 128K
+;      +--------------- bit 7 = 1 if joystick
+; Use the bit masks defined in constants.a
+         !byte $FD                   ; MachineStatus ($FFF9)
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
          !word Reenter               ; IRQ vector ($FFFE-F)
 }
 LastMover
-         !source "src/ui.font.data.a"
+!if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f0) {
+  ; in the unlikely event that a bit over 16 bytes are left in the page
+  ; then use it for the stack
+  STACKBASE = (hdddataend + 15) and -16
+  FONTSRC = *
+  !pseudopc STACKBASE + 16 {
+    FONTDST = *
+         !source "src/ui.font.data.lc2.a"
+    COPYDST = *
+    COPYSRC = LastMover + COPYDST - FONTDST
+         !source "src/ui.font.lc2.a"
+         !source "src/prodos.impl.lc2.a"
+         !source "src/glue.prorwts2.lc2.a"
+         !source "src/glue.launch.lc2.a"
+         !source "src/hw.accel.lc2.a"
+    LCRAM2_END = *
+    !if * > $E000 {
+      !error "code is too large: ends at ", *
+    }
+  }
+EvenLasterMover
+} else {
+  ; otherwise place stack after code
+  ; and begin font on the next page
+  COPYSRC = *
+  !pseudopc hdddataend {
+    COPYDST = *
+         !source "src/prodos.impl.lc2.a"
+         !source "src/ui.font.lc2.a"
+         !source "src/glue.prorwts2.lc2.a"
+         !source "src/glue.launch.lc2.a"
+         !source "src/hw.accel.lc2.a"
+    STACKBASE = *
+    LCRAM2_END = STACKBASE + 16
+    FONTDST = (LCRAM2_END + 255) and -256
+  }
+EvenLasterMover
+  FONTSRC = *
+  !pseudopc FONTDST {
+         !source "src/ui.font.data.lc2.a"
+    !if * > $E000 {
+      !error "code is too large: ends at ", *
+    }
+  }
+}
 !if RELBASE = $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
+    !warn "ProRWTS ends at ", hddcodeend - 1
+    !warn "STACK at ", STACKBASE
+    !warn "LCRAM2 ends at ", LCRAM2_END - 1
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
 }
