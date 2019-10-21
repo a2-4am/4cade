@@ -51,6 +51,6 @@ for i, j, k, l in zip(range(1680), range(1680,3360), range(3360,5040), range(504
     ripple_vals.append(unique_vals[j])
     ripple_vals.append(unique_vals[k])
     ripple_vals.append(unique_vals[l])
-with open("../../../src/fx/fx.hgr.slow.ripple.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
