@@ -1,7 +1,7 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-9 by 4am
 ;
-         !source "src/fx/fx.hgr.macros.a"
+         !source "src/fx/macros.a"
 
 HGRCalc
 ; in:    A = HGR row (0x00..0xBF)
@@ -23,20 +23,14 @@ HGRBlockCopy
 ;        Z set
 ;        C clear
 ;        all other flags and registers clobbered
-         asl
-         asl
-         asl
-         +HGR_CALC
+         +HGR_ROW_CALC
+HGRBlockCopyNoRecalc
          clc
          ldx   #$08
 @loop
          lda   ($3c),y
          sta   ($26),y
-         lda   $27
-         adc   #$04
-         sta   $27
-         eor   #$60
-         sta   $3d
+         +HGR_INC_WITHIN_BLOCK
          dex
          bne   @loop
          rts
@@ -49,10 +43,7 @@ HGRBlockToWhite
 ;        Z set
 ;        C clear
 ;        all other flags and registers clobbered
-         asl
-         asl
-         asl
-         +HGR_CALC
+         +HGR_ROW_CALC
          clc
          ldx   #$08
 @loop
@@ -105,4 +96,60 @@ HGRStaggerToWhite
          +HGR_INC_WITHIN_BLOCK
          dex
          bne   @loop
+         rts
+
+SetSourceMask
+; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
+         +STAY SourceMaskAddr
+         rts
+
+SetCopyMask
+; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
+         +STAY CopyMaskAddr
+         rts
+
+BuildSourceMaskFromCopyMask
+; build an 8-byte array of bit masks at (SourceMaskAddr)
+; that are the inverse (EOR #$FF) of the bit masks at (CopyMaskAddr)
+;
+; in:    must call SetSourceMask and SetCopyMask first
+; out:   A/Y clobbered
+;        $00/$01/$02/$03 clobbered
+;        X preserved
+         +LDAY CopyMaskAddr
+         +STAY $00
+         +LDAY SourceMaskAddr
+         +STAY $02
+         ldy   #$07
+-        lda   ($00),y
+         eor   #$FF
+         sta   ($02),y
+         dey
+         bpl   -
+         rts
+
+HGRBlockCopyWithMask
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+;        must call SetSourceMask and SetCopyMask first
+; out:   Y preserved
+;        A/X clobbered
+;        $00 clobbered
+         +HGR_ROW_CALC
+HGRBlockCopyWithMaskNoRecalc
+         ldx   #7
+HGRBlockCopyWithMasksLoop
+         lda   ($26),y
+SourceMaskAddr=*+1
+         and   $FDFD,x               ; call SetSourceMask to set
+         sta   $00
+         lda   ($3c),y
+CopyMaskAddr=*+1
+         and   $FDFD,x               ; call SetCopyMask to set
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   HGRBlockCopyWithMasksLoop
          rts

@@ -1,0 +1,66 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/DIAGONAL4",plain
+*=$6000
+
+row = $fd
+col = $fe
+counter = $ff
+
+         !source "src/fx/macros.a"
+
+         +INIT_MASKS sourcemasks, copymasks
+
+         lda   #64        ; 40 + 24
+         sta   counter
+
+         lda   #39
+         sta   col
+@colloop
+         lda   #0
+         sta   row
+         ldy   col
+         jsr   WaitForVBL
+@rowloop
+         tya
+         bmi   +
+         cpy   #40
+         bcs   +
+         lda   row
+         jsr   HGRBlockCopyWithMask
++        iny
+         bmi   +
+         cpy   #40
+         bcs   +
+         lda   row
+         jsr   HGRBlockCopy
++
+         inc   row
+         lda   row
+         cmp   #24
+         bcc   @rowloop
+         lda   #64
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         dec   col
+         dec   counter
+         bne   @colloop
+@exit    rts
+
+sourcemasks
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+copymasks
+         !byte %10000000
+         !byte %11000000
+         !byte %11100000
+         !byte %11110000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111110
+         !byte %11111111
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

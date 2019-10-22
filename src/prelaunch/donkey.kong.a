@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/DONKEY.KONG",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $3eab
+         jsr   $3e36      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2c
+         sta   $729b
+         sta   $6fea
++
+         +DISABLE_ACCEL
+         jmp   $4000

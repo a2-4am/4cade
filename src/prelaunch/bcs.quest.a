@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BCS.QUEST",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<cheat
+         sta   $3e09
+         lda   #>cheat
+         sta   $3e0a
+         jmp   $800      ; decompress
+
+cheat
+         jsr   $200
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $1eeb      ; patch - don't increase lives
+         sta   $7a4e      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         rts

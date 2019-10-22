@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/STANDARD",plain
+*=$106
+
+         lda   $59                   ; set up game entry point in stack page
+         ldy   $5A                   ; (last ProRWTS load address - 1)
+         sec
+         sbc   #$01
+         bcs   +
+         dey
++        sta   $1FE
+         sty   $1FF
+
+         !source "src/prelaunch/common.a"
+
+         ldx   #$FD                  ; Jump to game entry point via stack pop.
+         txs
+         rts

@@ -1,0 +1,4 @@
+$9D58: 20619D -> 4C0001 to exit on keypress during title sequence (context is AD00C0100520619D)
+$8FD6: C9C1D0 -> 4C0001 to exit on keypress during demo (context is AD00C0100AC9C1D006)
+$8FEF: 8D10C0 -> 4C0001 to exit on keypress during demo (context is AD00C010C68D10C020619D)
+$92B1: A90085 -> 4C0001 to exit at end of demo cycle (context is A900852860A526)

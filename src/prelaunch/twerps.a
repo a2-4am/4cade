@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/TWERPS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+1
+         ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
+-        lda   patch,x
+         sta   <($100-end_patch+patch),x
+         dex
+         bpl   -
+         lda   #($100-end_patch+patch)
+         sta   $1DF6
+         lda   #$00
+         sta   $1DF7
+         jmp   $1D97      ; decompress and show title
+patch
+         lda   #0         ; SMC
+         beq   +
+                          ; lives in $14FE
+         lda   #$AD
+         sta   $0640      ; patch - don't decrease lives
+         sta   $0774      ; patch - don't decrease lives
+         sta   $0F05      ; patch - don't decrease lives
++
+         jmp   $0400
+end_patch

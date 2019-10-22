@@ -176,6 +176,7 @@ NotGS    clc
          stx   MockingboardSlot      ; save mockingboard slot in LC RAM
 +
          jsr   EnableAccelerator
+
          jmp   OneTimeSetup
 
          ; ProRWTS2 has its own function to relocate itself
@@ -186,6 +187,7 @@ ProRWTSBuffer
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.mockingboard.a"
+
 TOTAL
          !text   "T O T A L"
 REPLAY

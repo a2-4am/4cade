@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/XEVIOUS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch2+1
+         lda   #<patch1
+         sta   $35E4
+         lda   #>patch1
+         sta   $35E5
+         jmp   $34AA      ; decompress 1
+patch1
+         +DISABLE_ACCEL
+         lda   #<patch2
+         sta   $ACE8
+         lda   #>patch2
+         sta   $ACE9
+         jmp   $AC48      ; decompress 2
+patch2
+         lda   #0         ; SMC
+         beq   +
+                          ; lives in $602B
+         lda   #$AD
+         sta   $6414      ; patch - don't decrease lives
+         sta   $6A8C      ; patch - don't increase lives
+         sta   $750D      ; patch - don't increase lives
+         sta   $894F      ; patch - don't increase lives
++
+         jmp   $0600

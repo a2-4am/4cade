@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/COMMANDO",plain
+*=$106
+
+         jmp   ++
+
+cheat
+         jsr   $d33f
+         lda   $d521
+         eor   #$c5
+         bne   +
+         sta   $1053
+         sta   $1063
++        rts
+
+++
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $111c
+         jsr   $1000      ; decompress
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<cheat
+         sta   $d318
+         lda   #>cheat
+         sta   $d319
++
+         jsr   DisableAccelerator
+         lda   #$c2
+         jmp   $d300

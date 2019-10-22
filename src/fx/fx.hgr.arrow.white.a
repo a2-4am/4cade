@@ -1,0 +1,193 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/ARROW.WHITE",plain
+*=$6000
+
+y = $fc
+row = $fd
+col = $fe
+counter = $ff
+
+hgrlo = $8000
+hgr1hi = $80C0
+
+         !source "src/fx/macros.a"
+
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         +INIT_MASKS sourcemasks1, copymasks1
+         +INIT_MASKS sourcemasks4, copymasks4
+
+         lda   #(40+12+1)
+         sta   counter
+
+         lda   #39
+         sta   col
+ColLoop
+         lda   #11
+         sta   row
+         ldy   col
+         sty   y
+         jsr   WaitForVBL
+
+RowLoop
+         ; do top half of arrow
+         lda   row
+         asl
+         asl
+         asl
+         tax
+         lda   hgrlo,x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi,x
+         sta   $27
+         eor   #$60
+         sta   $3d
+
+         ; check if this column is visible
+         ldy   y
+         +IS_Y_OFFSCREEN
+         bcs   TopSkip1
+
+         ldx   #7
+-        lda   ($26),y
+         and   sourcemasks1,x
+         sta   $00
+         lda   #$FF
+         and   copymasks1,x
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         +RESET_HGR_CALC
+TopSkip1
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   TopSkip2
+
+         ldx   #7
+-        lda   #$FF
+         and   sourcemasks1,x
+         sta   $00
+         lda   ($3c),y
+         and   copymasks1,x
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         +RESET_HGR_CALC
+TopSkip2
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   BottomHalf
+         lda   row
+         jsr   HGRBlockCopyNoRecalc
+
+BottomHalf
+         ; do bottom half of arrow (opposing row, same col)
+         lda   #23
+         sec
+         sbc   row
+         asl
+         asl
+         asl
+         tax
+         lda   hgrlo,x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi,x
+         sta   $27
+         eor   #$60
+         sta   $3d
+
+         ldy   y
+         +IS_Y_OFFSCREEN
+         bcs   BottomSkip1
+
+         ldx   #7
+-        lda   ($26),y
+         and   sourcemasks4,x
+         sta   $00
+         lda   #$FF
+         and   copymasks4,x
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         +RESET_HGR_CALC
+
+BottomSkip1
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   BottomSkip2
+
+         ldx   #7
+-        lda   #$FF
+         and   sourcemasks4,x
+         sta   $00
+         lda   ($3c),y
+         and   copymasks4,x
+         ora   $00
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         +RESET_HGR_CALC
+BottomSkip2
+         iny
+         +IS_Y_OFFSCREEN
+         bcs   NextRow
+
+         lda   #23
+         sec
+         sbc   row
+         jsr   HGRBlockCopyNoRecalc
+
+NextRow
+         ldy   y
+         iny
+         sty   y
+         dec   row
+         +LBPL RowLoop
+         lda   $c000
+         bmi   @exit
+         dec   col
+         dec   counter
+         +LBNE ColLoop
+@exit    rts
+
+sourcemasks1
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+sourcemasks4
+         !byte 0,0,0,0,0,0,0,0       ; SMC
+copymasks1
+         !byte %11111111
+         !byte %11111110
+         !byte %11111100
+         !byte %11111000
+         !byte %11110000
+         !byte %11100000
+         !byte %11000000
+         !byte %10000000
+copymasks4
+         !byte %10000000
+         !byte %11000000
+         !byte %11100000
+         !byte %11110000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111110
+         !byte %11111111
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"

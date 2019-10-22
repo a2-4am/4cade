@@ -1,42 +1,16 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2019 by 4am
 ;
 !cpu 6502
 !to "build/FX/IRIS",plain
 *=$6000
 
-coord = $FE
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         lda   #<@coords
-         sta   coord
-         lda   #>@coords
-         sta   coord+1
-         ldy   #0
-@loop
-         lda   (coord),y
-         tax
-         iny
-         lda   (coord),y
-         tay
-         txa
-         jsr   HGRHalfBlockCopy
-         lda   #$6
-         jsr   WaitForKeyWithTimeout
-         bmi   @exit
-         inc   coord
-         bne   +
-         inc   coord+1
-+        inc   coord
-         bne   +
-         inc   coord+1
-+        ldy   #$00
-         lda   ($FE),y
-         bpl   @loop
-@exit    rts
+         +FX_PRECOMPUTED_1BIT Coordinates
 
-@coords
+         rts
+
+Coordinates
          !source "src/fx/fx.hgr.iris.data.a"
          !byte $80
-
-         !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"

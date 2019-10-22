@@ -1,0 +1,53 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MR.DO",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    clc
+    bcc cheat3
+
+cheat2
+    jsr $20d
+
+cheat64
+    lda #$a5
+    sta $1da7
+    sta $9bf
+    rts
+
+cheat1
+    ldy #<cheat2
+    sty $209
+    ldy #>cheat2
+    sty $20a
+    bne $19e
+
+cheat3
+    lda #$60
+    sta $83f
+    jsr $800
+    lda $847
+    beq cheat48
+    lda #$60
+    sta $d15
+    jsr $ce8
+    lda #<cheat4
+    sta $d137
+    lda #>cheat4
+    sta $d138
+    jmp $d100
+
+cheat4
+    jsr $d13b
+    jmp cheat64
+
+cheat48
+    lda #<cheat1
+    sta $1040
+    lda #>cheat1
+    sta $1041
+    jmp $1000

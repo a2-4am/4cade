@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/TAPPER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   cheat+1
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $851
+         jsr   $800
+         +DISABLE_ACCEL
+         lda   #<cheat
+         sta   $248
+         lda   #>cheat
+         sta   $249
+         jmp   $200
+
+cheat
+         lda   #0         ; SMC
+         beq   +
+         lda   #$b5
+         sta   $17f0
+         sta   $1998
++
+         jmp   $d00

@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BRUCE.LEE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   #$4c
+         sta   $b21
+         lda   #<callback
+         sta   $b22
+         lda   #>callback
+         sta   $b23
+         ldx   #<cheat2
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #<cheat1
++        stx   $b55
+         lda   #>cheat1
+         sta   $b56
+-        lda   cheat, x
+         sta   $300, x
+         inx
+         bpl   -
+         bit   MachineStatus
+         bvs   +
+         lda   #$82
+         sta   lcpatch+1
++
+         +READ_ROM_NO_WRITE
+         jmp   $900
+
+callback
+         +DISABLE_ACCEL
+         jsr   $7f8
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         +READ_RAM1_WRITE_RAM1
+         jmp   $b24
+
+cheat !pseudopc $300 {
+cheat1
+         lda   #$2c
+         sta   $8a7e
+cheat2
+         lda   $c083
+         jsr   DisableAccelerator
+lcpatch
+         lda   $c08b
+         jmp   $3800
+cheat_e
+}

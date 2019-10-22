@@ -117,7 +117,13 @@ seekread        stx bloklo
                 sty blokhi
 entry           jmp $d1d1
 
-fakeMLI         pla
+fakeMLI         bne retcall
+readblk         dey
+                dey
+                sty adrhi
+                tay
+                jsr seekread
+retcall         pla
                 tax
                 inx
                 inx

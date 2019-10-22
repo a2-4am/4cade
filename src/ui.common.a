@@ -1,210 +1,37 @@
-;license:MIT
+;License:MIT
 ;(c) 2018-9 by 4am
 ;
-; common UI functions
+; miscellaneous UI functions
 ;
 ; Public functions
-; - WaitForKeyFor30Seconds
-; - GetOffscreenAddress
-; - LoadTitleOffscreen
-; - LoadCoverOffscreen
-; - DrawSearchBarOffscreen
-; - ClearOffscreen
-; - ShowOtherPage
-; - ToggleOffscreenPage
-; - CoverFade
-; - ResetInputTimeout
-; - SoftBell
+; - ClearScreens
 ; - Home
-; - BlankHGR
 ; - BlankDHGR
-
-; Public variables
-; - OffscreenPage
-; - UILine1
-; - UILine2
-; - VisibleGameCount (set during init)
+; - IsSearchKey
+; - IsUpDownOrRightArrow
 ;
 
-!zone {
-
-OffscreenPage
-         !byte 1                     ; 0 = currently showing HGR page 2
-                                     ;     (so offscreen is page 1 @ $2000)
-                                     ; 1 = currently showing HGR page 1
-                                     ;     (so offscreen is page 2 @ $4000)
-
-UILine1
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-UILine2
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 0
-UI_ToPlay
-         !byte 0,0,0,0,0,0,0,0,0
-
-Instructions
-         !text "[Type to search, "
-         !byte $0B
-         !text " to browse]  "
-VisibleGameCount
-         !text "000 games"
-ReturnToPlay
-         !byte $0D
-         !text " to play"
-
-GetOffscreenAddress
-; in:    none
-; out:   A = high byte of offscreen HGR page (#$20 or #$40)
-;        preserves X/Y
-         lda   OffscreenPage
-         beq   +
-         lda   #$40
-         rts
-+        lda   #$20
-         rts
-
-LoadTitleOffscreen
-; clobbers all
-         +LDADDR .TitleFile
-         bne   +                     ; Always branches, because Y is loaded
-                                     ; last with the high byte of the address,
-                                     ; which is never 0. I miss my 65c02.
-LoadCoverOffscreen
-; clobbers all
-         +LDADDR .CoverFile
-+
-         jsr   SetPath
-         jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFileAt
-         !byte $00
-+        !byte $FD                   ; SMC
-         rts
-.TitleFile
-         !byte 5
-         !text "TITLE"
-.CoverFile
-         !byte 5
-         !text "COVER"
-
-CoverFade
-; clobbers all
-         jsr   LoadCoverOffscreen
-         jsr   ShowOtherPage
-         lda   OffscreenPage
-         bne   +
-         jsr   LoadCoverOffscreen
-         jsr   ShowOtherPage
-+
-          ; load transition effect code at $6000
-         +LDADDR kFXDirectory
-         jsr   SetPath
-         +LDADDR @CoverFadeFile
-         jsr   AddToPath
-         jsr   LoadFile
-         jmp   $6000                 ; exit via loaded code
-@CoverFadeFile
-         !byte 9
-         !text "COVERFADE"
-
-DrawSearchBarOffscreen
-; clobbers all
-         LDA   #22                   ; draw visible search bar
-         sta   VTAB
-         lda   OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR UILine1
-         jsr   Draw40Chars
-         lda   OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR UILine2
-         jmp   Draw40Chars
-
-ShowOtherPage
-; in:    none
-; out:   A = new value of OffscreenPage
-;        preserves X/Y
-         jsr   ToggleOffscreenPage
-         bne   +
-         bit   PAGE2                 ; show page 2
-         rts
-+        bit   PAGE1                 ; show page 1
-         rts
-
-ToggleOffscreenPage
-; in:    none
-; out:   A = new value of OffscreenPage
-;        preserves X/Y
-         lda   OffscreenPage
-         eor   #$01
-         sta   OffscreenPage
-         rts
-
-ResetInputTimeout
-; clobbers X, preserves A/Y
-         ldx   #$16
-         stx   Timeout
-         stx   Timeout+1
-         stx   Timeout+2
-         rts
-
-WaitForKeyFor30Seconds
-         lda   KBD
-         bmi   @gotKey
-
-         inc   RNDSEED+1             ; these are only ever incremented, never
-         bne   +                     ; reset (may be used as a pseudorandom
-         inc   RNDSEED               ; seed)
-+
-         dec   Timeout               ; these are a 3-byte timeout counter
-         bne   WaitForKeyFor30Seconds; that counts down from a number set
-         dec   Timeout+1             ; in .ResetInputTimeout and reset
-         bne   WaitForKeyFor30Seconds; on every keypress (whether or not
-         dec   Timeout+2             ; the key leads to an action)
-         bne   WaitForKeyFor30Seconds
-         jsr   CoverFade             ; no input for ~30 seconds, switch to
-         jmp   MegaAttractMode       ; mega-attract mode
-@gotKey  rts
-
 ;------------------------------------------------------------------------------
-; SoftBell
-; yell at the user, but, like, gently
+; ClearScreens
+; clear and display text screen and then clear both hires screens
+; (in this order so that the erasing isn't visible)
 ;
 ; in:    none
-; out:   all registers and flags preserved
+; out:   $0106..$011F clobbered
 ;------------------------------------------------------------------------------
-SoftBell
-         php
-         pha
-         txa
-         pha
-         ldx   #32
--        lda   #2
-         jsr   @wait
-         bit   SPEAKER
-         lda   #33
-         jsr   @wait
-         bit   SPEAKER
+ClearScreens
+         jsr   Home
+         lda   #$20                  ; clear both hi-res pages
+         sta   @clear+2              ; (in case game loader shows them, we don't want
+         ldx   #$40                  ; to flash previous bits of the launcher UI)
+         ldy   #$00
+         tya
+@clear   sta   $FD00,y               ; SMC
+         iny
+         bne   @clear
+         inc   @clear+2
          dex
-         bne   -
-         pla
-         tax
-         pla
-         plp
-         rts
-@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
-         sec
---       pha
--        sbc   #1
-         bne   -
-         pla
-         sbc   #1
-         bne   --
+         bne   @clear
          rts
 
 ;------------------------------------------------------------------------------
@@ -219,8 +46,11 @@ Home
          and   #SUPPORTS_SHR
          beq   @noSHR
          lda   NEWVIDEO
-         and   #$3F
-         sta   NEWVIDEO              ; get out of SHR mode and linear mode
+         and   #%00011111            ; bit 7 = 0 -> IIgs Apple II-compatible video modes
+                                     ; bit 6 = 0 -> IIgs 128K memory map is the same as the Apple IIe
+                                     ; bit 5 = 0 -> IIgs DHGR is color, not monochrome
+                                     ; bits 0-4 unchanged
+         sta   NEWVIDEO
          lda   #$F0
          sta   TBCOLOR               ; white text on black background
          lda   #$00
@@ -245,21 +75,6 @@ Home
 @end
 
 ;------------------------------------------------------------------------------
-; BlankHGR
-; clear and show HGR page 1 without flickering
-;
-; in:    none
-; out:   text page clobbered (but screen holes preserved)
-;        $2000..$3FFF cleared
-;------------------------------------------------------------------------------
-BlankHGR
-         jsr   Home
-         jsr   .ClearHGR1            ; clear hi-res screen 1
-         bit   PAGE1                 ; show hi-res screen 1 (now blank)
-         +HGR_MODE
-         rts
-
-;------------------------------------------------------------------------------
 ; BlankDHGR
 ; clear and show DHGR page 1 without flickering
 ;
@@ -269,53 +84,64 @@ BlankHGR
 ;------------------------------------------------------------------------------
 BlankDHGR
          jsr   Home
-         jsr   .ClearHGR1            ; clear hi-res screen 1
+         jsr   ClearHGR1             ; clear hi-res screen 1
          sta   WRITEAUXMEM
-         jsr   .ClearHGR1            ; clear hi-res screen 1 in auxmem
+         jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
          sta   SET80VID
-         bit   PAGE1
-         +HGR_MODE
          sta   DHIRESON
-         rts
-
-ExecuteTransitionAndWait
-         +STAY @j+1
-@j       jsr   $FDFD                 ; SMC call transition effect code
-         ldx   #$20                  ; picture is showing so now we wait
--        lda   #0
-         jsr   WaitForKeyWithTimeout
-         bmi   +
-         dex
-         bpl   -
-+        rts
+         bit   PAGE1
+         jmp   HGRMode
 
 ;------------------------------------------------------------------------------
-; .ClearHGR1 [private]
-; clear $2000..$3FFF in current memory bank (main or auxmem)
-; does not change HGR mode
+; IsSearchKey
+; test whether accumulator contains a key that might trigger a new textrank
+; search
 ;
-; in:    none
-; out:   $2000..$3FFF cleared
-;        A = 0
-;        X = 0
-;        Y = 0
-;        Z = 1
+; in:    A = key
+; out:   A &= 0x7F
+;        Y preserved
+;        X clobbered
+;        Z = 1 and C = 0 if this is a search key
+;        Z = 0 if this is not a search key
 ;------------------------------------------------------------------------------
-ClearOffscreen
-         jsr   GetOffscreenAddress
-         +HIDE_NEXT_2_BYTES
-.ClearHGR1
-         lda   #$20
-         sta   @a+2
-         ldx   #$20
-         lda   #$80
-         ldy   #0
-@a       sta   $2000,y
-         iny
-         bne   @a
-         inc   @a+2
-         dex
-         bne   @a
+IsSearchKey
+         and   #$7F                  ; strip high bit for search characters
+         cmp   #$30                  ; control keys and punctuation ignored
+         bcc   @badkey
+         cmp   #$3A                  ; numbers are good input
+         bcc   @goodkey
+         cmp   #$41                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$5B                  ; uppercase letters are good input
+         bcs   +
+         ora   #$20                  ; convert uppercase letters to lowercase
+@goodkey
+         ldx   #0
          rts
-}
+
++        cmp   #$61                  ; more punctuation (also ignored)
+         bcc   @badkey
+         cmp   #$7B                  ; lowercase letters are good input
+         bcc   @goodkey
+@badkey
+         ldx   #1
+         rts
+
+;------------------------------------------------------------------------------
+; IsUpDownOrRightArrow
+; test whether accumulator contains ASCII code for up, down, or right arrow
+; search
+;
+; in:    A = key
+; out:   all registers preserved
+;        Z = 1 if accumulator was one of those 3 keys
+;        Z = 0 otherwise
+;------------------------------------------------------------------------------
+IsUpDownOrRightArrow
+         cmp   #$8B                  ; up arrow
+         beq   @done
+         cmp   #$95                  ; right arrow
+         beq   @done
+         cmp   #$8A                  ; down arrow
+@done    rts

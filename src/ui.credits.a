@@ -5,88 +5,53 @@
 ;
 ; Public functions
 ; - Credits
+; - Help
+;
 
-!zone {
-
+;------------------------------------------------------------------------------
+; Credits
+; display credits page and wait
+;
+; in:    none
+; out:   C clear
+;        all other flags and registers clobbered
+;------------------------------------------------------------------------------
 Credits
-; clobbers all
-         jsr   .LoadCredits
+         jsr   LoadFile              ; load credits text into $8000
+         !word kRootDirectory
+         !word kCreditsFile
+         !word $8000
          jsr   ClearOffscreen
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
-         jsr   .DrawPage
+         jsr   DrawPage              ; draw credits
+         jsr   ShowOtherPage         ; show credits
+         jsr   WaitForKeyFor30Seconds; wait
+--       bit   CLEARKBD              ; don't care about key
+         jsr   ShowOtherPage         ; back to previous page
+-        clc                         ; if called from search mode, tell caller not to refresh
+         rts
+
+;------------------------------------------------------------------------------
+; Help
+; display global help page and wait
+;
+; in:    none
+; out:   if user presses an arrow key within 30 seconds, this exits via BrowseMode
+;        otherwise this returns to caller with
+;          C clear, all other flags and registers clobbered
+;------------------------------------------------------------------------------
+Help
+         jsr   LoadHelpOffscreen
          jsr   ShowOtherPage
          jsr   WaitForKeyFor30Seconds
-         jsr   ShowOtherPage
-         bit   CLEARKBD
-         clc
+         cmp   #$88
+         beq   BrowseMode
+         cmp   #$83
+         beq   -
+         jsr   IsUpDownOrRightArrow
+         beq   -
+         jsr   IsSearchKey
+         bne   --
          rts
-
-.LoadCredits
-; [private] clobbers all
-         +LDADDR .CreditsFile
-+
-         jsr   SetPath
-         jsr   LoadFile              ; loads at $8000
-         rts
-.CreditsFile
-         !byte 7
-         !text "CREDITS"
-
-.DrawPage
-; A/Y contains address of character buffer
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; drawing starts at VTAB 0, HTAB 0
-; clobbers PTR
-; clobbers A/X/Y
-; preserves all flags, by a quirk of implementation
-         php
-         ldx   #0
-         stx   VTAB
-         +STAY PTR
-@drawLine
-         ldy   #0
-         sty   HTAB
-@parseLine
-         lda   (PTR),y
-         cmp   #$5B                  ; '[' at beginning on line
-         bne   +                     ; ends the parsing
-         tya
-         beq   @donePage
-+        cmp   #$0D
-         beq   @doneParsingLine
-         cmp   #$2A
-         bne   +
-         lda   #$10
-         sta   (PTR),y               ; asterisk -> dot, small
-+        cmp   #$7E
-         bne   +
-         lda   #$11
-         sta   (PTR),y               ; tilde -> dot, medium
-+        iny
-         bne   @parseLine
-@doneParsingLine
-         sty   SAVE
-         cpy   #0
-         beq   @skip
-         ldx   SAVE
-         +LDAY PTR
-         plp
-         php
-         jsr   DrawBuffer
-@skip    inc   SAVE                  ; skip carriage return
-         lda   SAVE                  ; advance PTR to start of next line
-         clc
-         adc   PTR
-         sta   PTR
-         bcc   +
-         inc   PTR+1
-+        inc   VTAB                  ; this will print 255 lines if you give it
-         bne   @drawLine             ; 255 lines, so don't do that
-@donePage
-         plp
-         rts
-
-}

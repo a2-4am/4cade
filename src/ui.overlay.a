@@ -1,0 +1,237 @@
+;License:MIT
+;(c) 2018-9 by 4am
+;
+; routines for drawing the UI overlay (search bar, browse bar, instructions, cheat mode)
+; on top of whatever else is on the screen
+;
+; Public functions
+; - DrawUIWithoutDots
+; - DrawUI
+;
+; Public variables
+; - VisibleGameCount (set during init)
+;
+
+Instructions
+         !text "[Type to search, ? for help ]  "
+VisibleGameCount
+         !text "000 games"
+ReturnToPlay
+         !byte $0D
+         !text " to play"
+
+kCheatsEnabled = 3                  ; index of 'cheats enabled' string in following table
+kCheatDescriptionLo
+         !byte <sNoCheats
+         !byte <sInfiniteLives
+         !byte <sInfiniteLivesAndWeapons
+         !byte <sCheatsEnabled
+kCheatDescriptionHi
+         !byte >sNoCheats
+         !byte >sInfiniteLives
+         !byte >sInfiniteLivesAndWeapons
+         !byte >sCheatsEnabled
+sNoCheats
+         !byte 8          ; length
+         !text "no cheat"
+sInfiniteLives
+         !byte 18         ; length
+         !byte $16        ; bolt character
+         !text " "
+         !text "infinite lives"
+         !text " "
+         !byte $16        ; bolt character
+sInfiniteLivesAndWeapons
+         !byte 28         ; length
+         !byte $16        ; bolt character
+         !text " "
+         !text "infinite lives & weapons"
+         !text " "
+         !byte $16        ; bolt character
+sCheatsEnabled
+         !byte 18         ; length
+         !byte $16        ; bolt character
+         !text " "
+         !text "cheats enabled"
+         !text " "
+         !byte $16        ; bolt character
+sCheatDescriptionPrefix
+         !byte 2          ; length
+         !byte $03        ; vertical line character
+         !text " "
+sCheatDescriptionSuffix
+         !byte 2          ; length
+         !text " "
+         !byte $03        ; vertical line character
+
+;------------------------------------------------------------------------------
+; DrawUIWithoutDots/DrawUI
+; draw 2- or 4-line UI on the HGR page that is not currently showing, then
+; show that HGR page
+;
+; in:    gGameToLaunch = game index, or #$FF if no game is selected
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+DrawUIWithoutDots
+         lda   #" " * 2
+         +HIDE_NEXT_2_BYTES
+DrawUI
+         lda   #$FF                  ; #$7F * 2
+         lsr
+         sta   @printCursor+1        ; set up cursor printing based on entry point
+         php
+
+         ldy   #39
+-        lda   #$00                  ; horizontal bar character
+         sta   UILine1,y             ; reset UI line 1 to solid bar
+         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
+         lda   Instructions,y
+         sta   UILine2,y             ; copy instructions to UI line 2
+         dey
+         bpl   -
+
+         ldx   gGameToLaunch
+         inx                         ; if no game, nothing more to do on UI line 2
+         beq   @doneWithLine2
+
+         jsr   GetGameToLaunch
+         jsr   okvs_get_current
+                                     ; (PTR) -> game title
+         lda   (PTR),y               ; copy game title into UI line 2
+         sta   SAVE                  ; title length
+         inc   SAVE
+-        iny
+@printCursor
+         lda   #$FD                  ; SMC
+         cpy   SAVE
+         bcc   @printTitleChar
+         beq   @printChar
+         lda   #" "
+         +HIDE_NEXT_2_BYTES
+@printTitleChar
+         lda   (PTR),y
+@printChar
+         sta   UILine2,y
+         cpy   #MaxInputLength+1
+         bcc   -
+
+         ldx   #8                    ; replace games count with 'to play' label
+-        lda   ReturnToPlay,x
+         sta   UI_ToPlay,x
+         dex
+         bpl   -
+
+@doneWithLine2
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   @maybeDrawDots        ; if cheat mode is disabled, we don't need
+                                     ; any curves or spaces on UI line 1
+         jsr   CheckCheats
+                                     ; (SAVE) -> length-prefixed string
+                                     ; (game-specific description or 'cheats enabled' message)
+         ldy   #0
+         lda   (SAVE),y              ; A = string length
+         clc
+         adc   #4                    ; extra padding (2 on each side)
+         sta   @len
+         lda   #40
+         sec
+         sbc   @len
+         lsr
+         tax
+         lda   #$09                  ; rounded bottom-right character
+         sta   UILine1,x
+         ldy   #1                    ; fill the proper width with spaces
+         lda   #$20                  ; space character
+-        inx
+         sta   UILine1,x
+         iny
+@len=*+1
+         cpy   #$FD                  ; SMC
+         bne   -
+         lda   #$0C                  ; rounded bottom-left character
+         sta   UILine1,x
+
+@maybeDrawDots
+         plp
+         bcc   @doneHighlight        ; if caller asked for no dots, then we're done building UI line 1
+
+         ldx   #0
+         ldy   #0
+@dotloop
+         iny
+         lda   (PTR),y               ; (PTR) still points to game title
+         ora   #$20                  ; force lower-case always
+         cmp   InputBuffer,x
+         bne   +
+         lda   #$11                  ; dot character
+         sta   UILine1,y
+         inx
+         cpx   InputLength           ; if input buffer is exhausted, we're done drawing dots
+         beq   @doneHighlight
++        inc   HTAB
+         cpy   SAVE                  ; if game name is exhausted, we're done drawing dots
+         bne   @dotloop
+@doneHighlight
+
+         lda   #22
+         sta   VTAB
+         lda   OffscreenPage
+         ror
+         php
+         +LDADDR UILine1
+         jsr   Draw40Chars           ; draw UI line 1 on offscreen page
+         plp
+         +LDADDR UILine2
+         jsr   Draw40Chars           ; draw UI line 2 on offscreen page
+
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   @uidone               ; if cheats are disabled, then we're done drawing UI
+
+                                     ; (SAVE) still points to length-prefixed cheat description
+         ldy   #0
+         lda   (SAVE),y              ; A = length of cheat description
+         clc
+         adc   #4                    ; extra padding (2 on each side)
+         sta   gPathname             ; gPathname = length
+         tax
+         lda   #$07                  ; gPathname+length = top-right rounded corner character
+         sta   gPathname,x
+         lda   #$06                  ; gPathname+1 = top-left rounded corner character
+         sta   gPathname+1
+         lda   #20
+         sta   VTAB
+         lda   OffscreenPage
+         ror
+         php
+         +LDADDR gPathname
+         jsr   DrawCenteredString    ; draw cheat UI line 1
+
+         jsr   CheckCheats
+                                     ; (SAVE) -> length-prefixed cheat description
+         +LDADDR sCheatDescriptionPrefix
+         jsr   SetPath
+         +LDAY SAVE
+         jsr   AddToPath
+         +LDADDR sCheatDescriptionSuffix
+         jsr   AddToPath
+         inc   VTAB
+         plp
+         +LDADDR gPathname
+         jsr   DrawCenteredString    ; draw cheat UI line 2
+
+@uidone  jmp   ShowOtherPage
+
+CheckCheats
+         ldy   #kCheatsEnabled
+         ldx   gGameToLaunch
+         cpx   #$FF
+         beq   +
+         ldy   gCheatsAvailable,x
++
+         lda   kCheatDescriptionLo,y
+         sta   SAVE
+         lda   kCheatDescriptionHi,y
+         sta   SAVE+1
+         rts

@@ -15,28 +15,11 @@
 ; - BestMatchScore                   ; [byte] raw ranking score (0-100) of current best match (updated during TextRankCallback)
 ; - BestMatchIndex                   ; [byte] index in gGamesListStore of current best match (updated during TextRankCallback)
 
-zpword   =     $F0        ; word
-zpstring =     $F2        ; word
-runningscore=  $F4        ; word
-startat  =     $F6        ; byte
-i        =     $F7        ; byte
-tmp      =     $F8        ; byte
-gamelength=    $F9        ; byte
-firstletter=   $FA        ; byte
-
 MaxInputLength = 26
 InputLength
          !byte 0
 InputBuffer
          !text "                         "
-SelectedIndex
-         !byte $FF
-MatchCount
-         !byte 0
-BestMatchScore
-         !byte 0
-BestMatchIndex
-         !byte 0
 
 ;------------------------------------------------------------------------------
 ; ResetTextRank
@@ -67,7 +50,7 @@ ResetTextRank
 ;          was the best match so far)
 ;------------------------------------------------------------------------------
 TextRankCallback
-         stx   @tmpx                 ; X = OKVS index of this title
+         stx   tmpx                  ; X = OKVS index of this title
          +STAY zpstring              ; A/Y = address of this title
          +LDADDR InputLength
          +STAY zpword
@@ -76,10 +59,9 @@ TextRankCallback
          cmp   InputLength
          bcc   ++
          sta   gamelength
-         lda   #0
-         sta   runningscore
-         sta   runningscore+1
-         ldy   #1
+         sty   runningscore
+         sty   runningscore+1
+         iny
          sty   startat
 -        sty   i
          lda   (zpword),y
@@ -94,8 +76,7 @@ TextRankCallback
          iny
          bcc   --
 ++       rts                         ; no match :(
-+
-         ldx   #80
++        ldx   #80
          cpy   startat
          beq   +
          ldx   #10
@@ -123,9 +104,7 @@ TextRankCallback
          cmp   gamelength
          bcc   -
          rts                         ; no match :(
-
-+
-         lda   runningscore
++        lda   runningscore
          ldx   runningscore+1
          ldy   gamelength
          jsr   @div
@@ -149,43 +128,35 @@ TextRankCallback
          cmp   #85
          bcs   +
          adc   #15
-+
-         cmp   BestMatchScore
++        cmp   BestMatchScore
          bcc   +
          beq   +
          sta   BestMatchScore
-         ldx   @tmpx
+         ldx   tmpx
          stx   BestMatchIndex
          inc   MatchCount
-+
-         rts
++        rts
 
 @div
-         sta   @num1
-         stx   @num1+1
-         sty   @num2
-
+         sta   num1
+         stx   num1+1
+         sty   num2
          lda   #0
-         sta   @rem
-         sta   @rem+1
+         sta   remainder
+         sta   remainder+1
          ldx   #16
--        asl   @num1
-         rol   @num1+1
-         rol   @rem
-         rol   @rem+1
-         lda   @rem
+-        asl   num1
+         rol   num1+1
+         rol   remainder
+         rol   remainder+1
+         lda   remainder
          sec
-         sbc   @num2
+         sbc   num2
          bcc   +
-         sta   @rem
-         dec   @rem+1
-         inc   @num1
+         sta   remainder
+         dec   remainder+1
+         inc   num1
 +        dex
          bne   -
-         lda   @num1
+         lda   num1
          rts
-
-@rem     !word 0
-@num1    !word 0
-@num2    !byte 0
-@tmpx    !byte $FD

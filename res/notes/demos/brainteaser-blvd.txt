@@ -1,0 +1,16 @@
+$170F: C0 -> D0 to disable sound (context is A90048A9C08D571768205E17)
+$0B61: C0 -> D0 to disable sound (context is 2C30C0)
+$0B80: C0 -> D0 to disable sound
+$0B9C: C0 -> D0 to disable sound
+$0BBB: C0 -> D0 to disable sound
+$1604: C0 -> D0 to disable sound
+$1628: C0 -> D0 to disable sound
+$1647: C0 -> D0 to disable sound
+$0A95: C0 -> D0 to disable sound
+$0AD4: C0 -> D0 to disable sound
+$0C3E: 20 -> 2C to skip input selection (context is 203619)
+$0C45: 20 -> 2C to skip key selection (context is 206B17)
+$0C48: 20 -> 2C to skip difficulty selection (context is 208A18)
+$15CC: 2C10C0 -> 4C0001 to exit on keypress (context is 2C00C010132C10C0A5823009)
+$0ED2: A58229 -> 4C0001 to exit on keypress (context is AD00C01009A582297F)
+$159A: 20E215 -> 4C0001 to exit after demo cycle (context is 20E215A900A2FF20391C)

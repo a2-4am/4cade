@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/HUNGRYBOY",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+2
+         lda   #<patch
+         sta   $0814
+         lda   #>patch
+         sta   $080D
+         jmp   $0800      ; decompress
+patch    nop
+         lda   #0         ; SMC (will be non-zero if cheats are enabled)
+         beq   +
+                          ; lives in $B6
+         lda   #$A5
+         sta   $70F4      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $94E0

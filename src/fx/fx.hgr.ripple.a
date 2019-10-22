@@ -1,13 +1,13 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2019 by 4am
 ;
 !cpu 6502
 !to "build/FX/RIPPLE",plain
 *=$6000
 
-         !source "src/fx/fx.hgr.precomputed.a"
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $30
+         +FX_PRECOMPUTED_1BIT Coordinates
 
          rts
 

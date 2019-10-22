@@ -1,0 +1,569 @@
+;license:MIT
+;(c) 2019 by 4am & qkumba
+;
+; Pseudo-ProDOS environment
+;
+; /!\ These live in LC RAM 2 and rely on the ProRWTS code which is also in LC RAM 2. /!\
+
+;------------------------------------------------------------------------------
+; ProDOS_enter
+; intercept certain ProDOS requests
+; wrap them to ProRWTS2 file requests
+;
+; in:    return address+1 is command and pointer to parameter block
+; out:   all flags clobbered
+;        A=0, X and Y preserved
+;        stack set to next instruction after parameters
+;------------------------------------------------------------------------------
+ipacket = first_zp ;word
+buffer = first_zp+2 ;word
+
+ProDOS_enter
+!set CloseHandles = @imp_close
+         stx   ProDOS_savedX+1
+         sty   ProDOS_savedY+1
+         jsr   @swap_zp
+         pla
+         tay
+         pla
+         sta   @fetchaddr+1
+         pla
+         sta   @fetchaddr+2
+         jsr   @fetchbyte
+         sta   @request+1
+         jsr   @fetchbyte
+         sta   ipacket
+         jsr   @fetchbyte
+         sta   ipacket+1
+         lda   @fetchaddr+2
+         pha
+         lda   @fetchaddr+1
+         pha
+         tya
+         pha
+@request
+         lda   #$d1
+         cmp   #$80
+         beq   @do_readblock
+         cmp   #$81
+         beq   @do_writeblock
+         cmp   #$c4
+         beq   @do_getattrib
+         cmp   #$c6
+         beq   @do_nothing
+         cmp   #$c7
+         beq   @do_prefix
+         cmp   #$c8
+         beq   @do_open
+         cmp   #$ca
+         beq   @do_read
+         cmp   #$cb
+         beq   @do_write
+         cmp   #$cc
+         beq   @do_close
+         cmp   #$ce
+         beq   @do_seek
+         cmp   #$d1
+;;       bne   @do_fatal
+@do_eof
+         jmp   @imp_eof
+@do_readblock
+@do_writeblock
+         jmp   @imp_rdwrblock
+@do_getattrib
+         jmp   @imp_getattrib
+@do_nothing
+         jmp   @restore_zp
+@do_prefix
+         jmp   @imp_prefix
+@do_open
+         jmp   @imp_open
+@do_read
+         jmp   @imp_read
+@do_write
+         jmp   @imp_write
+@do_close
+         jsr   @imp_close ;subroutine special case because of dual-use
+         jmp   @restore_zp
+@do_seek
+         jmp   @imp_seek
+@do_fatal
+;;       jmp   ProDOS_fatal
+
+@imp_rdwrblock
+         and   #$7f
+         tay
+         iny
+         sty   @rdwrop+1
+         ldx   #$44
+         ldy   #2
+         jsr   @setbuffer
+         iny
+         lda   (ipacket), y
+         tax
+         iny
+         lda   (ipacket), y
+@rdwrop
+         ldy   #$d1                  ; SMC
+         jsr   hddseekrd+2
+         bcc   @jmp_zp2 ;always
+
+@imp_getattrib
+         lda   ipacket+1
+         pha
+         lda   ipacket
+         pha
+         ldx   #namlo
+         jsr   @setbuffer1
+         lda   #$60
+         sta   attribpatch
+         jsr   hddopendir
+         lda   #$10
+         sta   attribpatch
+         pla
+         sta   ipacket
+         pla
+         sta   ipacket+1
+         ldy   #5
+         lda   ldrlo2
+         sta   (ipacket), y
+         iny
+         lda   ldrlo2+1
+         sta   (ipacket), y
+         ldy   #$13
+         lda   (bloklo), y
+         tax
+         iny
+         lda   (bloklo), y
+         ldy   #9
+         sta   (ipacket), y
+         txa
+         dey
+         sta   (ipacket), y
+@jmp_zp2
+         jmp   @restore_zp
+
+@imp_prefix
+         ldx   #buffer
+         jsr   @setbuffer1
+         ldy   ProDOS_prefix
+         iny
+         iny
+         tya
+         pha
+@copy_prefix
+         lda   ProDOS_prefix-1, y
+         sta   (buffer), y
+         dey
+         bne   @copy_prefix
+         pla
+         sta   (buffer), y
+         tay
+         lda   #'/'
+         sta   (buffer), y
+         ldy   #1
+         sta   (buffer), y
+         bne   @jmp_zp2
+
+@imp_open
+         ldx   #namlo
+         jsr   @setbuffer1
+         iny
+         inc   @handles+1
+@handles
+         ldx   #0
+         iny
+         lda   (ipacket), y
+         sta   @handle-1, x
+         jsr   @patch_buffer
+         iny
+         lda   #1
+         sta   (ipacket), y
+         lda   #0
+         sta   reqcmd
+         sta   sizehi
+         sta   sizelo
+         jsr   hddopendir
+         lda   #0
+         sta   blkidx
+         beq   @jmp_zp ;always
+
+@imp_seek
+         jsr   @set_rdwrbuff
+         lda   #0
+         sta   blkidx
+         sta   blkofflo
+         sta   blkoffhi
+         sta   reqcmd
+         jsr   @reset
+         ldx   sizelo
+         beq   @seek64
+         sta   sizehi
+         sta   sizelo
+         jsr   @seekreset
+         inc   ldrlo
+         bne   @seek64
+         inc   ldrhi
+
+@seek64
+         lda   ldrhi
+         sta   sizehi
+         lda   ldrlo
+         sta   sizelo
+         jsr   @seekreset
+         lda   ldrhi
+         ora   ldrlo
+         bne   @jmp_zp
+         dec   blkidx
+         beq   @jmp_zp ;always
+
+@seekreset
+         jsr   hddrdwrpart
+@reset
+         lda   #$ff
+         sta   blefthi
+         sta   bleftlo
+         rts
+
+@imp_read
+         clc
+@imp_write
+         php
+         lda   #cmdread
+         adc   #0
+         sta   reqcmd
+         jsr   @set_rdwrbuff
+         plp
+         bcc   @skip_align
+         lda   sizelo
+         adc   #$fe
+         lda   sizehi
+         adc   #1
+         and   #$fe
+         sta   sizehi
+         lda   bleftlo
+         adc   #$ff
+         lda   blefthi
+         adc   #1
+         and   #$fe
+         sta   blefthi
+
+@skip_align
+         jsr   hddrdwrpart
+         ldy   #6
+         lda   sizelo2
+         sta   (ipacket), y
+         iny
+         lda   sizehi2
+         sta   (ipacket), y
+@jmp_zp
+         jmp   @restore_zp
+
+@imp_eof
+         ldy   #2
+         lda   bleftlo
+         sta   (ipacket), y
+         iny
+         lda   blefthi
+         sta   (ipacket), y
+         bcs   @restore_zp ;always
+
+@imp_close
+         lda   @handles+1
+         beq   @close_ret
+         dec   @handles+1
+         bne   @close_ret
+         lda   #>hddencbuf
+
+@patch_buffer
+         sta   encbufpatch1+1
+         sta   encbufpatch2+1
+         tax
+         inx
+         stx   dirbufpatch1+1
+         inx
+         stx   dirbufpatch2+2
+         stx   dirbufpatch3+2
+         stx   dirbufpatch4+2
+         stx   dirbufpatch6+1
+         stx   dirbufpatch7+2
+         stx   dirbufpatch9+2
+         stx   dirbufpatch10+1
+         inx
+         stx   dirbufpatch5+2
+         stx   dirbufpatch8+2
+@close_ret
+         rts
+
+@fetchbyte
+         inc   @fetchaddr+1
+         bne   @fetchaddr
+         inc   @fetchaddr+2
+@fetchaddr
+         lda   $d1d1
+         rts
+
+@set_rdwrbuff
+         ldy   #1
+         lda   (ipacket), y
+         tax
+         lda   @handle-1, x
+         jsr   @patch_buffer
+         ldx   #ldrlo
+         iny
+         jsr   @setbuffer
+         ldx   #sizelo
+         iny
+         !byte $2c
+@setbuffer1
+         ldy   #1
+
+@setbuffer
+         lda   (ipacket), y
+         sta   $0,x
+         iny
+         lda   (ipacket), y
+         sta   $1,x
+         rts
+
+@swap_zp
+         ldx   #last_zp-first_zp
+@save_zp
+         lda   first_zp,x
+         ldy   @saved_zp,x
+         sta   @saved_zp,x
+         sty   first_zp,x
+         dex
+         bpl   @save_zp
+         rts
+
+@restore_zp
+         jsr   @swap_zp
+         jmp   ProDOS_exit
+
+@handle
+         !byte 0, 0 ;only up to two handles at a time
+
+@saved_zp
+         !fill (last_zp - first_zp) + 1
+
+;------------------------------------------------------------------------------
+; traverse [private]
+;
+; in:    (namlo) points to length-prefixed pathname+filename
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+traverse
+         +LDAY gRootDirectory
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         sty   (reloc + unrhddblockhi - unrelochdd) + 1
+         sta   @myreadblock+1
+         sty   @myreadblock+3        ; reset 'root' directory (saved at program start)
+
+         ;search for '/' character in filename
+
+         ldx   #0
+         ldy   #0
+         lda   (namlo), y
+         tay
+-        inx
+         dey
+         bmi   @go                   ; no '/', just do the read
+         lda   (namlo), y
+         cmp   #'/'
+         bne   -
+         sty   sizelo
+         txa
+         pha
+
+@myreadblock
+@myx80_parms
+         ldx   #2
+         lda   #0
+         jsr   hddreaddirsel
+         lda   #NAME_LENGTH
+         sta   bloklo
+         lda   #>(hdddirbuf - 1)
+         sta   blokhi
+
+         ;there can be only one page crossed, so we can increment here
+
+@mynextent1
+         inc   blokhi
+@mynextent
+         ldy   #0
+         lda   (bloklo), y
+         pha
+         and   #$0f
+         tax
+--       iny
+         lda   (bloklo), y
+         cmp   (namlo), y
+         beq   @myfoundname
+
+         ;match failed, move to next directory in this block, if possible
+
+-        pla
+
+@myskiphdr
+         clc
+         lda   bloklo
+         adc   #ENTRY_SIZE
+         sta   bloklo
+         bcs   @mynextent1
+         cmp   #$ff ;4 + ($27 * $0d)
+         bne   @mynextent
+
+         ;read next directory block when we reach the end of this block
+
+         lda   hdddirbuf + NEXT_BLOCK_LO
+         ldx   hdddirbuf + NEXT_BLOCK_HI
+         bcs   +
+
+@myfoundname
+         dex
+         bne   --
+
+         ;parse path until last directory is seen
+
+         iny
+         lda   (namlo), y
+         cmp   #'/'
+         bne   -
+         pla
+         and   #$20 ;Volume Directory Header XOR subdirectory
+         bne   @myskiphdr
+         tya
+         eor   #$ff
+         adc   sizelo
+         sta   sizelo
+         clc
+         tya
+         adc   namlo
+         sta   namlo
+
+         ;cache block number of current directory
+         ;as starting position for subsequent searches
+
+         ldy   #(KEY_POINTER + 1)
+         lda   (bloklo), y
+         tax
+         dey
+         lda   (bloklo), y
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         stx   (reloc + unrhddblockhi - unrelochdd) + 1
++        sta   @myx80_parms + 1
+         stx   @myx80_parms + 3
+++       lda   sizelo
+         bne   @myreadblock
+         tay
+
+         pla
+         sta   (namlo), y
+@go
+         rts
+
+;------------------------------------------------------------------------------
+; promote [private]
+;
+; tiny ProDOS-style interface for ProRWTS
+; in:    whatever ProDOS expects for the supported functions
+; out:   carry clear, A=0
+;        X, Y, and other flags clobbered
+;------------------------------------------------------------------------------
+
+promote
+!pseudopc $bf00 {
+        php
+        sei
+        bit   $c083
+        !byte $24
+  !if * != $bf06 {
+    !error "$BF06 misplaced (",*,")"
+  }
+        rts ;clock interface, must be RTS on real ProDOS if program uses $20x
+
+        bit   $c083
+        jmp   ProDOS_enter
+ProDOS_exit
+ProDOS_savedX
+        ldx   #$d1
+        plp
+        clc
+        bcc   ProDOS_savedY
+  !if * != $bf13 {
+    !error "$BF13 misplaced (",*,")"
+  }
+        !byte  $c1
+        !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
+ProDOS_savedY
+        ldy   #$d1
+        sta   $c082
+        lda   #0
+        rts
+
+  !if * > $bf30 {
+    !error "$BF30 misplaced (",*,")"
+  } else {
+    !if * != $bf30 {
+        !fill $bf30-*
+    }
+  }
+ProDOS_unit
+        !byte $d1
+
+ProDOS_fatal ;only for debugging, will be removed
+;;      bit   $c081
+;;      pha
+;;      jsr   $fe89
+;;      jsr   $fe93
+;;      pla
+;;      jsr   $fdda
+;;      jmp   $ff65
+;;*=$bf58
+;;      !fill $18 ;filled by init instead
+
+ProDOS_prefix=gPathname
+;       !fill $2e
+}
+end_promote
+
+
+;------------------------------------------------------------------------------
+; SaveOrRestoreScreenHoles
+; preserve screen hole contents across demo execution
+; to avoid crashing later on disk access
+;
+; in:    nothing
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+
+SaveOrRestoreScreenHoles
+         lda   #4
+         sta   namhi
+         ldx   #0
+         stx   namlo
+         sta   bloklo
+--       ldy   #$78
+-        lda   (namlo),y
+         pha
+         lda   holey_stuff,x
+holepatch ;sta->lda
+         lda   (namlo),y
+         pla
+         sta   holey_stuff,x
+         inx
+         tya
+         eor   #$80
+         tay
+         bmi   -
+         iny
+         bpl   -
+         inc   namhi
+         dec   bloklo
+         bne   --
+         rts
+holey_stuff
+         !fill 64

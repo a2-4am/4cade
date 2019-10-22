@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/JUMPMAN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $406E
+         jsr   $4000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $B7
+         lda   #$A5
+         sta   $8FF3      ; patch - don't decrease lives
+         sta   $93B1      ; patch - don't decrease lives
+         sta   $A598      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $8000

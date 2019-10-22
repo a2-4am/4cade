@@ -8,8 +8,14 @@
 ; - GRSingle
 ;
 
-!zone {
-
+;------------------------------------------------------------------------------
+; GRActionSlideshow
+; display a slideshow of lo-res action screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen
+;------------------------------------------------------------------------------
 GRActionSlideshow
          jsr   .LoadGRTransition     ; load transition effect code at $6000
          jsr   BlankGR               ; switch GR mode with initial blank screen
@@ -18,13 +24,23 @@ GRActionSlideshow
          !word .GRActionCallback     ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
+;------------------------------------------------------------------------------
+; GRSingle
+; display a single lo-res screenshot, with transition effect
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen
+;------------------------------------------------------------------------------
 GRSingle
-         jsr   SetPath
+         +STAY @fname
          jsr   BlankGR               ; switch to GR mode with initial blank screen
-         jsr   LoadFile              ; load GR screenshot at $6000
+         jsr   LoadFile              ; load GR screenshot into $6000
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $6000
          jsr   .LoadGRTransition     ; load transition effect code at $6400
-         +LDADDR $6400
-         jsr   ExecuteTransitionAndWait
+         jsr   ExecuteTransitionAt6400AndWait
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
@@ -33,6 +49,7 @@ GRSingle
 ;
 ; in:    none
 ; out:   text page clobbered
+;        graphics mode set to display lo-res screen
 ;------------------------------------------------------------------------------
 BlankGR
          ldx   #$04
@@ -46,7 +63,9 @@ BlankGR
          dex
          bne   @loop
          bit   PAGE1
-         +GR_MODE
+         bit   $C056                 ; set GR mode
+         bit   $C052
+         bit   $C050
          rts
 
 ;------------------------------------------------------------------------------
@@ -58,15 +77,11 @@ BlankGR
 ;        of that, but no promises)
 ;------------------------------------------------------------------------------
 .LoadGRTransition
-         +LDADDR kGRFizzleFile
-         +STAY @file
-         +LOAD_FILE kFXDirectory, @file
-         rts
-@file    !word $FDFD
-kGRFizzleFile
-         !byte @kSFXFizzleFile_e-*-1
-         !text "GR.FIZZLE"
-@kSFXFizzleFile_e
+         jsr   LoadFile
+         !word kFXDirectory
+         !word kGRFizzleFile
+         !word $6400
+GRRTS    rts
 
 ;------------------------------------------------------------------------------
 ; .GRActionCallback [private]
@@ -81,23 +96,21 @@ kGRFizzleFile
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
 .GRActionCallback
-         +STAY SAVE
+         bit   KBD
+         bmi   GRRTS
 
-         lda   KBD
-         bpl   +
-@actionExit
-         rts
-+
-         stx   gCurrentlyVisibleSlideshowIndex
+         +STAY +
 
-         +LDAY SAVE
-         jsr   GetGameDisplayName
-         bcs   @actionExit           ; not found, so just skip this title
+         jsr   GetGameInfoInActionSlideshow
+         ; if game name is not found (C will be set here), it means the game
+         ; can't be played due to memory or joystick requirements, so we hide
+         ; it from slideshows
+         bcs   GRRTS
+         stx   gGameToLaunch
 
-         ; load GR screenshot at $6000
-         +LOAD_FILE kGRActionDirectory, SAVE
+         jsr   LoadFile              ; load GR screenshot into $6000
+         !word kGRActionDirectory
++        !word $FDFD                 ; SMC
+         !word $6000
 
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
-
-}
+         jmp   ExecuteTransitionAt6400AndWait

@@ -5,10 +5,90 @@
 ;
 ; Public functions
 ; - SearchMode
-; - IsSearchKey
+; - SoftBell
 ;
 
-!zone {
+; indices into InputDispatchTable
+kInputSearch   = 0
+kInputClear    = 1
+kInputBack     = 2
+kInputBrowse   = 3
+kInputTab      = 4
+kInputLaunch   = 5
+kInputHelp     = 6
+kInputCredits  = 7
+kInputCheat    = 8
+kInputError    = 9
+
+InputDispatchTableLo
+         !byte <OnSearch
+         !byte <OnClear
+         !byte <OnBack
+         !byte <BrowseMode
+         !byte <OnTab
+         !byte <OnLaunch
+         !byte <Help
+         !byte <Credits
+         !byte <OnCheat
+         !byte <OnError
+InputDispatchTableHi
+         !byte >OnSearch
+         !byte >OnClear
+         !byte >OnBack
+         !byte >BrowseMode
+         !byte >OnTab
+         !byte >OnLaunch
+         !byte >Help
+         !byte >Credits
+         !byte >OnCheat
+         !byte >OnError
+
+kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
+InputKeys
+         !byte $83                   ; Ctrl-C = toggle cheat mode
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
+         !byte $A0                   ; Space = mini attract mode
+         !byte $89                   ; TAB = mini attract mode
+         !byte $88                   ; left arrow = delete (may as well, since
+                                     ;   popular emulators remap this anyway)
+         !byte $FF                   ; backspace = delete
+         !byte $8D                   ; ENTER = launch current game (if any)
+         !byte $9B                   ; Esc = clear input buffer (if any)
+                                     ;   or switch to mega attract mode
+InputKeyDispatch
+         !byte kInputCheat
+         !byte kInputCredits
+         !byte kInputHelp
+         !byte kInputHelp
+         !byte kInputTab
+         !byte kInputTab
+         !byte kInputBack
+         !byte kInputBack
+         !byte kInputLaunch
+         !byte kInputClear
+
+.noKeyMatch
+         jsr   IsSearchKey
+         beq   .foundSearchKey
+         ldx   #kInputError
+!if kInputSearch > 0 {
+         +HIDE_NEXT_2_BYTES
+.foundSearchKey
+         ldx   #kInputSearch
+} else {
+.foundSearchKey
+}
+         ; execution falls through here to .InputDispatch
+.InputDispatch
+         ldy   InputDispatchTableLo,x
+         sty   .j+1
+         ldy   InputDispatchTableHi,x
+         sty   .j+2
+.j       jsr   $FDFD                 ; SMC
+         bcc   .SearchModeInputLoop  ; if carry is clear, we're done
+         ; fall through to force full redraw
 
 ;------------------------------------------------------------------------------
 ; SearchMode
@@ -19,17 +99,17 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 SearchMode
-         +READ_RAM1_WRITE_RAM1
          ldx   #$FF
          txs
-         stx   SelectedIndex         ; no game selected
-         inx
-         stx   OffscreenPage
-         jsr   Home                  ; clear screen
-         jsr   .OnInputChanged       ; draw UI on HGR page 1
-         +HGR_MODE                   ; show HGR
+         stx   gGameToLaunch         ; $FF = no game selected
+         jsr   Home                  ; clear screen (switches to text mode)
+         jsr   OnInputChanged        ; draw UI offscreen
+         jsr   HGRMode               ; show HGR screen
+         jsr   ResyncPage
+         lda   KBD
+         jsr   IsSearchKey
+         beq   .SearchModeInputLoop
          bit   CLEARKBD
-         jsr   ResetInputTimeout
 
 .SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
@@ -38,145 +118,77 @@ SearchMode
          ; we want to switch to Browse Mode with the keyboard still hot so
          ; that mode finds and dispatches the arrow key.
 
-         cmp   #$8B                  ; right arrow switches to browse mode
-         beq   @arrow
-         cmp   #$95                  ; also up arrow
-         beq   @arrow
-         cmp   #$8A                  ; also down arrow
-         bne   @notArrow
-@arrow   ldx   #kInputBrowse
-         bne   @InputDispatch        ; always branches
-@notArrow
+         ldx   #kInputBrowse
+         jsr   IsUpDownOrRightArrow
+         beq   .InputDispatch
          bit   CLEARKBD
-         jsr   ResetInputTimeout
 
-         cmp   #$9B                  ; Esc clears the input buffer (if any)
-         bne   +                     ; or switches to mega attract mode
-         ldx   #kInputClear
-         bne   @InputDispatch        ; always branches
-+
-         cmp   #$8D                  ; ENTER launches the current game (if any)
+         ldy   #kNumBrowseKeys
+-        dey
+         bmi   .noKeyMatch
+         cmp   InputKeys,y
+         bne   -
+         ldx   InputKeyDispatch,y
+         bne   .InputDispatch        ; always branches
+
+OnClear
+         ldx   #1                    ; Esc with input clears the input
+         ldy   InputLength
          bne   +
-         ldx   #kInputLaunch
-         bne   @InputDispatch        ; always branches
-+
-         cmp   #$FF                  ; delete key
-         bne   +
--        ldx   #kInputBack
-         bne   @InputDispatch        ; always branches
-+
-         cmp   #$88                  ; left arrow = delete (may as well, since
-                                     ; popular emulators remap this anyway)
-         beq   -
-
-         cmp   #$89                  ; TAB switches to mini attract mode
-         bne   +                     ; if there is a game selected
-         ldx   #kInputTab
-         bne   @InputDispatch        ; always branches
-+
-
-         cmp   #$BF                  ; '?' display scredits
-         bne   +
--        ldx   #kInputCredits
-         bne   @InputDispatch        ; always branches
-+
-         cmp   #$AF                  ; '/' also displays credits
-         beq   -
-
-         and   #$7F                  ; strip high bit for search characters
-         jsr   IsSearchKey
-         beq   +
-         jsr   SoftBell              ; Beep on invalid input and start over.
-         bne   .SearchModeInputLoop  ; This always branches because SoftBell
-                                     ; preserves all flags and we got here
-                                     ; because the BEQ didn't branch.
-+
-         ldx   #kInputSearch
-         ; execution falls through here
-@InputDispatch
-         pha                         ; save key pressed
-         txa
-         asl
-         tax
-         lda   .InputDispatchTable,x
-         sta   @j+1
-         lda   .InputDispatchTable+1,x
-         sta   @j+2
-         pla                         ; restore key pressed
-@j       jsr   $FDFD                 ; SMC
-         bcs   +
-         jmp   .SearchModeInputLoop  ; if carry is clear, we're done
-+        jmp   SearchMode            ; if carry is set, force full redraw
-
-.OnClear
+         jmp   CoverFade             ; Esc with no input transitions to
+                                     ; mega attract mode
+OnBack
          ldx   InputLength
-         bne   +
-         jsr   CoverFade             ; Esc with no input switches to
-         jmp   MegaAttractMode       ; mega-attract mode
-+        ldx   #0                    ; Esc with input clears the input
+         beq   OnError
++        dex
          stx   InputLength
-         jmp   .OnInputChanged
+         bpl   OnInputChanged        ; always branches
 
-.OnBack
-         ldx   InputLength
-         bne   +
-         jsr   SoftBell
-         rts
-+        dec   InputLength
-         jmp   .OnInputChanged
-
-.OnTab
-         ldx   SelectedIndex
-         cpx   #$FF
-         beq   +
+OnTab
+         ldx   gGameToLaunch
+         inx
+         beq   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
-         beq   .OnLaunch             ; by pressing Enter, launch the game
+         bne   .req_redraw           ; by pressing Enter, launch the game
+
+OnLaunch
+         ldx   gGameToLaunch
+         inx
+         beq   OnError
+         jsr   PlayGame
+
+.req_redraw
          sec                         ; tell caller to redraw UI
          rts
-+        clc
-         rts
 
-.OnLaunch
-         ldx   SelectedIndex
-         cpx   #$FF
-         beq   +
-         jsr   PlayGameFromSearch
-         sec                         ; tell caller to redraw UI
-         rts
-+        clc
-         rts
+OnCheat
+         dec   gGameToLaunch         ; force reload (will be reset to correct value in OnInputChanged)
+         jsr   ToggleCheat
+         beq   OnInputChanged        ; always branches because Z=1 on exit from ToggleCheat
 
-.OnSearch
+OnSearch
          ldx   InputLength
          cpx   #MaxInputLength
-         bne   +
-         jsr   SoftBell
-         clc
-         rts
-+        sta   InputBuffer,x
+         beq   OnError
+         sta   InputBuffer,x
          inc   InputLength
-         ; execution falls through here
-
-.OnInputChanged
-         lda   InputLength
-         bne   @findMatchingTitle
+         ; execution falls through here to OnInputChanged
+OnInputChanged
+         ldx   InputLength
+         bne   FindMatchingTitle
                                      ; no input, reset params and UI
-         lda   #$FF
-         sta   SelectedIndex         ; no game selected
-         ldx   #39                   ; reset visible line
--        lda   #0
-         sta   UILine1,x
-         lda   Instructions,x
-         sta   UILine2,x
          dex
-         bpl   -
+         stx   gGameToLaunch         ; no game selected
          jsr   LoadTitleOffscreen
-         jsr   DrawSearchBarOffscreen
-         jsr   ShowOtherPage
+         jsr   DrawUIWithoutDots
          clc
          rts
-@findMatchingTitle
+
+FindMatchingTitle
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+
          jsr   ResetTextRank
 
          jsr   okvs_iter_values      ; iterate through all game titles
@@ -185,130 +197,55 @@ SearchMode
 
          lda   MatchCount            ; any matches at all?
          bne   +
-         jsr   SoftBell              ; no matches for this input buffer, beep
-         dec   InputLength           ; and ignore the last key typed
+                                     ; no matches for this input buffer
+         dec   InputLength           ; ignore the last key typed
+
+OnError
+         jsr   SwitchToBank2
+         jsr   DisableAcceleratorAndSwitchToBank1
+         ; /!\ execution falls through to SoftBell
+;------------------------------------------------------------------------------
+; SoftBell
+; yell at the user, but, like, gently
+;
+; in:    none
+; out:   C clear
+;        Y preserved
+;        A=0
+;        X=0
+;        all flags preserved
+;------------------------------------------------------------------------------
+SoftBell
+         ldx   #32
+-        lda   #2
+         jsr   @wait
+         bit   SPEAKER
+         lda   #33
+         jsr   @wait
+         bit   SPEAKER
+         dex
+         bne   -
          clc
          rts
+@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
+         sec
+--       pha
+-        sbc   #1
+         bne   -
+         pla
+         sbc   #1
+         bne   --
+         rts
+
 +
-         lda   BestMatchIndex        ; check if the new best match is the same
-         cmp   SelectedIndex         ; as the current best match
-         php                         ; (we'll use this later to skip reloading)
-         sta   SelectedIndex
-         sta   @index
-         jsr   okvs_nth              ; get the name of the new best match
-         !word gGamesListStore
-@index   !byte $FD
-         +STAY @key
-         plp
+         ldx   BestMatchIndex        ; check if the new best match is the same
+         cpx   gGameToLaunch         ; as the current best match
          bne   +
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
                                      ; we fake switching the 'offscreen' page
                                      ; in order to draw on the visible page.
-         bpl   @skipload             ; always branches
-+
-         jsr   GetOffscreenAddress   ; we have a new best match, so load the
-         sta   +                     ; new title screenshot (offscreen)
-         +LDADDR kHGRTitleDirectory
-         jsr   SetPath
-         +LDAY @key
-         jsr   AddToPath
-         jsr   LoadFileAt
-         !byte $00
-+        !byte $FD                   ; SMC
-
-@skipload
-         jsr   okvs_get
-         !word gGamesListStore
-@key     !word $FDFD
-         +STAY SRC                   ; A/Y points to game title (in OKVS)
-         ldy   #0                    ; copy game title into search bar buffer
-         lda   (SRC),y
-         sta   SAVE                  ; game title length
-         inc   SAVE
--        iny
-         cpy   SAVE
-         bcc   @printTitleChar
-         beq   @printCursor
-         lda   #" "
-         +HIDE_NEXT_2_BYTES
-@printCursor
-         lda   #$7F
-         +HIDE_NEXT_2_BYTES
-@printTitleChar
-         lda   (SRC),y               ; copy game title to search UI
-         sta   UILine2,y
-         cpy   #MaxInputLength+1
-         bcc   -
-         ldx   #8
--        lda   ReturnToPlay,x        ; replace games count with 'to play' label
-         sta   UI_ToPlay,x
-         dex
-         bpl   -
-         ldx   #40
-         lda   #0
--        sta   UILine1-1,x           ; reset search bar
-         dex
-         bne   -
-         tay
-@dotloop
-         iny
-         lda   (SRC),y
-         +LOW_ASCII_TO_LOWER
-         cmp   InputBuffer,x
-         bne   +
-         lda   #$11                  ; add dots to highlight matched characters
-         sta   UILine1,y
-         inx
-         cpx   InputLength           ; if input buffer is exhausted, we're done
-         beq   @doneHighlight
-+        inc   HTAB
-         cpy   SAVE                  ; if game name is exhausted, we're done
-         bne   @dotloop
-@doneHighlight
-         jsr   DrawSearchBarOffscreen; actually draw the search UI (offscreen)
-         jmp   ShowOtherPage         ; now show everything at once
-
-IsSearchKey
-         cmp   #$30                  ; control keys and punctuation ignored
-         bcc   @badkey
-         cmp   #$3A                  ; numbers are good input
-         bcc   @goodkey
-         cmp   #$41                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$5B                  ; uppercase letters are good input
-         bcs   +
-         ora   #$20                  ; convert uppercase letters to lowercase
-         bne   @goodkey              ; always branches
-
-+        cmp   #$61                  ; more punctuation (also ignored)
-         bcc   @badkey
-         cmp   #$7B                  ; lowercase letters are good input
-         bcc   @goodkey
-@badkey
-         ldx   #1
-         rts
-@goodkey
-         ldx   #0
-         rts
-
-;------------------------------------------------------------------------------
-
-; indices into InputDispatchTable
-kInputSearch   = 0
-kInputClear    = 1
-kInputBack     = 2
-kInputBrowse   = 3
-kInputTab      = 4
-kInputLaunch   = 5
-kInputCredits  = 6
-
-.InputDispatchTable
-         !word .OnSearch
-         !word .OnClear
-         !word .OnBack
-         !word BrowseMode
-         !word .OnTab
-         !word .OnLaunch
-         !word Credits
-
-}
+         bpl   @noload               ; (always branches)
++        stx   gGameToLaunch
+         jsr   LoadGameTitleOffscreen
+@noload  jsr   DrawUI
+         ; /!\ execution falls through to ui.animation/MaybeAnimateTitle

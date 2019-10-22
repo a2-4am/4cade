@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+; common code used by all prelaunchers
+;
+; you should include this file with a '!source' directive, not assemble it directly
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         ldx   #0                    ; wipe zero page
+         txa
+-        sta   $00,x
+         inx
+         bne   -
+
+         lda   #$65                  ; Initialize 'random' seed. These are
+         sta   RNDSEED               ; arbitrary values. Some games like Pooyan
+         lda   #$02                  ; require these to be non-zero. Ask me
+         sta   RNDSEED+1             ; how long that one took to debug.
+
+         +READ_ROM_NO_WRITE
+
+         jsr   ROM_IN0               ; Initialize machine like a cold boot.
+         jsr   ROM_PR0               ; Many games assume a 'clean slate' and
+         jsr   ROM_NORMAL            ; rely on zero page values set by these
+         sta   STOREOFF              ; ROM routines,
+         sta   READMAINMEM           ; e.g. Wavy Navy just prints out text via
+         sta   WRITEMAINMEM          ; $FDED and expects it to work. Having it
+         sta   CLR80VID              ; print all null characters is amusing, in
+         sta   PRIMARYCHARSET        ; a quiet way, but not really helpful.
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
+
+         bit   CLEARKBD
+         sei

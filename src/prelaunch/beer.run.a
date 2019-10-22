@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/BEER.RUN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2065
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $621F
+         lda   #$AD
+         sta   $1E20      ; patch - don't decrease lives
+         sta   $6D5C      ; patch - don't increase lives
+         sta   $7354      ; patch - don't increase lives
+         sta   $7D5C      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $BB00

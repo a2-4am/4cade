@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/UP.N.DOWN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+1
+         ldx   #$0B       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
+-        lda   patch,x
+         sta   $F4,x
+         dex
+         bpl   -
+         lda   #$F4       ; call patch instead of $200
+         sta   $4061
+         lda   #$00
+         sta   $4062
+         jmp   $2DC2
+patch
+         lda   #0         ; SMC
+         beq   +
+                          ; lives in $1B,X (X=0/1 for player 1/2)
+         lda   #$B5
+         sta   $0912      ; patch - don't decrease lives
++
+         jmp   $0200      ; continue with load

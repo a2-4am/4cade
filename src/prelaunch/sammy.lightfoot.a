@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/SAMMY.LIGHTFOOT",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4094
+         lda   #$FF
+         sta   $4206
+         jsr   $4000      ; decompress 1
+         jsr   $B7B5      ; decompress 2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $734E (player 1), $734F (player 2)
+         lda   #$AD
+         sta   $7B8B      ; patch - never decrease lives (player 1)
+         sta   $7B81      ; patch - never decrease lives (player 2)
++
+         +DISABLE_ACCEL
+         jmp   $B7A1

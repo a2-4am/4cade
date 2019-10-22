@@ -4,37 +4,50 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
-; - GetGameDisplayName
-; - PlayGameFromSearch
-; - PlayGameFromBrowse
-; - PlayGameFromAttract
-; - Prelaunch
+; - GetGameToLaunch
+; - GetGameInfo
+; - GetGameInfoInActionSlideshow
+; - PlayGame
 ; - Launch
 ;
-; Public variables
-; - gCurrentAttractIndex             ; [byte] numeric index in gAttractModeStore of current Mega-Attract Module
-; - gCurrentlyVisibleSlideshowIndex  ; [byte] numeric index in gSlideshowStore of currently visible slideshow picture
-                                     ;        (only valid during slideshows, not updated once a key is pressed)
+; Public variables:
+; - gGameToLaunch - 0-based index into gGamesListStore
+;
 
-!zone {
+GetGameToLaunch
+; in:    gGameToLaunch = index into gGamesListStore
+; out:   A/Y points to game filename
+gGameToLaunch=*+1
+         ldx   #$FF                  ; SMC
+         +LDADDR gGamesListStore
+         jmp   okvs_nth
 
-GetGameDisplayName
+GetGameInfo
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
 ;          A/Y points to game display name (but see hack notes below)
+;          X = game index, or #$FF if the game doesn't really exist but
+;          we want to return a successful result anyway (really, read the
+;          hack notes, they're important)
 ;        C set if game does not exist (this can happen because slideshows
 ;          list games that require a joystick, but the games list parser
 ;          filters out joystick-only games if the machine doesn't have a
 ;          joystick)
+         ldx   #$60
+         +HIDE_NEXT_2_BYTES
+GetGameInfoInActionSlideshow
+         ldx   #$EA
+         stx   @maybeExit
          +STAY @key
+         +STAY @slideshowKey
          jsr   okvs_get
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
          bcc   @exit
-         ; Hack to allow self-running demos that don't correspond to a game
-         ; filename. If the name ends in a '.', accept it unconditionally.
-         ; The filename is its own display name. Launching this fake game
-         ; will of course fail, so don't do that.
+; Hack to allow self-running demos that don't correspond to a game
+; filename. If the name ends in a '.', accept it unconditionally.
+; The filename is its own display name. Launching this fake game
+; will of course fail, so don't do that.
          +LDAY @key
          +STAY PARAM
          ldy   #0
@@ -44,192 +57,93 @@ GetGameDisplayName
          cmp   #"."
          beq   @forceGoodResult
          sec
+@maybeExit
+         !byte $00                   ; SMC
+; if the key is still not found, AND the caller said to try this, then try
+; getting the value of the current record from gSlideshowStore
+; (some games have multiple action screenshots, in which case the filename of
+; the action screenshot is not the game name, but the value is)
+         jsr   okvs_get
+         !word gSlideshowStore
+@slideshowKey
+         !word $FDFD                 ; SMC
+         +STAY @key3
+         jsr   okvs_get
+         !word gGamesListStore
+@key3    !word $FDFD                 ; SMC
+; note that the game might still not be found (C will be set by okvs_get),
+; which can happen if the game can't be played due to memory or joystick
+; requirements
          rts
 @forceGoodResult
          +LDAY @key
+         ldx   #$FF
          clc
 @exit    rts
 
-PlayGameFromSearch
-PlayGameFromBrowse
-         stx   @gameIndex
-         jsr   okvs_nth
-         !word gGamesListStore
-@gameIndex
-         !byte $FD                   ; SMC
-         jmp   .Go
+PlayGame
+         jsr   GetGameToLaunch
+                                     ; A/Y = address of game filename
+         +STAY SAVE
+         +STAY @pfile
 
-PlayGameFromAttract
-         jsr   LoadAndParseAttractModeConf
+         jsr   ClearScreens          ; avoid seeing code load into the HGR page
+                                     ; (clobbers $106, must do now before loading prelaunch code)
 
-         jsr   okvs_nth              ; get filename of current attract-mode module
-         !word gAttractModeStore
-gCurrentAttractIndex
-         !byte $FD                   ; set in MegaAttractMode
-         +STAY @key
-         jsr   okvs_get
-         !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
-         +STAY PTR
-         ldy   #1
-         lda   (PTR),y
-         and   #$0F
-         bne   @playFromSlideshow
+         jsr   LoadFile              ; load this game's prelaunch file at $106
+         !word kPrelaunchDirectory
+@pfile   !word $FDFD
+         !word $0106
 
-; we reached here by pressing <RETURN> during a self-running demo,
-; which means that @key points to the filename of the game we want to play
-         +LDAY @key
-         jmp   .Go
+         ; we start by placing the subdirectory name at gPathname+kGameDirectoryLen
+         ; to leave room for the GameDirectory name as the parent
 
-@playFromSlideshow
-; we reached here by pressing <RETURN> during a slideshow
-; gSlideshowStore is still in memory, and gCurrentlyVisibleSlideshowIndex
-; is the index into gSlideshowStore of the picture that is being displayed
-         jsr   okvs_nth
-         !word gSlideshowStore
-gCurrentlyVisibleSlideshowIndex
-         !byte $FD                   ; set in HGRTitleCallback, HGRActionCallback, DHGRTitleCallback
-         +STAY @sskey
-         +STAY @sskey2
-         jsr   okvs_get
-         !word gGamesListStore
-@sskey   !word $FDFD                 ; SMC
-         bcs   +
-         +LDAY @sskey
-         jmp   .Go
-+
-; if the key is not found, try getting the value of the current record
-; from gSlideshowStore and using that instead
-; (some games have multiple action screenshots, value points to the key in gGamesListStore)
-         jsr   okvs_get
-         !word gSlideshowStore
-@sskey2  !word $FDFD                 ; SMC
-         bcc   .Go
-         rts
+         lda   #kGameDirectoryLen
+         sta   gPathname
+         +LDAY SAVE
+         jsr   AddToPath
 
-.Go
-         +STAY PTR
-         ldx   #1                    ; construct path to game's startup file
-         sec                         ; which is always /X/game/game
-         !byte $2c
---       pha
-         clc
-         php
-         ldy   #0
-         lda   (PTR), y
-         tay
-         iny
-         sty   @runlength+1
-         ldy   #0
-         lda   #'X'
-         sta   ProDOS_prefix+1
+         ; attach the separator
+
+         inc   gPathname
          lda   #'/'
--        inx
-         sta   ProDOS_prefix, x
-         iny
-         lda   (PTR), y
-@runlength
-         cpy   #$D1                  ; SMC
-         bne   -
-         txa
-         plp
-         bcs   --
-         stx   ProDOS_prefix
+         sta   gPathname+1,x
 
-         +LDADDR ProDOS_prefix
-         jsr   SetPath
+         ; then we save the length of the resulting string without the count byte
+
+         dex
+         txa
+         pha
+
+         ; then attach the game name
+
+         +LDAY SAVE
+         jsr   AddToPath
+
+         ; don't look while I do this
+         ; we "place" a string at gPathname+kGameDirectoryLen
+         ; whose length is the subdirectory name and game name
+         ; then we load it
+         ; the load sets the path to the GameDirectory
+         ; and then finds the subdirectory name and game name right after it
+         ; and attaches it to the path by overwriting the count byte
+
+         sec
+         lda   gPathname
+         sbc   #kGameDirectoryLen
+         sta   gPathname+kGameDirectoryLen
          jsr   LoadFile              ; load the game startup file
+         !word kGameDirectory
+         !word gPathname+kGameDirectoryLen
+         !word 0                     ; use file's default address
 
          pla
          sta   ProDOS_prefix         ; set 'root' directory to the path part
                                      ; of the game startup file we just loaded
-                                     ;  so games can load other files without
+                                     ; so games can load other files without
                                      ; knowing which directory they're in
 
          ; execution falls through here
-
 Launch
-         +READ_RAM2_WRITE_RAM2
-         ldx   #1
--        lda   $100,x
-         sta   $DF00,x               ; back up stack
-         inx
-         bne   -
-         tsx                         ; back up stack pointer
-         stx   $DF00
-         lda   #$38                  ; 'sec' opcode to tell |Reenter| to
-         sta   RestoreStackNextTime  ; restore the stack and stack pointer
-
-         ldx   #(End_Prelaunch-Prelaunch-1)
--        lda   Prelaunch,x           ; copy pre-launch code to main memory
-         sta   $100,x
-         dex
-         bpl   -
-         ldx   #(end_promote-promote-1)
--        lda   promote,x             ; copy ProDOS shim to main memory
-         sta   $bf00,x
-         dex
-         bpl   -
-         jmp   $106                  ; jump to pre-launch code
-
-;------------------------------------------------------------------------------
-; Prelaunch
-; code to set up and launch third-party code (either a self-running demo or
-; an actual game)
-; THIS IS NOT A FUNCTION. DO NOT CALL THIS DIRECTLY.
-; must be run from main memory
-; contains multiple entry points
-;
-; in:    for first entry point, none
-;        for second entry point, the game must already be loaded in memory
-;          and ldrlo2/ldrhi2 must be the game entry point
-; out:   exits via JMP (ldrlo2), which is expected to exit via JMP |Prelaunch|
-;        (not here, but wherever it was copied to in main memory) or by
-;        manually enabling LC RAM then JMP |Reenter|
-;------------------------------------------------------------------------------
-Prelaunch
-; copied to $0100 in main memory
-; main entry point to return to launcher (used by self-running demos, vectors)
-         +READ_RAM1_NO_WRITE
-         jmp   Reenter
-
-!if * != Prelaunch+6 {
-  !error "Prelaunch entry points are messed up"
-}
-; copied to $0106 in main memory
-; main entry point to launch game
-         +READ_ROM_NO_WRITE
-         lda   ldrlo2                ; set up game entry point in stack page
-         ldy   ldrhi2                ; (last load address - 1)
-         sec
-         sbc   #$01
-         bcs   +
-         dey
-+
-         +STAY $1FE
-         ldx   #0                    ; wipe zero page
-         txa
--        sta   $00,x
-         inx
-         bne   -
-         lda   #$65                  ; Initialize 'random' seed. These are
-         sta   RNDSEED               ; arbitrary values. Some games like Pooyan
-         lda   #$02                  ; require these to be non-zero. Ask me
-         sta   RNDSEED+1             ; how long that one took to debug.
-         jsr   ROM_IN0               ; Initialize machine like a cold boot.
-         jsr   ROM_PR0               ; Many games assume a 'clean slate' and
-         jsr   ROM_NORMAL            ; rely on zero page values set by these
-         sta   STOREOFF              ; ROM routines,
-         sta   READMAINMEM           ; e.g. Wavy Navy just prints out text via
-         sta   WRITEMAINMEM          ; $FDED and expects it to work. Having it
-         sta   CLR80VID              ; print all null characters is amusing, in
-         sta   PRIMARYCHARSET        ; a quiet way, but not really helpful.
-         jsr   ROM_TEXT
-         jsr   ROM_HOME
-         bit   CLEARKBD
-         ldx   #$FD                  ; Jump to game entry point via stack pop.
-         txs
-         rts
-End_Prelaunch
-
-}
+         jsr   SwitchToBank2
+         jmp   LaunchInternal

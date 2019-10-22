@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GENETIC.DRIFT",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   patch+1
+         lda   #<patch
+         sta   $0859
+         lda   #>patch
+         sta   $085A
+         jmp   $0800      ; decompress and show title and decompress again
+patch
+         lda   #0         ; SMC (will be non-zero if cheat mode is enabled)
+         beq   +
+                          ; lives in $10
+         lda   #$A5
+         sta   $5846      ; patch - don't decrease lives
++
+         jmp   $57D7

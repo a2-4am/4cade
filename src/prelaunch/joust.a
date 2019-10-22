@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/JOUST",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $82f
+         sta   $85e
+         jsr   $800       ; decompress and show title/options screens
+         +DISABLE_ACCEL
+         jsr   $7000
+         +ENABLE_ACCEL
+         jsr   $832
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $2bc9
+         sta   $2b6b
++
+         +DISABLE_ACCEL
+         jmp   $3e00

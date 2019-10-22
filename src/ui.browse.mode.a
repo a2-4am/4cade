@@ -7,8 +7,6 @@
 ; - BrowseMode
 ;
 
-!zone {
-
 ;------------------------------------------------------------------------------
 ; BrowseMode
 ; main entry point for Browse Mode, which allows the user to browse the game
@@ -20,180 +18,160 @@
 BrowseMode
          ldx   #$FF
          txs
-         ldx   SelectedIndex
-         stx   BrowseSelectedIndex
 
-.BrowseModeInputLoop
+@BrowseModeInputLoop
          jsr   WaitForKeyFor30Seconds
          bit   CLEARKBD
-         jsr   ResetInputTimeout
 
-         cmp   #$88                  ; left arrow = previous
-         bne   +
--        ldx   #kBrowsePrevious
-         bne   @BrowseDispatch       ; always branches
-+        cmp   #$8B                  ; up arrow is same as left arrow
-         beq   -
-
-         cmp   #$95                  ; right arrow = next
-         bne   +
--        ldx   #kBrowseNext
-         bne   @BrowseDispatch       ; always branches
-+        cmp   #$8A                  ; down arrow is same as right arrow
-         beq   -
-
-         cmp   #$9B                  ; Esc switches to search mode
-         bne   +
-         ldx   #kBrowseExitToSearch
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$8D                  ; ENTER launches the current game
-         bne   +
-         ldx   #kBrowseLaunch
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$89                  ; TAB switches to mini attract mode
-         bne   +                     ; temporarily
-         ldx   #kBrowseTab
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$BF                  ; '?' display scredits
-         bne   +
--        ldx   #kBrowseCredits
-         bne   @BrowseDispatch       ; always branches
-+
-         cmp   #$AF                  ; '/' also displays credits
-         beq   -
-
-         and   #$7F                  ; strip high bit for search characters
-         jsr   IsSearchKey
-         beq   +
-         jsr   SoftBell              ; beep on invalid input
-         jmp   .BrowseModeInputLoop  ; and start over
-+
-         ldx   #kBrowseSearch
-         ; execution falls through here
-@BrowseDispatch
-         pha                         ; save key pressed
-         txa
-         asl
-         tax
-         lda   .BrowseDispatchTable,x
-         sta   @j+1
-         lda   .BrowseDispatchTable+1,x
-         sta   @j+2
-         pla                         ; restore key pressed
-@j       jsr   $FDFD                 ; SMC
-         jmp   .BrowseModeInputLoop
-
-.OnSearch
-         sta   InputBuffer
-         lda   #$01
-         sta   InputLength
-         jmp   SearchMode
-
-.OnPrevious
-         dec   BrowseSelectedIndex
-         jmp   +
-.OnNext
-         inc   BrowseSelectedIndex
-+
-         ldx   BrowseSelectedIndex
-         cpx   #$FF
-         bne   @notTooSmall
-         ldx   GameCount
-         dex
-         bne   @done                 ; always branches
-@notTooSmall
-         cpx   GameCount
-         bcc   @done
-         ldx   #0
-@done    stx   BrowseSelectedIndex
-         jmp   .OnBrowseChanged
-
-.OnLaunch
-         ldx   BrowseSelectedIndex
-         jsr   PlayGameFromBrowse
-         jsr   BlankHGR
-         jmp   +
-
-.OnTab
-         ldx   BrowseSelectedIndex
-         jsr   MiniAttractMode
-         cmp   #$8D
-         beq   .OnLaunch
-+        bit   CLEARKBD
-         ldx   BrowseSelectedIndex
-         ; execution falls through here
-
-.OnBrowseChanged
-         stx   @index
-         jsr   okvs_nth              ; get the name of the new game
-         !word gGamesListStore
-@index   !byte $FD
-         +STAY @key
-         jsr   GetOffscreenAddress   ; load new title screenshot offscreen
-         sta   +                     ; new title screenshot (offscreen)
-         +LDADDR kHGRTitleDirectory
-         jsr   SetPath
-         +LDAY @key
-         jsr   AddToPath
-         jsr   LoadFileAt
-         !byte $00
-+        !byte $FD                   ; SMC
-
-         jsr   okvs_get
-         !word gGamesListStore
-@key     !word $FDFD
-         +STAY SRC                   ; A/Y points to game title (in OKVS)
-         ldy   #0                    ; copy game title into search bar buffer
-         lda   (SRC),y
-         sta   SAVE                  ; game title length
-         inc   SAVE
--        iny
-         cpy   SAVE
-         bcc   @printTitleChar
-         lda   #" "
-         +HIDE_NEXT_2_BYTES
-@printTitleChar
-         lda   (SRC),y               ; copy game title to UI line 2
-         sta   UILine2,y
-         cpy   #MaxInputLength+1
-         bcc   -
-         ldx   #8
--        lda   ReturnToPlay,x        ; replace games count with 'to play' label
-         sta   UI_ToPlay,x
-         dex
-         bpl   -
-         ldx   #40
-         lda   #0
--        sta   UILine1-1,x           ; reset UI line 1
-         dex
-         bne   -
-         jsr   DrawSearchBarOffscreen ; actually draw the search UI (offscreen)
-         jmp   ShowOtherPage          ; now show everything at once
-
-;------------------------------------------------------------------------------
-
-; indices into BrowseDispatchTable
+; indices into BrowseDispatchTable below
 kBrowseSearch   = 0
 kBrowsePrevious = 1
 kBrowseNext     = 2
 kBrowseExitToSearch = 3
 kBrowseTab      = 4
 kBrowseLaunch   = 5
-kBrowseCredits  = 6
+kBrowseHelp     = 6
+kBrowseCredits  = 7
+kBrowseCheat    = 8
+kSoftBell       = 9
 
-.BrowseDispatchTable
-         !word .OnSearch
-         !word .OnPrevious
-         !word .OnNext
-         !word SearchMode
-         !word .OnTab
-         !word .OnLaunch
-         !word Credits
+         ldy   #kNumBrowseKeys
+-        dey
+         bmi   @noKeyMatch
+         cmp   BrowseKeys,y
+         bne   -
+         ldx   BrowseKeyDispatch,y
+         bne   @BrowseDispatch       ; always branches
 
-BrowseSelectedIndex
-         !byte $FF
-
+@noKeyMatch
+         jsr   IsSearchKey
+         beq   +
+         ldx   #kSoftBell            ; beep on invalid input
+!if kBrowseSearch > 0 {
+         +HIDE_NEXT_2_BYTES
++
+         ldx   #kBrowseSearch
+} else {
++
 }
+         ; execution falls through here
+@BrowseDispatch
+         ldy   BrowseDispatchTableLo,x
+         sty   @j+1
+         ldy   BrowseDispatchTableHi,x
+         sty   @j+2
+@j       jsr   $FDFD                 ; SMC
+         jmp   @BrowseModeInputLoop
+
+OnBrowseSearch
+         sta   InputBuffer
+         lda   #$01
+         sta   InputLength
+         jmp   SearchMode
+
+OnBrowsePrevious
+         ldx   gGameToLaunch
+         inx                         ; Slightly pathological case: there may be no
+                                     ; current game by the time we get here, e.g.
+                                     ; if we entered browse mode by pressing left
+                                     ; or up arrow from the global help screen.
+                                     ; In this case, pretend we were at game 0 and
+                                     ; continue with the key handler logic.
+         beq   +
+         dex
+         bne   .decindex
++        ldx   GameCount
+
+.decindex
+         dex
+
+.setindex
+         stx   gGameToLaunch
+         jmp   OnBrowseChanged
+
+OnBrowseNext
+         ldx   gGameToLaunch
+         inx
+GameCount = *+1
+         cpx   #$D1                  ; SMC
+         bne   .setindex
+         ldx   #0
+         beq   .setindex             ; branch always
+
+OnBrowseLaunch
+         jsr   PlayGame
+         jsr   BlankHGR
+         jmp   ForceBrowseChanged
+
+OnBrowseCheat
+         jsr   ToggleCheat
+         beq   ForceBrowseChanged    ; always branches because Z=1 on exit from ToggleCheat
+
+OnBrowseTab
+         jsr   MiniAttractMode
+         cmp   #$8D
+         beq   OnBrowseLaunch
+         ; execution falls through here
+ForceBrowseChanged
+         bit   CLEARKBD
+         ; execution falls through here
+OnBrowseChanged
+; in:    gGameToLaunch = game index
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+         jsr   LoadGameTitleOffscreen
+         jsr   DrawUIWithoutDots
+         jmp   MaybeAnimateTitle
+
+;------------------------------------------------------------------------------
+
+BrowseDispatchTableLo
+         !byte <OnBrowseSearch
+         !byte <OnBrowsePrevious
+         !byte <OnBrowseNext
+         !byte <SearchMode
+         !byte <OnBrowseTab
+         !byte <OnBrowseLaunch
+         !byte <Help
+         !byte <Credits
+         !byte <OnBrowseCheat
+         !byte <SoftBell
+BrowseDispatchTableHi
+         !byte >OnBrowseSearch
+         !byte >OnBrowsePrevious
+         !byte >OnBrowseNext
+         !byte >SearchMode
+         !byte >OnBrowseTab
+         !byte >OnBrowseLaunch
+         !byte >Help
+         !byte >Credits
+         !byte >OnBrowseCheat
+         !byte >SoftBell
+
+kNumBrowseKeys = 12                  ; number of entries in next 2 tables (each)
+BrowseKeys
+         !byte $83                   ; Ctrl-C = toggle cheat mode
+         !byte $A6                   ; '&' = credits
+         !byte $AF                   ; '/' = help
+         !byte $BF                   ; '?' = help
+         !byte $A0                   ; Space = mini attract mode
+         !byte $89                   ; TAB = mini attract mode
+         !byte $8D                   ; ENTER = launch current game
+         !byte $9B                   ; Esc = switch to search mode
+         !byte $8A                   ; down arrow = next
+         !byte $95                   ; right arrow = next
+         !byte $8B                   ; up arrow = previous
+         !byte $88                   ; left arrow = previous
+BrowseKeyDispatch
+         !byte kBrowseCheat
+         !byte kBrowseCredits
+         !byte kBrowseHelp
+         !byte kBrowseHelp
+         !byte kBrowseTab
+         !byte kBrowseTab
+         !byte kBrowseLaunch
+         !byte kBrowseExitToSearch
+         !byte kBrowseNext
+         !byte kBrowseNext
+         !byte kBrowsePrevious
+         !byte kBrowsePrevious

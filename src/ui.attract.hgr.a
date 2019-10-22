@@ -9,31 +9,93 @@
 ; - HGRSingle
 ;
 
-!zone {
-
+;------------------------------------------------------------------------------
+; HGRTitleSlideshow
+; execute a slideshow of hi-res title screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
 HGRTitleSlideshow
-         jsr   .LoadHGRTransition    ; load transition effect code at $6000
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
-         !word .HGRTitleCallback     ; address of callback (called on each file)
+         !word HGRTitleCallback      ; address of callback (called on each file)
          rts                         ; exit with last picture still visible
-
-HGRActionSlideshow
-         jsr   .LoadHGRTransition    ; load transition effect code at $6000
-         jsr   okvs_iter             ; cycle through all listed HGR files
-         !word gSlideshowStore
-         !word .HGRActionCallback    ; address of callback (called on each file)
-         rts                         ; exit with last picture still visible
-
-HGRSingle
-         jsr   SetPath
-         jsr   LoadFile              ; load HGR screenshot at $4000
-         jsr   .LoadHGRTransition    ; load transition effect code at $6000
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
 
 ;------------------------------------------------------------------------------
-; .HGRTitleCallback [private]
+; HGRActionSlideshow
+; execute a slideshow of hi-res action screenshots
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
+HGRActionSlideshow
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jsr   okvs_iter             ; cycle through all listed HGR files
+         !word gSlideshowStore
+         !word HGRActionCallback     ; address of callback (called on each file)
+         rts                         ; exit with last picture still visible
+
+;------------------------------------------------------------------------------
+; HGRSingle
+; display a single hi-res screenshot, with transition effect
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode still displaying hi-res screen with last picture visible
+;------------------------------------------------------------------------------
+HGRSingle
+         +STAY @fname
+         jsr   LoadFile              ; load HGR screenshot at $4000
+         !word kRootDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $4000
+         jsr   LoadHGRTransition     ; load transition effect code at $6000
+         jmp   ExecuteTransitionAt6000AndWait
+
+;------------------------------------------------------------------------------
+; LoadHGRTransition [private]
+; looks up name of next HGR transition effect in FX.CONF and loads that file
+; at $6000
+
+; in:    gGlobalPrefsStore has been initialized
+; out:   all registers and flags clobbered
+;        $6000..$BFFF contains transition effect code
+;------------------------------------------------------------------------------
+LoadHGRTransition
+         jsr   LoadFile              ; load HGR transition effects list into $8000
+         !word kRootDirectory
+         !word kFXConfFile
+-        !word $8000
+         jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
+         !word gFXStore
+         !word -
+         !byte 0
+
+         jsr   pref_get              ; get HGR transition effect from prefs
+         !word kNextFX
+         !word gFXStore
+         +STAY ++                    ; A/Y = filename (don't load file yet)
+                                     ; X = index of the transition in FX store
+         +LDADDR gFXStore
+         jsr   okvs_next             ; get transition after this one
+         +STAY +
+
+         jsr   pref_set              ; update prefs store and save to disk
+         !word kNextFX
++        !word $FDFD                 ; SMC
+
+         jsr   LoadFile              ; now load transition effect code into $6000
+         !word kFXDirectory
+++       !word $FDFD                ; SMC
+         !word $6000
+HGRRTS   rts
+
+;------------------------------------------------------------------------------
+; HGRTitleCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR title screenshot
 
@@ -43,30 +105,28 @@ HGRSingle
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
-.HGRTitleCallback
-         +STAY SAVE
+HGRTitleCallback
+         bit   KBD
+         bmi   HGRRTS
 
-         lda   KBD
-         bpl   +
-@exit    rts
-+
-         stx   gCurrentlyVisibleSlideshowIndex
+         +STAY +
 
-         ; check if game exists in the catalog (it might not if it requires a
-         ; joystick and the machine doesn't have one, or if it requires 128K
-         ; but the machine only has 64K)
-         +LDAY SAVE
-         jsr   GetGameDisplayName
-         bcs   @exit                 ; not found, so just skip this title
+         jsr   GetGameInfo
+         ; if game is not found (C will be set here), it means it can't be played on
+         ; this machine due to memory or joystick requirements, so we don't display
+         ; it in slideshows
+         bcs   HGRRTS
+         stx   gGameToLaunch
 
-         ; load HGR screenshot at $4000
-         +LOAD_FILE kHGRTitleDirectory, SAVE
+         jsr   LoadFile              ; load HGR screenshot at $4000
+         !word kHGRTitleDirectory
++        !word $FDFD                 ; SMC
+         !word $4000
 
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
+         jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
-; .HGRActionCallback [private]
+; HGRActionCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single HGR action screenshot
 
@@ -77,150 +137,62 @@ HGRSingle
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
-.HGRActionCallback
-         +STAY SAVE
-         +STAY @slideshowKey
+HGRActionCallback
+         bit   KBD
+         bmi   HGRRTS
 
-         lda   KBD
-         bpl   +
-@actionExit
-         rts
-+
-         stx   gCurrentlyVisibleSlideshowIndex
+         +STAY +
 
-         ; load HGR screenshot at $4000
-         +LOAD_FILE kHGRActionDirectory, SAVE
+         jsr   GetGameInfoInActionSlideshow
+         ; if game name is not found (C will be set here), it means the game
+         ; can't be played due to memory or joystick requirements, so we hide
+         ; it from slideshows
+         bcs   HGRRTS
 
-; try to get the human-readable name of this game from gGamesListStore
-; and display it in the bottom-left corner
-         +LDAY SAVE
-         jsr   GetGameDisplayName
-         bcc   @foundname
-; if the key is not found, try getting the value of the current record from
-; gSlideshowStore and using that instead
-; (some games have multiple action screenshots, in which case the filename of
-; the action screenshot is not the game name, but the value is)
-         jsr   okvs_get
-         !word gSlideshowStore
-@slideshowKey
-         !word $FDFD                 ; SMC
-         +STAY @key3
-         jsr   okvs_get
-         !word gGamesListStore
-@key3    !word $FDFD                 ; SMC
-         bcs   @actionExit           ; game still not found, bail
-                                     ; (could happen if game can't be played
-                                     ; due to memory or joystick requirements)
-@foundname
-         +STAY SAVE
-@drawname
-         ldx   #0
-         stx   HTAB
-         ldx   #22
-         stx   VTAB
-         ldy   #0
-         lda   (SAVE),y
-         tax
-         +LDADDR @topline
-         sec
-         jsr   DrawBuffer
-         ldx   #3
-         +LDADDR @toprightcorner
-         sec
-         jsr   DrawBuffer
+         ; found the game
+         +STAY SAVE                  ; (SAVE) -> game title
+         stx   gGameToLaunch
+
+         jsr   LoadFile              ; load HGR screenshot at $4000
+         !word kHGRActionDirectory
++        !word $FDFD                 ; SMC
+         !word $4000
+
+         ; display game name in the bottom-left corner
+         lda   #22
+         sta   VTAB
+         lda   #0                    ; solid horizontal bar character
+         jsr   @resetline
+         lda   (SAVE),y              ; (SAVE) -> game title, Y = 0, so A = title length
+         clc
+         adc   #$03
+         sta   gPathname
+         lda   #7                    ; top-right rounded corner character
+         jsr   @drawline
+
          inc   VTAB
-         ldx   #0
-         stx   HTAB
-         inx
-         +LDADDR @rightline
-         sec
-         jsr   DrawBuffer
-         +LDAY SAVE
-         jsr   SetPath
+         lda   #" "
+         jsr   @resetline
+         lda   (SAVE),y              ; A = title length
+         tay
+-        lda   (SAVE),y
+         sta   gPathname+1,y
+         dey
+         bne   -
+         lda   #3                    ; solid vertical bar character
+         jsr   @drawline
+
+         jmp   ExecuteTransitionAt6000AndWait
+@resetline
+         ldy   #40
+-        sta   gPathname,y
+         dey
+         bne   -
+         sty   HTAB
+         rts
+@drawline
+         ldy   gPathname
+         sta   gPathname,y
          +LDADDR gPathname
          sec
-         jsr   DrawString
-         ldx   #2
-         +LDADDR @rightline
-         sec
-         jsr   DrawBuffer
-
-         +LDADDR $6000
-         jmp   ExecuteTransitionAndWait
-@topline
-         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-@toprightcorner
-         !byte 0,0,7
-@rightline
-         !text " "
-         !byte 3
-
-;------------------------------------------------------------------------------
-; .LoadHGRTransition [private]
-; looks up name of next HGR transition effect in FX.CONF and loads that file
-; at $6000
-
-; in:    gGlobalPrefsStore has been initialized
-; out:   all registers and flags clobbered
-;        $6000..$BFFF contains transition effect code
-;------------------------------------------------------------------------------
-.LoadHGRTransition
-         +LDADDR kFXConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load HGR transition effects list into $8000
-         jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
-         !word gFXStore
-         !word ldrlo2                ; (ldrlo2) points to last load address
-         !byte 0
-
-         jsr   okvs_get              ; get next HGR transition effect from prefs
-         !word gGlobalPrefsStore
-         !word kNextFX
-         bcs   @nofx
-         +STAY @fx
-         jsr   okvs_get
-         !word gFXStore
-@fx      !word $FDFD                 ; SMC
-         bcc   +
-@nofx    ldx   #0
-+        stx   gFXIndex
-
-         jsr   okvs_nth              ; get filename of transition effect code
-         !word gFXStore
-gFXIndex
-         !byte 0
-         +STAY @fxkey
-
-         inc   gFXIndex              ; increment transition effect index
-         jsr   okvs_len
-         !word gFXStore
-         cmp   gFXIndex
-         bne   +
-         lda   #0
-         sta   gFXIndex
-+
-         lda   gFXIndex
-         sta   @nexti
-         jsr   okvs_nth              ; get name of next HGR transition
-         !word gFXStore
-@nexti   !byte $FD                   ; SMC
-         +STAY @nextfx
-
-         jsr   okvs_update           ; save name of next HGR transition in prefs store
-         !word gGlobalPrefsStore
-         !word kNextFX
-@nextfx  !word $FDFD                 ; SMC
-
-         jsr   SaveGlobalPreferences ; write prefs store to disk
-
-         ; load transition effect code at $6000
-         +LOAD_FILE kFXDirectory, @fxkey
-         rts
-@fxkey   !word $FDFD
-kFXConfFile
-         !byte @kFXConfFile_e-*-1
-         !text "FX.CONF"
-@kFXConfFile_e
-
-}
+         ; /!\ execution falls through to glue.font/DrawString

@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/POOYAN",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $203A
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $0F82,X (X=0/1 for player 1/2)
+         lda   #$BD
+         sta   $7D7E      ; patch - don't decrease lives
+         sta   $7D9A      ; patch - don't decrease lives
+         sta   $758A      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $6000

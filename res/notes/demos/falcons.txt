@@ -1,0 +1,4 @@
+$602A: 20 -> 2C to skip input selection (context is 20059E)
+$9FF7: AD00C0 -> 4C0001 to exit on keypress (context is 2C00C0300160AD00C085086512)
+$9FDC: 4CCC9E -> 4C0001 to exit after demo cycle (context is CEDD06D0E54CCC9E)
+no sound

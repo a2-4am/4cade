@@ -16,7 +16,7 @@ ver_02 = 1
                 verbose_info = 0        ;set to 1 to enable display of memory usage
                 enable_floppy = 0       ;set to 1 to enable floppy drive support
                 poll_drive   = 0        ;set to 1 to check if disk is in drive, recommended if allow_multi is enabled
-                allow_extend = 0        ;enable support for more than four partitions (note: it has overhead)
+                use_smartport = 1       ;set to 1 to enable support for more than two MicroDrive (or more than four CFFA) partitions
                 override_adr = 1        ;set to 1 to require an explicit load address
                 aligned_read = 0        ;set to 1 if all reads can be a multiple of block size
                 enable_readseq=0        ;set to 1 to enable reading multiple sequential times from the same file without seek
@@ -207,7 +207,9 @@ init            jsr     SETKBD
                 jsr     SETVID
                 lda     DEVNUM
                 sta     x80_parms + 1
+!if use_smartport = 0 {
                 sta     unrunit1 + 1
+} ;use_smartport
                 and     #$70
 !if (enable_floppy + enable_write) > 1 {
                 sta     unrslot1 + 1
@@ -372,7 +374,7 @@ adjpath         tya
                 bne     readblock
                 pla
 
-                ;unit to slot for SmartPort interface
+                ;unit to slot for ProDOS interface
 
 +++             pla
                 lsr
@@ -382,6 +384,38 @@ adjpath         tya
                 ldx     DEVADR01HI, y
                 cpx     #$c8
                 bcc     set_slot
+!if enable_floppy = 1 {
+
+                ;check if current device is floppy
+
+                lsr
+                ora     #$c0
+                tax
+                stx     blokhi
+                ldy     #0
+                sty     bloklo
+                iny
+                lda     (bloklo), y
+                cmp     #$20
+                bne     not_floppy
+                iny
+                iny
+                lda     (bloklo), y
+                bne     not_floppy
+                iny
+                iny
+                lda     (bloklo), y
+                cmp     #3
+                bne     not_floppy
+                ldy     #$ff
+                lda     (bloklo), y
+                beq     set_slot
+
+not_floppy
+} ;enable_floppy
+
+                ;find SmartPort device for basic MicroDrive support
+
                 ldx     #$c8
 -               dex
                 stx     blokhi
@@ -405,29 +439,28 @@ adjpath         tya
                 beq     -
 
 set_slot        stx     slot + 2
-!if allow_extend = 1 {
-                stx     unrentry1 + 2
-} ;allow_extend
+!if use_smartport = 0 {
                 stx     unrentry2 + 2
-!if allow_extend = 1 {
+} else { ;use_smartport = 1
+                stx     unrentry1 + 2
                 stx     unrentry3 + 2
-} ;allow_extend
+} ;use_smartport
 slot            ldx     $cfff
 !if enable_floppy = 1 {
                 php
                 beq     bankram
 } ;enable_floppy
+!if use_smartport = 0 {
                 stx     unrentry2 + 1
-!if allow_extend = 1 {
-                ;use ProDOS entrypoint instead
+} else { ;use_smartport = 1
+
+                ;use SmartPort entrypoint instead
 
                 inx
                 inx
                 inx
                 stx     unrentry1 + 1
                 stx     unrentry3 + 1
-
-                ;detect extended remapping and update unit accordingly
 
                 lda     #<(readbuff + $200)
                 sta     adrlo
@@ -436,30 +469,24 @@ slot            ldx     $cfff
                 stx     x80_parms + 4
                 lda     #0
                 sta     x80_parms + 5
-                jsr     unrhddrd
                 jsr     MLI
                 !byte   $80
                 !word   x80_parms
-                bcc     + ;always
-iterunit        inc     iterunit + 1
 
-                ;enable use of ProDOS SmartPort entrypoint
-
-                lda     #$2c
-                sta     unrentry2
+iterunit        inc     unrunit2
 
 unrentry1       jsr     $d1d1
                 !byte   cmdread
                 !word   unrpacket
                 bcs     iterunit
 
-+               ldy     #$0f
+                ldy     #$0f
 -               lda     readbuff + 4, y
                 cmp     readbuff + $204, y
                 bne     iterunit
                 dey
                 bpl     -
-} ;allow_extend
+} ;use_smartport
 
 bankram
 !if load_banked = 1 {
@@ -1252,7 +1279,8 @@ unrdrvoff4 = unrelocdsk + (* - reloc)
 rdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-setaux          sta     CLRAUXWR, x
+setaux          sta     CLRAUXRD, x
+                sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 
@@ -2074,10 +2102,8 @@ hddnextent      ldy     #0
                 and     #$0f
                 tax
                 inx
--               cmp     (namlo), y
-                beq     hddfoundname
-                ora     #$80
-                cmp     (namlo), y
+-               eor     (namlo), y
+                asl
                 beq     hddfoundname
 
                 ;match failed, check if any directory entries remain
@@ -2134,20 +2160,8 @@ hddfoundname    iny
                 ldy     reqcmd
                 cpy     #cmdwrite ;control carry instead of zero
                 bne     +
-
-                ;round requested size up to nearest block if writing
-
-                lda     sizelo
-                adc     #$fe
-                lda     sizehi
-                adc     #1
-                and     #$fe
-                sta     sizehi
     !if aligned_read = 0 {
                 stx     sizelo
-      !if bounds_check = 1 {
-                sec
-      } ;bounds_check
     } ;aligned_read
 +
   } ;enable_write
@@ -2606,7 +2620,11 @@ skiptree
                 beq     +
     } ;enable_seek
     !if enable_write = 1 {
+      !if use_smartport = 0 {
                 stx     command
+      } else { ;use_smartport = 1
+                stx     pcommand
+      } ;use_smartport
     } ;enable_write
   } ;aligned_read
 } else { ;rwts_mode = 1
@@ -2686,7 +2704,8 @@ hddresparse
 hddrdwrdone
   !if allow_aux = 1 {
                 ldx     #0
-hddsetaux       sta     CLRAUXWR, x
+hddsetaux       sta     CLRAUXRD, x
+                sta     CLRAUXWR, x
   } ;allow_aux
                 rts
 } ;rwts_mode
@@ -2810,34 +2829,43 @@ hddreaddirsect  ldy     #>hdddirbuf
                 ldy     #>hdddirbuf
 hddreaddirsect
 } ;allow_trees
-unrhddrd = unrelochdd + (* - reloc)
                 sty     adrhi
 hddseekrd       ldy     #cmdread
 !if (aligned_read + enable_write) > 1 {
-hddseekrdwr     sty     command
-} else { ;aligned_read = 0 or enable_write = 0
+hddseekrdwr
+  !if use_smartport = 0 {
                 sty     command
+  } else { ;use_smartport = 1
+                sty     pcommand
+  } ;use_smartport
+} else { ;aligned_read = 0 or enable_write = 0
+  !if use_smartport = 0 {
+                sty     command
+  } else { ;use_smartport = 1
+                sty     pcommand
+  } ;use_smartport
 hddseekrdwr
 } ;aligned_read and enable_write
 
+!if use_smartport = 0 {
                 stx     bloklo
                 sta     blokhi
+} else { ;use_smartport = 1
+                stx     pblock
+                sta     pblock + 1
+} ;use_smartport
 
+!if use_smartport = 0 {
 unrunit1 = unrelochdd + (* - reloc)
                 lda     #$d1
                 sta     unit
 unrentry2 = unrelochdd + (* - reloc)
                 jmp     $d1d1
-
-!if allow_extend = 1 {
-                ldx     #4
--               lda     command + 1, x
-                sta     packet + 1, x
-                dex
-                bne     -
-                lda     command
-                sta     pcommand
-
+} else { ;use_smartport = 1
+                lda     adrhi
+                sta     paddr + 1
+                lda     adrlo
+                sta     paddr
 unrentry3 = unrelochdd + (* - reloc)
                 jsr     $d1d1
 pcommand        !byte   0
@@ -2848,9 +2876,9 @@ unrpacket = unrelochdd + (* - reloc)
 packet          !byte   3
 unrunit2 = unrelochdd + (* - reloc)
                 !byte   0
-                !word   readbuff + $200
-                !word   2
-} ;allow_extend
+paddr           !word   readbuff + $200
+pblock          !byte   2, 0, 0
+} ;use_smartport
 
 !if rwts_mode = 1 {
 vollist_b
@@ -3043,5 +3071,5 @@ hdddataend
   } ;verbose_info
 } ;PASS2
 
-readbuff
+readbuff = $800
 !byte $D3,$C1,$CE,$A0,$C9,$CE,$C3,$AE

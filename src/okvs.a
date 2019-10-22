@@ -10,14 +10,14 @@
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
 ; - okvs_nth(address, n)                        get key by numeric index
+; - okvs_next(address, n)                       get next key by numeric index
 ; - okvs_iter(address, callback)                iterate through keys
 ; - okvs_iter_values(address, callback)         iterate through values
-; - okvs_as_boolean(value)                      set Z flag based on value
 ;
 ; Call init() once. Call it again to reset the store to 0 keys.
 ;
 ; Keys are maintained in a singly linked list, so most functions are O(n).
-; len() is O(1) though.
+; len() and append() are O(1) though.
 ;
 ; Key count is stored as a byte, so a store can hold a maximum of 255 keys.
 ;
@@ -48,7 +48,8 @@
 ;
 ; Store
 ;   +0 length (byte)
-;   +1 Record
+;   +1 free space pointer after last record (word)
+;   +3 Record
 ;   ...Record...
 ;   ...Record...
 ;
@@ -63,36 +64,46 @@
 ;------------------------------------------------------------------------------
 ; okvs_init
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   $00/$01 clobbered
 ;        $02/$03 clobbered
-;        A,Y=0
-;        X clobbered
+;        all registers clobbered
 ;------------------------------------------------------------------------------
 okvs_init
-         +PARAMS_ON_STACK 2
-         jsr   SetPTRFromStackParams
-         ldy   #0
+         jsr   GetStoreAddressFromAY
+                                     ; PTR -> store
+                                     ; Y = 0
          tya
-         sta   (PTR),y               ; set number of keys
+         sta   (PTR),y               ; set number of keys in store to 0
+
+         iny                         ; set next-free-space pointer to store + 3
+         ldx   PTR+1
+         lda   PTR
+         clc
+         adc   #$03
+         bcc   +
+         inx
++        sta   (PTR),y
+         iny
+         txa
+         sta   (PTR),y
          rts
 
 ;------------------------------------------------------------------------------
 ; okvs_len
 ;
-; in:    stack contains 2 bytes of parameters:
-;          +1 [word] handle to storage space
+; in:    A/Y = handle to storage space
 ; out:   A contains number of keys in this store
-;        X, Y clobbered
+;        X preserved
+;        Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;------------------------------------------------------------------------------
 okvs_len
-         +PARAMS_ON_STACK 2
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddressFromAY
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          rts
 
 ;------------------------------------------------------------------------------
@@ -103,7 +114,8 @@ okvs_len
 ;          +3 [word] address of key
 ;          +5 [word] address of value
 ;          +7 [byte] maximum length of value (or 0 to fit)
-; out:   all registers clobbered
+; out:   X = new number of records (same as calling okvs_len after okvs_append)
+;        A/Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        $04/$05 has the address of the next available byte after the new record
@@ -111,42 +123,42 @@ okvs_len
 ;------------------------------------------------------------------------------
 okvs_append
          +PARAMS_ON_STACK 7
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          clc
          adc   #1
+         pha                         ; will return this later
          sta   (PTR),y               ; increment number of keys
+         iny
+         lda   (PTR),y               ; get address of next free space
          tax
-         jsr   incptr                ; PTR -> first record
--        dex
-         beq   +
-         jsr   derefptr              ; PTR -> next record
-         clc
-         bcc   -                     ; always branches
-+                                    ; PTR -> new record
-         +LDAY PTR
-         +STAY SAVE                  ; save PTR
-         jsr   incptr
-         jsr   incptr                ; PTR -> space for new key
+         iny
+         lda   (PTR),y
+         sta   PTR+1
+         sta   SAVE+1
+         stx   PTR
+         stx   SAVE
+                                     ; PTR -> new record
+                                     ; SAVE -> new record
+         jsr   incptr2
+                                     ; PTR -> space for new key
          +LDPARAM 3
          +STAY SRC                   ; SRC -> new key to copy
          ldy   #0
          lda   (SRC),y
-         clc
-         adc   #1
-         sta   @keylen
          tay
--        dey                         ; copy new key
-         lda   (SRC),y
+         tax
+-        lda   (SRC),y               ; copy new key
          sta   (PTR),y
+         dey
          cpy   #$FF
          bne   -
 
-         lda   PTR                   ; update PTR to byte after copied key
-         clc
-@keylen=*+1
-         adc   #$FD                  ; SMC
+         sec
+         txa
+         adc   PTR                   ; update PTR to byte after copied key
          sta   PTR
          bcc   +
          inc   PTR+1
@@ -155,23 +167,22 @@ okvs_append
          +STAY SRC                   ; SRC -> new value to copy
          ldy   #7
          lda   (PARAM),y             ; get max length of value
+         tax
          bne   +
-         ldy   #0
-         lda   (SRC),y               ; no max, use actual length instead
-         clc
-         adc   #1
-+        sta   @valuelen
          tay
--        dey
-         lda   (SRC),y
+         lda   (SRC),y               ; no max, use actual length instead
+         tax
+         inx
++        tay
+-        lda   (SRC),y
          sta   (PTR),y
+         dey
          cpy   #$FF
          bne   -
 
-         lda   PTR
+         txa
          clc
-@valuelen=*+1
-         adc   #$FD                  ; SMC
+         adc   PTR
          sta   SRC
          bcc   +
          inc   PTR+1
@@ -185,6 +196,15 @@ okvs_append
          iny
          lda   SRC+1
          sta   (PTR),y
+         pla
+         tax                         ; X = new OKVS length
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+         ldy   #2
+-        lda   SRC-1,y
+         sta   (PTR),y               ; update next-free-space pointer in head
+         dey
+         bne   -
          rts
 
 ;------------------------------------------------------------------------------
@@ -204,20 +224,22 @@ okvs_append
 ;------------------------------------------------------------------------------
 okvs_get
          +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          beq   @fail                 ; no keys, fail immediately
-         sta   @maxkeys              ; A = number of keys
+         sta   @max
+         jsr   incptr3
+                                     ; PTR -> first record
          ldx   #0
-         jsr   incptr                ; PTR -> first record
          +LDPARAM 3
          +STAY SRC                   ; SRC -> key we want to find
          ldy   #0
          lda   (SRC),y
          tay
          iny
-         sty   @matchlen
+         sty   KEYLEN
 @matchRecordLoop
          lda   PTR+1
          sta   DEST+1
@@ -233,12 +255,12 @@ okvs_get
          cmp   (DEST),y
          bne   @next
          iny
-@matchlen=*+1
-         cpy   #$FD                  ; SMC
+KEYLEN = *+1
+         cpy   #$D1                  ; SMC
          bne   @matchKeyLoop
          +LDAY PTR
          clc
-         adc   @matchlen
+         adc   KEYLEN
          bcc   +
          iny
 +        clc
@@ -250,37 +272,71 @@ okvs_get
 +        rts
 @next    jsr   derefptr              ; PTR -> next record
          inx
-@maxkeys=*+1
-         cpx   #$FD                  ; SMC
+@max = *+1
+         cpx   #$D1                  ; SMC
          bne   @matchRecordLoop
 @fail    sec
          rts
 
+okvs_get_current
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         clc
+         adc   PTR
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++        jmp   incptr
+
+;------------------------------------------------------------------------------
+; okvs_next
+; get (N+1)th key, with wraparound
+;
+; in:    A/Y = handle to storage space
+;        X = record index
+; out:   A/Y = lo/hi address of (X+1)th key, or first key if X was the last record
+;        X = next record index
+;        SAVE clobbered
+;        see okvs_nth for other exit conditions
+;------------------------------------------------------------------------------
+okvs_next
+         +STAY PARAM
+         inx
+         stx   SAVE
+         jsr   okvs_len
+         eor   SAVE
+         bne   +
+         tax
++
+         +LDAY PARAM
+         ; /!\ execution falls through here to okvs_nth
 ;------------------------------------------------------------------------------
 ; okvs_nth
+; get (N)th key
 ;
-; in:    stack contains 3 bytes of parameters:
-;          +1 [word] handle to storage space
-;          +3 [byte] numeric index
+; in:    A/Y = handle to storage space
+;        X = record index
 ; out:   A/Y = lo/hi address of nth key
-;        all other registers and flags clobbered
-;        $00/$01 clobbered
-;        $02/$03 clobbered
-;        $04/$05 clobbered
+;        X preserved
+;        Z = 0
+;        all other flags clobbered
+;        PTR clobbered
 ;------------------------------------------------------------------------------
 okvs_nth
-         +PARAMS_ON_STACK 3
-         jsr   SetPTRFromStackParams
-         jsr   incptr                ; PTR -> first record
-         ldy   #3
-         lda   (PARAM),y
-         tax                         ; X = numeric index of key to get
+         jsr   GetStoreAddressFromAY
+                                     ; PTR -> store
+         jsr   incptr3
+                                     ; PTR -> first record
+         txa
          beq   @found
+         pha
 -        jsr   derefptr
          dex
          bne   -
-@found   jsr   incptr
-         jsr   incptr
+         pla
+         tax
+@found   jsr   incptr2
          +LDAY PTR
          rts
 
@@ -330,85 +386,47 @@ okvs_update
 @exit    rts
 
 ;------------------------------------------------------------------------------
-; okvs_iter
+; okvs_iter / okvs_iter_values
 ;
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] handle to storage space
 ;          +3 [word] address of callback
 ; out:   <callback> will be called for each record in the store, in order, with
 ;          X = numeric index of record
-;          A/Y = address of key
+;          A/Y = address of key or value (depends on which entry point you call)
 ;        all registers are clobbered
-;        all flags clobbered
-;        $00/$01 clobbered
+;        Z=1
+;        all other flags clobbered
+;        PARAM clobbered
+;        PTR clobbered
 ;------------------------------------------------------------------------------
 okvs_iter
-         +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
-         beq   @exit                 ; no keys, exit immediately
-         sta   @max
-         +LDPARAM 3
-         +STAY @callback
-         jsr   incptr                ; PTR -> first record
-         ldx   #0
-@loop    txa
-         pha                         ; save X on stack
-         ldy   PTR+1
-         tya
-         pha
-         lda   PTR
-         pha                         ; save PTR on stack (in case callback clobbers it)
-         clc
-         adc   #2                    ; skip over next-record pointer (2 bytes)
-         bcc   +
-         iny                         ; A/Y -> key
-+
-@callback=*+1
-         jsr   $FDFD                 ; SMC
-         pla
-         sta   PTR
-         pla
-         sta   PTR+1                 ; restore PTR from stack
-         pla
-         tax                         ; restore X from stack
-         jsr   derefptr              ; PTR -> next record
-         inx
-@max=*+1
-         cpx   #$FD                  ; SMC
-         bne   @loop
-@exit    rts
-
-;------------------------------------------------------------------------------
-; okvs_iter_values
-;
-; in:    stack contains 4 bytes of parameters:
-;          +1 [word] handle to storage space
-;          +3 [word] address of callback
-; out:   <callback> will be called for each record in the store, in order, with
-;          X = numeric index of record
-;          A/Y = address of value
-;        all registers are clobbered
-;        all flags clobbered
-;        $00/$01 clobbered
-;------------------------------------------------------------------------------
+         lda   #$D0                  ; 'BNE' opcode
+         +HIDE_NEXT_2_BYTES
 okvs_iter_values
+         lda   #$24                  ; 'BIT' opcode
+         sta   @branch
          +PARAMS_ON_STACK 4
-         jsr   SetPTRFromStackParams
-         ldy   #0
-         lda   (PTR),y
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
          beq   @exit                 ; no keys, exit immediately
          sta   @max
          +LDPARAM 3
          +STAY @callback
-         jsr   incptr                ; PTR -> first record
+         jsr   incptr3
+                                     ; PTR -> first record
          ldx   #0
-@loop    ldy   #2
+@loop
+         lda   #2                    ; for iter, skip length = 2
+@branch  bne   +                     ; SMC (iter_values puts a BIT here, so no branch)
+                                     ; for iter_values, skip length = length(key) + 2 + 1
+         ldy   #2
          lda   (PTR),y               ; A = length of key
          clc
          adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
-         sta   @skiplen
++        sta   @skiplen
          txa
          pha                         ; save X on stack
          lda   PTR+1
@@ -417,8 +435,8 @@ okvs_iter_values
          lda   PTR
          pha                         ; save PTR on stack (in case callback clobbers it)
          clc
-@skiplen=*+1                         ; skip over key
-         adc   #$FD                  ; SMC
+@skiplen=*+1
+         adc   #$FD                  ; SMC skip over pointer (and possibly key)
          bcc   +
          iny                         ; A/Y -> value
 +
@@ -440,16 +458,22 @@ okvs_iter_values
 ;------------------------------------------------------------------------------
 ; internal functions
 
+incptr3  jsr   incptr
+incptr2  jsr   incptr
 incptr
-; preserves A and X
-         ldy   PTR
-         iny
-         sty   PTR
+; preserves A, X, and Y
+         inc   PTR
          bne   +
          inc   PTR+1
 +        rts
 
-SetPTRFromStackParams
+GetStoreAddressFromAY
+         +STAY PTR
+         jmp   derefptr
+
+GetStoreAddress
+; in:    PARAM = address of stack params (any PARAMS_ON_STACK macro will do this)
+; out:   PTR = address of store (always the first parameter on stack)
 ; preserves X
          ldy   #1
          lda   (PARAM),y
@@ -459,13 +483,14 @@ SetPTRFromStackParams
          sta   PTR+1                 ; PTR -> first parameter on stack
                                      ; execution falls through here
 derefptr
-; preserves X
-         ldy   #0
+; out:   Y = 0
+;        preserves X
+         ldy   #1
          lda   (PTR),y
          pha
-         iny
+         dey
          lda   (PTR),y
-         sta   PTR+1
-         pla
          sta   PTR
+         pla
+         sta   PTR+1
          rts

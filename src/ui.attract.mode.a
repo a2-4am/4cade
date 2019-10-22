@@ -1,12 +1,12 @@
 ;license:MIT
 ;(c) 2018-9 by 4am
 ;
-; Mega Attract Mode - cycle through slideshows and self-running demos
+; Attract Mode - cycle through slideshows and self-running demos
 ;
 ; Public functions
 ; - MegaAttractMode
+; - MiniAttractMode
 ; - RunAttractModule
-; - LoadAndParseAttractModeConf
 
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
@@ -18,140 +18,97 @@
 ; out:   never returns to caller (may JMP to other major modes)
 ;------------------------------------------------------------------------------
 MegaAttractMode
-         +READ_RAM1_WRITE_RAM1
+         jsr   SwitchToBank1
          ldx   #$FF
          txs
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         jsr   LoadAndParseAttractModeConf
-
-         jsr   okvs_get              ; get next attract-mode module from prefs
-         !word gGlobalPrefsStore
-         !word kNextAttract
-         bcs   @noattract
-         +STAY @attract
-         jsr   okvs_get
+         jsr   LoadFile              ; load attract-mode configuration file into $8000
+         !word kRootDirectory
+         !word kAttractModeConfFile
+-        !word $8000
+         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
          !word gAttractModeStore
-@attract !word $FDFD                 ; SMC
-         bcc   +
-@noattract
-         ldx   #0
-+        stx   @attractIndex
-
-         jsr   okvs_nth              ; get filename of next attract-mode module
-         !word gAttractModeStore
-@attractIndex
+         !word -
          !byte 0
-         +STAY @key
 
-         lda   @attractIndex
-         sta   gCurrentAttractIndex
-         inc   @attractIndex         ; increment module index for next time
-         jsr   okvs_len
-         !word gAttractModeStore
-         cmp   @attractIndex
-         bne   +
-         lda   #0
-         sta   @attractIndex
-+
-         lda   @attractIndex
-         sta   @nexti
-         jsr   okvs_nth              ; get name of next attract-mode module
-         !word gAttractModeStore
-@nexti   !byte $FD                   ; SMC
-         +STAY @nextattract
-
-         jsr   okvs_update           ; save name of next attract-mode module in prefs store
-         !word gGlobalPrefsStore
+         jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
-@nextattract
-         !word $FDFD                 ; SMC
+         !word gAttractModeStore
+         +STAY @mname                ; A/Y = module name
+                                     ; X = index of module in attract store
+         +LDADDR gAttractModeStore
+         jsr   okvs_next             ; get module after this one
+         +STAY +
 
-         jsr   SaveGlobalPreferences ; write prefs store to disk
+         jsr   pref_set              ; update prefs store and save to disk
+         !word kNextAttract
++        !word $FDFD                 ; SMC
 
          jsr   okvs_get
          !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
+@mname   !word $FDFD                 ; SMC
          +STAY PTR
-
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY @key                  ; A/Y = address of module name
+         +LDAY @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
-         bpl   @jmpattract
+         bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
-         bne   @jmpsearch            ; Any other key switches to Search Mode.
-         jsr   PlayGameFromAttract   ; Might return if user hits Ctrl-Reset.
-@jmpattract
-         jmp   MegaAttractMode
-@jmpsearch
-         jmp   SearchMode
+         bne   +                     ; Any other key switches to Search Mode.
+         jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
++        jmp   SearchMode
 
 ;------------------------------------------------------------------------------
 ; MiniAttractMode
 ; run attract modules related to one game
 ;
-; in:    X = index in gGamesListStore
-;        gGlobalPrefsStore must be initialized
+; in:    gGameToLaunch = index in gGamesListStore
 ; out:   all flags and registers clobbered
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------
 MiniAttractMode
-         stx   +
+         jsr   GetGameToLaunch
+         +STAY +
 
          jsr   BlankHGR
-
-         jsr   okvs_nth
-         !word gGamesListStore
-+        !byte $FD                   ; SMC
-         +STAY @MiniAttractGame
-
-         lda   #0
-         sta   @MiniAttractIndex
-
+                                     ; X = 0
+         stx   @MiniAttractIndex
 @loop
-         ; load mini attract mode configuration file at $8000
-         +LOAD_FILE kMiniAttractDirectory, @MiniAttractGame
+         jsr   LoadFile              ; load mini attract mode configuration file into $8000
+         !word kMiniAttractDirectory
++        !word $FDFD                 ; SMC
+-        !word $8000
 
          jsr   ParseKeyValueList     ; parse configuration into OKVS data structure at $6000
          !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
+         !word -
          !byte 0
 
+         +LDADDR gAttractModeStore
          jsr   okvs_len
-         !word gAttractModeStore
          cmp   @MiniAttractIndex
-         beq   @exit                 ; we've run through all modules, so exit to caller
+         beq   ATTRTS                ; we've run through all modules, so exit to caller
 
-         lda   @MiniAttractIndex
-         sta   +
+@MiniAttractIndex=*+1
+         ldx   #$FD                  ; SMC
+         +LDADDR gAttractModeStore
          jsr   okvs_nth              ; get the next module on the list
-         !word gAttractModeStore
-+        !byte $FD                   ; SMC
-         +STAY @key
-
-         jsr   okvs_get              ; get module type
-         !word gAttractModeStore
-@key     !word $FDFD                 ; SMC
-         +STAY PTR
-
+         +STAY SAVE
+         jsr   okvs_get_current      ; get module type
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY @key                  ; A/Y = address of module name
+         +LDAY SAVE                  ; A/Y = address of module name
          jsr   RunAttractModule      ; execute the module
 
          inc   @MiniAttractIndex
          lda   KBD
          bpl   @loop
-@exit    rts
-@MiniAttractIndex
-         !byte $FD
-@MiniAttractGame
-         !word $FDFD
+ATTRTS   rts
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
@@ -169,8 +126,8 @@ MiniAttractMode
 ;------------------------------------------------------------------------------
 RunAttractModule
          +STAY @key
-         txa
-         cmp   #$30
+         +STAY @key2
+         cpx   #$30
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
@@ -180,75 +137,79 @@ RunAttractModule
 ; language card or auxiliary memory.
 
          +LDAY @key
-         jsr   GetGameDisplayName
-         bcc   +                     ; if game doesn't exist, skip the demo
-         rts
+         jsr   GetGameInfo
+         bcs   ATTRTS                ; if game doesn't exist, skip the demo
+         cpx   #$FF
+         beq   +
+         stx   gGameToLaunch
 +
-         jsr   Home                  ; avoid seeing code load into the HGR page
-         +LOAD_PATH kDemoDirectory
-         ldy   gPathname
-         sty   ProDOS_prefix         ; temporarily set 'root' directory to
--        lda   gPathname, y          ; /demos/ directory so demos can can load
-         sta   ProDOS_prefix, y      ; other resources in the same directory
-         dey
-         bne   -
-         +LOAD_FILE_IMM @key         ; load self-running demo (address varies)
-         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
+         jsr   ClearScreens          ; avoid seeing code load into the HGR page
+                                     ; (clobbers $106, must do now before loading prelaunch code)
+
+         jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
+         !word kPrelaunchDirectory
+         !word kStandardPrelaunch
+         !word $0106
+
+         jsr   LoadFile              ; load self-running demo into its default address (varies)
+         !word kDemoDirectory
+@key     !word $FDFD
+         !word 0
+
          jmp   Launch                ; will return to caller via |Reenter|
 
 ; not a demo, so maybe a slideshow or single screenshot
 @NotDemo
+         txa
          cmp   #$41                  ; numbers are slideshow modules,
          bcs   @dispatchSingle       ; letters are single files
 
 ; it's a slideshow, so load and parse slideshow configuration file
          pha                         ; save module type
-         +LOAD_FILE kAttractModeSlideshowDirectory, @key ; load slideshow configuration file at $4000
+         jsr   LoadFile              ; load slideshow configuration file into $4000
+         !word kAttractModeSlideshowDirectory
+@key2    !word $FDFD                 ; SMC
+-        !word $4000
          jsr   ParseKeyValueList     ; parse into an OKVS data structure at $0800
          !word gSlideshowStore
-         !word ldrlo2                ; (ldrlo2) points to address of last loaded file, so $4000
+         !word -
          !byte 0
          pla                         ; restore module type
 
 -        and   #$0F                  ; convert ASCII digit to int
-         asl
          tax
-         lda   @slideshows-2,x
+         lda   @slideshowslo-1,x
          sta   @jmp+1
-         lda   @slideshows-1,x
+         lda   @slideshowshi-1,x
          sta   @jmp+2
          +LDAY @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
 
 @dispatchSingle
-         clc
-         adc   #$06
+         adc   #(@singleslo-@slideshowslo)-1
          bne   -                     ; always branches
-@key     !word $FDFD                 ; SMC
-@slideshows
-         !word HGRTitleSlideshow
-         !word HGRActionSlideshow
-         !word DHGRTitleSlideshow
-         !word DHGRActionSlideshow
-         !word SHRSlideshow
-         !word GRActionSlideshow
-@singles
-         !word HGRSingle
-         !word DHGRSingle
-         !word SHRSingle
-         !word GRSingle
 
-LoadAndParseAttractModeConf
-; TODO refactor launch code then make this private
-         +LDADDR @AttractModeConfFile
-         jsr   SetPath
-         jsr   LoadFile              ; load attract-mode configuration file at $8000
-
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
-         !word gAttractModeStore
-         !word ldrlo2                ; (ldrlo2) points to last load address, so $8000
-         !byte 0
-         rts
-@AttractModeConfFile
-         !byte 12
-         !text "ATTRACT.CONF"
+@slideshowslo
+         !byte <HGRTitleSlideshow
+         !byte <HGRActionSlideshow
+         !byte <DHGRTitleSlideshow
+         !byte <DHGRActionSlideshow
+         !byte <SHRSlideshow
+         !byte <GRActionSlideshow
+@singleslo
+         !byte <HGRSingle
+         !byte <DHGRSingle
+         !byte <SHRSingle
+         !byte <GRSingle
+@slideshowshi
+         !byte >HGRTitleSlideshow
+         !byte >HGRActionSlideshow
+         !byte >DHGRTitleSlideshow
+         !byte >DHGRActionSlideshow
+         !byte >SHRSlideshow
+         !byte >GRActionSlideshow
+@singleshi
+         !byte >HGRSingle
+         !byte >DHGRSingle
+         !byte >SHRSingle
+         !byte >GRSingle

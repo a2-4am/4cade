@@ -1,0 +1,37 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; cheat-related UI functions
+;
+; Public functions:
+; - ToggleCheat
+;
+
+;------------------------------------------------------------------------------
+; ToggleCheat
+; toggle whether cheats are enabled (global flag) and update the preferences
+; file with the new status
+;
+; does not update UI
+;
+; in:    none
+; out:   X = 0
+;        Z = 1
+;        all other registers and flags clobbered
+;------------------------------------------------------------------------------
+ToggleCheat
+         ldx   #$B0
+         lda   MachineStatus
+         eor   #CHEATS_ENABLED
+         sta   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         inx
++        stx   @val
+         jsr   pref_set
+         !word kCheat
+         !word @pref
+                                     ; X = 0, Z = 1
+         rts
+@pref    !byte 1
+@val     !byte $FD

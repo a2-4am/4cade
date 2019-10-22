@@ -1,0 +1,111 @@
+;license:MIT
+;(c) 2017-2019 by qkumba and 4am
+
+!cpu 6502
+!to "build/FX/PALETTE.FIZZLE",plain
+*=$6000
+
+sourcemask_even = $f0
+copymask_even = $f1
+sourcemask_odd = $f2
+copymask_odd = $f3
+
+         !source "src/fx/macros.a"
+
+         ;init masks
+
+         lda   #%00101010
+         sta   sourcemask_even
+         lda   #%11010101
+         sta   copymask_even
+         lda   #%01010101
+         sta   sourcemask_odd
+         lda   #%10101010
+         sta   copymask_odd
+
+@outerloop
+         ;init RNG
+
+         ldx   #1
+         stx   @rnd1+1
+         dex
+         stx   @rnd2+1
+
+         ;iterate
+
+@loop
+         ldy   @rnd1+1
+         ldx   @rnd2+1
+         lsr   @rnd2+1
+         ror   @rnd1+1
+         bcc   +
+
+         ;feedback polynomial forms #$100D for period of 8191
+
+         lda   @rnd1+1
+         eor   #$0d
+         sta   @rnd1+1
+         lda   @rnd2+1
+         eor   #$10
+         sta   @rnd2+1
+
+         ;little hack to avoid missing offset zero
+         ;screen hole at $xxFF is missed instead
+
++        tya
+         eor   #$ff
+         sta   $26
+         sta   $3c
+         txa
+
+         ;target page 1
+
+         ora   #$20
+         sta   $27
+         eor   #$60
+         sta   $3d
+
+         ;copy pixel from other page to this page
+         ldy   #0
+         lda   $26
+         ror
+         bcs   @odd
+         lda   ($26),y
+         and   sourcemask_even
+         sta   $00
+         lda   ($3c),y
+         and   copymask_even
+         ora   $00
+         sta   ($26),y
+         jmp   @next
+@odd
+         lda   ($26),y
+         and   sourcemask_odd
+         sta   $00
+         lda   ($3c),y
+         and   copymask_odd
+         ora   $00
+         sta   ($26),y
+@next
+
+         lda   $c000
+         bmi   @exit
+
+         ;and exit condition
+
+@rnd2    lda   #0
+         bne   @loop
+@rnd1    lda   #0
+         cmp   #1
+         bne   @loop
+
+         lda   sourcemask_even
+         beq   @exit
+         lda   #0
+         sta   sourcemask_even
+         sta   sourcemask_odd
+         lda   #$FF
+         sta   copymask_even
+         sta   copymask_odd
+         +LBNE @outerloop
+@exit    rts

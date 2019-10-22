@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/FREE.FALL",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $204E
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $1532
+         lda   #$AD
+         sta   $0E19      ; patch - don't decrease lives
+         sta   $19F2      ; patch - don't decrease lives
+         sta   $0E69      ; patch - don't increase lives
+         sta   $7E11      ; patch - don't increase lives
+         sta   $BE11      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $4000

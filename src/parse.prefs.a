@@ -4,25 +4,20 @@
 ; Parser for global preferences file
 ;
 ; Public functions
-; - SaveGlobalPreferences
+; - pref_get
+; - pref_set
+; - SaveSmallFile
 ;
 ; Public constants (all length-prefixed strings)
-; - kGlobalPrefsFilename
-; - kLastPlayed
 ; - kNextAttract
 ; - kNextFX
 ; - kNextDFX
+; - kCheat
 ;
 
 kGlobalPrefsBuffer = $8000
 
-kGlobalPrefsFilename
-         !byte 10
-         !raw  "PREFS.CONF"
-
-kLastPlayed
-         !byte 10
-         !raw  "LASTPLAYED"
+; valid pref keys
 kNextAttract
          !byte 11
          !raw  "NEXTATTRACT"
@@ -32,100 +27,199 @@ kNextFX
 kNextDFX
          !byte 7
          !raw  "NEXTDFX"
+kCheat
+         !byte 5
+         !raw  "CHEAT"
 
-;------------------------------------------------------------------------------
-; SaveGlobalPreferences
-; save global options and state to file
-;
-; in:    none
-; out:   all registers and flags clobbered
-;        $00/$01/$FE/$FF clobbered
-;------------------------------------------------------------------------------
-SaveGlobalPreferences
-         +LDADDR kGlobalPrefsBuffer
-         +STAY   $FE
-
-         +LDADDR @kFluff1
-         jsr     @addString
-         +LDADDR kLastPlayed
-         jsr     @addStringFromStore
-
-         +LDADDR @kFluff2
-         jsr     @addString
-         +LDADDR kNextAttract
-         jsr     @addStringFromStore
-
-         +LDADDR @kFluff3
-         jsr     @addString
-         +LDADDR kNextFX
-         jsr     @addStringFromStore
-
-         +LDADDR @kFluff4
-         jsr     @addString
-         +LDADDR kNextDFX
-         jsr     @addStringFromStore
-
-         +LDADDR @kEOF
-         jsr     @addString
-
-         +LDADDR kGlobalPrefsFilename
-         jsr   SetPath
-         jsr   SaveSmallFile
-         !word kGlobalPrefsBuffer
-         rts
-
-@addStringFromStore
-         +STAY @key
-         jsr   @addString
-         +LDADDR @kEquals
-         jsr   @addString
-         jsr   okvs_get
-         !word gGlobalPrefsStore
-@key     !word $FDFD                 ; SMC
-         jsr   @addString
-         +LDADDR @kLF
-         jmp   @addString
-
-@addString
-         +STAY $00
-         ldx   #0
-         ldy   #0
-         lda   ($00),y
-         beq   ++
-         clc
-         adc   #$01
-         sta   @len
-         iny
--        lda   ($00),y
-         sta   ($FE,x)
-+        iny
-         inc   $FE
-         bne   +
-         inc   $FF
-@len=*+1
-+        cpy   #$FD                  ; SMC
-         bne   -
-++       rts
-
-@kEquals !byte 1
+.kEquals !byte 1
          !raw  "="
-@kLF     !byte 1,$0D
-@kFluff1 !byte @kFluff2-*-1
+.kLF     !byte 1,$0D
+.kFluff1 !byte .kFluff2-*-1
          !raw  "# Total Replay preferences file",$0D
          !raw  "# Do not edit by hand.",$0D
          !raw  "# Or do. I'm a comment, not a cop.",$0D
          !byte $0D
-         !raw  "# value=game directory listed in GAMES.CONF, or empty",$0D
-@kFluff2 !byte @kFluff3-*-1
-         !byte $0D
          !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0D
-@kFluff3 !byte @kFluff4-*-1
+.kFluff2 !byte .kFluff3-*-1
          !byte $0D
          !raw  "# value=transition effect listed in FX.CONF, or empty",$0D
-@kFluff4 !byte @kEOF-*-1
+.kFluff3 !byte .kFluff4-*-1
          !byte $0D
          !raw  "# value=transition effect listed in DFX.CONF, or empty",$0D
-@kEOF    !byte @_-*-1
+.kFluff4 !byte .kEOF-*-1
+         !byte $0D
+         !raw  "# value=0 or 1",$0D
+.kEOF    !byte ._-*-1
          !byte $0D
          !raw  "[eof]",$0D
-@_
+._
+
+.addStringFromStore
+         +STAY .key
+         jsr   .addString
+         +LDADDR .kEquals
+         jsr   .addString
+         jsr   okvs_get
+         !word gGlobalPrefsStore
+.key     !word $FDFD                 ; SMC
+         jsr   .addString
+         +LDADDR .kLF
+         ; execution falls through here
+.addString
+         +STAY $00
+         ldy   #0
+         lda   ($00),y
+         beq   PREFRTS
+         tay
+         clc
+         adc   $FE
+         tax
+-        lda   ($00),y
+         dey
+         sta   ($FE),y
+         bne   -
+         stx   $FE
+         bcc   PREFRTS
+         inc   $FF
+PREFRTS  rts
+
+;------------------------------------------------------------------------------
+; pref_get
+; get pref value by pref key, and optionally validate that the pref value
+; exists as a key in another OKVS
+;
+; example usage:
+;        jsr   pref_get
+;        !word kNextFX
+;        !word gFXStore
+;
+; See above for list of valid pref keys.
+;
+; The OKVS you pass in as the second parameter must have at least 1 record.
+; This is not checked.
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] address of length-prefixed pref key
+;          +3 [word] address of OKVS, or 0
+;        gGlobalPrefsStore must be initialized (this is done in 4cade.init)
+; out:   A/Y = address of pref value
+;        X = index of pref value in passed store
+;        (if OKVS parameter is 0, no validation occurs and X=0 and Z=1 on exit,
+;         some callers rely on this behavior, so don't change it!)
+;        PARAM clobbered
+;        PTR clobbered
+;        SRC clobbered
+;        SAVE clobbered
+;------------------------------------------------------------------------------
+pref_get
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY +
+         +LDPARAM 3
+         +STAY .store1
+
+         jsr   okvs_get              ; look up pref key in prefs store
+         !word gGlobalPrefsStore
++        !word $FDFD                 ; SMC
+         bcs   .useDefaultValue      ; if pref key is not found, use default value
+         ldx   .store1+1
+         beq   PREFRTS               ; if no OKVS to validate against, we're done
+         +STAY +
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         beq   .useDefaultValue      ; if pref value is empty, use default value
+         jsr   okvs_get              ; check whether the pref value exists as a key in the passed-in store
+.store1  !word $FDFD                 ; SMC
++        !word $FDFD                 ; SMC
+         bcc   +                     ; found key, continue
+.useDefaultValue                     ; did not find key, use first key in passed store as a default value
+         ldx   #0
++
+         +LDAY .store1
+         jmp   okvs_nth
+
+;------------------------------------------------------------------------------
+; pref_set
+; set pref value by pref key, serialize prefs, and write them to disk
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] address of length-prefixed pref key
+;          +3 [word] address of length-prefixed pref value
+; out:   all registers and flags clobbered
+;        PARAM clobbered
+;        PTR clobbered
+;        SRC clobbered
+;        $FE/$FF clobbered
+;------------------------------------------------------------------------------
+pref_set
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
+         +STAY +
+         +LDPARAM 3
+         +STAY ++
+
+         jsr   okvs_update           ; save that in prefs store
+         !word gGlobalPrefsStore
++        !word $FDFD                 ; SMC
+++       !word $FDFD                 ; SMC
+
+         +LDADDR kGlobalPrefsBuffer  ; clear prefs buffer
+         +STAY   $FE
+         ldx     #$02
+         ldy     #$00
+         tya
+-        sta     ($FE),y
+         iny
+         bne     -
+         inc     $FF
+         dex
+         bne     -
+         dec     $FF
+         dec     $FF
+
+         +LDADDR .kFluff1            ; serialize prefs into prefs buffer
+         jsr     .addString
+         +LDADDR kNextAttract
+         jsr     .addStringFromStore
+
+         +LDADDR .kFluff2
+         jsr     .addString
+         +LDADDR kNextFX
+         jsr     .addStringFromStore
+
+         +LDADDR .kFluff3
+         jsr     .addString
+         +LDADDR kNextDFX
+         jsr     .addStringFromStore
+
+         +LDADDR .kFluff4
+         jsr     .addString
+         +LDADDR kCheat
+         jsr     .addStringFromStore
+
+         +LDADDR .kEOF
+         jsr     .addString
+
+         +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
+         jsr   SetPath
+         +LDAY kGlobalPrefsBuffer
+         ; /!\ execution falls through here to glue.prorwts/SaveSmallFile
+;------------------------------------------------------------------------------
+; SaveSmallFile
+; Save a file into memory all at once, using ProRWTS2.
+; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
+; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
+;
+; supports paths, see note
+;
+; in:    A/Y points to data buffer
+;        gPathname contains path+filename to write
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+SaveSmallFile
+         +STAY ldrlo                 ; set data buffer address for ProRWTS2
+         jsr   SwitchToBank2
+         jsr   SaveSmallFileInternal
+         jmp   SwitchToBank1

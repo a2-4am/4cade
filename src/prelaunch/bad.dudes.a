@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BAD.DUDES",plain
+*=$106
+
+         jmp   ++
+
+cheat
+         jsr   EnableAccelerator ; yes!
+         jsr   $d357
+         jsr   DisableAccelerator
+         lda   $d51b
+         cmp   #$c7
+         bne   +
+         lda   #$ad
+         sta   $e6fb
++        rts
+
+++
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $110b
+         jsr   $1000
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<cheat
+         sta   $d336
+         lda   #>cheat
+         sta   $d337
++
+         jsr   DisableAccelerator
+         lda   #$c2
+         jmp   $d300

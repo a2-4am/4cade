@@ -16,7 +16,7 @@
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
 HasVidHDCard
-         ldx   #$c7
+         ldx   #$C7
 @slotLoop
          stx   @byteLoop+2
          ldy   #$02
@@ -26,11 +26,12 @@ HasVidHDCard
          bne   @nextSlot
          dey
          bpl   @byteLoop
+@found
          sec                         ; found
          rts
 @nextSlot
          dex
-         cpx   #$c0
+         cpx   #$C0
          bne   @slotLoop
          clc                         ; not found
          rts

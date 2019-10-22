@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/BOUNCING.KMNGAS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $52DB
+         jsr   $527C      ; decompress 1
+         +DISABLE_ACCEL
+         jsr   $8d4
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $BD40
+         jsr   $BD20      ; decompress 2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $0213
+         lda   #$AD
+         sta   $69DC      ; patch - don't decrease lives
+         sta   $6C9A      ; patch - don't increase lives
+         sta   $6C9D      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $7200

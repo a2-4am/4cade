@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GREMLINS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $0866
+         jsr   $0800      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $76 and $084A,X (0/1 for player 1/2)
+         lda   #$A5
+         sta   $54B2      ; patch - don't decrease lives
+         sta   $5165      ; patch - don't increase lives
+         lda   #$BD
+         sta   $54B6      ; patch - don't decrease lives
+         sta   $5162      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $4000

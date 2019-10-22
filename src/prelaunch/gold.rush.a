@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/GOLD.RUSH",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $36F3
+         jsr   $0800      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $0A33 (capped at 9)
+         lda   #$AD
+         sta   $13EE      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $0B00

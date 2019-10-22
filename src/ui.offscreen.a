@@ -1,0 +1,158 @@
+;License:MIT
+;(c) 2018-9 by 4am
+;
+; functions for managing which HGR page is showing, and doing things on the other one
+;
+; - GetOffscreenAddress
+; - LoadTitleOffscreen
+; - LoadCoverOffscreen
+; - LoadHelpOffscreen
+; - LoadGameTitleOffscreen
+; - ResyncPage
+; - ShowOtherPage
+; - ToggleOffscreenPage
+; - ClearOffscreen
+; - ClearHGR1
+; - ClearMem
+;
+; Public variables
+; - OffscreenPage
+;
+
+;------------------------------------------------------------------------------
+; GetOffscreenAddress
+; get high byte of HGR page that is currently not showing
+;
+; in:    none
+; out:   A = high byte of offscreen HGR page (#$20 or #$40)
+;        preserves X/Y
+;------------------------------------------------------------------------------
+GetOffscreenAddress
+         lda   #$40
+OffscreenPage = * + 1
+         bne   +                     ; SMC
+                                     ; 0 = currently showing HGR page 2
+                                     ;     (so offscreen is page 1 @ $2000)
+                                     ; 1 = currently showing HGR page 1
+                                     ;     (so offscreen is page 2 @ $4000)
++        lsr
+         rts
+
+;------------------------------------------------------------------------------
+; LoadTitleOffscreen
+; load title screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+LoadTitleOffscreen
+         lda   #<kTitleFile
+         +HIDE_NEXT_2_BYTES
+;------------------------------------------------------------------------------
+; LoadHelpOffscreen
+; load help screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+LoadHelpOffscreen
+         lda   #<kHelpFile
+         +HIDE_NEXT_2_BYTES
+;------------------------------------------------------------------------------
+; LoadCoverOffscreen
+; load cover screen in the HGR page that is currently not showing
+;
+; in:    none
+; out:   all flags and registers clobbered
+;------------------------------------------------------------------------------
+LoadCoverOffscreen
+         lda   #<kCoverFile
+LoadOffscreenFromAY
+         sta   @fname
+         jsr   GetOffscreenAddress
+         sta   +
+         jsr   LoadFile
+         !word kRootDirectory
+@fname   !byte $FD                   ; SMC
+         !byte >kCoverFile           ; all of these are on the same page
+         !byte $00
++        !byte $FD                   ; SMC
+         rts
+
+LoadGameTitleOffscreen
+; in:    gGameToLaunch = index into gGamesListStore
+         jsr   GetGameToLaunch
+         +STAY +
+         jsr   GetOffscreenAddress
+         sta   ++
+         jsr   LoadFile
+         !word kHGRTitleDirectory
++        !word $FDFD                 ; SMC
+         !byte $00
+++       !byte $FD                   ; SMC
+         rts
+
+;------------------------------------------------------------------------------
+; ClearOffscreen
+; clear $2000..$3FFF or $4000..$5FFF, depending on which HGR page is not
+; visible right now
+; does not change HGR mode
+;
+; in:    none
+; out:   $2000..$3FFF or $4000..$5FFF cleared
+;        A = #$80
+;        X = #$00
+;        Y = #$00
+;        Z = 1
+;------------------------------------------------------------------------------
+ClearOffscreen
+         jsr   GetOffscreenAddress
+         +HIDE_NEXT_2_BYTES
+ClearHGR1
+         lda   #$20                  ; note to self: LDX #$20 can't move here
+         ldx   #$20
+ClearMem
+         sta   @a+2
+         lda   #$80
+         ldy   #0
+@a       sta   $2000,y
+         iny
+         bne   @a
+         inc   @a+2
+         dex
+         bne   @a
+         rts
+
+ResyncPage
+         jsr   ToggleOffscreenPage
+         ; /!\ execution falls through here to ShowOtherPage
+;------------------------------------------------------------------------------
+; ShowOtherPage
+; switch to the HGR page that is not currently showing
+;
+; in:    none
+; out:   A = new value of OffscreenPage
+;        preserves X/Y
+;------------------------------------------------------------------------------
+ShowOtherPage
+         jsr   ToggleOffscreenPage
+         bne   +
+         bit   PAGE2                 ; show page 2
+         rts
++        bit   PAGE1                 ; show page 1
+         rts
+
+;------------------------------------------------------------------------------
+; ToggleOffscreenPage
+; switch the internal variable that tracks which HGR page is showing
+; (does not affect screen)
+;
+; in:    none
+; out:   A = new value of OffscreenPage
+;        preserves X/Y
+;------------------------------------------------------------------------------
+ToggleOffscreenPage
+         lda   OffscreenPage
+         eor   #$01
+         sta   OffscreenPage
+         rts

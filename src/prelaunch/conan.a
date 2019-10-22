@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CONAN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $81e
+         jsr   $800
+         lda   #$60
+         sta   $bd40
+         jsr   $bc94
+         +DISABLE_ACCEL
+         jsr   $5ff8
+         +ENABLE_ACCEL
+         lda   #$6c
+         sta   $bd40
+         lda   #$60
+         sta   $6ba2
+         jsr   $3ffc
+         jsr   $be00
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $19f5
+         sta   $1a00
+         sta   $1b4e
+         ;;sta $a973
++
+         +DISABLE_ACCEL
+         jmp   $6ba5

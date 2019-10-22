@@ -1,0 +1,1038 @@
+;license:MIT
+;(c) 2018-9 by 4am
+;
+; 'Circuitous' hi-res font data
+;
+
+FontDataRow0
+         !byte $80        ; 00
+         !byte $80        ; 01
+         !byte $80        ; 02
+         !byte $9C        ; 03
+         !byte $80        ; 04
+         !byte $9C        ; 05
+         !byte $80        ; 06
+         !byte $80        ; 07
+         !byte $00        ; 08
+         !byte $9C        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $9C        ; 0C
+         !byte $E0        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $80        ; 11
+         !byte $80        ; 12
+         !byte $80        ; 13
+         !byte $B6        ; 14
+         !byte $80        ; 15
+         !byte $B8        ; 16
+         !byte $80        ; 17
+         !byte $00        ; 18
+         !byte $00        ; 19
+         !byte $00        ; 1A
+         !byte $EC        ; 1B
+         !byte $B0        ; 1C
+         !byte $B0        ; 1D
+         !byte $8C        ; 1E
+         !byte $98        ; 1F
+         !byte $80
+         !byte $98
+         !byte $B6
+         !byte $80
+         !byte $98
+         !byte $E7
+         !byte $BE
+         !byte $98
+         !byte $98
+         !byte $8C
+         !byte $E3
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $E0
+         !byte $BC
+         !byte $98
+         !byte $BE
+         !byte $BE
+         !byte $E6
+         !byte $FE
+         !byte $BC
+         !byte $FE
+         !byte $BC
+         !byte $BC
+         !byte $80
+         !byte $80
+         !byte $F0
+         !byte $80
+         !byte $8E
+         !byte $BC
+         !byte $BE
+         !byte $BE
+         !byte $BF
+         !byte $FE
+         !byte $BF
+         !byte $FF
+         !byte $FF
+         !byte $FE
+         !byte $E3
+         !byte $BE
+         !byte $F0
+         !byte $E3
+         !byte $83
+         !byte $E3
+         !byte $E3
+         !byte $BE
+         !byte $BF
+         !byte $BE
+         !byte $BF
+         !byte $FE
+         !byte $FF
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $C1
+         !byte $E3
+         !byte $FF
+         !byte $9C
+         !byte $83
+         !byte $9C
+         !byte $98
+         !byte $80
+         !byte $8E
+         !byte $80
+         !byte $86
+         !byte $80
+         !byte $E0
+         !byte $80
+         !byte $F8
+         !byte $80
+         !byte $86
+         !byte $98
+         !byte $80
+         !byte $86
+         !byte $9C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $8C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $B0
+         !byte $9C
+         !byte $86
+         !byte $80
+         !byte $FF
+FontDataRow1
+         !byte $80        ; 00
+         !byte $9C        ; 01
+         !byte $9C        ; 02
+         !byte $9C        ; 03
+         !byte $9C        ; 04
+         !byte $9C        ; 05
+         !byte $80        ; 06
+         !byte $80        ; 07
+         !byte $8C        ; 08
+         !byte $9E        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $BC        ; 0C
+         !byte $E0        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $80        ; 11
+         !byte $80        ; 12
+         !byte $9C        ; 13
+         !byte $FF        ; 14
+         !byte $98        ; 15
+         !byte $9C        ; 16
+         !byte $E6        ; 17
+         !byte $00        ; 18
+         !byte $00        ; 19
+         !byte $00        ; 1A
+         !byte $80        ; 1B
+         !byte $98        ; 1C
+         !byte $98        ; 1D
+         !byte $98        ; 1E
+         !byte $8C        ; 1F
+         !byte $80
+         !byte $BC
+         !byte $B6
+         !byte $B6
+         !byte $FE
+         !byte $F3
+         !byte $E3
+         !byte $98
+         !byte $8C
+         !byte $98
+         !byte $B6
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $F0
+         !byte $E6
+         !byte $9C
+         !byte $E0
+         !byte $E0
+         !byte $E6
+         !byte $86
+         !byte $86
+         !byte $E0
+         !byte $E6
+         !byte $E6
+         !byte $98
+         !byte $98
+         !byte $B8
+         !byte $BE
+         !byte $9C
+         !byte $E6
+         !byte $E3
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $E3
+         !byte $BE
+         !byte $F0
+         !byte $F3
+         !byte $83
+         !byte $F7
+         !byte $E7
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $FF
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $FF
+         !byte $8C
+         !byte $87
+         !byte $98
+         !byte $BC
+         !byte $80
+         !byte $9B
+         !byte $80
+         !byte $86
+         !byte $80
+         !byte $E0
+         !byte $80
+         !byte $8C
+         !byte $80
+         !byte $86
+         !byte $98
+         !byte $B0
+         !byte $86
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $8C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $98
+         !byte $9C
+         !byte $8C
+         !byte $80
+         !byte $FF
+FontDataRow2
+         !byte $FF        ; 00
+         !byte $FE        ; 01
+         !byte $BF        ; 02
+         !byte $9C        ; 03
+         !byte $BE        ; 04
+         !byte $9C        ; 05
+         !byte $F0        ; 06
+         !byte $87        ; 07
+         !byte $86        ; 08
+         !byte $9F        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $FC        ; 0C
+         !byte $EC        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $88        ; 11
+         !byte $9C        ; 12
+         !byte $BE        ; 13
+         !byte $FF        ; 14
+         !byte $B0        ; 15
+         !byte $8E        ; 16
+         !byte $BC        ; 17
+         !byte $00        ; 18
+         !byte $00        ; 19
+         !byte $00        ; 1A
+         !byte $FC        ; 1B
+         !byte $BC        ; 1C
+         !byte $80        ; 1D
+         !byte $BC        ; 1E
+         !byte $BE        ; 1F
+         !byte $80
+         !byte $BC
+         !byte $A4
+         !byte $FF
+         !byte $9B
+         !byte $F8
+         !byte $87
+         !byte $88
+         !byte $8C
+         !byte $98
+         !byte $9C
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $B8
+         !byte $F6
+         !byte $9C
+         !byte $FC
+         !byte $FC
+         !byte $E6
+         !byte $BE
+         !byte $BE
+         !byte $B0
+         !byte $FE
+         !byte $FE
+         !byte $98
+         !byte $98
+         !byte $9C
+         !byte $BE
+         !byte $B8
+         !byte $E0
+         !byte $FB
+         !byte $E3
+         !byte $E3
+         !byte $83
+         !byte $E3
+         !byte $83
+         !byte $83
+         !byte $83
+         !byte $E3
+         !byte $9C
+         !byte $E0
+         !byte $B3
+         !byte $83
+         !byte $FF
+         !byte $EF
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $83
+         !byte $9C
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $E7
+         !byte $E3
+         !byte $F0
+         !byte $8C
+         !byte $8E
+         !byte $98
+         !byte $E6
+         !byte $80
+         !byte $B8
+         !byte $FC
+         !byte $B6
+         !byte $BC
+         !byte $EC
+         !byte $BC
+         !byte $BE
+         !byte $FC
+         !byte $B6
+         !byte $80
+         !byte $B0
+         !byte $E6
+         !byte $98
+         !byte $E6
+         !byte $BE
+         !byte $BC
+         !byte $BE
+         !byte $FC
+         !byte $BC
+         !byte $F8
+         !byte $FE
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $FE
+         !byte $98
+         !byte $9C
+         !byte $8C
+         !byte $EC
+         !byte $FF
+FontDataRow3
+         !byte $FF        ; 00
+         !byte $FE        ; 01
+         !byte $BF        ; 02
+         !byte $9C        ; 03
+         !byte $BE        ; 04
+         !byte $BE        ; 05
+         !byte $F8        ; 06
+         !byte $8F        ; 07
+         !byte $FF        ; 08
+         !byte $8F        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $F8        ; 0C
+         !byte $E6        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $88        ; 10
+         !byte $9C        ; 11
+         !byte $BE        ; 12
+         !byte $BE        ; 13
+         !byte $FF        ; 14
+         !byte $FF        ; 15
+         !byte $FF        ; 16
+         !byte $98        ; 17
+         !byte $00
+         !byte $00
+         !byte $00
+         !byte $E6
+         !byte $E6
+         !byte $9C
+         !byte $E0
+         !byte $FF
+         !byte $80
+         !byte $98
+         !byte $80
+         !byte $FF
+         !byte $BE
+         !byte $BC
+         !byte $F6
+         !byte $80
+         !byte $8C
+         !byte $98
+         !byte $FC
+         !byte $FE
+         !byte $80
+         !byte $BE
+         !byte $80
+         !byte $9C
+         !byte $EE
+         !byte $98
+         !byte $BE
+         !byte $BC
+         !byte $FE
+         !byte $FE
+         !byte $FE
+         !byte $98
+         !byte $BC
+         !byte $FC
+         !byte $80
+         !byte $80
+         !byte $8E
+         !byte $80
+         !byte $F0
+         !byte $F8
+         !byte $FB
+         !byte $E3
+         !byte $BB
+         !byte $83
+         !byte $E3
+         !byte $BB
+         !byte $BB
+         !byte $FB
+         !byte $FB
+         !byte $9C
+         !byte $E0
+         !byte $9B
+         !byte $83
+         !byte $FF
+         !byte $FF
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $BF
+         !byte $9C
+         !byte $E3
+         !byte $E3
+         !byte $E3
+         !byte $BE
+         !byte $B6
+         !byte $B8
+         !byte $8C
+         !byte $9C
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $E6
+         !byte $E6
+         !byte $86
+         !byte $E6
+         !byte $E6
+         !byte $8C
+         !byte $E6
+         !byte $E6
+         !byte $9C
+         !byte $80
+         !byte $B6
+         !byte $98
+         !byte $FE
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $86
+         !byte $9C
+         !byte $8C
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $BC
+         !byte $E6
+         !byte $B0
+         !byte $8E
+         !byte $9C
+         !byte $B8
+         !byte $FE
+         !byte $FF
+FontDataRow4
+         !byte $FF        ; 00
+         !byte $FE        ; 01
+         !byte $BF        ; 02
+         !byte $9C        ; 03
+         !byte $BE        ; 04
+         !byte $BE        ; 05
+         !byte $FC        ; 06
+         !byte $9F        ; 07
+         !byte $FF        ; 08
+         !byte $87        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $F0        ; 0C
+         !byte $FF        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $9C        ; 11
+         !byte $BE        ; 12
+         !byte $BE        ; 13
+         !byte $BE        ; 14
+         !byte $FF        ; 15
+         !byte $B8        ; 16
+         !byte $BC        ; 17
+         !byte $00
+         !byte $00
+         !byte $00
+         !byte $E6
+         !byte $B6
+         !byte $98
+         !byte $E6
+         !byte $E3
+         !byte $80
+         !byte $98
+         !byte $80
+         !byte $B6
+         !byte $F8
+         !byte $9E
+         !byte $E3
+         !byte $80
+         !byte $8C
+         !byte $98
+         !byte $9F
+         !byte $FE
+         !byte $80
+         !byte $BE
+         !byte $80
+         !byte $8E
+         !byte $E6
+         !byte $98
+         !byte $86
+         !byte $E0
+         !byte $FC
+         !byte $E0
+         !byte $E6
+         !byte $9C
+         !byte $E6
+         !byte $E0
+         !byte $98
+         !byte $98
+         !byte $9C
+         !byte $BE
+         !byte $B8
+         !byte $BC
+         !byte $BB
+         !byte $FB
+         !byte $BB
+         !byte $83
+         !byte $E3
+         !byte $BB
+         !byte $BB
+         !byte $FB
+         !byte $FB
+         !byte $9C
+         !byte $E0
+         !byte $9B
+         !byte $83
+         !byte $EB
+         !byte $FB
+         !byte $E3
+         !byte $FB
+         !byte $E3
+         !byte $BB
+         !byte $BE
+         !byte $9C
+         !byte $E3
+         !byte $F7
+         !byte $EB
+         !byte $9C
+         !byte $BE
+         !byte $9C
+         !byte $8C
+         !byte $B8
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $E6
+         !byte $E6
+         !byte $86
+         !byte $E6
+         !byte $B6
+         !byte $8C
+         !byte $FC
+         !byte $E6
+         !byte $98
+         !byte $B0
+         !byte $9E
+         !byte $98
+         !byte $FE
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $E6
+         !byte $86
+         !byte $B0
+         !byte $8C
+         !byte $E6
+         !byte $BC
+         !byte $FE
+         !byte $98
+         !byte $EC
+         !byte $8C
+         !byte $8E
+         !byte $9C
+         !byte $B8
+         !byte $B6
+         !byte $FF
+FontDataRow5
+         !byte $80        ; 00
+         !byte $9C        ; 01
+         !byte $9C        ; 02
+         !byte $9C        ; 03
+         !byte $9C        ; 04
+         !byte $BE        ; 05
+         !byte $BC        ; 06
+         !byte $9E        ; 07
+         !byte $86        ; 08
+         !byte $80        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $80        ; 0C
+         !byte $BF        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $88        ; 11
+         !byte $9C        ; 12
+         !byte $BE        ; 13
+         !byte $9C        ; 14
+         !byte $B0        ; 15
+         !byte $9C        ; 16
+         !byte $E6        ; 17
+         !byte $00
+         !byte $00
+         !byte $00
+         !byte $EE
+         !byte $9E
+         !byte $B8
+         !byte $FE
+         !byte $FB
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $FF
+         !byte $FF
+         !byte $8F
+         !byte $E3
+         !byte $80
+         !byte $8C
+         !byte $98
+         !byte $9C
+         !byte $98
+         !byte $98
+         !byte $80
+         !byte $98
+         !byte $87
+         !byte $FE
+         !byte $98
+         !byte $FE
+         !byte $FE
+         !byte $E0
+         !byte $FE
+         !byte $FE
+         !byte $9C
+         !byte $FE
+         !byte $FE
+         !byte $98
+         !byte $98
+         !byte $B8
+         !byte $BE
+         !byte $9C
+         !byte $80
+         !byte $83
+         !byte $FB
+         !byte $E3
+         !byte $83
+         !byte $E3
+         !byte $83
+         !byte $83
+         !byte $E3
+         !byte $E3
+         !byte $9C
+         !byte $E3
+         !byte $B3
+         !byte $83
+         !byte $E3
+         !byte $F3
+         !byte $E3
+         !byte $BB
+         !byte $FF
+         !byte $BB
+         !byte $E0
+         !byte $9C
+         !byte $E3
+         !byte $BE
+         !byte $FF
+         !byte $BE
+         !byte $9C
+         !byte $8E
+         !byte $8C
+         !byte $F0
+         !byte $98
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $EE
+         !byte $FE
+         !byte $FE
+         !byte $FE
+         !byte $9E
+         !byte $8C
+         !byte $E0
+         !byte $E6
+         !byte $B8
+         !byte $B0
+         !byte $BE
+         !byte $B8
+         !byte $E6
+         !byte $E6
+         !byte $FE
+         !byte $FE
+         !byte $EE
+         !byte $86
+         !byte $FE
+         !byte $FC
+         !byte $EE
+         !byte $BC
+         !byte $FE
+         !byte $BC
+         !byte $E0
+         !byte $FE
+         !byte $98
+         !byte $9C
+         !byte $8C
+         !byte $80
+         !byte $FF
+FontDataRow6
+         !byte $80        ; 00
+         !byte $80        ; 01
+         !byte $80        ; 02
+         !byte $9C        ; 03
+         !byte $9C        ; 04
+         !byte $9C        ; 05
+         !byte $9C        ; 06
+         !byte $9C        ; 07
+         !byte $8C        ; 08
+         !byte $80        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $80        ; 0C
+         !byte $86        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $80        ; 11
+         !byte $80        ; 12
+         !byte $9C        ; 13
+         !byte $88        ; 14
+         !byte $98        ; 15
+         !byte $8E        ; 16
+         !byte $80        ; 17
+         !byte $00
+         !byte $00
+         !byte $00
+         !byte $EC
+         !byte $FC
+         !byte $B8
+         !byte $BC
+         !byte $FB
+         !byte $80
+         !byte $98
+         !byte $80
+         !byte $FF
+         !byte $BE
+         !byte $E7
+         !byte $FF
+         !byte $80
+         !byte $8C
+         !byte $98
+         !byte $B6
+         !byte $98
+         !byte $98
+         !byte $80
+         !byte $98
+         !byte $83
+         !byte $BC
+         !byte $98
+         !byte $FE
+         !byte $BE
+         !byte $E0
+         !byte $BE
+         !byte $BC
+         !byte $9C
+         !byte $BC
+         !byte $BE
+         !byte $80
+         !byte $8C
+         !byte $F0
+         !byte $80
+         !byte $8E
+         !byte $98
+         !byte $FF
+         !byte $E3
+         !byte $FF
+         !byte $FF
+         !byte $FB
+         !byte $FF
+         !byte $83
+         !byte $FF
+         !byte $E3
+         !byte $BE
+         !byte $FF
+         !byte $F3
+         !byte $FF
+         !byte $E3
+         !byte $E3
+         !byte $FF
+         !byte $83
+         !byte $BE
+         !byte $F3
+         !byte $FF
+         !byte $9C
+         !byte $FF
+         !byte $9C
+         !byte $F7
+         !byte $F7
+         !byte $9C
+         !byte $FF
+         !byte $8C
+         !byte $E0
+         !byte $98
+         !byte $80
+         !byte $FF
+         !byte $80
+         !byte $EC
+         !byte $BE
+         !byte $BC
+         !byte $FC
+         !byte $FC
+         !byte $8C
+         !byte $FE
+         !byte $E6
+         !byte $B8
+         !byte $BE
+         !byte $F6
+         !byte $B8
+         !byte $E6
+         !byte $E6
+         !byte $BC
+         !byte $BE
+         !byte $EC
+         !byte $86
+         !byte $BC
+         !byte $B8
+         !byte $EC
+         !byte $98
+         !byte $E6
+         !byte $E6
+         !byte $FE
+         !byte $FE
+         !byte $98
+         !byte $9C
+         !byte $8C
+         !byte $80
+         !byte $FF
+FontDataRow7
+         !byte $00        ; 00
+         !byte $80        ; 01
+         !byte $80        ; 02
+         !byte $9C        ; 03
+         !byte $9C        ; 04
+         !byte $80        ; 05
+         !byte $9C        ; 06
+         !byte $9C        ; 07
+         !byte $80        ; 08
+         !byte $80        ; 09
+         !byte $00        ; 0A
+         !byte $00        ; 0B
+         !byte $00        ; 0C
+         !byte $8C        ; 0D
+         !byte $00        ; 0E
+         !byte $00        ; 0F
+         !byte $80        ; 10
+         !byte $80        ; 11
+         !byte $80        ; 12
+         !byte $80        ; 13
+         !byte $80        ; 14
+         !byte $80        ; 15
+         !byte $87        ; 16
+         !byte $80        ; 17
+         !byte $00
+         !byte $00
+         !byte $00
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $E3
+         !byte $80
+         !byte $98
+         !byte $80
+         !byte $B6
+         !byte $98
+         !byte $F3
+         !byte $BE
+         !byte $80
+         !byte $98
+         !byte $8C
+         !byte $E3
+         !byte $80
+         !byte $8C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $8C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $98
+         !byte $BE
+         !byte $E3
+         !byte $BF
+         !byte $FE
+         !byte $BB
+         !byte $FF
+         !byte $83
+         !byte $BE
+         !byte $E3
+         !byte $BE
+         !byte $BE
+         !byte $E3
+         !byte $FF
+         !byte $E3
+         !byte $E3
+         !byte $BE
+         !byte $83
+         !byte $F0
+         !byte $E3
+         !byte $BF
+         !byte $9C
+         !byte $BE
+         !byte $88
+         !byte $E3
+         !byte $E3
+         !byte $9C
+         !byte $FF
+         !byte $9C
+         !byte $80
+         !byte $9C
+         !byte $80
+         !byte $FF
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $BC
+         !byte $80
+         !byte $80
+         !byte $9C
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $86
+         !byte $E0
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $80
+         !byte $BC
+         !byte $80
+         !byte $B0
+         !byte $9C
+         !byte $86
+         !byte $80
+         !byte $FF

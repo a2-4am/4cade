@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/IRIS.IN",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_PRECOMPUTED_1BIT Coordinates
+
+         rts
+
+Coordinates
+         !source "src/fx/fx.hgr.iris.in.data.a"
+         !byte $80

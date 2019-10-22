@@ -3,142 +3,39 @@
 ;
 ; hi-res font drawing routines
 ;
+; Glue functions that handle bank switching and calling the real font drawing routines
+; that live in LC RAM 2 now.
+;
 ; Public functions
+; - DrawPage
 ; - Draw40Chars
+; - DrawCenteredString
 ; - DrawString
 ; - DrawBuffer
 ;
 
-Draw40Chars
-; A/Y contains address of character buffer
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; $25 contains textpage line (0..23) (this is the standard VTAB address)
-; drawing starts at HTAB 0
-; increments VTAB
-; sets HTAB to 0 on exit
-; clobbers A/X/Y
-         jsr   +
-         ldx   #40
-         jsr   DrawBuffer
-         inc   VTAB
-+        ldx   #0
-         stx   HTAB
-         rts
-
+         ; /!\ execution falls through from ui.attract.hgr/HGRActionCallback
 DrawString
-; A/Y contains address of length-prefixed string
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; $24 contains starting column (0..39) (this is the standard HTAB address)
-; $25 contains textpage line (0..23) (this is the standard VTAB address)
-; clobbers A/X/Y
-; clobbers PTR/PTR+1
-         +STAY PTR
+         jsr   SwitchToBank2
+         jsr   DrawStringInternal
+         jmp   SwitchToBank1
 
-         ldy   #0
-         lda   (PTR),y
-         tax
-         inc   PTR
-         bne   +
-         inc   PTR+1
-+
-         +LDAY PTR
-; note: execution falls through here
+DrawPage
+         jsr   SwitchToBank2
+         jsr   DrawPageInternal
+         jmp   SwitchToBank1
+
+Draw40Chars
+         jsr   SwitchToBank2
+         jsr   Draw40CharsInternal
+         jmp   SwitchToBank1
+
+DrawCenteredString
+         jsr   SwitchToBank2
+         jsr   DrawCenteredStringInternal
+         jmp   SwitchToBank1
 
 DrawBuffer
-; A/Y contains address of character buffer
-; X contains buffer length (1..40)
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; characters MUST have high bit off (0x00..0x7F)
-; special characters (0x00..0x1F) will be drawn
-; $24 contains starting column (0..39) (this is the standard HTAB address)
-; $25 contains textpage line (0..23) (this is the standard VTAB address)
-; all characters are drawn on the same line
-; HTAB is incremented for each character
-; VTAB is NOT incremented
-; clobbers A/X/Y
-         +STAY @src+1
-         bcs   +
-         lda   #$00
-         +HIDE_NEXT_2_BYTES
-+
-         lda   #$60
-         sta   @pagemask
-         dex
-         lda   VTAB
-         asl
-         asl
-         asl
-; routine to calculate memory address within HGR page
-; and self-modify addresses within draw loop that follows
-; (routine clobbers A and Y but preserves X)
-         asl
-         tay
-         and   #$F0
-         bpl   @calc1
-         ora   #$05
-@calc1   bcc   @calc2
-         ora   #$0A
-@calc2   asl
-         asl
-         sta   @hgrlo+1
-         tya
-         and   #$0E
-         adc   #$10
-         asl   @hgrlo+1
-         rol
-@pagemask=*+1
-         eor   #$FD                  ; SMC (0=hi-res page 1, #$60=hi-res page 2)
-         sta   @row0+2
-         clc
-         adc   #$04
-         sta   @row1+2
-         adc   #$04
-         sta   @row2+2
-         adc   #$04
-         sta   @row3+2
-         adc   #$04
-         sta   @row4+2
-         adc   #$04
-         sta   @row5+2
-         adc   #$04
-         sta   @row6+2
-         adc   #$04
-         sta   @row7+2
-@hgrlo   lda   #$FD
-         clc
-         adc   HTAB
-         sta   @row0+1
-         sta   @row1+1
-         sta   @row2+1
-         sta   @row3+1
-         sta   @row4+1
-         sta   @row5+1
-         sta   @row6+1
-         sta   @row7+1
-         +READ_RAM2_WRITE_RAM2
-@loop
-@src     ldy   $FDFD,x
-         lda   FontDataRow0,y
-@row0    sta   $FDFD,x
-         lda   FontDataRow1,y
-@row1    sta   $FDFD,x
-         lda   FontDataRow2,y
-@row2    sta   $FDFD,x
-         lda   FontDataRow3,y
-@row3    sta   $FDFD,x
-         lda   FontDataRow4,y
-@row4    sta   $FDFD,x
-         lda   FontDataRow5,y
-@row5    sta   $FDFD,x
-         lda   FontDataRow6,y
-@row6    sta   $FDFD,x
-         lda   FontDataRow7,y
-@row7    sta   $FDFD,x
-         inc   HTAB
-         dex
-         bpl   @loop
-         +READ_RAM1_WRITE_RAM1
-         rts
+         jsr   SwitchToBank2
+         jsr   DrawBufferInternal
+         jmp   SwitchToBank1

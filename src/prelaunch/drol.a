@@ -1,0 +1,70 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/DROL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4079
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   store-$BF70+cheat_b+1
+         ldy   #(cheat_e-cheat_b)-1
+-        lda   cheat_b,y
+         sta   $bf70,y
+         dey
+         bpl   -
+         lda   #$4c
+         sta   $4215
+         lda   #$70
+         sta   $4216
+         lda   #$bf
+         sta   $4217
+         jsr   $4000
+         jsr   $40e0
+         +DISABLE_ACCEL
+         jmp   $407c
+
+cheat_b !pseudopc $bf70 {
+         pla
+         sta   jmp1+1
+         pla
+         sta   jmp2+1
+         lda   #>(patch-1)
+         pha
+         lda   #<(patch-1)
+         pha
+         jmp   ($8c00)
+
+patch
+         lda   #$24
+         ldy   #$70
+         ldx   $bf4a
+         beq   store
+         ldy   #$5e
+         dex
+         beq   store
+         ldy   #$00
+         dex
+         bne   jmp2
+
+store
+         ldx   #0         ; SMC (will be non-zero if cheats are enabled)
+         beq   +
+         sta   $69b2,y
++
+
+jmp2
+         lda   #$d1
+         pha
+
+jmp1
+         lda   #$d1
+         pha
+         rts
+}
+cheat_e
