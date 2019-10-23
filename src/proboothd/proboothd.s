@@ -1,6 +1,6 @@
 ;license:BSD-3-Clause
 ;minimal open/read binary file in ProDOS filesystem
-;copyright (c) Peter Ferrie 2016-2018
+;copyright (c) Peter Ferrie 2016-2019
 !cpu 6502
 !to "proboothd",plain
 *=$800
@@ -115,14 +115,19 @@ readdone        jmp $2000
 
 seekread        stx bloklo
                 sty blokhi
-entry           jmp $d1d1
+                lda adrhi
+                pha
+entry           jsr $d1d1
+                pla
+                sta adrhi
+                rts
 
 fakeMLI         bne retcall
 readblk         dey
                 dey
                 sty adrhi
                 tay
-                jsr seekread
+                jsr $bf00+seekread-fakeMLI
 retcall         pla
                 tax
                 inx

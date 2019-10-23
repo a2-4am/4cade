@@ -207,9 +207,7 @@ init            jsr     SETKBD
                 jsr     SETVID
                 lda     DEVNUM
                 sta     x80_parms + 1
-!if use_smartport = 0 {
                 sta     unrunit1 + 1
-} ;use_smartport
                 and     #$70
 !if (enable_floppy + enable_write) > 1 {
                 sta     unrslot1 + 1
@@ -383,7 +381,10 @@ adjpath         tya
                 tay
                 ldx     DEVADR01HI, y
                 cpx     #$c8
-                bcc     set_slot
+                bcc     set_slot1
+!if use_smartport = 1 {
+                php
+} ;use_smartport
 !if enable_floppy = 1 {
 
                 ;check if current device is floppy
@@ -438,21 +439,54 @@ not_floppy
                 lda     (bloklo), y
                 beq     -
 
-set_slot        stx     slot + 2
-!if use_smartport = 0 {
-                stx     unrentry2 + 2
-} else { ;use_smartport = 1
-                stx     unrentry1 + 2
-                stx     unrentry3 + 2
+!if use_smartport = 1 {
+set_slot        plp
 } ;use_smartport
+set_slot1       stx     slot + 2
+!if use_smartport = 1 {
+                stx     unrentry1 + 2
+} ;use_smartport
+                stx     unrentry2 + 2
 slot            ldx     $cfff
-!if enable_floppy = 1 {
-                php
-                beq     bankram
-} ;enable_floppy
-!if use_smartport = 0 {
                 stx     unrentry2 + 1
-} else { ;use_smartport = 1
+!if use_smartport = 1 {
+                bcs     +
+  !if enable_floppy = 1 {
+                bne     +
+  } ;enable_floppy
+                jmp     bankram
+
++               lda     #$8c ;STY
+                sta     unrcommand1
+                lda     #<pcommand
+                sta     unrcommand1 + 1
+                sta     unrcommand2 + 1
+                lda     #>pcommand
+                sta     unrcommand1 + 2
+                sta     unrcommand2 + 2
+                lda     #$8e ;STX
+                sta     unrcommand2
+                sta     unrbloklo
+                lda     #<pblock
+                sta     unrbloklo + 1
+                lda     #>pblock
+                sta     unrbloklo + 2
+                lda     #$8d ;STA
+                sta     unrblokhi
+                lda     #<(pblock + 1)
+                sta     unrblokhi + 1
+                lda     #>(pblock + 1)
+                sta     unrblokhi + 2
+                lda     #$a5 ;LDA
+                sta     unrunit1
+                lda     #adrlo
+                sta     unrunit1 + 1
+                lda     #$8d ;STA
+                sta     unrunit1 + 2
+                lda     #<paddr
+                sta     unrunit1 + 3
+                lda     #>paddr
+                sta     unrunit1 + 4
 
                 ;use SmartPort entrypoint instead
 
@@ -460,7 +494,7 @@ slot            ldx     $cfff
                 inx
                 inx
                 stx     unrentry1 + 1
-                stx     unrentry3 + 1
+                stx     unrentry2 + 1
 
                 lda     #<(readbuff + $200)
                 sta     adrlo
@@ -489,6 +523,9 @@ unrentry1       jsr     $d1d1
 } ;use_smartport
 
 bankram
+!if enable_floppy = 1 {
+                php
+} ;enable_floppy
 !if load_banked = 1 {
                 lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
                 lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
@@ -2620,10 +2657,10 @@ skiptree
                 beq     +
     } ;enable_seek
     !if enable_write = 1 {
-      !if use_smartport = 0 {
+unrcommand2 = unrelochdd + (* - reloc)
                 stx     command
-      } else { ;use_smartport = 1
-                stx     pcommand
+      !if use_smartport = 1 {
+                nop ;allow replacing "stx command" with "stx pcommand" in extended SmartPort mode
       } ;use_smartport
     } ;enable_write
   } ;aligned_read
@@ -2833,45 +2870,48 @@ hddreaddirsect
 hddseekrd       ldy     #cmdread
 !if (aligned_read + enable_write) > 1 {
 hddseekrdwr
-  !if use_smartport = 0 {
+} ;aligned_read and enable_write
+unrcommand1 = unrelochdd + (* - reloc)
                 sty     command
-  } else { ;use_smartport = 1
-                sty     pcommand
-  } ;use_smartport
-} else { ;aligned_read = 0 or enable_write = 0
-  !if use_smartport = 0 {
-                sty     command
-  } else { ;use_smartport = 1
-                sty     pcommand
-  } ;use_smartport
+!if use_smartport = 1 {
+                nop ;allow replacing "sty command" with "sty pcommand" in extended SmartPort mode
+} ;use_smartport
+!if (aligned_read and enable_write) = 0 {
 hddseekrdwr
 } ;aligned_read and enable_write
 
-!if use_smartport = 0 {
+unrbloklo = unrelochdd + (* - reloc)
                 stx     bloklo
-                sta     blokhi
-} else { ;use_smartport = 1
-                stx     pblock
-                sta     pblock + 1
+!if use_smartport = 1 {
+                nop ;allow replacing "stx bloklo" with "stx pblock" in extended SmartPort mode
 } ;use_smartport
-
-!if use_smartport = 0 {
+unrblokhi = unrelochdd + (* - reloc)
+                sta     blokhi
+!if use_smartport = 1 {
+                nop ;allow replacing "sta blokhi" with "sta pblock + 1" in extended SmartPort mode
+} ;use_smartport
 unrunit1 = unrelochdd + (* - reloc)
                 lda     #$d1
                 sta     unit
-unrentry2 = unrelochdd + (* - reloc)
-                jmp     $d1d1
-} else { ;use_smartport = 1
-                lda     adrhi
+!if use_smartport = 1 {
+                nop ;allow replacing "lda #$d1/sta unit" with "lda adrlo/sta paddr" in extended SmartPort mode
+} ;use_smartport
+                lda     adrhi ;for Trackstar support
+                pha
+!if use_smartport = 1 {
                 sta     paddr + 1
-                lda     adrlo
-                sta     paddr
-unrentry3 = unrelochdd + (* - reloc)
+} ;use_smartport
+unrentry2 = unrelochdd + (* - reloc)
                 jsr     $d1d1
-pcommand        !byte   0
+!if use_smartport = 1 {
+pcommand        !byte   $2c ;hide packet in non-SmartPort mode
                 !word   packet
+} ;use_smartport
+                pla
+                sta     adrhi ;Trackstar does not preserve adrhi
                 rts
 
+!if use_smartport = 1 {
 unrpacket = unrelochdd + (* - reloc)
 packet          !byte   3
 unrunit2 = unrelochdd + (* - reloc)
