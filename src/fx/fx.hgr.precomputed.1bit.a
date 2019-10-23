@@ -25,12 +25,10 @@ hgr1himirror   = $BF40    ; $C0 bytes
 
 !macro COPY_BIT .src1, .dest1, .sourcemasks, .copymasks {
          lda   (.dest1),y
-         and   .sourcemasks,x
-         sta   $00
-         lda   (.src1),y
-         and   .copymasks,x
-         ora   $00
-         sta   (.dest1),y
+         eor   (.src1),y  ; merge source and destination bits
+         and   .copymasks,x ; isolate the bits to replace, zero the rest
+         eor   (.dest1),y ; unmerge source and destination bits, leaves "to keep" destination bits intact
+         sta   (.dest1),y ; write the result
 }
 
 !macro FX_PRECOMPUTED_1BIT .coords {
@@ -178,7 +176,7 @@ Exit1 = * + 1
          inc   input+1
          jmp   InputLoop
 Exit2    rts
-!if * and $fff {
-  !fill $1000 - (* and $fff) ;align 4096 for input data
+!if * and 1 {
+!byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
 }
 }
