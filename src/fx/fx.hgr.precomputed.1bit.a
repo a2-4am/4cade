@@ -16,9 +16,10 @@ sourcemasks    = $0201    ; same as copymasks
 mirror_copymasks = $0202
 mirror_sourcemasks = $0203
 hgrlo          = $0300    ; $C0 bytes
-mirror_cols    = $BD58    ; $28 bytes
-mirror_rows    = $BD80    ; $C0 bytes
+hgrlomirror    = $BD40    ; $C0 bytes
+mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
+hgr1himirror   = $BF40    ; $C0 bytes
 
          !source "src/fx/macros.a"
 
@@ -35,6 +36,7 @@ hgr1hi         = $BE40    ; $C0 bytes
 !macro FX_PRECOMPUTED_1BIT .coords {
          ; build lookup tables for base address of HGR rows
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
 
          ; build lookup table to get $27-y for y in $00..$27
          ldx   #$27
@@ -44,16 +46,6 @@ hgr1hi         = $BE40    ; $C0 bytes
          iny
          dex
          bpl   -
-
-         ; build lookup table to get $BF-x for x in $00..$BF
-         ldx   #$BF
-         ldy   #$00
--        tya
-         sta   mirror_rows,x
-         dex
-         iny
-         cpy   #$C0
-         bne   -
 
          ; build sparse lookup tables for bitmasks
          lda   #%10000001
@@ -111,9 +103,6 @@ hgr1hi         = $BE40    ; $C0 bytes
          lda   #>.coords
          sta   input+1
 
-         jmp   InputLoop
-Exit1    rts
-
 InputLoop
          ldy   #0
          lda   (input),y             ; first value: HGR row (only 0..95 will be in input array)
@@ -124,7 +113,8 @@ InputLoop
          sta   src1
          lda   hgr1hi,x
          sta   dest1+1
-         eor   #$60
+Exit1 = * + 1
+         eor   #$60                  ; ahem. doubles as RTS
          sta   src1+1
          lda   hgrlo+1,x
          sta   dest2
@@ -134,19 +124,17 @@ InputLoop
          eor   #$60
          sta   src2+1
 
-         lda   mirror_rows,x
-         tax
-         lda   hgrlo,x
+         lda   hgrlomirror,x
          sta   dest3
          sta   src3
-         lda   hgr1hi,x
+         lda   hgr1himirror,x
          sta   dest3+1
          eor   #$60
          sta   src3+1
-         lda   hgrlo-1,x
+         lda   hgrlomirror+1,x
          sta   dest4
          sta   src4
-         lda   hgr1hi-1,x
+         lda   hgr1himirror+1,x
          sta   dest4+1
          eor   #$60
          sta   src4+1
@@ -182,15 +170,13 @@ InputLoop
          +COPY_BIT src3, dest3, sourcemasks, copymasks
          +COPY_BIT src4, dest4, sourcemasks, copymasks
 
-         bit   $c000
-         bmi   Exit2
-
          inc   input
-         bne   +
+         inc   input
+         beq   +
+         jmp   InputLoop
++        bit   $c000
+         bmi   Exit2
          inc   input+1
-+        inc   input
-         +LBNE InputLoop
-         inc   input+1
-         +LBNE InputLoop
+         jmp   InputLoop
 Exit2
 }

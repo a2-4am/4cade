@@ -11,6 +11,9 @@
 
          rts
 
+!if * and $fff {
+  !fill $1000 - (* and $fff) ;align 4096
+}
 Coordinates
          !source "src/fx/fx.hgr.ripple.data.a"
          !byte $80

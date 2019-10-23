@@ -22,11 +22,91 @@
          rol
          asl   .hgrlo,x
          rol
-         clc
-         adc   #$20
+         ora   #$20
          sta   .hgr1hi,x
          inx
          cpx   #$C0
+         bne   -
+}
+
+; .hgrlo, .hgr1hi, .hgr2hi will each be filled with $C0 bytes
+!macro BUILD_HGR12_LOOKUP_TABLES .hgrlo, .hgr1hi, .hgr2hi {
+         ldx   #0
+-        txa
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlo,x
+         txa
+         and   #7
+         rol
+         asl   .hgrlo,x
+         rol
+         ora   #$20
+         sta   .hgr1hi,x
+         eor   #$60
+         sta   .hgr2hi,x
+         inx
+         cpx   #$C0
+         bne   -
+}
+
+; .hgrlomirror, .hgr1himirror will each be filled with $C0 bytes
+!macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror {
+         ldx   #$C0
+         ldy   #0
+-        tya
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlomirror-1,x
+         tya
+         and   #7
+         rol
+         asl   .hgrlomirror-1,x
+         rol
+         ora   #$20
+         sta   .hgr1himirror-1,x
+         iny
+         dex
+         bne   -
+}
+
+; .hgrlomirror, .hgr1himirror, .hgr2himirror will each be filled with $C0 bytes
+!macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror, .hgr2mirror {
+         ldx   #$C0
+         ldy   #0
+-        tya
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlomirror-1,x
+         tya
+         and   #7
+         rol
+         asl   .hgrlomirror-1,x
+         rol
+         ora   #$20
+         sta   .hgr1himirror-1,x
+         eor   #$60
+         sta   .hgr2himirror-1,x
+         iny
+         dex
          bne   -
 }
 
