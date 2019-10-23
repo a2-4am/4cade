@@ -1,6 +1,10 @@
 ;license:MIT
 ;(c) 2019 by 4am
 ;
+src3           = $E8      ; word
+dest3          = $EA      ; word
+src4           = $EC      ; word
+dest4          = $EE      ; word
 src1           = $F0      ; word
 dest1          = $F2      ; word
 src2           = $F4      ; word
@@ -104,7 +108,6 @@ InputLoop
          ldy   #0
          lda   (input),y             ; first value: HGR row (only 0..95 will be in input array)
          bmi   Exit1                 ; if > 127 then we're done
-         pha
          tax
          lda   hgrlo,x
          sta   dest1
@@ -113,22 +116,37 @@ InputLoop
          sta   dest1+1
          eor   #$60
          sta   src1+1
-         inx
-         lda   hgrlo,x
+         lda   hgrlo+1,x
          sta   dest2
          sta   src2
-         lda   hgr1hi,x
+         lda   hgr1hi+1,x
          sta   dest2+1
          eor   #$60
          sta   src2+1
+
+         lda   mirror_rows,x
+         tax
+         lda   hgrlo,x
+         sta   dest3
+         sta   src3
+         lda   hgr1hi,x
+         sta   dest3+1
+         eor   #$60
+         sta   src3+1
+         lda   hgrlo-1,x
+         sta   dest4
+         sta   src4
+         lda   hgr1hi-1,x
+         sta   dest4+1
+         eor   #$60
+         sta   src4+1
+
          iny
          lda   (input),y
-         pha
-         and   #%00011111            ; second value: low 5 bits = byte offset within the row
-         tay
-         pla
          and   #%11100000            ; second value: high 3 bits = index into tables to find bitmasks
          tax
+         eor   (input),y             ; second value: low 5 bits = byte offset within the row (implicitly "and #%00011111")
+         tay
 
          ; main 1x2 block in top-left quadrant
 
@@ -172,64 +190,43 @@ InputLoop
 
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
 
-         stx   $00
-         pla
-         tax
-         lda   mirror_rows,x
-         tax
-         lda   hgrlo,x
-         sta   dest1
-         sta   src1
-         lda   hgr1hi,x
-         sta   dest1+1
-         eor   #$60
-         sta   src1+1
-         dex
-         lda   hgrlo,x
-         sta   dest2
-         sta   src2
-         lda   hgr1hi,x
-         sta   dest2+1
-         eor   #$60
-         sta   src2+1
-         ldx   $00
-         lda   (dest1),y
+         lda   (dest3),y
          and   mirror_sourcemasks,x
          sta   $00
-         lda   (src1),y
+         lda   (src3),y
 ;         lda   #$FF
          and   mirror_copymasks,x
          ora   $00
-         sta   (dest1),y
-         lda   (dest2),y
+         sta   (dest3),y
+         lda   (dest4),y
          and   mirror_sourcemasks,x
          sta   $00
-         lda   (src2),y
+         lda   (src4),y
 ;         lda   #$FF
          and   mirror_copymasks,x
          ora   $00
-         sta   (dest2),y
+         sta   (dest4),y
 
          ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
 
          lda   mirror_cols,y
          tay
-         lda   (dest1),y
+         lda   (dest3),y
          and   sourcemasks,x
          sta   $00
-         lda   (src1),y
+         lda   (src3),y
 ;         lda   #$FF
          and   copymasks,x
          ora   $00
-         sta   (dest1),y
-         lda   (dest2),y
+         sta   (dest3),y
+         lda   (dest4),y
          and   sourcemasks,x
          sta   $00
-         lda   (src2),y
+         lda   (src4),y
 ;         lda   #$FF
          and   copymasks,x
          ora   $00
-         sta   (dest2),y
+         sta   (dest4),y
 
          bit   $c000
          bmi   Exit2
