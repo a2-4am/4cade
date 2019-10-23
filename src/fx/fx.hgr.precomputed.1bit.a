@@ -177,5 +177,8 @@ Exit1 = * + 1
          bmi   Exit2
          inc   input+1
          jmp   InputLoop
-Exit2
+Exit2    rts
+!if * and $fff {
+  !fill $1000 - (* and $fff) ;align 4096 for input data
+}
 }
