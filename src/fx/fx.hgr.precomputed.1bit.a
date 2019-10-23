@@ -139,7 +139,7 @@ Exit1 = * + 1
          eor   #$60
          sta   src4+1
 
-         iny
+         inc   input
          lda   (input),y
          and   #%11100000            ; second value: high 3 bits = index into tables to find bitmasks
          tax
@@ -170,7 +170,6 @@ Exit1 = * + 1
          +COPY_BIT src3, dest3, sourcemasks, copymasks
          +COPY_BIT src4, dest4, sourcemasks, copymasks
 
-         inc   input
          inc   input
          beq   +
          jmp   InputLoop
