@@ -22,6 +22,16 @@ hgr1hi         = $BE40    ; $C0 bytes
 
          !source "src/fx/macros.a"
 
+!macro COPY_BIT .src1, .dest1, .sourcemasks, .copymasks {
+         lda   (.dest1),y
+         and   .sourcemasks,x
+         sta   $00
+         lda   (.src1),y
+         and   .copymasks,x
+         ora   $00
+         sta   (.dest1),y
+}
+
 !macro FX_PRECOMPUTED_1BIT .coords {
          ; build lookup tables for base address of HGR rows
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
@@ -150,83 +160,27 @@ InputLoop
 
          ; main 1x2 block in top-left quadrant
 
-         lda   (dest1),y
-         and   sourcemasks,x
-         sta   $00
-         lda   (src1),y
-;         lda   #$FF
-         and   copymasks,x
-         ora   $00
-         sta   (dest1),y
-         lda   (dest2),y
-         and   sourcemasks,x
-         sta   $00
-         lda   (src2),y
-;         lda   #$FF
-         and   copymasks,x
-         ora   $00
-         sta   (dest2),y
+         +COPY_BIT src1, dest1, sourcemasks, copymasks
+         +COPY_BIT src2, dest2, sourcemasks, copymasks
 
          ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
 
          lda   mirror_cols,y
          tay
-         lda   (dest1),y
-         and   mirror_sourcemasks,x
-         sta   $00
-         lda   (src1),y
-;         lda   #$FF
-         and   mirror_copymasks,x
-         ora   $00
-         sta   (dest1),y
-         lda   (dest2),y
-         and   mirror_sourcemasks,x
-         sta   $00
-         lda   (src2),y
-;         lda   #$FF
-         and   mirror_copymasks,x
-         ora   $00
-         sta   (dest2),y
+         +COPY_BIT src1, dest1, mirror_sourcemasks, mirror_copymasks
+         +COPY_BIT src2, dest2, mirror_sourcemasks, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
 
-         lda   (dest3),y
-         and   mirror_sourcemasks,x
-         sta   $00
-         lda   (src3),y
-;         lda   #$FF
-         and   mirror_copymasks,x
-         ora   $00
-         sta   (dest3),y
-         lda   (dest4),y
-         and   mirror_sourcemasks,x
-         sta   $00
-         lda   (src4),y
-;         lda   #$FF
-         and   mirror_copymasks,x
-         ora   $00
-         sta   (dest4),y
+         +COPY_BIT src3, dest3, mirror_sourcemasks, mirror_copymasks
+         +COPY_BIT src4, dest4, mirror_sourcemasks, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
 
          lda   mirror_cols,y
          tay
-         lda   (dest3),y
-         and   sourcemasks,x
-         sta   $00
-         lda   (src3),y
-;         lda   #$FF
-         and   copymasks,x
-         ora   $00
-         sta   (dest3),y
-         lda   (dest4),y
-         and   sourcemasks,x
-         sta   $00
-         lda   (src4),y
-;         lda   #$FF
-         and   copymasks,x
-         ora   $00
-         sta   (dest4),y
+         +COPY_BIT src3, dest3, sourcemasks, copymasks
+         +COPY_BIT src4, dest4, sourcemasks, copymasks
 
          bit   $c000
          bmi   Exit2
