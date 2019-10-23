@@ -12,9 +12,7 @@ dest2          = $F6      ; word
 input          = $FE      ; word
 
 copymasks      = $0200    ; $100 bytes but sparse, index is 0..6 but in high 3 bits, so $00, $20, $40, $60, $80, $A0, $C0
-sourcemasks    = $0201    ; same as copymasks
-mirror_copymasks = $0202
-mirror_sourcemasks = $0203
+mirror_copymasks = $0201
 hgrlo          = $0300    ; $C0 bytes
 hgrlomirror    = $BD40    ; $C0 bytes
 mirror_cols    = $BE00    ; $28 bytes
@@ -23,7 +21,7 @@ hgr1himirror   = $BF40    ; $C0 bytes
 
          !source "src/fx/macros.a"
 
-!macro COPY_BIT .src1, .dest1, .sourcemasks, .copymasks {
+!macro COPY_BIT .src1, .dest1, .copymasks {
          lda   (.dest1),y
          eor   (.src1),y  ; merge source and destination bits
          and   .copymasks,x ; isolate the bits to replace, zero the rest
@@ -49,51 +47,30 @@ hgr1himirror   = $BF40    ; $C0 bytes
          lda   #%10000001
          sta   copymasks
          sta   mirror_copymasks+$C0
-         eor   #%11111111
-         sta   sourcemasks
-         sta   mirror_sourcemasks+$C0
 
          lda   #%10000010
          sta   copymasks+$20
          sta   mirror_copymasks+$A0
-         eor   #%11111111
-         sta   sourcemasks+$20
-         sta   mirror_sourcemasks+$A0
 
          lda   #%10000100
          sta   copymasks+$40
          sta   mirror_copymasks+$80
-         eor   #%11111111
-         sta   sourcemasks+$40
-         sta   mirror_sourcemasks+$80
 
          lda   #%10001000
          sta   copymasks+$60
          sta   mirror_copymasks+$60
-         eor   #%11111111
-         sta   sourcemasks+$60
-         sta   mirror_sourcemasks+$60
 
          lda   #%10010000
          sta   copymasks+$80
          sta   mirror_copymasks+$40
-         eor   #%11111111
-         sta   sourcemasks+$80
-         sta   mirror_sourcemasks+$40
 
          lda   #%10100000
          sta   copymasks+$A0
          sta   mirror_copymasks+$20
-         eor   #%11111111
-         sta   sourcemasks+$A0
-         sta   mirror_sourcemasks+$20
 
          lda   #%11000000
          sta   copymasks+$C0
          sta   mirror_copymasks
-         eor   #%11111111
-         sta   sourcemasks+$C0
-         sta   mirror_sourcemasks
 
          ; set up pointer to input data
          lda   #<.coords
@@ -146,27 +123,27 @@ Exit1 = * + 1
 
          ; main 1x2 block in top-left quadrant
 
-         +COPY_BIT src1, dest1, sourcemasks, copymasks
-         +COPY_BIT src2, dest2, sourcemasks, copymasks
+         +COPY_BIT src1, dest1, copymasks
+         +COPY_BIT src2, dest2, copymasks
 
          ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
 
          lda   mirror_cols,y
          tay
-         +COPY_BIT src1, dest1, mirror_sourcemasks, mirror_copymasks
-         +COPY_BIT src2, dest2, mirror_sourcemasks, mirror_copymasks
+         +COPY_BIT src1, dest1, mirror_copymasks
+         +COPY_BIT src2, dest2, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
 
-         +COPY_BIT src3, dest3, mirror_sourcemasks, mirror_copymasks
-         +COPY_BIT src4, dest4, mirror_sourcemasks, mirror_copymasks
+         +COPY_BIT src3, dest3, mirror_copymasks
+         +COPY_BIT src4, dest4, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
 
          lda   mirror_cols,y
          tay
-         +COPY_BIT src3, dest3, sourcemasks, copymasks
-         +COPY_BIT src4, dest4, sourcemasks, copymasks
+         +COPY_BIT src3, dest3, copymasks
+         +COPY_BIT src4, dest4, copymasks
 
          inc   input
          beq   +
