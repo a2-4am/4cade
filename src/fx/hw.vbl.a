@@ -22,6 +22,9 @@ WaitForVBL
          +LDADDR WaitForVBL_iie
          bne   +
 @iic
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05B      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
          +LDADDR WaitForVBL_iic
          bne   +
 @nop
@@ -50,5 +53,7 @@ WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
          rts
 
 WaitForVBL_iic            ; IIc is special
-         ; TODO
+-        bit   $c019
+         bpl   -
+         bit   $c070      ;$c019 bit 7 is sticky, reset it
          rts
