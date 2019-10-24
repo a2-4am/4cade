@@ -158,6 +158,14 @@
          sta   $3d
 }
 
+!macro COPY_BIT .src1, .dest1, .copymasks {
+         lda   (.dest1),y
+         eor   (.src1),y  ; merge source and destination bits
+         and   .copymasks,x ; isolate the bits to replace, zero the rest
+         eor   (.dest1),y ; unmerge source and destination bits, leaves "to keep" destination bits intact
+         sta   (.dest1),y ; write the result
+}
+
 !macro SWITCH_TO_MASKS .source, .copy {
          sty   $00
          +LDADDR .source

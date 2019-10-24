@@ -29,11 +29,9 @@ RowLoop
          ldx   #7
          ldy   col
 -        lda   ($26),y
-         and   sourcemask_even
-         sta   $00
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask_even
-         ora   $00
+         eor   ($26),y
          sta   ($26),y
          clc
          +HGR_INC_WITHIN_BLOCK
@@ -45,11 +43,9 @@ OddCol
          ldx   #7
          ldy   col
 -        lda   ($26),y
-         and   sourcemask_odd
-         sta   $00
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask_odd
-         ora   $00
+         eor   ($26),y
          sta   ($26),y
          clc
          +HGR_INC_WITHIN_BLOCK
@@ -104,12 +100,8 @@ RowLoop2
          +LBNE ColLoop2
 Exit2    rts
 
-sourcemask_even
-         !byte %00101010
 copymask_even
          !byte %11010101
-sourcemask_odd
-         !byte %01010101
 copymask_odd
          !byte %10101010
 

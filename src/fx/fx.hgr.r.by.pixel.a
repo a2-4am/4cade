@@ -20,8 +20,6 @@ col = $ff
          ldx   maskindex
          lda   copymasks,x
          sta   @copymask
-         eor   #$FF
-         sta   @sourcemask
          lda   #$17
          sta   row
 @rowloop
@@ -35,13 +33,10 @@ col = $ff
          ldy   col
 @blockloop
          lda   ($26),y
-@sourcemask=*+1
-         and   #$FD                  ; SMC
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
 @copymask=*+1
          and   #$FD                  ; SMC
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
          lda   $27
          adc   #4

@@ -3,7 +3,6 @@
 import math
 
 def f(x,r=36.3):
-    x = float(x)
     try:
         return math.sqrt(r*r*(1.0-(x*x/(r*r*0.6))))
     except:
