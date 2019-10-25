@@ -11,7 +11,7 @@ coord = $FE               ; word
 
          lda   #$80
          sta   phase
-         lda   #4
+         lda   #0
          sta   maskindex
 @outerloop
          lda   #<Coordinates
@@ -21,7 +21,7 @@ coord = $FE               ; word
 @loop
          dec   maskindex
          bpl   +
-         lda   #4
+         lda   #3
          sta   maskindex
 +        ldx   maskindex
          lda   maskslo,x
