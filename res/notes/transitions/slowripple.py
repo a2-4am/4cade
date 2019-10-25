@@ -54,3 +54,20 @@ for i, j, k, l in zip(range(1680), range(1680,3360), range(3360,5040), range(504
 with open("../../../src/fx/fx.hgr.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
+
+corner4_vals = []
+for x, y in unique_coords:
+    x = 139-x
+    y = 95-y
+    aval = "$" + hex(y)[2:].rjust(2, "0").upper()
+    bval = "%" + \
+        bin(x%7)[2:].rjust(3, "0") + \
+        bin(x//7)[2:].rjust(5, "0")
+    corner4_vals.append((aval, bval))
+with open("../../../src/fx/fx.hgr.corner4.in.data.a", "w") as f:
+    for aval, bval in corner4_vals:
+        f.write("         !byte %s,%s\n" % (aval, bval))
+corner4_vals.reverse()
+with open("../../../src/fx/fx.hgr.corner4.out.data.a", "w") as f:
+    for aval, bval in corner4_vals:
+        f.write("         !byte %s,%s\n" % (aval, bval))
