@@ -1,0 +1,114 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/TRI.FIZZLE",plain
+*=$6000
+
+phase = $FC               ; byte, $80 or $00
+maskindex = $FD           ; byte
+coord = $FE               ; word
+
+         lda   #$80
+         sta   phase
+         lda   #4
+         sta   maskindex
+@outerloop
+         lda   #<Coordinates
+         sta   coord
+         lda   #>Coordinates
+         sta   coord+1
+@loop
+         dec   maskindex
+         bpl   +
+         lda   #4
+         sta   maskindex
++        ldx   maskindex
+         lda   maskslo,x
+         ldy   maskshi,x
+         jsr   SetCopyMask
+         ldy   #0
+         lda   (coord),y
+         bmi   @nextPhase
+         tax
+         iny
+         lda   (coord),y
+         tay
+         txa
+         bit   phase
+         bmi   +
+         jsr   HGRBlockCopy
+         jmp   @wait
++        jsr   HGRBlockCopyWithMask
+@wait
+         lda   #$0C
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   coord
+         bne   +
+         inc   coord+1
++        inc   coord
+         bne   +
+         inc   coord+1
++        bne   @loop
+@nextPhase
+         bit   phase
+         bpl   @exit
+         asl   phase
+         bcs   @outerloop            ; always branches
+@exit    rts
+
+maskslo
+         !byte <mask1
+         !byte <mask2
+         !byte <mask3
+         !byte <mask4
+maskshi
+         !byte >mask1
+         !byte >mask2
+         !byte >mask3
+         !byte >mask4
+
+mask1
+         !byte %11111111
+         !byte %11111110
+         !byte %11111100
+         !byte %11111000
+         !byte %11110000
+         !byte %11100000
+         !byte %11000000
+         !byte %10000000
+mask2
+         !byte %11111111
+         !byte %10111111
+         !byte %10011111
+         !byte %10001111
+         !byte %10000111
+         !byte %10000011
+         !byte %10000001
+         !byte %10000000
+mask3
+         !byte %10000000
+         !byte %10000001
+         !byte %10000011
+         !byte %10000111
+         !byte %10001111
+         !byte %10011111
+         !byte %10111111
+         !byte %11111111
+mask4
+         !byte %10000000
+         !byte %11000000
+         !byte %11100000
+         !byte %11110000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111110
+         !byte %11111111
+
+
+Coordinates
+         !source "src/fx/fx.hgr.block.fizzle.data.a"
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
