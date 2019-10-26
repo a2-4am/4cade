@@ -11,7 +11,7 @@ counter = $ff
 
          !source "src/fx/macros.a"
 
-         +INIT_MASKS sourcemasks, copymasks
+         +SWITCH_TO_MASKS copymasks
 
          lda   #64        ; 40 + 24
          sta   counter
@@ -50,8 +50,6 @@ counter = $ff
          bcc   @colloop
 @exit    rts
 
-sourcemasks
-         !byte 0,0,0,0,0,0,0,0       ; SMC
 copymasks
          !byte %10000000
          !byte %10000001

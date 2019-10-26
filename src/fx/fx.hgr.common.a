@@ -98,17 +98,9 @@ HGRStaggerToWhite
          bne   @loop
          rts
 
-SetSourceMask
-         ; NOOP- to be removed
-         rts
-
 SetCopyMask
 ; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
          +STAY CopyMaskAddr
-         rts
-
-BuildSourceMaskFromCopyMask
-         ; NOOP- to be removed
          rts
 
 HGRBlockCopyWithMask
@@ -126,7 +118,7 @@ HGRBlockCopyWithMasksLoop
          eor   ($3c),y
 CopyMaskAddr=*+1
          and   $FDFD,x               ; call SetCopyMask to set
-         eor   ($3c),y
+         eor   ($26),y
          sta   ($26),y
          clc
          +HGR_INC_WITHIN_BLOCK
