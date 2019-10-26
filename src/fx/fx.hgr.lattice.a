@@ -1,0 +1,221 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/LATTICE",plain
+*=$6000
+
+maskindex = $fc
+rowcount = $fd
+row = $fe
+col = $ff
+
+         !source "src/fx/macros.a"
+
+         lda   #5
+         sta   maskindex
+MaskLoop
+         ldx   maskindex
+         lda   even_maskslo,x
+         sta   EvenMask
+         lda   even_maskshi,x
+         sta   EvenMask+1
+         lda   odd_maskslo,x
+         sta   OddMask
+         lda   odd_maskshi,x
+         sta   OddMask+1
+         lda   #0
+         sta   row
+         lda   #23
+         sta   rowcount
+         jsr   WaitForVBL
+RowLoop
+         lda   row
+         +HGR_ROW_CALC
+         lda   #39
+         sta   col
+ColLoop
+         ldy   col
+         tya
+         eor   row
+         and   #1
+         bne   Odd
+         clc
+         ldx   #7
+-        lda   ($3c),y
+         eor   ($26),y
+EvenMask=*+1
+         and   $FDFD,x
+         eor   ($26),y
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+         bmi   NextCol
+Odd
+         clc
+         ldx   #7
+-        lda   ($3c),y
+         eor   ($26),y
+OddMask=*+1
+         and   $FDFD,x
+         eor   ($26),y
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   -
+NextCol
+         +RESET_HGR_CALC
+         dec   col
+         +LBPL ColLoop
+         inc   row
+         dec   rowcount
+         +LBPL RowLoop
+         bit   $c000
+         bmi   Exit
+         dec   maskindex
+         +LBPL MaskLoop
+Exit     rts
+
+even_maskslo
+         !byte <copymask_even6
+         !byte <copymask_even5
+         !byte <copymask_even4
+         !byte <copymask_even3
+         !byte <copymask_even2
+         !byte <copymask_even1
+even_maskshi
+         !byte >copymask_even6
+         !byte >copymask_even5
+         !byte >copymask_even4
+         !byte >copymask_even3
+         !byte >copymask_even2
+         !byte >copymask_even1
+
+odd_maskslo
+         !byte <copymask_odd6
+         !byte <copymask_odd5
+         !byte <copymask_odd4
+         !byte <copymask_odd3
+         !byte <copymask_odd2
+         !byte <copymask_odd1
+odd_maskshi
+         !byte >copymask_odd6
+         !byte >copymask_odd5
+         !byte >copymask_odd4
+         !byte >copymask_odd3
+         !byte >copymask_odd2
+         !byte >copymask_odd1
+
+copymask_even1
+         !byte %11100000
+         !byte %10110000
+         !byte %10011000
+         !byte %10011000
+         !byte %10001100
+         !byte %10000110
+         !byte %10000011
+         !byte %10000001
+copymask_odd1
+         !byte %10000001
+         !byte %10000011
+         !byte %10000110
+         !byte %10001100
+         !byte %10011000
+         !byte %10011000
+         !byte %10110000
+         !byte %11100000
+copymask_even2
+         !byte %11110000
+         !byte %10111000
+         !byte %10011100
+         !byte %10011100
+         !byte %10001110
+         !byte %10000111
+         !byte %11000011
+         !byte %11100001
+copymask_odd2
+         !byte %11100001
+         !byte %11000011
+         !byte %10000111
+         !byte %10001110
+         !byte %10011100
+         !byte %10011100
+         !byte %10111000
+         !byte %11110000
+copymask_even3
+         !byte %11110001
+         !byte %11111000
+         !byte %10111100
+         !byte %10111100
+         !byte %10011110
+         !byte %10001111
+         !byte %11000111
+         !byte %11100011
+copymask_odd3
+         !byte %11100011
+         !byte %11000111
+         !byte %10001111
+         !byte %10011110
+         !byte %10111100
+         !byte %10111100
+         !byte %11111000
+         !byte %11110001
+copymask_even4
+         !byte %11111001
+         !byte %11111100
+         !byte %10111110
+         !byte %10111110
+         !byte %10011111
+         !byte %11001111
+         !byte %11100111
+         !byte %11110011
+copymask_odd4
+         !byte %11110011
+         !byte %11100111
+         !byte %11001111
+         !byte %10011111
+         !byte %10111110
+         !byte %10111110
+         !byte %11111100
+         !byte %11111001
+copymask_even5
+         !byte %11111011
+         !byte %11111101
+         !byte %11111110
+         !byte %11111110
+         !byte %10111111
+         !byte %11011111
+         !byte %11101111
+         !byte %11110111
+copymask_odd5
+         !byte %11110111
+         !byte %11101111
+         !byte %11011111
+         !byte %10111111
+         !byte %11111110
+         !byte %11111110
+         !byte %11111101
+         !byte %11111011
+copymask_even6
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+copymask_odd6
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
+         !source "src/fx/hw.vbl.a"
