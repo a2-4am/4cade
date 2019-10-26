@@ -36,32 +36,32 @@ hgr1himirror   = $BF40    ; $C0 bytes
 !macro BUILD_SPARSE_BITMASKS .copymasks, .mirror_copymasks {
          ; build sparse lookup tables for bitmasks
          lda   #%10000001
-         sta   copymasks
-         sta   mirror_copymasks+$C0
+         sta   .copymasks
+         sta   .mirror_copymasks+$C0
 
          lda   #%10000010
-         sta   copymasks+$20
-         sta   mirror_copymasks+$A0
+         sta   .copymasks+$20
+         sta   .mirror_copymasks+$A0
 
          lda   #%10000100
-         sta   copymasks+$40
-         sta   mirror_copymasks+$80
+         sta   .copymasks+$40
+         sta   .mirror_copymasks+$80
 
          lda   #%10001000
-         sta   copymasks+$60
-         sta   mirror_copymasks+$60
+         sta   .copymasks+$60
+         sta   .mirror_copymasks+$60
 
          lda   #%10010000
-         sta   copymasks+$80
-         sta   mirror_copymasks+$40
+         sta   .copymasks+$80
+         sta   .mirror_copymasks+$40
 
          lda   #%10100000
-         sta   copymasks+$A0
-         sta   mirror_copymasks+$20
+         sta   .copymasks+$A0
+         sta   .mirror_copymasks+$20
 
          lda   #%11000000
-         sta   copymasks+$C0
-         sta   mirror_copymasks
+         sta   .copymasks+$C0
+         sta   .mirror_copymasks
 }
 
 !macro ROW_X_TO_BASE_ADDRESSES {
