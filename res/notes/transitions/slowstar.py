@@ -40,3 +40,8 @@ for x, y in unique_coords:
 with open("../../../src/fx/fx.hgr.slow.star.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
+
+unique_vals.reverse()
+with open("../../../src/fx/fx.hgr.slow.star.in.data.a", "w") as f:
+    for aval, bval in unique_vals:
+        f.write("         !byte %s,%s\n" % (aval, bval))
