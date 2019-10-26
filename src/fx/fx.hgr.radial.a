@@ -23,8 +23,8 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
          iny
          lda   (input),y
          +HIGH_3_LOW_5 input
-         +COPY_BIT src3, dest3, copymasks
-         +COPY_BIT src4, dest4, copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks
          +DEC_INPUT_AND_LOOP LoopBL
 DoneBL
 
@@ -75,8 +75,8 @@ LoopBR                               ; bottom-right quadrant (opposite row, oppo
          +HIGH_3_LOW_5 input
          lda   mirror_cols,y
          tay
-         +COPY_BIT src3, dest3, mirror_copymasks
-         +COPY_BIT src4, dest4, mirror_copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks
          +INC_INPUT_AND_LOOP LoopBR
 DoneBR
          rts

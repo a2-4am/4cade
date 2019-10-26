@@ -1,10 +1,10 @@
 ;license:MIT
 ;(c) 2019 by 4am
 ;
-src3           = $E8      ; word
-dest3          = $EA      ; word
-src4           = $EC      ; word
-dest4          = $EE      ; word
+mirror_src1    = $E8      ; word
+mirror_dest1   = $EA      ; word
+mirror_src2    = $EC      ; word
+mirror_dest2   = $EE      ; word
 src1           = $F0      ; word
 dest1          = $F2      ; word
 src2           = $F4      ; word
@@ -83,19 +83,19 @@ hgr1himirror   = $BF40    ; $C0 bytes
 
 !macro ROW_X_TO_MIRROR_ADDRESSES {
          lda   hgrlomirror,x
-         sta   dest3
-         sta   src3
+         sta   mirror_dest1
+         sta   mirror_src1
          lda   hgr1himirror,x
-         sta   dest3+1
+         sta   mirror_dest1+1
          eor   #$60
-         sta   src3+1
+         sta   mirror_src1+1
          lda   hgrlomirror+1,x
-         sta   dest4
-         sta   src4
+         sta   mirror_dest2
+         sta   mirror_src2
          lda   hgr1himirror+1,x
-         sta   dest4+1
+         sta   mirror_dest2+1
          eor   #$60
-         sta   src4+1
+         sta   mirror_src2+1
 }
 
 !macro HIGH_3_LOW_5 .input {
@@ -163,14 +163,14 @@ InputLoop
          +COPY_BIT src2, dest2, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
-         +COPY_BIT src3, dest3, mirror_copymasks
-         +COPY_BIT src4, dest4, mirror_copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks
 
          ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
          lda   mirror_cols,y
          tay
-         +COPY_BIT src3, dest3, copymasks
-         +COPY_BIT src4, dest4, copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks
 
          +INC_INPUT_AND_LOOP InputLoop
          rts

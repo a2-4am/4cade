@@ -34,8 +34,8 @@ Loop     ldy   #0
          ; bottom-right quadrant (opposite row, opposite column, original input order)
          lda   mirror_cols,y
          tay
-         +COPY_BIT src3, dest3, mirror_copymasks
-         +COPY_BIT src4, dest4, mirror_copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks
 
          ldy   #0
          lda   (reverse_input),y
@@ -47,8 +47,8 @@ Loop     ldy   #0
          +HIGH_3_LOW_5 reverse_input
 
          ; bottom-left quadrant (opposite row, original column, reverse input order)
-         +COPY_BIT src3, dest3, copymasks
-         +COPY_BIT src4, dest4, copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks
 
          ; top-right quadrant (same row, opposite column, reverse input order)
          lda   mirror_cols,y
