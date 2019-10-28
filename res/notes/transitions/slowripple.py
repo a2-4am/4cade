@@ -2,8 +2,8 @@
 
 from math import sqrt, sin, cos, pi
 
-radius_x = 280/2
-radius_y = 192/2
+radius_x = 280//2
+radius_y = 192//2
 
 def f(t):
     return (sqrt(t)*cos(2*pi*sqrt(t)), 0.87*sqrt(t)*sin(2*pi*sqrt(t)))

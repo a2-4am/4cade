@@ -24,17 +24,18 @@ from math import sqrt, sin, cos, acos, pi
 
 max_x = 280
 max_y = 192
+radius_x = max_x//2
+radius_y = max_y//2
 
 def f(t, k):
-    r = k/cos(0.4*acos(sin(2.5*(t+pi/2))))
-    return r*cos(t),r*sin(t)
+    return (k*16*sin(t)*sin(t)*sin(t), k*(13*cos(t)-5*cos(2*t)-2*cos(3*t)-cos(4*t)))
 
 coords = []
-for k_mul in range(1000):
-    for t_mul in range(int(pi*1000+1)):
-        a, b = f(float(t_mul/100), float(k_mul)/10.0)
-        x = round(max_x//2+a*1.2)
-        y = round(max_y//2+b)
+for k_mul in range(2000):
+    for t_mul in range(int(2*pi*1000+1)):
+        a, b = f(float(t_mul)/1000.0, float(k_mul)/100.0)
+        x = round(radius_x+a*1.2)
+        y = round(radius_y+b)
         if (x % 2 != 0) or (y % 2 != 0):
             continue
         if x < 0 or x >= max_x//2 or y < 0 or y >= max_y:
@@ -52,7 +53,7 @@ unique_vals = []
 even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
 odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
 for x, y in unique_coords:
-    y = y + 1
+    y = 191 - y
     aval = "$" + hex(y)[2:].rjust(2, "0").upper()
     byte = x//7
     if byte % 2 == 0:
@@ -72,7 +73,7 @@ for x, y in unique_coords:
             bval = "%011" + bin(byte+1)[2:].rjust(5, "0") + ";"
             unique_vals.append((aval, bval))
 
-with open("../../../src/fx/fx.hgr.star.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.heart.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
@@ -82,11 +83,11 @@ for i, j, k, l in zip(range(1920), range(1920,3840), range(3840,5760), range(576
     ripple_vals.append(unique_vals[j])
     ripple_vals.append(unique_vals[k])
     ripple_vals.append(unique_vals[l])
-with open("../../../src/fx/fx.hgr.star.ripple.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.heart.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
 unique_vals.reverse()
-with open("../../../src/fx/fx.hgr.star.in.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.heart.in.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
