@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/BUTTERFLY",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.2bit.a"
+
+         +FX_PRECOMPUTED_2BIT Coordinates
+
+Coordinates
+         !source "src/fx/fx.hgr.butterfly.data.a"
+         !byte $00

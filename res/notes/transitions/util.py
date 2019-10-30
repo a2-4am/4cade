@@ -32,3 +32,13 @@ def vals_2bit(unique_coords):
                 bval = "%011" + bin(byte+1)[2:].rjust(5, "0") + ";"
                 unique_vals.append((aval, bval))
     return unique_vals
+
+def ripple(unique_vals):
+    z = len(unique_vals)
+    ripple_vals = []
+    for i, j, k, l in zip(range(z//4), range(z//4,z//2), range(z//2,z*3//4), range(z*3//4,z)):
+        ripple_vals.append(unique_vals[i])
+        ripple_vals.append(unique_vals[j])
+        ripple_vals.append(unique_vals[k])
+        ripple_vals.append(unique_vals[l])
+    return ripple_vals

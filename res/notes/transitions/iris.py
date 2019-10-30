@@ -45,12 +45,7 @@ with open("../../../src/fx/fx.hgr.iris.in.data.a", "w") as f:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
 unique_vals.reverse()
-ripple_vals = []
-for i, j, k, l in zip(range(1680), range(1680,3360), range(3360,5040), range(5040,6720)):
-    ripple_vals.append(unique_vals[i])
-    ripple_vals.append(unique_vals[j])
-    ripple_vals.append(unique_vals[k])
-    ripple_vals.append(unique_vals[l])
+ripple_vals = util.ripple(unique_vals)
 with open("../../../src/fx/fx.hgr.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))

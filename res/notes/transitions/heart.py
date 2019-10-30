@@ -51,12 +51,7 @@ with open("../../../src/fx/fx.hgr.heart.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
-ripple_vals = []
-for i, j, k, l in zip(range(1920), range(1920,3840), range(3840,5760), range(5760,7680)):
-    ripple_vals.append(unique_vals[i])
-    ripple_vals.append(unique_vals[j])
-    ripple_vals.append(unique_vals[k])
-    ripple_vals.append(unique_vals[l])
+ripple_vals = util.ripple(unique_vals)
 with open("../../../src/fx/fx.hgr.heart.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))

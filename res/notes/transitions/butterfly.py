@@ -27,14 +27,14 @@ import util
 max_x = 280
 max_y = 192
 
-def f(t, k):
-    r = k/cos(0.4*acos(sin(2.5*(t+pi/2))))
-    return r*cos(t),r*sin(t)
+def f(theta, k):
+    r = k*(12-sin(theta)+2*sin(3*theta)+2*sin(5*theta)-sin(7*theta)+3*cos(2*theta)-2*cos(4*theta))
+    return r*cos(theta),r*sin(theta)
 
 coords = []
-for k_mul in range(1000):
+for k_mul in range(3000):
     for t_mul in range(int(pi*1000+1)):
-        a, b = f(float(t_mul/100), float(k_mul)/10.0)
+        a, b = f(float(t_mul/100), float(k_mul)/100.0)
         x = round(max_x//2+a*1.2)
         y = round(max_y//2+b)
         if (x % 2 != 0) or (y % 2 != 0):
@@ -45,17 +45,16 @@ for k_mul in range(1000):
 
 unique_coords = util.unique(coords)
 unique_vals = util.vals_2bit(unique_coords)
-
-with open("../../../src/fx/fx.hgr.star.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.butterfly.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
 ripple_vals = util.ripple(unique_vals)
-with open("../../../src/fx/fx.hgr.star.ripple.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.butterfly.ripple.data.a", "w") as f:
     for aval, bval in ripple_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
 
 unique_vals.reverse()
-with open("../../../src/fx/fx.hgr.star.in.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.butterfly.in.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
