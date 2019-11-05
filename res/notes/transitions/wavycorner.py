@@ -14,8 +14,7 @@ import util
 #
 # 6502 code will be responsible for plotting each of these coordinates
 # in a 2x3 block. The bitmask usually includes 2 adjacent pixels;
-# the code will also plot the same 2 adjacent pixels in the adjacent row,
-# AND mirror both of those plots in the right half of the screen.
+# the code will also plot the same 2 adjacent pixels in the next two rows.
 #
 # Unfortunately, since bytes are 7 bits across, some blocks will cross a
 # byte boundary. To simplify the 6502 code, those are simply listed as
