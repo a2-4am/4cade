@@ -16,10 +16,10 @@ import util
 # in a 2x3 block. The bitmask usually includes 2 adjacent pixels;
 # the code will also plot the same 2 adjacent pixels in the next two rows.
 #
-# Unfortunately, since bytes are 7 bits across, some blocks will cross a
-# byte boundary. To simplify the 6502 code, those are simply listed as
-# separate coordinate pairs, each with a bitmask that includes 1 pixel
-# instead of 2.
+# Unfortunately, since bytes are 7 pixels across, some of the 2-pixel-wide
+# blocks will cross a byte boundary. To simplify the 6502 code, these are
+# simply listed as separate coordinate pairs, each with a bitmask that
+# includes 1 pixel instead of 2.
 
 max_x = 280
 max_y = 192
