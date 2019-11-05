@@ -16,7 +16,7 @@ def vals_2bit(unique_coords):
         aval = "$" + hex(y)[2:].rjust(2, "0").upper()
         byte = x//7
         if byte % 2 == 0:
-            # high 3 bits are 0-3, low 5 bits are 0-39
+            # high 3 bits are 0-3, low 5 bits are 0-19
             bval = "%" + bin(even_byte_bitmask[x % 7])[2:].rjust(3, "0") + bin(byte)[2:].rjust(5, "0")
             unique_vals.append((aval, bval))
             if x % 7 == 6:
@@ -24,7 +24,34 @@ def vals_2bit(unique_coords):
                 bval = "%100" + bin(byte+1)[2:].rjust(5, "0") + ";"
                 unique_vals.append((aval, bval))
         else:
-            # high 3 bits are 5-7 or 4, low 5 bits are 0-39
+            # high 3 bits are 5-7 or 4, low 5 bits are 0-19
+            bval = "%" + bin(odd_byte_bitmask[x % 7])[2:].rjust(3, "0") + bin(byte)[2:].rjust(5, "0")
+            unique_vals.append((aval, bval))
+            if x % 7 == 6:
+                # this 2x2 block will be split across bytes, so add an extra coordinate pair with the adjacent byte and high 3 bits = 3
+                bval = "%011" + bin(byte+1)[2:].rjust(5, "0") + ";"
+                unique_vals.append((aval, bval))
+    return unique_vals
+
+def vals_3bit(unique_coords):
+    unique_vals = []
+    for x, y in unique_coords:
+        y = 63 - y//3
+        byte = x//7
+        if byte >= 32:
+            byte -= 32
+            y += 64
+        aval = "$" + hex(y)[2:].rjust(2, "0").upper()
+        if byte % 2 == 0:
+            # high 3 bits are 0-3, low 5 bits are 0-19
+            bval = "%" + bin(even_byte_bitmask[x % 7])[2:].rjust(3, "0") + bin(byte)[2:].rjust(5, "0")
+            unique_vals.append((aval, bval))
+            if x % 7 == 6:
+                # this 2x2 block will be split across bytes, so add an extra coordinate pair with the adjacent byte and high 3 bits = 4
+                bval = "%100" + bin(byte+1)[2:].rjust(5, "0") + ";"
+                unique_vals.append((aval, bval))
+        else:
+            # high 3 bits are 5-7 or 4, low 5 bits are 0-19
             bval = "%" + bin(odd_byte_bitmask[x % 7])[2:].rjust(3, "0") + bin(byte)[2:].rjust(5, "0")
             unique_vals.append((aval, bval))
             if x % 7 == 6:
