@@ -265,6 +265,7 @@ end_iicplus
 
          plp             ; restore interrupt state
          stx   $0
+         +READ_RAM2_WRITE_RAM2
          rts
 
 ; Function #2: IIgs, Laser 128EX, or IIe card
