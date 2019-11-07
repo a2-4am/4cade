@@ -42,49 +42,41 @@ call :asm
 1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
-1>nul copy /y res\attract.conf build\ATTRACT.CONF >>build\log
-1>nul copy /y res\dfx.conf build\DFX.CONF >>build\log
-1>nul copy /y res\fx.conf build\FX.CONF >>build\log
-1>nul copy /y res\games.conf build\GAMES.CONF >>build\log
-1>nul copy /y res\prefs.conf build\PREFS.CONF >>build\log
+cscript /nologo bin\rsync.js res\*.conf build >>build\log
 1>nul copy /y res\credits.txt build\CREDITS >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\ATTRACT.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\FX.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DFX.CONF" >>build\log
+for %%q in (build\*.CONF) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
-cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "build\TITLE.HGR" >>build\log
 cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
-cscript /nologo bin\buildfileinfo.js build\TITLE.DHGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "build\TITLE.DHGR" >>build\log
 cscript /nologo bin\rsync.js res\action.hgr\* build\ACTION.HGR >>build\log
-cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "build\ACTION.HGR" >>build\log
 cscript /nologo bin\rsync.js res\action.dhgr\* build\ACTION.DHGR >>build\log
-cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "build\ACTION.DHGR" >>build\log
 cscript /nologo bin\rsync.js res\action.gr\* build\ACTION.GR >>build\log
-cscript /nologo bin\buildfileinfo.js build\ACTION.GR "06" "6000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "build\ACTION.GR" >>build\log
 cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
-cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "build\ARTWORK.SHR" >>build\log
 cscript /nologo bin\rsync.js res\attract\* build\ATTRACT >>build\log
-cscript /nologo bin\buildfileinfo.js build\ATTRACT "04" "8000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "build\ATTRACT" >>build\log
 cscript /nologo bin\rsync.js res\ss\* build\SS >>build\log
-cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
 cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build\DEMO" >>build\log
 cscript /nologo bin\rsync.js res\title.animated\* build\TITLE.ANIMATED >>build\log
+cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\TITLE.DHGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.GR "06" "6000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ATTRACT "04" "8000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "build\TITLE.HGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "build\TITLE.DHGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "build\ACTION.HGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "build\ACTION.DHGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "build\ACTION.GR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "build\ARTWORK.SHR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "build\ATTRACT" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "build\SS" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "build\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "build\TITLE.ANIMATED" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
