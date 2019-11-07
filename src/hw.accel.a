@@ -229,17 +229,22 @@ build_addon
 
 ; Function #1: Apple IIc+
 iicplus
+        nop
+        nop
+        nop
+        nop
+end_iicplus
 ; Set //c+ speed. Uses the horrible firmware in case other
 ; code works "by the book", that is can check and set
 ; whether the accelerator is enabled.
 ; The //c+ is otherwise Zip compatible.
-        lda     #1        ; disable accelerator entry point
-        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-        lda     #0        ; enable accelerator entry point
-
-!cpu 65C02                      ; only used for //c+
-        inc            ; 65C02 $1A
-!cpu 6502
+; This code cannot run from either LC or stack,
+; so it's set off and left off.  Sorry IIc+ users.
+        lda     #$60
+        sta     DisableAccelerator+3
+        lda     #2        ; disable accelerator entry point
+;        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
+;        lda     #1        ; enable accelerator entry point
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
@@ -261,7 +266,6 @@ iicplus
          plp             ; restore interrupt state
          stx   $0
          rts
-end_iicplus
 
 ; Function #2: IIgs, Laser 128EX, or IIe card
 ;; setspeed - set 1Mhz with AND and fast with OR
