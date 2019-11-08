@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from math import sqrt, sin, cos, pi
+import util
 
 radius_x = 280//2
 radius_y = 192//2
@@ -20,20 +21,8 @@ for i in range(1000000):
         continue
     coords.append((x,y))
 
-d = {}
-unique_coords = []
-for c in coords:
-    if not d.get(c):
-        unique_coords.append(c)
-        d[c] = 1
-
-unique_vals = []
-for x, y in unique_coords:
-    aval = "$" + hex(y)[2:].rjust(2, "0").upper()
-    bval = "%" + \
-        bin(x%7)[2:].rjust(3, "0") + \
-        bin(x//7)[2:].rjust(5, "0")
-    unique_vals.append((aval, bval))
+unique_coords = util.unique(coords)
+unique_vals = util.vals_1bit(unique_coords)
 
 with open("../../../src/fx/fx.hgr.iris.data.a", "w") as f:
     for aval, bval in unique_vals:

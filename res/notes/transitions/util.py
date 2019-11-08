@@ -7,9 +7,19 @@ def unique(coords):
             d[c] = 1
     return unique_coords
 
-even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
-odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
+def vals_1bit(unique_coords):
+    unique_vals = []
+    for x, y in unique_coords:
+        aval = "$" + hex(y)[2:].rjust(2, "0").upper()
+        bval = "%" + \
+            bin(x%7)[2:].rjust(3, "0") + \
+            bin(x//7)[2:].rjust(5, "0")
+        unique_vals.append((aval, bval))
+    return unique_vals
+
 def vals_2bit(unique_coords):
+    even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
+    odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
     unique_vals = []
     for x, y in unique_coords:
         y = 191 - y

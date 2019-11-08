@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/SNOWFLAKE.RIP",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_PRECOMPUTED_1BIT Coordinates
+
+Coordinates
+         !source "src/fx/fx.hgr.snowflake.ripple.data.a"
+         !byte $80
