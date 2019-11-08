@@ -5,11 +5,10 @@ import util
 
 # apple72.png is the source image. The source image MUST have a white background,
 # but other colors and pixel depth are irrelevant. This one is black & white.
-# Due to the Apple II pixel aspect ratio, we do a 1-time aspect-ratio-losing resize.
-# The original image size was 1000x1187, so we want to retain the width (1000) but
-# squash the image to height = 1187*0.87, which is 1032.
+# Due to the Apple II pixel aspect ratio, we do a 1-time aspect-ratio-losing resize
+# to squash the image to 87% height.
 #
-# $ gm convert apple72.png -resize "1000x1032!" squash.png
+# $ gm convert apple72.png -resize "100%x87%!" squash.png
 # (Depending on your shell, you may need to escape the exclamation point. Grr.)
 #
 # Now we can create individual images for each "frame" of the animation, by

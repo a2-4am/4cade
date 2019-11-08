@@ -3,12 +3,12 @@
 import PIL.Image # https://pillow.readthedocs.io/
 import util
 
-# mandelbrot.jpg is the source image. The source image MUST have a white background,
+# mandelbrot.png is the source image. The source image MUST have a white background,
 # but other colors and pixel depth are irrelevant. This one is black & white.
 # Due to the Apple II pixel aspect ratio, we do a 1-time aspect-ratio-losing resize
 # to squash the image to 87% height.
 #
-# $ gm convert mandelbrot.jpg -resize "100%x87%!" squash.png
+# $ gm convert mandelbrot.png -resize "100%x87%!" squash.png
 # (Depending on your shell, you may need to escape the exclamation point. Grr.)
 #
 # Now we can create individual images for each "frame" of the animation, by
