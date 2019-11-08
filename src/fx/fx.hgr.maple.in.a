@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/MAPLE.IN",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.2bit.a"
+
+         +FX_PRECOMPUTED_2BIT Coordinates
+
+Coordinates
+         !source "src/fx/fx.hgr.maple.in.data.a"
+         !byte $00
