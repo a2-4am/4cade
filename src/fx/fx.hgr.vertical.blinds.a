@@ -1,0 +1,259 @@
+;license:MIT
+;(c) 2019 by qkumba
+;
+!cpu 6502
+!to "build/FX/VERTICAL.BLINDS",plain
+*=$6000
+
+        ldx    #0
+        clc
+
+        ;build pre-shift tables
+
+-       txa
+        and    #%11111100
+        sta    tbl00000000a,x
+        adc    #1
+        sta    tbl00000001,x
+        adc    #1
+        sta    tbl00000010,x
+        adc    #1
+        sta    tbl00000011,x
+        txa
+        and    #%11110011
+        sta    tbl00000000b,x
+        ora    #%00000100
+        sta    tbl00000100,x
+        adc    #4
+        sta    tbl00001000,x
+        adc    #4
+        sta    tbl00001100,x
+        txa
+        and    #%11001111
+        sta    tbl00000000c,x
+        ora    #%00010000
+        sta    tbl00010000,x
+        adc    #16
+        sta    tbl00100000,x
+        adc    #16
+        sta    tbl00110000,x
+        txa
+        and    #%00111111
+        sta    tbl00000000d,x
+        ora    #%01000000
+        sta    tbl01000000,x
+        adc    #64
+        sta    tbl10000000,x
+        adc    #64
+        sta    tbl11000000,x
+
+        ;build index table
+
+        txa
+        and    #3
+        adc    #>tbl00000000a
+        sta    tblx00,x
+        txa
+        lsr
+        lsr
+        pha
+        and    #3
+        clc
+        adc    #>tbl00000000b
+        sta    tblx01,x
+        pla
+        lsr
+        lsr
+        pha
+        and    #3
+        clc
+        adc    #>tbl00000000c
+        sta    tblx02,x
+        pla
+        lsr
+        lsr
+        clc
+        adc    #>tbl00000000d
+        sta    tblx03,x
+        inx
+        bne    -
+
+        stx    $26
+        lda    #$20
+        sta    $27
+        stx    $fe
+        lda    #>shift
+        sta    $ff
+
+        lda    #>tblx03
+        sta    patchtbl + 1
+        lda    #<(shift + 2)
+        sta    loop1 + 6
+        lda    #>(shift + 2)
+        sta    loop1 + 7
+
+        ;generate unrolled rotate-left code
+
+        lda    #4
+        sta    $fd
+--      ldx    #0
+        ldy    #0
+        lda    #$a2
+        sta    ($fe),y
+        iny
+        lda    #0
+        sta    ($fe),y
+        clc
+-       ldy    #2
+        lda    #$bc
+        sta    ($fe),y
+        iny
+        lda    $26
+        sta    ($fe),y
+        iny
+        lda    $27
+        eor    #$60
+        sta    ($fe),y
+        iny
+        lda    #$b9
+        sta    ($fe),y
+        iny
+        lda    #0
+        sta    ($fe),y
+        iny
+patchtbl
+        lda    #>tblx00
+        sta    ($fe),y
+        iny
+        lda    #$8d
+        sta    ($fe),y
+        iny
+        lda    $fe
+        adc    #16
+        sta    ($fe),y
+        iny
+        lda    $ff
+        adc    #0
+        sta    ($fe),y
+        iny
+        lda    #$bc
+        sta    ($fe),y
+        iny
+        lda    $26
+        sta    ($fe),y
+        iny
+        lda    $27
+        sta    ($fe),y
+        iny
+        lda    #$b9
+        sta    ($fe),y
+        iny
+        lda    #0
+        sta    ($fe),y
+        iny
+        iny
+        lda    #$9d
+        sta    ($fe),y
+        iny
+        lda    $26
+        sta    ($fe),y
+        iny
+        lda    $27
+        sta    ($fe),y
+        lda    #18
+        adc    $fe
+        sta    $fe
+        bcc    +
+        inc    $ff
++       jsr    nextline
+        inx
+        cpx    #<$c0
+        bne    -
+
+        ;copy loop1 code
+
+        ldy    #2
+-       lda    loop1 - $c0,x
+        sta    ($fe),y
+        inx
+        iny
+        cpx    #<($c0 + (loop1_e - loop1))
+        bne    -
+
+        lda    $fe
+        clc
+        adc    #(loop1_e - loop1) + 2
+        sta    $fe
+        bcc    +
+        inc    $ff
++       adc    #2
+        sta    loop1 + 6
+        lda    $ff
+        adc    #0
+        sta    loop1 + 7
+        dec    patchtbl + 1
+        dec    $fd
+        beq    +
+        jmp    --
++       ldy    #0
+        lda    #$60
+        sta    ($fe),y
+
+        jmp    shift
+
+loop1   inx
+        cpx    #$28
+        beq    +
+        jmp    shift + 2
++
+loop1_e
+
+nextline
+        clc
+        lda    $27
+        adc    #4
+        bit    x1c
+        bne    +
+        asl    $26
+        bcc    ++
+        adc    #$e0
+        clc
+        bit    x04
+        beq    +++
+        lda    $26
+        adc    #$50
+        eor    #$f0
+        beq    ++++
+        eor    #$f0
+++++    sta    $26
+        lda    #$20
+        bcc    +++
+++      adc    #$e0
++++     ror    $26
++       sta    $27
+        rts
+
+x1c     !byte  $1c
+x04     !byte  $04
+
+tblx00 = (loop1_e + 255) and -256
+tblx01 = tblx00 + 256
+tblx02 = tblx01 + 256
+tblx03 = tblx02 + 256
+tbl00000000a = tblx03 + 256
+tbl00000001 = tbl00000000a + 256
+tbl00000010 = tbl00000001 + 256
+tbl00000011 = tbl00000010 + 256
+tbl00000000b = tbl00000011 + 256
+tbl00000100 = tbl00000000b + 256
+tbl00001000 = tbl00000100 + 256
+tbl00001100 = tbl00001000 + 256
+tbl00000000c = tbl00001100 + 256
+tbl00010000 = tbl00000000c + 256
+tbl00100000 = tbl00010000 + 256
+tbl00110000 = tbl00100000 + 256
+tbl00000000d = tbl00110000 + 256
+tbl01000000 = tbl00000000d + 256
+tbl10000000 = tbl01000000 + 256
+tbl11000000 = tbl10000000 + 256
+shift = tbl11000000 + 256
