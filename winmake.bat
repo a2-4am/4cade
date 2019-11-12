@@ -68,6 +68,8 @@ cscript /nologo bin\buildfileinfo.js build\ACTION.GR "06" "6000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\ATTRACT "04" "8000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
+cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
+cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "build\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "build\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "build\ACTION.HGR" >>build\log
@@ -84,13 +86,10 @@ cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
-cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
-echo y|1>nul 2>nul del /s build\X\.DS_Store
-echo y|1>nul 2>nul del /s build\X\PRODOS
-echo y|1>nul 2>nul del /s build\X\LOADER.SYSTEM
+1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
