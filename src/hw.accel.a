@@ -228,45 +228,72 @@ build_addon
 ;-----------------------------------------------------------
 
 ; Function #1: Apple IIc+
-iicplus
-        nop
-        nop
-        nop
-        nop
-end_iicplus
+iicplus !pseudopc DisableAccelerator {
 ; Set //c+ speed. Uses the horrible firmware in case other
 ; code works "by the book", that is can check and set
 ; whether the accelerator is enabled.
 ; The //c+ is otherwise Zip compatible.
-; This code cannot run from either LC or stack,
-; so it's set off and left off.  Sorry IIc+ users.
-        lda     #$60
-        sta     DisableAccelerator+3
+; This code cannot run from LC, and *must* bank in ROM.
+; CGGA assumes that ROM is already banked in.
+
         lda     #2        ; disable accelerator entry point
-;        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-;        lda     #1        ; enable accelerator entry point
+        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
+        lda     #1        ; enable accelerator entry point
+        sta     @pokery+1 ; action after CGGA_UNLOCK
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
          ldx   $0
+!cpu 65c02
+         phx
+!cpu 6502
+
          php
          sei             ; timing sensitive
-         pha             ; action after CGGA_UNLOCK
+         jsr   @jiggerypokery
+         plp             ; restore interrupt state
+         pla
+         sta   $0
+         rts
 
+@jiggerypokery
+         tsx
+         ldy   #(@endpokery - @jiggery)
+@copyiicp
+         lda   @jiggery-1,y
+         pha
+         dey
+         bne   @copyiicp
+         txa
+         tsx
+         iny
+!cpu 65c02
+         phy
+         phx
+!cpu 6502
+         tax
+         rts
+
+@jiggery
+         +READ_ROM_NO_WRITE
          lda   #CGGA_UNLOCK  ; unlock to change
          pha
          jsr   cgga
 
+@pokery
+         lda   #$D1    ; SMC
+         pha
          jsr   cgga    ; disable/enable
 
          lda   #CGGA_LOCK    ; should lock after a change
          pha
-         jsr   cgga
-
-         plp             ; restore interrupt state
-         stx   $0
+         jsr   cgga    ; reads parm from stack, must JSR
+         txs
          +READ_RAM2_WRITE_RAM2
          rts
+@endpokery
+}
+end_iicplus
 
 ; Function #2: IIgs, Laser 128EX, or IIe card
 ;; setspeed - set 1Mhz with AND and fast with OR
