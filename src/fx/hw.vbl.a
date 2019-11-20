@@ -6,25 +6,27 @@
 ;
 
          !source "src/fx/macros.a"
+         !source "src/constants.a"
 
 WaitForVBL
-         bit   $FDFD
+         bit   $FDFD      ; SMC
 
          pha
          tya
          pha
          +READ_ROM_NO_WRITE
          lda   $FBB3
+         +READ_RAM1_WRITE_RAM1
          cmp   #$06
          bne   @nop
-         lda   $FBC0
-         beq   @iic
+         lda   MachineStatus
+         and   #IS_IIC
+         bne   @iic
          +LDADDR WaitForVBL_iie
          bne   +
 @iic
-         sta   $C07F      ; enable access to VBL register
-         sta   $C05B      ; enable VBL polling
-         sta   $C07E      ; disable access to VBL register
+         lda   #$EA
+         sta   UnwaitForVBL
          +LDADDR WaitForVBL_iic
          bne   +
 @nop
@@ -36,7 +38,6 @@ WaitForVBL
          lda   #$4C       ; JMP opcode
          sta   WaitForVBL
 
-         +READ_RAM1_WRITE_RAM1
          pla
          tay
          pla
@@ -53,7 +54,22 @@ WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
          rts
 
 WaitForVBL_iic            ; IIc is special
--        bit   $c019
+         sei
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05B      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
+-        bit   $C019
          bpl   -
-         bit   $c070      ;$c019 bit 7 is sticky, reset it
+         lda   $C070      ; $c019 bit 7 is sticky, reset it
+         rts
+
+UnwaitForVBL
+         rts              ; SMC on IIc
+-        bit   $C019
+         bpl   -
+         lda   $C070      ; $c019 bit 7 is sticky, reset it
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05A      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
+         cli
          rts

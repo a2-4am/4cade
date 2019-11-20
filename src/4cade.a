@@ -81,6 +81,8 @@ ResetVector                          ; 6 bytes, copied to $100
          +READ_RAM1_NO_WRITE
          jmp   Reenter
 
+Ignore   rti                         ; discard IRQs, particular on the IIc
+
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"         ; \__ execution falls through
          !source "src/ui.animation.a"           ; /
@@ -130,8 +132,8 @@ SwitchToBank2
 ;      7 6 5 4 3 2 1 0
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
-;      | | | | | +----- bit 2 reserved
-;      | | | | +------- bit 3 = 1 if cheats are enabled
+;      | | | | | +----- bit 2 = 1 if cheats are enabled
+;      | | | | +------- bit 3 = 1 if IIc
 ;      | | | +--------- bit 4 = 1 if IIgs
 ;      | | +----------- bit 5 = 1 if VidHD
 ;      | +------------- bit 6 = 1 if 128K
@@ -140,7 +142,7 @@ SwitchToBank2
          !byte $FD                   ; MachineStatus ($FFF9)
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
-         !word Reenter               ; IRQ vector ($FFFE-F)
+         !word Ignore                ; IRQ vector ($FFFE-F)
 }
 LastMover
 !if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f0) {

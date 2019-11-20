@@ -5,7 +5,6 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
-tmp=$fd
 copymask=$ff
 
          ;init RNG

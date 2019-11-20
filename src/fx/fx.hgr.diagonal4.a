@@ -47,7 +47,7 @@ counter = $ff
          dec   col
          dec   counter
          bne   @colloop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
 copymasks
          !byte %10000000

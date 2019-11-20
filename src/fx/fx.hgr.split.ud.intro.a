@@ -119,7 +119,7 @@ row2 = $FF
          cmp   #$FE
          beq   @exit
          jmp   @outerloop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"

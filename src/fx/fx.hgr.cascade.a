@@ -74,6 +74,8 @@ maxline
          lda   $c000
          bpl   ---
 
+done     jmp   UnwaitForVBL
+
 vposn    txa
          pha
          and   #$c0
@@ -96,7 +98,6 @@ vposn    txa
          and   #$1f
          ora   $e6
          sta   $27
-
-done     rts
+         rts
 
          !source "src/fx/hw.vbl.a"

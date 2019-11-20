@@ -5,7 +5,6 @@
 !to "build/FX/SOFT.UD",plain
 *=$6000
 
-tmp = $fb
 maskindex = $fc
 row = $fd
 
@@ -81,7 +80,7 @@ row = $fd
          cmp   #24
          bcc   @rowloop
 
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
 masks
          !byte %10000000

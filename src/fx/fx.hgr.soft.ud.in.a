@@ -5,7 +5,6 @@
 !to "build/FX/SOFT.UD.IN",plain
 *=$6000
 
-tmp = $fb
 maskindex = $fc
 row = $fd
 
@@ -48,7 +47,7 @@ row = $fd
          cmp   #12
          bcc   @rowloop
 
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
 do
          asl

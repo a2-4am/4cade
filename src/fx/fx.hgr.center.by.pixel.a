@@ -8,10 +8,9 @@
 copymask1 = $f2
 copymask2 = $f3
 skipcounter = $f7
-counter = $f8
 top = $f9
 bottom = $fa
-tmp = $fb
+counter = $fb
 maskindex = $fc
 row = $fd
 col1 = $fe
@@ -102,7 +101,7 @@ SkipTopAndBottom
          inc   col1
          dec   col2
          +LBNE ColLoop
-Exit     rts
+Exit     jmp   UnwaitForVBL
 
 copymasks1
          !byte %11111111

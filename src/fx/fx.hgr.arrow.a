@@ -64,7 +64,7 @@ RowLoop
          dec   col
          dec   counter
          +LBNE ColLoop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
 copymasks1
          !byte %11111111

@@ -5,7 +5,6 @@
 !to "build/FX/R.BY.2",plain
 *=$6000
 
-tmp = $fc
 maskindex = $fd
 row = $fe
 col = $ff
@@ -65,7 +64,7 @@ NextRow
          cmp   #40
          +LBNE ColLoop
          beq   Phase2
-Exit     rts
+Exit     jmp   UnwaitForVBL
 
 Phase2
          lda   #0
@@ -98,7 +97,7 @@ RowLoop2
          lda   col
          cmp   #40
          +LBNE ColLoop2
-Exit2    rts
+Exit2    jmp   UnwaitForVBL
 
 copymask_even
          !byte %11001100

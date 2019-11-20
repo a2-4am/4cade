@@ -75,7 +75,7 @@ NextCol
          bmi   Exit
          dec   maskindex
          +LBPL MaskLoop
-Exit     rts
+Exit     jmp   UnwaitForVBL
 
 even_maskslo
          !byte <copymask_even6

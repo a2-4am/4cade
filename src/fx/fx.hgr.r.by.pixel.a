@@ -5,7 +5,6 @@
 !to "build/FX/R.BY.PIXEL",plain
 *=$6000
 
-tmp = $fc
 maskindex = $fd
 row = $fe
 col = $ff
@@ -56,7 +55,7 @@ col = $ff
          lda   col
          cmp   #40
          bne   @colloop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 copymasks
          !byte $FF,$BF,$9F,$8F,$87,$83,$81
 

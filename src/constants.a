@@ -117,4 +117,5 @@ EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MachineStatus
 SUPPORTS_SHR   = %00110000
-CHEATS_ENABLED = %00001000
+IS_IIC         = %00001000
+CHEATS_ENABLED = %00000100
