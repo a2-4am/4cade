@@ -9,14 +9,14 @@
 ; D000..E611 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; ECC8..FFF9 - main program code
+; ECC6..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D5F7 - ProRWTS code
-; D5F8..DB52 - HGR font code & ProRWTS glue code
-; DB53..DB6E - backup of stack (during gameplay and self-running demos)
+; D400..D671 - ProRWTS code
+; D672..DB6D - HGR font code & ProRWTS glue code
+; DB6E..DB7D - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB6..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -116,6 +116,5 @@ DisableAccelerator = $DBB6
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MachineStatus
-SUPPORTS_SHR   = %00110000
-IS_IIC         = %00001000
-CHEATS_ENABLED = %00000100
+SUPPORTS_SHR   = %00100000
+CHEATS_ENABLED = %00010000

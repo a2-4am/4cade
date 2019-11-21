@@ -16,12 +16,10 @@ WaitForVBL
          pha
          +READ_ROM_NO_WRITE
          lda   $FBB3
-         +READ_RAM1_WRITE_RAM1
          cmp   #$06
          bne   @nop
-         lda   MachineStatus
-         and   #IS_IIC
-         bne   @iic
+         lda   $FBC0
+         beq   @iic
          +LDADDR WaitForVBL_iie
          bne   +
 @iic
@@ -38,6 +36,7 @@ WaitForVBL
          lda   #$4C       ; JMP opcode
          sta   WaitForVBL
 
+         +READ_RAM1_WRITE_RAM1
          pla
          tay
          pla
@@ -71,5 +70,4 @@ UnwaitForVBL
          sta   $C07F      ; enable access to VBL register
          sta   $C05A      ; enable VBL polling
          sta   $C07E      ; disable access to VBL register
-         cli
          rts
