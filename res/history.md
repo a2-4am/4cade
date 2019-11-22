@@ -5,6 +5,7 @@
  - Added Flight Simulator II
  - Added Guardian
  - Added Short Circuit
+ - Added Skyfox
  - Removed Flight Simulator I
  - Combined Tetris 48K and Tetris 128K; just launch Tetris and it'll figure it out
 

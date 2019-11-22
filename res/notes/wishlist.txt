@@ -40,7 +40,6 @@ Roundabout
 Shanghai
 Shifty Sam
 Shuttle Intercept
-Skyfox
 Soko-Ban [DHGR] [priority]
 Spindizzy
 Station 5
@@ -78,6 +77,7 @@ Jawbreaker ][
 Mating Zone
 Randamn
 Saracen
+Super Zaxxon
 Test Drive [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
@@ -113,9 +113,6 @@ Zargs
 Fly Wars
 Jellyfish
 Minotaur
-
-//TODO(unacquired)
-Super Zaxxon
 
 //TODO(unreleased)
 Crystal Castles
