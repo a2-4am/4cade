@@ -30,29 +30,26 @@
 +
          lda   #0
          sta   zpMachineStatus
-         lda   ROM_MACHINEID
-         cmp   #$06
-         bne   NotGS
-         sec
-         jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
-         bcs   NotGS
-         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
-+        sec
-         +HIDE_NEXT_BYTE
-NotGS    clc
-         ror   zpMachineStatus
          sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
-         ror   zpMachineStatus
          sta   CLRC3ROM
-         jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
+         ror   zpMachineStatus
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   @NotGS
+         sec
+         jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
+         bcs   @NotGS
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
+         lda   #$80
+         sta   zpMachineStatus
+@NotGS   jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
          ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
-         ror   zpMachineStatus       ; now bit 4 = 1 if IIgs
-                                     ;     bit 5 = 1 if VidHD
+         ror   zpMachineStatus       ; now bit 5 = 1 if VidHD or IIgs
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
-                                     ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
+                                     ; and all other bits are 0 (we'll set bit 4 after copying it to LC RAM)
 
          lda   ROM_MACHINEID
          cmp   #$06
@@ -247,9 +244,6 @@ PrintAsDecimal
 OneTimeSetup
          lda   zpMachineStatus
          sta   MachineStatus         ; save machine status in LC RAM
-         jsr   SaveOrRestoreScreenHoles ; save initial copy of screen hole content
-         lda   #$91
-         sta   holepatch             ; enable restoring of copy from now on
          ldy   #$0b
 CopyDevs
          lda   $BF13,y

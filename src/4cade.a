@@ -45,7 +45,6 @@ Reenter
          jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
                                      ; which restores default speed on Ctrl-Reset)
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
-         jsr   SaveOrRestoreScreenHoles ; restore original screen hole contents
          ldx   #5
 -        lda   ResetVector,x         ; copy reentry wrapper to bottom of stack
          sta   $100,x                ; (used as reset vector because ][+ always
@@ -80,6 +79,8 @@ SwitchToBank1
 ResetVector                          ; 6 bytes, copied to $100
          +READ_RAM1_NO_WRITE
          jmp   Reenter
+
+Ignore   rti                         ; discard IRQs, particular on the IIc
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"         ; \__ execution falls through
@@ -135,16 +136,16 @@ SwitchToBank2
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
 ;      | | | | | +----- bit 2 reserved
-;      | | | | +------- bit 3 = 1 if cheats are enabled
-;      | | | +--------- bit 4 = 1 if IIgs
-;      | | +----------- bit 5 = 1 if VidHD
+;      | | | | +------- bit 3 reserved
+;      | | | +--------- bit 4 = 1 if cheats are enabled
+;      | | +----------- bit 5 = 1 if VidHD or IIgs
 ;      | +------------- bit 6 = 1 if 128K
 ;      +--------------- bit 7 = 1 if joystick
 ; Use the bit masks defined in constants.a
          !byte $FD                   ; MachineStatus ($FFF9)
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
-         !word Reenter               ; IRQ vector ($FFFE-F)
+         !word Ignore                ; IRQ vector ($FFFE-F)
 }
 LastMover
 !if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f0) {
@@ -196,7 +197,7 @@ EvenLasterMover
   !ifdef PASS2 {
   } else { ;PASS2
     !set PASS2=1
-    !warn "ProRWTS ends at ", hddcodeend - 1
+    !warn "ProRWTS ends at ", hdddataend - 1
     !warn "STACK at ", STACKBASE
     !warn "LCRAM2 ends at ", LCRAM2_END - 1
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)

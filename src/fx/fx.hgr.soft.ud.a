@@ -5,9 +5,10 @@
 !to "build/FX/SOFT.UD",plain
 *=$6000
 
-tmp = $fb
 maskindex = $fc
 row = $fd
+
+         !source "src/fx/macros.a"
 
          lda   #$FA
          sta   row
@@ -40,32 +41,22 @@ row = $fd
          inc   @basemaskaddr+1
 +
          ldx   #7
+         clc
 @blockloop
 @basemaskaddr=*+1
          lda   $FDFD,x               ; SMC
          sta   @copymask
-         eor   #%11111111
-         sta   @sourcemask
-
          ldy   #39
 @colloop
          lda   ($26),y
-@sourcemask=*+1
-         and   #0                    ; SMC
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
 @copymask=*+1
          and   #0                    ; SMC
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
          dey
          bpl   @colloop
-
-         lda   $27
-         adc   #4
-         sta   $27
-         eor   #$60
-         sta   $3d
+         +HGR_INC_WITHIN_BLOCK
          dex
          bpl   @blockloop
 
@@ -89,7 +80,7 @@ row = $fd
          cmp   #24
          bcc   @rowloop
 
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
 masks
          !byte %10000000

@@ -6,9 +6,10 @@
 ;
 
          !source "src/fx/macros.a"
+         !source "src/constants.a"
 
 WaitForVBL
-         bit   $FDFD
+         bit   $FDFD      ; SMC
 
          pha
          tya
@@ -22,6 +23,8 @@ WaitForVBL
          +LDADDR WaitForVBL_iie
          bne   +
 @iic
+         lda   #$EA
+         sta   UnwaitForVBL
          +LDADDR WaitForVBL_iic
          bne   +
 @nop
@@ -50,5 +53,21 @@ WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
          rts
 
 WaitForVBL_iic            ; IIc is special
-         ; TODO
+         sei
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05B      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
+-        bit   $C019
+         bpl   -
+         lda   $C070      ; $c019 bit 7 is sticky, reset it
+         rts
+
+UnwaitForVBL
+         rts              ; SMC on IIc
+-        bit   $C019
+         bpl   -
+         lda   $C070      ; $c019 bit 7 is sticky, reset it
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05A      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
          rts

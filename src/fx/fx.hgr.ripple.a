@@ -9,8 +9,6 @@
 
          +FX_PRECOMPUTED_1BIT Coordinates
 
-         rts
-
 Coordinates
          !source "src/fx/fx.hgr.ripple.data.a"
          !byte $80

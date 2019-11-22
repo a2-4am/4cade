@@ -22,11 +22,36 @@
          rol
          asl   .hgrlo,x
          rol
-         clc
-         adc   #$20
+         ora   #$20
          sta   .hgr1hi,x
          inx
          cpx   #$C0
+         bne   -
+}
+
+; .hgrlomirror, .hgr1himirror will each be filled with $C0 bytes
+!macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror {
+         ldx   #$C0
+         ldy   #0
+-        tya
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlomirror-1,x
+         tya
+         and   #7
+         rol
+         asl   .hgrlomirror-1,x
+         rol
+         ora   #$20
+         sta   .hgr1himirror-1,x
+         iny
+         dex
          bne   -
 }
 
@@ -78,18 +103,19 @@
          sta   $3d
 }
 
-!macro SWITCH_TO_MASKS .source, .copy {
-         sty   $00
-         +LDADDR .source
-         jsr   SetSourceMask
-         +LDADDR .copy
-         jsr   SetCopyMask
-         ldy   $00
+!macro COPY_BIT .src1, .dest1, .copymasks {
+         lda   (.src1),y
+         eor   (.dest1),y            ; merge source and destination bits
+         and   .copymasks,x          ; isolate the bits to replace, zero the rest
+         eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (.dest1),y            ; write the result
 }
 
-!macro INIT_MASKS .source, .copy {
-         +SWITCH_TO_MASKS .source, .copy
-         jsr   BuildSourceMaskFromCopyMask
+!macro SWITCH_TO_MASKS .copy {
+         lda   #<.copy
+         sta   CopyMaskAddr
+         lda   #>.copy
+         sta   CopyMaskAddr+1
 }
 
 ; must set N flag based on Y immediately before using this macro

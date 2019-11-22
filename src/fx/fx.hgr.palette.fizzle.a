@@ -5,23 +5,20 @@
 !to "build/FX/PALETTE.FIZZLE",plain
 *=$6000
 
-sourcemask_even = $f0
-copymask_even = $f1
-sourcemask_odd = $f2
-copymask_odd = $f3
+copymask_even = $f0
+copymask_odd = $f1
+counter = $f2
 
          !source "src/fx/macros.a"
 
          ;init masks
 
-         lda   #%00101010
-         sta   sourcemask_even
          lda   #%11010101
          sta   copymask_even
-         lda   #%01010101
-         sta   sourcemask_odd
          lda   #%10101010
          sta   copymask_odd
+         lda   #2
+         sta   counter
 
 @outerloop
          ;init RNG
@@ -71,20 +68,16 @@ copymask_odd = $f3
          ror
          bcs   @odd
          lda   ($26),y
-         and   sourcemask_even
-         sta   $00
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask_even
-         ora   $00
+         eor   ($26),y
          sta   ($26),y
          jmp   @next
 @odd
          lda   ($26),y
-         and   sourcemask_odd
-         sta   $00
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask_odd
-         ora   $00
+         eor   ($26),y
          sta   ($26),y
 @next
 
@@ -99,13 +92,9 @@ copymask_odd = $f3
          cmp   #1
          bne   @loop
 
-         lda   sourcemask_even
-         beq   @exit
-         lda   #0
-         sta   sourcemask_even
-         sta   sourcemask_odd
          lda   #$FF
          sta   copymask_even
          sta   copymask_odd
+         dec   counter
          +LBNE @outerloop
 @exit    rts

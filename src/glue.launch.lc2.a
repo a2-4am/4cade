@@ -8,7 +8,6 @@
 ; which handle bank switching for you.
 
 LaunchInternal
-         jsr   SaveOrRestoreScreenHoles ; save screen hole contents
          ldy   #$F1
 -        lda   $100,y
          sta   STACKBASE - $F0,y               ; back up stack

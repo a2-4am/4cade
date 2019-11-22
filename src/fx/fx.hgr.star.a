@@ -1,16 +1,14 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2019 by 4am
 ;
 !cpu 6502
 !to "build/FX/STAR",plain
 *=$6000
 
-         !source "src/fx/fx.hgr.precomputed.a"
+         !source "src/fx/fx.hgr.precomputed.2bit.a"
 
-         +FX_PRECOMPUTED HGRHalfBlockCopy, Coordinates, $10
-
-         rts
+         +FX_PRECOMPUTED_2BIT Coordinates
 
 Coordinates
          !source "src/fx/fx.hgr.star.data.a"
-         !byte $80
+         !byte $00

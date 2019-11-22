@@ -5,7 +5,6 @@
 !to "build/FX/MEETINTHEMIDDLE",plain
 *=$6000
 
-tmp = $fb
 maskindex = $fc
 row = $fd
 col1 = $fe
@@ -23,12 +22,8 @@ col2 = $ff
          ldx   maskindex
          lda   copymasks1,x
          sta   @copymask1
-         eor   #%11111111
-         sta   @sourcemask1
          lda   copymasks2,x
          sta   @copymask2
-         eor   #%11111111
-         sta   @sourcemask2
 
          lda   #23
          sta   row
@@ -43,24 +38,18 @@ col2 = $ff
 @blockloop
          ldy   col1
          lda   ($26),y
-@sourcemask1=*+1
-         and   #0                    ; SMC
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
 @copymask1=*+1
          and   #0                    ; SMC
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
 
          ldy   col2
          lda   ($26),y
-@sourcemask2=*+1
-         and   #0                    ; SMC
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
 @copymask2=*+1
          and   #0                    ; SMC
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
 
          lda   $27
@@ -84,7 +73,7 @@ col2 = $ff
          lda   col1
          cmp   #20
          bne   @colloop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 copymasks1
          !byte %11111111
          !byte %10111111

@@ -39,15 +39,14 @@ dsk: md asm
 	bin/buildfileinfo.sh build/ARTWORK.SHR "C1" "2000" >>build/log
 	bin/buildfileinfo.sh build/ATTRACT "04" "8000" >>build/log
 	bin/buildfileinfo.sh build/SS "04" "4000" >>build/log
+	rsync -aP res/fx/* build/FX >>build/log
+	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 	for f in build/TITLE.* build/ACTION.* build/ARTWORK.* build/ATTRACT build/SS build/DEMO build/TITLE.ANIMATED; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
-	rsync -aP res/fx/* build/FX >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
-	rm -f build/X/**/.DS_Store
-	rm -f build/X/**/PRODOS*
-	rm -f build/X/**/LOADER.SYSTEM*
+	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log

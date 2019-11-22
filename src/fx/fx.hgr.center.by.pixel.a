@@ -5,15 +5,12 @@
 !to "build/FX/CENTER.BY.PIXEL",plain
 *=$6000
 
-sourcemask1 = $f0
-sourcemask2 = $f1
 copymask1 = $f2
 copymask2 = $f3
 skipcounter = $f7
-counter = $f8
 top = $f9
 bottom = $fa
-tmp = $fb
+counter = $fb
 maskindex = $fc
 row = $fd
 col1 = $fe
@@ -41,12 +38,8 @@ MaskLoop
          ldx   maskindex
          lda   copymasks1,x
          sta   copymask1
-         eor   #%11111111
-         sta   sourcemask1
          lda   copymasks2,x
          sta   copymask2
-         eor   #%11111111
-         sta   sourcemask2
 
          lda   #23
          sta   row
@@ -57,20 +50,16 @@ RowLoop
 BlockLoop
          ldy   col1
          lda   ($26),y
-         and   sourcemask1
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask1
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
 
          ldy   col2
          lda   ($26),y
-         and   sourcemask2
-         sta   tmp
-         lda   ($3c),y
+         eor   ($3c),y
          and   copymask2
-         ora   tmp
+         eor   ($26),y
          sta   ($26),y
 
          clc
@@ -112,7 +101,7 @@ SkipTopAndBottom
          inc   col1
          dec   col2
          +LBNE ColLoop
-Exit     rts
+Exit     jmp   UnwaitForVBL
 
 copymasks1
          !byte %11111111

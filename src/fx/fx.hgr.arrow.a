@@ -12,9 +12,6 @@ counter = $ff
 
          !source "src/fx/macros.a"
 
-         +INIT_MASKS sourcemasks1, copymasks1
-         +INIT_MASKS sourcemasks4, copymasks4
-
          lda   #(40+12)
          sta   counter
 
@@ -33,12 +30,12 @@ RowLoop
          bcs   @skip1
 
          ; do top half of arrow
-         +SWITCH_TO_MASKS sourcemasks1, copymasks1
+         +SWITCH_TO_MASKS copymasks1
          lda   row
          jsr   HGRBlockCopyWithMask
 
          ; do bottom half of arrow (opposing row, same col)
-         +SWITCH_TO_MASKS sourcemasks4, copymasks4
+         +SWITCH_TO_MASKS copymasks4
          lda   #23
          sec
          sbc   row
@@ -67,12 +64,8 @@ RowLoop
          dec   col
          dec   counter
          +LBNE ColLoop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 
-sourcemasks1
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks4
-         !byte 0,0,0,0,0,0,0,0       ; SMC
 copymasks1
          !byte %11111111
          !byte %11111110

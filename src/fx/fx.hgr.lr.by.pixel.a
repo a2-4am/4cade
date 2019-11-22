@@ -103,7 +103,7 @@ col = $ff
          lda   col
          cmp   #40
          bne   @colloop
-@exit    rts
+@exit    jmp   UnwaitForVBL
 clearmasks
          !byte $80,$81,$83,$87,$8F,$9F,$BF
 copymasks

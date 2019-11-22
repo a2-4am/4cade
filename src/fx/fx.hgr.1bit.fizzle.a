@@ -5,8 +5,6 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
-tmp=$fd
-sourcemask=$fe
 copymask=$ff
 
          ;init RNG
@@ -60,20 +58,16 @@ copymask=$ff
          sta   $27
          eor   #$60
          sta   $3d
-         lda   copymask
-         eor   #%11111111
-         sta   sourcemask
 
          ;copy pixel from other page to this page
 
          ldy   #0
+
          lda   ($26),y
-         and   sourcemask
-         sta   tmp
-         lda   ($3c),y
-         and   copymask
-         ora   tmp
-         sta   ($26),y
+         eor   ($3c),y  ; merge source and destination bits
+         and   copymask ; isolate the bits to replace, zero the rest
+         eor   ($26),y ; unmerge source and destination bits, leaves "to keep" destination bits intact
+         sta   ($26),y ; write the result
 
          ;wait while checking for keypress
 

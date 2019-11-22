@@ -1,0 +1,156 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+mirror_src1    = $E8      ; word
+mirror_dest1   = $EA      ; word
+mirror_src2    = $EC      ; word
+mirror_dest2   = $EE      ; word
+src1           = $F0      ; word
+dest1          = $F2      ; word
+src2           = $F4      ; word
+dest2          = $F6      ; word
+reverse_input  = $FC      ; word
+input          = $FE      ; word
+
+copymasks      = $0200    ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00, $20, $40, $60, $80
+mirror_copymasks = $0201
+hgrlo          = $0300    ; $C0 bytes
+hgrlomirror    = $BD40    ; $C0 bytes
+mirror_cols    = $BE00    ; $28 bytes
+hgr1hi         = $BE40    ; $C0 bytes
+hgr1himirror   = $BF40    ; $C0 bytes
+
+         !source "src/fx/macros.a"
+
+!macro BUILD_MIRROR_COLS .mirror_cols {
+         ; build lookup table to get $27-y for y in $00..$27
+         ldx   #$27
+         ldy   #$00
+-        tya
+         sta   .mirror_cols,x
+         iny
+         dex
+         bpl   -
+}
+
+!macro BUILD_SPARSE_BITMASKS_2BIT .copymasks, .mirror_copymasks {
+         ; build sparse lookup tables for bitmasks
+         lda   #%10000011
+         sta   .copymasks
+         sta   .mirror_copymasks+$E0
+
+         lda   #%10001100
+         sta   .copymasks+$20
+         sta   .mirror_copymasks+$C0
+
+         lda   #%10110000
+         sta   .copymasks+$40
+         sta   .mirror_copymasks+$A0
+
+         lda   #%11000000
+         sta   .copymasks+$60
+         sta   .mirror_copymasks+$80
+
+         lda   #%10000001
+         sta   .copymasks+$80
+         sta   .mirror_copymasks+$60
+
+         lda   #%10000110
+         sta   .copymasks+$A0
+         sta   .mirror_copymasks+$40
+
+         lda   #%10011000
+         sta   .copymasks+$C0
+         sta   .mirror_copymasks+$20
+
+         lda   #%11100000
+         sta   .copymasks+$E0
+         sta   .mirror_copymasks
+}
+
+!macro ROW_X_TO_2BIT_BASE_ADDRESSES {
+         ; X = $01..$C0, mapping to row 0..191
+         lda   hgrlo-1,x
+         sta   dest1
+         sta   src1
+         lda   hgr1hi-1,x
+         sta   dest1+1
+         eor   #$60
+         sta   src1+1
+         lda   hgrlo,x
+         sta   dest2
+         sta   src2
+         lda   hgr1hi,x
+         sta   dest2+1
+         eor   #$60
+         sta   src2+1
+}
+
+!macro HIGH_3_LOW_5 .input {
+         and   #%11100000            ; second value: high 3 bits = index into tables to find bitmasks
+         tax
+         eor   (.input),y            ; second value: low 5 bits = byte offset within the row (implicitly "and #%00011111")
+         tay
+}
+
+!macro INC_INPUT_AND_LOOP .loop {
+         inc   input
+         beq   +
+         jmp   .loop
++        bit   $c000
+         bmi   +
+         inc   input+1
+         jmp   .loop
++        rts
+}
+
+!macro DEC_INPUT_AND_LOOP .loop {
+         lda   input
+         beq   +
+         dec   input
+         dec   input
+         jmp   .loop
++        dec   input
+         dec   input
+         dec   input+1
+         bit   $c000
+         bmi   +
+         jmp   .loop
++        rts
+}
+
+!macro FX_PRECOMPUTED_2BIT .coords {
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         +BUILD_MIRROR_COLS mirror_cols
+         +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
+         +LDADDR .coords
+         +STAY input
+         jmp   InputLoop
+Exit2Bit rts
+InputLoop
+         ldy   #0
+         lda   (input),y             ; first value: HGR row + 1
+         beq   Exit2Bit              ; if 0 then we're done
+         tax
+         +ROW_X_TO_2BIT_BASE_ADDRESSES
+
+         inc   input
+         lda   (input),y
+         +HIGH_3_LOW_5 input
+
+         ; main 2x2 block in left half
+         +COPY_BIT src1, dest1, copymasks
+         +COPY_BIT src2, dest2, copymasks
+
+         ; corresponding 2x2 block in right half (same row, opposite column)
+         lda   mirror_cols,y
+         tay
+         +COPY_BIT src1, dest1, mirror_copymasks
+         +COPY_BIT src2, dest2, mirror_copymasks
+
+         +INC_INPUT_AND_LOOP InputLoop
+         rts
+!if * and 1 {
+         !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
+}
+}

@@ -13,7 +13,7 @@ for (b = new Enumerator(a.GetFolder(c).files); !b.atEnd(); b.moveNext())
         e = WScript.Arguments(1) + "\\" + b.item().Name
         if (!a.fileexists(e) || (a.getfile(e).datelastmodified < b.item().datelastmodified))
         {
-            new ActiveXObject("wscript.shell").run('cmd /c copy "' + c + b.item().name + '" ' + WScript.Arguments(1), 0, 1)
+            new ActiveXObject("wscript.shell").run('cmd /c copy "' + c + b.item().name + '" ' + WScript.Arguments(1)+"\\"+b.item().name.toUpperCase(), 0, 1)
         }
     }
 }

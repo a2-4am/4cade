@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/FLOWER.RAD",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.3bit.a"
+
+         +FX_PRECOMPUTED_3BIT Coordinates
+
+Coordinates
+         !source "src/fx/fx.hgr.flower.radial.data.a"
+         !byte $80
