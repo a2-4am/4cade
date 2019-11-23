@@ -79,3 +79,11 @@ def ripple(unique_vals):
         ripple_vals.append(unique_vals[k])
         ripple_vals.append(unique_vals[l])
     return ripple_vals
+
+def halfripple(unique_vals):
+    z = len(unique_vals)
+    ripple_vals = []
+    for i, j in zip(range(z//2), range(z//2,z)):
+        ripple_vals.append(unique_vals[i])
+        ripple_vals.append(unique_vals[j])
+    return ripple_vals

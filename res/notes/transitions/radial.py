@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import util
 
 radius_x = 280//2
 radius_y = 192//2
@@ -41,4 +42,16 @@ for x, y in unique_coords:
 
 with open("../../../src/fx/fx.hgr.radial.data.a", "w") as f:
     for aval, bval in unique_vals:
+        f.write("         !byte %s,%s\n" % (aval, bval))
+
+with open("../../../src/fx/fx.hgr.radial2.data.a", "w") as f:
+    for aval, bval in util.halfripple(unique_vals):
+        f.write("         !byte %s,%s\n" % (aval, bval))
+
+with open("../../../src/fx/fx.hgr.radial4.data.a", "w") as f:
+    for aval, bval in util.ripple(unique_vals):
+        f.write("         !byte %s,%s\n" % (aval, bval))
+
+with open("../../../src/fx/fx.hgr.radial5.data.a", "w") as f:
+    for aval, bval in util.ripple(util.halfripple(unique_vals)):
         f.write("         !byte %s,%s\n" % (aval, bval))
