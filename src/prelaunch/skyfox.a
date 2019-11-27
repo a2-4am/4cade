@@ -1,0 +1,11 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SKYFOX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+    inc $80 ; requires a non-zero value for the RNG
+    jmp $4621
