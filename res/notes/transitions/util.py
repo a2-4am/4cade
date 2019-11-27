@@ -1,3 +1,6 @@
+even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
+odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
+
 def unique(coords):
     d = {}
     unique_coords = []
@@ -18,8 +21,6 @@ def vals_1bit(unique_coords):
     return unique_vals
 
 def vals_2bit(unique_coords):
-    even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
-    odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
     unique_vals = []
     for x, y in unique_coords:
         y = 191 - y
