@@ -64,9 +64,7 @@ BlankGR
          bne   @loop
          bit   PAGE1
          bit   $C056                 ; set GR mode
-         bit   $C052
-         bit   $C050
-         rts
+         jmp   GRMode
 
 ;------------------------------------------------------------------------------
 ; .LoadGRTransition [private]

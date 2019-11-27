@@ -141,7 +141,7 @@ DrawUI
          tax
          lda   #$09                  ; rounded bottom-right character
          sta   UILine1,x
-         ldy   #1                    ; fill the proper width with spaces
+         iny                         ; fill the proper width with spaces
          lda   #$20                  ; space character
 -        inx
          sta   UILine1,x
@@ -221,14 +221,15 @@ DrawUI
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 2
 
-@uidone  jmp   ShowOtherPage
+@uidone  clc
+         jmp   ShowOtherPage
 
 CheckCheats
          ldy   #kCheatsEnabled
          ldx   gGameToLaunch
-         cpx   #$FF
+         inx
          beq   +
-         ldy   gCheatsAvailable,x
+         ldy   gCheatsAvailable-1,x
 +
          lda   kCheatDescriptionLo,y
          sta   SAVE

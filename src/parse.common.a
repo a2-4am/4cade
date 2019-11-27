@@ -103,19 +103,17 @@ ParseKeyValueList
 SetKeyPtr
          jsr   okvs_init             ; reset key/value store
 
-         +LDPARAM 3
-         +STAY $FE
+         +LDPARAMPTR 3, $FE
 
-         ldy   #1
+         ldy   #0
          lda   ($FE),y
          tax
-         dey
-         lda   ($FE),y
          bne   +
-         dex
-         stx   $FF
-+        tax
-         dex
+         iny
+         lda   ($FE),y
+         sta   $FF
+         dec   $FF
++        dex
          stx   $FE
          rts
 

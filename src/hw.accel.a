@@ -251,35 +251,22 @@ iicplus !pseudopc DisableAccelerator {
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
-         ldx   $0
-!cpu 65c02
-         phx
-!cpu 6502
+         lda   $0
+         pha
+
+         ldy   #(@endpokery - @jiggery) - 1
+@copyiicp
+         lda   @jiggery,y
+         sta   $106, y
+         dey
+         bpl   @copyiicp
 
          php
          sei             ; timing sensitive
-         jsr   @jiggerypokery
+         jsr   $106
          plp             ; restore interrupt state
          pla
          sta   $0
-         rts
-
-@jiggerypokery
-         tsx
-         ldy   #(@endpokery - @jiggery)
-@copyiicp
-         lda   @jiggery-1,y
-         pha
-         dey
-         bne   @copyiicp
-         txa
-         tsx
-         iny
-!cpu 65c02
-         phy
-         phx
-!cpu 6502
-         tax
          rts
 
 @jiggery
@@ -296,7 +283,6 @@ iicplus !pseudopc DisableAccelerator {
          lda   #CGGA_LOCK    ; should lock after a change
          pha
          jsr   cgga    ; reads parm from stack, must JSR
-         txs
          +READ_RAM2_WRITE_RAM2
          rts
 @endpokery
