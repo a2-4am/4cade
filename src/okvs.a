@@ -144,8 +144,7 @@ okvs_append
                                      ; SAVE -> new record
          jsr   incptr2
                                      ; PTR -> space for new key
-         +LDPARAM 3
-         +STAY SRC                   ; SRC -> new key to copy
+         +LDPARAMPTR 3, SRC          ; SRC -> new key to copy
          ldy   #0
          lda   (SRC),y
          tay
@@ -163,8 +162,7 @@ okvs_append
          bcc   +
          inc   PTR+1
 +                                    ; PTR -> space for new value
-         +LDPARAM 5
-         +STAY SRC                   ; SRC -> new value to copy
+         +LDPARAMPTR 5, SRC          ; SRC -> new value to copy
          ldy   #7
          lda   (PARAM),y             ; get max length of value
          tax
@@ -233,8 +231,7 @@ okvs_get
          jsr   incptr3
                                      ; PTR -> first record
          ldx   #0
-         +LDPARAM 3
-         +STAY SRC                   ; SRC -> key we want to find
+         +LDPARAMPTR 3, SRC          ; SRC -> key we want to find
          ldy   #0
          lda   (SRC),y
          tay

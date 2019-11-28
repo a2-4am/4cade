@@ -125,7 +125,7 @@ IsSearchKey
          cmp   #$7B                  ; lowercase letters are good input
          bcc   @goodkey
 @badkey
-         ldx   #1
+         ldx   #kInputError          ; also #kSoftBell
          rts
 
 ;------------------------------------------------------------------------------

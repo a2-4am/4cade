@@ -71,8 +71,6 @@ InputKeyDispatch
 
 .noKeyMatch
          jsr   IsSearchKey
-         beq   .foundSearchKey
-         ldx   #kInputError
 !if kInputSearch > 0 {
          +HIDE_NEXT_2_BYTES
 .foundSearchKey
@@ -108,8 +106,8 @@ SearchMode
          jsr   ResyncPage
          lda   KBD
          jsr   IsSearchKey
-         beq   .SearchModeInputLoop
-         bit   CLEARKBD
+         lda   CLEARKBD - kInputError,X
+                                     ; clear strobe if key was bad
 
 .SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
@@ -181,9 +179,7 @@ OnInputChanged
          dex
          stx   gGameToLaunch         ; no game selected
          jsr   LoadTitleOffscreen
-         jsr   DrawUIWithoutDots
-         clc
-         rts
+         jmp   DrawUIWithoutDots
 
 FindMatchingTitle
          jsr   SwitchToBank2

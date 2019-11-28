@@ -52,8 +52,7 @@ LoadFile
          jsr   SetPath
          +LDPARAM 3
          jsr   AddToPath
-         +LDPARAM 5
-         +STAY ldrlo                 ; set load address
+         +LDPARAMPTR 5, ldrlo        ; set load address
          jsr   SwitchToBank2
          jsr   LoadFileInternal
          jmp   SwitchToBank1

@@ -39,6 +39,19 @@
          pla
 }
 
+; for functions that take parameters on the stack
+; load a 16-bit value from the parameters on the stack into A (low) and Y (high)
+; then store it as new source
+; (assumes PARAMS_ON_STACK was used first)
+!macro   LDPARAMPTR .offset,.dest {
+         ldy   #.offset
+         lda   (PARAM),y
+         sta   .dest
+         iny
+         lda   (PARAM),y
+         sta   .dest+1
+}
+
 ; load the address of .ptr into A (low) and Y (high)
 !macro   LDADDR .ptr {
          lda   #<.ptr

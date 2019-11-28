@@ -33,7 +33,7 @@ kBrowseLaunch   = 5
 kBrowseHelp     = 6
 kBrowseCredits  = 7
 kBrowseCheat    = 8
-kSoftBell       = 9
+kSoftBell       = 9 ; must match kInputError
 
          ldy   #kNumBrowseKeys
 -        dey
@@ -45,15 +45,9 @@ kSoftBell       = 9
 
 @noKeyMatch
          jsr   IsSearchKey
-         beq   +
-         ldx   #kSoftBell            ; beep on invalid input
-!if kBrowseSearch > 0 {
-         +HIDE_NEXT_2_BYTES
-+
+         bne   @BrowseDispatch
          ldx   #kBrowseSearch
-} else {
-+
-}
+
          ; execution falls through here
 @BrowseDispatch
          ldy   BrowseDispatchTableLo,x

@@ -10,11 +10,11 @@
 LaunchInternal
          ldy   #$F1
 -        lda   $100,y
-         sta   STACKBASE - $F0,y               ; back up stack
+         sta   STACKBASE - $EF,y               ; back up stack
          iny
          bne   -
          tsx                         ; back up stack pointer
-         stx   STACKBASE
+         stx   STACKPTR + 1
          sty   RestoreStackNextTime + 1
                                      ; tell |Reenter| to restore the stack and stack pointer
 

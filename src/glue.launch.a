@@ -128,7 +128,7 @@ PlayGame
          ; and then finds the subdirectory name and game name right after it
          ; and attaches it to the path by overwriting the count byte
 
-         sec
+         ;;sec ; carry set by AddToPath
          lda   gPathname
          sbc   #kGameDirectoryLen
          sta   gPathname+kGameDirectoryLen
