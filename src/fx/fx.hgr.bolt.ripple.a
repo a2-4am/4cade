@@ -1,0 +1,17 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+; https://thenounproject.com/ArtZ91/collection/pure-lines/?i=550425
+; Lightning Bolt by Arthur Shlain from the Noun Project
+; CC-BY
+!cpu 6502
+!to "build/FX/BOLT.RIPPLE",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.3bit.a"
+
+         +FX_PRECOMPUTED_3BIT Coordinates
+
+Coordinates
+         !source "src/fx/fx.hgr.bolt.ripple.data.a"
+         !byte $00
