@@ -31,7 +31,7 @@ unique_vals = util.vals_1bit(unique_coords)
 util.write("../../../src/fx/fx.hgr.radial.data.a",  unique_vals)
 util.write("../../../src/fx/fx.hgr.radial2.data.a", util.halfripple(unique_vals))
 util.write("../../../src/fx/fx.hgr.radial4.data.a", util.ripple(unique_vals))
-util.write("../../../src/fx/fx.hgr.radial5.data.a", util.halfripple(unique_vals))
+util.write("../../../src/fx/fx.hgr.radial5.data.a", util.ripple(util.halfripple(unique_vals)))
 
 mult_coords = util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(unique_coords))))))
 util.write("../../../src/fx/fx.hgr.pinwheels.data.a", util.vals_1bit(mult_coords))
