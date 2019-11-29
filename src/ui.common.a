@@ -145,3 +145,21 @@ IsUpDownOrRightArrow
          beq   @done
          cmp   #$8A                  ; down arrow
 @done    rts
+
+MatchPalette
+         lda   #$40
+         sta   @a+2
+         lsr
+         sta   @b+2
+         tax
+         ldy   #0
+@a       lda   $FD00,y
+         and   #$80
+@b       sta   $FD00,y
+         iny
+         bne   @a
+         inc   @a+2
+         inc   @b+2
+         dex
+         bne   @a
+         rts
