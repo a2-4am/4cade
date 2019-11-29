@@ -18,6 +18,12 @@ def radial_multiply(unique_coords):
     q4.reverse()
     return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
 
+def quadrant_multiply(unique_coords):
+    q2 = [(279-x, y) for (x, y) in unique_coords]
+    q3 = [(279-x, 190-y) for (x, y) in unique_coords]
+    q4 = [(x, 190-y) for (x, y) in unique_coords]
+    return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
+
 def vals_1bit(unique_coords):
     unique_vals = []
     for x, y in unique_coords:
