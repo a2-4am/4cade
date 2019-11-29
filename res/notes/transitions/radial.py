@@ -28,21 +28,10 @@ for i in range(30000, 0, -1):
 unique_coords = util.unique(coords)
 unique_vals = util.vals_1bit(unique_coords)
 
-with open("../../../src/fx/fx.hgr.radial.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-with open("../../../src/fx/fx.hgr.radial2.data.a", "w") as f:
-    for aval, bval in util.halfripple(unique_vals):
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-with open("../../../src/fx/fx.hgr.radial4.data.a", "w") as f:
-    for aval, bval in util.ripple(unique_vals):
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-with open("../../../src/fx/fx.hgr.radial5.data.a", "w") as f:
-    for aval, bval in util.ripple(util.halfripple(unique_vals)):
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.radial.data.a",  unique_vals)
+util.write("../../../src/fx/fx.hgr.radial2.data.a", util.halfripple(unique_vals))
+util.write("../../../src/fx/fx.hgr.radial4.data.a", util.ripple(unique_vals))
+util.write("../../../src/fx/fx.hgr.radial5.data.a", util.halfripple(unique_vals))
 
 mult_coords = util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(unique_coords))))))
 util.write("../../../src/fx/fx.hgr.pinwheels.data.a", util.vals_1bit(mult_coords))
