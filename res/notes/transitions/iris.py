@@ -39,3 +39,5 @@ mult_coords = util.ripple(util.quadrant_multiply(util.ripple(util.quadrant_multi
 util.write("../../../src/fx/fx.hgr.bubbles.data.a", util.vals_1bit(mult_coords))
 mult_coords.reverse()
 util.write("../../../src/fx/fx.hgr.bubbles.in.data.a", util.vals_1bit(mult_coords))
+mult_coords = util.halfripple(util.ripple(util.radial_multiply(util.radial_multiply(unique_coords))))
+util.write("../../../src/fx/fx.hgr.radbubbles.data.a", util.vals_1bit(mult_coords))
