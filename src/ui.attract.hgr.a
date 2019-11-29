@@ -18,8 +18,6 @@
 ;        graphics mode still displaying hi-res screen with last picture visible
 ;------------------------------------------------------------------------------
 HGRTitleSlideshow
-         lda   #$20
-         sta   HGRTitleCallbackMatchPalette
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
@@ -35,8 +33,6 @@ HGRTitleSlideshow
 ;        graphics mode still displaying hi-res screen with last picture visible
 ;------------------------------------------------------------------------------
 HGRActionSlideshow
-         lda   #$20
-         sta   HGRActionCallbackMatchPalette
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
@@ -127,10 +123,6 @@ HGRTitleCallback
 +        !word $FDFD                 ; SMC
          !word $4000
 
-HGRTitleCallbackMatchPalette
-         jsr   MatchPalette
-         lda   #$2C
-         sta   HGRTitleCallbackMatchPalette
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
@@ -170,17 +162,17 @@ HGRActionCallback
          lda   #22
          sta   VTAB
          lda   #0                    ; solid horizontal bar character
-         jsr   HGRActionResetLine
+         jsr   @resetline
          lda   (SAVE),y              ; (SAVE) -> game title, Y = 0, so A = title length
          clc
          adc   #$03
          sta   gPathname
          lda   #7                    ; top-right rounded corner character
-         jsr   HGRActionDrawLine
+         jsr   @drawline
 
          inc   VTAB
          lda   #" "
-         jsr   HGRActionResetLine
+         jsr   @resetline
          lda   (SAVE),y              ; A = title length
          tay
 -        lda   (SAVE),y
@@ -188,21 +180,17 @@ HGRActionCallback
          dey
          bne   -
          lda   #3                    ; solid vertical bar character
-         jsr   HGRActionDrawLine
+         jsr   @drawline
 
-HGRActionCallbackMatchPalette
-         jsr   MatchPalette
-         lda   #$2C
-         sta   HGRActionCallbackMatchPalette
          jmp   ExecuteTransitionAt6000AndWait
-HGRActionResetLine
+@resetline
          ldy   #40
 -        sta   gPathname,y
          dey
          bne   -
          sty   HTAB
          rts
-HGRActionDrawLine
+@drawline
          ldy   gPathname
          sta   gPathname,y
          +LDADDR gPathname
