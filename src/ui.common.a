@@ -68,8 +68,10 @@ Home
          +READ_ROM_NO_WRITE
          sta   CLR80VID              ; get out of DHGR mode
          sta   DHIRESOFF             ; get out of DHGR mode
-         jsr   ROM_TEXT              ; TEXT
+         jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
          jsr   ROM_HOME              ; HOME
+         LDA   PAGE1
+         LDA   $C051                 ; now show it
          +READ_RAM1_WRITE_RAM1
          rts
 @end
