@@ -195,4 +195,4 @@ HGRActionCallback
          sta   gPathname,y
          +LDADDR gPathname
          sec
-         ; /!\ execution falls through to glue.font/DrawString
+         ; /!\ execution falls through to ui.font/DrawString

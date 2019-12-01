@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from math import sqrt, sin, cos, acos, pi
+import util
 
 max_x = 280//2
 max_y = 192//2
@@ -22,26 +23,13 @@ for k_mul in range(500):
             continue
         coords.append((x,y))
 
-d = {}
-unique_coords = []
-for c in coords:
-    if not d.get(c):
-        unique_coords.append(c)
-        d[c] = 1
+unique_coords = util.unique(coords)
+unique_vals = util.vals_1bit(unique_coords)
 
-unique_vals = []
-for x, y in unique_coords:
-    aval = "$" + hex(y)[2:].rjust(2, "0").upper()
-    bval = "%" + \
-        bin(x%7)[2:].rjust(3, "0") + \
-        bin(x//7)[2:].rjust(5, "0")
-    unique_vals.append((aval, bval))
-
-with open("../../../src/fx/fx.hgr.slow.star.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.slow.star.data.a",  unique_vals)
 
 unique_vals.reverse()
-with open("../../../src/fx/fx.hgr.slow.star.in.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.slow.star.in.data.a", unique_vals)
+
+mult_coords = util.ripple(util.radial_multiply(unique_coords))
+util.write("../../../src/fx/fx.hgr.full.of.stars.data.a", util.vals_1bit(mult_coords))

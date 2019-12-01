@@ -24,32 +24,20 @@ for i in range(1000000):
 unique_coords = util.unique(coords)
 unique_vals = util.vals_1bit(unique_coords)
 
-with open("../../../src/fx/fx.hgr.iris.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
+util.write("../../../src/fx/fx.hgr.iris.data.a", unique_vals)
+util.write("../../../src/fx/fx.hgr.ripple.data.a", util.ripple(unique_vals))
 unique_vals.reverse()
-with open("../../../src/fx/fx.hgr.iris.in.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-unique_vals.reverse()
-ripple_vals = util.ripple(unique_vals)
-with open("../../../src/fx/fx.hgr.ripple.data.a", "w") as f:
-    for aval, bval in ripple_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.iris.in.data.a", unique_vals)
 
 corner4_coords = [(139-x,95-y) for (x,y) in unique_coords]
 corner4_vals = util.vals_1bit(corner4_coords)
-with open("../../../src/fx/fx.hgr.corner4.in.data.a", "w") as f:
-    for aval, bval in corner4_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.corner4.in.data.a", corner4_vals)
 corner4_vals.reverse()
-with open("../../../src/fx/fx.hgr.corner4.out.data.a", "w") as f:
-    for aval, bval in corner4_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-swirl_vals = util.ripple(util.ripple(corner4_vals))
-with open("../../../src/fx/fx.hgr.swirl.data.a", "w") as f:
-    for aval, bval in swirl_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+util.write("../../../src/fx/fx.hgr.corner4.out.data.a", corner4_vals)
+util.write("../../../src/fx/fx.hgr.swirl.data.a", util.ripple(util.ripple(corner4_vals)))
+mult_coords = util.ripple(util.quadrant_multiply(util.ripple(util.quadrant_multiply(util.ripple(util.quadrant_multiply(unique_coords))))))
+util.write("../../../src/fx/fx.hgr.bubbles.data.a", util.vals_1bit(mult_coords))
+mult_coords.reverse()
+util.write("../../../src/fx/fx.hgr.bubbles.in.data.a", util.vals_1bit(mult_coords))
+mult_coords = util.halfripple(util.ripple(util.radial_multiply(util.radial_multiply(unique_coords))))
+util.write("../../../src/fx/fx.hgr.radbubbles.data.a", util.vals_1bit(mult_coords))

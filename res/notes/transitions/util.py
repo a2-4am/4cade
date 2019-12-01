@@ -10,6 +10,20 @@ def unique(coords):
             d[c] = 1
     return unique_coords
 
+def radial_multiply(unique_coords):
+    q2 = [(279-x, y) for (x, y) in unique_coords]
+    q2.reverse()
+    q3 = [(279-x, 190-y) for (x, y) in unique_coords]
+    q4 = [(x, 190-y) for (x, y) in unique_coords]
+    q4.reverse()
+    return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
+
+def quadrant_multiply(unique_coords):
+    q2 = [(279-x, y) for (x, y) in unique_coords]
+    q3 = [(279-x, 190-y) for (x, y) in unique_coords]
+    q4 = [(x, 190-y) for (x, y) in unique_coords]
+    return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
+
 def vals_1bit(unique_coords):
     unique_vals = []
     for x, y in unique_coords:
@@ -88,3 +102,8 @@ def halfripple(unique_vals):
         ripple_vals.append(unique_vals[i])
         ripple_vals.append(unique_vals[j])
     return ripple_vals
+
+def write(filename, vals):
+    with open(filename, "w") as f:
+        for aval, bval in vals:
+            f.write("         !byte %s,%s\n" % (aval, bval))
