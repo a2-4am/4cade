@@ -20,6 +20,9 @@
 ;;; NORMFAST Disable/enable Apple II compatible accelerator
 ; (no copyright info given)
 ;
+; Release 7 2019-11-27 FASTChip control just like ZipChip.
+; Prevents unexpected acceleration by user.
+;
 ; Release 6 2017-10-05 Fix Mac IIe card check
 ;
 ; Release 5 2017-09-27 Add Macintosh IIe Card. Addon
@@ -210,10 +213,11 @@ build_setspeed
          rts
 
 patch_zc
-         lda   #$d0    ; BNE
-         sta   zc_iic
-         lda   #(FASTChip-zc_iic)-2
-         sta   zc_iic+1
+         lda   #$D0
+         sta   zc_iic1 + 2
+         sta   zc_iic2
+         lda   #(FASTChip - zc_iic2) - 2
+         sta   zc_iic2 + 1
          ; fall through
 
 build_addon
@@ -283,6 +287,7 @@ iicplus !pseudopc DisableAccelerator {
          lda   #CGGA_LOCK    ; should lock after a change
          pha
          jsr   cgga    ; reads parm from stack, must JSR
+         sta   $C05B   ; fix colouring
          +READ_RAM2_WRITE_RAM2
          rts
 @endpokery
@@ -326,14 +331,18 @@ addon
         lda     #0        ; enable accelerator entry point
 
         ; TransWarp I
-         sta   tw1_speed
+        sta   tw1_speed
 
         ; trademarked accelerator from Germany
 
-         tay
-         sta   uw_fast,y ; value does not matter
+        tay
 
-        ; Zip Chip
+zc_iic1
+         sta   uw_fast,y ; value does not matter, SMC
+                         ; no blind setting on the IIc
+                         ; it has unwanted side-effects
+
+         ; Zip Chip
 
          ldy   #FC_1MHZ
          eor   #1
@@ -343,8 +352,7 @@ addon
 +        lda   #ZC_UNLOCK
          php
          sei             ; timing sensitive
-
-zc_iic
+zc_iic2
          sta   zc_lock   ; SMC
                          ; no blind Zip Chip on the IIc
                          ; it has unwanted side-effects
@@ -369,6 +377,7 @@ FASTChip
          lda   #FC_LOCK
          sta   fc_lock
 
+skip_chip
          plp             ; restore interrupt state
          rts
 end_addon
