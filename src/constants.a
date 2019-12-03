@@ -9,14 +9,14 @@
 ; D000..E635 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; ECF3..FFF9 - main program code
+; ECF2..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
-; D670..DB6B - HGR font code & ProRWTS glue code
-; DB6B..DB79 - backup of stack (during gameplay and self-running demos)
+; D670..DB5F - HGR font code & ProRWTS glue code
+; DB60..DB6E - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB2..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data

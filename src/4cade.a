@@ -76,14 +76,10 @@ RestoreStackNextTime
 STACKPTR
          ldx   #$D1                  ; SMC, restore stack pointer
          txs
-SwitchToBank1
-         +READ_RAM1_WRITE_RAM1
-         rts                         ; and return to caller
+         jmp   SwitchToBank1         ; switch to bank 1 and return to caller
 ResetVector                          ; 6 bytes, copied to $100
          +READ_RAM1_NO_WRITE
          jmp   Reenter
-
-Ignore   rti                         ; discard IRQs, particular on the IIc
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"         ; \__ execution falls through
