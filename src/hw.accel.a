@@ -248,46 +248,55 @@ iicplus !pseudopc DisableAccelerator {
 ; This code cannot run from LC, and *must* bank in ROM.
 ; CGGA assumes that ROM is already banked in.
 
-        lda     #2        ; disable accelerator entry point
+        lda     #$3A      ; DEC, disable accelerator entry point
         !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-        lda     #1        ; enable accelerator entry point
-        sta     @pokery+1 ; action after CGGA_UNLOCK
+        lda     #$4A      ; LSR, enable accelerator entry point
+        sta     @pokery   ; action after CGGA_UNLOCK
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
          lda   $0
          pha
-
-         ldy   #(@endpokery - @jiggery) - 1
-@copyiicp
-         lda   @jiggery,y
-         sta   $106, y
-         dey
-         bpl   @copyiicp
-
          php
          sei             ; timing sensitive
-         jsr   $106
+         jsr   @jiggerypokery
+         sta   $C05B     ; fix colouring
          plp             ; restore interrupt state
          pla
          sta   $0
          rts
 
+@jiggerypokery
+         tsx
+         ldy   #(@endpokery - @jiggery)
+@copyiicp
+         lda   @jiggery-1,y
+         pha
+         dey
+         bne   @copyiicp
+         txa
+         tsx
+         iny
+!cpu 65c02
+         phy
+         phx
+!cpu 6502
+         tax
+         rts
+
 @jiggery
          +READ_ROM_NO_WRITE
-         lda   #CGGA_UNLOCK  ; unlock to change
-         pha
-         jsr   cgga
-
-@pokery
-         lda   #$D1    ; SMC
-         pha
-         jsr   cgga    ; disable/enable
-
          lda   #CGGA_LOCK    ; should lock after a change
          pha
+@pokery
+         nop    ; SMC
+         pha
+         lda   #CGGA_UNLOCK  ; unlock to change
+         pha
+         jsr   cgga    ; disable/enable
+         jsr   cgga
          jsr   cgga    ; reads parm from stack, must JSR
-         sta   $C05B   ; fix colouring
+         txs
          +READ_RAM2_WRITE_RAM2
          rts
 @endpokery
