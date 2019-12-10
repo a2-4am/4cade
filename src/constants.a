@@ -18,7 +18,7 @@
 ; D670..DB5F - HGR font code & ProRWTS glue code
 ; DB60..DB6E - backup of stack (during gameplay and self-running demos)
 ; ...unused...
-; DBB2..DBFF - (de)acceleration function
+; DBAF..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ gCheatsAvailable   = $D000  ; master cheats table, indexed by game index in gGam
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBB2
+DisableAccelerator = $DBAF
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MachineStatus

@@ -197,7 +197,7 @@ maccheck
 iic
          ldx   romid_c
          cpx   #ROMID_CPLUS
-         bne   patch_zc ; not a //c+, eventually hit Zip
+         bne   build_addon ; not a //c+, eventually hit Zip
 
          lda   #<iicplus
          ldy   #>iicplus
@@ -211,14 +211,6 @@ build_setspeed
          ldy   #>setspeed
          ldx   #(end_setspeed-setspeed)
          rts
-
-patch_zc
-         lda   #$D0
-         sta   zc_iic1 + 2
-         sta   zc_iic2
-         lda   #(FASTChip - zc_iic2) - 2
-         sta   zc_iic2 + 1
-         ; fall through
 
 build_addon
          lda   #<addon
@@ -346,7 +338,6 @@ addon
 
         tay
 
-zc_iic1
          sta   uw_fast,y ; value does not matter, SMC
                          ; no blind setting on the IIc
                          ; it has unwanted side-effects
@@ -361,10 +352,7 @@ zc_iic1
 +        lda   #ZC_UNLOCK
          php
          sei             ; timing sensitive
-zc_iic2
-         sta   zc_lock   ; SMC
-                         ; no blind Zip Chip on the IIc
-                         ; it has unwanted side-effects
+         sta   zc_lock
          sta   zc_lock
          sta   zc_lock
          sta   zc_lock
@@ -372,6 +360,7 @@ zc_iic2
          sta   zc_lock,x  ; disable/enable
          lda   #ZC_LOCK
          sta   zc_lock
+         sta   $C05B     ; fix colouring
 
 FASTChip
          lda   #FC_UNLOCK
@@ -386,7 +375,6 @@ FASTChip
          lda   #FC_LOCK
          sta   fc_lock
 
-skip_chip
          plp             ; restore interrupt state
          rts
 end_addon
