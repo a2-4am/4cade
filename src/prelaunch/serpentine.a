@@ -15,10 +15,10 @@
          sta   $F1,x
          dex
          bpl   -
-         lda   #$F1       ; call patch instead of $222
-         sta   $8BE3
+         lda   #$F1       ; call patch instead of $233
+         sta   $8C96
          lda   #$00
-         sta   $8BE4
+         sta   $8C97
          jmp   $43F5      ; decompress and show title
 patch
          jsr   $0100      ; decompress
