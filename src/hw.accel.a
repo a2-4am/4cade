@@ -360,7 +360,7 @@ addon
          sta   zc_lock,x  ; disable/enable
          lda   #ZC_LOCK
          sta   zc_lock
-         sta   $C05B     ; fix colouring
+         sta   $C05D     ; fix colouring
 
 FASTChip
          lda   #FC_UNLOCK
