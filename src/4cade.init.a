@@ -284,9 +284,10 @@ CopyDevs
          and   #1                    ; A = #$01 or #$00
          asl
          asl
-         asl                         ; A = #$08 or #$00
+         asl
+         asl                         ; A = #$10 or #$00
          ora   MachineStatus
-         sta   MachineStatus         ; set bit 3 of MachineStatus
+         sta   MachineStatus         ; set bit 4 of MachineStatus
 
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          dey                         ; Y = 0
