@@ -10,7 +10,7 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $3ec9
-         sta   $3f03
+         sta   $3f09
          jsr   $3e97
          +DISABLE_ACCEL
          lda   #$b1
