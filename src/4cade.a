@@ -54,8 +54,10 @@ Reenter
          bpl   -
          inx
          stx   $3F2                  ; page 3 reset vector to ($100)
+         stx   $3FE                  ; page 3 IRQ vector to ($100)
          inx
          stx   $3F3
+         stx   $3FF
          ldx   #$A4
          stx   $3F4
 RestoreStackNextTime
