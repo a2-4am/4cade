@@ -1,4 +1,4 @@
-# Revision 3 / unreleased
+# Revision 3.0-beta.1 / serial number 191213
 
 ## New & changed games
 
@@ -11,21 +11,22 @@
 
 ## Enhancements & bug fixes
 
- - Added help screen (press ? in search or browse mode to show)
- - Added global cheat mode (press Ctrl-C in search or browse mode to toggle)
+ - Added help screen (press `?` in search or browse mode to show)
+ - Added global cheat mode (press `Ctrl-C` in search or browse mode to toggle)
  - Added 71 game cheats
+ - New and updated graphic effects in screensaver mode
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Fixed Axis Assassin demo hanging on Apple IIgs
  - Fixed a crash in Agent USA
  - Added missing levels in Out Of This World
- - Removed latent copy protection in Sea Dragon (sneaky sneaky)
+ - Removed latent copy protection in BurgerTime, Sea Dragon, and Spider Raid (sneaky sneaky)
  - Enable fast machine speed or accelerator (if available) to speed up searching, browsing, and game launching
  - Prevent flashes of other game screenshots while loading a demo or game
  - Fixed a freeze on startup with certain accelerators
- - Fixed a crash on Apple ][+
+ - Fixed multiple crashes on Apple ][+, //c, //c+, and IIgs
  - Fixed choppy sound in some games on Apple IIgs
- - Fixed launching from MicroDrive partition 3+ (in progress)
+ - Fixed launching from MicroDrive partition 3+
  - Fixed launching from CFFA 3000 partition 5+
  - Fixed launching from RamFAST "GS/OS partitions"
  - Fixed launching from ProDOS 2.5
