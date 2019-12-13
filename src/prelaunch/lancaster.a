@@ -25,3 +25,7 @@ cheat
          sta   $1476
 +
          jmp   $1000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

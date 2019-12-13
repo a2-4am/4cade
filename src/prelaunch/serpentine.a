@@ -30,3 +30,7 @@ cheat=*+1
          sta   $868F      ; patch - don't decrease lives
 +
          jmp   $0800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

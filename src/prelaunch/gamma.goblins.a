@@ -24,3 +24,7 @@
          lda   #$00
          tay
          jmp   $2035
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

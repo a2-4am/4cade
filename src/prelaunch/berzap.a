@@ -37,3 +37,7 @@ cheat2
          sta   $76ba      ; patch - don't increase lives
 +
          jmp   ($b2ce)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -23,3 +23,7 @@
          lda   $c08b
          jsr   $ee1f
          jmp   $981
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

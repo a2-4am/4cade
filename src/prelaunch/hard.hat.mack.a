@@ -27,3 +27,7 @@ patcher  rts
          lda   #$FF
          pha
          rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

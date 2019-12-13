@@ -13,3 +13,7 @@
          jsr   $44E5      ; decompress
          +DISABLE_ACCEL
          jmp   $0800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

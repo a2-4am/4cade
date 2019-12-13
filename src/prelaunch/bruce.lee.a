@@ -56,3 +56,7 @@ lcpatch
          jmp   $3800
 }
 cheat_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -28,3 +28,7 @@ cheat
          sta   $87e0
          sta   $97d2
          rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

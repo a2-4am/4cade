@@ -36,3 +36,7 @@ cheat
          jsr   DisableAccelerator
          lda   #$c2
          jmp   $d300
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

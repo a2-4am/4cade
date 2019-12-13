@@ -18,3 +18,7 @@
          ldx   #$FD                  ; Jump to game entry point via stack pop.
          txs
          rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

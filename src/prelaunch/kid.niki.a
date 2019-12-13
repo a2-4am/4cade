@@ -18,3 +18,7 @@
          sta   $BD34      ; patch - don't decrease lives
 +
          jmp   $61E3
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

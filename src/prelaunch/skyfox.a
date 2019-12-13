@@ -9,3 +9,7 @@
 
     inc $80 ; requires a non-zero value for the RNG
     jmp $4621
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
