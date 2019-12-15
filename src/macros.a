@@ -166,3 +166,11 @@
          lda   MachineStatus
          +READ_ROM_NO_WRITE
 }
+
+!macro   USES_TEXT_PAGE_2 {
+         sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   +
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
++
+}

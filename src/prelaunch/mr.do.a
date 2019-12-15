@@ -7,6 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
+    +USES_TEXT_PAGE_2
     clc
     bcc cheat3
 

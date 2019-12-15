@@ -42,7 +42,6 @@
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   @NotGS
-         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
          lda   #$80
          sta   zpMachineStatus
 @NotGS   jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
