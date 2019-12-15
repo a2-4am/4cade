@@ -15,6 +15,7 @@
          +DISABLE_ACCEL
          jsr   $4C00
          +ENABLE_ACCEL
+         ldy   #0
          jsr   $B839
          +DISABLE_ACCEL
          +GET_MACHINE_STATUS

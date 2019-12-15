@@ -168,6 +168,9 @@
 }
 
 !macro   USES_TEXT_PAGE_2 {
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   +
          sec
          jsr   $FE1F                 ; check for IIgs
          bcs   +
