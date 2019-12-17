@@ -18,6 +18,11 @@
          sta   $729b
          sta   $6fea
 +
+         lda   #0
+         sta   $4112
+         lda   #1
+         sta   $4117      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $4000
 

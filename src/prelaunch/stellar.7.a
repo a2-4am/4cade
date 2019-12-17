@@ -8,7 +8,19 @@
     !source "src/prelaunch/common.a"
 
          +USES_TEXT_PAGE_2
-         jmp   $800
+         lda   #$60
+         sta   $863
+         jsr   $800
+
+         lda   #0
+         sta   $AE2A
+         lda   #1
+         sta   $AE2C
+         lda   #$A4
+         sta   $AE28      ; reset vector patch
+
+         jmp   $AE27
+
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

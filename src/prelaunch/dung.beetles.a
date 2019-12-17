@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/DUNG.BEETLES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $603A
+         jsr   $6000
+
+         lda   #1
+         sta   $083E   ; reset vector patch
+         lda   #$4C
+         sta   $847
+         lda   #0
+         sta   $848
+         lda   #$96    ; patch $847 - JMP ($3F2)
+         sta   $849    ; to JMP $9600
+
+         +DISABLE_ACCEL
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
