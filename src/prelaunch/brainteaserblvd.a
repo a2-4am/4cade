@@ -15,6 +15,14 @@
          lda   #$60
          sta   $363F
          jsr   $3600      ; memory move
+
+         lda   #0
+         sta   $0A01
+         lda   #$2C
+         sta   $0A05
+         lda   #$A4
+         sta   $0A09      ; reset vector patch
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +

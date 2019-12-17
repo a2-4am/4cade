@@ -19,6 +19,11 @@
          lda   #>cheat
          sta   $2008
 +
+         lda   #0
+         sta   $202A
+         lda   #1
+         sta   $202F      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $2000
 
