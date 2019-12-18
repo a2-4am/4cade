@@ -34,3 +34,7 @@
 skipmb
          +DISABLE_ACCEL
          jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

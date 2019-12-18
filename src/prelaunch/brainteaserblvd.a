@@ -7,6 +7,7 @@
 
          !source "src/prelaunch/common.a"
 
+         +USES_TEXT_PAGE_2
          +ENABLE_ACCEL
          lda   #$60
          sta   $0813
@@ -14,6 +15,14 @@
          lda   #$60
          sta   $363F
          jsr   $3600      ; memory move
+
+         lda   #0
+         sta   $0A01
+         lda   #$2C
+         sta   $0A05
+         lda   #$A4
+         sta   $0A09      ; reset vector patch
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -24,3 +33,7 @@
 +
          +DISABLE_ACCEL
          jmp   $0A00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

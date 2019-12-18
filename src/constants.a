@@ -9,16 +9,16 @@
 ; D000..E635 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; ECC6..FFF9 - main program code
+; ECEC..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D671 - ProRWTS code
-; D672..DB6D - HGR font code & ProRWTS glue code
-; DB6E..DB7D - backup of stack (during gameplay and self-running demos)
+; D400..D66F - ProRWTS code
+; D670..DB5F - HGR font code & ProRWTS glue code
+; DB60..DB6E - backup of stack (during gameplay and self-running demos)
 ; ...unused...
-; DBB6..DBFF - (de)acceleration function
+; DBAF..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
@@ -113,7 +113,7 @@ MockingboardSlot   = $FFF8
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBB6
+DisableAccelerator = $DBAF
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MachineStatus

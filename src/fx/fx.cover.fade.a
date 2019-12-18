@@ -64,9 +64,6 @@ InitPRNG
          sta   SEED+3
          rts
 
-RAND7BIT
-         rts
-
 PRNG
          lda   #$01
          ldx   #$03

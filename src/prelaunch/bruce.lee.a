@@ -10,27 +10,28 @@
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
          lda   #$4c
-         sta   $b21
+         sta   $bb8
          lda   #<callback
-         sta   $b22
+         sta   $bb9
          lda   #>callback
-         sta   $b23
+         sta   $bba
          ldx   #<cheat2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          ldx   #<cheat1
-+        stx   $b55
++        stx   $bec
          lda   #>cheat1
-         sta   $b56
--        lda   cheat, x
-         sta   $300, x
-         inx
-         bpl   -
+         sta   $bed
+         ldx   #cheat_e - cheat
+-        lda   cheat - 1, x
+         sta   <(cheat1 - 1), x
+         dex
+         bne   -
          bit   MachineStatus
          bvs   +
          lda   #$82
-         sta   lcpatch+1
+         sta   <(lcpatch + 1)
 +
          +READ_ROM_NO_WRITE
          jmp   $900
@@ -41,9 +42,9 @@ callback
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
          +READ_RAM1_WRITE_RAM1
-         jmp   $b24
+         jmp   $bbb
 
-cheat !pseudopc $300 {
+cheat !pseudopc $cf {
 cheat1
          lda   #$2c
          sta   $8a7e
@@ -53,5 +54,9 @@ cheat2
 lcpatch
          lda   $c08b
          jmp   $3800
+}
 cheat_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
 }

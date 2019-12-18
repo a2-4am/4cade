@@ -19,7 +19,7 @@
          sta   $4061
          lda   #$00
          sta   $4062
-         jmp   $2DC2
+         jmp   $2D2C
 patch
          lda   #0         ; SMC
          beq   +
@@ -28,3 +28,7 @@ patch
          sta   $0912      ; patch - don't decrease lives
 +
          jmp   $0200      ; continue with load
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

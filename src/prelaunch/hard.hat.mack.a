@@ -21,9 +21,16 @@ patcher  rts
          sta   $50A5      ; patch - don't decrease lives
          sta   $7197      ; patch - don't increase lives
 +
+         lda   #1
+         sta   $2218      ; reset vector patch
+         
          +DISABLE_ACCEL
          lda   #$07
          pha
          lda   #$FF
          pha
          rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

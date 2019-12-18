@@ -86,7 +86,6 @@ skipmb
          +DISABLE_ACCEL
          jmp   ($b2ce)
 
-
 !if * > $1F0 {
-    !error "code is too large: ends at ", *
+  !error "code is too large, ends at ", *
 }

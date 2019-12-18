@@ -7,7 +7,7 @@ C'est La Vie
 California Games [DHGR]
 Championship Baseball
 Championship Wrestling
-Congo Bongo
+Congo Bongo [priority]
 Conquering Worlds
 Dive Bomber
 Double Trouble
@@ -77,7 +77,7 @@ Jawbreaker ][
 Mating Zone
 Randamn
 Saracen
-Super Zaxxon
+Super Zaxxon [priority]
 Test Drive [DHGR] [priority]
 
 //TODO(woz-imaged but uncracked)
@@ -89,13 +89,15 @@ Caverns of Callisto
 Copts and Robbers
 The Dam Busters
 Fight Night
+Force 7 [priority]
+Gauntlet
 Hardball
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
 Lemmings
 Lunar Leepers
-One on One
+One on One [priority]
 Peeping Tom
 Pulsar II
 Retro-Ball

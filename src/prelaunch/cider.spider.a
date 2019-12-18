@@ -18,5 +18,14 @@
          sta   $19C5      ; patch - don't decrease lives
          sta   $196A      ; patch - don't increase lives
 +
+         lda   #0
+         sta   $10AC
+         lda   #1
+         sta   $10B1      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $1000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

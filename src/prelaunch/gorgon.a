@@ -21,5 +21,14 @@
          lda   #$A5
          sta   $A5B0      ; patch - don't decrease lives
 +
+         lda   #0
+         sta   $A8B4
+         lda   #1
+         sta   $A8BC      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $A720
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -234,9 +234,7 @@ ver_02 = 1
 
                 D1S1      = 1           ;disk 1 side 1 volume ID if rwts_mode enabled
 
-init            jsr     SETKBD
-                jsr     SETVID
-                lda     DEVNUM
+init            lda     DEVNUM
                 sta     x80_parms + 1
                 sta     unrunit1 + 1
                 and     #$70

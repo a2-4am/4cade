@@ -113,10 +113,8 @@ PREFRTS  rts
 ;------------------------------------------------------------------------------
 pref_get
          +PARAMS_ON_STACK 4
-         +LDPARAM 1
-         +STAY +
-         +LDPARAM 3
-         +STAY .store1
+         +LDPARAMPTR 1, +
+         +LDPARAMPTR 3, .store1
 
          jsr   okvs_get              ; look up pref key in prefs store
          !word gGlobalPrefsStore
@@ -154,10 +152,8 @@ pref_get
 ;------------------------------------------------------------------------------
 pref_set
          +PARAMS_ON_STACK 4
-         +LDPARAM 1
-         +STAY +
-         +LDPARAM 3
-         +STAY ++
+         +LDPARAMPTR 1, +
+         +LDPARAMPTR 3, ++
 
          jsr   okvs_update           ; save that in prefs store
          !word gGlobalPrefsStore

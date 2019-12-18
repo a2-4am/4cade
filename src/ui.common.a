@@ -57,7 +57,7 @@ Home
          sta   CLOCKCTL              ; black border
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
-         ldx   #(@end-@start-1)
+         ldx   #(.end-@start-1)
 -        lda   @start,x
          sta   $106,x
          dex
@@ -68,11 +68,14 @@ Home
          +READ_ROM_NO_WRITE
          sta   CLR80VID              ; get out of DHGR mode
          sta   DHIRESOFF             ; get out of DHGR mode
-         jsr   ROM_TEXT              ; TEXT
+         jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
          jsr   ROM_HOME              ; HOME
+         lda   PAGE1
+         lda   $C051                 ; now show it
+SwitchToBank1
          +READ_RAM1_WRITE_RAM1
-         rts
-@end
+         rts                         ; and return to caller
+.end
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
@@ -125,7 +128,7 @@ IsSearchKey
          cmp   #$7B                  ; lowercase letters are good input
          bcc   @goodkey
 @badkey
-         ldx   #1
+         ldx   #kInputError          ; also #kSoftBell
          rts
 
 ;------------------------------------------------------------------------------

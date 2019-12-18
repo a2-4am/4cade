@@ -31,3 +31,7 @@ patch
 +
          jmp   $0400
 end_patch
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

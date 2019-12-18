@@ -54,16 +54,15 @@ SaveSmallFileInternal
          +LDADDR gPathname
          +STAY namlo                 ; set filename for ProRWTS2
          jsr   traverse              ; go to subdirectory, set up filename for read
-         ;;if the write address is always a fixed value then we can discard the query
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
+         ;lda   #cmdread              ; read (instead of write)
+         ;sta   reqcmd
          lda   #0                    ; 0 = read into main memory
          sta   sizelo
-         sta   sizehi                ; 0 = query load address
-         jsr   hddopendir            ; call ProRWTS2
-         lda   ldrlo2
+         ;sta   sizehi                ; 0 = query load address
+         ;jsr   hddopendir            ; call ProRWTS2         
+         ;lda   ldrlo2
          sta   ldrlo
-         lda   ldrhi2
+         lda   #$80 ;lda   ldrhi2
          sta   ldrhi
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd

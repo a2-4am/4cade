@@ -131,10 +131,10 @@ ProDOS_enter
          lda   ldrlo2+1
          sta   (ipacket), y
          ldy   #$13
-         lda   (bloklo), y
+         lda   (scratchlo), y
          tax
          iny
-         lda   (bloklo), y
+         lda   (scratchlo), y
          ldy   #9
          sta   (ipacket), y
          txa
