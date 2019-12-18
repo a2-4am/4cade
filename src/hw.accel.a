@@ -20,6 +20,9 @@
 ;;; NORMFAST Disable/enable Apple II compatible accelerator
 ; (no copyright info given)
 ;
+; Release 7 2019-11-27 FASTChip control just like ZipChip.
+; Prevents unexpected acceleration by user.
+;
 ; Release 6 2017-10-05 Fix Mac IIe card check
 ;
 ; Release 5 2017-09-27 Add Macintosh IIe Card. Addon
@@ -118,7 +121,8 @@ fc_lock         =    $C06A
 FC_UNLOCK       =    $6A     ; write 4 times
 FC_LOCK         =    $A6
 fc_enable       =    $C06B
-fc_speed        =    $C06D
+fc_config       =    $C06E
+fc_data         =    $C06F
 FC_1MHZ         =    9
 FC_ON           =    40      ; doco says 16.6Mhz
 
@@ -236,21 +240,19 @@ iicplus !pseudopc DisableAccelerator {
 ; This code cannot run from LC, and *must* bank in ROM.
 ; CGGA assumes that ROM is already banked in.
 
-        lda     #2        ; disable accelerator entry point
+        lda     #$3A      ; DEC, disable accelerator entry point
         !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-        lda     #1        ; enable accelerator entry point
-        sta     @pokery+1 ; action after CGGA_UNLOCK
+        lda     #$4A      ; LSR, enable accelerator entry point
+        sta     @pokery   ; action after CGGA_UNLOCK
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
-         ldx   $0
-!cpu 65c02
-         phx
-!cpu 6502
-
+         lda   $0
+         pha
          php
          sei             ; timing sensitive
          jsr   @jiggerypokery
+         sta   $C05B     ; fix colouring
          plp             ; restore interrupt state
          pla
          sta   $0
@@ -276,17 +278,15 @@ iicplus !pseudopc DisableAccelerator {
 
 @jiggery
          +READ_ROM_NO_WRITE
-         lda   #CGGA_UNLOCK  ; unlock to change
-         pha
-         jsr   cgga
-
-@pokery
-         lda   #$D1    ; SMC
-         pha
-         jsr   cgga    ; disable/enable
-
          lda   #CGGA_LOCK    ; should lock after a change
          pha
+@pokery
+         nop    ; SMC
+         pha
+         lda   #CGGA_UNLOCK  ; unlock to change
+         pha
+         jsr   cgga    ; disable/enable
+         jsr   cgga
          jsr   cgga    ; reads parm from stack, must JSR
          txs
          +READ_RAM2_WRITE_RAM2
@@ -332,14 +332,24 @@ addon
         lda     #0        ; enable accelerator entry point
 
         ; TransWarp I
-         sta   tw1_speed
+        sta   tw1_speed
 
-        ; Zip Chip
+        ; trademarked accelerator from Germany
 
-         tay
+        tay
+
+         sta   uw_fast,y ; value does not matter, SMC
+                         ; no blind setting on the IIc
+                         ; it has unwanted side-effects
+
+         ; Zip Chip
+
+         ldy   #FC_1MHZ
          eor   #1
          tax
-         lda   #ZC_UNLOCK
+         beq   +
+         ldy   #FC_ON
++        lda   #ZC_UNLOCK
          php
          sei             ; timing sensitive
          sta   zc_lock
@@ -350,30 +360,21 @@ addon
          sta   zc_lock,x  ; disable/enable
          lda   #ZC_LOCK
          sta   zc_lock
+         sta   $C05D     ; fix colouring
 
-        ;; current products are subject to change so do
-        ;; these last
-
-        ; trademarked accelerator from Germany
-
-         sta   uw_fast,y ; value does not matter
-
-        ; FASTChip
-
-         ldx   #FC_1MHZ
-         tya
-         bne   fcset
-         ldx   #FC_ON  ; enable set speed?
-fcset
+FASTChip
          lda   #FC_UNLOCK
          sta   fc_lock
          sta   fc_lock
          sta   fc_lock
          sta   fc_lock
          sta   fc_enable
-         stx   fc_speed
+         lda   #0
+         sta   fc_config
+         sty   fc_data
          lda   #FC_LOCK
          sta   fc_lock
+
          plp             ; restore interrupt state
          rts
 end_addon

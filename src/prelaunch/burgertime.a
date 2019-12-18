@@ -10,7 +10,7 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $3ec9
-         sta   $3f03
+         sta   $3f09
          jsr   $3e97
          +DISABLE_ACCEL
          lda   #$b1
@@ -27,5 +27,14 @@
          sta   $94d1
          sta   $9768
 +
+         lda   #0
+         sta   $A30A
+         lda   #1
+         sta   $A30F      ; reset vector patch
+         
          +DISABLE_ACCEL
          jmp   $a300
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,17 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/RADBUBBLES",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+         !source "src/fx/fx.hgr.radial.common.a"
+
+!if * and 1 {
+         !byte 0
+}
+Coordinates
+         !source "src/fx/fx.hgr.radbubbles.data.a"
+EndCoordinates
+         !byte $80

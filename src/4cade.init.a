@@ -15,6 +15,8 @@
          sta   WRITEMAINMEM
          jsr   ROM_TEXT
          jsr   ROM_HOME
+         jsr   ROM_IN0
+         jsr   ROM_PR0
          jsr   Has64K                ; check for 64K (required)
          bcc   +
 
@@ -40,7 +42,6 @@
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   @NotGS
-         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
          lda   #$80
          sta   zpMachineStatus
 @NotGS   jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
@@ -197,8 +198,8 @@ LoaderBuild
          !word   BUILDNUMBER
 } else {
 LoaderVersion
-         !byte   12
-         !text   "v3.0-alpha.2"
+         !byte   11
+         !text   "v3.0-beta.1"
 }
 Loader64K
          !byte   3
@@ -293,9 +294,10 @@ CopyDevs
          and   #1                    ; A = #$01 or #$00
          asl
          asl
-         asl                         ; A = #$08 or #$00
+         asl
+         asl                         ; A = #$10 or #$00
          ora   MachineStatus
-         sta   MachineStatus         ; set bit 3 of MachineStatus
+         sta   MachineStatus         ; set bit 4 of MachineStatus
 
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          dey                         ; Y = 0

@@ -7,6 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
+    +USES_TEXT_PAGE_2
     clc
     bcc cheat3
 
@@ -51,3 +52,7 @@ cheat48
     lda #>cheat1
     sta $1041
     jmp $1000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

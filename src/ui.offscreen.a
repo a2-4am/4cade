@@ -28,6 +28,7 @@
 ;        preserves X/Y
 ;------------------------------------------------------------------------------
 GetOffscreenAddress
+Ignore = * + 1                       ; discard IRQs, particularly on the IIc
          lda   #$40
 OffscreenPage = * + 1
          bne   +                     ; SMC

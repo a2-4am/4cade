@@ -29,3 +29,7 @@ cheat
          sta   $1998
 +
          jmp   $d00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

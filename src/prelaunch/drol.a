@@ -68,3 +68,7 @@ jmp1
          rts
 }
 cheat_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

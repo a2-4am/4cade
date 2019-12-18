@@ -19,3 +19,7 @@
          sta   $78C5      ; patch - don't increase lives
 +
          jmp   $7600
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

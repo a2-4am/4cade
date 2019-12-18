@@ -30,3 +30,7 @@ cheat=*+1
 +
          jmp   $8460
 end_patch
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

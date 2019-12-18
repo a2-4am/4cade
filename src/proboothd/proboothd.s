@@ -25,6 +25,7 @@
                 tay
 -               txa
                 jsr scrn2p2
+                and #7
                 ora #$c0
                 sta $be30, y
                 sta slot+2

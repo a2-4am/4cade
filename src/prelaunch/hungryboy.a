@@ -25,3 +25,7 @@ patch    nop
 +
          +DISABLE_ACCEL
          jmp   $94E0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

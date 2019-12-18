@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import util
 
 radius_x = 280//2
 radius_y = 192//2
@@ -24,21 +25,13 @@ for i in range(30000, 0, -1):
                 continue
             coords.append((radius_x - x,radius_y - m))
 
-d = {}
-unique_coords = []
-for c in coords:
-    if not d.get(c):
-        unique_coords.append(c)
-        d[c] = 1
+unique_coords = util.unique(coords)
+unique_vals = util.vals_1bit(unique_coords)
 
-unique_vals = []
-for x, y in unique_coords:
-    aval = "$" + hex(y)[2:].rjust(2, "0").upper()
-    bval = "%" + \
-        bin(x%7)[2:].rjust(3, "0") + \
-        bin(x//7)[2:].rjust(5, "0")
-    unique_vals.append((aval, bval))
+util.write("../../../src/fx/fx.hgr.radial.data.a",  unique_vals)
+util.write("../../../src/fx/fx.hgr.radial2.data.a", util.halfripple(unique_vals))
+util.write("../../../src/fx/fx.hgr.radial4.data.a", util.ripple(unique_vals))
+util.write("../../../src/fx/fx.hgr.radial5.data.a", util.ripple(util.halfripple(unique_vals)))
 
-with open("../../../src/fx/fx.hgr.radial.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
+mult_coords = util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(util.ripple(util.radial_multiply(unique_coords))))))
+util.write("../../../src/fx/fx.hgr.pinwheels.data.a", util.vals_1bit(mult_coords))

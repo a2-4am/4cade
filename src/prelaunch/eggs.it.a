@@ -15,6 +15,7 @@
          +DISABLE_ACCEL
          jsr   $4C00
          +ENABLE_ACCEL
+         ldy   #0
          jsr   $B839
          +DISABLE_ACCEL
          +GET_MACHINE_STATUS
@@ -25,3 +26,7 @@
          sta   $962A      ; patch - don't decrease lives
 +
          jmp   ($0020)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

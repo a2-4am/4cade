@@ -25,3 +25,7 @@ cheat
 +
          +DISABLE_ACCEL
          rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

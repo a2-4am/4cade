@@ -22,5 +22,14 @@
          dec   $7270
          dec   $7b53
 +
+         lda   #0
+         sta   $2067
+         lda   #1
+         sta   $206C      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $2001
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

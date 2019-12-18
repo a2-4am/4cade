@@ -1,3 +1,6 @@
+even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
+odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
+
 def unique(coords):
     d = {}
     unique_coords = []
@@ -6,6 +9,20 @@ def unique(coords):
             unique_coords.append(c)
             d[c] = 1
     return unique_coords
+
+def radial_multiply(unique_coords):
+    q2 = [(279-x, y) for (x, y) in unique_coords]
+    q2.reverse()
+    q3 = [(279-x, 190-y) for (x, y) in unique_coords]
+    q4 = [(x, 190-y) for (x, y) in unique_coords]
+    q4.reverse()
+    return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
+
+def quadrant_multiply(unique_coords):
+    q2 = [(279-x, y) for (x, y) in unique_coords]
+    q3 = [(279-x, 190-y) for (x, y) in unique_coords]
+    q4 = [(x, 190-y) for (x, y) in unique_coords]
+    return unique([(x//2, y//2) for (x, y) in unique_coords + q2 + q3 + q4 if (x % 2 == 0) and (y % 4 == 0)])
 
 def vals_1bit(unique_coords):
     unique_vals = []
@@ -18,8 +35,6 @@ def vals_1bit(unique_coords):
     return unique_vals
 
 def vals_2bit(unique_coords):
-    even_byte_bitmask = (0, 0, 1, 1, 2, 2, 3)
-    odd_byte_bitmask = (5, 5, 6, 6, 7, 7, 4)
     unique_vals = []
     for x, y in unique_coords:
         y = 191 - y
@@ -79,3 +94,16 @@ def ripple(unique_vals):
         ripple_vals.append(unique_vals[k])
         ripple_vals.append(unique_vals[l])
     return ripple_vals
+
+def halfripple(unique_vals):
+    z = len(unique_vals)
+    ripple_vals = []
+    for i, j in zip(range(z//2), range(z//2,z)):
+        ripple_vals.append(unique_vals[i])
+        ripple_vals.append(unique_vals[j])
+    return ripple_vals
+
+def write(filename, vals):
+    with open(filename, "w") as f:
+        for aval, bval in vals:
+            f.write("         !byte %s,%s\n" % (aval, bval))

@@ -84,10 +84,8 @@ CoverFade
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage
          lda   OffscreenPage
-         bne   +
-         jsr   LoadCoverOffscreen
-         jsr   ShowOtherPage
-+        jsr   LoadFile              ; load transition effect code at $6000
+         beq   CoverFade
+         jsr   LoadFile              ; load transition effect code at $6000
          !word kFXDirectory
          !word kCoverFadeFile
          !word $6000

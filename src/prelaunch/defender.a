@@ -19,5 +19,13 @@
          sta   $7579      ; patch - don't decrease lives
          sta   $6567      ; patch - don't increase lives
 +
+         lda   #$EA
+         sta   $4045
+         sta   $4046      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

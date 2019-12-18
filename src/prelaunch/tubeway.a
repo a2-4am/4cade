@@ -21,3 +21,7 @@
 +
          +DISABLE_ACCEL
          jmp   $9000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

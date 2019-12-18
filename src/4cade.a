@@ -41,6 +41,8 @@ FirstMover
 Reenter
          cld
          cli
+         ldx   #$ff
+         txs                         ; so that we never trash the reset vector
          jsr   SwitchToBank2
          jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
                                      ; which restores default speed on Ctrl-Reset)
@@ -52,8 +54,10 @@ Reenter
          bpl   -
          inx
          stx   $3F2                  ; page 3 reset vector to ($100)
+         stx   $3FE                  ; page 3 IRQ vector to ($100)
          inx
          stx   $3F3
+         stx   $3FF
          ldx   #$A4
          stx   $3F4
 RestoreStackNextTime
@@ -67,20 +71,17 @@ RestoreStackNextTime
          sta   RestoreStackNextTime + 1
                                      ; restore the same stack twice
          ldx   #$F1
--        lda   STACKBASE - $F0,x     ; restore stack
+-        lda   STACKBASE - $EF,x     ; restore stack
          sta   $100,x
          inx
          bne   -
-         ldx   STACKBASE             ; restore stack pointer
+STACKPTR
+         ldx   #$D1                  ; SMC, restore stack pointer
          txs
-SwitchToBank1
-         +READ_RAM1_WRITE_RAM1
-         rts                         ; and return to caller
+         jmp   SwitchToBank1         ; switch to bank 1 and return to caller
 ResetVector                          ; 6 bytes, copied to $100
          +READ_RAM1_NO_WRITE
          jmp   Reenter
-
-Ignore   rti                         ; discard IRQs, particular on the IIc
 
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"         ; \__ execution falls through
@@ -148,12 +149,12 @@ SwitchToBank2
          !word Ignore                ; IRQ vector ($FFFE-F)
 }
 LastMover
-!if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f0) {
+!if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f2) {
   ; in the unlikely event that a bit over 16 bytes are left in the page
   ; then use it for the stack
-  STACKBASE = (hdddataend + 15) and -16
+  STACKBASE = ((hdddataend + 15) and -16) + 1
   FONTSRC = *
-  !pseudopc STACKBASE + 16 {
+  !pseudopc STACKBASE + 15 {
     FONTDST = *
          !source "src/ui.font.data.lc2.a"
     COPYDST = *
@@ -181,7 +182,7 @@ EvenLasterMover
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
     STACKBASE = *
-    LCRAM2_END = STACKBASE + 16
+    LCRAM2_END = STACKBASE + 15
     FONTDST = (LCRAM2_END + 255) and -256
   }
 EvenLasterMover
