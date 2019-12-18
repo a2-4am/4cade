@@ -33,6 +33,9 @@ patch2
          sta   $750D      ; patch - don't increase lives
          sta   $894F      ; patch - don't increase lives
 +
+         inc   $3F4       ; reboot on control-reset
+                          ; (only works after title screen)
+
          jmp   $0600
 
 !if * > $1C0 {
