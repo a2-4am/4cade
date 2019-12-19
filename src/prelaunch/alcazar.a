@@ -17,6 +17,13 @@
          lda   #$ad
          sta   $8289      ; patch - don't decrease lives
 +
+         lda   #$4C
+         sta   $9DBF
+         lda   #0
+         sta   $9DC0
+         lda   #1
+         sta   $9DC1      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $7c1e
 

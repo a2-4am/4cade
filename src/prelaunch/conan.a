@@ -15,8 +15,17 @@
          sta   $bd40
          jsr   $bc94
          +DISABLE_ACCEL
-         jsr   $5ff8
+         jsr   $5ff8     ; run intro
+
          +ENABLE_ACCEL
+
+         lda   #0
+         sta   $3f2
+         lda   #1
+         sta   $3f3
+         lda   #$A4      ; reset vector patch
+         sta   $3f4      ; (doesn't work during copyright)
+
          lda   #$6c
          sta   $bd40
          lda   #$60
@@ -32,14 +41,6 @@
          sta   $1b4e
          ;;sta $a973
 +
-         lda   #0
-         sta   $3f2
-         lda   #1
-         sta   $3f3
-         lda   #$A4
-         sta   $3f4      ; reset vector patch
-                         ; (only works after title music)
-
          +DISABLE_ACCEL
          jmp   $6ba5
 

@@ -17,6 +17,13 @@
          lda   #$ad
          sta   $6d31
 +
+         lda   #$4C
+         sta   $5B2E
+         lda   #0
+         sta   $5B2F
+         lda   #1
+         sta   $5B30      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $5c00
 
