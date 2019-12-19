@@ -18,6 +18,11 @@
          sta   $777C      ; patch - don't decrease lives
          sta   $78C5      ; patch - don't increase lives
 +
+         lda   #$EA
+         sta   $13D9
+         sta   $13DA
+         sta   $13DB      ; reset vector patch
+
          jmp   $7600
 
 !if * > $1C0 {

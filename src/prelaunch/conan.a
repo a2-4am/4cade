@@ -32,6 +32,14 @@
          sta   $1b4e
          ;;sta $a973
 +
+         lda   #0
+         sta   $3f2
+         lda   #1
+         sta   $3f3
+         lda   #$A4
+         sta   $3f4      ; reset vector patch
+                         ; (only works after title music)
+
          +DISABLE_ACCEL
          jmp   $6ba5
 
