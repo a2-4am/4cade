@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/IMPOSSIBLE.MISS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         inc   $3f4      ; reset vector patch (reboot)
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
