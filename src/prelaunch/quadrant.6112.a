@@ -1,0 +1,39 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/QUADRANT.6112",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $872
+         jsr   $800       ; title
+
+         lda   #$2C
+         sta   $100
+         lda   #$88
+         sta   $101
+         lda   #$C0
+         sta   $102
+         lda   #$6C       ; JMP ($FFFC)
+         sta   $103       ; 'Reenter'
+         lda   #$FC
+         sta   $104
+         lda   #$FF
+         sta   $105       ; re-establish LC hook
+
+         lda   #0
+         sta   $3f2
+         lda   #1
+         sta   $3f3
+         lda   #$A4
+         sta   $3f4       ; reset vector patch
+
+         jmp   $2007
+
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -7,7 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-
          ldy   #6
 -        lda   $100-1,y
          sta   $180-1,y   ; move hook to $180
@@ -16,7 +15,11 @@
          lda   #$80
          sta   $3F2       ; reset vector patch
 
-         jmp   $3FF5
+         lda   #$60
+         sta   $7D1F
+         jsr   $3FF5      ; unpack
+
+         jmp   $BA00
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
