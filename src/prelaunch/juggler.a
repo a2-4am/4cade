@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/JUGGLER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+
+         ldy   #6
+-        lda   $100-1,y
+         sta   $180-1,y   ; move hook to $180
+         dey
+         bne   -
+         lda   #$80
+         sta   $3F2       ; reset vector patch
+
+         jmp   $3FF5
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

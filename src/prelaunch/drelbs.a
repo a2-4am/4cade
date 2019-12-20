@@ -17,6 +17,8 @@
          lda   #$a5
          sta   $1cb0      ; patch - don't decrease lives
 +
+         inc   $3F4       ; reset vector patch
+                          ; trashes LC, so reboot
          +DISABLE_ACCEL
          jmp   $8000
 

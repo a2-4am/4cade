@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/NIGHT.STALKER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6017
+         jsr   $800       ; decompress
+         jsr   $2A8       ; part 2
+
+         lda   #$A6
+         sta   $6491
+         lda   #$FA
+         sta   $6496      ; reset vector patch (reboot)
+
+         +DISABLE_ACCEL
+         jmp   $283
+
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

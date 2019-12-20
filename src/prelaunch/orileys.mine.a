@@ -2,22 +2,22 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/PAC.MAN",plain
+!to "build/PRELAUNCH/ORILEYS.MINE",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
-         +USES_TEXT_PAGE_2
+         +ENABLE_ACCEL
          lda   #$60
-         sta   $813
+         sta   $81D
          jsr   $800       ; decompress
 
-         lda   #0
-         sta   $103F
          lda   #1
-         sta   $104A      ; reset vector patch
+         sta   $2006
+         sta   $201B      ; reset vector patch
 
-         jmp   $1000
+         +DISABLE_ACCEL
+         jmp   $8FD
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
