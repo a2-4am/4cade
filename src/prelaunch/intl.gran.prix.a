@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/INTL.GRAN.PRIX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60       ; RTS instead of JMP
+         sta   $201A
+         jsr   $2000      ; decompress
+
+         lda   #0
+         sta   $6010
+         lda   #1
+         sta   $6015      ; reset vector patch
+
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
