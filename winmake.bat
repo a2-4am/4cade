@@ -44,12 +44,14 @@ call :asm
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 cscript /nologo bin\rsync.js res\*.conf build >>build\log
 1>nul copy /y res\credits.txt build\CREDITS >>build\log
+1>nul copy /y res\help.txt build\HELPTEXT >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 for %%q in (build\*.CONF) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
 cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
 cscript /nologo bin\rsync.js res\action.hgr\* build\ACTION.HGR >>build\log

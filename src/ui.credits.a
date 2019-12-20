@@ -25,6 +25,7 @@ Credits
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
+         ldx   #0
          jsr   DrawPage              ; draw credits
          jsr   ShowOtherPage         ; show credits
          jsr   WaitForKeyFor30Seconds; wait
@@ -43,12 +44,23 @@ Credits
 ;          C clear, all other flags and registers clobbered
 ;------------------------------------------------------------------------------
 Help
+         jsr   LoadFile              ; load help text into $8000
+         !word kRootDirectory
+         !word kHelpTextFile
+         !word $8000
          jsr   LoadHelpOffscreen
+         lda   OffscreenPage
+         ror                         ; draw on offscreen page
+         +LDADDR $8000
+         ldx   #8
+         jsr   DrawPage              ; draw help text
          jsr   ShowOtherPage
          jsr   WaitForKeyFor30Seconds
          cmp   #$88
          beq   BrowseMode
          cmp   #$83
+         beq   -
+         cmp   #$81
          beq   -
          jsr   IsUpDownOrRightArrow
          beq   -

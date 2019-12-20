@@ -122,9 +122,13 @@ kCreditsFile
          !byte 7
          !raw  "CREDITS"
 
-kHelpFile
+kHelpBackgroundFile
          !byte 4
          !raw  "HELP"
+
+kHelpTextFile
+         !byte 8
+         !raw  "HELPTEXT"
 
 kTitleFile
          !byte 5

@@ -46,7 +46,7 @@ InputDispatchTableHi
 kNumInputKeys = 10                   ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
-         !byte $A6                   ; '&' = credits
+         !byte $81                   ; Ctrl-A = about
          !byte $AF                   ; '/' = help
          !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
