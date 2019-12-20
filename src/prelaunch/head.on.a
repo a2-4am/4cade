@@ -13,11 +13,11 @@
          sta   $7001
          lda   #$C0
          sta   $7002
-         lda   #$4C
-         sta   $7003
-         lda   #<RELBASE  ; low byte
+         lda   #$6C       ; JMP ($FFFC)
+         sta   $7003      ; 'Reenter'
+         lda   #$FC
          sta   $7004
-         lda   #>RELBASE  ; high byte
+         lda   #$FF
          sta   $7005      ; re-establish LC hook
 
          lda   #0
