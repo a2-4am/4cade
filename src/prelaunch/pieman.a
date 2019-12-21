@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PIEMAN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60       ; hook1
+         sta   $3EA9
+         jsr   $3E88      ; decompress
+         +DISABLE_ACCEL
+
+         lda   #$60       ; hook2
+         sta   $A050
+         jsr   $A000      ; title/load
+
+         lda   #$60       ; hook3
+         sta   $948
+         jsr   $940
+
+         lda   #0
+         sta   $3F2
+         lda   #1
+         sta   $3F3
+         lda   #$A4
+         sta   $3F4       ; reset vector patch
+
+         jmp   $950
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
