@@ -7,9 +7,23 @@
 
     !source "src/prelaunch/common.a"
 
-         inc   $3f4       ; reset vector patch
-                          ; (overwrites LC so reboot)
-         jmp   $800
+         lda   #$60
+         sta   $9DE
+         jsr   $800       ; decompress
+
+         lda   #$82
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update TR hook to reboot
+         lda   #0
+         sta   $FFFC
+         lda   #1
+         sta   $FFFD      ; reset vector fix
+
+         lda   #8         ; x=45, y=1 here
+         jmp   $B800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

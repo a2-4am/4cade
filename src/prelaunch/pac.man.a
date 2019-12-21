@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +USES_TEXT_PAGE_2
+         +ENABLE_ACCEL
          lda   #$60
          sta   $813
          jsr   $800       ; decompress
@@ -17,6 +18,7 @@
          lda   #1
          sta   $104A      ; reset vector patch
 
+         +DISABLE_ACCEL
          jmp   $1000
 
 !if * > $1C0 {
