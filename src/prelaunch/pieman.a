@@ -7,9 +7,11 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60       ; hook1
          sta   $3EA9
          jsr   $3E88      ; decompress
+         +DISABLE_ACCEL
 
          lda   #$60       ; hook2
          sta   $A050

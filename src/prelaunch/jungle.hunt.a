@@ -7,6 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $81E
          jsr   $800
@@ -20,6 +21,7 @@
          lda   #0
          sta   $0A67 ; reset vector patch
 
+         +DISABLE_ACCEL
          jmp   $A00
 
 !if * > $1C0 {

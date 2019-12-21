@@ -7,9 +7,12 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $82E
          jsr   $800       ; decompress
+         +DISABLE_ACCEL
+
          jsr   $BD1C      ; title screen
 
          lda   #$60
