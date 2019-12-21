@@ -66,8 +66,8 @@ Home
 @start
          ; this will be run from main memory
          +READ_ROM_NO_WRITE
-         sta   CLR80VID              ; get out of DHGR mode
          sta   DHIRESOFF             ; get out of DHGR mode
+         sta   CLR80VID              ; get out of DHGR mode
          jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
          jsr   ROM_HOME              ; HOME
          lda   PAGE1
@@ -92,6 +92,10 @@ BlankDHGR
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
          sta   SET80VID
+         sta   DHIRESON
+         sta   DHIRESOFF
+         sta   DHIRESON
+         sta   DHIRESOFF
          sta   DHIRESON
          bit   PAGE1
          jmp   HGRMode
