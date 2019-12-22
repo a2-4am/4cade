@@ -34,6 +34,13 @@
          sta   $FFFC
          lda   #1
          sta   $FFFD      ; reset vector fix
+         lda   #$EA
+         sta   $600
+         sta   $601
+         sta   $602
+         sta   $603
+         sta   $604
+         sta   $605       ; NOP setting the reset
 
          jmp   $981
 
