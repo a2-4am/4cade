@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SABOTAGE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60       ; hook1
+         sta   $4020
+         jsr   $4000      ; decompress1
+         +DISABLE_ACCEL
+         jsr   $6B00      ; decompress2/title
+
+         lda   #$60       ; hook2
+         sta   $1DB2
+         jsr   $1D1F
+
+         lda   #0
+         sta   $3f2
+         lda   #1
+         sta   $3f3
+         lda   #$A4
+         sta   $3f4       ; reset vector patch
+
+         jmp   $42BC
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

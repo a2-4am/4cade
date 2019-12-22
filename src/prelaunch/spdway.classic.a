@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SPDWAY.CLASSIC",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60       ; hook
+         sta   $2078
+         jsr   $2000      ; decompress
+
+         lda   #0
+         sta   $3F2
+         lda   #1
+         sta   $3F3
+         lda   #$A4
+         sta   $3F4       ; reset vector patch
+
+         +DISABLE_ACCEL
+         jmp   $817
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
