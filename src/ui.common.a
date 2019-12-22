@@ -68,6 +68,7 @@ Home
          +READ_ROM_NO_WRITE
          sta   DHIRESOFF             ; get out of DHGR mode
          sta   CLR80VID              ; get out of DHGR mode
+                                     ; write-order matters for RGB-card
          jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
          jsr   ROM_HOME              ; HOME
          lda   PAGE1
@@ -91,12 +92,20 @@ BlankDHGR
          sta   WRITEAUXMEM
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
+
+         ; magic sequence to set colour mode on an RGB card
+         ; SET80VID clears the RGB-card shift-register
+         ; DHIRESON/OFF shifts that bit into the mode register
+         ; we do that twice because the mode register is two bits wide
+         ; we need mode 00 for colour
+
          sta   SET80VID
          sta   DHIRESON
          sta   DHIRESOFF
          sta   DHIRESON
          sta   DHIRESOFF
-         sta   DHIRESON
+
+         sta   DHIRESON              ; then turn DHGR on
          bit   PAGE1
          jmp   HGRMode
 
