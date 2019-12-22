@@ -13,9 +13,9 @@
          jsr   $6BD1      ; decompress/title
 
          ldy   #6
--        dey
-         lda   $100,y
-         sta   $280,y     ; move hook to $280
+-        lda   $100-1,y
+         sta   $280-1,y   ; move hook to $280
+         dey
          bne   -
 
          lda   #$80

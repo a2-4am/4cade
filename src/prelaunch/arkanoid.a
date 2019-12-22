@@ -11,6 +11,7 @@
          lda   #$60
          sta   $97e
          jsr   $800
+
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -22,6 +23,18 @@
          jsr   DisableAccelerator
          lda   $c08b
          jsr   $ee1f
+
+         lda   #$82
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update TR hook to reboot
+         lda   #0
+         sta   $FFFC
+         lda   #1
+         sta   $FFFD      ; reset vector fix
+
          jmp   $981
 
 !if * > $1C0 {

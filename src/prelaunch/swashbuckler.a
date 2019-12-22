@@ -17,9 +17,9 @@
          jsr   $BC00      ; title
 
          ldy   #6
--        dey
-         lda   $100,y
-         sta   $180,y     ; move reset hook to $180
+-        lda   $100-1,y
+         sta   $180-1,y   ; move hook to $180
+         dey
          bne   -
 
          lda   #$80
