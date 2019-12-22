@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SWASHBUCKLER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ;+ENABLE_ACCEL   ; can't
+         lda   #$60
+         sta   $332C      ; stop1
+         jsr   $330F      ; decompress
+
+         lda   #$60
+         sta   $BC81      ; stop2
+         jsr   $BC00      ; title
+
+         ldy   #6
+-        lda   $100-1,y
+         sta   $180-1,y   ; move hook to $180
+         dey
+         bne   -
+
+         lda   #$80
+         sta   $3F2       ; reset vector patch
+
+         jmp   $1B34
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

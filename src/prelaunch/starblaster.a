@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/STARBLASTER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ;+ENABLE_ACCEL   ; can't - shows title right away
+         lda   #$60       ; hook
+         sta   $9318
+         jsr   $6BD1      ; decompress/title
+
+         ldy   #6
+-        lda   $100-1,y
+         sta   $280-1,y   ; move hook to $280
+         dey
+         bne   -
+
+         lda   #$80
+         sta   $3F2
+         lda   #$02
+         sta   $3F3
+         lda   #$A7
+         sta   $3F4       ; reset vector patch
+
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
