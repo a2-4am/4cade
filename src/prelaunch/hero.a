@@ -25,6 +25,25 @@
                           ; not the other so you can plant a bomb without using up a bomb then get the
                           ; maximum 'unused bombs' bonus and advance to the next level)
 +
+         lda   #3
+         sta   $6040
+         lda   #$A6
+         sta   $6041      ; reset vector cloned from $603F
+                          ; $100 gets trashed so put it at $300
+
+         lda   #$2C
+         sta   $300
+         lda   #$88
+         sta   $301
+         lda   #$C0
+         sta   $302
+         lda   #$6C       ; JMP ($FFFC)
+         sta   $303       ; 'Reenter'
+         lda   #$FC
+         sta   $304
+         lda   #$FF
+         sta   $305       ; re-establish LC hook
+
          +DISABLE_ACCEL
          jmp   $6000
 

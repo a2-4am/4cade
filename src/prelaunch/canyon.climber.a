@@ -17,6 +17,19 @@
          lda   #$a5
          sta   $35c2
 +
+         lda   #$82       ; READ_ROM_NO_WRITE
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update TR hook to reboot
+         +READ_RAM2_WRITE_RAM2
+         lda   #0
+         sta   $3256      ; sets reset at $455
+         sta   $FFFC
+         lda   #1
+         sta   $3261      ; which is copied from $3255
+         sta   $FFFD      ; LC reset vector fix
          +DISABLE_ACCEL
          jmp   $3000
 
