@@ -204,3 +204,18 @@
          sta   .addr+5
          +RESET_VECTOR .addr
 }
+
+; for 64k games on ][+ which either hang or restart
+; updates reset hook to reboot on ctrl-reset
+!macro   LC_REBOOT {
+         lda   #$82       ; (assumes LC is switched in)
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+         lda   #0
+         sta   $FFFC
+         lda   #1
+         sta   $FFFD      ; LC reset vector fix
+}

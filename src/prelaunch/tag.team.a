@@ -12,17 +12,7 @@
          sta   $820
          jsr   $800       ; decompress
 
-         lda   #$82
-         sta   $101
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; update TR hook to reboot
-
-         lda   #0
-         sta   $FFFC
-         lda   #1
-         sta   $FFFD      ; LC reset vector patch
+         +LC_REBOOT
 
          +DISABLE_ACCEL
          jmp   $6000

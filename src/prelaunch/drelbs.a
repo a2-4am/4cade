@@ -17,17 +17,9 @@
          lda   #$a5
          sta   $1cb0      ; patch - don't decrease lives
 +
-         lda   #$82       ; READ_ROM_NO_WRITE
-         sta   $101
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; update TR hook to reboot
          +READ_RAM2_WRITE_RAM2
-         lda   #0
-         sta   $FFFC
-         lda   #1
-         sta   $FFFD      ; LC reset vector fix
+         +LC_REBOOT
+
          +DISABLE_ACCEL
          jmp   $8000
 
