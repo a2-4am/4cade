@@ -7,25 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
-         lda   #$2C
-         sta   $7000
-         lda   #$88
-         sta   $7001
-         lda   #$C0
-         sta   $7002
-         lda   #$6C       ; JMP ($FFFC)
-         sta   $7003      ; 'Reenter'
-         lda   #$FC
-         sta   $7004
-         lda   #$FF
-         sta   $7005      ; re-establish LC hook
-
-         lda   #0
-         sta   $3F2
-         lda   #$70
-         sta   $3F3
-         lda   #$D5
-         sta   $3F4       ; reset vector patch
+         +NEW_RESET_VECTOR $7000
 
          jmp   $2000
 

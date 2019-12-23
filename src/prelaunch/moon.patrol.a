@@ -21,18 +21,8 @@
          sta   $2d07
          sta   $1c17
 +
-         ldy   #6
--        lda   $100-1,y   ; game uses $100 as variable
-         sta   $1B0-1,y   ; move hook to $1B0
-         dey
-         bne   -
-
-         lda   #$B0
-         sta   $3F2
-         lda   #$01
-         sta   $3F3
-         lda   #$A4
-         sta   $3F4       ; reset vector patch
+         ; game uses $100 as variable, so move reset vector to $1B0
+         +NEW_RESET_VECTOR $1B0
 
          +DISABLE_ACCEL
          jmp   $919

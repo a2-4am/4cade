@@ -19,12 +19,8 @@
          sta   $BD19
          jsr   $BCFA
 
-         lda   #0
-         sta   $3F2
-         lda   #1
-         sta   $3F3
-         lda   #$A4
-         sta   $3F4       ; reset vector patch
+         ; re-patch reset vector
+         +RESET_VECTOR $100
 
          jmp   $7E00
 

@@ -177,3 +177,30 @@
          jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
 +
 }
+
+!macro   RESET_VECTOR .addr {
+         lda   #<.addr
+         sta   $3F2
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+}
+
+; for games that clobber $100-$105, the prelaunch code constructs a new reset vector
+; somewhere else and sets its
+!macro   NEW_RESET_VECTOR .addr {
+         lda   #$2C
+         sta   .addr
+         lda   #$88
+         sta   .addr+1
+         lda   #$C0
+         sta   .addr+2
+         lda   #$6C       ; JMP ($FFFC) points to 'Reenter'
+         sta   .addr+3
+         lda   #$FC
+         sta   .addr+4
+         lda   #$FF
+         sta   .addr+5
+         +RESET_VECTOR .addr
+}

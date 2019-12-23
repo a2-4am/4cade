@@ -18,12 +18,8 @@
          sta   $1DB2
          jsr   $1D1F
 
-         lda   #0
-         sta   $3f2
-         lda   #1
-         sta   $3f3
-         lda   #$A4
-         sta   $3f4       ; reset vector patch
+         ; re-patch reset vector
+         +RESET_VECTOR $100
 
          jmp   $42BC
 

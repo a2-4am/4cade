@@ -19,12 +19,8 @@
 
          +ENABLE_ACCEL
 
-         lda   #0
-         sta   $3f2
-         lda   #1
-         sta   $3f3
-         lda   #$A4      ; reset vector patch
-         sta   $3f4      ; (doesn't work during copyright)
+         ; re-patch reset vector (doesn't work during copyright sequence)
+         +RESET_VECTOR $100
 
          lda   #$6c
          sta   $bd40
