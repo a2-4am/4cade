@@ -10,6 +10,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   cheat
+         +NEW_RESET_VECTOR $3C0
          ldx   #$0E       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
          sta   $F1,x
