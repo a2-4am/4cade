@@ -8,6 +8,8 @@
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $BFF0
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch+1
