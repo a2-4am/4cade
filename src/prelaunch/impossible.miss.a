@@ -20,16 +20,7 @@
          sta   $4018
          jsr   $4000      ; LC switched in
 
-         lda   #$82
-         sta   $101
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; update TR hook to reboot
-         lda   #0
-         sta   $FFFC
-         lda   #1
-         sta   $FFFD      ; reset vector fix
+         +LC_REBOOT
 
          jmp   $800
 
