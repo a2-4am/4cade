@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/NIGHT.STALKER",plain
