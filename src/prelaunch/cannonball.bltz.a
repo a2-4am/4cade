@@ -18,6 +18,12 @@
          sta   $7dbf      ; patch - don't increase lives
          sta   $9c01      ; patch - don't decrease lives
 +
+         +RESET_VECTOR $100
+         lda   #$2C
+         sta   $A0D2
+         sta   $A0D5
+         sta   $A0DA      ; reset fix
+
          +DISABLE_ACCEL
          jmp   $a000
 
