@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/OUTPOST",plain
@@ -10,7 +10,7 @@
          ;+ENABLE_ACCEL   ; can't
          lda   #$60
          sta   $3EF2
-         jsr   $3EC8      ; decompress/title
+         jsr   $3EC8      ; decompress/title/set reset vector
 
          +RESET_VECTOR $100
          jmp   $200
