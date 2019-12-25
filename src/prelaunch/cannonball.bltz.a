@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/CANNONBALL.BLTZ",plain
@@ -10,7 +10,7 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $1e61
-         jsr   $1e30      ; decompress
+         jsr   $1e30      ; decompress/sets reset vector
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
