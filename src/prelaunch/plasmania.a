@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/PLASMANIA",plain
@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +USES_TEXT_PAGE_2
+         +NEW_RESET_VECTOR $BFF0  ; overwrites $100 once game starts
          jmp   $800
 
 !if * > $1C0 {
