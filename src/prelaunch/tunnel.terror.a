@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/TUNNEL.TERROR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #1        ; reset vector fix
+         sta   $6E13     ; to $3F3
+         lda   #$A4
+         sta   $6E15     ; to $3F4 (doesn't change $3F2)
+
+         jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
