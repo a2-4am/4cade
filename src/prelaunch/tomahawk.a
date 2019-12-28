@@ -2,18 +2,23 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/SKYFOX",plain
+!to "build/PRELAUNCH/TOMAHAWK",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         inc   $80 ; requires a non-zero value for the RNG
          lda   #$60
-         sta   $7E31
-         jsr   $4621
+         sta   $309B
+         jsr   $3019
+         +RESET_VECTOR reset
          +DISABLE_ACCEL
-         jmp   $67BD
+         lda   $C083
+         jmp   $235
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
