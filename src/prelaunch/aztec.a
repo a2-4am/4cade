@@ -2,15 +2,14 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/BEYOND.WOLFEN",plain
+!to "build/PRELAUNCH/AZTEC",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +USES_TEXT_PAGE_2
          lda   #$60
-         sta   $97C
+         sta   $98A
          jsr   $800       ; find and load "DOS"
          lda   #<callback
          sta   $B748
@@ -18,15 +17,11 @@
          sta   $B749
          jmp   $B700
 
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
-
 callback
-         lda   #>reset
-         sta   $9E31
-         lda   #<reset
-         sta   $9E3C      ; reset vector patch
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector patch
 
          +DISABLE_ACCEL
          jmp   $9D84
