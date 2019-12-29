@@ -30,6 +30,19 @@
 @no64Klen=(*-@s_no64K)-1
 
 +
+         lda   #$6A                  ; change Fastchip speaker setting to 'HIFI'
+         sta   $C06A                 ; (improves sound on most games)
+         sta   $C06A                 ; (setting reverts on power cycle)
+         sta   $C06A
+         sta   $C06A
+         sta   $C06B                 ; unlock & enable FC settings
+         lda   #$02
+         sta   $C06E                 ; config speaker
+         lda   #$04
+         sta   $C06F                 ; setting 'HIFI'
+         lda   #$A6
+         sta   $C06A                 ; re-lock FC
+
          lda   #0
          sta   zpMachineStatus
          sta   SETC3ROM
