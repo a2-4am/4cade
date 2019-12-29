@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SKYFOX",plain
@@ -8,10 +8,22 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         inc   $80 ; requires a non-zero value for the RNG
+         inc   $80        ; requires a non-zero value for the RNG
          lda   #$60
          sta   $7E31
          jsr   $4621
+
+         lda   #$82       ; READ_ROM_NO_WRITE
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update TR hook to reboot
+         lda   #0
+         sta   $5FFC
+         lda   #1
+         sta   $5FFD      ; moved to LC $FFFC/D
+
          +DISABLE_ACCEL
          jmp   $67BD
 
