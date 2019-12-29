@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/WOLFEN84",plain
@@ -23,10 +23,14 @@ reset
          jmp   $FAA6
 
 callback
-         lda   #>reset
-         sta   $9E52
+         +READ_RAM2_WRITE_RAM2
          lda   #<reset
-         sta   $9E53      ; reset vector patch
+         sta   $9E52
+         sta   $FFFC
+         lda   #>reset
+         sta   $9E53
+         sta   $FFFD       ; reset vector patch
+         +READ_ROM_NO_WRITE
 
          +DISABLE_ACCEL
          jmp   $9D84

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/THEXDER",plain
@@ -11,7 +11,13 @@
          lda   #$60
          sta   $13A8
          jsr   $1200
+
          +RESET_VECTOR reset
+         lda   #<reset
+         sta   $47FC
+         lda   #>reset
+         sta   $47FD      ; moved to LC $FFFC/D
+
          +DISABLE_ACCEL
          jmp   $1800
 
