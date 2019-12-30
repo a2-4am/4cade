@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/WARP.DESTROYER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $893
+         jsr   $800      ; decompress
+         ldx   #1
+         stx   $6692
+         dex
+         stx   $669C
+         +DISABLE_ACCEL
+         lda   #0
+         jmp   $896
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BLACK.MAGIC",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9C2
+         jsr   $800       ; decompress
+
+         lda   #$60
+         sta   $1B2D
+         sta   $D6E6
+         jsr   DisableAccelerator
+         jsr   $1B00
+         jsr   EnableAccelerator
+         jsr   $D000
+         lda   #$4C
+         sta   $D6EB
+         lda   #<callback
+         sta   $8D5
+         lda   #>callback
+         sta   $8D6
+         jsr   DisableAccelerator
+         jmp   $800
+
+callback
+         jsr   EnableAccelerator
+         jsr   $D003
+         lda   #$A6
+         sta   $4183
+         lda   #$FA
+         sta   $4184
+         jsr   DisableAccelerator
+         jmp   $D6EE
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
