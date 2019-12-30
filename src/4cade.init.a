@@ -188,7 +188,7 @@ LoaderBuild
 } else {
 LoaderVersion
          !byte   11
-         !text   "v3.0-beta.1"
+         !text   "v3.0-beta.2"
 }
 Loader64K
          !byte   3
