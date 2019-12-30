@@ -1,4 +1,4 @@
-# Revision 3.0-beta.1 / serial number 191213
+# Revision 3.0-beta.2 / serial number 191230
 
 ## New & changed games
 
@@ -15,6 +15,7 @@
  - Added global cheat mode (press `Ctrl-C` in search or browse mode to toggle)
  - Added 71 game cheats
  - New and updated graphic effects in screensaver mode
+ - Ctrl-Reset quits to launcher from most games, and reboots cleanly from the rest (thanks Frank M.)
  - Fixed corrupted graphics in Asteroid Blaster
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Fixed Axis Assassin demo hanging on Apple IIgs
@@ -26,6 +27,8 @@
  - Fixed a freeze on startup with certain accelerators
  - Fixed multiple crashes on Apple ][+, //c, //c+, and IIgs
  - Fixed choppy sound in some games on Apple IIgs
+ - Fixed sound with FastChip accelerator (thanks Frank M.)
+ - Fixed crash with RGB card when entering double hi-res mode
  - Fixed launching from MicroDrive partition 3+
  - Fixed launching from CFFA 3000 partition 5+
  - Fixed launching from RamFAST "GS/OS partitions"
