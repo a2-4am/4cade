@@ -31,13 +31,18 @@
 callback
          jsr   EnableAccelerator
          jsr   $D003
-         lda   #$A6
-         sta   $4183
-         lda   #$FA
-         sta   $4184
+         ldx   #5
+-        lda   reset, x
+         sta   $4182, x
+         dex
+         bpl   -
          jsr   DisableAccelerator
          jmp   $D6EE
 
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+         
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }
