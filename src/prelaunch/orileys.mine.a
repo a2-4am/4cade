@@ -12,9 +12,15 @@
          sta   $81D
          jsr   $800       ; decompress
 
-         lda   #1
+         +NEW_RESET_VECTOR $280
+         lda   #$80
+         sta   $2001
+         sta   $2016
+         sta   $812E
+         lda   #$02
          sta   $2006
          sta   $201B      ; reset vector patch
+         sta   $8133      ; (yes, that's 3 times)
 
          +DISABLE_ACCEL
          jmp   $8FD
