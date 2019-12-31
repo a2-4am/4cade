@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/BALLBLAZER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $5FEB
+         jsr   $5FCC      ; decompress1
+
+         lda   #$60
+         sta   $BE20
+         +DISABLE_ACCEL
+         jsr   $BE00      ; decompress2/title
+
+         lda   #1
+         sta   $415       ; gets patched to LC reset vector
+
+         jmp   $400
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
