@@ -18,8 +18,21 @@
          sta   $82b0
          sta   $8324
 +
+         +READ_ROM_WRITE_RAM1
+         lda   #<reset
+         sta   $3F2
+         sta   $FFFC
+         lda   #>reset
+         sta   $3F3
+         sta   $FFFD
+         eor   #$A5
+         sta   $3F4
          +DISABLE_ACCEL
          jmp   $6000
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
