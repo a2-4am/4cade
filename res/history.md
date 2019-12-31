@@ -1,4 +1,4 @@
-# Revision 3.0-beta.2 / serial number 191230
+# Revision 3.0 / unreleased
 
 ## New & changed games
 
@@ -7,6 +7,7 @@
  - Added Short Circuit
  - Added Skyfox
  - Removed Flight Simulator I
+ - Updated Rescue Raiders to version 1.5 (fixes Mockingboard and other issues)
  - Combined Tetris 48K and Tetris 128K; just launch Tetris and it'll figure it out
 
 ## Enhancements & bug fixes
