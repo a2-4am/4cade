@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/UP.N.DOWN",plain
@@ -7,18 +7,24 @@
 
          !source "src/prelaunch/common.a"
 
+         lda   #$03       ; reset vector to $103
+         sta   $2D4E
+         lda   #$01       ; (game uses the 3 value to set STA $'03'F2
+         sta   $2D50      ; so reset has to be somewhere $xx03
+         sta   $2DB1      ; unless you want to waste more time making this reboot)
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch+1
-         ldx   #$0B       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
--        lda   patch,x
-         sta   $F4,x
+         ldx   #$2A-1     ; copy patch code to zero page
+-        lda   patch,x    ; (stack will be destroyed by the time we need to patch)
+         sta   $80,x
          dex
          bpl   -
-         lda   #$F4       ; call patch instead of $200
-         sta   $4061
+         lda   #$80       ; call patch instead of $200
+         sta   $4054
          lda   #$00
-         sta   $4062
+         sta   $4055      ; updated here for new .po file locations
          jmp   $2D2C
 patch
          lda   #0         ; SMC
@@ -27,7 +33,20 @@ patch
          lda   #$B5
          sta   $0912      ; patch - don't decrease lives
 +
-         jmp   $0200      ; continue with load
+         lda   #$2C
+         sta   $103
+         lda   #$82
+         sta   $104
+         lda   #$C0
+         sta   $105
+         lda   #$4C       ; add reboot hook @ $103
+         sta   $106
+         lda   #$A6
+         sta   $107
+         lda   #$FA
+         sta   $108
+
+         jmp   $200       ; continue to game
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
