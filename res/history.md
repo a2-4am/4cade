@@ -14,7 +14,7 @@
 
  - Added help screen (press `?` in search or browse mode to show)
  - Added global cheat mode (press `Ctrl-C` in search or browse mode to toggle)
- - Added 71 game cheats
+ - Added 80 game cheats
  - New and updated graphic effects in screensaver mode
  - Ctrl-Reset quits to launcher from most games, and reboots cleanly from the rest (thanks Frank M.)
  - Fixed corrupted graphics in Asteroid Blaster
