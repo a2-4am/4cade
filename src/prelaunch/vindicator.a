@@ -18,6 +18,16 @@
          lda   #$BF
          sta   $400F      ; reset vector fix
 
+         lda   #$58       ; annunciator fix
+         sta   $5B98      ; kills 'Gizmo' support
+         sta   $5BA8      ; but fixes ][+ 80-col softswitch
+         lda   #$5A
+         sta   $5B7B
+         sta   $5B9B
+         sta   $5BC6
+         lda   #$5C
+         sta   $5BD5
+
          +DISABLE_ACCEL
          jmp   $4000
 
