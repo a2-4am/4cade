@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/THRESHOLD",plain
@@ -8,6 +8,8 @@
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $BFF0
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch+1

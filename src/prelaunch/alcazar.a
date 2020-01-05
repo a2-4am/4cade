@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ALCAZAR",plain
@@ -17,6 +17,13 @@
          lda   #$ad
          sta   $8289      ; patch - don't decrease lives
 +
+         lda   #$4C
+         sta   $9DBF
+         lda   #0
+         sta   $9DC0
+         lda   #1
+         sta   $9DC1      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $7c1e
 

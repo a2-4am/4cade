@@ -22,6 +22,10 @@
          sta   $7B8B      ; patch - never decrease lives (player 1)
          sta   $7B81      ; patch - never decrease lives (player 2)
 +
+         lda   #$AD
+         sta   $209
+         sta   $211
+         sta   $21C
          +DISABLE_ACCEL
          jmp   $B7A1
 

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/GAMMA.GOBLINS",plain
@@ -21,6 +21,7 @@
          lda   #$00
          sta   $7F62      ; patch - don't increase lives
 +
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          lda   #$00
          tay

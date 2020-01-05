@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/CRISIS.MOUNTAIN",plain
@@ -8,9 +8,17 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         lda   #$4c
+         sta   $B75B
+         lda   #0
+         sta   $B75C
+         lda   #1
+         sta   $B75D      ; reset vector patch
+
          lda   #$60
          sta   $207b
          jsr   $2000      ; decompress
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +

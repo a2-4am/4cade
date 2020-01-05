@@ -1,12 +1,13 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/KID.NIKI",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+    !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          lda   #$60
          sta   $6069
 
@@ -21,7 +22,7 @@
          lda   #$AD
          sta   $BD34      ; patch - don't decrease lives
 +
-
+         +DISABLE_ACCEL
          jmp   $61E3
 
 !if * > $1C0 {

@@ -8,8 +8,10 @@
          jmp   ++
 
 cheat
-         jsr   $d33f
-         lda   $d521
+         jsr   EnableAccelerator ; yes!
+         jsr   $d33b
+         jsr   DisableAccelerator
+         lda   $d4bd
          eor   #$c5
          bne   +
          sta   $1053
@@ -20,20 +22,18 @@ cheat
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $111c
+         dec   $11a6
          jsr   $1000      ; decompress
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #<cheat
-         sta   $d318
+         sta   $d312
          lda   #>cheat
-         sta   $d319
+         sta   $d313
 +
          jsr   DisableAccelerator
-         lda   #$c2
-         jmp   $d300
+         jmp   $803
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

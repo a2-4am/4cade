@@ -116,6 +116,8 @@ readdone        jmp $2000
 
 seekread        stx bloklo
                 sty blokhi
+                lda #1
+                sta command
                 lda adrhi
                 pha
 entry           jsr $d1d1

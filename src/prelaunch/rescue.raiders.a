@@ -1,0 +1,37 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/RESCUE.RAIDERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A37
+         jsr   $800        ; find and load "DOS"
+         ldx   #$60
+         stx   $BFE5
+         jsr   $BFC8
+         lda   #$4C
+         sta   $4047
+         +DISABLE_ACCEL    ; otherwise Mockingboard detection fails
+         lda   #0
+         jsr   $4000
+         lda   #<reset
+         sta   $3F2
+         sta   $FFFC
+         lda   #>reset
+         sta   $FFFD
+         lda   #$4C
+         sta   $BFE5
+         jmp   $404A
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/PHOTAR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $1027
+         jsr   $1000      ; decompress
+
+         lda   #0
+         sta   $60
+         sta   $61
+         sta   $62        ; uses reset vector for setup code
+         +RESET_VECTOR $100
+
+         +DISABLE_ACCEL
+         jmp   $3FA
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

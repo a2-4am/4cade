@@ -1,0 +1,30 @@
+notes on animated title screen:
+load at $5800
+JMP $6000
+JSR $80EE moves memory (keep)
+JSR $66B8 and $66BE clear hi-res pages (skip)
+.
+.
+.
+JSR $7D1B
+  JSR $9400 keep
+  JSR $66BE skip
+  JSR $85D4 keep
+  .
+  .
+  .
+  at $7D5F, JSR $7EF1 to draw text box text on page 1 (skip)
+  at $7D62, loop scrolls box with credits (skip)
+  at $7D77, three JSR $7E73 waits (skip)
+  .
+  $7D80 sets up then waits again (skip)
+**********  $7DCA starts animation
+
+$7E22: JMP $100 to exit back to launcher
+
+no-sound patch:
+global search/replace "AD 30 C0" -> "AD 30 D0"
+$8124: C0 -> D0 (patches self-modifying code)
+
+no-hi-res-clear patch:
+$66C2: 8D -> 60

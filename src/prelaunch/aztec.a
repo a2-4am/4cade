@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2019 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/AZTEC",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $98A
+         jsr   $800       ; find and load "DOS"
+         lda   #<callback
+         sta   $B748
+         lda   #>callback
+         sta   $B749
+         jmp   $B700
+
+callback
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector patch
+
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

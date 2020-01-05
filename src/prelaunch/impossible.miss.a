@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/IMPOSSIBLE.MISS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+                          ; reboot on reset during title
+         +READ_RAM2_WRITE_RAM2
+         +LC_REBOOT
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $920
+         jsr   $800       ; decompress/title
+
+         lda   #$60
+         sta   $9f1
+         jsr   $9AD
+         jsr   $9050
+
+         lda   #$60
+         sta   $4018
+         jsr   $4000      ; sets reset vector/LC switched in
+
+         +LC_REBOOT       ; change it back to reboot
+
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

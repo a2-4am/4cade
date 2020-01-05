@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/DRELBS",plain
@@ -17,6 +17,9 @@
          lda   #$a5
          sta   $1cb0      ; patch - don't decrease lives
 +
+         +READ_RAM2_WRITE_RAM2
+         +LC_REBOOT
+
          +DISABLE_ACCEL
          jmp   $8000
 

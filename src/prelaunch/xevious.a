@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/XEVIOUS",plain
@@ -8,6 +8,14 @@
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+
+         +READ_RAM2_WRITE_RAM2
+         lda   #<reset
+         sta   $FFFC
+         sta   $3F2       ; $3F3/3F4 already set to page 1
+         lda   #>reset
+         sta   $FFFD      ; reset vector patch
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch2+1
@@ -16,13 +24,18 @@
          lda   #>patch1
          sta   $35E5
          jmp   $34AA      ; decompress 1
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+         
 patch1
          +DISABLE_ACCEL
          lda   #<patch2
          sta   $ACE8
          lda   #>patch2
          sta   $ACE9
-         jmp   $AC48      ; decompress 2
+         jmp   $AC48      ; decompress 2/first title
 patch2
          lda   #0         ; SMC
          beq   +
@@ -33,7 +46,7 @@ patch2
          sta   $750D      ; patch - don't increase lives
          sta   $894F      ; patch - don't increase lives
 +
-         jmp   $0600
+         jmp   $0600      ; play demo/start game
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

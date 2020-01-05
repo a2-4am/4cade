@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/HERO",plain
@@ -25,6 +25,13 @@
                           ; not the other so you can plant a bomb without using up a bomb then get the
                           ; maximum 'unused bombs' bonus and advance to the next level)
 +
+         lda   #3
+         sta   $6040
+         lda   #$A6
+         sta   $6041      ; reset vector cloned from $603F
+                          ; $100 gets trashed so put it at $300
+         +NEW_RESET_VECTOR $300
+
          +DISABLE_ACCEL
          jmp   $6000
 

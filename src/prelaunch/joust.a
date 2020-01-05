@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/JOUST",plain
@@ -23,6 +23,12 @@
          sta   $2bc9
          sta   $2b6b
 +
+         lda   #$4C
+         sta   $A3DC
+         lda   #0
+         sta   $A3DD
+         lda   #1
+         sta   $A3DE      ; reset vector patch
          +DISABLE_ACCEL
          jmp   $3e00
 

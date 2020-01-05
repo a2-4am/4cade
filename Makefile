@@ -28,8 +28,9 @@ dsk: md asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	for f in res/*.conf; do rsync -aP "$$f" build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
 	rsync -aP res/credits.txt build/CREDITS >>build/log
+	rsync -aP res/help.txt build/HELPTEXT >>build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-	for f in res/TITLE res/COVER res/HELP build/*.CONF build/CREDITS; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	for f in res/TITLE res/COVER res/HELP build/*.CONF build/CREDITS build/HELPTEXT; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	for f in res/title.hgr res/title.dhgr res/action.hgr res/action.dhgr res/action.gr res/artwork.shr res/attract res/ss res/demo res/title.animated; do rsync -aP "$$f"/* build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
 	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh build/TITLE.DHGR "06" "4000" >>build/log

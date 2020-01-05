@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/AXIS.ASSASSIN",plain
@@ -7,7 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
          lda   #$60
          sta   $3f06
          jsr   $3eb1      ; decompress
@@ -17,7 +16,13 @@
          lda   #$ad
          sta   $6d31
 +
-         +DISABLE_ACCEL
+         lda   #$4C
+         sta   $5B2E
+         lda   #0
+         sta   $5B2F
+         lda   #1
+         sta   $5B30      ; reset vector patch
+
          jmp   $5c00
 
 !if * > $1C0 {

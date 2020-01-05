@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MOON.PATROL",plain
@@ -21,6 +21,9 @@
          sta   $2d07
          sta   $1c17
 +
+         ; game uses $100 as variable, so move reset vector to $1B0
+         +NEW_RESET_VECTOR $1B0
+
          +DISABLE_ACCEL
          jmp   $919
 

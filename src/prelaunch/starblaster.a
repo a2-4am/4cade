@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/STARBLASTER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ;+ENABLE_ACCEL   ; can't - shows title right away
+         lda   #$60       ; hook
+         sta   $9318
+         jsr   $6BD1      ; decompress/title
+
+         +NEW_RESET_VECTOR $280
+
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

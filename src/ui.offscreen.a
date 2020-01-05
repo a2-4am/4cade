@@ -57,7 +57,7 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadHelpOffscreen
-         lda   #<kHelpFile
+         lda   #<kHelpBackgroundFile
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadCoverOffscreen

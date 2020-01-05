@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MR.ROBOT",plain
@@ -18,6 +18,11 @@
          sta   $777C      ; patch - don't decrease lives
          sta   $78C5      ; patch - don't increase lives
 +
+         lda   #$EA
+         sta   $13D9
+         sta   $13DA
+         sta   $13DB      ; reset vector patch
+
          jmp   $7600
 
 !if * > $1C0 {

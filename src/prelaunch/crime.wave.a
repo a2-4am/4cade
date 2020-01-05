@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/CRIME.WAVE",plain
@@ -18,6 +18,8 @@
          sta   $9D89      ; patch - don't decrease lives
          sta   $9DF4      ; patch - don't increase lives
 +
+                          ; reset vector in high score file
+                          ; gets loaded directly to $300
          +DISABLE_ACCEL
          jmp   $0800
 

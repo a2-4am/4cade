@@ -10,19 +10,24 @@
 
 DrawPageInternal
 ; A/Y contains address of character buffer
+; X contains 0-indexed left margin (HTAB)
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
-; drawing starts at VTAB 0, HTAB 0
+; drawing starts at VTAB 0
+; each line starts at column X which was passed in (0-indexed)
 ; clobbers PTR
 ; clobbers A/X/Y
 ; preserves all flags, by a quirk of implementation
          php
+         stx   @leftMargin
          ldx   #0
          stx   VTAB
          +STAY PTR
 @drawLine
+@leftMargin=*+1
+         lda   #$FD                  ; SMC
+         sta   HTAB
          ldy   #0
-         sty   HTAB
 @parseLine
          lda   (PTR),y
          cmp   #$5B                  ; '[' at beginning on line
@@ -31,19 +36,20 @@ DrawPageInternal
          beq   @donePage
 +        cmp   #$0D
          beq   @doneParsingLine
-         cmp   #$2A
-         bne   +
-         lda   #$10
-         sta   (PTR),y               ; asterisk -> dot, small
-+        cmp   #$7E
-         bne   +
-         lda   #$11
-         sta   (PTR),y               ; tilde -> dot, medium
+         ldx   #3
+-        cmp   @subs_a,x
+         beq   @makesub
+         dex
+         bpl   -
+         bmi   +
+@makesub
+         lda   @subs_b,x
+         sta   (PTR),y
 +        iny
          bne   @parseLine
 @doneParsingLine
          sty   SAVE
-         cpy   #0
+         tya
          beq   @skip
          ldx   SAVE
          +LDAY PTR
@@ -62,6 +68,10 @@ DrawPageInternal
 @donePage
          plp
          rts
+@subs_a
+         !byte $2A,$7E,$3C,$3E
+@subs_b
+         !byte $10,$11,$08,$15
 
 Draw40CharsInternal
 ; A/Y contains address of character buffer

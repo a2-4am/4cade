@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/CAPTN.GOODNIGHT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $9DE
+         jsr   $800       ; decompress
+
+         +LC_REBOOT
+
+         lda   #8         ; x=45, y=1 here
+         jmp   $B800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

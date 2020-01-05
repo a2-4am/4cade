@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/HEAD.ON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ; clobbers $100, sets LC & page 3 reset vectors
+         +NEW_RESET_VECTOR $7000
+
+         lda   #$4C
+         sta   $7003      ; JMP not (JMP)
+         lda   $104
+         sta   $7004
+         lda   $105       ; clone actual TR reentry point to $7000
+         sta   $7005      ; loops between LC and $7000 otherwise
+                    
+         +READ_RAM2_WRITE_RAM2
+         lda   #0
+         sta   $FFFC
+         lda   #$70
+         sta   $FFFD      ; LC reset vector fix to $7000
+         +READ_ROM_NO_WRITE
+
+         jmp   $2000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

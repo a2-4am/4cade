@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/FREE.FALL",plain
@@ -22,6 +22,7 @@
          sta   $7E11      ; patch - don't increase lives
          sta   $BE11      ; patch - don't increase lives
 +
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          jmp   $4000
 
