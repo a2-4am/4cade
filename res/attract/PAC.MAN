@@ -1,1 +1,1 @@
-## Attract mode for Pac-Man#ARTWORK.SHR/PAC.MAN=CACTION.HGR/PAC.MAN=A[eof]
+## Attract mode for Pac-Man#ARTWORK.SHR/PAC.MAN=CACTION.HGR/PAC.MAN=APAC.MAN=0[eof]
