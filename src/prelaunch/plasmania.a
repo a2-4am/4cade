@@ -8,7 +8,8 @@
     !source "src/prelaunch/common.a"
 
          +USES_TEXT_PAGE_2
-         +NEW_RESET_VECTOR $BFF0  ; overwrites $100 once game starts
+         inc   $3f4 ; mismatch checksum to trigger reboot
+                    ; game overwrites LC during title
          jmp   $800
 
 !if * > $1C0 {
