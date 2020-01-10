@@ -15,6 +15,7 @@
          sta   WRITEMAINMEM
          jsr   ROM_TEXT
          jsr   ROM_HOME
+         jsr   ROM_NORMAL
          jsr   ROM_IN0
          jsr   ROM_PR0
          jsr   Has64K                ; check for 64K (required)
