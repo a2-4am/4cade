@@ -19,7 +19,6 @@
          +DISABLE_ACCEL    ; otherwise Mockingboard detection fails
          lda   #0
          jsr   $4000
-         +READ_RAM1_WRITE_RAM1 ; fix crash on //c+
          lda   #<reset
          sta   $3F2
          sta   $FFFC
@@ -27,6 +26,7 @@
          sta   $FFFD
          lda   #$4C
          sta   $BFE5
+         +READ_RAM1_WRITE_RAM1 ; fix crash on //c+
          jmp   $404A
 
 reset
