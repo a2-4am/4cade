@@ -10,7 +10,8 @@ cat res/games.conf |
     cut -d"=" -f1 | \
     while read game; do
         # if I knew how to use awk, this could be O(N) instead of O(N^2)
-        name=`cat res/games.conf | tr "\r" "\n" | grep "$game=" | cut -d"=" -f2`
+        name=`cat res/games.conf | tr "\r" "\n" | grep ",$game=" | cut -d"=" -f2`
+        echo "$game"" ""$name"
 
         # initialize attract mode configuration file for this game
         echo "#\n# Attract mode for $name\n#\n" > /tmp/g
@@ -26,7 +27,7 @@ cat res/games.conf |
         # add DHGR action screenshots, if any
         cat res/ss/ACTDHGR*.CONF |
             tr "\r" "\n" |
-            grep "$game""$" |
+            egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/^/ACTION.DHGR\//g" |
             sed -e "s/$/=B/g" |
@@ -36,7 +37,7 @@ cat res/games.conf |
         # add HGR action screenshots, if any
         cat res/ss/ACTION*.CONF |
             tr "\r" "\n" |
-            grep "$game""$" |
+            egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/^/ACTION.HGR\//g" |
             sed -e "s/$/=A/g" |
@@ -46,7 +47,7 @@ cat res/games.conf |
         # add GR action screenshots, if any
         cat res/ss/ACTGR*.CONF |
             tr "\r" "\n" |
-            grep "$game""$" |
+            egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/^/ACTION.GR\//g" |
             sed -e "s/$/=D/g" |
