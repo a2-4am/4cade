@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/FORCE.7",plain
@@ -7,9 +7,11 @@
 
          !source "src/prelaunch/common.a"
 
-         ; TODO reset vector
-         ; TODO cceleration
          ; TODO cheats
+
+         ;+ENABLE_ACCEL    ; can't
+         inc   $3F4        ; 128k - must reboot
+
          jmp   $2A55
 
 !if * > $1C0 {
