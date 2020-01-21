@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2019 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH/SPY.HUNTER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #<callback
+         sta   $4013
+         lda   #>callback
+         sta   $4010
+         jmp   $4000
+callback nop
+         ldy   #0
+         sty   $0D8E
+         iny
+         sty   $0D93
+         jmp   $0451
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
