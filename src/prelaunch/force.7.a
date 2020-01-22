@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/FORCE.7",plain
@@ -7,12 +7,38 @@
 
          !source "src/prelaunch/common.a"
 
-         ; TODO cheats
-
-         ;+ENABLE_ACCEL    ; can't
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $556B
+         lda   #>callback
+         sta   $556C
+         lda   #$4C
+         sta   $5581
+         jsr   $2A55
+         lda   #<reset
+         sta   $121A
+         lda   #>reset
+         sta   $121F
          inc   $3F4        ; 128k - must reboot
+         jmp   $1000
 
-         jmp   $2A55
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+callback
+         jsr   DisableAccelerator
+         jsr   $800
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $E263
+         sta   $E266
+         sta   $E269
+         sta   $E26C
+         sta   $E95B
++        rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
