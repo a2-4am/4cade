@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/GALAXY.GATES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6013
+         jsr   $6000      ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A5
+         sta   $20F3      ; patch - don't decrease lives
+         sta   $20BB      ; patch - don't increase lives
++        +DISABLE_ACCEL
+         jmp   $3A00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CRAZY.MAZEY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $3F0B
+         jsr   $3E47      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $EC2       ; patch - don't decrease lives
+         sta   $F16       ; patch - don't erase sprite
+         sta   $F19       ; patch - don't erase sprite
+         sta   $F1C       ; patch - don't erase sprite
+         sta   $1105      ; patch - don't increase lives
++        +DISABLE_ACCEL
+         jmp   $50E0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/AQUATRON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback - 1)
+         sta   $5FC3
+         lda   #<(callback - 1)
+         sta   $5FC6
+         jmp   $59C2      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $7696      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $400
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

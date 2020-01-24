@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/FROGGER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $3EFF
+         lda   #>callback
+         sta   $3F00
+         jmp   $3ED9      ; decompress
+
+callback
+         jsr   $BF00
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $48B0      ; patch - don't decrease lives
+         sta   $48CD      ; patch - don't erase sprite
++        +DISABLE_ACCEL
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
