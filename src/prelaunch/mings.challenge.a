@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<callback
-         sta   $9169
+         sta   $916F
          lda   #>callback
-         sta   $916A
+         sta   $9170
          jmp   $5B00      ; decompress
 
 callback
