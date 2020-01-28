@@ -134,6 +134,16 @@
          inc   @FM+5
          bne   @FM
 
+         ldy   #>(255 + EvenLasterMover - LastMover)
+@LM      lda   COPYSRC,x             ; relocate pseudo-ProDOS to RAM bank 2
+         sta   COPYDST,x
+         inx
+         bne   @LM
+         inc   @LM+2
+         inc   @LM+5
+         dey
+         bne   @LM
+
          ldy   #4
 @ELM     lda   FONTSRC,x
                                      ; relocate font data to RAM bank 2
@@ -144,16 +154,6 @@
          inc   @ELM+5
          dey
          bne   @ELM
-
-         ldy   #>(255 + EvenLasterMover - LastMover)
-@LM      lda   COPYSRC,x             ; relocate pseudo-ProDOS to RAM bank 2
-         sta   COPYDST,x
-         inx
-         bne   @LM
-         inc   @LM+2
-         inc   @LM+5
-         dey
-         bne   @LM
 
          +READ_ROM_NO_WRITE
          jsr   BuildAcceleratorFunction
