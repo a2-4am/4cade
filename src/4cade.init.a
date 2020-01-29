@@ -169,7 +169,6 @@
          jsr   DisableAccelerator    ; cycle counting requires 1MHz
          jsr   GetMockingboardSlot
          stx   MockingboardSlot      ; save mockingboard slot in LC RAM
-+
          jsr   EnableAccelerator
 
          jmp   OneTimeSetup
@@ -196,7 +195,7 @@ LoaderBuild
 } else {
 LoaderVersion
          !byte   11
-         !text   "v4.0-alpha.1"
+         !text   "v3.0"
 }
 Loader64K
          !byte   3
