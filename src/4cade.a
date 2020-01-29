@@ -128,6 +128,10 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
+; MockingboardSlot (label is in constants.a so prelaunchers can use it)
+;      slot number where Mockingboard was detected + $C0
+;      #$00 if no Mockingboard detected
+         !byte $FD                   ; MockingboardSlot ($FFF8)
 ; MachineStatus (label is in constants.a so prelaunchers can use it)
 ;      7 6 5 4 3 2 1 0
 ;      | | | | | | | +- bit 0 reserved

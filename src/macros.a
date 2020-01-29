@@ -167,6 +167,19 @@
          +READ_ROM_NO_WRITE
 }
 
+!macro   GET_MOCKINGBOARD_SLOT {
+         +READ_RAM2_NO_WRITE
+         ldx   MockingboardSlot
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT {
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         ldx   MockingboardSlot
+         +READ_ROM_NO_WRITE
+}
+
 !macro   USES_TEXT_PAGE_2 {
          lda   ROM_MACHINEID
          cmp   #$06

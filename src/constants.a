@@ -109,6 +109,7 @@ gVal         = $1F81
 ; LC RAM 1
 gCheatsAvailable   = $D000  ; master cheats table, indexed by game index in gGamesListStore
                             ; 1 byte per game, so max size = 256 games
+MockingboardSlot   = $FFF8
 MachineStatus      = $FFF9
 
 ; LC RAM 2
