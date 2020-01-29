@@ -167,13 +167,13 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARDSLOT {
+!macro   GET_MOCKINGBOARD_SLOT {
          +READ_RAM2_NO_WRITE
          ldx   MockingboardSlot
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARDSLOT {
+!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT {
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          ldx   MockingboardSlot

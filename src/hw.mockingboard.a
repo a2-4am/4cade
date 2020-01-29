@@ -6,8 +6,8 @@
 ;
 
 ;------------------------------------------------------------------------------
-; HasMockingboard
-; detect Mockingboard card by searching for 6522 timers across all slots
+; GetMockingboardSlot
+; detect Mockingboard card by searching for 6522 timers across all slots 7->1
 ; access 6522 timers with deterministic cycle counts
 ;
 ;   based on prior art in Mockingboard Developers Toolkit
@@ -16,14 +16,13 @@
 ;
 ; in:    none
 ;        accelerators should be off
-; out:   C set if Mockingboard found in any slot
-;        if card was found, X = #$Cn where n is the slot number of the card
-;        C clear if no Mockingboard found
-;        other flags clobbered
+; out:   
+;        if card was found, X = #$Cn where n is the slot number of the card, otherwise #$00
+;        flags clobbered
 ;        zp $80-$82 clobbered
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
-HasMockingboard
+GetMockingboardSlot
          lda   #$00
          sta   $80
          ldx   #$C7
@@ -35,15 +34,12 @@ HasMockingboard
          ldy   #$84                  ; 6522 #2 $Cx84
          jsr   timercheck
          bne   @nextSlot
-@found
-         sec                         ; found
-         rts
+         rts                         ; found
 @nextSlot
          dex
          cpx   #$C0
          bne   @slotLoop
-
-         clc                         ; not found
+         ldx   #$00                  ; not found
          rts
 
 timercheck

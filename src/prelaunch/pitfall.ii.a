@@ -12,7 +12,7 @@
          sta   $3D34
          jsr   $0800      ; decompress
 
-         +GET_MOCKINGBOARDSLOT
+         +GET_MOCKINGBOARD_SLOT
          txa   
          beq skipmb
          stx $2E5B        ;Replace #$C4 with detected slot

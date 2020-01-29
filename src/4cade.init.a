@@ -167,10 +167,7 @@
          bpl   -
 
          jsr   DisableAccelerator    ; cycle counting requires 1MHz
-         lda   #0
-         sta   MockingboardSlot      ; default to no Mockingboard
-         jsr   HasMockingboard
-         bcc   +
+         jsr   GetMockingboardSlot
          stx   MockingboardSlot      ; save mockingboard slot in LC RAM
 +
          jsr   EnableAccelerator
@@ -199,7 +196,7 @@ LoaderBuild
 } else {
 LoaderVersion
          !byte   11
-         !text   "v3.0-beta.2"
+         !text   "v4.0-alpha.1"
 }
 Loader64K
          !byte   3

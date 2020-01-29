@@ -25,7 +25,7 @@ cheat1
          jmp   $b000
 
 cheat2
-         +GET_MACHINE_STATUS_AND_MOCKINGBOARDSLOT
+         +GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

@@ -7,7 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS_AND_MOCKINGBOARDSLOT
+         +GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT
          and   #CHEATS_ENABLED
          sta   cheat+1
          stx   mbslot+1
@@ -37,8 +37,9 @@ mbslot
          bne +
          txa
          sta $6700,Y      ;Replace #$C4 with configured slot
-+
-         iny              ;Finish scan at $67FF
+;         iny              ;potential optimisation to finish quicker
+;	      iny              ;not tested
++		 iny              ;Finish scan at $67FF
          bne -
 skipmb
          jmp   $1000
