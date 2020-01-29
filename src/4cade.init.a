@@ -194,7 +194,7 @@ LoaderBuild
          !word   BUILDNUMBER
 } else {
 LoaderVersion
-         !byte   11
+         !byte   4
          !text   "v3.0"
 }
 Loader64K
