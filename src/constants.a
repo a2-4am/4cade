@@ -15,8 +15,8 @@
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
-; D670..DB98 - HGR font code & ProRWTS glue code
-; DB99..DBA7 - backup of stack (during gameplay and self-running demos)
+; D670..DB9C - HGR font code & ProRWTS glue code
+; DB9D..DBAB - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBAF..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data

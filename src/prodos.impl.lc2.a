@@ -270,6 +270,8 @@ ProDOS_enter
          sta   sizehi
          lda   bleftlo
          adc   #$ff
+         lda   #0
+         sta   bleftlo
          lda   blefthi
          adc   #1
          and   #$fe
