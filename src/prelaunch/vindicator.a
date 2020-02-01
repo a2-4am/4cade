@@ -18,6 +18,10 @@
          lda   #$BF
          sta   $400F      ; reset vector fix
 
+         lda   #$60       ; annunciator fix - kills Gizmo/joyport support
+         sta   $5B77      ; but fixes ][+ 80-col softswitch
+         sta   $5B43      ; and //c+ coloring
+
          +DISABLE_ACCEL
          jmp   $4000
 

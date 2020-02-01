@@ -43,16 +43,22 @@ ProDOS_enter
          pha
 @request
          lda   #$d1
+         cmp   #$40
+         beq   @imp_allocint ;;@do_allocint
+         cmp   #$41
+         beq   @do_deallocint
          cmp   #$80
-         beq   @do_readblock
+         beq   @imp_rdwrblock ;;@do_readblock
          cmp   #$81
-         beq   @do_writeblock
+         beq   @imp_rdwrblock ;;@do_writeblock
+         cmp   #$c0
+         beq   @do_create
          cmp   #$c4
-         beq   @do_getattrib
+         beq   @imp_getattrib ;;@do_getattrib
          cmp   #$c6
-         beq   @do_nothing
+         beq   @do_setprefix
          cmp   #$c7
-         beq   @do_prefix
+         beq   @do_getprefix
          cmp   #$c8
          beq   @do_open
          cmp   #$ca
@@ -63,19 +69,21 @@ ProDOS_enter
          beq   @do_close
          cmp   #$ce
          beq   @do_seek
-         cmp   #$d1
+         cmp   #$d0
+         beq   @do_seteof
+;;         cmp   #$d1
 ;;       bne   @do_fatal
-@do_eof
-         jmp   @imp_eof
+@do_geteof
+         jmp   @imp_geteof
+@do_allocint
+;;         jmp   @imp_allocint
 @do_readblock
 @do_writeblock
-         jmp   @imp_rdwrblock
+;;         jmp   @imp_rdwrblock
 @do_getattrib
-         jmp   @imp_getattrib
-@do_nothing
-         jmp   @restore_zp
-@do_prefix
-         jmp   @imp_prefix
+;;         jmp   @imp_getattrib
+@do_getprefix
+         jmp   @imp_getprefix
 @do_open
          jmp   @imp_open
 @do_read
@@ -84,11 +92,30 @@ ProDOS_enter
          jmp   @imp_write
 @do_close
          jsr   @imp_close ;subroutine special case because of dual-use
+@do_deallocint ;nothing for now
+@do_create     ;nothing for now
+@do_setprefix  ;nothing for now
+@do_seteof     ;nothing for now
          jmp   @restore_zp
 @do_seek
          jmp   @imp_seek
 @do_fatal
 ;;       jmp   ProDOS_fatal
+
+@imp_allocint
+         ldy   #2
+         lda   (ipacket), y
+         sta   ProDOS_irq + 1
+         iny
+         lda   (ipacket), y
+         sta   ProDOS_irq + 2
+         lda   #<ProDOS_int
+         ldx   #>ProDOS_int
+         sta   $3fe
+         sta   $fffe
+         stx   $3ff
+         stx   $ffff
+         bne   @jmp_zp2 ;always
 
 @imp_rdwrblock
          and   #$7f
@@ -143,7 +170,7 @@ ProDOS_enter
 @jmp_zp2
          jmp   @restore_zp
 
-@imp_prefix
+@imp_getprefix
          ldx   #buffer
          jsr   @setbuffer1
          ldy   ProDOS_prefix
@@ -243,6 +270,8 @@ ProDOS_enter
          sta   sizehi
          lda   bleftlo
          adc   #$ff
+         lda   #0
+         sta   bleftlo
          lda   blefthi
          adc   #1
          and   #$fe
@@ -259,7 +288,7 @@ ProDOS_enter
 @jmp_zp
          jmp   @restore_zp
 
-@imp_eof
+@imp_geteof
          ldy   #2
          lda   bleftlo
          sta   (ipacket), y
@@ -512,6 +541,28 @@ ProDOS_savedY
   }
 ProDOS_unit
         !byte $d1
+
+ProDOS_int
+        pha
+        txa
+        pha
+        tya
+        pha
+ProDOS_irq
+        jsr   $d1d1 ;SMC
+        pla
+        tay
+        pla
+        tax
+        pla
+        bit   $c012
+        bmi   +
+        lda   $45
++       rti
+
+  !if * > $bf58 {
+    !error "code is too large, ends at ", *
+  }
 
 ProDOS_fatal ;only for debugging, will be removed
 ;;      bit   $c081

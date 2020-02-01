@@ -1,0 +1,46 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/FROGGER.II",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6068
+         jsr   $6000      ; decompress
+         lda   #$4C
+         sta   $B04A
+         lda   #<callback
+         sta   $B04B
+         lda   #>callback
+         sta   $B04C
+         +DISABLE_ACCEL
+         jmp   $800
+
+callback
+         +ENABLE_ACCEL
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         jsr   $B050
+         ldx   #$A5
+         lda   $B158
+         cmp   #$30
+         bne   +
+         stx   $A1C8      ; patch - don't decrease lives
+         bne   ++
++        cmp   #$31
+         bne   +
+         lda   #$BD
+         sta   $FB3       ; patch - don't decrease lives
+         bne   ++
++        stx   $9A35      ; patch - don't decrease lives
+++       +DISABLE_ACCEL
+         jmp   ($B04E)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

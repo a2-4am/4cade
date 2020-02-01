@@ -1,4 +1,4 @@
-# Revision 3.0 / unreleased
+# Revision 3.0 / serial number 20200121
 
 ## New & changed games
 
@@ -21,6 +21,7 @@
  - Fixed corrupted graphics in Sneakers game, demo, and screenshots, and now we are entirely done with this I promise
  - Fixed Axis Assassin demo hanging on Apple IIgs
  - Fixed a crash in Agent USA
+ - Fixed a crash in Spy Hunter at the boat house
  - Added missing levels in Out Of This World
  - Removed latent copy protection in BurgerTime, Sea Dragon, and Spider Raid (sneaky sneaky)
  - Enable fast machine speed or accelerator (if available) to speed up searching, browsing, and game launching

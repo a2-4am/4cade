@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/RESCUE.RAIDERS",plain
@@ -26,6 +26,7 @@
          sta   $FFFD
          lda   #$4C
          sta   $BFE5
+         +READ_RAM1_WRITE_RAM1 ; fix crash on //c+
          jmp   $404A
 
 reset

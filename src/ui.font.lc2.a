@@ -38,14 +38,13 @@ DrawPageInternal
          beq   @doneParsingLine
          ldx   #3
 -        cmp   @subs_a,x
-         beq   @makesub
-         dex
-         bpl   -
-         bmi   +
-@makesub
+         bne   @nosub
          lda   @subs_b,x
          sta   (PTR),y
-+        iny
+@nosub
+         dex
+         bpl   -
+         iny
          bne   @parseLine
 @doneParsingLine
          sty   SAVE
@@ -99,17 +98,15 @@ DrawCenteredStringInternal
 ; clobbers PTR/PTR+1
          +STAY PTR
 
-         php
          ldy   #0
-         lda   (PTR),y
-         sta   HTAB
+         php
          lda   #40
          sec
-         sbc   HTAB
+         sbc   (PTR),y
          lsr
          sta   HTAB
          plp
-         jmp   +
+         beq   +
 
 DrawStringInternal
 ; A/Y contains address of length-prefixed string
@@ -145,12 +142,7 @@ DrawBufferInternal
 ; VTAB is NOT incremented
 ; clobbers A/X/Y
          +STAY @src+1
-         bcs   +
-         lda   #$00
-         +HIDE_NEXT_2_BYTES
-+
-         lda   #$60
-         sta   @pagemask
+         php
          dex
          lda   VTAB
          asl
@@ -174,10 +166,12 @@ DrawBufferInternal
          adc   #$10
          asl   @hgrlo+1
          rol
-@pagemask=*+1
-         eor   #$FD                  ; SMC (0=hi-res page 1, #$60=hi-res page 2)
-         sta   @row0+2
+         plp
+         bcc   +
+         eor   #$60
          clc
++
+         sta   @row0+2
          adc   #$04
          sta   @row1+2
          adc   #$04

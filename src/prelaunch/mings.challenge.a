@@ -1,0 +1,60 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MINGS.CHALLENGE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $916F
+         lda   #>callback
+         sta   $9170
+         jmp   $5B00      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $7822      ; patch - don't increase lives
+         lda   #<cheat
+         sta   $B418
+         lda   #>cheat
+         sta   $B419
++        +DISABLE_ACCEL
+         jmp   $1183
+
+cheat
+         +ENABLE_ACCEL
+         jsr   $BD00
+         lda   $B43B
+         cmp   #$0a
+         bne   +
+         dec   $8F0E      ; patch - don't decrease lives
+         beq   ++
+
++        cmp   #$0c
+         bne   +
+         dec   $9DC6      ; patch - don't decrease lives
+         beq   ++
+
++        cmp   #$0f
+         bne   +
+         dec   $99BB      ; patch - don't decrease lives
+         beq   ++
+
++        cmp   #$11
+         bne   ++
+         dec   $87CC      ; patch - don't decrease lives
+         dec   $88DF      ; patch - don't decrease lives
+         dec   $99BB      ; patch - don't decrease lives
+
+++       +DISABLE_ACCEL
+         clc
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

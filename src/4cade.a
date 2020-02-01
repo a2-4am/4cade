@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-20 by 4am
 ;
 !cpu 6502
 !to "build/LAUNCHER.SYSTEM",plain
@@ -149,49 +149,27 @@ SwitchToBank2
          !word Ignore                ; IRQ vector ($FFFE-F)
 }
 LastMover
-!if ((hdddataend & 255) > $ec) and ((hdddataend & 255) < $f2) {
-  ; in the unlikely event that a bit over 16 bytes are left in the page
-  ; then use it for the stack
-  STACKBASE = ((hdddataend + 15) and -16) + 1
-  FONTSRC = *
-  !pseudopc STACKBASE + 15 {
-    FONTDST = *
-         !source "src/ui.font.data.lc2.a"
-    COPYDST = *
-    COPYSRC = LastMover + COPYDST - FONTDST
-         !source "src/ui.font.lc2.a"
-         !source "src/prodos.impl.lc2.a"
-         !source "src/glue.prorwts2.lc2.a"
-         !source "src/glue.launch.lc2.a"
-         !source "src/hw.accel.lc2.a"
-    LCRAM2_END = *
-    !if * > $E000 {
-      !error "code is too large: ends at ", *
-    }
-  }
-EvenLasterMover
-} else {
-  ; otherwise place stack after code
-  ; and begin font on the next page
-  COPYSRC = *
-  !pseudopc hdddataend {
-    COPYDST = *
+COPYSRC = *
+!pseudopc hdddataend {
+  COPYDST = *
          !source "src/prodos.impl.lc2.a"
          !source "src/ui.font.lc2.a"
          !source "src/glue.prorwts2.lc2.a"
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
-    STACKBASE = *
-    LCRAM2_END = STACKBASE + 15
-    FONTDST = (LCRAM2_END + 255) and -256
+  STACKBASE = *
+  LCRAM2_END = STACKBASE + 15
+  !if LCRAM2_END > DisableAccelerator {
+    !error "code is too large: ends at ", LCRAM2_END
   }
+  FONTDST = (LCRAM2_END + 255) and -256
+}
 EvenLasterMover
   FONTSRC = *
-  !pseudopc FONTDST {
+!pseudopc FONTDST {
          !source "src/ui.font.data.lc2.a"
-    !if * > $E000 {
+  !if * > $E000 {
       !error "code is too large: ends at ", *
-    }
   }
 }
 !if RELBASE = $2000 {
