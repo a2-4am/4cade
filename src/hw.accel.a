@@ -329,7 +329,7 @@ setspeed_y=*+1
          tya
          bcs   setnorm
          ora   iobase,x
-         ldy   #$96
+         ldy   #$d6
          bne   setsta     ; always branches
 setnorm
          eor   #$FF
