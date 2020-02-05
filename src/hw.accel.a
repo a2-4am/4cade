@@ -329,12 +329,15 @@ setspeed_y=*+1
          tya
          bcs   setnorm
          ora   iobase,x
+         ldy   #$96
          bne   setsta     ; always branches
 setnorm
          eor   #$FF
          and   iobase,x
+         ldy   #$56
 setsta
          sta   iobase,x
+         sty   $7FE        ; Laser checks it
          rts
 end_setspeed
 
