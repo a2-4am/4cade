@@ -1,3 +1,21 @@
+# Revision 4.0 / unreleased
+
+## New & changed games
+
+ - Added Bejeweled
+ - Added Force 7
+ - Added Ming's Challenge
+ - Added Wings of Fury
+ - Removed Alien Rain (play Alien Typhoon instead)
+ - Removed Apple Galaxian (play Alien Typhoon instead)
+ - Removed Puck Man (play Snoggle instead)
+
+## Enhancements & bug fixes
+
+ - Added more game cheats
+ - Auto-configure Mockingboard support in Berzap, Lancaster, Pitfall II
+ - Fixed acceleration on Laser 128
+
 # Revision 3.0 / serial number 20200121
 
 ## New & changed games
