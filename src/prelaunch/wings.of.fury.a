@@ -1,0 +1,37 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/WINGS.OF.FURY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $2129
+         lda   #>callback
+         sta   $212A
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<cheat
+         sta   $8276
+         lda   #>cheat
+         sta   $8277
++
+         jmp   $800       ; decompress
+
+cheat
+         jsr   $2000
+         lda   #$AD
+         sta   $AAAC      ; patch - don't decrease lives
+         rts
+
+callback
+         jsr   DisableAccelerator
+         jmp   $2000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
