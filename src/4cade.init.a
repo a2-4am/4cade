@@ -214,6 +214,12 @@ Loader128KAndJoystick
 !ifndef RELEASE {
 PrintAsDecimal
          jsr   $FF4A
+
+         lda   $FDE2	
+         cmp   #$EA
+         bne   @go
+         dec   @addr+1	    ; fix for Laser
+@go
 --       lda   #$00
          clv
          ldx   #$18
@@ -230,7 +236,7 @@ PrintAsDecimal
          pha
          lda   #$FD
          pha
-         lda   #$E1
+@addr    lda   #$E1
          pha
          bvs   --
          rts
