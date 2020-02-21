@@ -297,7 +297,7 @@ ProDOS_enter
          iny
          lda   blefthi
          sta   (ipacket), y
-         bcs   @restore_zp ;always
+         bcc   @restore_zp ;always
 
 @imp_close
          lda   @handles+1
