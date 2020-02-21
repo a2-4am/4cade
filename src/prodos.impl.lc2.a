@@ -41,12 +41,15 @@ ProDOS_enter
          pha
          tya
          pha
+         ldy   #2
 @request
          lda   #$d1
          cmp   #$40
          beq   @imp_allocint ;;@do_allocint
          cmp   #$41
          beq   @do_deallocint
+         cmp   #$65
+         beq   @do_quit
          cmp   #$80
          beq   @imp_rdwrblock ;;@do_readblock
          cmp   #$81
@@ -77,6 +80,8 @@ ProDOS_enter
          jmp   @imp_geteof
 @do_allocint
 ;;         jmp   @imp_allocint
+@do_quit
+         jmp   $100
 @do_readblock
 @do_writeblock
 ;;         jmp   @imp_rdwrblock
@@ -103,7 +108,7 @@ ProDOS_enter
 ;;       jmp   ProDOS_fatal
 
 @imp_allocint
-         ldy   #2
+         ;;ldy   #2
          lda   (ipacket), y
          sta   ProDOS_irq + 1
          iny
@@ -119,13 +124,11 @@ ProDOS_enter
 
 @imp_rdwrblock
          and   #$7f
-         tay
-         iny
-         sty   @rdwrop+1
+         adc   #0
+         sta   @rdwrop+1
          ldx   #$44
-         ldy   #2
+         ;;ldy   #2
          jsr   @setbuffer
-         iny
          lda   (ipacket), y
          tax
          iny
@@ -195,7 +198,6 @@ ProDOS_enter
 @imp_open
          ldx   #namlo
          jsr   @setbuffer1
-         iny
          inc   @handles+1
 @handles
          ldx   #0
@@ -206,7 +208,7 @@ ProDOS_enter
          iny
          lda   #1
          sta   (ipacket), y
-         lda   #0
+         lsr
          sta   reqcmd
          sta   sizehi
          sta   sizelo
@@ -289,7 +291,7 @@ ProDOS_enter
          jmp   @restore_zp
 
 @imp_geteof
-         ldy   #2
+         ;;ldy   #2
          lda   bleftlo
          sta   (ipacket), y
          iny
@@ -342,7 +344,6 @@ ProDOS_enter
          iny
          jsr   @setbuffer
          ldx   #sizelo
-         iny
          !byte $2c
 @setbuffer1
          ldy   #1
@@ -353,6 +354,7 @@ ProDOS_enter
          iny
          lda   (ipacket), y
          sta   $1,x
+         iny
          rts
 
 @swap_zp
