@@ -1,0 +1,2 @@
+$A006: 84 -> C6 to disable sound (context is A900D007A00084C7)
+$A090: AD00C01093AD00C0C9 -> CE98A010934C000102 to exit after keypress and set up counter (context is AD00C0C993D00CA5C749FF85C7)
