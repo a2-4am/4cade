@@ -11,27 +11,6 @@
          lda   #$60
          sta   $3D34
          jsr   $0800      ; decompress
-
-         +GET_MOCKINGBOARD_SLOT
-         txa   
-         beq skipmb
-         stx $2E5B        ;Replace #$C4 with detected slot
-         stx $2E5E		 
-         stx $2E67
-         stx $2E6A
-         ldy #$92         ;Start scan at first patch $2F1C
--        lda $2E8A,Y      ;Find #$C4's in code (20 locations) 
-         cmp #$C4
-         bne +
-         txa
-         sta $2E8A,Y      ;Replace #$C4 with detected slot
-         iny              ;Skip next 2 bytes after a match because there is never another match so close
-         iny
-+        iny              ;Finish scan at $2F8A = (last patch 2F87)+3
-                          ;Check math: 2F8A-2F1C=6E code length; 00 index end - 6E code length = 92 index start
-         bne -
-
-skipmb
          +RESET_VECTOR reset
          +DISABLE_ACCEL
          jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location

@@ -1,6 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
-;mockingboard patch by Andrew Roughan
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BERZAP",plain
@@ -9,83 +8,46 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #<cheat1
+         lda   #<callback1
          sta   $871
-         lda   #>cheat1
+         lda   #>callback1
          sta   $872
          jmp   $800       ; decompress
 
-cheat1
+callback1
          lda   #$4c
          sta   $b20b
-         lda   #<cheat2
+         lda   #<callback2
          sta   $b20c
-         lda   #>cheat2
+         lda   #>callback2
          sta   $b20d
          jmp   $b000
 
-cheat2
-         +GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$ad
-         sta   $3d94      ; patch - don't decrease lives
-         sta   $6573      ; patch - don't increase lives
-         sta   $76ba      ; patch - don't increase lives
+callback2
+         lda   #0
+         sta   $b20c
+         lda   #2
+         sta   $56        ; ldrhi
+         sta   $b20d
+         +READ_RAM2_WRITE_RAM2
+         lda   $D401
+         pha
+         lda   $D403
+         pha
+         lda   #<berzap_mb
+         ldy   #>berzap_mb
+         jsr   $DAF1      ; ahem, LoadFileInternal+4
+         pla
+         sta   $D403
+         pla
+         sta   $D401
+         jsr   DisableAccelerator
+         jmp   $200
 
-+        txa   
-         beq   skipmb
-         stx   $3FCD      ;Replace #$C4 with detected slot
-         stx   $3FD5      ;Page $3F is relocated to $1F
-         stx   $3FE1
-         stx   $3FE6
-         stx   $3FEB
-         stx   $3FF0
-         stx   $AB1D
-firstPage
-         ldy   #$32       ;Start scan at first patch $9743
--        lda   $9711,Y    ;Find #$C4's in code (24 locations) 
-         cmp   #$C4
-         bne   +
-         txa
-         sta   $9711,Y    ;Replace #$C4 with detected slot
-+        iny              ;Finish scan at $9811
-         bne   -
-secondPage
--        lda   $9811,Y    ;Find #$C4's in code (17 locations) 
-         cmp   #$C4
-         bne   +
-         txa
-         sta   $9811,Y    ;Replace #$C4 with detected slot
-         iny              ;Skip next 2 bytes after a match because there is never another match so close
-         iny
-+        iny              ;Finish scan at $9911 = (last patch 990E)+3
-                          ;Check math: 9911-9743=1CE code length; 00 index end - CE code length = 32 index start
-         bne   -
+berzap_mb
+         !byte 19
+         !text "PRELAUNCH/BERZAP.MB"
 
-thirdPage
-         ldy   #$7B       ;Start scan at first patch $ACE0
--        lda   $AC65,Y    ;Find #$C4's in code (21 locations) 
-         cmp   #$C4
-         bne   +
-         txa
-         sta   $AC65,Y    ;Replace #$C4 with detected slot
-         iny              ;Skip next 2 bytes after a match because there is never another match so close
-         iny
-+        iny              ;Finish scan at $AD65 = (last patch AD62)+3
-                          ;Check math: AD65-ACE0=85 code length; 00 index end - 85 code length = 7B  index start
-         bne   -
-
-skipmb
-         lda   #$6C       ;Remove patch from code so it is only run once
-         sta   $B20B
-         lda   #$CE
-         sta   $B20C
-         lda   #$B2
-         sta   $B20D
-         +DISABLE_ACCEL
-         jmp   ($b2ce)
-
-!if * > $1F0 {
+!if * > $1C0 {
   !error "code is too large, ends at ", *
 }

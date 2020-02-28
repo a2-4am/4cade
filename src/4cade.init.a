@@ -168,8 +168,8 @@
          bpl   -
 
          jsr   DisableAccelerator    ; cycle counting requires 1MHz
-         jsr   GetMockingboardSlot
-         stx   MockingboardSlot      ; save mockingboard slot in LC RAM
+         jsr   GetMockingboardStuff
+         stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM
          jsr   EnableAccelerator
 
          jmp   OneTimeSetup

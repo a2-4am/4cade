@@ -1,12 +1,12 @@
 ;license:MIT
-; By Andrew Roughan
+;(c) 2019-20 by Andrew Roughan, qkumba
 ;   in the style of 4am for Total Replay
 ;
 ; Mockingboard support functions
 ;
 
 ;------------------------------------------------------------------------------
-; GetMockingboardSlot
+; GetMockingboardStuff
 ; detect Mockingboard card by searching for 6522 timers across all slots 7->1
 ; access 6522 timers with deterministic cycle counts
 ;
@@ -17,24 +17,25 @@
 ; in:    none
 ;        accelerators should be off
 ; out:   
-;        if card was found, X = #$Cn where n is the slot number of the card, otherwise #$00
+;        if card was found, X = #$?n where n is the slot number of the card, otherwise #$00
+;                           and    bit 6 = 0 if Mockingboard Sound I found
+;                               or bit 6 = 1 if Mockingboard Sound II or "A" found
+;                           and    bit 7 = 1 if Mockingboard Sound/Speech I or "C" found
 ;        flags clobbered
 ;        zp $80-$82 clobbered
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
-GetMockingboardSlot
+GetMockingboardStuff
          lda   #$00
          sta   $80
+         sta   $82                   ; type
          ldx   #$C7
 @slotLoop
          stx   $81
          ldy   #$04                  ; 6522 #1 $Cx04
-         jsr   timercheck
-         bne   @nextSlot
-         ldy   #$84                  ; 6522 #2 $Cx84
-         jsr   timercheck
-         bne   @nextSlot
-         rts                         ; found
+         jsr   @timercheck
+         beq   @foundI
+
 @nextSlot
          dex
          cpx   #$C0
@@ -42,13 +43,126 @@ GetMockingboardSlot
          ldx   #$00                  ; not found
          rts
 
-timercheck
-         lda   ($80),y               ; read 6522 timer low byte
-         sta   $82
-         lda   ($80),y               ; second time 
+@foundI  ; sound I or better
+         ldy   #$84                  ; 6522 #2 $Cx84
+         jsr   @timercheck
+         beq   @foundII
+
+         ldy   #$0c
+         sty   @mb_smc3 + 1
+         iny
+         sty   @mb_smc8 + 1
+         iny
+         sty   @mb_smc7 + 1
+         sty   @mb_smc11 + 1
+
+         +HIDE_NEXT_2_BYTES
+@foundII  ;stereo
+         ror   $82
+
+         lda   $81
+         sta   @mb_smc1 + 2
+         sta   @mb_smc2 + 2
+         sta   @mb_smc3 + 2
+         sta   @mb_smc4 + 2
+         sta   @mb_smc5 + 2
+         sta   @mb_smc6 + 2
+         sta   @mb_smc7 + 2
+         sta   @mb_smc8 + 2
+         sta   @mb_smc9 + 2
+         sta   @mb_smc10 + 2
+         sta   @mb_smc11 + 2
+         sta   @mb_smc12 + 2
+         sta   @mb_smc13 + 2
+
+         ; detect speech chip
+
+         sei
+         lda   #<@mb_irq
+         sta   $3fe
+         sta   $fffe
+         lda   #>@mb_irq
+         sta   $3ff
+         sta   $ffff
+
+         lda   #0
+@mb_smc1
+         sta   $c403
+@mb_smc2
+         sta   $c402
+         lda   #$0c
+@mb_smc3
+         sta   $c48c
+         lda   #$80
+@mb_smc4
+         sta   $c443
+         lda   #$c0
+@mb_smc5
+         sta   $c440
+         lda   #$70
+@mb_smc6
+         sta   $c443
+         lda   #$82
+@mb_smc7
+         sta   $c48e
+
+         ldx   #0
+         ldy   #0
          sec
-         sbc   $82
-         cmp   #$F8                  ; looking for (-)8 cycles between reads
+         cli
+
+@wait_irq
+         lda   $80
+         bne   @got_irq
+         iny
+         bne   @wait_irq
+         inx
+         bne   @wait_irq
+         clc
+
+@got_irq
+         sei
+         ror   $82
+
+@onlyI
+         lda   $81
+         and   #7
+         ora   $82
+         tax
+         lda   #<Ignore
+         sta   $fffe
+         lda   #>Ignore
+         sta   $ffff
+         rts                         ; found
+
+@timercheck
+         sec
+         lda   ($80),y               ; read 6522 timer low byte
+         sbc   ($80),y               ; second time 
+         cmp   #5                    ; looking for (-)8 cycles between reads
          beq   +
-         cmp   #$F7                  ; FastChip //e clock is different
+         cmp   #6                    ; FastChip //e clock is different
 +        rts
+
+@mb_irq
+         lda   #2
+@mb_smc8
+         sta   $c48d
+         lda   #0
+@mb_smc9
+         sta   $c440
+         lda   #$70
+@mb_smc10
+         sta   $c443
+         sta   $80
+         lda   #2
+@mb_smc11
+         sta   $c48e
+         lda   #$ff
+@mb_smc12
+         sta   $c403
+         lda   #7
+@mb_smc13
+         sta   $c402
+         lda   $45
+         rti

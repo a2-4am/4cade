@@ -167,19 +167,38 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SLOT {
+!macro   GET_MOCKINGBOARD_SPEECH { ;carry set if present
          +READ_RAM2_NO_WRITE
-         ldx   MockingboardSlot
+         lda   MockingboardStuff
+         asl
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT {
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;carry set if present
          +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         asl
          lda   MachineStatus
-         ldx   MockingboardSlot
          +READ_ROM_NO_WRITE
 }
 
+!macro   GET_MOCKINGBOARD_SLOT { ;carry set if present
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS { ;carry set if present
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         tax
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+}
 !macro   USES_TEXT_PAGE_2 {
          lda   ROM_MACHINEID
          cmp   #$06

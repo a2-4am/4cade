@@ -16,6 +16,11 @@
          jsr   $BFC8
          lda   #$4C
          sta   $4047
+         +GET_MOCKINGBOARD_SPEECH
+         bcs   +
+         lda   #$60
+         sta   $40FB       ; no speech chip, pretend no MB
++
          +DISABLE_ACCEL    ; otherwise Mockingboard detection fails
          lda   #0
          jsr   $4000

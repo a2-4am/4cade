@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am & qkumba
+;(c) 2019-2020 by 4am & qkumba
 ;
 ; Pseudo-ProDOS environment
 ;
@@ -518,19 +518,18 @@ promote
         bit   $c083
         jmp   ProDOS_enter
 ProDOS_exit
+        sta   $c082
+        bmi   ProDOS_savedX ;always
+  !if * != $bf12 {
+    !error "$BF12 misplaced (",*,")"
+  }
+        !word $c1d1, $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
 ProDOS_savedX
         ldx   #$d1
-        plp
-        clc
-        bcc   ProDOS_savedY
-  !if * != $bf13 {
-    !error "$BF13 misplaced (",*,")"
-  }
-        !byte  $c1
-        !word  $c2d1, $c3d1, $c4d1, $c5d1, $c6d1, $c7d1
 ProDOS_savedY
         ldy   #$d1
-        sta   $c082
+        plp
+        clc
         lda   #0
         rts
 

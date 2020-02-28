@@ -12,9 +12,11 @@
          sta   $2027
          jsr   $2000      ; decompress
 
-callback
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
+         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
+         bcs   +
+         ldy   #$60
+         sty   $8FE6      ; no speech chip, pretend no MB
++        and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $A22       ; patch - don't decrease lives
