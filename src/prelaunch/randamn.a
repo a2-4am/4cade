@@ -10,6 +10,9 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $4082
+         asl
+         sta   $40D5
+         sta   $40DB
          ldx   #$4e
          txs
          jsr   $4000      ; decompress
