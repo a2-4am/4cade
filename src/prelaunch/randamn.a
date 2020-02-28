@@ -1,0 +1,41 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/RANDAMN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4082
+         ldx   #$4e
+         txs
+         jsr   $4000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BFC
+         lda   #>callback
+         sta   $BFD
++
+         +DISABLE_ACCEL
+         jmp   $822
+
+*=$17e
+callback
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $834B
+         jsr   $8300
+         lda   #$A5
+         sta   $BE2       ; patch - don't increase lives
+         sta   $1271      ; patch - don't decrease lives
+         +DISABLE_ACCEL
+         jmp   $808
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
