@@ -11,12 +11,9 @@ Congo Bongo [priority]
 Conquering Worlds
 Dive Bomber
 Double Trouble
-Dunzhin
 Elite
 G.I. Joe
-GBA Championship Baseball
 GBA Championship Basketball
-Gulf Strike
 The Heist
 Impossible Mission II [DHGR]
 Karate Champ
@@ -75,7 +72,6 @@ Bandits
 Injured Engine
 Jawbreaker ][
 Mating Zone
-Randamn
 Saracen
 Super Zaxxon [priority]
 Test Drive [DHGR] [priority]
