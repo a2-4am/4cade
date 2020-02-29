@@ -14,8 +14,11 @@
 
          +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
          bcs   +
+         ldy   #0
+         sty   $868
+         sty   $9486
          ldy   #$60
-         sty   $8FE6      ; no speech chip, pretend no MB
+         sty   $B000      ; no speech chip, pretend no MB
 +        and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
