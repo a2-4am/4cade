@@ -29,7 +29,7 @@ GetMockingboardStuff
          lda   #$00
          sta   $80
          sta   $82                   ; type
-         ldx   #$C7
+         ldx   #$C1
 @slotLoop
          stx   $81
          ldy   #$04                  ; 6522 #1 $Cx04
@@ -37,8 +37,8 @@ GetMockingboardStuff
          beq   @foundI
 
 @nextSlot
-         dex
-         cpx   #$C0
+         inx
+         cpx   #$C8
          bne   @slotLoop
          ldx   #$00                  ; not found
          rts
