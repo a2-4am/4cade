@@ -54,11 +54,11 @@
          cpx   #$C4
          bne   +
          sta   $9743,Y    ;Replace #$C4 with detected slot
-         ldx   $988D,Y    ;find #$C4s
++        ldx   $988D,Y    ;find #$C4s
          cpx   #$C4
          bne   +
          sta   $988D,Y    ;Replace #$C4 with detected slot
-         ldx   $ACE0,Y    ;find #$C4s
++        ldx   $ACE0,Y    ;find #$C4s
          cpx   #$C4
          bne   +
          sta   $ACE0,Y    ;Replace #$C4 with detected slot
