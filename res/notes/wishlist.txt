@@ -4,7 +4,6 @@ Arcticfox
 Ardy the Aardvark
 Boulder Dash
 C'est La Vie
-California Games [DHGR]
 Championship Baseball
 Championship Wrestling
 Congo Bongo [priority]
@@ -40,10 +39,6 @@ Shuttle Intercept
 Soko-Ban [DHGR] [priority]
 Spindizzy
 Station 5
-Street Sports Baseball [DHGR]
-Street Sports Basketball [DHGR]
-Street Sports Football [DHGR]
-Street Sports Soccer [DHGR]
 Super Bunny
 Super Huey
 Super Taxman II
