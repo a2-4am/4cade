@@ -43,6 +43,7 @@
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   @NotGS
+         sec
          +HIDE_NEXT_BYTE
 @NotGS   clc
          ror   zpMachineStatus
