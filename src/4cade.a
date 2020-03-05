@@ -138,9 +138,9 @@ SwitchToBank2
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
 ;      | | | | | +----- bit 2 reserved
-;      | | | | +------- bit 3 reserved
-;      | | | +--------- bit 4 = 1 if cheats are enabled
-;      | | +----------- bit 5 = 1 if VidHD or IIgs
+;      | | | | +------- bit 3 = 1 if cheats are enabled
+;      | | | +--------- bit 4 = 1 if VidHD
+;      | | +----------- bit 5 = 1 if IIgs
 ;      | +------------- bit 6 = 1 if 128K
 ;      +--------------- bit 7 = 1 if joystick
 ; Use the bit masks defined in constants.a
