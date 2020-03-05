@@ -1,0 +1,66 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/TECHNOCOP",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+         and   #CHEATS_ENABLED
+         pha
+         lda   #$60
+         sta   $A05
+         jsr   $800       ; load "DOS"
+         pla
+         beq   +
+         ldy   #(cheat_e - cheat_b) - 1
+-        lda   cheat_b, y
+         sta   $FB60, y
+         dey
+         bpl   -
+         lda   #$20
+         sta   $FA85
+         lda   #$60
+         sta   $FA86
+         lda   #$FB
+         sta   $FA87
++        jsr   DisableAccelerator
+         jmp   $F800
+
+cheat_b
+         ldx   $FFC3
+         ldy   $FFC4
+         lda   $FA5A
+         bne   cheat_run
+
+cheat_drive
+         cpx   #$1D
+         bne   cheat_done
+         cpy   #$0F
+         bne   cheat_done
+         lda   #$0A
+         sta   $FDAB      ; patch - don't apply damage
+         bne   cheat_done
+
+cheat_run
+         cpx   #$1E
+         bne   cheat_done
+         cpy   #$06
+         bne   cheat_done
+         lda   #$AD
+         sta   $FC18      ; patch - don't decrease lives
+
+cheat_done
+         lda   $FFC9
+         rts
+
+cheat_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
