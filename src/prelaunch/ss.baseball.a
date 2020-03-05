@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2020 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/SS.BASEBALL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9EB
+         jsr   $800      ; decompress
+
+         inc   $3F4      ; reboot
+
+         +DISABLE_ACCEL
+         jmp   $B700     ; could probably hook further
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
