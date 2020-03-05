@@ -14,10 +14,11 @@
 ;   with optimisation from deater/french touch
 ;   also takes into account FastChip //e clock difference
 ;
-; in:    none
-;        accelerators should be off
-; out:   
-;        if card was found, X = #$?n where n is the slot number of the card, otherwise #$00
+; in:    A/Y contains address of callback to call if card was found
+;          (this will be called before the speech detection routine, and
+;          (zp$81 will contain the slot in form $Cx)
+;        /!\ ALL ACCELERATORS MUST BE OFF OR SET TO 1 MHZ
+; out:   if card was found, X = #$?n where n is the slot number of the card, otherwise #$00
 ;                           and    bit 6 = 0 if Mockingboard Sound I found
 ;                               or bit 6 = 1 if Mockingboard Sound II or "A" found
 ;                           and    bit 7 = 1 if Mockingboard Sound/Speech I or "C" found
@@ -26,6 +27,7 @@
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
 GetMockingboardStuff
+         +STAY @callback+1
          lda   #$00
          sta   $80
          sta   $82                   ; type
@@ -44,6 +46,7 @@ GetMockingboardStuff
          rts
 
 @foundI  ; sound I or better
+         jsr   @callback
          ldy   #$84                  ; 6522 #2 $Cx84
          jsr   @timercheck
          beq   @foundII
@@ -166,3 +169,6 @@ GetMockingboardStuff
          sta   $c402
          lda   $45
          rti
+
+@callback
+         jmp   $FDFD                 ; SMC

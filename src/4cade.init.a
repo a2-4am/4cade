@@ -43,16 +43,20 @@
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   @NotGS
-         lda   #$80
-         sta   zpMachineStatus
-@NotGS   jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
+         +HIDE_NEXT_BYTE
+@NotGS   clc
+         ror   zpMachineStatus
+         jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
          ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
-         ror   zpMachineStatus       ; now bit 5 = 1 if VidHD or IIgs
+         ror   zpMachineStatus
+                                     ; now bit 4 = 1 if VidHD
+                                     ;     bit 5 = 1 if IIgs
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
-                                     ; and all other bits are 0 (we'll set bit 4 after copying it to LC RAM)
+                                     ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
 
+         ; accomodate uppercase-only machines (64K ][+ is supported)
          lda   ROM_MACHINEID
          cmp   #$06
          beq   +
@@ -61,6 +65,7 @@
 +        lda   #$FF
          sta   zpCharMask
 
+         ; print text title in same place as graphical title will appear
          ldy   #8
 -        lda   TOTAL,y
          ora   #$80
@@ -74,51 +79,66 @@
          dey
          bpl   -
 
-         ldy   LoaderVersion
--        lda   LoaderVersion,y
-         ora   #$80
-         +FORCE_UPPERCASE_IF_REQUIRED
-         sta   $07CF,y
-         dey
-         bne   -
-
+         ; increase text window width so we can print to the edge of the screen without scrolling
+         inc   $21
+         ; print version or build number in lower right corner
+         ldx   #30
+         ldy   #23
+         jsr   SetCursorPosition
+         +LDADDR LoadingVersion
+         jsr   LoadingPrint
 !ifndef RELEASE {
-         lda   #$D6
-         sta   $28
-         lda   #$07
-         sta   $29
-         lda   LoaderBuild
-         ldx   LoaderBuild+1
+         lda   LoadingBuild
+         ldx   LoadingBuild+1
          ldy   #0
          jsr   PrintAsDecimal
 }
 
-         bit   zpMachineStatus
-         bvc   ++
-         bpl   +
-         +LDADDR Loader128KAndJoystick
-         bne   @ShowLoadScreen
+         ; set up text window so it only covers lower left corner
+         lda   #30
+         sta   $21
+         lda   #19
+         sta   $22
+
+         ; print machine configuration in lower left corner
+         ldx   #0
+         ldy   #23
+         jsr   SetCursorPosition
+
+         ; if zpMachineStatus AND IS_IIGS then print 'IIgs'
+         ; else if zpMachineStatus AND HAS_128K then print '128K'
+         ; else print '64K'
+         lda   zpMachineStatus
+         and   #IS_IIGS
+         beq   +
+         +LDADDR LoadingIIgs
+         bne   @printMem
++        lda   zpMachineStatus
+         and   #HAS_128K
+         beq   +
+         +LDADDR Loading128K
+         bne   @printMem
 +
-         +LDADDR Loader128K
-         bne   @ShowLoadScreen
-++
-         bpl   +
-         +LDADDR Loader64KAndJoystick
-         bne   @ShowLoadScreen
+         +LDADDR Loading64K
+@printMem
+         jsr   LoadingPrint
+
+         ; if zpMachineStatus AND HAS_JOYSTICK then CR & print 'joystick'
+         lda   zpMachineStatus
+         and   #HAS_JOYSTICK
+         beq   +
+         jsr   LoadingCR
+         +LDADDR LoadingJoystick
+         jsr   LoadingPrint
 +
-         +LDADDR Loader64K
-@ShowLoadScreen
-         +STAY PTR
-         ldy   #0
-         lda   (PTR),y
-         tay
--        lda   (PTR),y
-         ora   #$80
-         +FORCE_UPPERCASE_IF_REQUIRED
-@load    sta   $07F7
-         dec   @load+1
-         dey
-         bne   -
+         ; if zpMachineStatus AND HAS_VIDHD then CR & print 'VidHD'
+         lda   zpMachineStatus
+         and   #HAS_VIDHD
+         beq   +
+         jsr   LoadingCR
+         +LDADDR LoadingVidHD
+         jsr   LoadingPrint
++
 
 @Relocate
          +READ_ROM_WRITE_RAM2
@@ -167,11 +187,24 @@
          dex
          bpl   -
 
-         jsr   DisableAccelerator    ; cycle counting requires 1MHz
+         jsr   DisableAccelerator    ; cycle counting in Mockingboard detection requires 1MHz
+
+         +READ_ROM_WRITE_RAM2
+         +LDADDR FoundMockingboardCallback
          jsr   GetMockingboardStuff
          stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM
-         jsr   EnableAccelerator
 
+         ; if Mockingboard AND HAS_SPEECH then print CR & '...and it talks!'
+         txa
+         and   #HAS_SPEECH
+         beq   +
+         jsr   LoadingCR
+         +LDADDR LoadingMockingboardSpeech
+         jsr   LoadingPrint
+
++
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
          jmp   OneTimeSetup
 
          ; ProRWTS2 has its own function to relocate itself
@@ -183,43 +216,89 @@ ProRWTSBuffer
          !source "src/hw.joystick.a"
          !source "src/hw.mockingboard.a"
 
+SetCursorPosition
+         stx   HTAB
+         sty   VTAB
+         jmp   $FC22
+
+LoadingPrint
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y
+         sta   @max
+         sty   i
+-        inc   i
+         ldy   i
+         lda   (PTR),y
+         ora   #$80
+         +FORCE_UPPERCASE_IF_REQUIRED
+         jsr   ROM_COUT
+         ldy   i
+@max=*+1
+         cpy   #$FD                  ; SMC
+         bne   -
+         rts
+
+LoadingCR
+         lda   #$8D
+         jmp   ROM_COUT
+
+FoundMockingboardCallback
+; in:    zp$81 contains slot number in form $Cx
+         jsr   LoadingCR
+         +LDADDR LoadingMockingboard
+         jsr   LoadingPrint
+         lda   $81
+         and   #$0F
+         ora   #$B0
+         jmp   ROM_COUT
+
 TOTAL
-         !text   "T O T A L"
+         !text "T O T A L"
 REPLAY
-         !text   "R E P L A Y"
+         !text "R E P L A Y"
 !ifndef RELEASE {
-LoaderVersion
-         !byte   5
-         !text   "build"
-LoaderBuild
-         !word   BUILDNUMBER
+LoadingVersion
+         !byte 6
+         !text "build "
+LoadingBuild
+         !word BUILDNUMBER
 } else {
-LoaderVersion
-         !byte   4
-         !text   "v3.0"
+LoadingVersion
+         !byte 10
+         !text "      v3.0"
 }
-Loader64K
-         !byte   3
-         !text   "64K"
-Loader64KAndJoystick
-         !byte   14
-         !text   "joystick + 64K"
-Loader128K
-         !byte   4
-         !text   "128K"
-Loader128KAndJoystick
-         !byte   15
-         !text   "joystick + 128K"
+Loading64K
+         !byte 3
+         !text "64K"
+Loading128K
+         !byte 4
+         !text "128K"
+LoadingIIgs
+         !byte 4
+         !text "IIgs"
+LoadingJoystick
+         !byte 8
+         !text "joystick"
+LoadingVidHD
+         !byte 5
+         !text "VidHD"
+LoadingMockingboard
+         !byte 21
+         !text "Mockingboard in slot "
+LoadingMockingboardSpeech
+         !byte 16
+         !text "...and it talks!"
 
 !ifndef RELEASE {
 PrintAsDecimal
          jsr   $FF4A
 
-         lda   $FDE2	
+         lda   $FDE2
          cmp   #$EA
-         bne   @go
-         dec   @addr+1	    ; fix for Laser
-@go
+         bne   +
+         dec   @addr+1               ; fix for Laser
++
 --       lda   #$00
          clv
          ldx   #$18
@@ -297,10 +376,9 @@ CopyDevs
          and   #1                    ; A = #$01 or #$00
          asl
          asl
-         asl
-         asl                         ; A = #$10 or #$00
+         asl                         ; A = #$08 or #$00
          ora   MachineStatus
-         sta   MachineStatus         ; set bit 4 of MachineStatus
+         sta   MachineStatus         ; set bit 3 of MachineStatus
 
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          dey                         ; Y = 0

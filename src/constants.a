@@ -53,6 +53,7 @@ ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
 ROM_HOME =     $FC58
+ROM_COUT =     $FDED
 ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
 ROM_PR0 =      $FE93      ; SETVID
@@ -119,6 +120,14 @@ MachineStatus      = $FFF9
 DisableAccelerator = $DBAF
 EnableAccelerator  = DisableAccelerator+3
 
+; AND masks for MockingboardStuff
+MOCKINGBOARD_SLOT = %00001111
+HAS_SPEECH        = %10000000
+
 ; AND masks for MachineStatus
-SUPPORTS_SHR   = %00100000
-CHEATS_ENABLED = %00010000
+HAS_JOYSTICK   = %10000000
+HAS_128K       = %01000000
+IS_IIGS        = %00100000           ; /!\ do not use this to gate SHR, use SUPPORTS_SHR instead
+HAS_VIDHD      = %00010000
+SUPPORTS_SHR   = %00110000
+CHEATS_ENABLED = %00001000
