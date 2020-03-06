@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/CONGO.BONGO",plain
@@ -18,6 +18,12 @@
          sta   $cf7       ; patch - don't increase lives
          sta   $1099      ; patch - don't decrease lives
 +
+         lda   #$30       ; reset vector fixes
+         sta   $C02
+         lda   #$03
+         sta   $C0A
+         +NEW_RESET_VECTOR $330
+
          +DISABLE_ACCEL
          jmp   $c00
 
