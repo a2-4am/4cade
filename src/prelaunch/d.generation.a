@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/D.GENERATION",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $1405
+         jsr   $1200      ; load "DOS"
+         lda   #$60
+         sta   $B64E
+         jsr   $B600
+         ldy   #9
+-        lda   callback, y
+         sta   $200, y
+         dey
+         bpl   -
+         lda   #0
+         sta   $6009
+         lda   #2
+         sta   $600A
+         jsr   DisableAccelerator
+         jmp   $6000
+
+callback
+         jsr   $62F0
+         sta   $D9F7
+         jmp   $600B
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
