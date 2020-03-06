@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SOKO.BAN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A17
+         jsr   $800       ; load "DOS"
+         lda   #$60
+         sta   $EC38
+         jsr   $EC00      ; set up vectors
+         inc   $3F4       ; reboot
+         jsr   DisableAccelerator
+         jmp   $F6C5
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
