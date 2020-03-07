@@ -1,19 +1,50 @@
 # Revision 4.0 / unreleased
 
-## New & changed games
+## New games
 
- - Added Bejeweled
- - Added Force 7
- - Added Ming's Challenge
- - Added Wings of Fury
- - Removed Alien Rain (play Alien Typhoon instead)
- - Removed Apple Galaxian (play Alien Typhoon instead)
- - Removed Puck Man (play Snoggle instead)
+ - Battle Cruiser
+ - Bejeweled
+ - California Games
+ - Congo Bongo
+ - Flapple Bird
+ - Force 7
+ - Genius
+ - Genius 2
+ - Ming's Challenge
+ - One on One
+ - Penetrator
+ - Randamn
+ - Soko-Ban
+ - Solo Flight
+ - Street Sports Baseball
+ - Street Sports Basketball
+ - Street Sports Football
+ - Street Sports Soccer
+ - Summer Games
+ - Summer Games II
+ - TechnoCop
+ - Triad
+ - Wings of Fury
+ - Winter Games
+
+## Removed games
+
+ - Alien Rain (play Alien Typhoon instead)
+ - Apple Galaxian (play Alien Typhoon instead)
+ - Puck Man (play Snoggle instead)
+
+## New demos
+
+  - Cannonball Blitz
+  - Crime Wave
+  - Space Quarks
 
 ## Enhancements & bug fixes
 
+ - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
  - Added more game cheats
- - Auto-configure Mockingboard support in Berzap, Lancaster, Pitfall II
+ - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lancaster, Pitfall II)
+ - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed
  - Fixed acceleration on Laser 128
 
 # Revision 3.0 / serial number 20200121
