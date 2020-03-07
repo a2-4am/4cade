@@ -246,8 +246,8 @@
          sta   $104
          lda   #$FA
          sta   $105       ; update reset hook to reboot
-         lda   #0
-         sta   $FFFC
          lda   #1
-         sta   $FFFD      ; LC reset vector fix
+         sta   $FFFD
+         lsr
+         sta   $FFFC      ; LC reset vector fix
 }
