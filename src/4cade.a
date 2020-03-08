@@ -91,15 +91,13 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.credits.a"             ; \__ execution falls through
          !source "src/ui.browse.mode.a"         ; /
 
-         !source "src/ui.attract.hgr.a"         ; \__ execution falls through
-         !source "src/ui.font.a"                ; /
-
+         !source "src/ui.attract.hgr.a"
+         !source "src/ui.font.a"
          !source "src/ui.overlay.a"
          !source "src/ui.offscreen.a"
          !source "src/ui.attract.mode.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
-
          !source "src/ui.cheats.a"
          !source "src/glue.launch.a"
          !source "src/okvs.a"

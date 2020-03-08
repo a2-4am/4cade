@@ -205,6 +205,12 @@ DHGRActionCallback
          !word kDHGRActionDirectory
 +        !word $FDFD
 
+         lda   #$EA                  ; NOP
+         +HIDE_NEXT_2_BYTES
+DrawGameTitleInActionSlideshowHGR
+         lda   #$60                  ; RTS
+         sta   @fallThroughForDHGR
+
          ; display game name in the bottom-left corner
          lda   #22
          sta   VTAB
@@ -245,10 +251,11 @@ DHGRActionCallback
          +LDADDR gPathname
          sec
          jsr   DrawString
-;RedrawForDHGR
-         jsr   SwitchToBank2
          pla
+@fallThroughForDHGR
+         nop                         ; SMC
          sta   HTAB
+         jsr   SwitchToBank2
          ldx   gPathname
          dex
 
