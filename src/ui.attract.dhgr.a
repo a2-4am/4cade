@@ -403,61 +403,29 @@ HGRByteToDHGRBytes
 ;        $01 = corresponding DHGR byte in auxmem
 ;        preserves X
 
-         ldy   #%10000000
-         sty   $00
-         sty   $01
-         pha
-         and   #%00000001
+         stx   $02
+         ldy   #$02
+         sec
+         php
+         ldx   #$07
+--       lsr
+-        php
+         ror   $00
+         sec
+         dex
          beq   +
-         lda   #%10000011
-         sta   $01
-+        pla
-         pha
-         and   #%00000010
-         beq   +
-         lda   $01
-         clc
-         adc   #%00001100
-         sta   $01
-+        pla
-         pha
-         and   #%00000100
-         beq   +
-         lda   $01
-         clc
-         adc   #%00110000
-         sta   $01
-+        pla
-         pha
-         and   #%00001000
-         beq   +
-         lda   $01
-         clc
-         adc   #%01000000
-         sta   $01
-         inc   $00
-+        pla
-         pha
-         and   #%00010000
-         beq   +
-         lda   $00
-         clc
-         adc   #%00000110
-         sta   $00
-+        pla
-         pha
-         and   #%00100000
-         beq   +
-         lda   $00
-         clc
-         adc   #%00011000
-         sta   $00
-+        pla
-         ;pha
-         and   #%01000000
-         beq   +
-         lda   $00
-         clc
-         adc   #%01100000
-         sta   $00
-+        rts
+         plp
++        ror   $00
+         dex
+         bpl   --
+         plp
+         ldx   $03
+         stx   $01
+         ldx   $00
+         stx   $03
+         ldx   #$06
+         dey
+         bne   -
+         ror   $00
+         ldx   $02
+         rts
