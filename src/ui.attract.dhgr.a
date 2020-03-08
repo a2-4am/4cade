@@ -256,148 +256,27 @@ DrawGameTitleInActionSlideshowHGR
          nop                         ; SMC
          sta   HTAB
          jsr   SwitchToBank2
-         ldx   gPathname
-         dex
-
+         +LDAY DBIRow0+1
+         +STAY $FE
+         lda   #8
+         sta   i
+--       ldy   gPathname
+         dey
+-        lda   ($FE),y
+         jsr   HGRByteToDHGRBytes
+         sta   ($FE),y
+         txa
+         sta   WRITEAUXMEM
+         sta   ($FE),y
+         sta   WRITEMAINMEM
+         dey
+         bpl   -
+         lda   $FF
          clc
-         lda   DBIRow0+2
-         sta   @row0a+2
-         sta   @row0b+2
-         sta   @row0c+2
          adc   #$04
-         sta   @row1a+2
-         sta   @row1b+2
-         sta   @row1c+2
-         adc   #$04
-         sta   @row2a+2
-         sta   @row2b+2
-         sta   @row2c+2
-         adc   #$04
-         sta   @row3a+2
-         sta   @row3b+2
-         sta   @row3c+2
-         adc   #$04
-         sta   @row4a+2
-         sta   @row4b+2
-         sta   @row4c+2
-         adc   #$04
-         sta   @row5a+2
-         sta   @row5b+2
-         sta   @row5c+2
-         adc   #$04
-         sta   @row6a+2
-         sta   @row6b+2
-         sta   @row6c+2
-         adc   #$04
-         sta   @row7a+2
-         sta   @row7b+2
-         sta   @row7c+2
-
-         lda   DBIRow0+1
-         sta   @row0a+1
-         sta   @row0b+1
-         sta   @row0c+1
-         sta   @row1a+1
-         sta   @row1b+1
-         sta   @row1c+1
-         sta   @row2a+1
-         sta   @row2b+1
-         sta   @row2c+1
-         sta   @row3a+1
-         sta   @row3b+1
-         sta   @row3c+1
-         sta   @row4a+1
-         sta   @row4b+1
-         sta   @row4c+1
-         sta   @row5a+1
-         sta   @row5b+1
-         sta   @row5c+1
-         sta   @row6a+1
-         sta   @row6b+1
-         sta   @row6c+1
-         sta   @row7a+1
-         sta   @row7b+1
-         sta   @row7c+1
-
-@loop
-
-@row0a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row0b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row0c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row1a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row1b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row1c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row2a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row2b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row2c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row3a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row3b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row3c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row4a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row4b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row4c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row5a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row5b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row5c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row6a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row6b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row6c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-@row7a   lda   $FDFD,x
-         jsr   HGRByteToDHGRBytes
-         lda   $00
-@row7b   sta   $FDFD,x
-         lda   $01
-         sta   WRITEAUXMEM
-@row7c   sta   $FDFD,x
-         sta   WRITEMAINMEM
-
-         inc   HTAB
-         dex
-         bmi   +
-         jmp   @loop
-+
+         sta   $FF
+         dec   i
+         bne   --
          jmp   SwitchToBank1
 
 HGRByteToDHGRBytes
@@ -406,11 +285,12 @@ HGRByteToDHGRBytes
 ;1DCCBBAA (aux)
 ;
 ; in:    A = HGR byte
-; out:   $00 = corresponding DHGR byte in mainmem
-;        $01 = corresponding DHGR byte in auxmem
-;        preserves X
+; out:   A = DHGR byte in mainmem
+;        X = DHGR byte in auxmem
+;        preserves Y
+;        clobbers zero page $00,$01,$02,$03
 
-         stx   $02
+         sty   $02
          ldy   #$02
          sec
          php
@@ -434,5 +314,7 @@ HGRByteToDHGRBytes
          dey
          bne   -
          ror   $00
-         ldx   $02
+         lda   $00
+         ldx   $01
+         ldy   $02
          rts
