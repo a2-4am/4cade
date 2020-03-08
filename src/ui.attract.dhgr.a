@@ -197,6 +197,7 @@ DHGRActionCallback
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   DHGRRTS
+         +STAY SAVE                  ; (SAVE) -> game title
          stx   gGameToLaunch
 
          ; load DHGR screenshot at $4000/main and $4000/aux
@@ -204,4 +205,259 @@ DHGRActionCallback
          !word kDHGRActionDirectory
 +        !word $FDFD
 
-         ; /!\ execution falls through to ui.wait/ExecuteTransitionAt6000AndWait
+         ; display game name in the bottom-left corner
+         lda   #22
+         sta   VTAB
+         lda   #0                    ; solid horizontal bar character
+         jsr   @resetline
+         lda   (SAVE),y              ; (SAVE) -> game title, Y = 0, so A = title length
+         clc
+         adc   #$03
+         sta   gPathname
+         lda   #7                    ; top-right rounded corner character
+         jsr   @drawline
+
+         inc   VTAB
+         lda   #" "
+         jsr   @resetline
+         lda   (SAVE),y              ; A = title length
+         tay
+-        lda   (SAVE),y
+         sta   gPathname+1,y
+         dey
+         bne   -
+         lda   #3                    ; solid vertical bar character
+         jsr   @drawline
+
+         jmp   ExecuteTransitionAt6000AndWait
+@resetline
+         ldy   #40
+-        sta   gPathname,y
+         dey
+         bne   -
+         sty   HTAB
+         rts
+@drawline
+         ldy   gPathname
+         sta   gPathname,y
+         lda   HTAB
+         pha
+         +LDADDR gPathname
+         sec
+         jsr   DrawString
+;RedrawForDHGR
+         jsr   SwitchToBank2
+         pla
+         sta   HTAB
+         ldx   gPathname
+         dex
+
+         clc
+         lda   DBIRow0+2
+         sta   @row0a+2
+         sta   @row0b+2
+         sta   @row0c+2
+         adc   #$04
+         sta   @row1a+2
+         sta   @row1b+2
+         sta   @row1c+2
+         adc   #$04
+         sta   @row2a+2
+         sta   @row2b+2
+         sta   @row2c+2
+         adc   #$04
+         sta   @row3a+2
+         sta   @row3b+2
+         sta   @row3c+2
+         adc   #$04
+         sta   @row4a+2
+         sta   @row4b+2
+         sta   @row4c+2
+         adc   #$04
+         sta   @row5a+2
+         sta   @row5b+2
+         sta   @row5c+2
+         adc   #$04
+         sta   @row6a+2
+         sta   @row6b+2
+         sta   @row6c+2
+         adc   #$04
+         sta   @row7a+2
+         sta   @row7b+2
+         sta   @row7c+2
+
+         lda   DBIRow0+1
+         sta   @row0a+1
+         sta   @row0b+1
+         sta   @row0c+1
+         sta   @row1a+1
+         sta   @row1b+1
+         sta   @row1c+1
+         sta   @row2a+1
+         sta   @row2b+1
+         sta   @row2c+1
+         sta   @row3a+1
+         sta   @row3b+1
+         sta   @row3c+1
+         sta   @row4a+1
+         sta   @row4b+1
+         sta   @row4c+1
+         sta   @row5a+1
+         sta   @row5b+1
+         sta   @row5c+1
+         sta   @row6a+1
+         sta   @row6b+1
+         sta   @row6c+1
+         sta   @row7a+1
+         sta   @row7b+1
+         sta   @row7c+1
+
+@loop
+
+@row0a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row0b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row0c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row1a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row1b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row1c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row2a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row2b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row2c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row3a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row3b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row3c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row4a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row4b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row4c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row5a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row5b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row5c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row6a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row6b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row6c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+@row7a   lda   $FDFD,x
+         jsr   HGRByteToDHGRBytes
+         lda   $00
+@row7b   sta   $FDFD,x
+         lda   $01
+         sta   WRITEAUXMEM
+@row7c   sta   $FDFD,x
+         sta   WRITEMAINMEM
+
+         inc   HTAB
+         dex
+         bmi   +
+         jmp   @loop
++
+         jmp   SwitchToBank1
+
+HGRByteToDHGRBytes
+;1GFEDCBA ->
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+;
+; in:    A = HGR byte
+; out:   $00 = corresponding DHGR byte in mainmem
+;        $01 = corresponding DHGR byte in auxmem
+;        preserves X
+
+         ldy   #%10000000
+         sty   $00
+         sty   $01
+         pha
+         and   #%00000001
+         beq   +
+         lda   #%10000011
+         sta   $01
++        pla
+         pha
+         and   #%00000010
+         beq   +
+         lda   $01
+         clc
+         adc   #%00001100
+         sta   $01
++        pla
+         pha
+         and   #%00000100
+         beq   +
+         lda   $01
+         clc
+         adc   #%00110000
+         sta   $01
++        pla
+         pha
+         and   #%00001000
+         beq   +
+         lda   $01
+         clc
+         adc   #%01000000
+         sta   $01
+         inc   $00
++        pla
+         pha
+         and   #%00010000
+         beq   +
+         lda   $00
+         clc
+         adc   #%00000110
+         sta   $00
++        pla
+         pha
+         and   #%00100000
+         beq   +
+         lda   $00
+         clc
+         adc   #%00011000
+         sta   $00
++        pla
+         ;pha
+         and   #%01000000
+         beq   +
+         lda   $00
+         clc
+         adc   #%01100000
+         sta   $00
++        rts
