@@ -12,17 +12,18 @@ Double Trouble
 Elite
 G.I. Joe
 GBA Championship Basketball
-The Heist
+The Heist [priority]
 Impossible Mission II [DHGR]
 Karate Champ
 Kung Fu Master
 L.A. Crackdown
 Little Computer People
 Lock 'N' Chase
+Mad Rat
 Marauder
 Mars Cars
 Microwave
-Miner 2049er II
+Miner 2049er II [priority]
 Minit Man
 MIRV
 Monster Mash
@@ -32,11 +33,12 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Roundabout
+Run For It
 Shanghai
 Shifty Sam
 Shuttle Intercept
 Spindizzy
-Station 5
+Station 5 [priority]
 Super Bunny
 Super Huey
 Super Taxman II
@@ -61,7 +63,7 @@ Space Cadette
 Bandits
 Injured Engine
 Jawbreaker ][
-Mating Zone
+Mating Zone [priority]
 Saracen
 Super Zaxxon [priority]
 Test Drive [DHGR] [priority]
@@ -69,14 +71,19 @@ Test Drive [DHGR] [priority]
 //TODO(woz-imaged but uncracked)
 A.E.
 Alien Lander
+Arcade Boot Camp
+Beach-Head
+Beach-Head II
 Boa
 Borg
 Caverns of Callisto
 Copts and Robbers
 The Dam Busters
 Fight Night
-Gauntlet
+Gauntlet [priority]
 Hardball
+Infiltrator
+Infiltrator II
 International Hockey
 Into The Eagle's Nest [DHGR]
 Jawbreaker
@@ -87,6 +94,9 @@ Pulsar II
 Retro-Ball
 Roach Hotel
 The Asteroid Field
+The Last Gladiator
+The Last Ninja
+The Space Ark
 The Snapper
 Star Cruiser
 Superstar Ice Hockey
