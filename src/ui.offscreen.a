@@ -83,14 +83,34 @@ LoadOffscreenFromAY
 LoadGameTitleOffscreen
 ; in:    gGameToLaunch = index into gGamesListStore
          jsr   GetGameToLaunch
-         +STAY +
+         +STAY @fname
+         bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
+         bvc   @hgr
+         jsr   okvs_get_current
+                                     ; (PTR) -> game title + bitfield of game info
+                                     ; Y = 0
+         lda   (PTR),y               ; A = game title length + 1
+         sta   SAVE
+         tay
+         lda   (PTR),y               ; A = game info bitfield
+         and   #HAS_DHGR_TITLE
+         bne   @dhgr
+@hgr
          jsr   GetOffscreenAddress
-         sta   ++
+         sta   @addrhi
          jsr   LoadFile
          !word kHGRTitleDirectory
-+        !word $FDFD                 ; SMC
+@fname   !word $FDFD                 ; SMC
          !byte $00
-++       !byte $FD                   ; SMC
+@addrhi  !byte $FD                   ; SMC
+         rts
+@dhgr
+         jsr   BlankDHGR
+         +LDAY @fname
+         +STAY +
+         jsr   LoadDHRFile
+         !word kDHGRTitleDirectory
++        !word $FDFD
          rts
 
 ;------------------------------------------------------------------------------

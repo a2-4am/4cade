@@ -82,13 +82,18 @@ DrawUI
          php
 
          ldy   #39
--        lda   #$00                  ; horizontal bar character
-         sta   UILine1,y             ; reset UI line 1 to solid bar
-         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
+-
          lda   Instructions,y
          sta   UILine2,y             ; copy instructions to UI line 2
+         lda   #$00                  ; horizontal bar character
+         sta   UILine1,y             ; reset UI line 1 to solid bar
+         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
          dey
          bpl   -
+         sta   gGameToLaunchInfo     ; reset gGameToLaunchInfo
+         lda   #40
+         sta   gPathname             ; hack, used by first RedrawForDHGR which follows
+                                     ; Draw40Chars which doesn't set gPathname
 
          ldx   gGameToLaunch
          inx                         ; if no game, nothing more to do on UI line 2
@@ -177,7 +182,6 @@ DrawUI
          cpy   SAVE                  ; if game name is exhausted, we're done drawing dots
          bne   @dotloop
 @doneHighlight
-
          lda   #22
          sta   VTAB
          lda   OffscreenPage
@@ -185,10 +189,11 @@ DrawUI
          php
          +LDADDR UILine1
          jsr   Draw40Chars           ; draw UI line 1 on offscreen page
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          plp
          +LDADDR UILine2
          jsr   Draw40Chars           ; draw UI line 2 on offscreen page
-
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   @uidone               ; if cheats are disabled, then we're done drawing UI
@@ -211,7 +216,7 @@ DrawUI
          php
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 1
-
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          jsr   CheckCheats
                                      ; (SAVE) -> length-prefixed cheat description
          +LDADDR sCheatDescriptionPrefix
@@ -224,7 +229,7 @@ DrawUI
          plp
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 2
-
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
 @uidone  clc
          jmp   ShowOtherPage
 
@@ -235,11 +240,16 @@ CheckCheats
          beq   +
 gGameToLaunchInfo=*+1
          lda   #$FD                  ; SMC
-         and   #$03
+         and   #CHEAT_CATEGORY
          tay
 +
          lda   kCheatDescriptionLo,y
          sta   SAVE
          lda   kCheatDescriptionHi,y
          sta   SAVE+1
-         rts
+-        rts
+
+MaybeRedrawUIForDHGR
+         bit   gGameToLaunchInfo
+         bpl   -
+         jmp   RedrawForDHGR

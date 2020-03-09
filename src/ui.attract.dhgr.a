@@ -9,6 +9,7 @@
 ; - DHGRSingle
 ; - BlankHGR
 ; - HGRMode
+; - RedrawForDHGR
 ;
 
 ;------------------------------------------------------------------------------
@@ -209,7 +210,7 @@ DHGRActionCallback
          +HIDE_NEXT_2_BYTES
 DrawGameTitleInActionSlideshowHGR
          lda   #$60                  ; RTS
-         sta   @fallThroughForDHGR
+         sta   @fallthroughForDHGR
 
          ; display game name in the bottom-left corner
          lda   #22
@@ -247,15 +248,27 @@ DrawGameTitleInActionSlideshowHGR
 @drawline
          ldy   gPathname
          sta   gPathname,y
-         lda   HTAB
-         pha
          +LDADDR gPathname
          sec
          jsr   DrawString
-         pla
-@fallThroughForDHGR
+@fallthroughForDHGR
          nop                         ; SMC
-         sta   HTAB
+         ; /!\ execution sometimes falls through here to RedrawForDHGR
+
+;------------------------------------------------------------------------------
+; RedrawForDHGR
+; After drawing text on HGR screen, this will transform the low-level bytes
+; to display properly on the DHGR screen.
+;
+; /!\ must be called immediately after calling one of the font drawing routines
+;     (Draw40Chars, DrawCenteredString, DrawString, DrawBuffer)
+;
+; in:    gPathname contains number of bytes to transform
+;        DBIRow0 set (this will be true if you just called DrawBufferInternal
+;        or something that calls it, see above)
+; out:   clobbers zero page $00,$01,$02,$03,SAVE,$FE,$FF
+;------------------------------------------------------------------------------
+RedrawForDHGR
          jsr   SwitchToBank2
          +LDAY DBIRow0+1
          +STAY $FE

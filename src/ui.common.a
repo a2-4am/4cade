@@ -107,6 +107,8 @@ BlankDHGR
 
          sta   DHIRESON              ; then turn DHGR on
          bit   PAGE1
+         lda   #1
+         sta   OffscreenPage
          jmp   HGRMode
 
 ;------------------------------------------------------------------------------

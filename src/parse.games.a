@@ -64,7 +64,7 @@ ParseGamesList
          pha
 @parseCheatsAvailable
          jsr   IncAndGetChar         ; get fourth character (cheat category, int)
-         and   #$0F
+         and   #CHEAT_CATEGORY
          pha
 @swallowComma
          jsr   IncAndGetChar

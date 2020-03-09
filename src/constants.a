@@ -122,6 +122,10 @@ EnableAccelerator  = DisableAccelerator+3
 MOCKINGBOARD_SLOT = %00001111
 HAS_SPEECH        = %10000000
 
+; AND masks for game info bitfield (after game title in gGamesList)
+HAS_DHGR_TITLE    = %10000000
+CHEAT_CATEGORY    = %00001111
+
 ; AND masks for MachineStatus
 HAS_JOYSTICK   = %10000000
 HAS_128K       = %01000000
