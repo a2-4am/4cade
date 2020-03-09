@@ -96,10 +96,14 @@ DrawUI
 
          jsr   GetGameToLaunch
          jsr   okvs_get_current
-                                     ; (PTR) -> game title
-         lda   (PTR),y               ; copy game title into UI line 2
-         sta   SAVE                  ; title length
-         inc   SAVE
+                                     ; (PTR) -> game title + bitfield of game info
+                                     ; Y = 0
+         lda   (PTR),y               ; A = game title length + 1
+         sta   SAVE
+         tay
+         lda   (PTR),y               ; A = game info bitfield
+         sta   gGameToLaunchInfo
+         ldy   #0
 -        iny
 @printCursor
          lda   #$FD                  ; SMC
@@ -229,7 +233,10 @@ CheckCheats
          ldx   gGameToLaunch
          inx
          beq   +
-         ldy   gCheatsAvailable-1,x
+gGameToLaunchInfo=*+1
+         lda   #$FD                  ; SMC
+         and   #$03
+         tay
 +
          lda   kCheatDescriptionLo,y
          sta   SAVE

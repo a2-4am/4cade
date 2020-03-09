@@ -119,7 +119,7 @@ gDFXStore
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
-         !word $D100
+         !word $D000
 gGamesListStore
          !word $FDFD                 ; SMC
 SwitchToBank2

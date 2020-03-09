@@ -85,6 +85,15 @@ ParseGamesList
          inx
          bpl   @gatherValue
 @endValue
+         pla                         ; pop cheat category
+         sta   gVal,x                ; store after game title
+         pla                         ; pop DHGR title
+         clc
+         ror
+         ror
+         ora   gVal,x
+         sta   gVal,x                ; store in bit 7 of same byte as cheat category
+         inx
          stx   gValLen
          tya
          pha                         ; okvs functions clobber everything but we need Y
@@ -93,13 +102,8 @@ ParseGamesList
          !word gKeyLen
          !word gValLen
          !byte 0
-                                     ; X = new OKVS length
          pla                         ; pop saved Y
          tay
-         pla                         ; pop cheat category
-         dex                         ; X = new OKVS length - 1
-         sta   gCheatsAvailable,x
-         pla                         ; pop DHGR title
          clc
          bcc   @newkey               ; always branches
 

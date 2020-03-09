@@ -108,8 +108,6 @@ gValLen      = $1F80
 gVal         = $1F81
 
 ; LC RAM 1
-gCheatsAvailable   = $D000  ; master cheats table, indexed by game index in gGamesListStore
-                            ; 1 byte per game, so max size = 256 games
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C")
                             ; bit 6 = 1 if Mockingboard "B" (stereo) found (else Mockingboard "A")
                             ; bit 4-5 unused
