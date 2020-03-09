@@ -81,6 +81,7 @@ WaitForKeyFor30Seconds
 ; out:   exits via MegaAttractMode and everything is clobbered
 ;------------------------------------------------------------------------------
 CoverFade
+         jsr   ForceHGRMode
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage
          lda   OffscreenPage

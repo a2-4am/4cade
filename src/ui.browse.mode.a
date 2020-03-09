@@ -116,6 +116,12 @@ OnBrowseChanged
          jsr   LoadGameTitleOffscreen
          jsr   DrawUIWithoutDots
          jmp   MaybeAnimateTitle
+BrowseCreditsWrapper
+         jsr   Credits
+         jmp   ForceBrowseChanged
+BrowseHelpWrapper
+         jsr   Help
+         jmp   ForceBrowseChanged
 
 ;------------------------------------------------------------------------------
 
@@ -126,8 +132,8 @@ BrowseDispatchTableLo
          !byte <SearchMode
          !byte <OnBrowseTab
          !byte <OnBrowseLaunch
-         !byte <Help
-         !byte <Credits
+         !byte <BrowseHelpWrapper
+         !byte <BrowseCreditsWrapper
          !byte <OnBrowseCheat
          !byte <SoftBell
 BrowseDispatchTableHi
@@ -137,8 +143,8 @@ BrowseDispatchTableHi
          !byte >SearchMode
          !byte >OnBrowseTab
          !byte >OnBrowseLaunch
-         !byte >Help
-         !byte >Credits
+         !byte >BrowseHelpWrapper
+         !byte >BrowseCreditsWrapper
          !byte >OnBrowseCheat
          !byte >SoftBell
 

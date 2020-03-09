@@ -89,6 +89,8 @@ BlankHGR
          jsr   Home
          jsr   ClearHGR1             ; clear hi-res screen 1
          bit   PAGE1                 ; show hi-res screen 1 (now blank)
+         lda   #1
+         sta   OffscreenPage
          ; /!\ execution falls through here to HGRMode
 ;------------------------------------------------------------------------------
 ; HGRMode
@@ -103,6 +105,12 @@ GRMode
          bit   $C052
          bit   $C050
 DHGRRTS  rts
+
+ForceHGRMode
+gMachineInDHGRMode=*+1
+         lda   #$00
+         bne   BlankHGR
+         beq   DHGRRTS
 
 ;------------------------------------------------------------------------------
 ; LoadDHGRTransition [private]

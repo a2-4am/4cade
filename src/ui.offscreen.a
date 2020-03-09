@@ -70,6 +70,7 @@ LoadCoverOffscreen
          lda   #<kCoverFile
 LoadOffscreenFromAY
          sta   @fname
+         jsr   ForceHGRMode
          jsr   GetOffscreenAddress
          sta   +
          jsr   LoadFile
@@ -96,6 +97,7 @@ LoadGameTitleOffscreen
          and   #HAS_DHGR_TITLE
          bne   @dhgr
 @hgr
+         jsr   ForceHGRMode
          jsr   GetOffscreenAddress
          sta   @addrhi
          jsr   LoadFile

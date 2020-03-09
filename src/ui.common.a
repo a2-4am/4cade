@@ -57,11 +57,12 @@ Home
          sta   CLOCKCTL              ; black border
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
-         ldx   #(.end-@start-1)
--        lda   @start,x
-         sta   $106,x
+         ldx   #(.end-@start)
+-        lda   @start-1,x
+         sta   $105,x
          dex
-         bpl   -
+         bne   -
+         stx   gMachineInDHGRMode
          jmp   $106
 @start
          ; this will be run from main memory
@@ -109,6 +110,7 @@ BlankDHGR
          bit   PAGE1
          lda   #1
          sta   OffscreenPage
+         sta   gMachineInDHGRMode
          jmp   HGRMode
 
 ;------------------------------------------------------------------------------
