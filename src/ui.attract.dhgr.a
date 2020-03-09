@@ -302,33 +302,25 @@ HGRByteToDHGRBytes
 ; out:   A = DHGR byte in mainmem
 ;        X = DHGR byte in auxmem
 ;        preserves Y
-;        clobbers zero page $00,$01,$02,$03
+;        clobbers zero page $00,$01,$02
 
          sty   $02
          ldy   #$02
-         sec
+--       stx   $01
+         ldx   #$04
+-        ror   $00                   ; duplicate previous bit
+         lsr                         ; fetch bit
          php
-         ldx   #$07
---       lsr
--        php
-         ror   $00
-         sec
-         dex
-         beq   +
+         ror   $00                   ; insert bit
          plp
-+        ror   $00
          dex
-         bpl   --
-         plp
-         ldx   $03
-         stx   $01
-         ldx   $00
-         stx   $03
-         ldx   #$06
-         dey
          bne   -
-         ror   $00
-         lda   $00
+         ldx   $00
+         dey
+         bne   --
+         txa
+         sec
+         ror   $01                   ; set bit 7 explicitly on auxmem value
          ldx   $01
          ldy   $02
          rts
