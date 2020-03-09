@@ -264,63 +264,32 @@ DrawGameTitleInActionSlideshowHGR
 ;     (Draw40Chars, DrawCenteredString, DrawString, DrawBuffer)
 ;
 ; in:    gPathname contains number of bytes to transform
-;        DBIRow0 set (this will be true if you just called DrawBufferInternal
-;        or something that calls it, see above)
-; out:   clobbers zero page $00,$01,$02,$03,SAVE,$FE,$FF
+;        DBIRow0/LC2 contains address of first byte of first row to transform
+;          (this will be true if you just called DrawBufferInternal or
+;           something that calls it, see above)
+; out:   clobbers zero page $00,$01,$02,$26,$27,$F7
 ;------------------------------------------------------------------------------
 RedrawForDHGR
          jsr   SwitchToBank2
          +LDAY DBIRow0+1
-         +STAY $FE
+         +STAY $26
          lda   #8
          sta   i
 --       ldy   gPathname
          dey
--        lda   ($FE),y
-         jsr   HGRByteToDHGRBytes
-         sta   ($FE),y
+-        lda   ($26),y
+         +HGR_BYTE_TO_DHGR_BYTES
+         sta   ($26),y
          txa
          sta   WRITEAUXMEM
-         sta   ($FE),y
+         sta   ($26),y
          sta   WRITEMAINMEM
          dey
          bpl   -
-         lda   $FF
+         lda   $27
          clc
          adc   #$04
-         sta   $FF
+         sta   $27
          dec   i
          bne   --
          jmp   SwitchToBank1
-
-HGRByteToDHGRBytes
-;1GFEDCBA ->
-;1GGFFEED (main) +
-;1DCCBBAA (aux)
-;
-; in:    A = HGR byte
-; out:   A = DHGR byte in mainmem
-;        X = DHGR byte in auxmem
-;        preserves Y
-;        clobbers zero page $00,$01,$02
-
-         sty   $02
-         ldy   #$02
---       stx   $01
-         ldx   #$04
--        ror   $00                   ; duplicate previous bit
-         lsr                         ; fetch bit
-         php
-         ror   $00                   ; insert bit
-         plp
-         dex
-         bne   -
-         ldx   $00
-         dey
-         bne   --
-         txa
-         sec
-         ror   $01                   ; set bit 7 explicitly on auxmem value
-         ldx   $01
-         ldy   $02
-         rts

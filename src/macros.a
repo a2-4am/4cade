@@ -148,6 +148,37 @@
 +
 }
 
+!macro   HGR_BYTE_TO_DHGR_BYTES {
+;1GFEDCBA ->
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+;
+; in:    A = HGR byte
+; out:   A = DHGR byte in mainmem
+;        X = DHGR byte in auxmem
+;        preserves Y
+;        clobbers zero page $00,$01,$02
+         sty   $02
+         ldy   #$02
+--       stx   $01
+         ldx   #$04
+-        ror   $00                   ; duplicate previous bit
+         lsr                         ; fetch bit
+         php
+         ror   $00                   ; insert bit
+         plp
+         dex
+         bne   -
+         ldx   $00
+         dey
+         bne   --
+         txa
+         sec
+         ror   $01                   ; set bit 7 explicitly on auxmem value
+         ldx   $01
+         ldy   $02
+}
+
 ; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
 !macro   ENABLE_ACCEL {
          +READ_RAM2_NO_WRITE
