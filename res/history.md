@@ -22,6 +22,7 @@
  - Street Sports Soccer
  - Summer Games
  - Summer Games II
+ - Super Zaxxon
  - TechnoCop
  - Triad
  - Wings of Fury
