@@ -41,8 +41,9 @@
 
 ## Enhancements & bug fixes
 
- - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
  - Added more game cheats
+ - Display DHGR title screens in search and browse modes
+ - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
  - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lancaster, Pitfall II)
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed
  - Fixed acceleration on Laser 128
