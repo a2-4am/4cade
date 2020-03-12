@@ -1,0 +1,5 @@
+BLOCKCHAIN=Type(06),AuxType(6000),Access(C3)
+FUJI.SPEED.WAY=Type(06),AuxType(6000),Access(C3)
+OOTW=Type(06),AuxType(6000),Access(C3)
+POLLYWOG=Type(06),AuxType(6000),Access(C3)
+_FILEINFORMATION.TXT=Type(06),AuxType(6000),Access(C3)
