@@ -10,6 +10,7 @@ You will need
  - [Xcode command line tools](https://www.google.com/search?q=xcode+command+line+tools)
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [sicklittlemonkey's Cadius fork](https://github.com/sicklittlemonkey/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
 Then open a terminal window and type
 
@@ -25,6 +26,7 @@ If all goes well, the `build/` subdirectory will contain a `4cade.2mg` image whi
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Cadius for Windows](https://www.brutaldeluxe.fr/products/crossdevtools/cadius/)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
 (Those tools will need to be added to your command-line PATH.)
 
