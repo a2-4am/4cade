@@ -408,6 +408,12 @@ CopyDevs
          bcc   @outer
 
          bit   CLEARKBD
+
+         +READ_ROM_NO_WRITE
+         jsr   ROM_TEXT              ; let's reset the window boundaries
+         jsr   ROM_HOME              ; and clear text screen 1
+         +READ_RAM1_WRITE_RAM1
+
          jmp   Reenter
 
 @kGameListConfFile
