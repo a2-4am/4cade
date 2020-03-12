@@ -34,17 +34,15 @@ dsk: md asm compress
 	rsync -aP res/help.txt build/HELPTEXT >>build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
 	for f in res/TITLE res/COVER res/HELP build/*.CONF build/CREDITS build/HELPTEXT; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
+	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
+	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
+	bin/buildfileinfo.sh res/ARTWORK.SHR "06" "1FF8" >>build/log
+	bin/buildfileinfo.sh res/ATTRACT "04" "8000" >>build/log
+	bin/buildfileinfo.sh res/SS "04" "4000" >>build/log
 	for f in res/title.hgr res/title.dhgr res/action.hgr res/action.dhgr res/action.gr res/artwork.shr res/attract res/ss res/demo res/title.animated; do rsync -aP "$$f"/* build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
-	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh build/TITLE.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh build/ACTION.HGR "06" "3FF8" >>build/log
-	bin/buildfileinfo.sh build/ACTION.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh build/ACTION.GR "06" "6000" >>build/log
-	bin/buildfileinfo.sh build/ARTWORK.SHR "06" "1FF8" >>build/log
-	bin/buildfileinfo.sh build/ATTRACT "04" "8000" >>build/log
-	bin/buildfileinfo.sh build/SS "04" "4000" >>build/log
-	rsync -aP res/fx/* build/FX >>build/log
-	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 	for f in build/TITLE.* build/ACTION.* build/ARTWORK.* build/ATTRACT build/SS build/DEMO build/TITLE.ANIMATED; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
@@ -64,6 +62,7 @@ asmlauncher:
 
 asmfx:
 	for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log || true; done
+	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 
 asmprelaunch:
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
@@ -73,8 +72,9 @@ chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
 
 compress:
-	for f in res/action.hgr.uncompressed/*; do o=res/action.hgr/$$(basename $$f | tr '[:lower:]' '[:upper:]'); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
-	for f in res/artwork.shr.uncompressed/*; do o=res/artwork.shr/$$(basename $$f | tr '[:lower:]' '[:upper:]'); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
+	for f in res/action.hgr.uncompressed/*; do  o=res/action.hgr/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
+	for f in res/action.dhgr.uncompressed/*; do o=res/action.dhgr/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
+	for f in res/artwork.shr.uncompressed/*; do o=res/artwork.shr/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
