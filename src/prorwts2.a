@@ -1,6 +1,6 @@
 ;license:BSD-3-Clause
 ;extended open/read/write binary file in ProDOS filesystem, with random access
-;copyright (c) Peter Ferrie 2013-19
+;copyright (c) Peter Ferrie 2013-2020
 
 ver_02 = 1
 

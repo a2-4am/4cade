@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Double hi-res slideshows
 ;
@@ -67,11 +67,13 @@ DHGRActionSlideshow
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvc   DHGRRTS
-         +STAY +
+         +STAY @fname
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
-         jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
+         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kRootDirectory
-+        !word $FDFD                 ; SMC
+@fname   !word $FDFD                 ; SMC
+         !word $3FF8
+         jsr   DecompressDHGR
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   ExecuteTransitionAt6000AndWait
          ; switch back to HGR mode with initial blank screen on exit
@@ -209,10 +211,11 @@ DHGRActionCallback
          +STAY SAVE                  ; (SAVE) -> game title
          stx   gGameToLaunch
 
-         ; load DHGR screenshot at $4000/main and $4000/aux
-         jsr   LoadDHRFile
+         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kDHGRActionDirectory
 +        !word $FDFD
+         !word $3FF8
+         jsr   DecompressDHGR
 
          lda   #$EA                  ; NOP
          +HIDE_NEXT_2_BYTES
@@ -300,4 +303,47 @@ RedrawForDHGR
          sta   $27
          dec   i
          bne   --
+         jmp   SwitchToBank1
+
+;------------------------------------------------------------------------------
+; DecompressDHGR [private]
+;
+; in:    compressed DHGR loaded to aux $3FF8+
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed HGR at $4000..$5FFF/main and $4000..$5FFF/aux
+;        $6000..$7FFF/aux clobbered by decompressor
+;        $00A7..$00A8 clobbered by decompressor
+;        $00AE..$00AF clobbered by decompressor
+;        $00FC..$00FF clobbered by decompressor
+;        $0200..$02CB clobbered by decompressor
+;------------------------------------------------------------------------------
+DecompressDHGR
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
+         clc
+         lda   sizelo2
+         adc   #$F8
+         sta   _byte_lo
+         lda   sizehi2
+         adc   #$3F
+         sta   _byte_hi
+         sta   $C003
+         sta   $C005
+         jsr   decrunch
+         sta   $C004
+         lda   #$60
+         sta   @copyaux+2
+         lda   #$40
+         sta   @copyaux+5
+         ldy   #0
+@copyaux
+         lda   $D100, y              ; SMC
+         sta   $D100, y              ; SMC
+         iny
+         bne   @copyaux
+         inc   @copyaux+5
+         inc   @copyaux+2
+         bpl   @copyaux
+         sta   $C002
+         jsr   DisableAccelerator
          jmp   SwitchToBank1

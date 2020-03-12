@@ -1,4 +1,3 @@
-PRODOS=Type(FF),AuxType(0000),Access(C3)
 LAUNCHER.SYSTEM=Type(FF),AuxType(2000),Access(C3)
 PREFS.CONF=Type(04),AuxType(8000),Access(C3)
 GAMES.CONF=Type(04),AuxType(8000),Access(C3)
