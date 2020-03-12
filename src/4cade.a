@@ -108,6 +108,8 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/glue.prorwts2.a"
          !source "src/ui.common.a"
 
+         !source "src/exodecrunch.a"
+
          ; add new files above here so ui.wait stays last
 
          !source "src/ui.attract.dhgr.a"        ; \-- execution falls through

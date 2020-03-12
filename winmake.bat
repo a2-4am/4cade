@@ -13,6 +13,8 @@ set VOLUME=TOTAL.REPLAY
 rem third-party tools required to build (must be in path)
 rem https://sourceforge.net/projects/acme-crossass/
 set ACME=acme
+rem https://bitbucket.org/magli143/exomizer/wiki/Home
+set EXOMIZER=exomizer mem -q -P23 -lnone
 rem https://www.brutaldeluxe.fr/products/crossdevtools/cadius/
 rem https://github.com/mach-kernel/cadius
 set CADIUS=cadius
@@ -54,10 +56,11 @@ for %%q in (build\*.CONF) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" 
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
 cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
-cscript /nologo bin\rsync.js res\action.hgr\* build\ACTION.HGR >>build\log
+for %%q in (res\action.hgr\*) do if not exist build\%%~nxq %EXOMIZER% res\action.hgr\%%~nxq@0x4000 -o build\ACTION.HGR\%%~nxq
+cscript /nologo bin\rsync.js res\title.dgr\* build\TITLE.DGR >>build\log
 cscript /nologo bin\rsync.js res\action.dhgr\* build\ACTION.DHGR >>build\log
 cscript /nologo bin\rsync.js res\action.gr\* build\ACTION.GR >>build\log
-cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
+for %%q in (res\artwork.shr\*) do if not exist build\%%~nxq %EXOMIZER% res\artwork.shr\%%~nxq@0x2000 -o build\ARTWORK.SHR\%%~nxq
 cscript /nologo bin\rsync.js res\attract\* build\ATTRACT >>build\log
 cscript /nologo bin\rsync.js res\ss\* build\SS >>build\log
 cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
@@ -148,4 +151,5 @@ for %%q in (src\prelaunch\*.a) do (
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
 for %%q in (res\title.hgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
+for %%q in (res\title.dhgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
 )

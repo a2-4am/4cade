@@ -49,10 +49,11 @@ HGRActionSlideshow
 ;------------------------------------------------------------------------------
 HGRSingle
          +STAY @fname
-         jsr   LoadFile              ; load HGR screenshot at $4000
+         jsr   LoadFile              ; load compressed HGR screenshot at $3FF8
          !word kRootDirectory
 @fname   !word $FDFD                 ; SMC
-         !word $4000
+         !word $3FF8
+         jsr   DecompressHGR
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jmp   ExecuteTransitionAt6000AndWait
 
@@ -153,9 +154,30 @@ HGRActionCallback
          +STAY SAVE                  ; (SAVE) -> game title
          stx   gGameToLaunch
 
-         jsr   LoadFile              ; load HGR screenshot at $4000
+         jsr   LoadFile              ; load compressed HGR screenshot at $3FF8
          !word kHGRActionDirectory
 +        !word $FDFD                 ; SMC
-         !word $4000
-
+         !word $3FF8
+         jsr   DecompressHGR
          jmp   DrawGameTitleInActionSlideshowHGR
+
+;------------------------------------------------------------------------------
+; DecompressHGR [private]
+;
+; in:    compressed HGR loaded to $3FF8+
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed HGR at $4000..$5FFF
+;        $00A7..$00A8 clobbered by decompressor
+;        $00AE..$00AF clobbered by decompressor
+;        $00FC..$00FF clobbered by decompressor
+;        $0200..$02CB clobbered by decompressor
+;------------------------------------------------------------------------------
+DecompressHGR
+         clc
+         lda   sizelo2
+         adc   #$F8
+         sta   _byte_lo
+         lda   sizehi2
+         adc   #$3F
+         sta   _byte_hi
+         jmp   decrunch
