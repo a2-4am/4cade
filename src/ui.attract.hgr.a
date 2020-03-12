@@ -173,6 +173,8 @@ HGRActionCallback
 ;        $0200..$02CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressHGR
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
          clc
          lda   sizelo2
          adc   #$F8
@@ -180,4 +182,6 @@ DecompressHGR
          lda   sizehi2
          adc   #$3F
          sta   _byte_hi
-         jmp   decrunch
+         jsr   decrunch
+         jsr   DisableAccelerator
+         jmp   SwitchToBank1

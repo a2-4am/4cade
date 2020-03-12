@@ -40,6 +40,7 @@ goto :EOF
 if "%1" equ "dsk" (
 :dsk
 call :asm
+call :compress
 2>nul del build\log
 1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
@@ -56,21 +57,21 @@ for %%q in (build\*.CONF) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" 
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 cscript /nologo bin\rsync.js res\title.hgr\* build\TITLE.HGR >>build\log
 cscript /nologo bin\rsync.js res\title.dhgr\* build\TITLE.DHGR >>build\log
-for %%q in (res\action.hgr\*) do if not exist build\%%~nxq %EXOMIZER% res\action.hgr\%%~nxq@0x4000 -o build\ACTION.HGR\%%~nxq
+cscript /nologo bin\rsync.js res\action.hgr\* build\ACTION.HGR >>build\log
 cscript /nologo bin\rsync.js res\title.dgr\* build\TITLE.DGR >>build\log
 cscript /nologo bin\rsync.js res\action.dhgr\* build\ACTION.DHGR >>build\log
 cscript /nologo bin\rsync.js res\action.gr\* build\ACTION.GR >>build\log
-for %%q in (res\artwork.shr\*) do if not exist build\%%~nxq %EXOMIZER% res\artwork.shr\%%~nxq@0x2000 -o build\ARTWORK.SHR\%%~nxq
+cscript /nologo bin\rsync.js res\artwork.shr\* build\ARTWORK.SHR >>build\log
 cscript /nologo bin\rsync.js res\attract\* build\ATTRACT >>build\log
 cscript /nologo bin\rsync.js res\ss\* build\SS >>build\log
 cscript /nologo bin\rsync.js res\demo\* build\DEMO >>build\log
 cscript /nologo bin\rsync.js res\title.animated\* build\TITLE.ANIMATED >>build\log
 cscript /nologo bin\buildfileinfo.js build\TITLE.HGR "06" "4000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\TITLE.DHGR "06" "4000" >>build\log
-cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "4000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ACTION.HGR "06" "3FF8" >>build\log
 cscript /nologo bin\buildfileinfo.js build\ACTION.DHGR "06" "4000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\ACTION.GR "06" "6000" >>build\log
-cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "C1" "2000" >>build\log
+cscript /nologo bin\buildfileinfo.js build\ARTWORK.SHR "06" "1FF8" >>build\log
 cscript /nologo bin\buildfileinfo.js build\ATTRACT "04" "8000" >>build\log
 cscript /nologo bin\buildfileinfo.js build\SS "04" "4000" >>build\log
 cscript /nologo bin\rsync.js res\fx\* build\FX >>build\log
@@ -153,3 +154,8 @@ for %%q in (src\prelaunch\*.a) do (
 for %%q in (res\title.hgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
 )
+goto :EOF
+
+:compress
+for %%q in (res\action.hgr.uncompressed\*) do if not exist res\action.hgr\%%~nxq %EXOMIZER% res\action.hgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
+for %%q in (res\artwork.shr.uncompressed\*) do if not exist res\artwork.shr\%%~nxq %EXOMIZER% res\artwork.shr.uncompressed\%%~nxq@0x2000 -o res\artwork.shr\%%~nxq

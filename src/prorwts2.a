@@ -2577,9 +2577,8 @@ attribpatch
   !if allow_subdir = 1 {
                 plp
                 bcs     hddrdwrfilei
-  } else { ;allow_subdir = 0
-++
   } ;allow_subdir = 1
+++
 } ;rwts_mode = 1
 
 hddrdwrpart
@@ -2590,7 +2589,6 @@ hddrdwrfile
 hddrdwrfilex
 !if allow_subdir = 1 {
                 clc
-++
 } ;allow_subdir = 1
 !if (no_interrupts + (rwts_mode xor 1)) > 1 {
   !if detect_err = 1 {

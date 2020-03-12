@@ -97,7 +97,7 @@ SHRArtworkCallback
 
          jsr   BlankSHR
 
-         ; load compressed SHR artwork at $1FF8/main (not aux)
+         ; load compressed SHR artwork at $1FF0/main (not aux)
          jsr   LoadFile
          !word kSHRArtworkDirectory
 @sfname  !word $FDFD
@@ -154,6 +154,8 @@ BlankSHR
 ;        $0200..$02CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressSHR
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
          clc
          lda   sizelo2
          adc   #$F8
@@ -161,4 +163,6 @@ DecompressSHR
          lda   sizehi2
          adc   #$1F
          sta   _byte_hi
-         jmp   decrunch
+         jsr   decrunch
+         jsr   DisableAccelerator
+         jmp   SwitchToBank1

@@ -37,10 +37,10 @@ dsk: md asm compress
 	for f in res/title.hgr res/title.dhgr res/action.hgr res/action.dhgr res/action.gr res/artwork.shr res/attract res/ss res/demo res/title.animated; do rsync -aP "$$f"/* build/$$(basename $$f | tr '[:lower:]' '[:upper:]') >>build/log; done
 	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh build/TITLE.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh build/ACTION.HGR "06" "4000" >>build/log
+	bin/buildfileinfo.sh build/ACTION.HGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh build/ACTION.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh build/ACTION.GR "06" "6000" >>build/log
-	bin/buildfileinfo.sh build/ARTWORK.SHR "C1" "2000" >>build/log
+	bin/buildfileinfo.sh build/ARTWORK.SHR "06" "1FF8" >>build/log
 	bin/buildfileinfo.sh build/ATTRACT "04" "8000" >>build/log
 	bin/buildfileinfo.sh build/SS "04" "4000" >>build/log
 	rsync -aP res/fx/* build/FX >>build/log
