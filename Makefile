@@ -22,7 +22,10 @@ ACME=acme
 # version 1.4.0 or later
 CADIUS=cadius
 
-dsk: md asm
+# https://bitbucket.org/magli143/exomizer/wiki/Home
+EXOMIZER=exomizer mem -q -P23 -lnone
+
+dsk: md asm compress
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
@@ -64,10 +67,14 @@ asmfx:
 
 asmprelaunch:
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
-	for f in res/title.hgr/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
+	for f in res/title.hgr/* res/title.dhgr/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
 chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
+
+compress:
+	for f in res/action.hgr.uncompressed/*; do o=res/action.hgr/$$(basename $$f | tr '[:lower:]' '[:upper:]'); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
+	for f in res/artwork.shr.uncompressed/*; do o=res/artwork.shr/$$(basename $$f | tr '[:lower:]' '[:upper:]'); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
@@ -91,4 +98,4 @@ md:
 clean:
 	rm -rf build/ || rm -rf build
 
-all: clean asm dsk mount
+all: clean dsk mount
