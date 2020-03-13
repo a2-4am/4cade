@@ -8,6 +8,7 @@
  - Congo Bongo
  - Flapple Bird
  - Force 7
+ - Gauntlet
  - Genius
  - Genius 2
  - Ming's Challenge
