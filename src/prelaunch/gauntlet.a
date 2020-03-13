@@ -1,0 +1,50 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/GAUNTLET",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   +
+
+callback
+         lda   #$60
+         sta   $B47D
+         jsr   $B58F
+         lda   #$60
+         sta   $984D
+         jsr   $8800
+         lda   #$60
+         sta   $A394
+         jsr   $A200
+
+         lda   #$bd
+         sta   $6829      ; patch - don't decrease health
+         sta   $8A8F      ; patch - don't decrease health
+         sta   $8E6B      ; patch - don't decrease health
+         sta   $90C8      ; patch - don't decrease health
+         sta   $925B      ; patch - don't decrease health
+         jmp   $6000
+
++
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9DA
+         jsr   $800       ; load "DOS"
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $B748
+         lda   #>callback
+         sta   $B749
++        jmp   $B700
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
