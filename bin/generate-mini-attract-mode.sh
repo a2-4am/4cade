@@ -16,10 +16,6 @@ cat res/games.conf |
         # initialize attract mode configuration file for this game
         echo "#\n# Attract mode for $name\n#\n" > /tmp/g
 
-        # add DHGR title screenshot, if any
-        [ -f res/title.dhgr/"$game" ] &&
-            echo "TITLE.DHGR/$game=B" >> /tmp/g
-
         # add box art, if any
         [ -f res/artwork.shr/"$game" ] &&
             echo "ARTWORK.SHR/$game=C" >> /tmp/g
