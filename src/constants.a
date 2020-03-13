@@ -41,6 +41,7 @@ NEWVIDEO =     $C029      ; IIgs graphics modes (also VidHD)
 SPEAKER =      $C030      ; chirp chirp
 CLOCKCTL =     $C034      ; bits 0-3 are IIgs border color (also VidHD)
 SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing (also VidHD)
+TEXTMODE =     $C051
 PAGE1 =        $C054      ; page 1 (affects text, HGR, DHGR)
 PAGE2 =        $C055      ; page 2 (affects text, HGR, DHGR)
 DHIRESON =     $C05E      ; double hi-res on switch

@@ -39,7 +39,7 @@ ClearScreens
 ; clear and display text screen (HARDER THAN IT SOUNDS)
 ;
 ; in:    none
-; out:   $0106..$011F clobbered
+; out:   none
 ;------------------------------------------------------------------------------
 Home
          lda   MachineStatus
@@ -57,37 +57,27 @@ Home
          sta   CLOCKCTL              ; black border
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
-         ldx   #(.end-@start)
--        lda   @start-1,x
-         sta   $105,x
+         lda   #$A0                  ; clear text screen page 1
+         ldx   #$78                  ; but preserve screen holes
+-        sta   $3FF,x
+         sta   $47F,x
+         sta   $4FF,x
+         sta   $57F,x
+         sta   $5FF,x
+         sta   $67F,x
+         sta   $6FF,x
+         sta   $77F,x
          dex
          bne   -
          stx   gMachineInDHGRMode
-         jmp   $106
-@start
-         ; this will be run from main memory
-         lda   #$A0                  ; clear text screen page 1
-         ldx   #$77
--        sta   $400,x
-         sta   $480,x
-         sta   $500,x
-         sta   $580,x
-         sta   $600,x
-         sta   $680,x
-         sta   $700,x
-         sta   $780,x
-         dex
-         bpl   -
 
          sta   DHIRESOFF             ; get out of DHGR mode
-         sta   CLR80VID              ; get out of DHGR mode
-                                     ; write-order matters for RGB-card
+         sta   CLR80VID              ; /!\ order of operations matters for RGB card
          lda   PAGE1
-         lda   $C051                 ; now show it
+         lda   TEXTMODE
 SwitchToBank1
          +READ_RAM1_WRITE_RAM1
-         rts                         ; and return to caller
-.end
+         rts
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
