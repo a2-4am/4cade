@@ -57,7 +57,7 @@
                                      ;     bit 7 = 1 if joystick
                                      ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
 
-         ; accomodate uppercase-only machines (64K ][+ is supported)
+         ; accommodate uppercase-only machines (64K ][+ is supported)
          lda   ROM_MACHINEID
          cmp   #$06
          beq   +
