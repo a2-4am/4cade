@@ -363,6 +363,21 @@ CopyDevs
          !word gGamesListStore
          !word -
 
+!ifndef RELEASE {
+         +READ_ROM_NO_WRITE
+         lda   #40
+         sta   $21
+         lda   #36
+         sta   $24
+         dec   $25
+         jsr   $FC22
+         lda   SRC+1
+         jsr   $FDDA
+         lda   SRC
+         jsr   $FDDA
+         +READ_RAM2_WRITE_RAM2
+}
+
          +LDADDR gGamesListStore
          jsr   okvs_len
          sta   GameCount
