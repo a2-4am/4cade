@@ -16,7 +16,6 @@ The Heist [priority]
 Impossible Mission II [DHGR]
 Karate Champ
 Kung Fu Master
-L.A. Crackdown
 Little Computer People
 Lock 'N' Chase
 Mad Rat
@@ -64,8 +63,12 @@ Bandits
 Injured Engine
 Jawbreaker ][
 Mating Zone [priority]
-Saracen
 Test Drive [DHGR] [priority]
+
+//other
+Battle Chess [DHGR]
+Columns IIe [DHGR]
+Saracen
 
 //TODO(woz-imaged but uncracked)
 A.E.
@@ -93,7 +96,7 @@ Retro-Ball
 Roach Hotel
 The Asteroid Field
 The Last Gladiator
-The Last Ninja
+The Last Ninja [DHGR]
 The Space Ark
 The Snapper
 Star Cruiser
