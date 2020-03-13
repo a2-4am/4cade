@@ -40,6 +40,8 @@ callback2
          lda   #$8B
          sta   $B528
          sta   $B52B
+         sta   $B54A
+         sta   $B54D
          +DISABLE_ACCEL
          jmp   $B581
 

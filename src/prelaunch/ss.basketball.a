@@ -38,8 +38,10 @@ callback2
          ; regardless of which bank was active
 
          lda   #$8B
-         sta   $B528
-         sta   $B52B
+         sta   $B462
+         sta   $B465
+         sta   $B482
+         sta   $B485
          +DISABLE_ACCEL
          jmp   $B581
 
