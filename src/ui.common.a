@@ -57,25 +57,24 @@ Home
          sta   CLOCKCTL              ; black border
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
+         sta   gMachineInDHGRMode    ; A=0 here
          lda   #$A0                  ; clear text screen page 1
-         ldx   #$78                  ; but preserve screen holes
--        sta   $3FF,x
-         sta   $47F,x
-         sta   $4FF,x
-         sta   $57F,x
-         sta   $5FF,x
-         sta   $67F,x
-         sta   $6FF,x
-         sta   $77F,x
+         ldx   #$77                  ; but preserve screen holes
+-        sta   $400,x
+         sta   $480,x
+         sta   $500,x
+         sta   $580,x
+         sta   $600,x
+         sta   $680,x
+         sta   $700,x
+         sta   $780,x
          dex
-         bne   -
-         stx   gMachineInDHGRMode
-
+         bpl   -
          sta   DHIRESOFF             ; get out of DHGR mode
          sta   CLR80VID              ; /!\ order of operations matters for RGB card
          lda   PAGE1
          lda   TEXTMODE
-SwitchToBank1
+SwitchToBank1                        ; unnecessary but harmless (and has to be somewhere)
          +READ_RAM1_WRITE_RAM1
          rts
 
