@@ -375,7 +375,7 @@ CopyDevs
          jsr   $FDDA
          lda   SRC
          jsr   $FDDA
-         +READ_RAM2_WRITE_RAM2
+         +READ_RAM1_WRITE_RAM1
 }
 
          +LDADDR gGamesListStore
