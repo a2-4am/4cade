@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; functions for managing which HGR page is showing, and doing things on the other one
 ;
@@ -94,8 +94,8 @@ LoadGameTitleOffscreen
          sta   SAVE
          tay
          lda   (PTR),y               ; A = game info bitfield
-         and   #HAS_DHGR_TITLE
-         bne   @dhgr
+         ;;and   #HAS_DHGR_TITLE
+         bmi   @dhgr
 @hgr
          jsr   ForceHGRMode
          jsr   GetOffscreenAddress
@@ -135,16 +135,34 @@ ClearHGR1
          lda   #$20                  ; note to self: LDX #$20 can't move here
          ldx   #$20
 ClearMem
-         sta   @a+2
+         ldy   #$2C                  ; BIT
+         bne   +                     ; always
+
+;------------------------------------------------------------------------------
+; CopyHGR
+;
+; in:    source and destination page pointers set
+; out:   all registers clobbered
+;        8kb memory region duplicated
+;------------------------------------------------------------------------------
+CopyHGR
+         ldx   #$20
+         ldy   #$B9                  ; LDY
++        sty   PageFrom
+         sta   PageTo+2
          lda   #$80
+ClearGR
          ldy   #0
-@a       sta   $2000,y
+PageFrom lda   $FD00,y               ; SMC
+PageTo   sta   $FD00,y               ; SMC
          iny
-         bne   @a
-         inc   @a+2
+         bne   PageFrom
+         inc   PageFrom+2
+         inc   PageTo+2
          dex
-         bne   @a
+         bne   PageFrom
          rts
+
 
 ResyncPage
          jsr   ToggleOffscreenPage

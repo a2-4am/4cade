@@ -11,16 +11,12 @@
 !macro   PARAMS_ON_STACK .bytes {
          pla
          sta   PARAM
-         pla
-         tax
-         stx   PARAM+1
-         lda   #.bytes
          clc
-         adc   PARAM
+         adc   #.bytes
          tay
-         bcc   +
-         inx
-+        txa
+         pla
+         sta   PARAM+1
+         adc   #0
          pha
          tya
          pha

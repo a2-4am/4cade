@@ -318,32 +318,13 @@ RedrawForDHGR
 ;        $0200..$02CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressDHGR
-         jsr   SwitchToBank2
-         jsr   EnableAccelerator
-         clc
-         lda   sizelo2
-         adc   #$F8
-         sta   _byte_lo
-         lda   sizehi2
-         adc   #$3F
-         sta   _byte_hi
          sta   $C003
          sta   $C005
-         jsr   decrunch
+         jsr   DecompressHGR
          sta   $C004
          lda   #$60
-         sta   @copyaux+2
+         sta   PageFrom+2
          lda   #$40
-         sta   @copyaux+5
-         ldy   #0
-@copyaux
-         lda   $D100, y              ; SMC
-         sta   $D100, y              ; SMC
-         iny
-         bne   @copyaux
-         inc   @copyaux+5
-         inc   @copyaux+2
-         bpl   @copyaux
+         jsr   CopyHGR
          sta   $C002
-         jsr   DisableAccelerator
-         jmp   SwitchToBank1
+         rts

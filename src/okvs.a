@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Ordered key/value store (6502 compatible)
 ;
@@ -127,7 +127,7 @@ okvs_append
                                      ; PTR -> store
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
-         clc
+         ;;clc
          adc   #1
          pha                         ; will return this later
          sta   (PTR),y               ; increment number of keys
@@ -155,7 +155,7 @@ okvs_append
          cpy   #$FF
          bne   -
 
-         sec
+         ;;sec
          txa
          adc   PTR                   ; update PTR to byte after copied key
          sta   PTR
@@ -163,7 +163,7 @@ okvs_append
          inc   PTR+1
 +                                    ; PTR -> space for new value
          +LDPARAMPTR 5, SRC          ; SRC -> new value to copy
-         ldy   #7
+         iny ;;ldy   #7
          lda   (PARAM),y             ; get max length of value
          tax
          bne   +
@@ -260,8 +260,8 @@ KEYLEN = *+1
          adc   KEYLEN
          bcc   +
          iny
-+        clc
-         adc   #2
+         clc
++        adc   #2
          sta   PTR
          bcc   +
          iny
