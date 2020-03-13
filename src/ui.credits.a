@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; credits page
 ;
@@ -26,7 +26,7 @@ Credits
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
-         ldx   #0
+         tax
          jsr   DrawPage              ; draw credits
          jsr   ShowOtherPage         ; show credits
          jsr   WaitForKeyFor30Seconds; wait

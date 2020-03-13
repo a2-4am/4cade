@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; GR action slideshows
 ;
@@ -52,16 +52,12 @@ GRSingle
 ;        graphics mode set to display lo-res screen
 ;------------------------------------------------------------------------------
 BlankGR
+         ldy   #$2C                  ; BIT
+         sty   PageFrom
          ldx   #$04
-         stx   @loop+2
+         stx   PageTo+2
          lda   #0
-         tay
-@loop    sta   $FD00,y
-         iny
-         bne   @loop
-         inc   @loop+2
-         dex
-         bne   @loop
+         jsr   ClearGR
          bit   PAGE1
          bit   $C056                 ; set GR mode
          jmp   GRMode

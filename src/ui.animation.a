@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; functions for animated title screens
 ;
@@ -28,9 +28,9 @@ MaybeAnimateTitle
          eor   #$60
 +        sta   SAVE+1
          and   #$60
-         sta   @a+2
+         sta   PageFrom+2
          eor   #$60
-         sta   @b+2
+         tax
          lda   #$FD
          sta   SAVE
          ldy   #0
@@ -41,17 +41,8 @@ MaybeAnimateTitle
                                      ; file -- this area part of a 'screen
                                      ; hole' and is not displayed on screen)
          bne   @exit                 ; if not, we're done here
-
-         ; copy one HGR screen to the other
-         ldx   #$20
-@a       lda   $FD00,y               ; SMC
-@b       sta   $FD00,y               ; SMC
-         iny
-         bne   @a
-         inc   @a+2
-         inc   @b+2
-         dex
-         bne   @a
+         txa
+         jsr   CopyHGR
 
          ; load the animation routine, which is stored in a subdirectory by filename
          jsr   GetGameToLaunch

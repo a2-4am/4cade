@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; hi-res font drawing routines
 ;
@@ -18,24 +18,26 @@
 DrawString
          jsr   SwitchToBank2
          jsr   DrawStringInternal
-         jmp   SwitchToBank1
+         bmi   JmpSwitch             ; always
 
 DrawPage
          jsr   SwitchToBank2
          jsr   DrawPageInternal
+
+JmpSwitch
          jmp   SwitchToBank1
 
 Draw40Chars
          jsr   SwitchToBank2
          jsr   Draw40CharsInternal
-         jmp   SwitchToBank1
+         beq   JmpSwitch             ; always
 
 DrawCenteredString
          jsr   SwitchToBank2
          jsr   DrawCenteredStringInternal
-         jmp   SwitchToBank1
+         bmi   JmpSwitch             ; always
 
 DrawBuffer
          jsr   SwitchToBank2
          jsr   DrawBufferInternal
-         jmp   SwitchToBank1
+         bmi   JmpSwitch             ; always

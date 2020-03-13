@@ -121,13 +121,13 @@ BlankSHR
          jsr   Home
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on linearize
-         ora   #%01000000
+         ora   #%01000000            ; can't use TSB here - might not be 65816
          sta   NEWVIDEO
 
          sta   WRITEAUXMEM           ; writes go to auxmem
 
          lda   SHADOW                ; enable auxmem-to-bank-E1 shadowing on IIgs
-         and   #$F7
+         and   #$F7                  ; can't use TRB here - might not be 65816
          sta   SHADOW
 
          lda   #$20                  ; clear $2000..$9FFF in auxmem
@@ -137,7 +137,7 @@ BlankSHR
          sta   WRITEMAINMEM          ; writes go to main memory
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on SHR mode
-         ora   #%10000001
+         ora   #%10000001            ; can't use TSB here - might not be 65816
          sta   NEWVIDEO
 
          rts
@@ -154,15 +154,6 @@ BlankSHR
 ;        $0200..$02CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressSHR
-         jsr   SwitchToBank2
-         jsr   EnableAccelerator
-         clc
-         lda   sizelo2
-         adc   #$F8
-         sta   _byte_lo
-         lda   sizehi2
-         adc   #$1F
-         sta   _byte_hi
-         jsr   decrunch
-         jsr   DisableAccelerator
-         jmp   SwitchToBank1
+         lda   #$1F
+         jmp   DecompressCommon
+
