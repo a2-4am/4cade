@@ -66,12 +66,22 @@ Home
          jmp   $106
 @start
          ; this will be run from main memory
-         +READ_ROM_NO_WRITE
+         lda   #$A0                  ; clear text screen page 1
+         ldx   #$77
+-        sta   $400,x
+         sta   $480,x
+         sta   $500,x
+         sta   $580,x
+         sta   $600,x
+         sta   $680,x
+         sta   $700,x
+         sta   $780,x
+         dex
+         bpl   -
+
          sta   DHIRESOFF             ; get out of DHGR mode
          sta   CLR80VID              ; get out of DHGR mode
                                      ; write-order matters for RGB-card
-         jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
-         jsr   ROM_HOME              ; HOME
          lda   PAGE1
          lda   $C051                 ; now show it
 SwitchToBank1
