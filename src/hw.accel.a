@@ -267,8 +267,10 @@ iicplus !pseudopc DisableAccelerator {
          php
          sei             ; timing sensitive
          jsr   @jiggerypokery
-         sta   $C05B     ; fix colouring
-         plp             ; restore interrupt state
+         lda   gMachineInDHGRMode
+         bne   +         ; DHGR mode doesn't need fix
+         sta   $C05B     ; fix HGR-mode colouring
++        plp             ; restore interrupt state
          pla
          sta   $0
          rts
