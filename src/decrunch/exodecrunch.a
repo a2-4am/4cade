@@ -1,6 +1,9 @@
 ; This source code is altered and is not the original version found on
 ; the Exomizer homepage.
 ; It contains modifications made by qkumba to work with ACME assembler.
+!cpu 6502
+!to "DECRUNCH",plain
+*=$200
 
 ;
 ; Copyright (c) 2002 - 2018 Magnus Lind.
@@ -118,25 +121,8 @@ skip:
 !MACRO mac_get_bits {
         jsr get_bits
 }
-get_bits:
-        adc #$80                ; needs c=0, affects v
-        asl
-        bpl gb_skip
-gb_next:
-        asl zp_bitbuf
-        bne gb_ok
-        +mac_refill_bits
-gb_ok:
-        rol
-        bmi gb_next
-gb_skip:
-        bvs gb_get_hi
-        rts
-gb_get_hi:
-        sec
-        sta zp_bits_hi
-        jmp get_crunched_byte
 }
+
 ; -------------------------------------------------------------------
 ; no code below this comment has to be modified in order to generate
 ; a working decruncher of this source file.
@@ -390,6 +376,26 @@ tabl_bit:
 ; end of decruncher
 ; -------------------------------------------------------------------
 
+!IFNDEF INLINE_GET_BITS {
+get_bits:
+        adc #$80                ; needs c=0, affects v
+        asl
+        bpl gb_skip
+gb_next:
+        asl zp_bitbuf
+        bne gb_ok
+        +mac_refill_bits
+gb_ok:
+        rol
+        bmi gb_next
+gb_skip:
+        bvs gb_get_hi
+        rts
+gb_get_hi:
+        sec
+        sta zp_bits_hi
+; fall through
+}
 get_crunched_byte:
         lda _byte_lo
         bne _byte_skip_hi
@@ -406,7 +412,27 @@ _byte_hi = * + 2
 ; this 156 (204) byte table area may be relocated. It may also be
 ; clobbered by other data between decrunches.
 ; -------------------------------------------------------------------
-decrunch_table=$200;;:
+decrunch_table:
+!warn "entry=",*
+        pla
+        tay
+        pla
+        tax
+        clc
+        pla
+        adc #$F8
+        sta _byte_lo
+        pla
+        sta zp_bitbuf
+        pla
+        adc zp_bitbuf
+        sta _byte_hi
+        txa
+        pha
+        tya
+        pha
+        jmp decrunch
+
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

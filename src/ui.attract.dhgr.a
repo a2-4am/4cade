@@ -315,11 +315,9 @@ RedrawForDHGR
 ;        $00A7..$00A8 clobbered by decompressor
 ;        $00AE..$00AF clobbered by decompressor
 ;        $00FC..$00FF clobbered by decompressor
-;        $0200..$02CB clobbered by decompressor
+;        $0200..$03CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressDHGR
-         sta   $C003
-         sta   $C005
          jsr   DecompressHGR
          sta   $C004
          lda   #$60

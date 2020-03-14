@@ -56,6 +56,7 @@ for %%q in (res\*.CONF) do if "%%q" neq "res\PREFS.CONF" %CADIUS% ADDFILE "build
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log

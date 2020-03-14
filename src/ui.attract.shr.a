@@ -151,7 +151,7 @@ BlankSHR
 ;        $00A7..$00A8 clobbered by decompressor
 ;        $00AE..$00AF clobbered by decompressor
 ;        $00FC..$00FF clobbered by decompressor
-;        $0200..$02CB clobbered by decompressor
+;        $0200..$03CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressSHR
          lda   #$1F

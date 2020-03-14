@@ -149,3 +149,7 @@ kGRFizzleFile
 kSFXFizzleFile
          !byte 10
          !raw  "SHR.FIZZLE"
+
+kDecrunchFile
+         !byte 8
+         !raw  "DECRUNCH"
