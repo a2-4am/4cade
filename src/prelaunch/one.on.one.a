@@ -23,6 +23,7 @@
          jsr   $4000      ; decompress
          pla
          plp
+         php
          bcc   skipmb
          cmp   #$C4
          beq   skipmb
@@ -37,7 +38,12 @@
          bne   -
 
 skipmb
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
+         plp
+         bcs   +
+         +READ_ROM_NO_WRITE
++
          jmp   $400
 
 !if * > $1C0 {
