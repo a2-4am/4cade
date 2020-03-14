@@ -214,23 +214,14 @@ OnError
 SoftBell
          ldx   #32
 -        lda   #2
-         jsr   @wait
+         jsr   WaitForKeyWithTimeout
          bit   SPEAKER
          lda   #33
-         jsr   @wait
+         jsr   WaitForKeyWithTimeout
          bit   SPEAKER
          dex
          bne   -
          clc
-         rts
-@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
-         sec
---       pha
--        sbc   #1
-         bne   -
-         pla
-         sbc   #1
-         bne   --
          rts
 
 +

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; GAMES.CONF parser
 ;
@@ -88,8 +88,7 @@ ParseGamesList
          pla                         ; pop cheat category
          sta   gVal,x                ; store after game title
          pla                         ; pop DHGR title
-         clc
-         ror
+         lsr
          ror
          ora   gVal,x
          sta   gVal,x                ; store in bit 7 of same byte as cheat category

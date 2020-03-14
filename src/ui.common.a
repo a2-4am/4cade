@@ -4,35 +4,11 @@
 ; miscellaneous UI functions
 ;
 ; Public functions
-; - ClearScreens
 ; - Home
 ; - BlankDHGR
 ; - IsSearchKey
 ; - IsUpDownOrRightArrow
 ;
-
-;------------------------------------------------------------------------------
-; ClearScreens
-; clear and display text screen and then clear both hires screens
-; (in this order so that the erasing isn't visible)
-;
-; in:    none
-; out:   $0106..$011F clobbered
-;------------------------------------------------------------------------------
-ClearScreens
-         jsr   Home
-         lda   #$20                  ; clear both hi-res pages
-         sta   @clear+2              ; (in case game loader shows them, we don't want
-         ldx   #$40                  ; to flash previous bits of the launcher UI)
-         ldy   #$00
-         tya
-@clear   sta   $FD00,y               ; SMC
-         iny
-         bne   @clear
-         inc   @clear+2
-         dex
-         bne   @clear
-         rts
 
 ;------------------------------------------------------------------------------
 ; Home
@@ -58,24 +34,17 @@ Home
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
          sta   gMachineInDHGRMode    ; A=0 here
+         ldy   #$2C                  ; BIT
+         sty   PageFrom
+         ldx   #$04
+         stx   PageTo+2
          lda   #$A0                  ; clear text screen page 1
-         ldx   #$77                  ; but preserve screen holes
--        sta   $400,x
-         sta   $480,x
-         sta   $500,x
-         sta   $580,x
-         sta   $600,x
-         sta   $680,x
-         sta   $700,x
-         sta   $780,x
-         dex
-         bpl   -
+         jsr   ClearGR
+
          sta   DHIRESOFF             ; get out of DHGR mode
          sta   CLR80VID              ; /!\ order of operations matters for RGB card
          lda   PAGE1
          lda   TEXTMODE
-SwitchToBank1                        ; unnecessary but harmless (and has to be somewhere)
-         +READ_RAM1_WRITE_RAM1
          rts
 
 ;------------------------------------------------------------------------------

@@ -11,6 +11,7 @@
 ; - ResyncPage
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
+; - ClearScreens
 ; - ClearOffscreen
 ; - ClearHGR1
 ; - ClearMem
@@ -114,6 +115,20 @@ LoadGameTitleOffscreen
          !word kDHGRTitleDirectory
 +        !word $FDFD
          rts
+
+;------------------------------------------------------------------------------
+; ClearScreens
+; clear and display text screen and then clear both hires screens
+; (in this order so that the erasing isn't visible)
+;
+; in:    none
+; out:   $400..$7FF and $2000..$5FFF cleared
+;------------------------------------------------------------------------------
+ClearScreens
+         jsr   Home
+         lda   #$20                  ; clear both hi-res pages
+         ldx   #$40                  ; to flash previous bits of the launcher UI)
+         bne   ClearMem              ; always
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen
