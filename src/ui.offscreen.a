@@ -165,7 +165,7 @@ CopyHGR
          ldy   #$B9                  ; LDY
 +        sty   PageFrom
          sta   PageTo+2
-         lda   #$80
+         lda   #$00
 ClearGR
          ldy   #0
 PageFrom lda   $FD00,y               ; SMC
