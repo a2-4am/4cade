@@ -250,6 +250,8 @@ gGameToLaunchInfo=*+1
 -        rts
 
 MaybeRedrawUIForDHGR
+         bit   MachineStatus
+         bvc   -
          bit   gGameToLaunchInfo
          bpl   -
          jmp   RedrawForDHGR
