@@ -227,12 +227,19 @@ SoftBell
 +
          ldx   BestMatchIndex        ; check if the new best match is the same
          cpx   gGameToLaunch         ; as the current best match
-         bne   +
+         bne   @load
+
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
                                      ; we fake switching the 'offscreen' page
                                      ; in order to draw on the visible page.
-         bpl   @noload               ; (always branches)
-+        stx   gGameToLaunch
+         lda   #1
+         bne   @noload               ; always branches
+@load
+         stx   gGameToLaunch
          jsr   LoadGameTitleOffscreen
-@noload  jsr   DrawUI
+         lda   #0
+@noload
+         sta   gDrawingOnscreen      ; will minimize flicker in case we're
+         jsr   DrawUI                ; drawing directly onscreen
+
          ; /!\ execution falls through to ui.animation/MaybeAnimateTitle

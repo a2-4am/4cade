@@ -191,6 +191,9 @@ DrawUI
          jsr   Draw40Chars           ; draw UI line 1 on offscreen page
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          plp
+gDrawingOnscreen=*+1
+         lda   #$00                  ; SMC, might be 1
+         bne   @uidone
          +LDADDR UILine2
          jsr   Draw40Chars           ; draw UI line 2 on offscreen page
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
@@ -230,7 +233,9 @@ DrawUI
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 2
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
-@uidone  clc
+@uidone  lda   #0
+         sta   gDrawingOnscreen
+         clc
          jmp   ShowOtherPage
 
 CheckCheats
