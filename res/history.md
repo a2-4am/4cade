@@ -21,7 +21,7 @@
  - Street Sports Basketball
  - Street Sports Football
  - Street Sports Soccer
- - Summer Games [needs screenshots]
+ - Summer Games
  - Summer Games II [needs screenshots]
  - Super Zaxxon
  - TechnoCop [needs screenshots]
