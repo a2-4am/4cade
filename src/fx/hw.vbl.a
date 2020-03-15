@@ -68,6 +68,6 @@ UnwaitForVBL
          bpl   -
          lda   $C070      ; $c019 bit 7 is sticky, reset it
          sta   $C07F      ; enable access to VBL register
-         sta   $C05A      ; enable VBL polling
+         sta   $C05A      ; disable VBL polling
          sta   $C07E      ; disable access to VBL register
          rts
