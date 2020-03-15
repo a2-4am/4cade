@@ -176,8 +176,8 @@ PageTo   sta   $FD00,y               ; SMC
          inc   PageTo+2
          dex
          bne   PageFrom
+         sta   READMAINMEM
          rts
-
 
 ResyncPage
          jsr   ToggleOffscreenPage
