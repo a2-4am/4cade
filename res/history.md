@@ -25,7 +25,7 @@
  - Summer Games II
  - Super Zaxxon
  - TechnoCop [needs screenshots]
- - Triad [needs screenshots]
+ - Triad
  - Wings of Fury
  - Winter Games
 

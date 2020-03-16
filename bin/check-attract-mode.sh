@@ -17,7 +17,7 @@ check_title_slideshow() {
         grep -v "^$" |
         while read ssline; do
             [ -f "$2"/"$ssline" ] ||
-                fatal_error "Can't find HGR title screenshot" "$ssline"
+                fatal_error "Can't find title screenshot" "$ssline"
         done
 }
 
@@ -35,9 +35,9 @@ check_action_slideshow() {
                 gamename=$filename
             fi
             [ -f "$2"/"$filename" ] ||
-                fatal_error "Can't find HGR action screenshot" "$filename"
+                fatal_error "Can't find action screenshot" "$filename"
             grep "^$gamename$" /tmp/games >/dev/null ||
-                fatal_error "HGR action screenshot links to non-existent game" "$gamename"
+                fatal_error "Action screenshot links to non-existent game" "$gamename"
         done
 }
 
