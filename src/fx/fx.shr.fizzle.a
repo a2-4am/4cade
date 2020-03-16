@@ -63,7 +63,7 @@
 
          ;select address
 
-         clc
+         ;clc
          adc   #$20
          sta   $27
          sta   $3d
@@ -78,11 +78,11 @@
 
          ;wait while checking for keypress
 
-+        ldx   #2
++        ;ldx   #2
 @wait    lda   $c000
          bmi   @exit
-         dex
-         bne   @wait
+         ;dex
+         ;bne   @wait
 
          ;and exit condition
 
