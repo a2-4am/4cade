@@ -20,6 +20,14 @@ WaitForVBL
          bne   @nop
          lda   $FBC0
          beq   @iic
+         sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   @NotGS
+         lda   #$30
+         sta   patch_VBL_iigs1
+         lda   #$10
+         sta   patch_VBL_iigs2
+@NotGS
          +LDADDR WaitForVBL_iie
          bne   +
 @iic
@@ -29,8 +37,6 @@ WaitForVBL
          bne   +
 @nop
          +LDADDR WaitForVBL_nop
-         bne   +          ; always branches
-
 +
          +STAY WaitForVBL+1
          lda   #$4C       ; JMP opcode
@@ -46,9 +52,14 @@ WaitForVBL_nop            ; II/II+ have no easy VBL
          rts
 
 WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
+                          ; but it's reversed between the two
+                          ; so we default to IIe, and patch in
+                          ; the reverse case if it's a IIGS.
 -        bit   $c019
+patch_VBL_iigs1
          bpl   -
 -        bit   $c019
+patch_VBL_iigs2
          bmi   -
          rts
 
