@@ -2,7 +2,7 @@
 
 # run from project root directory
 
-cat res/games.conf |
+cat res/GAMES.CONF |
     tr "\r" "\n" |
     grep "=" |
     grep -v "^#" |
@@ -10,18 +10,18 @@ cat res/games.conf |
     cut -d"=" -f1 | \
     while read game; do
         # if I knew how to use awk, this could be O(N) instead of O(N^2)
-        name=`cat res/games.conf | tr "\r" "\n" | grep ",$game=" | cut -d"=" -f2`
+        name=`cat res/GAMES.CONF | tr "\r" "\n" | grep ",$game=" | cut -d"=" -f2`
         echo "$game"" ""$name"
 
         # initialize attract mode configuration file for this game
         echo "#\n# Attract mode for $name\n#\n" > /tmp/g
 
         # add box art, if any
-        [ -f res/artwork.shr/"$game" ] &&
+        [ -f res/ARTWORK.SHR/"$game" ] &&
             echo "ARTWORK.SHR/$game=C" >> /tmp/g
 
         # add DHGR action screenshots, if any
-        cat res/ss/ACTDHGR*.CONF |
+        cat res/SS/ACTDHGR*.CONF |
             tr "\r" "\n" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
@@ -31,7 +31,7 @@ cat res/games.conf |
             uniq >> /tmp/g
 
         # add HGR action screenshots, if any
-        cat res/ss/ACTION*.CONF |
+        cat res/SS/ACTION*.CONF |
             tr "\r" "\n" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
@@ -41,7 +41,7 @@ cat res/games.conf |
             uniq >> /tmp/g
 
         # add GR action screenshots, if any
-        cat res/ss/ACTGR*.CONF |
+        cat res/SS/ACTGR*.CONF |
             tr "\r" "\n" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
@@ -51,7 +51,7 @@ cat res/games.conf |
             uniq >> /tmp/g
 
         # add self-running demo, if any
-        cat res/attract.conf |
+        cat res/ATTRACT.CONF |
             tr "\r" "\n" |
             grep "^$game=0" >> /tmp/g
 
@@ -72,7 +72,7 @@ cat res/games.conf |
         echo "\n[eof]" >> /tmp/g
 
         # change line endings
-        cat /tmp/g | tr "\n" "\r" > res/attract/"$game"
+        cat /tmp/g | tr "\n" "\r" > res/ATTRACT/"$game"
 
         # clean up
         rm /tmp/g
