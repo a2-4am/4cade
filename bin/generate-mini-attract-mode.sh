@@ -11,7 +11,6 @@ cat res/GAMES.CONF |
     while read game; do
         # if I knew how to use awk, this could be O(N) instead of O(N^2)
         name=`cat res/GAMES.CONF | tr "\r" "\n" | grep ",$game=" | cut -d"=" -f2`
-        echo "$game"" ""$name"
 
         # initialize attract mode configuration file for this game
         echo "#\n# Attract mode for $name\n#\n" > /tmp/g
