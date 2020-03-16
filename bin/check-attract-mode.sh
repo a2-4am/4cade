@@ -77,4 +77,4 @@ cat res/ATTRACT.CONF |
         fi
     done
 
-#rm -f /tmp/games
+rm -f /tmp/games
