@@ -27,7 +27,7 @@
  - TechnoCop [needs screenshots]
  - Triad [needs screenshots]
  - Wings of Fury
- - Winter Games [needs screenshots]
+ - Winter Games
 
 ## Removed games
 

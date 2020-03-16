@@ -73,6 +73,9 @@ compress:
 	for f in res/ACTION.DHGR.UNCOMPRESSED/*; do o=res/ACTION.DHGR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ARTWORK.SHR.UNCOMPRESSED/*; do o=res/ARTWORK.SHR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
 
+attract: compress
+	bin/generate-mini-attract-mode.sh
+
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
