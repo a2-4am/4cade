@@ -22,7 +22,7 @@
  - Street Sports Football
  - Street Sports Soccer
  - Summer Games
- - Summer Games II [needs screenshots]
+ - Summer Games II
  - Super Zaxxon
  - TechnoCop [needs screenshots]
  - Triad [needs screenshots]
