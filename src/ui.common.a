@@ -40,12 +40,18 @@ Home
          stx   PageTo+2
          lda   #$A0                  ; clear text screen page 1
          jsr   ClearGR
+         sta   WRITEAUXMEM
+         ldx   #$04
+         stx   PageTo+2
+         jsr   ClearGR
+         sta   WRITEMAINMEM
 
+         jsr   WaitForVBL
          sta   DHIRESOFF             ; get out of DHGR mode
          sta   CLR80VID              ; /!\ order of operations matters for RGB card
          lda   PAGE1
          lda   TEXTMODE
-         rts
+         jmp   UnwaitForVBL
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
@@ -68,6 +74,7 @@ BlankDHGR
          ; we do that twice because the mode register is two bits wide
          ; we need mode 00 for colour
 
+         jsr   WaitForVBL
          sta   SET80VID
          sta   DHIRESON
          sta   DHIRESOFF
@@ -79,6 +86,7 @@ BlankDHGR
          lda   #1
          sta   OffscreenPage
          sta   gMachineInDHGRMode
+         jsr   UnwaitForVBL
          jmp   HGRMode
 
 ;------------------------------------------------------------------------------

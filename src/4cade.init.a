@@ -188,6 +188,10 @@
          dex
          bpl   -
 
+         +READ_ROM_WRITE_RAM2
+         jsr   BuildVBLFunction
+         +READ_RAM2_WRITE_RAM2
+
          jsr   DisableAccelerator    ; cycle counting in Mockingboard detection requires 1MHz
 
          +READ_ROM_WRITE_RAM2
@@ -323,6 +327,7 @@ PrintAsDecimal
 }
 
          !source "src/hw.accel.a"
+         !source "src/hw.vbl.init.a"
          !source "src/parse.games.a"
 
 OneTimeSetup

@@ -6,10 +6,10 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E8A7 - persistent data structures (per-game cheat categories,
+; D000..E8C9 - persistent data structures (per-game cheat categories,
 ;              gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EB7F..FFF9 - main program code
+; EB2C..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -134,3 +134,7 @@ IS_IIGS        = %00100000           ; /!\ do not use this to gate SHR, use SUPP
 HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
+
+; VBL functions
+WaitForVBL   = $FCB2
+UnwaitForVBL = $FCC7

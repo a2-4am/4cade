@@ -5,6 +5,8 @@
 !to "build/FX/SPIRAL",plain
 *=$6000
 
+         !source "src/constants.a"
+
          lda   #$27
          sta   $FB
          lda   #$17

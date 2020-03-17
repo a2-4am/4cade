@@ -111,6 +111,8 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/glue.decompress.a"
          !source "src/ui.common.a"
 
+         !source "src/hw.vbl.a"
+
          ; add new files above here so ui.wait stays last
 
          !source "src/ui.attract.dhgr.a"        ; \-- execution falls through
@@ -185,5 +187,10 @@ EvenLasterMover
     !warn "STACK at ", STACKBASE
     !warn "LCRAM2 ends at ", LCRAM2_END - 1
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
+  }
+} else {
+  !if (iWaitForVBL != WaitForVBL) or (iUnwaitForVBL != UnwaitForVBL) {
+    !error "WaitForVBL at ", WaitForVBL
+    !error "UnwaitForVBL at ", UnwaitForVBL
   }
 }

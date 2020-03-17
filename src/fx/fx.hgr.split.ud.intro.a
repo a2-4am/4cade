@@ -6,6 +6,7 @@
 *=$6000
 
          !source "src/fx/macros.a"
+         !source "src/constants.a"
 
 col1 = $FE
 col2 = $FF
@@ -123,4 +124,3 @@ row2 = $FF
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
-         !source "src/fx/hw.vbl.a"

@@ -9,6 +9,7 @@ maskindex = $fc
 row = $fd
 
          !source "src/fx/macros.a"
+         !source "src/constants.a"
 
          lda   #$FA
          sta   row
@@ -156,4 +157,3 @@ masks
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
-         !source "src/fx/hw.vbl.a"

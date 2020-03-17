@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2020 by qkumba
+;
+; Identify platform and construct appropriate VBL routine
+
+romid           =    $FBB3
+; $38=][, $EA=][+, $06=//e compatible
+ROMID_IIECOMPAT =    6
+romid_ec        =    $FBC0
+; $EA=//e original, $E0=//e enhanced, $E1=//e EDM, $00=//c
+
+; IIGS
+idroutine       =    $FE1F   ; SEC, JSR $FE1F, BCS notgs
+
+BuildVBLFunction
+         lda   #$60
+         ldx   romid
+         cpx   #ROMID_IIECOMPAT
+         bne   @build_none           ; not a //e
+         lda   romid_ec
+         beq   @build_iic            ; //c family
+         sec
+         jsr   idroutine             ; check for IIgs
+         bcs   @NotGS
+         lda   #$30
+         sta   patch_VBL_iigs1
+         lda   #$10
+         sta   patch_VBL_iigs2
+@NotGS
+         lda   #<WaitForVBL_iie
+         sta   WaitForVBL+1
+         lda   #>WaitForVBL_iie
+         sta   WaitForVBL+2
+         lda   #$4C
+@build_none
+         sta   WaitForVBL
+         rts
+@build_iic
+         lda   #$70
+         sta   patch_VBL_iic+1
+         lda   #$EA
+         sta   UnwaitForVBL
+         rts
