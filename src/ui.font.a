@@ -14,7 +14,6 @@
 ; - DrawBuffer
 ;
 
-         ; /!\ execution falls through from ui.attract.hgr/HGRActionCallback
 DrawString
          jsr   SwitchToBank2
          jsr   DrawStringInternal

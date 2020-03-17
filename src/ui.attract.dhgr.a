@@ -9,6 +9,8 @@
 ; - DHGRSingle
 ; - BlankHGR
 ; - HGRMode
+; - ForceHGRMOde
+; - DrawGameTitleInActionSlideshowHGR
 ; - RedrawForDHGR
 ;
 
@@ -108,9 +110,17 @@ GRMode
          bit   $C050
 DHGRRTS  rts
 
+;------------------------------------------------------------------------------
+; ForceHGRMode
+; if machine is in DHGR mode, switch it back to HGR mode
+; otherwise do nothing
+;
+; in:    none
+; out:   see BlankHGR
+;------------------------------------------------------------------------------
 ForceHGRMode
 gMachineInDHGRMode=*+1
-         lda   #$00
+         lda   #$00                  ; SMC
          bne   BlankHGR
          beq   DHGRRTS
 

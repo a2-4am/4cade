@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; routines for drawing the UI overlay (search bar, browse bar, instructions, cheat mode)
 ; on top of whatever else is on the screen

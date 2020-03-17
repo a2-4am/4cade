@@ -17,11 +17,11 @@
 ;        graphics mode set to display hi-res screen
 ;------------------------------------------------------------------------------
 GRActionSlideshow
-         jsr   .LoadGRTransition     ; load transition effect code at $6000
+         jsr   LoadGRTransition      ; load transition effect code at $6000
          jsr   BlankGR               ; switch GR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed GR files
          !word gSlideshowStore
-         !word .GRActionCallback     ; address of callback (called on each file)
+         !word GRActionCallback      ; address of callback (called on each file)
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ GRSingle
          !word kRootDirectory
 @fname   !word $FDFD                 ; SMC
          !word $6000
-         jsr   .LoadGRTransition     ; load transition effect code at $6400
+         jsr   LoadGRTransition      ; load transition effect code at $6400
          jsr   ExecuteTransitionAt6400AndWait
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
@@ -70,7 +70,7 @@ BlankGR
 ;        $6400..$BFFF/main contains transition effect code (probably not all
 ;        of that, but no promises)
 ;------------------------------------------------------------------------------
-.LoadGRTransition
+LoadGRTransition
          jsr   LoadFile
          !word kFXDirectory
          !word kGRFizzleFile
@@ -89,7 +89,7 @@ GRRTS    rts
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
 ;------------------------------------------------------------------------------
-.GRActionCallback
+GRActionCallback
          bit   KBD
          bmi   GRRTS
 
