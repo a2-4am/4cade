@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MINER.2049.II",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>callback
+         sta   $2080
+         lda   #<callback
+         sta   $207F
+         jmp   $2000      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$bd
+         sta   $938       ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $8D9
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
