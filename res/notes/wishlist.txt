@@ -68,6 +68,7 @@ Test Drive [DHGR] [priority]
 Battle Chess [DHGR]
 Columns IIe [DHGR]
 Saracen
+IO Silver
 
 //TODO(woz-imaged but uncracked)
 A.E.
