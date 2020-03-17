@@ -11,6 +11,7 @@
  - Gauntlet
  - Genius
  - Genius 2
+ - Miner 2049er II
  - Ming's Challenge
  - One on One
  - Penetrator
