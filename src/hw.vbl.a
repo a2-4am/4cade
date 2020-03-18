@@ -16,8 +16,9 @@ WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
 -        bit   $C019
 patch_VBL_iigs1
          bpl   -
-patch_VBL_iic
+patch_VBL_iic1
 -        lda   $C019      ; $c019 bit 7 is sticky, reset it (SMC->#$70 for IIc)
+patch_VBL_iic2
 patch_VBL_iigs2
          bmi   -
 WaitForVBL_nop            ; II/II+ have no easy VBL

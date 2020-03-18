@@ -37,7 +37,9 @@ BuildVBLFunction
          rts
 @build_iic
          lda   #$70
-         sta   patch_VBL_iic+1
+         sta   patch_VBL_iic1+1
+         lda   #$60
+         sta   patch_VBL_iic2
          lda   #$EA
          sta   UnwaitForVBL
          rts
