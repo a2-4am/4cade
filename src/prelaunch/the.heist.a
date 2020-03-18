@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/THE.HEIST",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $407F
+         lda   #>callback
+         sta   $4080
+         jmp   $4000      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $A47       ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $A05
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
