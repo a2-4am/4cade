@@ -192,7 +192,8 @@ EvenLasterMover
   }
 } else {
   !if (iWaitForVBL != WaitForVBL) or (iUnwaitForVBL != UnwaitForVBL) {
-    !error "WaitForVBL at ", WaitForVBL
-    !error "UnwaitForVBL at ", UnwaitForVBL
+    !warn "constants.a needs updating"
+    !error "WaitForVBL is at ", iWaitForVBL
+    !error "UnwaitForVBL is at ", iUnwaitForVBL
   }
 }
