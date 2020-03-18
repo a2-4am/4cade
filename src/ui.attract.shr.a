@@ -88,7 +88,7 @@ SHRArtworkCallback
 
          +STAY @sfname
 
-         jsr   GetGameInfo
+         jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows

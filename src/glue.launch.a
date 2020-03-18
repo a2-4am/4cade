@@ -5,8 +5,9 @@
 ;
 ; Public functions
 ; - GetGameToLaunch
-; - GetGameInfo
-; - GetGameInfoInActionSlideshow
+; - FindGame
+; - FindGameInActionSlideshow
+; - GetGameDisplayName
 ; - PlayGame
 ; - Launch
 ;
@@ -22,32 +23,24 @@ gGameToLaunch=*+1
          +LDADDR gGamesListStore
          jmp   okvs_nth
 
-GetGameInfo
+FindGame
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
-;          A/Y points to game display name (but see hack notes below)
 ;          X = game index, or #$FF if the game doesn't really exist but
-;          we want to return a successful result anyway (really, read the
-;          hack notes, they're important)
-;        C set if game does not exist (this can happen because slideshows
-;          list games that require a joystick, but the games list parser
-;          filters out joystick-only games if the machine doesn't have a
-;          joystick)
-         ldx   #$60
-         +HIDE_NEXT_2_BYTES
-GetGameInfoInActionSlideshow
-         ldx   #$EA
-         stx   @maybeExit
+;          we want to return a successful result anyway
+;        C set if game does not exist, and
+;          X clobbered (this can happen because slideshows list games
+;          that require a joystick, but the games list parser filters out
+;          joystick-only games if the machine doesn't have a joystick)
+;        A,Y always clobbered
          +STAY @key
-         +STAY @slideshowKey
-         jsr   okvs_get
+         jsr   okvs_find
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
          bcc   @exit
 ; Hack to allow self-running demos that don't correspond to a game
 ; filename. If the name ends in a '.', accept it unconditionally.
-; The filename is its own display name. Launching this fake game
-; will of course fail, so don't do that.
+         ldx   #$FF
          +LDAY @key
          +STAY PARAM
          ldy   #0
@@ -57,29 +50,77 @@ GetGameInfoInActionSlideshow
          cmp   #"."
          beq   @forceGoodResult
          sec
-@maybeExit
-         !byte $00                   ; SMC
-; if the key is still not found, AND the caller said to try this, then try
-; getting the value of the current record from gSlideshowStore
-; (some games have multiple action screenshots, in which case the filename of
-; the action screenshot is not the game name, but the value is)
-         jsr   okvs_get
-         !word gSlideshowStore
-@slideshowKey
-         !word $FDFD                 ; SMC
-         +STAY @key3
-         jsr   okvs_get
-         !word gGamesListStore
-@key3    !word $FDFD                 ; SMC
-; note that the game might still not be found (C will be set by okvs_get),
-; which can happen if the game can't be played due to memory or joystick
-; requirements
          rts
 @forceGoodResult
-         +LDAY @key
-         ldx   #$FF
          clc
 @exit    rts
+
+FindGameInActionSlideshow
+; in:    A/Y points to game filename
+; out:   C clear if game exists, and
+;          X = game index, and
+;          A/Y points to game display name + game info bitfield
+;        C set if game can't be found by any means
+         +STAY @sskey
+         jsr   FindGame
+         bcc   +
+; if the game was not found, try getting the value of the current record from
+; gSlideshowStore (some games have multiple action screenshots, in which case
+; the key is only the screenshot filename, and the value is the actual game
+; filename)
+         jsr   okvs_get
+         !word gSlideshowStore
+@sskey   !word $FDFD                 ; SMC
+         jsr   FindGame
+         bcs   @exit
++
+         jsr   GetGameDisplayName
+         clc
+@exit    rts
+
+GetGameDisplayName
+; in:    A/Y contains address of a key in gGamesListStore
+; out:   A/Y contains address of game display name + game info bitfield
+;        (this might be just the corresponding value in gGamesListStore,
+;        or it might be a temporary buffer in main memory that we constructed
+;        out of thin air)
+;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
+;        X preserved
+         +STAY SAVE
+         jsr   okvs_get_current      ; get value for this key
+                                     ; (PTR) -> truncated game display name + info bitfield
+         ldy   #0
+         lda   (PTR), y              ; A = length of truncated game display name + info bitfield
+         cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
+         beq   +
+         +LDAY PTR
+         rts
++                                    ; game display name is truncated, we must expand it
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
+         pha                         ; save on stack
+         dey
+         lda   (SAVE), y             ; A = length of key
+         tay
+         iny
+         sty   @len
+         sty   gValLen
+         lda   #$24                  ; BIT opcode
+         sta   @or
+         ldy   #1
+-        lda   (SAVE), y
+@or      ora   #$20                  ; SMC (opcode)
+         sta   gValLen, y
+         lda   #$09                  ; OR opcode
+         sta   @or
+@next    iny
+@len=*+1
+         cpy   #$FD                  ; SMC
+         bne   -
+         pla
+         sta   gValLen, y
+         +LDADDR gValLen
+         rts
 
 PlayGame
          jsr   GetGameToLaunch

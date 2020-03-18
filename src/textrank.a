@@ -4,22 +4,50 @@
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
 ; Public functions
+; - BuildSearchStore
 ; - ResetTextRank
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
 ; Public variables
 ; - InputLength                      ; [byte] number of characters typed in search mode
 ; - InputBuffer                      ; [25 bytes] characters typed in search mode
-; - SelectedIndex                    ; [byte] index in gGamesListStore of currently selected game in search mode
+; - SelectedIndex                    ; [byte] index in gSearchStore of currently selected game in search mode
 ; - MatchCount                       ; [byte] number of games that match InputBuffer
 ; - BestMatchScore                   ; [byte] raw ranking score (0-100) of current best match (updated during TextRankCallback)
-; - BestMatchIndex                   ; [byte] index in gGamesListStore of current best match (updated during TextRankCallback)
+; - BestMatchIndex                   ; [byte] index in gSearchStore of current best match (updated during TextRankCallback)
 
 MaxInputLength = 26
 InputLength
          !byte 0
 InputBuffer
          !text "                         "
+
+BuildSearchStore
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+         +LDADDR gSearchStore
+         jsr   okvs_init
+
+         jsr   okvs_iter
+         !word gGamesListStore
+         !word @callback
+         rts
+@callback
+; callback called by okvs_iter on gGamesListStore
+
+; in:    A/Y contains address of filename
+;        X contains 0-based index of the current record in gGamesListStore
+; out:   all registers and flags clobbered
+         +STAY @key
+         jsr   GetGameDisplayName
+         +STAY @value
+@append
+         jsr   okvs_append
+         !word gSearchStore
+@key     !word $FDFD                 ; SMC
+@value   !word $FDFD                 ; SMC
+         !byte 0
+         rts
 
 ;------------------------------------------------------------------------------
 ; ResetTextRank
@@ -38,20 +66,20 @@ ResetTextRank
 
 ;------------------------------------------------------------------------------
 ; TextRankCallback
-; callback called by okvs_iter_values on gGamesListStore
-; to calculate a ranking score for a single game title
+; callback called by okvs_iter_values on gSearchStore
+; to calculate a ranking score for a single game display name
 ; against the current InputBuffer
 
-; in:    A/Y contains address of game title
-;        X contains 0-based index of the current record in gGamesListStore
+; in:    A/Y contains address of game display name
+;        X contains 0-based index of the current record in gSearchStore
 ; out:   all registers and flags clobbered
-;        MatchCount possibly incremented (if this title was a match at all)
-;        BestMatchScore and BestMatchIndex possibly updated (if this title
+;        MatchCount possibly incremented (if this game was a match at all)
+;        BestMatchScore and BestMatchIndex possibly updated (if this game
 ;          was the best match so far)
 ;------------------------------------------------------------------------------
 TextRankCallback
-         stx   tmpx                  ; X = OKVS index of this title
-         +STAY zpstring              ; A/Y = address of this title
+         stx   tmpx                  ; X = OKVS index of this game
+         +STAY zpstring              ; A/Y = address of this game display name
          +LDADDR InputLength
          +STAY zpword
          ldy   #0

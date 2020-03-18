@@ -9,6 +9,7 @@
 ; - okvs_append(address, key, value, max_len)   add new key/value pair
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
+; - okvs_find(address, key)                     get key by key lookup
 ; - okvs_nth(address, n)                        get key by numeric index
 ; - okvs_next(address, n)                       get next key by numeric index
 ; - okvs_iter(address, callback)                iterate through keys
@@ -206,21 +207,26 @@ okvs_append
          rts
 
 ;------------------------------------------------------------------------------
-; okvs_get
+; okvs_find / okvs_get
 ;
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] handle to storage space
 ;          +3 [word] address of key
-; out:   if C clear, key was found
-;          A/Y = lo/hi address of value
-;          X = numeric index of key
-;        if C set, key was not found and all registers are clobbered
+; out:   if C clear, record was found
+;          A/Y = lo/hi address of key (okvs_find) or value (okvs_get)
+;          X = numeric index of found record
+;        if C set, keyrecord was not found and all registers are clobbered
 ;        all other flags clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        $04/$05 clobbered
 ;------------------------------------------------------------------------------
+okvs_find
+         lda   #$60
+         +HIDE_NEXT_2_BYTES
 okvs_get
+         lda   #$EA
+         sta   @maybeGetValue
          +PARAMS_ON_STACK 4
          jsr   GetStoreAddress
                                      ; PTR -> store
@@ -255,18 +261,14 @@ okvs_get
 KEYLEN = *+1
          cpy   #$D1                  ; SMC
          bne   @matchKeyLoop
+         +LDAY DEST
+         clc
+@maybeGetValue
+         brk                         ; SMC
+         jsr   okvs_get_current
          +LDAY PTR
          clc
-         adc   KEYLEN
-         bcc   +
-         iny
-         clc
-+        adc   #2
-         sta   PTR
-         bcc   +
-         iny
-         clc
-+        rts
+         rts
 @next    jsr   derefptr              ; PTR -> next record
          inx
 @max = *+1

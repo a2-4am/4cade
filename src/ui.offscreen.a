@@ -89,9 +89,9 @@ LoadGameTitleOffscreen
          bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
          bvc   @hgr
          jsr   okvs_get_current
-                                     ; (PTR) -> game title + bitfield of game info
+                                     ; (PTR) -> game display name + bitfield of game info
                                      ; Y = 0
-         lda   (PTR),y               ; A = game title length + 1
+         lda   (PTR),y               ; A = game display name length + 1
          sta   SAVE
          tay
          lda   (PTR),y               ; A = game info bitfield

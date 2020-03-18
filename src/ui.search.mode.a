@@ -100,6 +100,7 @@ SearchMode
          ldx   #$FF
          txs
          stx   gGameToLaunch         ; $FF = no game selected
+         jsr   BuildSearchStore
          jsr   Home                  ; clear screen (switches to text mode)
          jsr   OnInputChanged        ; draw UI offscreen
          jsr   HGRMode               ; show HGR screen
@@ -187,8 +188,8 @@ FindMatchingTitle
 
          jsr   ResetTextRank
 
-         jsr   okvs_iter_values      ; iterate through all game titles
-         !word gGamesListStore       ; and rank them for the best match
+         jsr   okvs_iter_values      ; iterate through all game display names
+         !word gSearchStore          ; and rank them for the best match
          !word TextRankCallback      ; to the current input buffer
 
          lda   MatchCount            ; any matches at all?

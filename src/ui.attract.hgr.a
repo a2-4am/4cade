@@ -112,7 +112,7 @@ HGRTitleCallback
 
          +STAY +
 
-         jsr   GetGameInfo
+         jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
@@ -144,14 +144,14 @@ HGRActionCallback
 
          +STAY +
 
-         jsr   GetGameInfoInActionSlideshow
+         jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   HGRRTS
 
          ; found the game
-         +STAY SAVE                  ; (SAVE) -> game title
+         +STAY SAVE                  ; (SAVE) -> game display name + game info bitfield
          stx   gGameToLaunch
 
          jsr   LoadFile              ; load compressed HGR screenshot at $3FF8

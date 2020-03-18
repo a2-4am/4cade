@@ -109,10 +109,11 @@ DrawUI
          beq   @doneWithLine2
 
          jsr   GetGameToLaunch
-         jsr   okvs_get_current
-                                     ; (PTR) -> game title + bitfield of game info
-                                     ; Y = 0
-         lda   (PTR),y               ; A = game title length + 1
+         jsr   GetGameDisplayName
+                                     ; A/Y -> game display name + bitfield of game info
+         +STAY PTR
+         ldy   #0
+         lda   (PTR),y               ; A = game display name length + 1
          sta   SAVE
          tay
          lda   (PTR),y               ; A = game info bitfield
@@ -178,7 +179,7 @@ DrawUI
          ldy   #0
 @dotloop
          iny
-         lda   (PTR),y               ; (PTR) still points to game title
+         lda   (PTR),y               ; (PTR) still points to game display name + game info bitfield
          ora   #$20                  ; force lower-case always
          cmp   InputBuffer,x
          bne   +

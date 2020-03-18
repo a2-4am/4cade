@@ -25,7 +25,7 @@ CADIUS=cadius
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: md asm compress
+dsk: md asm
 	cp res/blank.2mg build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log

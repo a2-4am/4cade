@@ -137,7 +137,7 @@ RunAttractModule
 ; language card or auxiliary memory.
 
          +LDAY @key
-         jsr   GetGameInfo
+         jsr   FindGame
          bcs   ATTRTS                ; if game doesn't exist, skip the demo
          cpx   #$FF
          beq   +

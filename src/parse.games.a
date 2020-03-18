@@ -38,6 +38,7 @@ ParseGamesList
          cmp   #$0D                  ; CR
          bne   @skipLine
 @newkey  ldx   #$00                  ; X = index into current key
+         stx   gValLen               ; initialize value length (in case this line has no value)
 @emptyline
          jsr   IncAndGetChar         ; get first filter character ('1' if game requires joystick)
          cmp   #$0D                  ; ignore blank line
@@ -70,6 +71,8 @@ ParseGamesList
          jsr   IncAndGetChar
 @gatherKey
          jsr   IncAndGetChar
+         cmp   #$0D                  ; CR -> finalize key, no value
+         beq   @endKey
          cmp   #$3D                  ; '=' ends the key
          beq   @endKey
          sta   gKey,x
@@ -77,6 +80,8 @@ ParseGamesList
          bpl   @gatherKey
 @endKey  stx   gKeyLen
          ldx   #$00                  ; now X = index into the current value
+         cmp   #$0D
+         beq   @endValue
 @gatherValue
          jsr   IncAndGetChar
          cmp   #$0D                  ; CR ends the value
@@ -86,8 +91,8 @@ ParseGamesList
          bpl   @gatherValue
 @endValue
          pla                         ; pop cheat category
-         sta   gVal,x                ; store after game title
-         pla                         ; pop DHGR title
+         sta   gVal,x                ; store after game display name
+         pla                         ; pop has-DHGR-title flag
          lsr
          ror
          ora   gVal,x
@@ -103,7 +108,6 @@ ParseGamesList
          !byte 0
          pla                         ; pop saved Y
          tay
-         clc
-         bcc   @newkey               ; always branches
+         jmp   @newkey
 
 @exit    rts
