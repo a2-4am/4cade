@@ -106,12 +106,19 @@ GetGameDisplayName
          sty   @len
          sty   gValLen
          lda   #$24                  ; BIT opcode
-         sta   @or
+         sta   @or                   ; first character remains capitalized
          ldy   #1
 -        lda   (SAVE), y
+         cmp   #$2E
+         bne   @or
+         lda   #$20                  ; convert '.' to ' '
 @or      ora   #$20                  ; SMC (opcode)
          sta   gValLen, y
-         lda   #$09                  ; OR opcode
+         cmp   #$20
+         bne   +
+         lda   #$24                  ; first character after ' ' remains capitalized
+         +HIDE_NEXT_2_BYTES
++        lda   #$09                  ; OR opcode
          sta   @or
 @next    iny
 @len=*+1
