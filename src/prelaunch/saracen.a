@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SARACEN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $21F8
+         jsr   $2000      ; load "DOS"
+         lda   #<callback
+         sta   $1795
+         lda   #>callback
+         sta   $1796
+         jmp   $81F
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $878       ; patch - don't increase lives
+         dec   $8A5       ; patch - don't decrease lives
+         dec   $8DE       ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $400
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
