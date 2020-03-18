@@ -18,6 +18,7 @@
  - Randamn
  - Soko-Ban
  - Solo Flight
+ - Station 5
  - Street Sports Baseball
  - Street Sports Basketball
  - Street Sports Football
