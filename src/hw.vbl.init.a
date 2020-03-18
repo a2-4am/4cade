@@ -17,7 +17,7 @@ BuildVBLFunction
          ldx   romid
          cpx   #ROMID_IIECOMPAT
          bne   @build_none           ; not a //e
-         lda   romid_ec
+         ldx   romid_ec
          beq   @build_iic            ; //c family
          sec
          jsr   idroutine             ; check for IIgs
@@ -36,10 +36,9 @@ BuildVBLFunction
          sta   WaitForVBL
          rts
 @build_iic
+         sta   patch_VBL_iic2
          lda   #$70
          sta   patch_VBL_iic1+1
-         lda   #$60
-         sta   patch_VBL_iic2
          lda   #$EA
          sta   UnwaitForVBL
          rts
