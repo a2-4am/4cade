@@ -6,8 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E27D - persistent data structures (per-game cheat categories,
-;              gGlobalPrefsStore, gGamesListStore)
+; D000..E27D - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
 ; EAAC..FFF9 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
