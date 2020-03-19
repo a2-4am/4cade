@@ -46,16 +46,14 @@ call :compress
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 1>nul copy /y res\PREFS.CONF build\ >>build\log
-1>nul copy /y res\credits.txt build\CREDITS >>build\log
-1>nul copy /y res\help.txt build\HELPTEXT >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 for %%q in (res\*.CONF) do if "%%q" neq "res\PREFS.CONF" %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CREDITS" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
