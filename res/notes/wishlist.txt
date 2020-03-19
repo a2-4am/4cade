@@ -67,6 +67,7 @@ Battle Chess [DHGR]
 Columns IIe [DHGR][priority]
 IO Silver [priority]
 Castle Smurfenstein
+Dino Smurf
 
 //TODO(woz-imaged but uncracked)
 A.E.
