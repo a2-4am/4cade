@@ -4,7 +4,7 @@
 
 cat res/GAMES.CONF |
     tr "\r" "\n" |
-    grep "=" |
+    grep "," |
     grep -v "^#" |
     cut -d"," -f2 |
     cut -d"=" -f1 | \
