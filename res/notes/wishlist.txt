@@ -12,7 +12,7 @@ Double Trouble
 Elite
 G.I. Joe
 GBA Championship Basketball
-Impossible Mission II [DHGR]
+Impossible Mission II [DHGR][priority]
 Karate Champ
 Kung Fu Master
 Little Computer People
@@ -64,8 +64,8 @@ Test Drive [DHGR] [priority]
 
 //other
 Battle Chess [DHGR]
-Columns IIe [DHGR]
-IO Silver
+Columns IIe [DHGR][priority]
+IO Silver [priority]
 
 //TODO(woz-imaged but uncracked)
 A.E.
@@ -93,7 +93,7 @@ Retro-Ball
 Roach Hotel
 The Asteroid Field
 The Last Gladiator
-The Last Ninja [DHGR]
+The Last Ninja [DHGR][priority]
 The Space Ark
 The Snapper
 Star Cruiser
