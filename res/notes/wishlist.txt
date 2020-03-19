@@ -66,6 +66,7 @@ Test Drive [DHGR] [priority]
 Battle Chess [DHGR]
 Columns IIe [DHGR][priority]
 IO Silver [priority]
+Castle Smurfenstein
 
 //TODO(woz-imaged but uncracked)
 A.E.
