@@ -31,7 +31,9 @@ BuildSearchStore
          jsr   okvs_iter
          !word gGamesListStore
          !word @callback
-         rts
+
+         jsr   SwitchToBank2
+         jmp   DisableAcceleratorAndSwitchToBank1
 @callback
 ; callback called by okvs_iter on gGamesListStore
 
