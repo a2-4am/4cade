@@ -137,6 +137,13 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
+; WaitForVBL
+         jmp   WaitForVBL_iie        ; SMC to RTS on a II+
+
+; UnwaitForVBL
+         rts                         ; SMC to JMP on a IIc
+         !word iUnwaitForVBL
+
 ; MockingboardStuff (label is in constants.a so prelaunchers can use it)
 ;      slot number where Mockingboard was detected and type of board
 ;      #$00 if no Mockingboard detected
@@ -189,11 +196,5 @@ EvenLasterMover
     !warn "STACK at ", STACKBASE
     !warn "LCRAM2 ends at ", LCRAM2_END - 1
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
-  }
-} else {
-  !if (iWaitForVBL != WaitForVBL) or (iUnwaitForVBL != UnwaitForVBL) {
-    !warn "constants.a needs updating"
-    !error "WaitForVBL is at ", iWaitForVBL
-    !error "UnwaitForVBL is at ", iUnwaitForVBL
   }
 }

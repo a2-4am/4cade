@@ -8,7 +8,7 @@
 ; LC RAM BANK 1
 ; D000..E297 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EAA7..FFF9 - main program code
+; EAA7..FFF8 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
@@ -108,6 +108,9 @@ gValLen      = $1F80
 gVal         = $1F81
 
 ; LC RAM 1
+WaitForVBL         = $FFF2
+UnwaitForVBL       = $FFF5
+
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C")
                             ; bit 6 = 1 if Mockingboard "B" (stereo) found (else Mockingboard "A")
                             ; bit 4-5 unused
@@ -134,6 +137,3 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
-; VBL functions
-WaitForVBL   = $FCB0
-UnwaitForVBL = $FCC5

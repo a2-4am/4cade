@@ -13,7 +13,6 @@ romid_ec        =    $FBC0
 idroutine       =    $FE1F   ; SEC, JSR $FE1F, BCS notgs
 
 BuildVBLFunction
-         lda   #$60
          ldx   romid
          cpx   #ROMID_IIECOMPAT
          bne   @build_none           ; not a //e
@@ -27,19 +26,20 @@ BuildVBLFunction
          lda   #$10
          sta   patch_VBL_iigs2
 @NotGS
-         lda   #<WaitForVBL_iie
-         sta   WaitForVBL+1
-         lda   #>WaitForVBL_iie
-         sta   WaitForVBL+2
-         lda   #$4C
-@build_none
-         sta   WaitForVBL
          rts
 @build_iic
          lda   #$70
          sta   patch_VBL_iic1+1
          lda   #$60
          sta   patch_VBL_iic2
-         lda   #$EA
+         lda   #<iWaitForVBL
+         sta   WaitForVBL+1
+         lda   #>iWaitForVBL
+         sta   WaitForVBL+2
+         lda   #$4C
          sta   UnwaitForVBL
+         rts
+@build_none
+         lda   #$60
+         sta   WaitForVBL
          rts

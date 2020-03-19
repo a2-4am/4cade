@@ -25,7 +25,6 @@ WaitForVBL_nop            ; II/II+ have no easy VBL
          rts
 
 iUnwaitForVBL
-         rts              ; SMC on IIc
 -        bit   $C019
          bpl   -
          lda   $C070      ; $c019 bit 7 is sticky, reset it
