@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SARACEN",plain
@@ -25,6 +25,7 @@ callback
          dec   $8A5       ; patch - don't decrease lives
          dec   $8DE       ; patch - don't decrease lives
 +
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          jmp   $400
 
