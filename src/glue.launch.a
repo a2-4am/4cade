@@ -12,28 +12,49 @@
 ; - Launch
 ;
 ; Public variables:
-; - gGameToLaunch - 0-based index into gGamesListStore
+; - gGameToLaunch - 0-based index into gGamesListStore (word)
 ;
 
+gGameToLaunch
+         !word $FF,$FF
+
+AnyGameSelected
+; in:    none
+; out:   A/Y = gGameToLaunch (word)
+;        C clear if gGameToLaunch is not #$FFFF
+;        C set if gGameToLaunch is #$FFFF
+;        X preserved
+         +LD16 gGameToLaunch
+         +CMP16 $FFFF
+         beq   +
+         clc
+         rts
++        sec
+         rts
+
 GetGameToLaunch
-; in:    gGameToLaunch = index into gGamesListStore
-; out:   A/Y points to game filename
-gGameToLaunch=*+1
-         ldx   #$FF                  ; SMC
+; in:    gGameToLaunch = index into gGamesListStore (word) or #$FFFF if no game selected
+; out:   C clear if a game is selected, and
+;          A/Y points to game filename
+;        C set if no game is selected
+         jsr   AnyGameSelected
+         bcs   @exit
+         +ST16 WINDEX
          +LDADDR gGamesListStore
-         jmp   okvs_nth
+         jsr   okvs_nth
+         clc
+@exit    rts
 
 FindGame
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
-;          X = game index, or #$FF if the game doesn't really exist but
-;          we want to return a successful result anyway
-;        C set if game does not exist, and
-;          X clobbered (this can happen because slideshows list games
-;          that require a joystick, but the games list parser filters out
-;          joystick-only games if the machine doesn't have a joystick)
-;        A,Y always clobbered
-         +STAY @key
+;          $WINDEX = game index, or #$FFFF if the game doesn't really
+;          exist but we want to return a successful result anyway
+;        C set if game does not exist (this can happen because slideshows
+;          list games that require a joystick, but the games list parser
+;          filters them out if the machine doesn't have a joystick)
+;        all registers clobbered
+         +ST16 @key
          jsr   okvs_find
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
@@ -41,8 +62,10 @@ FindGame
 ; Hack to allow self-running demos that don't correspond to a game
 ; filename. If the name ends in a '.', accept it unconditionally.
          ldx   #$FF
-         +LDAY @key
-         +STAY PARAM
+         stx   WINDEX
+         stx   WINDEX+1
+         +LD16 @key
+         +ST16 PARAM
          ldy   #0
          lda   (PARAM),y
          tay
@@ -58,10 +81,10 @@ FindGame
 FindGameInActionSlideshow
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists, and
-;          X = game index, and
+;          $WINDEX = game index, and
 ;          A/Y points to game display name + game info bitfield
 ;        C set if game can't be found by any means
-         +STAY @sskey
+         +ST16 @sskey
          jsr   FindGame
          bcc   +
 ; if the game was not found, try getting the value of the current record from
@@ -86,14 +109,14 @@ GetGameDisplayName
 ;        out of thin air)
 ;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
 ;        X preserved
-         +STAY SAVE
+         +ST16 SAVE
          jsr   okvs_get_current      ; get value for this key
                                      ; (PTR) -> truncated game display name + info bitfield
          ldy   #0
          lda   (PTR), y              ; A = length of truncated game display name + info bitfield
          cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
          beq   +
-         +LDAY PTR
+         +LD16 PTR
          rts
 +                                    ; game display name is truncated, we must expand it
          iny                         ; Y = 1
@@ -132,8 +155,8 @@ GetGameDisplayName
 PlayGame
          jsr   GetGameToLaunch
                                      ; A/Y = address of game filename
-         +STAY SAVE
-         +STAY @pfile
+         +ST16 SAVE
+         +ST16 @pfile
 
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
@@ -148,7 +171,7 @@ PlayGame
 
          lda   #kGameDirectoryLen
          sta   gPathname
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
 
          ; attach the separator
@@ -165,7 +188,7 @@ PlayGame
 
          ; then attach the game name
 
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
 
          ; don't look while I do this

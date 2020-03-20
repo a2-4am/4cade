@@ -78,7 +78,7 @@ sCheatDescriptionSuffix
 ; draw 2- or 4-line UI on the HGR page that is not currently showing, then
 ; show that HGR page
 ;
-; in:    gGameToLaunch = game index, or #$FF if no game is selected
+; in:    gGameToLaunch = game index (word), or #$FFFF if no game is selected
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawUIWithoutDots
@@ -104,14 +104,11 @@ DrawUI
          sta   gPathname             ; hack, used by first RedrawForDHGR which follows
                                      ; Draw40Chars which doesn't set gPathname
 
-         ldx   gGameToLaunch
-         inx                         ; if no game, nothing more to do on UI line 2
-         beq   @doneWithLine2
-
-         jsr   GetGameToLaunch
+         jsr   GetGameToLaunch       ; get current game, if any
+         bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
          jsr   GetGameDisplayName
                                      ; A/Y -> game display name + bitfield of game info
-         +STAY PTR
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y               ; A = game display name length + 1
          sta   SAVE
@@ -234,7 +231,7 @@ gDrawingOnscreen=*+1
                                      ; (SAVE) -> length-prefixed cheat description
          +LDADDR sCheatDescriptionPrefix
          jsr   SetPath
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
          +LDADDR sCheatDescriptionSuffix
          jsr   AddToPath
@@ -249,18 +246,17 @@ gDrawingOnscreen=*+1
          jmp   ShowOtherPage
 
 CheckCheats
-         ldy   #kCheatsEnabled
-         ldx   gGameToLaunch
-         inx
-         beq   +
+         ldx   #kCheatsEnabled
+         jsr   AnyGameSelected
+         bcs   +
 gGameToLaunchInfo=*+1
          lda   #$FD                  ; SMC
          and   #CHEAT_CATEGORY
-         tay
+         tax
 +
-         lda   kCheatDescriptionLo,y
+         lda   kCheatDescriptionLo,x
          sta   SAVE
-         lda   kCheatDescriptionHi,y
+         lda   kCheatDescriptionHi,x
          sta   SAVE+1
 -        rts
 

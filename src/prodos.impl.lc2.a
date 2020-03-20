@@ -384,7 +384,7 @@ ProDOS_enter
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 traverse
-         +LDAY gRootDirectory
+         +LD16 gRootDirectory
          sta   (reloc + unrhddblocklo - unrelochdd) + 1
          sty   (reloc + unrhddblockhi - unrelochdd) + 1
          sta   @myreadblock+1

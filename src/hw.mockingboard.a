@@ -26,7 +26,7 @@
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
 GetMockingboardStuff
-         +STAY @callback+1
+         +ST16 @callback+1
          lda   #$00
          sta   $80
          sta   $82                   ; type

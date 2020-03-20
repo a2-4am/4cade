@@ -42,7 +42,7 @@ SHRRTS   rts
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 SHRSingle
-         +STAY +
+         +ST16 +
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          beq   SHRRTS
@@ -76,7 +76,7 @@ LoadSHRTransition
 ; to load and display a single SHR graphic
 
 ; in:    A/Y contains address of filename (name only, path is always /ARTWORK.SHR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -86,14 +86,16 @@ SHRArtworkCallback
          bit   KBD
          bmi   SHRRTS
 
-         +STAY @sfname
+         +ST16 @sfname
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   SHRRTS
-         stx   gGameToLaunch
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   BlankSHR
 

@@ -22,7 +22,7 @@ DrawPageInternal
          stx   @leftMargin
          ldx   #0
          stx   VTAB
-         +STAY PTR
+         +ST16 PTR
 @drawLine
 @leftMargin=*+1
          lda   #$FD                  ; SMC
@@ -51,7 +51,7 @@ DrawPageInternal
          tya
          beq   @skip
          ldx   SAVE
-         +LDAY PTR
+         +LD16 PTR
          plp
          php
          jsr   DrawBufferInternal
@@ -96,7 +96,7 @@ DrawCenteredStringInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
-         +STAY PTR
+         +ST16 PTR
 
          ldy   #0
          php
@@ -116,7 +116,7 @@ DrawStringInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
-         +STAY PTR
+         +ST16 PTR
 
          ldy   #0
 +        lda   (PTR),y
@@ -125,7 +125,7 @@ DrawStringInternal
          bne   +
          inc   PTR+1
 +
-         +LDAY PTR
+         +LD16 PTR
          ; /!\ execution falls through here to DrawBufferInternal
 
 DrawBufferInternal
@@ -141,7 +141,7 @@ DrawBufferInternal
 ; HTAB is incremented for each character
 ; VTAB is NOT incremented
 ; clobbers A/X/Y
-         +STAY DBISrc+1
+         +ST16 DBISrc+1
          php
          dex
          lda   VTAB

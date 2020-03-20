@@ -83,9 +83,9 @@ LoadOffscreenFromAY
          rts
 
 LoadGameTitleOffscreen
-; in:    gGameToLaunch = index into gGamesListStore
+; in:    gGameToLaunch = index into gGamesListStore (word)
          jsr   GetGameToLaunch
-         +STAY @fname
+         +ST16 @fname
          bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
          bvc   @hgr
          jsr   okvs_get_current
@@ -109,8 +109,8 @@ LoadGameTitleOffscreen
          rts
 @dhgr
          jsr   BlankDHGR
-         +LDAY @fname
-         +STAY +
+         +LD16 @fname
+         +ST16 +
          jsr   LoadDHRFile
          !word kDHGRTitleDirectory
 +        !word $FDFD

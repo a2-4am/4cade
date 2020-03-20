@@ -30,7 +30,7 @@ ExecuteTransitionAtA000AndWait
 ;------------------------------------------------------------------------------
 ExecuteTransitionAndWait
          lda   #0
-         +STAY @j+1
+         +ST16 @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
          ldx   #$20                  ; picture is showing so now we wait
 -        lda   #0

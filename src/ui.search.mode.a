@@ -99,7 +99,8 @@ InputKeyDispatch
 SearchMode
          ldx   #$FF
          txs
-         stx   gGameToLaunch         ; $FF = no game selected
+         stx   gGameToLaunch         ; $FFFF = no game selected
+         stx   gGameToLaunch+1
          jsr   BuildSearchStore
          jsr   Home                  ; clear screen (switches to text mode)
          stx   OffscreenPage         ; don't show text page 2 by accident
@@ -145,15 +146,14 @@ OnBack
          bpl   OnInputChanged        ; always branches
 
 OnTab
-         ldx   gGameToLaunch
-         inx
-         beq   OnError
+         jsr   AnyGameSelected
+         bcs   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
          bne   .req_redraw           ; by pressing Enter, launch the game
 
 OnLaunch
-         ldx   gGameToLaunch
+         ldx   gGameToLaunch+1
          inx
          beq   OnError
          jsr   PlayGame
@@ -179,7 +179,8 @@ OnInputChanged
          bne   FindMatchingTitle
                                      ; no input, reset params and UI
          dex
-         stx   gGameToLaunch         ; no game selected
+         stx   gGameToLaunch         ; $FFFF = no game selected
+         stx   gGameToLaunch+1
          jsr   LoadTitleOffscreen
          jmp   DrawUIWithoutDots
 
@@ -227,8 +228,11 @@ SoftBell
          rts
 
 +
-         ldx   BestMatchIndex        ; check if the new best match is the same
-         cpx   gGameToLaunch         ; as the current best match
+         lda   BestMatchIndex        ; check if the new best match is the same
+         cmp   gGameToLaunch         ; as the current best match
+         bne   @load
+         lda   BestMatchIndex+1
+         cmp   gGameToLaunch+1
          bne   @load
 
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
@@ -237,7 +241,8 @@ SoftBell
          lda   #1
          bne   @noload               ; always branches
 @load
-         stx   gGameToLaunch
+         +LD16 BestMatchIndex
+         +ST16 gGameToLaunch
          jsr   LoadGameTitleOffscreen
          lda   #0
 @noload

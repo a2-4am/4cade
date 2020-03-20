@@ -12,7 +12,7 @@ LoadFileInternal
 LoadFileAuxInternal
          sta   @auxreq+1             ; call with A=1 to load directly into aux memory
          +LDADDR gPathname
-         +STAY namlo                 ; set filename
+         +ST16 namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
@@ -23,8 +23,8 @@ LoadFileAuxInternal
          sta   sizelo                ; otherwise query the load address from file metadata
          sta   sizehi                ; 0 = query load address
          jsr   hddopendir            ; call ProRWTS2
-         +LDAY ldrlo2
-         +STAY ldrlo
+         +LD16 ldrlo2
+         +ST16 ldrlo
 +        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
 @auxreq
@@ -35,7 +35,7 @@ JumpOpen
 
 LoadDHRFileInternal
          +LDADDR gPathname
-         +STAY namlo                 ; set filename
+         +ST16 namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #$20
          sta   sizehi
@@ -57,7 +57,7 @@ LoadDHRFileInternal
 
 SaveSmallFileInternal
          +LDADDR gPathname
-         +STAY namlo                 ; set filename for ProRWTS2
+         +ST16 namlo                 ; set filename for ProRWTS2
          jsr   traverse              ; go to subdirectory, set up filename for read
          ;lda   #cmdread              ; read (instead of write)
          ;sta   reqcmd

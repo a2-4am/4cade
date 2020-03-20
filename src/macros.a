@@ -55,15 +55,49 @@
 }
 
 ; load a 16-bit value into A (low) and Y (high)
-!macro   LDAY .ptr {
+!macro   LD16 .ptr {
          lda   .ptr
          ldy   .ptr+1
 }
 
 ; store a 16-bit value from A (low) and Y (high)
-!macro   STAY .ptr {
+!macro   ST16 .ptr {
          sta   .ptr
          sty   .ptr+1
+}
+
+; decrement a 16-bit value in A (low) and Y (high)
+!macro   DEC16 {
+         sec
+         sbc   #1
+         bcs   +
+         dey
++
+}
+
+; increment a 16-bit value in A (low) and Y (high)
+!macro   INC16 {
+         clc
+         adc   #1
+         bne   +
+         iny
++
+}
+
+; compare a 16-bit value in A (low) and Y (high) to an absolute address
+!macro   CMP16ADDR .addr {
+         cmp   .addr
+         bne   +
+         cpy   .addr+1
++
+}
+
+; compare a 16-bit value in A (low) and Y (high) to an immediate value
+!macro   CMP16 .val {
+         cmp   #<.val
+         bne   +
+         cpy   #>.val
++
 }
 
 !macro   LBPL .target {
@@ -92,6 +126,14 @@
 ; use BIT to swallow the following 2-byte opcode
 !macro   HIDE_NEXT_2_BYTES {
          !byte $2C
+}
+
+; debugging
+!macro   DEBUGWAIT {
+         bit   $c010
+-        bit   $c000
+         bpl   -
+         bit   $c010
 }
 
 ; various language card configurations

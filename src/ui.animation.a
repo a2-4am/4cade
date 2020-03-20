@@ -46,7 +46,7 @@ MaybeAnimateTitle
 
          ; load the animation routine, which is stored in a subdirectory by filename
          jsr   GetGameToLaunch
-         +STAY +
+         +ST16 +
          jsr   LoadFile
          !word kAnimatedTitleDirectory
 +        !word $FDFD

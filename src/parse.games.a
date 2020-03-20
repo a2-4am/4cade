@@ -28,7 +28,7 @@ ParseGamesList
          +PARAMS_ON_STACK 4
 
          +LDPARAM 1
-         +STAY @store2
+         +ST16 @store2
          jsr   SetKeyPtr
 
          ldy   #$00                  ; index into ($FE) pointing to current character

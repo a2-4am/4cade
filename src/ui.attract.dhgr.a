@@ -69,7 +69,7 @@ DHGRActionSlideshow
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvc   DHGRRTS
-         +STAY @fname
+         +ST16 @fname
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kRootDirectory
@@ -147,11 +147,11 @@ LoadDHGRTransition
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
          !word gDFXStore
-         +STAY ++                    ; A/Y = filename (don't load file yet)
-                                     ; X = index of the transition in DFX store
+         +ST16 ++                    ; A/Y = filename (don't load file yet)
+                                     ; $WINDEX = index of the transition in DFX store
          +LDADDR gDFXStore
          jsr   okvs_next             ; get transition after this one
-         +STAY +
+         +ST16 +
 
          jsr   pref_set              ; update prefs store and save to disk
          !word kNextDFX
@@ -169,7 +169,7 @@ LoadDHGRTransition
 ; to load and display a single DHGR title screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /TITLE.DHGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -179,14 +179,16 @@ DHGRTitleCallback
          bit   KBD
          bmi   DHGRRTS
 
-         +STAY +
+         +ST16 +
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   DHGRRTS
-         stx   gGameToLaunch
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile
@@ -201,7 +203,7 @@ DHGRTitleCallback
 ; to load and display a single DHGR action screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.DHGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -211,15 +213,17 @@ DHGRActionCallback
          bit   KBD
          bmi   DHGRRTS
 
-         +STAY +
+         +ST16 +
 
          jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   DHGRRTS
-         +STAY SAVE                  ; (SAVE) -> game display name + game info bitfield
-         stx   gGameToLaunch
+         +ST16 SAVE                  ; (SAVE) -> game display name + game info bitfield
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kDHGRActionDirectory
@@ -292,8 +296,8 @@ DrawGameTitleInActionSlideshowHGR
 ;------------------------------------------------------------------------------
 RedrawForDHGR
          jsr   SwitchToBank2
-         +LDAY DBIRow0+1
-         +STAY $26
+         +LD16 DBIRow0+1
+         +ST16 $26
          lda   #8
          sta   i
 --       ldy   gPathname

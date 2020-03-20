@@ -1,7 +1,7 @@
 ;license:MIT
 ;(c) 2018-2020 by 4am
 ;
-; Ordered key/value store (6502 compatible)
+; Ordered key/value store (6502 compatible)(256+ records compatible)
 ;
 ; Public functions
 ; - okvs_init(address)                          reset (required)
@@ -15,12 +15,12 @@
 ; - okvs_iter(address, callback)                iterate through keys
 ; - okvs_iter_values(address, callback)         iterate through values
 ;
-; Call init() once. Call it again to reset the store to 0 keys.
+; Call init() once. Call it again to reset the store to 0 records.
 ;
-; Keys are maintained in a singly linked list, so most functions are O(n).
+; Records are maintained in a singly linked list, so most functions are O(n).
 ; len() and append() are O(1) though.
 ;
-; Key count is stored as a byte, so a store can hold a maximum of 255 keys.
+; Record count is stored as a word, so a store can hold 65535 records.
 ;
 ; Keys and values are length-prefixed strings (Pascal style), so max length
 ; of any single key or value is 255 bytes.
@@ -34,23 +34,24 @@
 ; There is no range checking because this is assembly.
 
 ; All functions take the starting address of the store's data buffer in
-; memory, so there can be multiple independent stores at one time. append()
-; will happily extend the store's data buffer without limit. There is no
-; overflow protection because this is assembly.
+; memory, so there can be multiple independent stores at one time. The next-
+; record pointers are actual memory addresses, so stores are not easily
+; relocatable. append() will happily extend the store's data buffer without
+; limit. There is no overflow protection because this is assembly.
 ;
 ; There is no sort() function.
 ;
 ; There is no delete() function.
 ;
-; Keys can be duplicated, but get() will always return the one that was
-; append()ed first.
+; Keys can be duplicated, but get() and find() will always return the one that
+; was append()ed first.
 ;
 ; Structures:
 ;
 ; Store
-;   +0 length (byte)
-;   +1 free space pointer after last record (word)
-;   +3 Record
+;   +0 number of records (word)
+;   +2 free space pointer after last record (word)
+;   +4 Record
 ;   ...Record...
 ;   ...Record...
 ;
@@ -75,13 +76,15 @@ okvs_init
                                      ; PTR -> store
                                      ; Y = 0
          tya
-         sta   (PTR),y               ; set number of keys in store to 0
+         sta   (PTR),y               ; set number of keys in store to 0 (word)
+         iny
+         sta   (PTR),y
 
-         iny                         ; set next-free-space pointer to store + 3
+         iny                         ; set next-free-space pointer to store + 4
          ldx   PTR+1
          lda   PTR
          clc
-         adc   #$03
+         adc   #$04
          bcc   +
          inx
 +        sta   (PTR),y
@@ -94,9 +97,9 @@ okvs_init
 ; okvs_len
 ;
 ; in:    A/Y = handle to storage space
-; out:   A contains number of keys in this store
+; out:   $WCOUNT contains number of keys in this store
 ;        X preserved
-;        Y clobbered
+;        A, Y clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;------------------------------------------------------------------------------
@@ -104,7 +107,11 @@ okvs_len
          jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
-         lda   (PTR),y               ; A = number of keys in store
+         lda   (PTR), y              ; get number of keys in store (word)
+         sta   WCOUNT
+         iny
+         lda   (PTR), y
+         sta   WCOUNT+1
          rts
 
 ;------------------------------------------------------------------------------
@@ -115,8 +122,8 @@ okvs_len
 ;          +3 [word] address of key
 ;          +5 [word] address of value
 ;          +7 [byte] maximum length of value (or 0 to fit)
-; out:   X = new number of records (same as calling okvs_len after okvs_append)
-;        A/Y clobbered
+; out:   (new record count is not returned because no one cares)
+;        all registers clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;        $04/$05 has the address of the next available byte after the new record
@@ -128,10 +135,20 @@ okvs_append
                                      ; PTR -> store
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
-         ;;clc
-         adc   #1
-         pha                         ; will return this later
+         sta   WINDEX
+         iny
+         lda   (PTR), y
+         sta   WINDEX+1
+         inc   WINDEX
+         bne   +
+         inc   WINDEX+1
++
+         dey
+         lda   WINDEX
          sta   (PTR),y               ; increment number of keys
+         lda   WINDEX+1
+         iny
+         sta   (PTR),y
          iny
          lda   (PTR),y               ; get address of next free space
          tax
@@ -187,23 +204,22 @@ okvs_append
          inc   PTR+1
 +        lda   PTR+1
          sta   SRC+1                 ; SRC -> byte after this record
-         +LDAY SAVE
-         +STAY PTR                   ; PTR -> this record again
+         +LD16 SAVE
+         +ST16 PTR                   ; PTR -> this record again
          ldy   #0
          lda   SRC                   ; update next-record pointer
          sta   (PTR),y
          iny
          lda   SRC+1
          sta   (PTR),y
-         pla
-         tax                         ; X = new OKVS length
          jsr   GetStoreAddress
                                      ; PTR -> store
          ldy   #2
--        lda   SRC-1,y
+         lda   SRC-2,y
          sta   (PTR),y               ; update next-free-space pointer in head
-         dey
-         bne   -
+         iny
+         lda   SRC-2,y
+         sta   (PTR),y
          rts
 
 ;------------------------------------------------------------------------------
@@ -214,7 +230,7 @@ okvs_append
 ;          +3 [word] address of key
 ; out:   if C clear, record was found
 ;          A/Y = lo/hi address of key (okvs_find) or value (okvs_get)
-;          X = numeric index of found record
+;          $WINDEX = index of found record (word)
 ;        if C set, keyrecord was not found and all registers are clobbered
 ;        all other flags clobbered
 ;        $00/$01 clobbered
@@ -232,13 +248,21 @@ okvs_get
                                      ; PTR -> store
                                      ; Y = 0
          lda   (PTR),y               ; A = number of keys in store
+         sta   WCOUNT
+         iny
+         lda   (PTR),y
+         sta   WCOUNT+1
+         bne   +
+         dey
+         lda   (PTR),y
          beq   @fail                 ; no keys, fail immediately
-         sta   @max
-         jsr   incptr3
++
+         jsr   incptr4
                                      ; PTR -> first record
-         ldx   #0
          +LDPARAMPTR 3, SRC          ; SRC -> key we want to find
          ldy   #0
+         sty   WINDEX
+         sty   WINDEX+1
          lda   (SRC),y
          tay
          iny
@@ -261,24 +285,30 @@ okvs_get
 KEYLEN = *+1
          cpy   #$D1                  ; SMC
          bne   @matchKeyLoop
-         +LDAY DEST
+         +LD16 DEST
          clc
 @maybeGetValue
          brk                         ; SMC
          jsr   okvs_get_current
-         +LDAY PTR
+         +LD16 PTR
          clc
          rts
 @next    jsr   derefptr              ; PTR -> next record
-         inx
-@max = *+1
-         cpx   #$D1                  ; SMC
+         inc   WINDEX
+         bne   +
+         inc   WINDEX+1
++
+         lda   WINDEX
+         cmp   WCOUNT
+         bne   @matchRecordLoop
+         lda   WINDEX+1
+         cmp   WCOUNT+1
          bne   @matchRecordLoop
 @fail    sec
          rts
 
 okvs_get_current
-         +STAY PTR
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y
          clc
@@ -293,50 +323,61 @@ okvs_get_current
 ; get (N+1)th key, with wraparound
 ;
 ; in:    A/Y = handle to storage space
-;        X = record index
-; out:   A/Y = lo/hi address of (X+1)th key, or first key if X was the last record
-;        X = next record index
-;        SAVE clobbered
+;        $WINDEX = record index (word)
+; out:   A/Y = lo/hi address of ($WINDEX+1)th key, or first key if $WINDEX was the last record
+;        $WINDEX = record index of next record
 ;        see okvs_nth for other exit conditions
 ;------------------------------------------------------------------------------
 okvs_next
-         +STAY PARAM
-         inx
-         stx   SAVE
-         jsr   okvs_len
-         eor   SAVE
+         +ST16 PARAM
+         inc   WINDEX
          bne   +
-         tax
+         inc   WINDEX+1
 +
-         +LDAY PARAM
+         jsr   okvs_len
+         +LD16 WINDEX
+         +CMP16ADDR WCOUNT
+         bne   +
+         lda   #0
+         sta   WINDEX
+         sta   WINDEX+1
++
+         +LD16 PARAM
          ; /!\ execution falls through here to okvs_nth
 ;------------------------------------------------------------------------------
 ; okvs_nth
 ; get (N)th key
 ;
 ; in:    A/Y = handle to storage space
-;        X = record index
+;        $WINDEX = record index
 ; out:   A/Y = lo/hi address of nth key
-;        X preserved
+;        $WINDEX preserved
+;        X = 0
 ;        Z = 0
 ;        all other flags clobbered
-;        PTR clobbered
+;        $PTR clobbered
 ;------------------------------------------------------------------------------
 okvs_nth
          jsr   GetStoreAddressFromAY
                                      ; PTR -> store
-         jsr   incptr3
+         jsr   incptr4
                                      ; PTR -> first record
-         txa
-         beq   @found
-         pha
+         +LD16 WINDEX
+         +ST16 SAVE
+         jmp   @next
 -        jsr   derefptr
-         dex
+@next
+         dec   SAVE
+         lda   SAVE
+         cmp   #$FF
          bne   -
-         pla
-         tax
-@found   jsr   incptr2
-         +LDAY PTR
+         dec   SAVE+1
+         lda   SAVE+1
+         cmp   #$FF
+         bne   -
+         jsr   incptr2
+         +LD16 PTR
+         ldx   #0
          rts
 
 ;------------------------------------------------------------------------------
@@ -372,7 +413,7 @@ okvs_update
          !word $FDFD                 ; SMC
          !word $FDFD                 ; SMC
          bcs   @exit
-         +STAY DEST
+         +ST16 DEST
          ldy   #0
          lda   (SAVE),y
          tay
@@ -391,13 +432,15 @@ okvs_update
 ;          +1 [word] handle to storage space
 ;          +3 [word] address of callback
 ; out:   <callback> will be called for each record in the store, in order, with
-;          X = numeric index of record
+;          $WINDEX = numeric index of record (word)
 ;          A/Y = address of key or value (depends on which entry point you call)
 ;        all registers are clobbered
 ;        Z=1
 ;        all other flags clobbered
 ;        PARAM clobbered
 ;        PTR clobbered
+;        WINDEX clobbered
+;        WCOUNT clobbered
 ;------------------------------------------------------------------------------
 okvs_iter
          lda   #$D0                  ; 'BNE' opcode
@@ -409,14 +452,23 @@ okvs_iter_values
          jsr   GetStoreAddress
                                      ; PTR -> store
                                      ; Y = 0
-         lda   (PTR),y               ; A = number of keys in store
+         lda   (PTR),y               ; get number of keys in store (word)
+         sta   WCOUNT
+         iny
+         lda   (PTR),y
+         sta   WCOUNT+1
+         bne   +
+         dey
+         lda   (PTR),y
          beq   @exit                 ; no keys, exit immediately
-         sta   @max
++
          +LDPARAM 3
-         +STAY @callback
-         jsr   incptr3
+         +ST16 @callback
+         jsr   incptr4
                                      ; PTR -> first record
-         ldx   #0
+         lda   #0
+         sta   WINDEX
+         sta   WINDEX+1
 @loop
          lda   #2                    ; for iter, skip length = 2
 @branch  bne   +                     ; SMC (iter_values puts a BIT here, so no branch)
@@ -426,13 +478,19 @@ okvs_iter_values
          clc
          adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
 +        sta   @skiplen
-         txa
-         pha                         ; save X on stack
+         lda   WCOUNT+1              ; save WCOUNT on stack
+         pha
+         lda   WCOUNT
+         pha
+         lda   WINDEX+1              ; save WINDEX on stack
+         pha
+         lda   WINDEX
+         pha
          lda   PTR+1
          tay
          pha
          lda   PTR
-         pha                         ; save PTR on stack (in case callback clobbers it)
+         pha                         ; save PTR on stack
          clc
 @skiplen=*+1
          adc   #$FD                  ; SMC skip over pointer (and possibly key)
@@ -446,18 +504,30 @@ okvs_iter_values
          pla
          sta   PTR+1                 ; restore PTR from stack
          pla
-         tax                         ; restore X from stack
+         sta   WINDEX
+         pla
+         sta   WINDEX+1
+         pla
+         sta   WCOUNT
+         pla
+         sta   WCOUNT+1
          jsr   derefptr              ; PTR -> next record
-         inx
-@max=*+1
-         cpx   #$FD                  ; SMC
+         inc   WINDEX
+         bne   +
+         inc   WINDEX+1
++
+         lda   WINDEX
+         cmp   WCOUNT
+         bne   @loop
+         lda   WINDEX+1
+         cmp   WCOUNT+1
          bne   @loop
 @exit    rts
 
 ;------------------------------------------------------------------------------
 ; internal functions
 
-incptr3  jsr   incptr
+incptr4  jsr   incptr2
 incptr2  jsr   incptr
 incptr
 ; preserves A, X, and Y
@@ -467,7 +537,7 @@ incptr
 +        rts
 
 GetStoreAddressFromAY
-         +STAY PTR
+         +ST16 PTR
          jmp   derefptr
 
 GetStoreAddress
