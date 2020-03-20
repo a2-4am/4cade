@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/THE.HEIST",plain
@@ -20,7 +20,6 @@ callback
          beq   +
          dec   $A47       ; patch - don't decrease lives
 +
-         inc   #3F4       ; reboot
          +DISABLE_ACCEL
          jmp   $A05
 
