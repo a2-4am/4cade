@@ -14,7 +14,7 @@
          and   #CHEATS_ENABLED
          pha
          lda   #$60
-         sta   $A05
+         sta   $A01
          jsr   $800       ; load "DOS"
          pla
          beq   +

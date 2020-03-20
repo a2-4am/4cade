@@ -7,18 +7,24 @@
 
     !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
-         beq   +
+         pha
          lda   #$60
          sta   $A0A
-+        jsr   $800       ; load "DOS"
+         jsr   $800       ; load "DOS"
+         pla
+         beq   +
          lda   #$4C
          sta   $F858
          lda   #<callback1
          sta   $F859
          lda   #>callback2
          sta   $F85A
++        jsr   DisableAccelerator
          jmp   $F800
 
 callback1
