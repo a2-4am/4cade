@@ -63,7 +63,6 @@ Mating Zone [priority]
 
 //other
 Battle Chess [DHGR]
-IO Silver [priority]
 Castle Smurfenstein
 Dino Smurf
 
