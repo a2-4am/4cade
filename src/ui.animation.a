@@ -58,6 +58,7 @@ MaybeAnimateTitle
          dex
          bpl   -
 
+         bit   $c050                 ; turn on graphics mode (Home set text mode)
          jsr   Launch                ; execute the animation
 
          jsr   BuildSearchStore
