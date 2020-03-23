@@ -360,10 +360,10 @@ CopyDevs
          +LDAY SRC                   ; (SRC) points to free space after the OKVS data structure we just created
          +STAY gGamesListStore       ; save pointer to free space for next store
 
-         jsr   LoadFile              ; load games list file into $8000
+         jsr   LoadFile              ; load games list file into $8200
          !word kRootDirectory
          !word @kGameListConfFile
--        !word $8000
+-        !word $8200
          jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
          !word gGamesListStore
          !word -

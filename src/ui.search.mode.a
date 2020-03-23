@@ -102,6 +102,7 @@ SearchMode
          stx   gGameToLaunch         ; $FF = no game selected
          jsr   BuildSearchStore
          jsr   Home                  ; clear screen (switches to text mode)
+         stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   OnInputChanged        ; draw UI offscreen
          jsr   HGRMode               ; show HGR screen
          jsr   ResyncPage

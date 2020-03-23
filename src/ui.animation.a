@@ -60,6 +60,7 @@ MaybeAnimateTitle
 
          jsr   Launch                ; execute the animation
 
+         jsr   BuildSearchStore
          jsr   ResyncPage            ; we don't know which HGR page is showing
                                      ; when the animation returns, so resync
                                      ; the current one with our OffscreenPage

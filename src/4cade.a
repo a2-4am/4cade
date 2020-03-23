@@ -122,7 +122,7 @@ gFXStore
 gDFXStore
          !word $6000
 gSearchStore
-         !word $8000
+         !word $8200
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
