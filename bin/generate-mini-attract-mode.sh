@@ -12,7 +12,7 @@ cat res/GAMES.CONF |
         name=`cat res/GAMES.CONF | grep ",$game=" | cut -d"=" -f2`
 
         # initialize attract mode configuration file for this game
-        echo "#\r# Attract mode for $name\r#\r" > /tmp/g
+        echo "#\n# Attract mode for $name\n#\n" > /tmp/g
 
         # add box art, if any
         [ -f res/ARTWORK.SHR/"$game" ] &&
@@ -63,7 +63,7 @@ cat res/GAMES.CONF |
         fi
 
         # add eof
-        echo "\r[eof]" >> /tmp/g
+        echo "\n[eof]" >> /tmp/g
 
         cat /tmp/g > res/ATTRACT/"$game"
 

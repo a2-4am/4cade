@@ -1,5 +1,9 @@
-## Attract mode for Brainteaser Boulevard#
+#
+# Attract mode for Brainteaser Boulevard
+#
+
 ARTWORK.SHR/BRAINTEASERBLVD=C
 ACTION.HGR/BRAINTEASERBLVD=A
 BRAINTEASERBLVD=0
-[eof]
+
+[eof]

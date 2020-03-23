@@ -1,4 +1,7 @@
-## Attract mode for California Games#
+#
+# Attract mode for California Games
+#
+
 ARTWORK.SHR/CALI.GAMES=C
 ACTION.DHGR/CALI.GAMES2=B
 ACTION.DHGR/CALI.GAMES3=B
@@ -6,4 +9,5 @@ ACTION.DHGR/CALI.GAMES4=B
 ACTION.DHGR/CALI.GAMES5=B
 ACTION.DHGR/CALI.GAMES6=B
 ACTION.DHGR/CALI.GAMES=B
-[eof]
+
+[eof]

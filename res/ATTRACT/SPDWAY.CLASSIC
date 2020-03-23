@@ -1,4 +1,8 @@
-## Attract mode for Speedway Classic#
+#
+# Attract mode for Speedway Classic
+#
+
 ACTION.HGR/SPDWAY.CLASSIC2=A
 ACTION.HGR/SPDWAY.CLASSIC=A
-[eof]
+
+[eof]

@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/GAUNTLET=C
 ACTION.HGR/GAUNTLET2=A
 ACTION.HGR/GAUNTLET3=A
 ACTION.HGR/GAUNTLET=A
-[eof]
+
+[eof]

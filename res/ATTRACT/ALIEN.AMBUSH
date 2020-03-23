@@ -1,5 +1,9 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/ALIEN.AMBUSH=C
 ACTION.HGR/ALIEN.AMBUSH=A
 ALIEN.AMBUSH=0
-[eof]
+
+[eof]

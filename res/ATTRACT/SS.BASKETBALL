@@ -1,6 +1,10 @@
-## Attract mode for Street Sports Basketball#
+#
+# Attract mode for Street Sports Basketball
+#
+
 ARTWORK.SHR/SS.BASKETBALL=C
 ACTION.DHGR/SS.BASKETBALL2=B
 ACTION.DHGR/SS.BASKETBALL3=B
 ACTION.DHGR/SS.BASKETBALL=B
-[eof]
+
+[eof]

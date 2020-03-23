@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/ZAXXON=C
 ACTION.HGR/ZAXXON2=A
 ACTION.HGR/ZAXXON3=A
 ACTION.HGR/ZAXXON=A
-[eof]
+
+[eof]

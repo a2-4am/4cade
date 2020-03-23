@@ -1,6 +1,10 @@
-## Attract mode for Pipe Dream#
+#
+# Attract mode for Pipe Dream
+#
+
 ARTWORK.SHR/PIPEDREAM=C
 ACTION.DHGR/PIPEDREAM2=B
 ACTION.DHGR/PIPEDREAM3=B
 ACTION.DHGR/PIPEDREAM=B
-[eof]
+
+[eof]

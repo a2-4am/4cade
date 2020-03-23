@@ -1,4 +1,8 @@
-## Attract mode for Pitstop II#
+#
+# Attract mode for Pitstop II
+#
+
 ARTWORK.SHR/PITSTOP.II=C
 ACTION.HGR/PITSTOP.II=A
-[eof]
+
+[eof]

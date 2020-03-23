@@ -1,4 +1,8 @@
-## Attract mode for Up'n Down#
+#
+# Attract mode for Up'n Down
+#
+
 ARTWORK.SHR/UP.N.DOWN=C
 ACTION.HGR/UP.N.DOWN=A
-[eof]
+
+[eof]

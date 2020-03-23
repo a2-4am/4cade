@@ -1,5 +1,9 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/DIG.DUG=C
 ACTION.HGR/DIG.DUG=A
 DIG.DUG=0
-[eof]
+
+[eof]

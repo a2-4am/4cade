@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/BLACK.MAGIC=C
 ACTION.HGR/BLACK.MAGIC2=A
 ACTION.HGR/BLACK.MAGIC3=A
 ACTION.HGR/BLACK.MAGIC=A
-[eof]
+
+[eof]

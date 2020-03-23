@@ -1,6 +1,10 @@
-## Attract mode for Mario Bros.#
+#
+# Attract mode for Mario Bros.
+#
+
 ARTWORK.SHR/MARIO.BROS=C
 ACTION.HGR/MARIO.BROS2=A
 ACTION.HGR/MARIO.BROS3=A
 ACTION.HGR/MARIO.BROS=A
-[eof]
+
+[eof]

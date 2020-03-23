@@ -1,6 +1,10 @@
-## Attract mode for Mr. Do!#
+#
+# Attract mode for Mr. Do!
+#
+
 ACTION.HGR/MR.DO.L01=A
 ACTION.HGR/MR.DO.L02=A
 ACTION.HGR/MR.DO.L03=A
 ACTION.HGR/MR.DO.L10=A
-[eof]
+
+[eof]

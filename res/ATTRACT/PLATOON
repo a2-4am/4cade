@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/PLATOON=C
 ACTION.DHGR/PLATOON2=B
 ACTION.DHGR/PLATOON3=B
 ACTION.DHGR/PLATOON=B
-[eof]
+
+[eof]

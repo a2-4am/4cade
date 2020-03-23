@@ -1,6 +1,10 @@
-## Attract mode for Street Sports Soccer#
+#
+# Attract mode for Street Sports Soccer
+#
+
 ARTWORK.SHR/SS.SOCCER=C
 ACTION.DHGR/SS.SOCCER2=B
 ACTION.DHGR/SS.SOCCER3=B
 ACTION.DHGR/SS.SOCCER=B
-[eof]
+
+[eof]

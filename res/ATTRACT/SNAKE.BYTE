@@ -1,5 +1,9 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/SNAKE.BYTE=C
 ACTION.HGR/SNAKE.BYTE=A
 SNAKE.BYTE=0
-[eof]
+
+[eof]

@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/GUMBALL=C
 ACTION.HGR/GUMBALL2=A
 ACTION.HGR/GUMBALL=A
 GUMBALL=0
-[eof]
+
+[eof]

@@ -1,4 +1,7 @@
-## Attract mode for Championship Lode Runner#
+#
+# Attract mode for Championship Lode Runner
+#
+
 ARTWORK.SHR/CHAMP.LODERUN=C
 ACTION.HGR/CHAMP.LODERUN=A
 ACTION.HGR/CLODE001=A
@@ -52,4 +55,5 @@ ACTION.HGR/CLODE048=A
 ACTION.HGR/CLODE049=A
 ACTION.HGR/CLODE050=A
 CHAMP.LODERUN=0
-[eof]
+
+[eof]

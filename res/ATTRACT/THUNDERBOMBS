@@ -1,4 +1,8 @@
-## Attract mode for Thunder Bombs#
+#
+# Attract mode for Thunder Bombs
+#
+
 ACTION.HGR/THUNDERBOMBS=A
 THUNDERBOMBS=0
-[eof]
+
+[eof]

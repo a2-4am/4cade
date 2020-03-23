@@ -1,4 +1,7 @@
-## Attract mode for The Goonies#
+#
+# Attract mode for The Goonies
+#
+
 ARTWORK.SHR/GOONIES=C
 ACTION.HGR/GOONIES2=A
 ACTION.HGR/GOONIES3=A
@@ -7,4 +10,5 @@ ACTION.HGR/GOONIES5=A
 ACTION.HGR/GOONIES6=A
 ACTION.HGR/GOONIES=A
 GOONIES=0
-[eof]
+
+[eof]

@@ -1,6 +1,10 @@
-## Attract mode for The Games: Summer Edition#
+#
+# Attract mode for The Games: Summer Edition
+#
+
 ARTWORK.SHR/SUMMER.EDITION=C
 ACTION.DHGR/SUMMER.EDITION2=B
 ACTION.DHGR/SUMMER.EDITION3=B
 ACTION.DHGR/SUMMER.EDITION=B
-[eof]
+
+[eof]

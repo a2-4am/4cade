@@ -1,4 +1,8 @@
-## Attract mode for D-Generation#
+#
+# Attract mode for D-Generation
+#
+
 ARTWORK.SHR/D.GENERATION=C
 ACTION.DHGR/D.GENERATION=B
-[eof]
+
+[eof]

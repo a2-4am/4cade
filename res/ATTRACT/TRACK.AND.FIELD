@@ -1,4 +1,8 @@
-## Attract mode for Track & Field#
+#
+# Attract mode for Track & Field
+#
+
 ACTION.HGR/TRACK.AND.FIELD=A
 TRACK.AND.FIELD=0
-[eof]
+
+[eof]

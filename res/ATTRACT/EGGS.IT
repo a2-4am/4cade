@@ -1,4 +1,8 @@
-## Attract mode for Eggs-It#
+#
+# Attract mode for Eggs-It
+#
+
 ARTWORK.SHR/EGGS.IT=C
 ACTION.HGR/EGGS.IT=A
-[eof]
+
+[eof]

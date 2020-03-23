@@ -1,5 +1,9 @@
-## Attract mode for Street Sports Baseball#
+#
+# Attract mode for Street Sports Baseball
+#
+
 ARTWORK.SHR/SS.BASEBALL=C
 ACTION.DHGR/SS.BASEBALL2=B
 ACTION.DHGR/SS.BASEBALL=B
-[eof]
+
+[eof]

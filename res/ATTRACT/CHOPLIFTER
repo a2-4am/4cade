@@ -1,5 +1,9 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/CHOPLIFTER=C
 ACTION.HGR/CHOPLIFTER=A
 CHOPLIFTER=0
-[eof]
+
+[eof]

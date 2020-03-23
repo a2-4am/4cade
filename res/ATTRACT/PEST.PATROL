@@ -1,5 +1,9 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ACTION.HGR/PEST.PATROL2=A
 ACTION.HGR/PEST.PATROL=A
 PEST.PATROL=0
-[eof]
+
+[eof]

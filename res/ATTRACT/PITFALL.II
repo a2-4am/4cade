@@ -1,5 +1,9 @@
-## Attract mode for Pitfall II#
+#
+# Attract mode for Pitfall II
+#
+
 ACTION.HGR/PITFALL.II2=A
 ACTION.HGR/PITFALL.II=A
 PITFALL.II=0
-[eof]
+
+[eof]

@@ -1,6 +1,10 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/HEAVY.BARREL=C
 ACTION.DHGR/HEAVY.BARREL=B
 ACTION.DHGR/HEAVY2=B
 ACTION.DHGR/HEAVY3=B
-[eof]
+
+[eof]

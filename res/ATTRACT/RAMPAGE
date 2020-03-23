@@ -1,7 +1,11 @@
-## Attract mode for #
+#
+# Attract mode for 
+#
+
 ARTWORK.SHR/RAMPAGE=C
 ACTION.DHGR/RAMPAGE2=B
 ACTION.DHGR/RAMPAGE3=B
 ACTION.DHGR/RAMPAGE4=B
 ACTION.DHGR/RAMPAGE=B
-[eof]
+
+[eof]
