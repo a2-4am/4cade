@@ -1,1 +1,5 @@
-## Attract mode for One on One#ARTWORK.SHR/ONE.ON.ONE=CACTION.HGR/ONE.ON.ONE2=AACTION.HGR/ONE.ON.ONE=A[eof]
+## Attract mode for One on One#
+ARTWORK.SHR/ONE.ON.ONE=C
+ACTION.HGR/ONE.ON.ONE2=A
+ACTION.HGR/ONE.ON.ONE=A
+[eof]

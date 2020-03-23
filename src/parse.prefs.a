@@ -33,25 +33,25 @@ kCheat
 
 .kEquals !byte 1
          !raw  "="
-.kLF     !byte 1,$0D
+.kLF     !byte 1,$0A
 .kFluff1 !byte .kFluff2-*-1
-         !raw  "# Total Replay preferences file",$0D
-         !raw  "# Do not edit by hand.",$0D
-         !raw  "# Or do. I'm a comment, not a cop.",$0D
-         !byte $0D
-         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0D
+         !raw  "# Total Replay preferences file",$0A
+         !raw  "# Do not edit by hand.",$0A
+         !raw  "# Or do. I'm a comment, not a cop.",$0A
+         !byte $0A
+         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0A
 .kFluff2 !byte .kFluff3-*-1
-         !byte $0D
-         !raw  "# value=transition effect listed in FX.CONF, or empty",$0D
+         !byte $0A
+         !raw  "# value=transition effect listed in FX.CONF, or empty",$0A
 .kFluff3 !byte .kFluff4-*-1
-         !byte $0D
-         !raw  "# value=transition effect listed in DFX.CONF, or empty",$0D
+         !byte $0A
+         !raw  "# value=transition effect listed in DFX.CONF, or empty",$0A
 .kFluff4 !byte .kEOF-*-1
-         !byte $0D
-         !raw  "# value=0 or 1",$0D
+         !byte $0A
+         !raw  "# value=0 or 1",$0A
 .kEOF    !byte ._-*-1
-         !byte $0D
-         !raw  "[eof]",$0D
+         !byte $0A
+         !raw  "[eof]",$0A
 ._
 
 .addStringFromStore

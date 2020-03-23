@@ -35,13 +35,13 @@ ParseGamesList
          beq   @newkey               ; always branches
 @skipLine                            ; skip to CR
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR
+         cmp   #$0A                  ; CR
          bne   @skipLine
 @newkey  ldx   #$00                  ; X = index into current key
          stx   gValLen               ; initialize value length (in case this line has no value)
 @emptyline
          jsr   IncAndGetChar         ; get first filter character ('1' if game requires joystick)
-         cmp   #$0D                  ; ignore blank line
+         cmp   #$0A                  ; ignore blank line
          beq   @emptyline
          cmp   #$5B                  ; '[' ends the parsing
          beq   @exit
@@ -71,7 +71,7 @@ ParseGamesList
          jsr   IncAndGetChar
 @gatherKey
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR -> finalize key, no value
+         cmp   #$0A                  ; CR -> finalize key, no value
          beq   @endKey
          cmp   #$3D                  ; '=' ends the key
          beq   @endKey
@@ -80,11 +80,11 @@ ParseGamesList
          bpl   @gatherKey
 @endKey  stx   gKeyLen
          ldx   #$00                  ; now X = index into the current value
-         cmp   #$0D
+         cmp   #$0A
          beq   @endValue
 @gatherValue
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR ends the value
+         cmp   #$0A                  ; CR ends the value
          beq   @endValue
          sta   gVal,x
          inx

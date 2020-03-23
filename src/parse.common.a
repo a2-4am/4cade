@@ -44,11 +44,11 @@ ParseKeyValueList
          beq   @emptyline            ; always branches
 @skipLine                            ; skip to CR
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR
+         cmp   #$0A                  ; CR
          bne   @skipLine
 @emptyline
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR in first position (blank line) -> no key
+         cmp   #$0A                  ; CR in first position (blank line) -> no key
          beq   @emptyline
          cmp   #$23                  ; '#' starts a comment -> no key, skip to CR
          beq   @skipLine
@@ -57,7 +57,7 @@ ParseKeyValueList
          bne   @appendToKey
 @gatherKey
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR -> finalize key, no value
+         cmp   #$0A                  ; CR -> finalize key, no value
          beq   @finalizeKey
          cmp   #$3D                  ; '=' -> finalize key, start gathering value
          beq   @finalizeKey
@@ -67,12 +67,12 @@ ParseKeyValueList
          bpl   @gatherKey
 @finalizeKey
          stx   gKeyLen
-         cmp   #$0D
+         cmp   #$0A
          beq   @storeInOKVS
          ldx   #$00                  ; now X = index into the current value
 @gatherValue
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR -> finalize value
+         cmp   #$0A                  ; CR -> finalize value
          beq   @finalizeValue
          sta   gVal,x
          inx

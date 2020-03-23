@@ -34,7 +34,7 @@ DrawPageInternal
          bne   +                     ; ends the parsing
          tya
          beq   @donePage
-+        cmp   #$0D
++        cmp   #$0A
          beq   @doneParsingLine
          ldx   #3
 -        cmp   @subs_a,x

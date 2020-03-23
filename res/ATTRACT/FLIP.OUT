@@ -1,1 +1,4 @@
-## Attract mode for #ACTION.HGR/FLIP.OUT=AFLIP.OUT=0[eof]
+## Attract mode for #
+ACTION.HGR/FLIP.OUT=A
+FLIP.OUT=0
+[eof]
