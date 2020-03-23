@@ -93,7 +93,6 @@ Retro-Ball
 Roach Hotel
 The Asteroid Field
 The Last Gladiator
-The Last Ninja [DHGR][priority]
 The Space Ark
 The Snapper
 Star Cruiser
