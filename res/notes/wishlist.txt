@@ -59,7 +59,6 @@ Space Cadette
 Bandits
 Injured Engine
 Jawbreaker ][
-Mating Zone [priority]
 
 //other
 Battle Chess [DHGR]
