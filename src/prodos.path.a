@@ -25,7 +25,7 @@ kRootDirectory=*+1
          stx   gPathname
          ; execution falls through here
 AddToPath
-         +STAY PTR
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y               ; length of this segment
          beq   @done

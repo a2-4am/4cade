@@ -179,7 +179,7 @@
          +READ_ROM_NO_WRITE
          jsr   BuildAcceleratorFunction
          +READ_RAM2_WRITE_RAM2
-         +STAY @accelSrc
+         +ST16 @accelSrc
          dex
 -
 @accelSrc=*+1
@@ -227,7 +227,7 @@ SetCursorPosition
          jmp   $FC22
 
 LoadingPrint
-         +STAY PTR
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y
          sta   @max
@@ -347,7 +347,7 @@ CopyDevs
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
          jsr   SwitchToBank1
-         +STAY gRootDirectory
+         +ST16 gRootDirectory
 
          jsr   LoadFile              ; load preferences file into $8000
          !word kRootDirectory
@@ -357,8 +357,8 @@ CopyDevs
          !word gGlobalPrefsStore
          !word -
          !byte 16
-         +LDAY SRC                   ; (SRC) points to free space after the OKVS data structure we just created
-         +STAY gGamesListStore       ; save pointer to free space for next store
+         +LD16 SRC                   ; (SRC) points to free space after the OKVS data structure we just created
+         +ST16 gGamesListStore       ; save pointer to free space for next store
 
          jsr   LoadFile              ; load games list file into $8200
          !word kRootDirectory
@@ -385,13 +385,14 @@ CopyDevs
 
          +LDADDR gGamesListStore
          jsr   okvs_len
-         sta   GameCount
-         sta   SAVE
+         +LD16 WCOUNT
+         +ST16 GameCount
+         +ST16 SAVE
 
          jsr   pref_get              ; see if cheats are enabled by default
          !word kCheat
          !word 0
-         +STAY PTR                   ; (PTR) -> cheat pref value as length-prefixed string '1' or '0'
+         +ST16 PTR                   ; (PTR) -> cheat pref value as length-prefixed string '1' or '0'
          ldy   #1
          lda   (PTR),y               ; A = #$B1 or #$B0
          and   #1                    ; A = #$01 or #$00
@@ -408,18 +409,21 @@ CopyDevs
          pha
 @inner
          lda   SAVE
-         cmp   @kPowersOfTen,y
-         bcc   @digitDone
+         sec
          sbc   @kPowersOfTen,y
          sta   SAVE
          lda   SAVE+1
          sbc   #0
+         bcc   @digitDone
          sta   SAVE+1
          pla
          adc   #0
          pha
          jmp   @inner
 @digitDone
+         lda   SAVE
+         adc   @kPowersOfTen,y
+         sta   SAVE
          pla
          ora   #$30
          sta   VisibleGameCount,y

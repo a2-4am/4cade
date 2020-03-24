@@ -38,11 +38,11 @@ BuildSearchStore
 ; callback called by okvs_iter on gGamesListStore
 
 ; in:    A/Y contains address of filename
-;        X contains 0-based index of the current record in gGamesListStore
+;        $WINDEX contains 0-based index of the current record in gGamesListStore (word)
 ; out:   all registers and flags clobbered
-         +STAY @key
+         +ST16 @key
          jsr   GetGameDisplayName
-         +STAY @value
+         +ST16 @value
 @append
          jsr   okvs_append
          !word gSearchStore
@@ -64,6 +64,7 @@ ResetTextRank
          stx   BestMatchScore
          dex
          stx   BestMatchIndex
+         stx   BestMatchIndex+1
          rts
 
 ;------------------------------------------------------------------------------
@@ -73,17 +74,16 @@ ResetTextRank
 ; against the current InputBuffer
 
 ; in:    A/Y contains address of game display name
-;        X contains 0-based index of the current record in gSearchStore
+;        $WINDEX contains 0-based index of the current record in gSearchStore (word)
 ; out:   all registers and flags clobbered
 ;        MatchCount possibly incremented (if this game was a match at all)
 ;        BestMatchScore and BestMatchIndex possibly updated (if this game
 ;          was the best match so far)
 ;------------------------------------------------------------------------------
 TextRankCallback
-         stx   tmpx                  ; X = OKVS index of this game
-         +STAY zpstring              ; A/Y = address of this game display name
+         +ST16 zpstring              ; A/Y = address of this game display name
          +LDADDR InputLength
-         +STAY zpword
+         +ST16 zpword
          ldy   #0
          lda   (zpstring),y
          cmp   InputLength
@@ -162,8 +162,10 @@ TextRankCallback
          bcc   +
          beq   +
          sta   BestMatchScore
-         ldx   tmpx
-         stx   BestMatchIndex
+         lda   WINDEX
+         sta   BestMatchIndex
+         lda   WINDEX+1
+         sta   BestMatchIndex+1
          inc   MatchCount
 +        rts
 

@@ -100,7 +100,7 @@ HGRStaggerToWhite
 
 SetCopyMask
 ; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
-         +STAY CopyMaskAddr
+         +ST16 CopyMaskAddr
          rts
 
 HGRBlockCopyWithMask

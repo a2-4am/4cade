@@ -72,10 +72,13 @@ PTR          = $02        ; word
 SRC          = $04        ; word
 DEST         = $06        ; word
 SAVE         = $08        ; word
+WINDEX       = $0A        ; word
+WCOUNT       = $0C        ; word
 HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
 ; textrank
+BestMatchIndex = $E5      ; word
 tmpx         = $E7        ; byte
 remainder    = $E8        ; word
 num1         = $EA        ; word
@@ -91,7 +94,6 @@ gamelength=    $F9        ; byte
 firstletter=   $FA        ; byte
 MatchCount =   $FB        ; byte
 BestMatchScore = $FC      ; byte
-BestMatchIndex = $FD      ; byte
 
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList

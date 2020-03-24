@@ -124,7 +124,7 @@ hgr1himirror   = $BF40    ; $C0 bytes
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
          +LDADDR .coords
-         +STAY input
+         +ST16 input
          jmp   InputLoop
 Exit2Bit rts
 InputLoop

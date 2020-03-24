@@ -130,7 +130,7 @@ hgrhi3c        = $BE80    ; $80 bytes
          +BUILD_EXTRA_COLS
          +BUILD_SPARSE_BITMASKS_3BIT
          +LDADDR .coords
-         +STAY input
+         +ST16 input
          jmp   InputLoop
 Exit3Bit rts
 InputLoop
