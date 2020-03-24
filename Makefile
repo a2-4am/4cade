@@ -43,10 +43,10 @@ dsk: md asm
 	for f in res/TITLE.* res/ACTION.* res/ARTWORK.* res/ATTRACT res/SS res/DEMO res/TITLE.ANIMATED; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
-	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" >>build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
+	for f in build/X/*; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f"; done >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" res/proboothd
