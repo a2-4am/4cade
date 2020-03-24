@@ -5,17 +5,22 @@
  - Battle Cruiser
  - Bejeweled
  - California Games
+ - Columns
  - Congo Bongo
  - Flapple Bird
  - Force 7
  - Gauntlet
  - Genius
  - Genius 2
+ - I.O. Silver
+ - Mating Zone
+ - Matterhorn Screamer
  - Miner 2049er II
  - Ming's Challenge
  - One on One
  - Penetrator
  - Randamn
+ - Saracen
  - Soko-Ban
  - Solo Flight
  - Station 5
@@ -27,6 +32,9 @@
  - Summer Games II
  - Super Zaxxon
  - TechnoCop
+ - Test Drive
+ - The Heist
+ - The Last Ninja
  - Triad
  - Wings of Fury
  - Winter Games
@@ -47,10 +55,12 @@
 
  - Added more game cheats
  - Display DHGR title screens in search and browse modes
+ - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Flapple Bird to latest version (thanks Dagen)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
- - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lancaster, Pitfall II)
- - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed
- - Fixed acceleration on Laser 128
+ - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lancaster, Pitfall II) (thanks Andrew R.)
+ - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
+ - Fixed acceleration on Laser 128 (thanks Tom G.)
 
 # Revision 3.0 / serial number 20200121
 
