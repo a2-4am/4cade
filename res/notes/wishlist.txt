@@ -1,7 +1,7 @@
 //4am crack
 The American Challenge
 Arcticfox
-Ardy the Aardvark
+Ardy the Aardvark [priority]
 Boulder Dash
 C'est La Vie
 Championship Baseball
@@ -57,16 +57,15 @@ Space Cadette
 
 //qkumba crack
 Bandits
-Injured Engine
 Jawbreaker ][
 
 //other
 Battle Chess [DHGR]
-Castle Smurfenstein
-Dino Smurf
+Castle Smurfenstein [priority]
+Dino Smurf [priority]
 
 //TODO(woz-imaged but uncracked)
-A.E.
+A.E. [priority]
 Alien Lander
 Arcade Boot Camp
 Beach-Head
@@ -81,7 +80,7 @@ Hardball
 Infiltrator
 Infiltrator II
 International Hockey
-Into The Eagle's Nest [DHGR]
+Into The Eagle's Nest [DHGR][priority]
 Jawbreaker
 Lemmings
 Lunar Leepers
