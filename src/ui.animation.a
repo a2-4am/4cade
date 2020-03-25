@@ -26,15 +26,15 @@ MaybeAnimateTitle
          ldy   OffscreenPage
          bne   +
          eor   #$60
-+        sta   SAVE+1
++        sta   DEST+1
          and   #$60
          sta   PageFrom+2
          eor   #$60
          tax
          lda   #$FD
-         sta   SAVE
+         sta   DEST
          ldy   #0
-         lda   (SAVE),y              ; see if there is a hidden JMP to an
+         lda   (DEST),y              ; see if there is a hidden JMP to an
          cmp   #$4C                  ; animation routine for this screen
                                      ; at +$1FFD (after the graphics data,
                                      ; in the last 3 bytes of a $2000 byte
@@ -72,4 +72,4 @@ MaybeAnimateTitle
 
 @titleAnimPrelaunch                  ; this is executed from $106/main by |Launch|
          bit   $C082
-         jmp   (SAVE)
+         jmp   (DEST)

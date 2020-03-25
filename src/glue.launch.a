@@ -25,12 +25,10 @@ AnyGameSelected
 ;        C set if gGameToLaunch is #$FFFF
 ;        X preserved
          +LD16 gGameToLaunch
-         +CMP16 $FFFF
-         beq   +
+         +CMP16 $FFFF                ; CMP sets carry when equal
+         beq   + 
          clc
-         rts
-+        sec
-         rts
++        rts
 
 GetGameToLaunch
 ; in:    gGameToLaunch = index into gGamesListStore (word) or #$FFFF if no game selected
