@@ -1,5 +1,5 @@
 #
-# Attract mode for N O R A D
+# Attract mode for 
 #
 
 ACTION.HGR/N.O.R.A.D2=A
