@@ -6,6 +6,7 @@
 ; Public functions
 ; - Home
 ; - BlankDHGR
+; - DHGRMode
 ; - IsSearchKey
 ; - IsUpDownOrRightArrow
 ;
@@ -68,6 +69,15 @@ BlankDHGR
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
 
+         ; /!\ execution falls through here to DHGRMode
+;------------------------------------------------------------------------------
+; DHGRMode
+; switch to DHGR mode (HARDER THAN IT SOUNDS)
+;
+; in:    none
+; out:   none
+;------------------------------------------------------------------------------
+DHGRMode
          ; magic sequence to set colour mode on an RGB card
          ; SET80VID clears the RGB-card shift-register
          ; DHIRESON/OFF shifts that bit into the mode register
