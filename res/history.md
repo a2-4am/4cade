@@ -10,6 +10,7 @@
  - Crystal Castles
  - Flapple Bird
  - Force 7
+ - Fuji Speed Way
  - Gauntlet
  - Genius
  - Genius 2
