@@ -90,33 +90,30 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.search.mode.a"         ; \__ execution falls through
          !source "src/ui.animation.a"           ; /
 
-         !source "src/ui.credits.a"             ; \__ execution falls through
-         !source "src/ui.browse.mode.a"         ; /
-
-         !source "src/ui.attract.hgr.a"
-         !source "src/ui.font.a"
-         !source "src/ui.overlay.a"
-         !source "src/ui.offscreen.a"
+         !source "src/ui.browse.mode.a"
          !source "src/ui.attract.mode.a"
+         !source "src/ui.attract.hgr.a"
+         !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
+         !source "src/ui.offscreen.a"
          !source "src/ui.cheats.a"
-         !source "src/glue.launch.a"
-         !source "src/okvs.a"
-         !source "src/wait.a"
-         !source "src/textrank.a"
-         !source "src/parse.common.a"
+         !source "src/ui.credits.a"
+         !source "src/ui.common.a"
+         !source "src/ui.font.a"
+         !source "src/ui.overlay.a"
          !source "src/parse.prefs.a"
+         !source "src/parse.common.a"
+         !source "src/glue.launch.a"
          !source "src/glue.prorwts2.a"
          !source "src/glue.decompress.a"
-         !source "src/ui.common.a"
+         !source "src/textrank.a"
+         !source "src/okvs.a"
+         !source "src/wait.a"
 
+         ; add new files above here
          !source "src/hw.vbl.a"
-
-         ; add new files above here so ui.wait stays last
-
-         !source "src/ui.attract.dhgr.a"        ; \-- execution falls through
-         !source "src/ui.wait.a"                ; /
+         !source "src/ui.wait.a"
 gAttractModeStore
 gFXStore
 gDFXStore
@@ -137,14 +134,14 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
-; WaitForVBL
+; WaitForVBL (label is in constants.a)
          jmp   WaitForVBL_iie        ; SMC to RTS on a II+
 
-; UnwaitForVBL
+; UnwaitForVBL (label is in constants.a)
          rts                         ; SMC to JMP on a IIc
          !word iUnwaitForVBL
 
-; MockingboardStuff (label is in constants.a so prelaunchers can use it)
+; MockingboardStuff (label is in constants.a)
 ;      slot number where Mockingboard was detected and type of board
 ;      #$00 if no Mockingboard detected
          !byte $FD                   ; MockingboardStuff ($FFF8)
