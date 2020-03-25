@@ -7,6 +7,7 @@
  - California Games
  - Columns
  - Congo Bongo
+ - Crystal Castles
  - Flapple Bird
  - Force 7
  - Gauntlet
