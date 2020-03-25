@@ -6,9 +6,9 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E2FB - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E2DD - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; EA95..FFF8 - main program code
+; EA7B..FFF8 - main program code
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
