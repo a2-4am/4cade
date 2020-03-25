@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am and qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/LADY.TUT",plain
@@ -7,27 +7,46 @@
 
          !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         sta   cheat
          ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
-         sta   $F0,x
+         sta   $200,x
          dex
          bpl   -
-         lda   #$F0
-         sta   $084F
          lda   #$00
+         sta   $084F
+         lda   #$02
          sta   $0850
          jmp   $0800      ; decompress
 patch
-cheat=*+1
-         lda   #$00       ; SMC
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
          beq   +
                           ; lives in $07
          lda   #$A5
          sta   $76AC      ; patch - don't decrease lives
 +
+         lda   #$2C
+         sta   $8470      ; reset vector to reboot
+         sta   $84B7
+         lda   #$00
+         sta   $84BE
+         sta   $84C5
+         dec   $84C9
+
+         lda   MockingboardStuff
+         beq   +
+         asl
+         ror   $AD
+         lsr
+         ora   #$C0
+         sta   $AC
+         lda   #$4B
+         sta   $84CB
+         lda   #$85
+         sta   $84CC
++
+         +READ_ROM_NO_WRITE
          jmp   $8460
 end_patch
 
