@@ -19,8 +19,6 @@
          jsr   $1B00
          jsr   EnableAccelerator
          jsr   $D000
-         lda   #$4C
-         sta   $D6EB
          lda   #<callback
          sta   $8D5
          lda   #>callback
@@ -36,8 +34,9 @@ callback
          sta   $4182, x
          dex
          bpl   -
-         jsr   DisableAccelerator
-         jmp   $D6EE
+         lda   #$20
+         sta   $D6EB
+         jmp   DisableAccelerator
 
 reset
          +READ_ROM_NO_WRITE
