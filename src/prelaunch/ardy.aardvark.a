@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ARDY.AARDVARK",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback1
+         sta   $2842
+         lda   #>callback1
+         sta   $2843
+         jmp   $27BF      ; decompress
+
+callback1
+         lda   $C000
+         bpl   callback1
+         ldy   #callback2_e - callback2
+-        lda   callback2, y
+         sta   $200, y
+         dey
+         bpl   -
+         iny
+         sty   $9610
+         inc   $9611
+         jmp   $401E
+
+callback2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $6820      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $401E
+callback2_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
