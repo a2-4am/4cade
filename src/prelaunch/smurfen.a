@@ -1,0 +1,40 @@
+;license:MIT
+;(c) 2020 by qkumba/Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/SMURFEN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         +USES_TEXT_PAGE_2
+         lda   #$60
+         sta   $A0B
+         jsr   $800        ; find and load "DOS"
+         lda   #<callback
+         sta   $B748
+         lda   #>callback
+         sta   $B749
+         jmp   $B700
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+callback
+         +READ_RAM2_WRITE_RAM2
+         lda   #<reset
+         sta   $9E52
+         sta   $FFFC
+         lda   #>reset
+         sta   $9E53
+         sta   $FFFD       ; reset vector patch
+         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+         jmp   $9B00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
