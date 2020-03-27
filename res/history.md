@@ -2,9 +2,11 @@
 
 ## New games
 
+ - Ardy the Aardvark
  - Battle Cruiser
  - Bejeweled
  - California Games
+ - Castle Smurfenstein
  - Columns
  - Congo Bongo
  - Crystal Castles

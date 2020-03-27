@@ -1,0 +1,9 @@
+#
+# Attract mode for Castle Smurfenstein
+#
+
+ACTION.HGR/SMURFEN2=A
+ACTION.HGR/SMURFEN3=A
+ACTION.HGR/SMURFEN=A
+
+[eof]
