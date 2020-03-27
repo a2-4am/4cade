@@ -26,6 +26,7 @@ callback1
          iny
          sty   $9610
          inc   $9611
+         +DISABLE_ACCEL
          jmp   $401E
 
 callback2
@@ -34,7 +35,6 @@ callback2
          beq   +
          dec   $6820      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
          jmp   $401E
 callback2_e
 
