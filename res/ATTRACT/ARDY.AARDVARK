@@ -2,5 +2,7 @@
 # Attract mode for Ardy the Aardvark
 #
 
+ARTWORK.SHR/ARDY.AARDVARK=C
+ACTION.HGR/ARDY.AARDVARK=A
 
 [eof]
