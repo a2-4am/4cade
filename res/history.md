@@ -54,6 +54,7 @@
   - Cannonball Blitz
   - Crime Wave
   - Space Quarks
+  - Tunnel Terror
 
 ## Enhancements & bug fixes
 
