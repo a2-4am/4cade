@@ -63,7 +63,6 @@ Battle Chess [DHGR]
 Dino Smurf [priority]
 
 //TODO(woz-imaged but uncracked)
-A.E. [priority]
 Alien Lander
 Arcade Boot Camp
 Beach-Head
