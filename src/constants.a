@@ -20,7 +20,7 @@
 ; D670..DB98 - HGR font code & ProRWTS glue code
 ; DB99..DBA7 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
-; DBAF..DBFF - (de)acceleration function
+; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C"
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBAF
+DisableAccelerator = $DBB4
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MockingboardStuff
