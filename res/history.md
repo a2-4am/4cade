@@ -2,6 +2,7 @@
 
 ## New games
 
+ - A.E.
  - Ardy the Aardvark
  - Battle Cruiser
  - Bejeweled
