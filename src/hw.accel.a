@@ -119,6 +119,7 @@ EX_3MHZMASK     =    $C0     ; 3.6Mhz
 ; FASTChip
 fc_lock         =    $C06A
 fc_enable       =    $C06B
+fc_speed        =    $C06D
 fc_config       =    $C06E
 fc_data         =    $C06F
 FC_UNLOCK       =    $6A     ; write 4 times
@@ -389,9 +390,7 @@ FASTChip
          sta   fc_lock
          sta   fc_lock
          sta   fc_enable
-         lda   #0
-         sta   fc_config
-         sty   fc_data
+         sty   fc_speed
          lda   #FC_LOCK
          sta   fc_lock
 

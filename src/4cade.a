@@ -123,10 +123,7 @@ gSearchStore
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
-         !word $D001                 ; leave $D000 alone because FastChip accelerator
-                                     ; flips out if it has certain values (it will
-                                     ; be set to $55 as part of the 64K memory test,
-                                     ; which is apparently one of the acceptable values)
+         !word $D000
 gGamesListStore
          !word $FDFD                 ; SMC
 SwitchToBank2
