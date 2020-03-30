@@ -4,5 +4,6 @@
 #
 
 ACTION.HGR/PHASER.FIRE=A
+PHASER.FIRE=0
 
 [eof]
