@@ -1,3 +1,5 @@
+# This file is maintained by hand
+
 SPARE.CHANGE=Type(06),AuxType(0300),Access(C3)
 SPARE.CHANGE.1=Type(F1),AuxType(0000),Access(C3)
 SPY.STRIKES.BAK=Type(06),AuxType(0300),Access(C3)
