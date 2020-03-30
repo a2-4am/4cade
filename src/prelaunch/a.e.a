@@ -9,17 +9,24 @@
 
          +ENABLE_ACCEL
          lda   #$60
+         sta   $4CFC
          sta   $4D23
          bne   +
-         !fill $15
-+        jsr   $BD5       ; decompress
-         +GET_MACHINE_STATUS
+         !fill $12
++        jsr   $BD5       ; decompress title
+         +DISABLE_ACCEL
+         jsr   $800
+         +ENABLE_ACCEL
+         jsr   $535       ; decompress game
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $773       ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $68E
 
 !if * > $1C0 {
