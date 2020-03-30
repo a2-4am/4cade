@@ -1,5 +1,5 @@
 #
-# Attract mode for 
+# Attract mode for A.E
 #
 
 ARTWORK.SHR/A.E=C

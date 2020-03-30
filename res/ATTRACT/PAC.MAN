@@ -1,5 +1,5 @@
 #
-# Attract mode for Pac-Man
+# Attract mode for PAC.MAN
 #
 
 ARTWORK.SHR/PAC.MAN=C

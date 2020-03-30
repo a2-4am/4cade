@@ -8,11 +8,8 @@ cat res/GAMES.CONF |
     cut -d"," -f2 |
     cut -d"=" -f1 | \
     while read game; do
-        # if I knew how to use awk, this could be O(N) instead of O(N^2)
-        name=`cat res/GAMES.CONF | grep ",$game=" | cut -d"=" -f2`
-
         # initialize attract mode configuration file for this game
-        echo "#\n# Attract mode for $name\n#\n" > /tmp/g
+        echo "#\n# Attract mode for $game\n#\n" > /tmp/g
 
         # add box art, if any
         [ -f res/ARTWORK.SHR/"$game" ] &&

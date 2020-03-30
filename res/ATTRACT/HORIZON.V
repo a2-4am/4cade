@@ -1,5 +1,5 @@
 #
-# Attract mode for 
+# Attract mode for HORIZON.V
 #
 
 ACTION.HGR/HORIZON.V2=A

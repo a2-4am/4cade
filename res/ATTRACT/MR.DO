@@ -1,5 +1,5 @@
 #
-# Attract mode for Mr. Do!
+# Attract mode for MR.DO
 #
 
 ACTION.HGR/MR.DO.L01=A

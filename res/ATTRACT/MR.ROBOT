@@ -1,5 +1,5 @@
 #
-# Attract mode for Mr. Robot
+# Attract mode for MR.ROBOT
 #
 
 ARTWORK.SHR/MR.ROBOT=C
