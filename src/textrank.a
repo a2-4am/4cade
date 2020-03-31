@@ -86,6 +86,8 @@ TextRankCallback
          +ST16 zpword
          ldy   #0
          lda   (zpstring),y
+         sec
+         sbc   #1
          cmp   InputLength
          bcc   ++
          sta   gamelength
