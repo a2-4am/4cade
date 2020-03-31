@@ -18,23 +18,33 @@
 gGameToLaunch
          !word $FF,$FF
 
-AnyGameSelected
+;------------------------------------------------------------------------------
+; AnyGameSelected
+; get index of game that is currently selected in the UI (if any)
+;
 ; in:    none
 ; out:   A/Y = gGameToLaunch (word)
 ;        C clear if gGameToLaunch is not #$FFFF
 ;        C set if gGameToLaunch is #$FFFF
 ;        X preserved
+;------------------------------------------------------------------------------
+AnyGameSelected
          +LD16 gGameToLaunch
          +CMP16 $FFFF                ; CMP sets carry when equal
-         beq   + 
+         beq   +
          clc
 +        rts
 
-GetGameToLaunch
+;------------------------------------------------------------------------------
+; GetGameToLaunch
+; get filename of game that is currently selected in the UI (if any)
+;
 ; in:    gGameToLaunch = index into gGamesListStore (word) or #$FFFF if no game selected
 ; out:   C clear if a game is selected, and
 ;          A/Y points to game filename
 ;        C set if no game is selected
+;------------------------------------------------------------------------------
+GetGameToLaunch
          jsr   AnyGameSelected
          bcs   @exit
          +ST16 WINDEX
@@ -43,7 +53,10 @@ GetGameToLaunch
          clc
 @exit    rts
 
-FindGame
+;------------------------------------------------------------------------------
+; FindGame
+; check if an arbitrary game exists, for some definition of 'exists'
+;
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
 ;          $WINDEX = game index, or #$FFFF if the game doesn't really
@@ -52,6 +65,8 @@ FindGame
 ;          list games that require a joystick, but the games list parser
 ;          filters them out if the machine doesn't have a joystick)
 ;        all registers clobbered
+;------------------------------------------------------------------------------
+FindGame
          +ST16 @key
          jsr   okvs_find
          !word gGamesListStore
@@ -76,12 +91,21 @@ FindGame
          clc
 @exit    rts
 
-FindGameInActionSlideshow
+;------------------------------------------------------------------------------
+; FindGameInActionSlideshow
+; check if an arbitrary game exists, for some definition of 'exists', while
+; in the middle of a slideshow
+;
+; /!\ This function assumes that gSlideshowStore exists and is populated,
+;     which is generally only true during the callback function of a slideshow
+;
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists, and
 ;          $WINDEX = game index, and
 ;          A/Y points to game display name + game info bitfield
 ;        C set if game can't be found by any means
+;------------------------------------------------------------------------------
+FindGameInActionSlideshow
          +ST16 @sskey
          jsr   FindGame
          bcc   +
@@ -99,7 +123,10 @@ FindGameInActionSlideshow
          clc
 @exit    rts
 
-GetGameDisplayName
+;------------------------------------------------------------------------------
+; GetGameDisplayName
+; lookup or construct the display name for a specific game
+;
 ; in:    A/Y contains address of a key in gGamesListStore
 ; out:   A/Y contains address of game display name + game info bitfield
 ;        (this might be just the corresponding value in gGamesListStore,
@@ -107,6 +134,8 @@ GetGameDisplayName
 ;        out of thin air)
 ;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
 ;        X preserved
+;------------------------------------------------------------------------------
+GetGameDisplayName
          +ST16 SAVE
          jsr   okvs_get_current      ; get value for this key
                                      ; (PTR) -> truncated game display name + info bitfield
@@ -150,6 +179,15 @@ GetGameDisplayName
          +LDADDR gValLen
          rts
 
+;------------------------------------------------------------------------------
+; PlayGame
+;
+; in:    gGameToLaunch != #$FFFF
+; out:   exits via the game, but also backs up the stack, which may get
+;        restored in |Reenter|... what I'm saying is that we might actually
+;        'return' from this after the user is done playing the game, which is
+;        a neat trick
+;------------------------------------------------------------------------------
 PlayGame
          jsr   GetGameToLaunch
                                      ; A/Y = address of game filename
