@@ -163,4 +163,4 @@ HGRActionCallback
 +        !word $FDFD                 ; SMC
          !word $3FF8
          jsr   DecompressHGR
-         jmp   DrawGameTitleInActionSlideshowHGR
+         jmp   DrawGameTitleInActionSlideshow

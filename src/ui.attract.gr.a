@@ -44,7 +44,7 @@ GRSingle
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
-; BlankGR
+; BlankGR [private]
 ; clear and show GR page 1 without flickering
 ;
 ; in:    none
@@ -63,7 +63,7 @@ BlankGR
          jmp   GRMode
 
 ;------------------------------------------------------------------------------
-; .LoadGRTransition [private]
+; LoadGRTransition [private]
 ;
 ; in:    none
 ; out:   all registers and flags clobbered
@@ -78,7 +78,7 @@ LoadGRTransition
 GRRTS    rts
 
 ;------------------------------------------------------------------------------
-; .GRActionCallback [private]
+; GRActionCallback [private]
 ; callback called by okvs_iter on gSlideshowStore
 ; to load and display a single GR action screenshot
 

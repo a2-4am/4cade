@@ -58,6 +58,7 @@ SHRSingle
 
 ;------------------------------------------------------------------------------
 ; LoadSHGRTransition [private]
+; load the SHR transition effect code (currently always the same file)
 ;
 ; in:    none
 ; out:   all registers and flags clobbered

@@ -10,7 +10,6 @@
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
 
-         ; /!\ execution falls through here from ui.attract.dhgr/DHGRActionCallback
 ExecuteTransitionAt6000AndWait
          ldy   #$60
          +HIDE_NEXT_2_BYTES

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am & qkumba
+;(c) 2018-2020 by 4am & qkumba
 ;
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
@@ -11,6 +11,8 @@
 ; Public variables
 ; - InputLength                      ; [byte] number of characters typed in search mode
 ; - InputBuffer                      ; [25 bytes] characters typed in search mode
+;
+; Zero page variables
 ; - SelectedIndex                    ; [byte] index in gSearchStore of currently selected game in search mode
 ; - MatchCount                       ; [byte] number of games that match InputBuffer
 ; - BestMatchScore                   ; [byte] raw ranking score (0-100) of current best match (updated during TextRankCallback)
@@ -22,6 +24,17 @@ InputLength
 InputBuffer
          !text "                         "
 
+;------------------------------------------------------------------------------
+; BuildSearchStore
+; Build a temporary data structure in main memory to support search UI.
+; Now that gGamesListStore no longer contains full game display names, we call
+; this to build a store that does. It's built in main memory and will be
+; clobbered as soon as we enter attract mode (mega- or mini-), run a game,
+; run a demo, or sneeze.
+;
+; in:    none
+; out:   gSearchStore populated
+;------------------------------------------------------------------------------
 BuildSearchStore
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1

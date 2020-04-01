@@ -9,8 +9,9 @@
 ; - DHGRSingle
 ; - BlankHGR
 ; - HGRMode
-; - ForceHGRMOde
-; - DrawGameTitleInActionSlideshowHGR
+; - GRMode
+; - ForceHGRMode
+; - DrawGameTitleInActionSlideshow
 ; - RedrawForDHGR
 ;
 
@@ -97,8 +98,8 @@ BlankHGR
          sta   OffscreenPage
          ; /!\ execution falls through here to HGRMode
 ;------------------------------------------------------------------------------
-; HGRMode
-; twiddles softswitches to set HGR mode (does not set page 1 or 2)
+; HGRMode / GRMode
+; twiddles softswitches to set (H)GR mode (does not set page 1 or 2)
 ;
 ; in:    none
 ; out:   all registers preserved
@@ -233,7 +234,18 @@ DHGRActionCallback
 
          lda   #$EA                  ; NOP
          +HIDE_NEXT_2_BYTES
-DrawGameTitleInActionSlideshowHGR
+         ; /!\ execution falls through here to DrawGameTitleInActionSlideshowHGR
+;------------------------------------------------------------------------------
+; DrawGameTitleInActionSlideshow
+; draw the game title in the lower left corner of the screen
+;
+; /!\ exits via ExecuteTransitionAt6000AndWait, and the transition code must
+;     already be loaded at $6000
+;
+; in:    none
+; out:   exits via ExecuteTransitionAt6000AndWait
+;------------------------------------------------------------------------------
+DrawGameTitleInActionSlideshow
          lda   #$60                  ; RTS
          sta   @fallthroughForDHGR
 
