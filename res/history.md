@@ -54,17 +54,21 @@
 
   - Cannonball Blitz
   - Crime Wave
+  - Laser Bounce
+  - N.O.R.A.D
+  - Phaser Fire
   - Space Quarks
   - Tunnel Terror
 
 ## Enhancements & bug fixes
 
  - Added more game cheats
- - Display DHGR title screens in search and browse modes
+ - Display double hi-res title screens in search and browse modes
  - Upgrade Bejeweled to latest version (thanks Jeremy)
  - Upgrade Flapple Bird to latest version (thanks Dagen)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
- - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lancaster, Pitfall II) (thanks Andrew R.)
+ - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
+ - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lady Tut, Lancaster, Pitfall II) (thanks Andrew R.)
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
  - Fixed acceleration on Laser 128 (thanks Tom G.)
 
