@@ -7,14 +7,14 @@ Championship Baseball
 Championship Wrestling
 Conquering Worlds
 Dive Bomber
-Double Trouble
+Double Trouble [priority]
 Elite
 G.I. Joe
 GBA Championship Basketball
 Impossible Mission II [DHGR][priority]
-Karate Champ
+Karate Champ [priority]
 Kung Fu Master
-Little Computer People
+Little Computer People [priority]
 Lock 'N' Chase
 Mad Rat
 Marauder
@@ -56,7 +56,7 @@ Space Cadette
 
 //qkumba crack
 Bandits
-Jawbreaker ][
+Jawbreaker ][ [priority]
 
 //other
 Battle Chess [DHGR]
@@ -69,7 +69,7 @@ Beach-Head
 Beach-Head II
 Boa
 Borg
-Caverns of Callisto
+Caverns of Callisto [priority]
 Copts and Robbers
 The Dam Busters
 Fight Night
