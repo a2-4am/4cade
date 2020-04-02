@@ -21,7 +21,7 @@ Credits
          !word kRootDirectory
          !word kCreditsFile
          !word $8000
-         jsr   ForceHGRMode
+--       jsr   ForceHGRMode
          jsr   ClearOffscreen
          lda   OffscreenPage
          ror                         ; draw on offscreen page
@@ -36,17 +36,26 @@ Credits
 
 ;------------------------------------------------------------------------------
 ; Help
-; display global help page and wait
+; display per-game or global help page and wait
 ;
 ; in:    none
 ; out:   see above
 ;------------------------------------------------------------------------------
 Help
-         jsr   LoadFile              ; load help text into $8000
+         jsr   GetGameToLaunch
+         bcs   @global
+         +ST16 @fname
+         jsr   LoadFile
+         !word kGameHelpDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $8000
+         clc
+         bcc   --                    ; always branches
+@global  jsr   LoadFile              ; load help text into $8000
          !word kRootDirectory
          !word kHelpTextFile
          !word $8000
-         jsr   LoadHelpOffscreen
+         jsr   LoadHelpOffscreen     ; load fancy backdrop
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000

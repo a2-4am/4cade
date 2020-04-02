@@ -49,6 +49,10 @@ dsk: md asm
 	for f in build/X/*; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f"; done >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
+	rsync -aP res/GAMEHELP build/ >>build/log
+	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/GAMEHELP/STANDARD build/GAMEHELP/$$(basename $$f); done
+	bin/buildfileinfo.sh build/GAMEHELP "04" "8000" >>build/log
+	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/GAMEHELP" "build/GAMEHELP" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" res/proboothd
 
 asm: md asmlauncher asmfx asmprelaunch
@@ -81,9 +85,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X
-	mkdir -p build/FX
-	mkdir -p build/PRELAUNCH
+	mkdir -p build/X build/FX build/PRELAUNCH build/GAMEHELP
 
 clean:
 	rm -rf build/ || rm -rf build
