@@ -55,6 +55,7 @@
   - Cannonball Blitz
   - Crime Wave
   - Laser Bounce
+  - Night Stalker
   - N.O.R.A.D
   - Phaser Fire
   - Space Quarks
