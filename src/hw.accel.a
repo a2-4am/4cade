@@ -6,8 +6,7 @@
 ;
 ; Forked from NORMFAST Release 6 (see changelog below)
 ;
-; No functional changes to the acceleration routines, but for
-; Total Replay, we split the machine identification code from
+; For Total Replay, we split the machine identification code from
 ; the (de)acceleration code, because we can do the ID part once
 ; at program startup (when ROM is easily available), then
 ; (de)accelerate repeatedly from the language card (when ROM
@@ -134,11 +133,6 @@ FC_HIFI         =    4
 tw1_speed       =    $C074
 TW1_1MHZ        =    1
 TW1_MAX         =    0
-
-; Trademarked German accelerator
-; overlaps annunciator 2 & //c mouse interrupts
-uw_fast         =    $C05C
-uw_1mhz         =    $C05D
 
 ; Zip Chip
 ; overlaps annunciator 1 & //c vertical blank
@@ -320,9 +314,9 @@ end_iicplus
 ; X = low byte address of speed location
 ; Y = OR mask for fast
 setspeed
-        lda     #1        ; disable accelerator entry point
-        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-        lda     #0        ; enable accelerator entry point
+         lda     #1       ; disable accelerator entry point
+         !byte   $2C      ; BIT <ABSOLUTE>, hide next lda #
+         lda     #0       ; enable accelerator entry point
 
 setspeed_x=*+1
          ldx   #$FD       ; SMC
@@ -348,23 +342,17 @@ end_setspeed
 ; FastChip, &c.)
 ; We blindly set switches for all known cards.
 addon
-        lda     #1        ; disable accelerator entry point
-        !byte   $2C       ; BIT <ABSOLUTE>, hide next lda #
-        lda     #0        ; enable accelerator entry point
+         lda     #1       ; disable accelerator entry point
+         !byte   $2C      ; BIT <ABSOLUTE>, hide next lda #
+         lda     #0       ; enable accelerator entry point
 
-        ; TransWarp I
-        sta   tw1_speed
+         ; TransWarp I
+         sta   tw1_speed
 
-        ; trademarked accelerator from Germany
-
-        tay
-
-         sta   uw_fast,y ; value does not matter, SMC
-                         ; no blind setting on the IIc
-                         ; it has unwanted side-effects
+         ; no UW support here because the softswitch to enable
+         ; acceleration triggers DHGR bugs in OpenEmulator :-(
 
          ; Zip Chip
-
          ldy   #FC_1MHZ
          eor   #1
          tax
@@ -372,16 +360,15 @@ addon
          ldy   #FC_ON
 +        lda   #ZC_UNLOCK
          php
-         sei             ; timing sensitive
+         sei              ; following sequence is timing sensitive
          sta   zc_lock
          sta   zc_lock
          sta   zc_lock
          sta   zc_lock
-         lsr             ; not ZC_LOCK or ZC_UNLOCK
+         lsr              ; not ZC_LOCK or ZC_UNLOCK
          sta   zc_lock,x  ; disable/enable
          lda   #ZC_LOCK
          sta   zc_lock
-         sta   $C05D     ; fix colouring
 
 FASTChip
          lda   #FC_UNLOCK

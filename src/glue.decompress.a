@@ -81,8 +81,6 @@ DecompressHGR
 DecompressDHGR
          jsr   DecompressHGR
          sta   WRITEMAINMEM
-         jsr   DHGRMode              ; OpenEmulator incorrectly switches out of
-                                     ; DHGR mode during accelerated decompression
          lda   #$60
          sta   PageFrom+2
          lda   #$40
