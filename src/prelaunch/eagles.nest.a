@@ -1,0 +1,45 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/EAGLES.NEST",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9E6
+         jsr   $800       ; load DOS
+         lda   #$4C
+         sta   $347
+         lda   #<callback1
+         sta   $348
+         lda   #>callback1
+         sta   $349
+         jmp   $9600
+
+callback1
+         lda   #<callback2
+         sta   $348
+         jmp   ($55)
+
+callback2
+         lda   #$6C
+         sta   $347
+         lda   #$55
+         sta   $348
+         lda   #0
+         sta   $349
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $8580      ; patch - don't increase hits
++
+         +DISABLE_ACCEL
+         jmp   $347
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

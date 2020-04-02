@@ -94,16 +94,6 @@ goto :EOF
 2>nul md build
 2>nul md build\po
 2>nul md build\X
-2>nul md build\TITLE.HGR
-2>nul md build\TITLE.DHGR
-2>nul md build\ACTION.HGR
-2>nul md build\ACTION.DHGR
-2>nul md build\ACTION.GR
-2>nul md build\ARTWORK.SHR
-2>nul md build\TITLE.ANIMATED
-2>nul md build\ATTRACT
-2>nul md build\SS
-2>nul md build\DEMO
 2>nul md build\FX
 2>nul md build\PRELAUNCH
 goto :EOF
