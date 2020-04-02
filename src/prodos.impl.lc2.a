@@ -249,7 +249,7 @@ ProDOS_enter
 @seekreset
          jsr   hddrdwrpart
 @reset
-         lda   #$ff
+         lda   #$f0
          sta   blefthi
          sta   bleftlo
          rts

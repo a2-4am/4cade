@@ -77,6 +77,11 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
+cscript /nologo bin\rsync.js "res\GAMEHELP\*" "build\GAMEHELP" >>build\log
+for %%q in (res\title.hgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
+for %%q in (res\title.dhgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
+cscript /nologo bin\buildfileinfo.js build\GAMEHELP "06" "6000" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/GAMEHELP" "build\GAMEHELP" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
 goto :EOF
 )
@@ -96,6 +101,7 @@ goto :EOF
 2>nul md build\X
 2>nul md build\FX
 2>nul md build\PRELAUNCH
+2>nul md build\GAMEHELP
 goto :EOF
 
 :asmlauncher
@@ -120,8 +126,8 @@ for %%q in (src\prelaunch\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
-for %%q in (res\title.hgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
-for %%q in (res\title.dhgr\*) do if not exist build\prelaunch\%%~nxq 1>nul copy build\prelaunch\standard build\prelaunch\%%~nxq
+for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
+for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 )
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
