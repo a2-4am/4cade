@@ -52,14 +52,14 @@
 
 ## New demos
 
-  - Cannonball Blitz
-  - Crime Wave
-  - Laser Bounce
-  - Night Stalker
-  - N.O.R.A.D
-  - Phaser Fire
-  - Space Quarks
-  - Tunnel Terror
+ - Cannonball Blitz
+ - Crime Wave
+ - Laser Bounce
+ - Night Stalker
+ - N.O.R.A.D
+ - Phaser Fire
+ - Space Quarks
+ - Tunnel Terror
 
 ## Enhancements & bug fixes
 
