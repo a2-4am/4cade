@@ -60,7 +60,6 @@ Jawbreaker ][ [priority]
 
 //other
 Battle Chess [DHGR]
-Dino Smurf [priority]
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
