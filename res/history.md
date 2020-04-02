@@ -18,6 +18,7 @@
  - Genius
  - Genius 2
  - I.O. Silver
+ - Into The Eagle's Nest
  - Mating Zone
  - Matterhorn Screamer
  - Miner 2049er II
