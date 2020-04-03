@@ -20,6 +20,7 @@
  - Genius 2
  - I.O. Silver
  - Into The Eagle's Nest
+ - Little Computer People
  - Mating Zone
  - Matterhorn Screamer
  - Miner 2049er II
