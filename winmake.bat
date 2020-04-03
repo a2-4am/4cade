@@ -80,6 +80,7 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 cscript /nologo bin\rsync.js "res\GAMEHELP\*" "build\GAMEHELP" >>build\log
 for %%q in (res\title.hgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
+cscript /nologo bin\dumpcr.js "build\GAMEHELP\*"
 cscript /nologo bin\buildfileinfo.js build\GAMEHELP "06" "6000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/GAMEHELP" "build\GAMEHELP" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
