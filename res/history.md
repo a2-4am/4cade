@@ -11,6 +11,7 @@
  - Columns
  - Congo Bongo
  - Crystal Castles
+ - Dino Smurf
  - Flapple Bird
  - Force 7
  - Fuji Speed Way
