@@ -12,6 +12,7 @@
  - Congo Bongo
  - Crystal Castles
  - Dino Smurf
+ - Double Trouble
  - Flapple Bird
  - Force 7
  - Fuji Speed Way
