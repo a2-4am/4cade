@@ -1,45 +1,22 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; miscellaneous UI functions
 ;
 ; Public functions
-; - ClearScreens
 ; - Home
 ; - BlankDHGR
+; - DHGRMode
 ; - IsSearchKey
 ; - IsUpDownOrRightArrow
 ;
-
-;------------------------------------------------------------------------------
-; ClearScreens
-; clear and display text screen and then clear both hires screens
-; (in this order so that the erasing isn't visible)
-;
-; in:    none
-; out:   $0106..$011F clobbered
-;------------------------------------------------------------------------------
-ClearScreens
-         jsr   Home
-         lda   #$20                  ; clear both hi-res pages
-         sta   @clear+2              ; (in case game loader shows them, we don't want
-         ldx   #$40                  ; to flash previous bits of the launcher UI)
-         ldy   #$00
-         tya
-@clear   sta   $FD00,y               ; SMC
-         iny
-         bne   @clear
-         inc   @clear+2
-         dex
-         bne   @clear
-         rts
 
 ;------------------------------------------------------------------------------
 ; Home
 ; clear and display text screen (HARDER THAN IT SOUNDS)
 ;
 ; in:    none
-; out:   $0106..$011F clobbered
+; out:   none
 ;------------------------------------------------------------------------------
 Home
          lda   MachineStatus
@@ -57,26 +34,25 @@ Home
          sta   CLOCKCTL              ; black border
          sta   CLOCKCTL              ; set twice for VidHD
 @noSHR
-         ldx   #(.end-@start-1)
--        lda   @start,x
-         sta   $106,x
-         dex
-         bpl   -
-         jmp   $106
-@start
-         ; this will be run from main memory
-         +READ_ROM_NO_WRITE
+         sta   gMachineInDHGRMode    ; A=0 here
+         ldy   #$2C                  ; BIT
+         sty   PageFrom
+         ldx   #$04
+         stx   PageTo+2
+         lda   #$A0                  ; clear text screen page 1
+         jsr   ClearGR
+         sta   WRITEAUXMEM
+         ldx   #$04
+         stx   PageTo+2
+         jsr   ClearGR
+         sta   WRITEMAINMEM
+
+         jsr   WaitForVBL
          sta   DHIRESOFF             ; get out of DHGR mode
-         sta   CLR80VID              ; get out of DHGR mode
-                                     ; write-order matters for RGB-card
-         jsr   $FB3C ;ROM_TEXTish    ; clear screen but don't show it
-         jsr   ROM_HOME              ; HOME
+         sta   CLR80VID              ; /!\ order of operations matters for RGB card
          lda   PAGE1
-         lda   $C051                 ; now show it
-SwitchToBank1
-         +READ_RAM1_WRITE_RAM1
-         rts                         ; and return to caller
-.end
+         lda   TEXTMODE
+         jmp   UnwaitForVBL
 
 ;------------------------------------------------------------------------------
 ; BlankDHGR
@@ -93,12 +69,22 @@ BlankDHGR
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
 
+         ; /!\ execution falls through here to DHGRMode
+;------------------------------------------------------------------------------
+; DHGRMode
+; switch to DHGR mode (HARDER THAN IT SOUNDS)
+;
+; in:    none
+; out:   none
+;------------------------------------------------------------------------------
+DHGRMode
          ; magic sequence to set colour mode on an RGB card
          ; SET80VID clears the RGB-card shift-register
          ; DHIRESON/OFF shifts that bit into the mode register
          ; we do that twice because the mode register is two bits wide
          ; we need mode 00 for colour
 
+         jsr   WaitForVBL
          sta   SET80VID
          sta   DHIRESON
          sta   DHIRESOFF
@@ -107,6 +93,10 @@ BlankDHGR
 
          sta   DHIRESON              ; then turn DHGR on
          bit   PAGE1
+         lda   #1
+         sta   OffscreenPage
+         sta   gMachineInDHGRMode
+         jsr   UnwaitForVBL
          jmp   HGRMode
 
 ;------------------------------------------------------------------------------

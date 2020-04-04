@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; hi-res font drawing routines
 ;
@@ -22,7 +22,7 @@ DrawPageInternal
          stx   @leftMargin
          ldx   #0
          stx   VTAB
-         +STAY PTR
+         +ST16 PTR
 @drawLine
 @leftMargin=*+1
          lda   #$FD                  ; SMC
@@ -34,7 +34,7 @@ DrawPageInternal
          bne   +                     ; ends the parsing
          tya
          beq   @donePage
-+        cmp   #$0D
++        cmp   #$0A
          beq   @doneParsingLine
          ldx   #3
 -        cmp   @subs_a,x
@@ -51,7 +51,7 @@ DrawPageInternal
          tya
          beq   @skip
          ldx   SAVE
-         +LDAY PTR
+         +LD16 PTR
          plp
          php
          jsr   DrawBufferInternal
@@ -96,7 +96,7 @@ DrawCenteredStringInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
-         +STAY PTR
+         +ST16 PTR
 
          ldy   #0
          php
@@ -116,7 +116,7 @@ DrawStringInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
-         +STAY PTR
+         +ST16 PTR
 
          ldy   #0
 +        lda   (PTR),y
@@ -125,7 +125,7 @@ DrawStringInternal
          bne   +
          inc   PTR+1
 +
-         +LDAY PTR
+         +LD16 PTR
          ; /!\ execution falls through here to DrawBufferInternal
 
 DrawBufferInternal
@@ -141,7 +141,7 @@ DrawBufferInternal
 ; HTAB is incremented for each character
 ; VTAB is NOT incremented
 ; clobbers A/X/Y
-         +STAY @src+1
+         +ST16 DBISrc+1
          php
          dex
          lda   VTAB
@@ -171,51 +171,51 @@ DrawBufferInternal
          eor   #$60
          clc
 +
-         sta   @row0+2
+         sta   DBIRow0+2
          adc   #$04
-         sta   @row1+2
+         sta   DBIRow1+2
          adc   #$04
-         sta   @row2+2
+         sta   DBIRow2+2
          adc   #$04
-         sta   @row3+2
+         sta   DBIRow3+2
          adc   #$04
-         sta   @row4+2
+         sta   DBIRow4+2
          adc   #$04
-         sta   @row5+2
+         sta   DBIRow5+2
          adc   #$04
-         sta   @row6+2
+         sta   DBIRow6+2
          adc   #$04
-         sta   @row7+2
+         sta   DBIRow7+2
 @hgrlo   lda   #$FD
          clc
          adc   HTAB
-         sta   @row0+1
-         sta   @row1+1
-         sta   @row2+1
-         sta   @row3+1
-         sta   @row4+1
-         sta   @row5+1
-         sta   @row6+1
-         sta   @row7+1
-@loop
-@src     ldy   $FDFD,x
+         sta   DBIRow0+1
+         sta   DBIRow1+1
+         sta   DBIRow2+1
+         sta   DBIRow3+1
+         sta   DBIRow4+1
+         sta   DBIRow5+1
+         sta   DBIRow6+1
+         sta   DBIRow7+1
+DBILoop
+DBISrc   ldy   $FDFD,x
          lda   FontDataRow0,y
-@row0    sta   $FDFD,x
+DBIRow0  sta   $FDFD,x
          lda   FontDataRow1,y
-@row1    sta   $FDFD,x
+DBIRow1  sta   $FDFD,x
          lda   FontDataRow2,y
-@row2    sta   $FDFD,x
+DBIRow2  sta   $FDFD,x
          lda   FontDataRow3,y
-@row3    sta   $FDFD,x
+DBIRow3  sta   $FDFD,x
          lda   FontDataRow4,y
-@row4    sta   $FDFD,x
+DBIRow4  sta   $FDFD,x
          lda   FontDataRow5,y
-@row5    sta   $FDFD,x
+DBIRow5  sta   $FDFD,x
          lda   FontDataRow6,y
-@row6    sta   $FDFD,x
+DBIRow6  sta   $FDFD,x
          lda   FontDataRow7,y
-@row7    sta   $FDFD,x
+DBIRow7  sta   $FDFD,x
          inc   HTAB
          dex
-         bpl   @loop
+         bpl   DBILoop
          rts

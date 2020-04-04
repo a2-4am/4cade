@@ -1,0 +1,89 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BERZAP.MB",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   ++
+         php
+         lda   #$ad
+         ldy   $3d94
+         cpy   #$ce
+         bne   +
+         sta   $3d94      ; patch - don't decrease lives
+         sta   $6573      ; patch - don't increase lives
+         sta   $76ba      ; patch - don't increase lives
++        ldy   $684e
+         cpy   #$ee
+         bne   +
+         sta   $684e      ; patch - don't increase lives
+         sta   $735f      ; patch - don't increase lives
++        ldy   $6a70
+         cpy   #$ee
+         bne   +
+         sta   $6a70      ; patch - don't increase lives
+         sta   $72d7      ; patch - don't increase lives
++        plp
+
+++       bcc   skipmb
+         cpx   #$C4
+         beq   skipmb
+         txa
+
+         ldx   $3FCD      ;find #$C4s
+         cpx   #$C4
+         bne   ++
+         ldy   #0
+-        ldx   $3FCD,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $3FCD,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+
+++       ldx   $9743      ;find #$C4s
+         cpx   #$C4
+         bne   ++
+-        ldx   $9743,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $9743,Y    ;Replace #$C4 with detected slot
++        ldx   $988D,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $988D,Y    ;Replace #$C4 with detected slot
++        ldx   $ACE0,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $ACE0,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+         sta   $9A63
+         sta   $9A6B
+         sta   $AB1D
+
+++       ldx   $89D5      ;find #$C4s
+         cpx   #$C4
+         bne   ++
+         ldy   #0
+-        ldx   $89D5,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $89D5,Y    ;Replace #$C4 with detected slot
++        ldx   $9464,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $9464,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+
+++
+
+skipmb
+         jmp   ($b2ce)

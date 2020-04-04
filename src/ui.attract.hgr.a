@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; HGR title and action slideshows
 ;
@@ -48,11 +48,12 @@ HGRActionSlideshow
 ;        graphics mode still displaying hi-res screen with last picture visible
 ;------------------------------------------------------------------------------
 HGRSingle
-         +STAY @fname
-         jsr   LoadFile              ; load HGR screenshot at $4000
+         +ST16 @fname
+         jsr   LoadFile              ; load compressed HGR screenshot at $3FF8
          !word kRootDirectory
 @fname   !word $FDFD                 ; SMC
-         !word $4000
+         !word $3FF8
+         jsr   DecompressHGR
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jmp   ExecuteTransitionAt6000AndWait
 
@@ -78,11 +79,11 @@ LoadHGRTransition
          jsr   pref_get              ; get HGR transition effect from prefs
          !word kNextFX
          !word gFXStore
-         +STAY ++                    ; A/Y = filename (don't load file yet)
-                                     ; X = index of the transition in FX store
+         +ST16 ++                    ; A/Y = filename (don't load file yet)
+                                     ; $WINDEX = index of the transition in FX store
          +LDADDR gFXStore
          jsr   okvs_next             ; get transition after this one
-         +STAY +
+         +ST16 +
 
          jsr   pref_set              ; update prefs store and save to disk
          !word kNextFX
@@ -100,7 +101,7 @@ HGRRTS   rts
 ; to load and display a single HGR title screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /TITLE.HGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -109,14 +110,16 @@ HGRTitleCallback
          bit   KBD
          bmi   HGRRTS
 
-         +STAY +
+         +ST16 +
 
-         jsr   GetGameInfo
+         jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   HGRRTS
-         stx   gGameToLaunch
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadFile              ; load HGR screenshot at $4000
          !word kHGRTitleDirectory
@@ -131,7 +134,7 @@ HGRTitleCallback
 ; to load and display a single HGR action screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.HGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
@@ -141,58 +144,23 @@ HGRActionCallback
          bit   KBD
          bmi   HGRRTS
 
-         +STAY +
+         +ST16 +
 
-         jsr   GetGameInfoInActionSlideshow
+         jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   HGRRTS
 
          ; found the game
-         +STAY SAVE                  ; (SAVE) -> game title
-         stx   gGameToLaunch
+         +ST16 SAVE                  ; (SAVE) -> game display name + game info bitfield
 
-         jsr   LoadFile              ; load HGR screenshot at $4000
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
+
+         jsr   LoadFile              ; load compressed HGR screenshot at $3FF8
          !word kHGRActionDirectory
 +        !word $FDFD                 ; SMC
-         !word $4000
-
-         ; display game name in the bottom-left corner
-         lda   #22
-         sta   VTAB
-         lda   #0                    ; solid horizontal bar character
-         jsr   @resetline
-         lda   (SAVE),y              ; (SAVE) -> game title, Y = 0, so A = title length
-         clc
-         adc   #$03
-         sta   gPathname
-         lda   #7                    ; top-right rounded corner character
-         jsr   @drawline
-
-         inc   VTAB
-         lda   #" "
-         jsr   @resetline
-         lda   (SAVE),y              ; A = title length
-         tay
--        lda   (SAVE),y
-         sta   gPathname+1,y
-         dey
-         bne   -
-         lda   #3                    ; solid vertical bar character
-         jsr   @drawline
-
-         jmp   ExecuteTransitionAt6000AndWait
-@resetline
-         ldy   #40
--        sta   gPathname,y
-         dey
-         bne   -
-         sty   HTAB
-         rts
-@drawline
-         ldy   gPathname
-         sta   gPathname,y
-         +LDADDR gPathname
-         sec
-         ; /!\ execution falls through to ui.font/DrawString
+         !word $3FF8
+         jsr   DecompressHGR
+         jmp   DrawGameTitleInActionSlideshow

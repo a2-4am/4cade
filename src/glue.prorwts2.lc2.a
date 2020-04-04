@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am & qkumba
+;(c) 2018-2020 by 4am & qkumba
 ;
 ; ProRWTS2 glue functions
 ;
@@ -8,51 +8,56 @@
 ; and parse.prefs which handle bank switching for you.
 
 LoadFileInternal
+         lda   #0                    ; 0 = read into main memory
+LoadFileAuxInternal
+         sta   @auxreq+1             ; call with A=1 to load directly into aux memory
          +LDADDR gPathname
-         +STAY namlo                 ; set filename
+         +ST16 namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
-         lda   #0                    ; 0 = read into main memory
+         lsr
          sta   auxreq
          lda   ldrlo+1
          bne   +                     ; if caller provided a load address, use it
          sta   sizelo                ; otherwise query the load address from file metadata
          sta   sizehi                ; 0 = query load address
          jsr   hddopendir            ; call ProRWTS2
-         +LDAY ldrlo2
-         +STAY ldrlo
+         +LD16 ldrlo2
+         +ST16 ldrlo
 +        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
+@auxreq
+         lda   #0
+         sta   auxreq
+JumpOpen
          jmp   hddopendir            ; exit via ProRWTS2
 
 LoadDHRFileInternal
          +LDADDR gPathname
-         +STAY namlo                 ; set filename
+         +ST16 namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
-         lda   #$00                  ; read first $2000 bytes
-         sta   sizelo
-         sta   ldrlo
          lda   #$20
          sta   sizehi
          asl
          sta   ldrhi                 ; into $4000
-         lda   #1                    ; 1 = read into aux memory
-         sta   auxreq
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
+         ;;lda   #1                    ; 1 = read into aux memory
+         sta   auxreq
+         lsr                         ; read first $2000 bytes
+         sta   sizelo
+         sta   ldrlo
          jsr   hddopendir            ; call ProRWTS2
          lda   #$20                  ; read next $2000 bytes
          sta   sizehi
-         asl
-         sta   ldrhi                 ; into $4000
          dec   auxreq                ; 0 = read into main memory
          clc                         ; not a subdirectory
          jmp   hddrdwrpart           ; call ProRWTS2
 
 SaveSmallFileInternal
          +LDADDR gPathname
-         +STAY namlo                 ; set filename for ProRWTS2
+         +ST16 namlo                 ; set filename for ProRWTS2
          jsr   traverse              ; go to subdirectory, set up filename for read
          ;lda   #cmdread              ; read (instead of write)
          ;sta   reqcmd
@@ -67,4 +72,4 @@ SaveSmallFileInternal
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd
          sta   sizehi                ; 512 bytes
-         jmp   hddopendir            ; exit via ProRWTS2 (must re-open the file after query)
+         bne   JumpOpen              ; exit via ProRWTS2 (must re-open the file after query)

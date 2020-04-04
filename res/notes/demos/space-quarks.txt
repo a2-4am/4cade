@@ -1,0 +1,9 @@
+$1C38: 8D10C0 -> EAEAEA don't clear keyboard strobe (context is 4C501CAD00C08D10C0C980)
+$1C3F: C99BD0 -> 4C0001 to exit on keypress (context is 90E2C99BD006200096)
+$0D6F: 8D10C0 -> EAEAEA don't clear keyboard strobe (context is AD00C08D10C0C9809005C9C6)
+$0D76: C9C6F0 -> 4C0001 to exit on keypress
+$72BD: F0 0A AD 00 C0 C9 80 8D 10 C0 90 08 68 68 AD 10 C0 ->
+       F0 08 AD 00 C0 10 0D 4C 00 01 CE 05 03 F0 F8 68 68 to exit on keypress or after 3 demo cycles
+
+no sound
+no joystick

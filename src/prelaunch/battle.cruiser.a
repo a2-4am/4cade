@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BATTLE.CRUISER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2027
+         jsr   $2000      ; decompress
+
+         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
+         bcs   +
+         ldy   #0
+         sty   $868
+         sty   $9486
+         ldy   #$60
+         sty   $B000      ; no speech chip, pretend no MB
++        and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $A22       ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $845
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

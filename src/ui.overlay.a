@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; routines for drawing the UI overlay (search bar, browse bar, instructions, cheat mode)
 ; on top of whatever else is on the screen
@@ -20,16 +20,18 @@ ReturnToPlay
          !byte $0D
          !text " to play"
 
-kCheatsEnabled = 3                  ; index of 'cheats enabled' string in following table
+kCheatsEnabled = 4                  ; index of 'cheats enabled' string in following table
 kCheatDescriptionLo
          !byte <sNoCheats
          !byte <sInfiniteLives
          !byte <sInfiniteLivesAndWeapons
+         !byte <sInvincibility
          !byte <sCheatsEnabled
 kCheatDescriptionHi
          !byte >sNoCheats
          !byte >sInfiniteLives
          !byte >sInfiniteLivesAndWeapons
+         !byte >sInvincibility
          !byte >sCheatsEnabled
 sNoCheats
          !byte 8          ; length
@@ -46,6 +48,13 @@ sInfiniteLivesAndWeapons
          !byte $16        ; bolt character
          !text " "
          !text "infinite lives & weapons"
+         !text " "
+         !byte $16        ; bolt character
+sInvincibility
+         !byte 14         ; length
+         !byte $16        ; bolt character
+         !text " "
+         !text "invincible"
          !text " "
          !byte $16        ; bolt character
 sCheatsEnabled
@@ -69,7 +78,7 @@ sCheatDescriptionSuffix
 ; draw 2- or 4-line UI on the HGR page that is not currently showing, then
 ; show that HGR page
 ;
-; in:    gGameToLaunch = game index, or #$FF if no game is selected
+; in:    gGameToLaunch = game index (word), or #$FFFF if no game is selected
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawUIWithoutDots
@@ -82,24 +91,31 @@ DrawUI
          php
 
          ldy   #39
--        lda   #$00                  ; horizontal bar character
-         sta   UILine1,y             ; reset UI line 1 to solid bar
-         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
+-
          lda   Instructions,y
          sta   UILine2,y             ; copy instructions to UI line 2
+         lda   #$00                  ; horizontal bar character
+         sta   UILine1,y             ; reset UI line 1 to solid bar
+         sta   gPathname,y           ; reset cheat UI line 1 to solid bar
          dey
          bpl   -
+         sta   gGameToLaunchInfo     ; reset gGameToLaunchInfo
+         lda   #40
+         sta   gPathname             ; hack, used by first RedrawForDHGR which follows
+                                     ; Draw40Chars which doesn't set gPathname
 
-         ldx   gGameToLaunch
-         inx                         ; if no game, nothing more to do on UI line 2
-         beq   @doneWithLine2
-
-         jsr   GetGameToLaunch
-         jsr   okvs_get_current
-                                     ; (PTR) -> game title
-         lda   (PTR),y               ; copy game title into UI line 2
-         sta   SAVE                  ; title length
-         inc   SAVE
+         jsr   GetGameToLaunch       ; get current game, if any
+         bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
+         jsr   GetGameDisplayName
+                                     ; A/Y -> game display name + bitfield of game info
+         +ST16 PTR
+         ldy   #0
+         lda   (PTR),y               ; A = game display name length + 1
+         sta   SAVE
+         tay
+         lda   (PTR),y               ; A = game info bitfield
+         sta   gGameToLaunchInfo
+         ldy   #0
 -        iny
 @printCursor
          lda   #$FD                  ; SMC
@@ -160,7 +176,7 @@ DrawUI
          ldy   #0
 @dotloop
          iny
-         lda   (PTR),y               ; (PTR) still points to game title
+         lda   (PTR),y               ; (PTR) still points to game display name + game info bitfield
          ora   #$20                  ; force lower-case always
          cmp   InputBuffer,x
          bne   +
@@ -173,7 +189,6 @@ DrawUI
          cpy   SAVE                  ; if game name is exhausted, we're done drawing dots
          bne   @dotloop
 @doneHighlight
-
          lda   #22
          sta   VTAB
          lda   OffscreenPage
@@ -181,10 +196,14 @@ DrawUI
          php
          +LDADDR UILine1
          jsr   Draw40Chars           ; draw UI line 1 on offscreen page
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          plp
+gDrawingOnscreen=*+1
+         lda   #$00                  ; SMC, might be 1
+         bne   @uidone
          +LDADDR UILine2
          jsr   Draw40Chars           ; draw UI line 2 on offscreen page
-
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   @uidone               ; if cheats are disabled, then we're done drawing UI
@@ -207,12 +226,12 @@ DrawUI
          php
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 1
-
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
          jsr   CheckCheats
                                      ; (SAVE) -> length-prefixed cheat description
          +LDADDR sCheatDescriptionPrefix
          jsr   SetPath
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
          +LDADDR sCheatDescriptionSuffix
          jsr   AddToPath
@@ -220,19 +239,30 @@ DrawUI
          plp
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 2
-
-@uidone  clc
+         jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
+@uidone  lda   #0
+         sta   gDrawingOnscreen
+         clc
          jmp   ShowOtherPage
 
 CheckCheats
-         ldy   #kCheatsEnabled
-         ldx   gGameToLaunch
-         inx
-         beq   +
-         ldy   gCheatsAvailable-1,x
+         ldx   #kCheatsEnabled
+         jsr   AnyGameSelected
+         bcs   +
+gGameToLaunchInfo=*+1
+         lda   #$FD                  ; SMC
+         and   #CHEAT_CATEGORY
+         tax
 +
-         lda   kCheatDescriptionLo,y
+         lda   kCheatDescriptionLo,x
          sta   SAVE
-         lda   kCheatDescriptionHi,y
+         lda   kCheatDescriptionHi,x
          sta   SAVE+1
-         rts
+-        rts
+
+MaybeRedrawUIForDHGR
+         bit   MachineStatus
+         bvc   -
+         bit   gGameToLaunchInfo
+         bpl   -
+         jmp   RedrawForDHGR

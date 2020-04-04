@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Double hi-res slideshows
 ;
@@ -9,6 +9,10 @@
 ; - DHGRSingle
 ; - BlankHGR
 ; - HGRMode
+; - GRMode
+; - ForceHGRMode
+; - DrawGameTitleInActionSlideshow
+; - RedrawForDHGR
 ;
 
 ;------------------------------------------------------------------------------
@@ -66,11 +70,13 @@ DHGRActionSlideshow
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvc   DHGRRTS
-         +STAY +
+         +ST16 @fname
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
-         jsr   LoadDHRFile           ; load DHGR file at $4000/main and $4000/aux
+         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kRootDirectory
-+        !word $FDFD                 ; SMC
+@fname   !word $FDFD                 ; SMC
+         !word $3FF8
+         jsr   DecompressDHGR
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   ExecuteTransitionAt6000AndWait
          ; switch back to HGR mode with initial blank screen on exit
@@ -88,10 +94,12 @@ BlankHGR
          jsr   Home
          jsr   ClearHGR1             ; clear hi-res screen 1
          bit   PAGE1                 ; show hi-res screen 1 (now blank)
+         lda   #1
+         sta   OffscreenPage
          ; /!\ execution falls through here to HGRMode
 ;------------------------------------------------------------------------------
-; HGRMode
-; twiddles softswitches to set HGR mode (does not set page 1 or 2)
+; HGRMode / GRMode
+; twiddles softswitches to set (H)GR mode (does not set page 1 or 2)
 ;
 ; in:    none
 ; out:   all registers preserved
@@ -102,6 +110,20 @@ GRMode
          bit   $C052
          bit   $C050
 DHGRRTS  rts
+
+;------------------------------------------------------------------------------
+; ForceHGRMode
+; if machine is in DHGR mode, switch it back to HGR mode
+; otherwise do nothing
+;
+; in:    none
+; out:   see BlankHGR
+;------------------------------------------------------------------------------
+ForceHGRMode
+gMachineInDHGRMode=*+1
+         lda   #$00                  ; SMC
+         bne   BlankHGR
+         beq   DHGRRTS
 
 ;------------------------------------------------------------------------------
 ; LoadDHGRTransition [private]
@@ -126,11 +148,11 @@ LoadDHGRTransition
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
          !word gDFXStore
-         +STAY ++                    ; A/Y = filename (don't load file yet)
-                                     ; X = index of the transition in DFX store
+         +ST16 ++                    ; A/Y = filename (don't load file yet)
+                                     ; $WINDEX = index of the transition in DFX store
          +LDADDR gDFXStore
          jsr   okvs_next             ; get transition after this one
-         +STAY +
+         +ST16 +
 
          jsr   pref_set              ; update prefs store and save to disk
          !word kNextDFX
@@ -148,7 +170,7 @@ LoadDHGRTransition
 ; to load and display a single DHGR title screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /TITLE.DHGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -158,14 +180,16 @@ DHGRTitleCallback
          bit   KBD
          bmi   DHGRRTS
 
-         +STAY +
+         +ST16 +
 
-         jsr   GetGameInfo
+         jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   DHGRRTS
-         stx   gGameToLaunch
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          ; load DHGR screenshot at $4000/main and $4000/aux
          jsr   LoadDHRFile
@@ -180,7 +204,7 @@ DHGRTitleCallback
 ; to load and display a single DHGR action screenshot
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.DHGR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -190,18 +214,119 @@ DHGRActionCallback
          bit   KBD
          bmi   DHGRRTS
 
-         +STAY +
+         +ST16 +
 
-         jsr   GetGameInfoInActionSlideshow
+         jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   DHGRRTS
-         stx   gGameToLaunch
+         +ST16 SAVE                  ; (SAVE) -> game display name + game info bitfield
 
-         ; load DHGR screenshot at $4000/main and $4000/aux
-         jsr   LoadDHRFile
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
+
+         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
          !word kDHGRActionDirectory
 +        !word $FDFD
+         !word $3FF8
+         jsr   DecompressDHGR
 
-         ; /!\ execution falls through to ui.wait/ExecuteTransitionAt6000AndWait
+         lda   #$EA                  ; NOP
+         +HIDE_NEXT_2_BYTES
+         ; /!\ execution falls through here to DrawGameTitleInActionSlideshowHGR
+;------------------------------------------------------------------------------
+; DrawGameTitleInActionSlideshow
+; draw the game title in the lower left corner of the screen
+;
+; /!\ exits via ExecuteTransitionAt6000AndWait, and the transition code must
+;     already be loaded at $6000
+;
+; in:    none
+; out:   exits via ExecuteTransitionAt6000AndWait
+;------------------------------------------------------------------------------
+DrawGameTitleInActionSlideshow
+         lda   #$60                  ; RTS
+         sta   @fallthroughForDHGR
+
+         ; display game name in the bottom-left corner
+         lda   #22
+         sta   VTAB
+         lda   #0                    ; solid horizontal bar character
+         jsr   @resetline
+         lda   (SAVE),y              ; (SAVE) -> game display name, Y = 0, so A = display length + 1
+         clc
+         adc   #$02
+         sta   gPathname
+         lda   #7                    ; top-right rounded corner character
+         jsr   @drawline
+
+         inc   VTAB
+         lda   #" "
+         jsr   @resetline
+         lda   (SAVE),y              ; A = display length + 1
+         tay
+         dey
+-        lda   (SAVE),y
+         sta   gPathname+1,y
+         dey
+         bne   -
+         lda   #3                    ; solid vertical bar character
+         jsr   @drawline
+
+         jmp   ExecuteTransitionAt6000AndWait
+@resetline
+         ldy   #40
+-        sta   gPathname,y
+         dey
+         bne   -
+         sty   HTAB
+         rts
+@drawline
+         ldy   gPathname
+         sta   gPathname,y
+         +LDADDR gPathname
+         sec
+         jsr   DrawString
+@fallthroughForDHGR
+         nop                         ; SMC
+         ; /!\ execution sometimes falls through here to RedrawForDHGR
+
+;------------------------------------------------------------------------------
+; RedrawForDHGR
+; After drawing text on HGR screen, this will transform the low-level bytes
+; to display properly on the DHGR screen.
+;
+; /!\ must be called immediately after calling one of the font drawing routines
+;     (Draw40Chars, DrawCenteredString, DrawString, DrawBuffer)
+;
+; in:    gPathname contains number of bytes to transform
+;        DBIRow0/LC2 contains address of first byte of first row to transform
+;          (this will be true if you just called DrawBufferInternal or
+;           something that calls it, see above)
+; out:   clobbers zero page $00,$01,$02,$26,$27,$F7
+;------------------------------------------------------------------------------
+RedrawForDHGR
+         jsr   SwitchToBank2
+         +LD16 DBIRow0+1
+         +ST16 $26
+         lda   #8
+         sta   i
+--       ldy   gPathname
+         dey
+-        lda   ($26),y
+         +HGR_BYTE_TO_DHGR_BYTES
+         sta   ($26),y
+         txa
+         sta   WRITEAUXMEM
+         sta   ($26),y
+         sta   WRITEMAINMEM
+         dey
+         bpl   -
+         lda   $27
+         clc
+         adc   #$04
+         sta   $27
+         dec   i
+         bne   --
+         jmp   SwitchToBank1

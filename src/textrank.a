@@ -1,25 +1,68 @@
 ;license:MIT
-;(c) 2018-9 by 4am & qkumba
+;(c) 2018-2020 by 4am & qkumba
 ;
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
 ; Public functions
+; - BuildSearchStore
 ; - ResetTextRank
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
 ; Public variables
 ; - InputLength                      ; [byte] number of characters typed in search mode
 ; - InputBuffer                      ; [25 bytes] characters typed in search mode
-; - SelectedIndex                    ; [byte] index in gGamesListStore of currently selected game in search mode
+;
+; Zero page variables
+; - SelectedIndex                    ; [byte] index in gSearchStore of currently selected game in search mode
 ; - MatchCount                       ; [byte] number of games that match InputBuffer
 ; - BestMatchScore                   ; [byte] raw ranking score (0-100) of current best match (updated during TextRankCallback)
-; - BestMatchIndex                   ; [byte] index in gGamesListStore of current best match (updated during TextRankCallback)
+; - BestMatchIndex                   ; [byte] index in gSearchStore of current best match (updated during TextRankCallback)
 
 MaxInputLength = 26
 InputLength
          !byte 0
 InputBuffer
          !text "                         "
+
+;------------------------------------------------------------------------------
+; BuildSearchStore
+; Build a temporary data structure in main memory to support search UI.
+; Now that gGamesListStore no longer contains full game display names, we call
+; this to build a store that does. It's built in main memory and will be
+; clobbered as soon as we enter attract mode (mega- or mini-), run a game,
+; run a demo, or sneeze.
+;
+; in:    none
+; out:   gSearchStore populated
+;------------------------------------------------------------------------------
+BuildSearchStore
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
+         +LDADDR gSearchStore
+         jsr   okvs_init
+
+         jsr   okvs_iter
+         !word gGamesListStore
+         !word @callback
+
+         jsr   SwitchToBank2
+         jmp   DisableAcceleratorAndSwitchToBank1
+@callback
+; callback called by okvs_iter on gGamesListStore
+
+; in:    A/Y contains address of filename
+;        $WINDEX contains 0-based index of the current record in gGamesListStore (word)
+; out:   all registers and flags clobbered
+         +ST16 @key
+         jsr   GetGameDisplayName
+         +ST16 @value
+@append
+         jsr   okvs_append
+         !word gSearchStore
+@key     !word $FDFD                 ; SMC
+@value   !word $FDFD                 ; SMC
+         !byte 0
+         rts
 
 ;------------------------------------------------------------------------------
 ; ResetTextRank
@@ -34,28 +77,30 @@ ResetTextRank
          stx   BestMatchScore
          dex
          stx   BestMatchIndex
+         stx   BestMatchIndex+1
          rts
 
 ;------------------------------------------------------------------------------
 ; TextRankCallback
-; callback called by okvs_iter_values on gGamesListStore
-; to calculate a ranking score for a single game title
+; callback called by okvs_iter_values on gSearchStore
+; to calculate a ranking score for a single game display name
 ; against the current InputBuffer
 
-; in:    A/Y contains address of game title
-;        X contains 0-based index of the current record in gGamesListStore
+; in:    A/Y contains address of game display name
+;        $WINDEX contains 0-based index of the current record in gSearchStore (word)
 ; out:   all registers and flags clobbered
-;        MatchCount possibly incremented (if this title was a match at all)
-;        BestMatchScore and BestMatchIndex possibly updated (if this title
+;        MatchCount possibly incremented (if this game was a match at all)
+;        BestMatchScore and BestMatchIndex possibly updated (if this game
 ;          was the best match so far)
 ;------------------------------------------------------------------------------
 TextRankCallback
-         stx   tmpx                  ; X = OKVS index of this title
-         +STAY zpstring              ; A/Y = address of this title
+         +ST16 zpstring              ; A/Y = address of this game display name
          +LDADDR InputLength
-         +STAY zpword
+         +ST16 zpword
          ldy   #0
          lda   (zpstring),y
+         sec
+         sbc   #1
          cmp   InputLength
          bcc   ++
          sta   gamelength
@@ -132,8 +177,10 @@ TextRankCallback
          bcc   +
          beq   +
          sta   BestMatchScore
-         ldx   tmpx
-         stx   BestMatchIndex
+         lda   WINDEX
+         sta   BestMatchIndex
+         lda   WINDEX+1
+         sta   BestMatchIndex+1
          inc   MatchCount
 +        rts
 

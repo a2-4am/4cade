@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Super hi-res slideshows
 ;
@@ -42,7 +42,7 @@ SHRRTS   rts
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 SHRSingle
-         +STAY +
+         +ST16 +
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          beq   SHRRTS
@@ -50,13 +50,15 @@ SHRSingle
          jsr   LoadFile
          !word kRootDirectory
 +        !word $FDFD                 ; SMC
-         !word $2000
+         !word $1FF8
+         jsr   DecompressSHR
          jsr   LoadSHRTransition
          jsr   ExecuteTransitionAtA000AndWait
          jmp   BlankHGR
 
 ;------------------------------------------------------------------------------
 ; LoadSHGRTransition [private]
+; load the SHR transition effect code (currently always the same file)
 ;
 ; in:    none
 ; out:   all registers and flags clobbered
@@ -75,7 +77,7 @@ LoadSHRTransition
 ; to load and display a single SHR graphic
 
 ; in:    A/Y contains address of filename (name only, path is always /ARTWORK.SHR/)
-;        X contains 0-based index of the current record in gSlideshowStore
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -85,23 +87,25 @@ SHRArtworkCallback
          bit   KBD
          bmi   SHRRTS
 
-         +STAY @sfname
+         +ST16 @sfname
 
-         jsr   GetGameInfo
+         jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
          bcs   SHRRTS
-         stx   gGameToLaunch
+
+         +LD16 WINDEX                ; save game index in case user hits RETURN
+         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   BlankSHR
 
-         ; load SHR artwork at $2000/main (not aux)
+         ; load compressed SHR artwork at $1FF0/main (not aux)
          jsr   LoadFile
          !word kSHRArtworkDirectory
 @sfname  !word $FDFD
-         !word $2000
-
+         !word $1FF8
+         jsr   DecompressSHR
          jmp   ExecuteTransitionAtA000AndWait
 
 ;------------------------------------------------------------------------------
@@ -120,13 +124,13 @@ BlankSHR
          jsr   Home
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on linearize
-         ora   #%01000000
+         ora   #%01000000            ; can't use TSB here - might not be 65816
          sta   NEWVIDEO
 
          sta   WRITEAUXMEM           ; writes go to auxmem
 
          lda   SHADOW                ; enable auxmem-to-bank-E1 shadowing on IIgs
-         and   #$F7
+         and   #$F7                  ; can't use TRB here - might not be 65816
          sta   SHADOW
 
          lda   #$20                  ; clear $2000..$9FFF in auxmem
@@ -136,7 +140,7 @@ BlankSHR
          sta   WRITEMAINMEM          ; writes go to main memory
 
          lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on SHR mode
-         ora   #%10000001
+         ora   #%10000001            ; can't use TSB here - might not be 65816
          sta   NEWVIDEO
 
          rts

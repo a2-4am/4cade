@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; GAMES.CONF parser
 ;
@@ -28,19 +28,20 @@ ParseGamesList
          +PARAMS_ON_STACK 4
 
          +LDPARAM 1
-         +STAY @store2
+         +ST16 @store2
          jsr   SetKeyPtr
 
          ldy   #$00                  ; index into ($FE) pointing to current character
          beq   @newkey               ; always branches
 @skipLine                            ; skip to CR
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR
+         cmp   #$0A                  ; CR
          bne   @skipLine
 @newkey  ldx   #$00                  ; X = index into current key
+         stx   gValLen               ; initialize value length (in case this line has no value)
 @emptyline
          jsr   IncAndGetChar         ; get first filter character ('1' if game requires joystick)
-         cmp   #$0D                  ; ignore blank line
+         cmp   #$0A                  ; ignore blank line
          beq   @emptyline
          cmp   #$5B                  ; '[' ends the parsing
          beq   @exit
@@ -53,19 +54,25 @@ ParseGamesList
 @filterOnMemory
          jsr   IncAndGetChar         ; get second filter character ('1' if game requires 128K)
          cmp   #$30                  ; '0' -> no filtering on memory
-         beq   @parseCheatsAvailable
+         beq   @parseDHGRTitle
          cmp   #$31                  ; not '0' or '1' -> ignore entire line
          bne   @skipLine
          bit   zpMachineStatus
          bvc   @skipLine             ; game requires 128K but we only have 64K, so ignore entire line
+@parseDHGRTitle
+         jsr   IncAndGetChar         ; get third character ('1' if game has DHGR title)
+         and   #$01
+         pha
 @parseCheatsAvailable
-         jsr   IncAndGetChar         ; get third character (cheat category, int)
-         and   #$0F
+         jsr   IncAndGetChar         ; get fourth character (cheat category, int)
+         and   #CHEAT_CATEGORY
          pha
 @swallowComma
          jsr   IncAndGetChar
 @gatherKey
          jsr   IncAndGetChar
+         cmp   #$0A                  ; CR -> finalize key, no value
+         beq   @endKey
          cmp   #$3D                  ; '=' ends the key
          beq   @endKey
          sta   gKey,x
@@ -73,14 +80,24 @@ ParseGamesList
          bpl   @gatherKey
 @endKey  stx   gKeyLen
          ldx   #$00                  ; now X = index into the current value
+         cmp   #$0A
+         beq   @endValue
 @gatherValue
          jsr   IncAndGetChar
-         cmp   #$0D                  ; CR ends the value
+         cmp   #$0A                  ; CR ends the value
          beq   @endValue
          sta   gVal,x
          inx
          bpl   @gatherValue
 @endValue
+         pla                         ; pop cheat category
+         sta   gVal,x                ; store after game display name
+         pla                         ; pop has-DHGR-title flag
+         lsr
+         ror
+         ora   gVal,x
+         sta   gVal,x                ; store in bit 7 of same byte as cheat category
+         inx
          stx   gValLen
          tya
          pha                         ; okvs functions clobber everything but we need Y
@@ -89,13 +106,8 @@ ParseGamesList
          !word gKeyLen
          !word gValLen
          !byte 0
-                                     ; X = new OKVS length
          pla                         ; pop saved Y
          tay
-         pla                         ; pop cheat category
-         dex                         ; X = new OKVS length - 1
-         sta   gCheatsAvailable,x
-         clc
-         bcc   @newkey               ; always branches
+         jmp   @newkey
 
 @exit    rts

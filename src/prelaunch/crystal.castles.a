@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CRYSTAL.CASTLES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4F1D
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$b5
+         sta   $1DCF      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $93D
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

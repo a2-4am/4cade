@@ -10,6 +10,8 @@ row = $fd
 col1 = $fe
 col2 = $ff
 
+         !source "src/constants.a"
+
          lda   #0
          sta   col1
          lda   #39
@@ -93,4 +95,3 @@ copymasks2
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
-         !source "src/fx/hw.vbl.a"

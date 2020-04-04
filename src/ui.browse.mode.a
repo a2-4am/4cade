@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Browse Mode - main UI
 ;
@@ -64,33 +64,25 @@ OnBrowseSearch
          jmp   SearchMode
 
 OnBrowsePrevious
-         ldx   gGameToLaunch
-         inx                         ; Slightly pathological case: there may be no
-                                     ; current game by the time we get here, e.g.
-                                     ; if we entered browse mode by pressing left
-                                     ; or up arrow from the global help screen.
-                                     ; In this case, pretend we were at game 0 and
-                                     ; continue with the key handler logic.
-         beq   +
-         dex
-         bne   .decindex
-+        ldx   GameCount
-
-.decindex
-         dex
-
-.setindex
-         stx   gGameToLaunch
+         +LD16 gGameToLaunch
+         +CMP16 0
+         bne   @notFirstGame
+         +LD16 GameCount
+@notFirstGame
+         +DEC16
+         +ST16 gGameToLaunch
          jmp   OnBrowseChanged
 
 OnBrowseNext
-         ldx   gGameToLaunch
-         inx
-GameCount = *+1
-         cpx   #$D1                  ; SMC
-         bne   .setindex
-         ldx   #0
-         beq   .setindex             ; branch always
+         +LD16 gGameToLaunch
+         +INC16
+         +CMP16ADDR GameCount
+         bne   @notLastGame
+         lda   #0
+         tay
+@notLastGame
+         +ST16 gGameToLaunch
+         jmp   OnBrowseChanged
 
 OnBrowseLaunch
          jsr   PlayGame
@@ -110,12 +102,18 @@ ForceBrowseChanged
          bit   CLEARKBD
          ; execution falls through here
 OnBrowseChanged
-; in:    gGameToLaunch = game index
+; in:    gGameToLaunch = game index (word)
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
          jsr   LoadGameTitleOffscreen
          jsr   DrawUIWithoutDots
          jmp   MaybeAnimateTitle
+BrowseCreditsWrapper
+         jsr   Credits
+         jmp   ForceBrowseChanged
+BrowseHelpWrapper
+         jsr   Help
+         jmp   ForceBrowseChanged
 
 ;------------------------------------------------------------------------------
 
@@ -126,8 +124,8 @@ BrowseDispatchTableLo
          !byte <SearchMode
          !byte <OnBrowseTab
          !byte <OnBrowseLaunch
-         !byte <Help
-         !byte <Credits
+         !byte <BrowseHelpWrapper
+         !byte <BrowseCreditsWrapper
          !byte <OnBrowseCheat
          !byte <SoftBell
 BrowseDispatchTableHi
@@ -137,8 +135,8 @@ BrowseDispatchTableHi
          !byte >SearchMode
          !byte >OnBrowseTab
          !byte >OnBrowseLaunch
-         !byte >Help
-         !byte >Credits
+         !byte >BrowseHelpWrapper
+         !byte >BrowseCreditsWrapper
          !byte >OnBrowseCheat
          !byte >SoftBell
 
@@ -169,3 +167,6 @@ BrowseKeyDispatch
          !byte kBrowseNext
          !byte kBrowsePrevious
          !byte kBrowsePrevious
+
+GameCount
+         !word 0

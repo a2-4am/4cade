@@ -9,28 +9,23 @@
 
          +ENABLE_ACCEL
          lda   #<callback
-         sta   $4491
+         sta   $455C
          lda   #>callback
-         sta   $4492
+         sta   $455D
          jmp   $800       ; decompress
 
 helper
-         lda   $862D
+         lda   $86E9
          cmp   #$CB       ; write file
          bne   nohelp
-         lda   $8A4D      ; write address
+         lda   $8AFE      ; write address (low)
+         cmp   #$F3       ; erasing save
+         beq   nohelp
          cmp   #$F5       ; writing "valid"
          beq   nocall     ; ignore it
-         ldx   $8A4F
-         dex
-         bne   write
-         lda   #<(callback + 2)
-         sta   $8A4D
-         lda   #>(callback + 2)
-         sta   $8A4E      ; point to known zero
-
-write
-         dec   $8A4D      ; write address
+         cmp   #$A8       ; writing options
+         beq   nohelp
+         dec   $8AFE      ; write address
 
 nohelp
          jmp   $D670      ; ProDOS_enter

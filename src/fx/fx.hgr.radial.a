@@ -13,7 +13,7 @@
          +BUILD_SPARSE_BITMASKS copymasks, mirror_copymasks
 
          +LDADDR EndCoordinates-2
-         +STAY input
+         +ST16 input
 LoopBL                               ; bottom-left quadrant (opposite row, original column, reverse input order)
          ldy   #0
          lda   (input),y
@@ -29,7 +29,7 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
 DoneBL
 
          +LDADDR Coordinates
-         +STAY input
+         +ST16 input
 LoopTL                               ; top-left quadrant
          ldy   #0
          lda   (input),y
@@ -45,7 +45,7 @@ LoopTL                               ; top-left quadrant
 DoneTL
 
          +LDADDR EndCoordinates-2
-         +STAY input
+         +ST16 input
 LoopTR                               ; top-right quadrant (same row, opposite column, reverse input order)
          ldy   #0
          lda   (input),y
@@ -63,7 +63,7 @@ LoopTR                               ; top-right quadrant (same row, opposite co
 DoneTR
 
          +LDADDR Coordinates
-         +STAY input
+         +ST16 input
 LoopBR                               ; bottom-right quadrant (opposite row, opposite column, original input order)
          ldy   #0
          lda   (input),y

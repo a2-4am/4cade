@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; ProDOS - functions for constructing and passing around ProDOS pathnames
 ;
@@ -25,7 +25,7 @@ kRootDirectory=*+1
          stx   gPathname
          ; execution falls through here
 AddToPath
-         +STAY PTR
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y               ; length of this segment
          beq   @done
@@ -98,6 +98,10 @@ kPrelaunchDirectory
          !byte 10
          !raw  "PRELAUNCH/"
 
+kGameHelpDirectory
+         !byte 9
+         !raw  "GAMEHELP/"
+
 kStandardPrelaunch
          !byte 8
          !raw  "STANDARD"
@@ -149,3 +153,7 @@ kGRFizzleFile
 kSFXFizzleFile
          !byte 10
          !raw  "SHR.FIZZLE"
+
+kDecrunchFile
+         !byte 8
+         !raw  "DECRUNCH"

@@ -132,7 +132,7 @@ FontDataRow0
          !byte $9C
          !byte $86
          !byte $80
-         !byte $FF
+         !byte $FE
 FontDataRow1
          !byte $80        ; 00
          !byte $9C        ; 01
@@ -261,7 +261,7 @@ FontDataRow1
          !byte $9C
          !byte $8C
          !byte $80
-         !byte $FF
+         !byte $FE
 FontDataRow2
          !byte $FF        ; 00
          !byte $FE        ; 01
@@ -390,7 +390,7 @@ FontDataRow2
          !byte $9C
          !byte $8C
          !byte $EC
-         !byte $FF
+         !byte $FE
 FontDataRow3
          !byte $FF        ; 00
          !byte $FE        ; 01
@@ -519,7 +519,7 @@ FontDataRow3
          !byte $9C
          !byte $B8
          !byte $FE
-         !byte $FF
+         !byte $FE
 FontDataRow4
          !byte $FF        ; 00
          !byte $FE        ; 01
@@ -648,7 +648,7 @@ FontDataRow4
          !byte $9C
          !byte $B8
          !byte $B6
-         !byte $FF
+         !byte $FE
 FontDataRow5
          !byte $80        ; 00
          !byte $9C        ; 01
@@ -777,7 +777,7 @@ FontDataRow5
          !byte $9C
          !byte $8C
          !byte $80
-         !byte $FF
+         !byte $FE
 FontDataRow6
          !byte $80        ; 00
          !byte $80        ; 01
@@ -906,7 +906,7 @@ FontDataRow6
          !byte $9C
          !byte $8C
          !byte $80
-         !byte $FF
+         !byte $FE
 FontDataRow7
          !byte $00        ; 00
          !byte $80        ; 01
@@ -1035,4 +1035,4 @@ FontDataRow7
          !byte $9C
          !byte $86
          !byte $80
-         !byte $FF
+         !byte $FE

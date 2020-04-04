@@ -36,11 +36,11 @@ MegaAttractMode
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
          !word gAttractModeStore
-         +STAY @mname                ; A/Y = module name
-                                     ; X = index of module in attract store
+         +ST16 @mname                ; A/Y = module name
+                                     ; $WINDEX = index of module in attract store
          +LDADDR gAttractModeStore
          jsr   okvs_next             ; get module after this one
-         +STAY +
+         +ST16 +
 
          jsr   pref_set              ; update prefs store and save to disk
          !word kNextAttract
@@ -49,11 +49,11 @@ MegaAttractMode
          jsr   okvs_get
          !word gAttractModeStore
 @mname   !word $FDFD                 ; SMC
-         +STAY PTR
+         +ST16 PTR
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY @mname                ; A/Y = address of module name
+         +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
          bpl   MegaAttractMode
@@ -66,17 +66,18 @@ MegaAttractMode
 ; MiniAttractMode
 ; run attract modules related to one game
 ;
-; in:    gGameToLaunch = index in gGamesListStore
+; in:    gGameToLaunch = index in gGamesListStore (word)
 ; out:   all flags and registers clobbered
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------
 MiniAttractMode
          jsr   GetGameToLaunch
-         +STAY +
+         +ST16 +
 
          jsr   BlankHGR
                                      ; X = 0
-         stx   @MiniAttractIndex
+         stx   MiniAttractIndex
+         stx   MiniAttractIndex+1
 @loop
          jsr   LoadFile              ; load mini attract mode configuration file into $8000
          !word kMiniAttractDirectory
@@ -90,25 +91,34 @@ MiniAttractMode
 
          +LDADDR gAttractModeStore
          jsr   okvs_len
-         cmp   @MiniAttractIndex
+         lda   WCOUNT
+         cmp   MiniAttractIndex
+         bne   +
+         lda   WCOUNT+1
+         cmp   MiniAttractIndex+1
          beq   ATTRTS                ; we've run through all modules, so exit to caller
-
-@MiniAttractIndex=*+1
-         ldx   #$FD                  ; SMC
++
+         +LD16 MiniAttractIndex
+         +ST16 WINDEX
          +LDADDR gAttractModeStore
          jsr   okvs_nth              ; get the next module on the list
-         +STAY SAVE
+         +ST16 SAVE
          jsr   okvs_get_current      ; get module type
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
-         +LDAY SAVE                  ; A/Y = address of module name
+         +LD16 SAVE                  ; A/Y = address of module name
          jsr   RunAttractModule      ; execute the module
 
-         inc   @MiniAttractIndex
+         inc   MiniAttractIndex
+         bne   +
+         inc   MiniAttractIndex+1
++
          lda   KBD
          bpl   @loop
 ATTRTS   rts
+MiniAttractIndex
+         !word 0                     ; SMC
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
@@ -125,8 +135,8 @@ ATTRTS   rts
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------
 RunAttractModule
-         +STAY @key
-         +STAY @key2
+         +ST16 @key
+         +ST16 @key2
          cpx   #$30
          bne   @NotDemo
 
@@ -136,12 +146,14 @@ RunAttractModule
 ; All demos are strictly 48K / main memory. No demo uses the
 ; language card or auxiliary memory.
 
-         +LDAY @key
-         jsr   GetGameInfo
+         +LD16 @key
+         jsr   FindGame
          bcs   ATTRTS                ; if game doesn't exist, skip the demo
-         cpx   #$FF
+         +LD16 WINDEX
+         +CMP16 $FFFF
          beq   +
-         stx   gGameToLaunch
+         +ST16 gGameToLaunch         ; if this demo corresponds to a game, save its index
+                                     ; in case user presses RETURN during the demo (we will launch the game)
 +
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
@@ -182,7 +194,7 @@ RunAttractModule
          sta   @jmp+1
          lda   @slideshowshi-1,x
          sta   @jmp+2
-         +LDAY @key                  ; pass in module name
+         +LD16 @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
 
 @dispatchSingle

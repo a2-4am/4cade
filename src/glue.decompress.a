@@ -1,0 +1,87 @@
+;license:MIT
+;(c) 2018-2020 by 4am & qkumba
+;
+; Exomizer glue functions
+;
+; Public functions
+; - DecompressHGR
+; - DecompressDHGR
+; - DecompressSHR
+;
+
+DECRUNCH = $0314                     ; decrunch entry point
+
+;------------------------------------------------------------------------------
+; DecompressSHR
+;
+; in:    compressed SHR loaded to $1FF8+
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed SHR at $2000..$9FFF
+;        $00A7..$00A8 clobbered by decompressor
+;        $00AE..$00AF clobbered by decompressor
+;        $00FC..$00FF clobbered by decompressor
+;        $0200..$03CB clobbered by decompressor
+;------------------------------------------------------------------------------
+DecompressSHR
+         lda   #$1F
+         +HIDE_NEXT_2_BYTES
+         ; /!\ execution falls through here
+
+;------------------------------------------------------------------------------
+; DecompressHGR
+;
+; in:    compressed HGR loaded to $3FF8+
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed HGR at $4000..$5FFF
+;        $00A7..$00A8 clobbered by decompressor
+;        $00AE..$00AF clobbered by decompressor
+;        $00FC..$00FF clobbered by decompressor
+;        $0200..$03CB clobbered by decompressor
+;------------------------------------------------------------------------------
+DecompressHGR
+         lda   #$3F
+         pha
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
+         lda   sizehi2
+         pha
+         lda   sizelo2
+         pha
+         lda   #>(@loaddecrunch - 1)
+         pha
+         lda   #<(@loaddecrunch - 1)
+         pha
+         lda   auxreq
+         bne   +
+         jmp   LoadFile              ; load decompression code to $200
++        jmp   LoadAuxFile           ; load decompression code to $200/aux
+@loaddecrunch
+         !word kRootDirectory
+         !word kDecrunchFile
+         !word $200
+         ldx   auxreq
+         sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
+         sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
+         jsr   DECRUNCH              ; loaded from separate file
+         jsr   SwitchToBank2
+         jmp   DisableAcceleratorAndSwitchToBank1
+
+;------------------------------------------------------------------------------
+; DecompressDHGR
+;
+; in:    compressed DHGR loaded to aux $3FF8+
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed HGR at $4000..$5FFF/main and $4000..$5FFF/aux
+;        $6000..$7FFF/aux clobbered by decompressor
+;        $00A7..$00A8 clobbered by decompressor
+;        $00AE..$00AF clobbered by decompressor
+;        $00FC..$00FF clobbered by decompressor
+;        $0200..$03CB clobbered by decompressor
+;------------------------------------------------------------------------------
+DecompressDHGR
+         jsr   DecompressHGR
+         sta   WRITEMAINMEM
+         lda   #$60
+         sta   PageFrom+2
+         lda   #$40
+         jmp   CopyHGR               ; switches back to READMAINMEM on exit

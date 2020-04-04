@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; UI functions for doing things then waiting, or waiting then doing things
 ;
@@ -10,7 +10,6 @@
 ; - WaitForKeyFor30Seconds
 ; - CoverFade
 
-         ; /!\ execution falls through here from ui.attract.dhgr/DHGRActionCallback
 ExecuteTransitionAt6000AndWait
          ldy   #$60
          +HIDE_NEXT_2_BYTES
@@ -30,7 +29,7 @@ ExecuteTransitionAtA000AndWait
 ;------------------------------------------------------------------------------
 ExecuteTransitionAndWait
          lda   #0
-         +STAY @j+1
+         +ST16 @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
          ldx   #$20                  ; picture is showing so now we wait
 -        lda   #0
@@ -81,6 +80,7 @@ WaitForKeyFor30Seconds
 ; out:   exits via MegaAttractMode and everything is clobbered
 ;------------------------------------------------------------------------------
 CoverFade
+         jsr   ForceHGRMode
          jsr   LoadCoverOffscreen
          jsr   ShowOtherPage
          lda   OffscreenPage

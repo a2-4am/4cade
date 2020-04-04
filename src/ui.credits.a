@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; credits page
 ;
@@ -21,49 +21,43 @@ Credits
          !word kRootDirectory
          !word kCreditsFile
          !word $8000
+--       jsr   ForceHGRMode
          jsr   ClearOffscreen
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
-         ldx   #0
-         jsr   DrawPage              ; draw credits
+         tax
+-        jsr   DrawPage              ; draw credits
          jsr   ShowOtherPage         ; show credits
          jsr   WaitForKeyFor30Seconds; wait
---       bit   CLEARKBD              ; don't care about key
-         jsr   ShowOtherPage         ; back to previous page
--        clc                         ; if called from search mode, tell caller not to refresh
+         bit   CLEARKBD              ; don't care about key
+         sec                         ; if called from search mode, tell caller to refresh
          rts
 
 ;------------------------------------------------------------------------------
 ; Help
-; display global help page and wait
+; display per-game or global help page and wait
 ;
 ; in:    none
-; out:   if user presses an arrow key within 30 seconds, this exits via BrowseMode
-;        otherwise this returns to caller with
-;          C clear, all other flags and registers clobbered
+; out:   see above
 ;------------------------------------------------------------------------------
 Help
-         jsr   LoadFile              ; load help text into $8000
+         jsr   GetGameToLaunch
+         bcs   @global
+         +ST16 @fname
+         jsr   LoadFile
+         !word kGameHelpDirectory
+@fname   !word $FDFD                 ; SMC
+         !word $8000
+         clc
+         bcc   --                    ; always branches
+@global  jsr   LoadFile              ; load help text into $8000
          !word kRootDirectory
          !word kHelpTextFile
          !word $8000
-         jsr   LoadHelpOffscreen
+         jsr   LoadHelpOffscreen     ; load fancy backdrop
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
          ldx   #8
-         jsr   DrawPage              ; draw help text
-         jsr   ShowOtherPage
-         jsr   WaitForKeyFor30Seconds
-         cmp   #$88
-         beq   BrowseMode
-         cmp   #$83
-         beq   -
-         cmp   #$81
-         beq   -
-         jsr   IsUpDownOrRightArrow
-         beq   -
-         jsr   IsSearchKey
-         bne   --
-         rts
+         bne   -                     ; always branches

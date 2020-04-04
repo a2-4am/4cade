@@ -1,2 +1,0 @@
-SHR.FIZZLE=Type(06),AuxType(A000),Access(C3)
-GR.FIZZLE=Type(06),AuxType(6400),Access(C3)

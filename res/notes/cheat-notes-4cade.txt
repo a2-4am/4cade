@@ -1,0 +1,183 @@
+Beer Run
+lives in $621F
+$1E20: CE 1F 62     DEC $621F
+$6D5C: EE 1F 62     INC $621F
+$7354: EE 1F 62     INC $621F
+$7D5C: EE 1F 62     INC $621F
+
+Bouncing Kamungas
+lives in $0213
+$69DC: CE 13 02     DEC $0213
+$6C9A: EE 13 02     INC $0213
+$6C9D: EE 13 02     INC $0213
+
+Brainteaser Blvd
+lives in $74
+$1338: C6 74        DEC $74
+$10A8: E6 74        INC $74
+
+Crazy Mazey
+lives in $0326
+$0EC2: CE 26 03     DEC $0326
+$1105: EE 26 03     INC $0326
+
+Crossfire
+lives in $4C1F but copied from $4C16
+$4785: E9 01        SBC #$01 -> E9 00
+$4940: 69 00        ADC #$00 -> 24 00
+$49AF: 69 01        ADC #$01 -> 69 00
+$569A: 69 01        ADC #$01 -> 69 00
+
+Defender
+lives in $9E
+$7579: C6 9E        DEC $9E -> A5 9E
+$6567: E6 9E        INC $9E -> A5 9E
+
+Diamond Mine
+lives in $B9
+$1112: D6 B9        DEC $B9,X -> B5 B9   LDA $B9,X
+$0940: F6 B9        INC $B9,X -> B5 B9   LDA $B9,X
+(incomplete)
+
+Eggs-It
+lives in $7801
+$962A: CE 01 78 -> AD
+
+Free Fall
+lives in $1532
+$0E19: CE 32 15 -> AD 32 15
+$19F2: CE 32 15 -> AD
+$0E69: EE 32 15 -> AD
+$7E11: EE 32 15
+$BE11: EE 32 15
+
+Gamma Goblins
+lives in $06FE
+$4EF3: CE FE 06 -> AD FE 06
+$7F61: 69 02    -> 69 00
+
+Genetic Drift
+lives in $10
+$5846: 85 10    -> A5 10
+
+Gold Rush
+lives in $0A33, capped at 9
+$13EE: CE 33 0A -> AD 33 0A
+
+Gorgon
+lives in $70
+$A5B0: C6 70    -> A5 70
+
+Gremlins
+lives in $76 and $084A,X (0/1 for player 1/2)
+$54B2: C6 76    -> A5 76
+$54B6: DE 4A 08 -> BD 4A 08
+$5165: E6 76    -> A5 76
+$5162: FE 4A 08 -> BD 4A 08
+
+HERO
+lives in $28, capped at 6
+bombs in $29 but the routine that gives you bonus points at the end of the level assumes that they decrement otherwise you get bonus points forever and never get to advance to the next level :(
+$6387: C6 28    -> A5 28 to never decrease lives
+$70BC: F0 33    -> 24 33 to allow planting bombs even if you don't have any
+
+Lancaster
+lives in $0ED7
+$1661: CE D7 0E -> AD D7 0E
+$1476: EE D7 0E -> AD D7 0E
+
+Lazer Silk
+lives in $CE
+$7BA0: C6 CE    -> A5 CE
+$806A: E6 CE    -> A5 CE
+
+Up'n Down
+lives in $1B,X (X=0/1 for player 1/2)
+$0912: D6 1B    -> B5 1B
+
+Hungry Boy
+lives in $B6
+$70F4: C6 B6    -> A5 B6
+
+Hyper Head On
+lives in $79
+$04B0: C6 79    -> A5 79
+$05FB: E6 79    -> A5 79
+
+Sammy Lightfoot
+lives in $734E (player 1), $734F (player 2)
+$7B8B: CE 4E 73 -> AD 4E 73
+$7B81: CE 4F 73 -> AD 4F 73
+
+Serpentine
+lives in $D8 (capped at 3)
+$868F: C6 D8    -> A5 D8
+
+Jumpman
+lives in $B7
+$8FF3: C6 B7    -> A5 B7
+$93B1: C6 B7    -> A5 B7
+$A598: E6 B7    -> A5 B7
+
+Kid Niki
+lives in $084A
+$BD34: CE 4A 08 -> AD 4A 08
+
+Lady Tut
+lives in $07
+$76AC: C6 07    -> A5 07
+
+Pooyan
+lives in $0F82,X (X=0/1 for player 1/2)
+$7D7E: DE 82 0F -> BD 82 0F
+$7D9A: DE 82 0F -> BD 82 0F
+$758A: FE 82 0F -> BD 82 0F
+
+Twerps
+lives in $14FE
+$0640: CE FE 14 -> AD FE 14
+$0774: CE FE 14 -> AD FE 14
+$0F05: CE FE 14 -> AD FE 14
+
+Spy's Demise
+lives in $17
+$6D8A: C6 17    -> A5 17
+$6DD0: E6 17    -> A5 17
+
+Xevious
+lives in $602B
+$6414: CE 2B 60 -> AD 2B 60
+$6A8C: EE 2B 60 -> AD 2B 60
+$750D: EE 2B 60 -> AD 2B 60
+$894F: EE 2B 60 -> AD 2B 60
+
+Threshold
+lives in $778F
+$45B0: CE 8F 77 -> AD 8F 77
+$7ECD: EE 8F 77 -> AD 8F 77
+
+Tubeway ][
+lives in $A3
+$9083: C6 A3    -> A5 A3
+$A1FA: E6 A3    -> A5 A3
+$A735: E6 A3    -> A5 A3
+
+Mr. Robot
+lives in $EF
+$777B: E9 01    -> E9 00
+$78C4: 69 01    -> 69 00
+
+Lode Runner
+lives in $98, capped at 255
+$613F: C6 98    -> A5 98
+
+Championship Lode runner
+lives in $7D, capped at 255
+$61AB: C6 7D    -> A5 7D
+$60DD: A9 05    -> A9 FF to start with 255 lives
+
+Spy Hunter
+reset vector to $100:
+$0D8E: E8 -> 00
+$0D93: 0B -> 01
+

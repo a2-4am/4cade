@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; functions for animated title screens
 ;
@@ -26,36 +26,27 @@ MaybeAnimateTitle
          ldy   OffscreenPage
          bne   +
          eor   #$60
-+        sta   SAVE+1
++        sta   DEST+1
          and   #$60
-         sta   @a+2
+         sta   PageFrom+2
          eor   #$60
-         sta   @b+2
+         tax
          lda   #$FD
-         sta   SAVE
+         sta   DEST
          ldy   #0
-         lda   (SAVE),y              ; see if there is a hidden JMP to an
+         lda   (DEST),y              ; see if there is a hidden JMP to an
          cmp   #$4C                  ; animation routine for this screen
                                      ; at +$1FFD (after the graphics data,
                                      ; in the last 3 bytes of a $2000 byte
                                      ; file -- this area part of a 'screen
                                      ; hole' and is not displayed on screen)
          bne   @exit                 ; if not, we're done here
-
-         ; copy one HGR screen to the other
-         ldx   #$20
-@a       lda   $FD00,y               ; SMC
-@b       sta   $FD00,y               ; SMC
-         iny
-         bne   @a
-         inc   @a+2
-         inc   @b+2
-         dex
-         bne   @a
+         txa
+         jsr   CopyHGR
 
          ; load the animation routine, which is stored in a subdirectory by filename
          jsr   GetGameToLaunch
-         +STAY +
+         +ST16 +
          jsr   LoadFile
          !word kAnimatedTitleDirectory
 +        !word $FDFD
@@ -67,8 +58,10 @@ MaybeAnimateTitle
          dex
          bpl   -
 
+         bit   $c050                 ; turn on graphics mode (Home set text mode)
          jsr   Launch                ; execute the animation
 
+         jsr   BuildSearchStore
          jsr   ResyncPage            ; we don't know which HGR page is showing
                                      ; when the animation returns, so resync
                                      ; the current one with our OffscreenPage
@@ -79,4 +72,4 @@ MaybeAnimateTitle
 
 @titleAnimPrelaunch                  ; this is executed from $106/main by |Launch|
          bit   $C082
-         jmp   (SAVE)
+         jmp   (DEST)

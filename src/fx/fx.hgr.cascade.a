@@ -5,6 +5,8 @@
 !to "build/FX/CASCADE",plain
 *=$6000
 
+         !source "src/constants.a"
+
          ldx   #191
 
 ---      jsr   WaitForVBL
@@ -99,5 +101,3 @@ vposn    txa
          ora   $e6
          sta   $27
          rts
-
-         !source "src/fx/hw.vbl.a"

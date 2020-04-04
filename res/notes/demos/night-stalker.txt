@@ -1,0 +1,28 @@
+no-sound:
+OK $0DED: AD30C0 -> AD30D0 (context is AD30C098AACACAD0FC)
+OK $1DC3: AD30C0 -> AD30D0 (context is AD30C0AE3D1CE88EE51D)
+OK $ABC7: AD30C0 -> AD30D0 (context is AD30C088D005CEDBABF009)
+OK $AC6C: AD30C0 -> AD30D0 (context is AD30C088F008CAD0FD)
+
+OK $196D: 4C321B -> 4C0001 to exit on keypress or button (context is AD00C010034C321BADB5BBF005)
+OK $1D67: 8D10C0 -> 60 to disable esc-to-pause-demo (context is 8D10C0AD00C010FB8D10C060AD501C)
+OK $BF00: ADC3BF -> 4C0001 to exit on button (context is AD61C0100BADC3BFD019EEC3BF) (split)
+OK $AB30: A5B6 -> A904 to shorten on-screen key help (context is A5B6A2FFA0FF88D0FD)
+OK $18EC: 2030AB -> 207003 to call custom routine to decrement counter and eventually exit demo cycle (context is 2030ABA9408570A9208571)
+XXXXXX$BB6B: 20DBBB -> 4C0001 to exit on keypress or button during title sequence (context is AD00C03007C6D0F0034C47B820DBBB)
+$BBA3: 8D10C0 -> EAEAEA to disable keyboard strobe clear after title sequence (allows keypress in title to actually exit) (context is 8D10C0A9048D0494)
+$0CB6: 68 -> call custom routine .sta
+$0CD0: 48 -> call custom routine .lda to work around bug that eventually clobbers entire stack (context is 68A2FF4C2C0B)
+
+in loader:
+$0370: 2030AB
+       CE2403
+       D003
+       4C0001
+       60
+.sta   AD6F03
+       05EA
+       60
+       8D6F03
+.lda   A2FF
+       60

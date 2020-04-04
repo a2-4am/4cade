@@ -1,24 +1,26 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 
 ;------------------------------------------------------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E635 - persistent data structures (per-game cheat categories,
-;              gGlobalPrefsStore, gGamesListStore)
+; D000..E327 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; ECA6..FFF9 - main program code
+; E977..FFF1 - main program code
+; FFF2..FFF9 - API functions and global constants available for main program
+;              code, prelaunchers, transition effects, &c.
+;              (Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
-; D670..DB9C - HGR font code & ProRWTS glue code
-; DB9D..DBAB - backup of stack (during gameplay and self-running demos)
+; D670..DB98 - HGR font code & ProRWTS glue code
+; DB99..DBA7 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
-; DBAF..DBFF - (de)acceleration function
+; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
@@ -41,6 +43,7 @@ NEWVIDEO =     $C029      ; IIgs graphics modes (also VidHD)
 SPEAKER =      $C030      ; chirp chirp
 CLOCKCTL =     $C034      ; bits 0-3 are IIgs border color (also VidHD)
 SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing (also VidHD)
+TEXTMODE =     $C051
 PAGE1 =        $C054      ; page 1 (affects text, HGR, DHGR)
 PAGE2 =        $C055      ; page 2 (affects text, HGR, DHGR)
 DHIRESON =     $C05E      ; double hi-res on switch
@@ -53,6 +56,7 @@ ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
 ROM_HOME =     $FC58
+ROM_COUT =     $FDED
 ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
 ROM_PR0 =      $FE93      ; SETVID
@@ -71,10 +75,13 @@ PTR          = $02        ; word
 SRC          = $04        ; word
 DEST         = $06        ; word
 SAVE         = $08        ; word
+WINDEX       = $0A        ; word
+WCOUNT       = $0C        ; word
 HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
 ; textrank
+BestMatchIndex = $E5      ; word
 tmpx         = $E7        ; byte
 remainder    = $E8        ; word
 num1         = $EA        ; word
@@ -90,7 +97,6 @@ gamelength=    $F9        ; byte
 firstletter=   $FA        ; byte
 MatchCount =   $FB        ; byte
 BestMatchScore = $FC      ; byte
-BestMatchIndex = $FD      ; byte
 
 ;              $FE        ; used by ParseGamesList
 ;              $FF        ; used by ParseGamesList
@@ -107,15 +113,31 @@ gValLen      = $1F80
 gVal         = $1F81
 
 ; LC RAM 1
-gCheatsAvailable   = $D000  ; master cheats table, indexed by game index in gGamesListStore
-                            ; 1 byte per game, so max size = 256 games
-MockingboardSlot   = $FFF8
+WaitForVBL         = $FFF2
+UnwaitForVBL       = $FFF5
+
+MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C")
+                            ; bit 6 = 1 if Mockingboard "B" (stereo) found (else Mockingboard "A")
+                            ; bit 4-5 unused
+                            ; bits 0-3: slot number
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBAF
+DisableAccelerator = $DBB4
 EnableAccelerator  = DisableAccelerator+3
 
+; AND masks for MockingboardStuff
+MOCKINGBOARD_SLOT = %00001111
+HAS_SPEECH        = %10000000
+
+; AND masks for game info bitfield (after game display name in gGamesListStore)
+HAS_DHGR_TITLE    = %10000000        ; this one is hard-coded via BMI instead of AND/BNE
+CHEAT_CATEGORY    = %00001111
+
 ; AND masks for MachineStatus
-SUPPORTS_SHR   = %00100000
-CHEATS_ENABLED = %00010000
+HAS_JOYSTICK   = %10000000
+HAS_128K       = %01000000
+IS_IIGS        = %00100000           ; /!\ do not use this to gate SHR, use SUPPORTS_SHR instead
+HAS_VIDHD      = %00010000
+SUPPORTS_SHR   = %00110000
+CHEATS_ENABLED = %00001000

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; common assembler macros (6502 compatible)
 ;
@@ -11,16 +11,12 @@
 !macro   PARAMS_ON_STACK .bytes {
          pla
          sta   PARAM
-         pla
-         tax
-         stx   PARAM+1
-         lda   #.bytes
          clc
-         adc   PARAM
+         adc   #.bytes
          tay
-         bcc   +
-         inx
-+        txa
+         pla
+         sta   PARAM+1
+         adc   #0
          pha
          tya
          pha
@@ -59,15 +55,49 @@
 }
 
 ; load a 16-bit value into A (low) and Y (high)
-!macro   LDAY .ptr {
+!macro   LD16 .ptr {
          lda   .ptr
          ldy   .ptr+1
 }
 
 ; store a 16-bit value from A (low) and Y (high)
-!macro   STAY .ptr {
+!macro   ST16 .ptr {
          sta   .ptr
          sty   .ptr+1
+}
+
+; decrement a 16-bit value in A (low) and Y (high)
+!macro   DEC16 {
+         sec
+         sbc   #1
+         bcs   +
+         dey
++
+}
+
+; increment a 16-bit value in A (low) and Y (high)
+!macro   INC16 {
+         clc
+         adc   #1
+         bne   +
+         iny
++
+}
+
+; compare a 16-bit value in A (low) and Y (high) to an absolute address
+!macro   CMP16ADDR .addr {
+         cmp   .addr
+         bne   +
+         cpy   .addr+1
++
+}
+
+; compare a 16-bit value in A (low) and Y (high) to an immediate value
+!macro   CMP16 .val {
+         cmp   #<.val
+         bne   +
+         cpy   #>.val
++
 }
 
 !macro   LBPL .target {
@@ -96,6 +126,14 @@
 ; use BIT to swallow the following 2-byte opcode
 !macro   HIDE_NEXT_2_BYTES {
          !byte $2C
+}
+
+; debugging
+!macro   DEBUGWAIT {
+         bit   $c010
+-        bit   $c000
+         bpl   -
+         bit   $c010
 }
 
 ; various language card configurations
@@ -148,6 +186,37 @@
 +
 }
 
+!macro   HGR_BYTE_TO_DHGR_BYTES {
+;1GFEDCBA ->
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+;
+; in:    A = HGR byte
+; out:   A = DHGR byte in mainmem
+;        X = DHGR byte in auxmem
+;        preserves Y
+;        clobbers zero page $00,$01,$02
+         sty   $02
+         ldy   #$02
+--       stx   $01
+         ldx   #$04
+-        ror   $00                   ; duplicate previous bit
+         lsr                         ; fetch bit
+         php
+         ror   $00                   ; insert bit
+         plp
+         dex
+         bne   -
+         ldx   $00
+         dey
+         bne   --
+         txa
+         sec
+         ror   $01                   ; set bit 7 explicitly on auxmem value
+         ldx   $01
+         ldy   $02
+}
+
 ; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
 !macro   ENABLE_ACCEL {
          +READ_RAM2_NO_WRITE
@@ -167,19 +236,38 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SLOT {
+!macro   GET_MOCKINGBOARD_SPEECH { ;carry set if present
          +READ_RAM2_NO_WRITE
-         ldx   MockingboardSlot
+         lda   MockingboardStuff
+         asl
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT {
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;carry set if present
          +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         asl
          lda   MachineStatus
-         ldx   MockingboardSlot
          +READ_ROM_NO_WRITE
 }
 
+!macro   GET_MOCKINGBOARD_SLOT { ;carry set if present
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         +READ_ROM_NO_WRITE
+}
+
+!macro   GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS { ;carry set if present
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         tax
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+}
 !macro   USES_TEXT_PAGE_2 {
          lda   ROM_MACHINEID
          cmp   #$06
@@ -227,8 +315,8 @@
          sta   $104
          lda   #$FA
          sta   $105       ; update reset hook to reboot
-         lda   #0
-         sta   $FFFC
          lda   #1
-         sta   $FFFD      ; LC reset vector fix
+         sta   $FFFD
+         lsr
+         sta   $FFFC      ; LC reset vector fix
 }

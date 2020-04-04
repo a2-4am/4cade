@@ -22,6 +22,10 @@
          sta   $54B6      ; patch - don't decrease lives
          sta   $5162      ; patch - don't increase lives
 +
+         ldx   #0
+         stx   $67AA
+         dex
+         stx   $67A0
          +DISABLE_ACCEL
          jmp   $4000
 

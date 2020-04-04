@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2020 by Tom Greene
+
+!cpu 6502
+!to "build/PRELAUNCH/MATTERHORN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+
+           +GET_MACHINE_STATUS
+           and   #CHEATS_ENABLED
+           beq   +
+           lda   #$2C
+           sta   $5255      ; do not decrement lives
++          jmp   $2000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

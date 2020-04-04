@@ -5,51 +5,80 @@
 ;
 ; Public functions
 ; - GetGameToLaunch
-; - GetGameInfo
-; - GetGameInfoInActionSlideshow
+; - FindGame
+; - FindGameInActionSlideshow
+; - GetGameDisplayName
 ; - PlayGame
 ; - Launch
 ;
 ; Public variables:
-; - gGameToLaunch - 0-based index into gGamesListStore
+; - gGameToLaunch - 0-based index into gGamesListStore (word)
 ;
 
-GetGameToLaunch
-; in:    gGameToLaunch = index into gGamesListStore
-; out:   A/Y points to game filename
-gGameToLaunch=*+1
-         ldx   #$FF                  ; SMC
-         +LDADDR gGamesListStore
-         jmp   okvs_nth
+gGameToLaunch
+         !word $FF,$FF
 
-GetGameInfo
+;------------------------------------------------------------------------------
+; AnyGameSelected
+; get index of game that is currently selected in the UI (if any)
+;
+; in:    none
+; out:   A/Y = gGameToLaunch (word)
+;        C clear if gGameToLaunch is not #$FFFF
+;        C set if gGameToLaunch is #$FFFF
+;        X preserved
+;------------------------------------------------------------------------------
+AnyGameSelected
+         +LD16 gGameToLaunch
+         +CMP16 $FFFF                ; CMP sets carry when equal
+         beq   +
+         clc
++        rts
+
+;------------------------------------------------------------------------------
+; GetGameToLaunch
+; get filename of game that is currently selected in the UI (if any)
+;
+; in:    gGameToLaunch = index into gGamesListStore (word) or #$FFFF if no game selected
+; out:   C clear if a game is selected, and
+;          A/Y points to game filename
+;        C set if no game is selected
+;------------------------------------------------------------------------------
+GetGameToLaunch
+         jsr   AnyGameSelected
+         bcs   @exit
+         +ST16 WINDEX
+         +LDADDR gGamesListStore
+         jsr   okvs_nth
+         clc
+@exit    rts
+
+;------------------------------------------------------------------------------
+; FindGame
+; check if an arbitrary game exists, for some definition of 'exists'
+;
 ; in:    A/Y points to game filename
 ; out:   C clear if game exists in gGamesListStore, and
-;          A/Y points to game display name (but see hack notes below)
-;          X = game index, or #$FF if the game doesn't really exist but
-;          we want to return a successful result anyway (really, read the
-;          hack notes, they're important)
+;          $WINDEX = game index, or #$FFFF if the game doesn't really
+;          exist but we want to return a successful result anyway
 ;        C set if game does not exist (this can happen because slideshows
 ;          list games that require a joystick, but the games list parser
-;          filters out joystick-only games if the machine doesn't have a
-;          joystick)
-         ldx   #$60
-         +HIDE_NEXT_2_BYTES
-GetGameInfoInActionSlideshow
-         ldx   #$EA
-         stx   @maybeExit
-         +STAY @key
-         +STAY @slideshowKey
-         jsr   okvs_get
+;          filters them out if the machine doesn't have a joystick)
+;        all registers clobbered
+;------------------------------------------------------------------------------
+FindGame
+         +ST16 @key
+         jsr   okvs_find
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
          bcc   @exit
 ; Hack to allow self-running demos that don't correspond to a game
 ; filename. If the name ends in a '.', accept it unconditionally.
-; The filename is its own display name. Launching this fake game
-; will of course fail, so don't do that.
-         +LDAY @key
-         +STAY PARAM
+         ldx   #$FF
+         stx   WINDEX
+         stx   WINDEX+1
+         +LD16 @key
+         +ST16 PARAM
          ldy   #0
          lda   (PARAM),y
          tay
@@ -57,35 +86,113 @@ GetGameInfoInActionSlideshow
          cmp   #"."
          beq   @forceGoodResult
          sec
-@maybeExit
-         !byte $00                   ; SMC
-; if the key is still not found, AND the caller said to try this, then try
-; getting the value of the current record from gSlideshowStore
-; (some games have multiple action screenshots, in which case the filename of
-; the action screenshot is not the game name, but the value is)
-         jsr   okvs_get
-         !word gSlideshowStore
-@slideshowKey
-         !word $FDFD                 ; SMC
-         +STAY @key3
-         jsr   okvs_get
-         !word gGamesListStore
-@key3    !word $FDFD                 ; SMC
-; note that the game might still not be found (C will be set by okvs_get),
-; which can happen if the game can't be played due to memory or joystick
-; requirements
          rts
 @forceGoodResult
-         +LDAY @key
-         ldx   #$FF
          clc
 @exit    rts
 
+;------------------------------------------------------------------------------
+; FindGameInActionSlideshow
+; check if an arbitrary game exists, for some definition of 'exists', while
+; in the middle of a slideshow
+;
+; /!\ This function assumes that gSlideshowStore exists and is populated,
+;     which is generally only true during the callback function of a slideshow
+;
+; in:    A/Y points to game filename
+; out:   C clear if game exists, and
+;          $WINDEX = game index, and
+;          A/Y points to game display name + game info bitfield
+;        C set if game can't be found by any means
+;------------------------------------------------------------------------------
+FindGameInActionSlideshow
+         +ST16 @sskey
+         jsr   FindGame
+         bcc   +
+; if the game was not found, try getting the value of the current record from
+; gSlideshowStore (some games have multiple action screenshots, in which case
+; the key is only the screenshot filename, and the value is the actual game
+; filename)
+         jsr   okvs_get
+         !word gSlideshowStore
+@sskey   !word $FDFD                 ; SMC
+         jsr   FindGame
+         bcs   @exit
++
+         jsr   GetGameDisplayName
+         clc
+@exit    rts
+
+;------------------------------------------------------------------------------
+; GetGameDisplayName
+; lookup or construct the display name for a specific game
+;
+; in:    A/Y contains address of a key in gGamesListStore
+; out:   A/Y contains address of game display name + game info bitfield
+;        (this might be just the corresponding value in gGamesListStore,
+;        or it might be a temporary buffer in main memory that we constructed
+;        out of thin air)
+;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
+;        X preserved
+;------------------------------------------------------------------------------
+GetGameDisplayName
+         +ST16 SAVE
+         jsr   okvs_get_current      ; get value for this key
+                                     ; (PTR) -> truncated game display name + info bitfield
+         ldy   #0
+         lda   (PTR), y              ; A = length of truncated game display name + info bitfield
+         cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
+         beq   +
+         +LD16 PTR
+         rts
++                                    ; game display name is truncated, we must expand it
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
+         pha                         ; save on stack
+         dey
+         lda   (SAVE), y             ; A = length of key
+         tay
+         iny
+         sty   @len
+         sty   gValLen
+         lda   #$24                  ; BIT opcode
+         sta   @or                   ; first character remains capitalized
+         ldy   #1
+-        lda   (SAVE), y
+         cmp   #$2E
+         bne   @or
+         lda   #$20                  ; convert '.' to ' '
+@or      ora   #$20                  ; SMC (opcode)
+         sta   gValLen, y
+         cmp   #$20
+         bne   +
+         lda   #$24                  ; first character after ' ' remains capitalized
+         +HIDE_NEXT_2_BYTES
++        lda   #$09                  ; OR opcode
+         sta   @or
+@next    iny
+@len=*+1
+         cpy   #$FD                  ; SMC
+         bne   -
+         pla
+         sta   gValLen, y
+         +LDADDR gValLen
+         rts
+
+;------------------------------------------------------------------------------
+; PlayGame
+;
+; in:    gGameToLaunch != #$FFFF
+; out:   exits via the game, but also backs up the stack, which may get
+;        restored in |Reenter|... what I'm saying is that we might actually
+;        'return' from this after the user is done playing the game, which is
+;        a neat trick
+;------------------------------------------------------------------------------
 PlayGame
          jsr   GetGameToLaunch
                                      ; A/Y = address of game filename
-         +STAY SAVE
-         +STAY @pfile
+         +ST16 SAVE
+         +ST16 @pfile
 
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
@@ -100,7 +207,7 @@ PlayGame
 
          lda   #kGameDirectoryLen
          sta   gPathname
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
 
          ; attach the separator
@@ -117,7 +224,7 @@ PlayGame
 
          ; then attach the game name
 
-         +LDAY SAVE
+         +LD16 SAVE
          jsr   AddToPath
 
          ; don't look while I do this

@@ -1,0 +1,7 @@
+OK $0DB5: AD00C03020 -> AD00C0301D
+OK $0DD7: 8D10C0 -> 4C0001
+OK $0DE7: 8D20C0 -> EAEAEA (context is 8D20C0C663D0F160)
+OK $0E64: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010698D10C0A515)
+OK $1486: 8D20C0 -> 8D8714 (context is 8D20C060A50CC903900A) 30 is dynamically changed to 20 to "disable" sound, only changed C0 to D0
+OK $40E7: 8D20C0 -> EAEAEA (context is 8D20C051269126A551) likewise ^
+OK $443D: 203046 -> 4C0001 to exit on keypress (context is 6085134C5C458D10C02030464C8002)

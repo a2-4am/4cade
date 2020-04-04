@@ -10,6 +10,7 @@ row = $fe
 col = $ff
 
          !source "src/fx/macros.a"
+         !source "src/constants.a"
 
          lda   #0
          sta   col
@@ -106,4 +107,3 @@ copymask_odd
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
-         !source "src/fx/hw.vbl.a"

@@ -1,0 +1,15 @@
+Jungle Hunt cheat
+
+(first phase - swinging)
+$7BD3: D6 -> B5           ; lives never decrease
+
+(second phase - swimming)
+$78DC: D6 -> B5           ; lives never decrease
+
+(third phase - rocks)
+$78E0: D6 -> B5           ; lives never decrease
+$70AF: E6 -> A5           ; lives never increase (e.g. at 10,000)
+
+(fourth phase - cannibals)
+$7965: D6 -> B5           ; lives never decrease
+$0D87: 

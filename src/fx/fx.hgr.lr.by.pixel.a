@@ -9,6 +9,8 @@ maskindex = $fd
 row = $fe
 col = $ff
 
+         !source "src/constants.a"
+
 @jump
          jmp   @copy                 ; skip clear the first time
 
@@ -110,4 +112,3 @@ copymasks
          !byte $FF,$BF,$9F,$8F,$87,$83,$81
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
-         !source "src/fx/hw.vbl.a"

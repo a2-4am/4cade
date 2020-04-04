@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am & qkumba
+;(c) 2018-2020 by 4am & qkumba
 ;
 ; ProRWTS2 glue functions
 ;
@@ -55,6 +55,32 @@ LoadFile
          +LDPARAMPTR 5, ldrlo        ; set load address
          jsr   SwitchToBank2
          jsr   LoadFileInternal
+         jmp   SwitchToBank1
+
+;------------------------------------------------------------------------------
+; LoadAuxFile
+; Load a file into aux memory all at once, using ProRWTS2
+;
+; supports paths, see note
+;
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] address of length-prefixed pathname
+;          +3 [word] address of length-prefixed filename
+;          +5 [word] address to load file, or 0 to use file's default address
+; out:   all flags clobbered
+;        all registers clobbered
+;        gPathname clobbered
+;------------------------------------------------------------------------------
+LoadAuxFile
+         +PARAMS_ON_STACK 6
+         +LDPARAM 1
+         jsr   SetPath
+         +LDPARAM 3
+         jsr   AddToPath
+         +LDPARAMPTR 5, ldrlo        ; set load address
+         jsr   SwitchToBank2
+         lda   #1                    ; request aux memory
+         jsr   LoadFileAuxInternal
          jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------

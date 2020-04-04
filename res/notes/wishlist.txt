@@ -1,33 +1,23 @@
 //4am crack
 The American Challenge
 Arcticfox
-Ardy the Aardvark
 Boulder Dash
 C'est La Vie
-California Games [DHGR]
 Championship Baseball
 Championship Wrestling
-Congo Bongo [priority]
 Conquering Worlds
 Dive Bomber
-Double Trouble
-Dunzhin
 Elite
 G.I. Joe
-GBA Championship Baseball
 GBA Championship Basketball
-Gulf Strike
-The Heist
-Impossible Mission II [DHGR]
-Karate Champ
+Impossible Mission II [DHGR][priority]
+Karate Champ [priority]
 Kung Fu Master
-L.A. Crackdown
-Little Computer People
 Lock 'N' Chase
+Mad Rat
 Marauder
 Mars Cars
 Microwave
-Miner 2049er II
 Minit Man
 MIRV
 Monster Mash
@@ -37,26 +27,18 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Roundabout
+Run For It
 Shanghai
 Shifty Sam
 Shuttle Intercept
-Soko-Ban [DHGR] [priority]
 Spindizzy
-Station 5
-Street Sports Baseball [DHGR]
-Street Sports Basketball [DHGR]
-Street Sports Football [DHGR]
-Street Sports Soccer [DHGR]
-Summer Games
 Super Bunny
 Super Huey
 Super Taxman II
-Techno Cop [DHGR] [priority]
 Tharolian Tunnels
 Video Vegas
 World Karate Championship
 The World's Greatest Baseball Game
-Winter Games
 
 //4am crack (unreleased)
 Bop N Wrestle
@@ -72,36 +54,36 @@ Space Cadette
 
 //qkumba crack
 Bandits
-Injured Engine
-Jawbreaker ][
-Mating Zone
-Randamn
-Saracen
-Super Zaxxon [priority]
-Test Drive [DHGR] [priority]
+Jawbreaker ][ [priority]
+
+//other
+Battle Chess [DHGR]
 
 //TODO(woz-imaged but uncracked)
-A.E.
 Alien Lander
+Arcade Boot Camp
+Beach-Head
+Beach-Head II
 Boa
 Borg
-Caverns of Callisto
+Caverns of Callisto [priority]
 Copts and Robbers
 The Dam Busters
 Fight Night
-Gauntlet
 Hardball
+Infiltrator
+Infiltrator II
 International Hockey
-Into The Eagle's Nest [DHGR]
 Jawbreaker
 Lemmings
 Lunar Leepers
-One on One [priority]
 Peeping Tom
 Pulsar II
 Retro-Ball
 Roach Hotel
 The Asteroid Field
+The Last Gladiator
+The Space Ark
 The Snapper
 Star Cruiser
 Superstar Ice Hockey
@@ -114,6 +96,3 @@ Zargs
 Fly Wars
 Jellyfish
 Minotaur
-
-//TODO(unreleased)
-Crystal Castles

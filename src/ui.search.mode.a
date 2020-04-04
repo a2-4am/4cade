@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Search Mode - main UI
 ;
@@ -99,8 +99,11 @@ InputKeyDispatch
 SearchMode
          ldx   #$FF
          txs
-         stx   gGameToLaunch         ; $FF = no game selected
+         stx   gGameToLaunch         ; $FFFF = no game selected
+         stx   gGameToLaunch+1
+         jsr   BuildSearchStore
          jsr   Home                  ; clear screen (switches to text mode)
+         stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   OnInputChanged        ; draw UI offscreen
          jsr   HGRMode               ; show HGR screen
          jsr   ResyncPage
@@ -143,15 +146,14 @@ OnBack
          bpl   OnInputChanged        ; always branches
 
 OnTab
-         ldx   gGameToLaunch
-         inx
-         beq   OnError
+         jsr   AnyGameSelected
+         bcs   OnError
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
          bne   .req_redraw           ; by pressing Enter, launch the game
 
 OnLaunch
-         ldx   gGameToLaunch
+         ldx   gGameToLaunch+1
          inx
          beq   OnError
          jsr   PlayGame
@@ -177,7 +179,8 @@ OnInputChanged
          bne   FindMatchingTitle
                                      ; no input, reset params and UI
          dex
-         stx   gGameToLaunch         ; no game selected
+         stx   gGameToLaunch         ; $FFFF = no game selected
+         stx   gGameToLaunch+1
          jsr   LoadTitleOffscreen
          jmp   DrawUIWithoutDots
 
@@ -187,8 +190,8 @@ FindMatchingTitle
 
          jsr   ResetTextRank
 
-         jsr   okvs_iter_values      ; iterate through all game titles
-         !word gGamesListStore       ; and rank them for the best match
+         jsr   okvs_iter_values      ; iterate through all game display names
+         !word gSearchStore          ; and rank them for the best match
          !word TextRankCallback      ; to the current input buffer
 
          lda   MatchCount            ; any matches at all?
@@ -214,34 +217,36 @@ OnError
 SoftBell
          ldx   #32
 -        lda   #2
-         jsr   @wait
+         jsr   WaitForKeyWithTimeout
          bit   SPEAKER
          lda   #33
-         jsr   @wait
+         jsr   WaitForKeyWithTimeout
          bit   SPEAKER
          dex
          bne   -
          clc
          rts
-@wait ; identical to $FCA8 ROM routine, but ROM is switched out when we need it
-         sec
---       pha
--        sbc   #1
-         bne   -
-         pla
-         sbc   #1
-         bne   --
-         rts
 
 +
-         ldx   BestMatchIndex        ; check if the new best match is the same
-         cpx   gGameToLaunch         ; as the current best match
-         bne   +
+         lda   BestMatchIndex        ; check if the new best match is the same
+         cmp   gGameToLaunch         ; as the current best match
+         bne   @load
+         lda   BestMatchIndex+1
+         cmp   gGameToLaunch+1
+         bne   @load
+
          jsr   ToggleOffscreenPage   ; Since we're not loading a new screenshot
                                      ; we fake switching the 'offscreen' page
                                      ; in order to draw on the visible page.
-         bpl   @noload               ; (always branches)
-+        stx   gGameToLaunch
+         lda   #1
+         bne   @noload               ; always branches
+@load
+         +LD16 BestMatchIndex
+         +ST16 gGameToLaunch
          jsr   LoadGameTitleOffscreen
-@noload  jsr   DrawUI
+         lda   #0
+@noload
+         sta   gDrawingOnscreen      ; will minimize flicker in case we're
+         jsr   DrawUI                ; drawing directly onscreen
+
          ; /!\ execution falls through to ui.animation/MaybeAnimateTitle

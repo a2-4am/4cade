@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-20 by 4am
+;(c) 2018-2020 by 4am
 ;
 !cpu 6502
 !to "build/LAUNCHER.SYSTEM",plain
@@ -40,7 +40,6 @@ FirstMover
 ;------------------------------------------------------------------------------
 Reenter
          cld
-         cli
          ldx   #$ff
          txs                         ; so that we never trash the reset vector
          jsr   SwitchToBank2
@@ -49,15 +48,17 @@ Reenter
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
          ldx   #5
 -        lda   ResetVector,x         ; copy reentry wrapper to bottom of stack
-         sta   $100,x                ; (used as reset vector because ][+ always
+         sta   $100,x                ; (used as reset vector because //e always
          dex                         ; switches to ROM on Ctrl-Reset)
          bpl   -
          inx
          stx   $3F2                  ; page 3 reset vector to ($100)
+         sei
          stx   $3FE                  ; page 3 IRQ vector to ($100)
          inx
-         stx   $3F3
          stx   $3FF
+         cli
+         stx   $3F3
          ldx   #$A4
          stx   $3F4
 RestoreStackNextTime
@@ -78,7 +79,9 @@ RestoreStackNextTime
 STACKPTR
          ldx   #$D1                  ; SMC, restore stack pointer
          txs
-         jmp   SwitchToBank1         ; switch to bank 1 and return to caller
+SwitchToBank1
+         +READ_RAM1_WRITE_RAM1
+         rts
 ResetVector                          ; 6 bytes, copied to $100
          +READ_RAM1_NO_WRITE
          jmp   Reenter
@@ -87,40 +90,43 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.search.mode.a"         ; \__ execution falls through
          !source "src/ui.animation.a"           ; /
 
-         !source "src/ui.credits.a"             ; \__ execution falls through
-         !source "src/ui.browse.mode.a"         ; /
-
-         !source "src/ui.attract.hgr.a"         ; \__ execution falls through
-         !source "src/ui.font.a"                ; /
-
-         !source "src/ui.overlay.a"
-         !source "src/ui.offscreen.a"
+         !source "src/ui.browse.mode.a"
          !source "src/ui.attract.mode.a"
+         !source "src/ui.attract.hgr.a"
+         !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
-
+         !source "src/ui.offscreen.a"
          !source "src/ui.cheats.a"
+         !source "src/ui.credits.a"
+         !source "src/ui.common.a"
+         !source "src/ui.font.a"
+         !source "src/ui.overlay.a"
+         !source "src/parse.prefs.a"
+         !source "src/parse.common.a"
          !source "src/glue.launch.a"
+         !source "src/glue.prorwts2.a"
+         !source "src/glue.decompress.a"
+         !source "src/textrank.a"
          !source "src/okvs.a"
          !source "src/wait.a"
-         !source "src/textrank.a"
-         !source "src/parse.common.a"
-         !source "src/parse.prefs.a"
-         !source "src/glue.prorwts2.a"
-         !source "src/ui.common.a"
 
-         ; add new files above here so ui.wait stays last
-
-         !source "src/ui.attract.dhgr.a"        ; \-- execution falls through
-         !source "src/ui.wait.a"                ; /
+         ; add new files above here
+         !source "src/hw.vbl.a"
+         !source "src/ui.wait.a"
 gAttractModeStore
 gFXStore
 gDFXStore
          !word $6000
+gSearchStore
+         !word $8200
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
-         !word $D100
+         !word $D001                 ; leave $D000 alone because FastChip accelerator
+                                     ; flips out if it has certain values (it will
+                                     ; be set to $55 as part of the 64K memory test,
+                                     ; which is apparently one of the acceptable values)
 gGamesListStore
          !word $FDFD                 ; SMC
 SwitchToBank2
@@ -128,18 +134,25 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
-; MockingboardSlot (label is in constants.a so prelaunchers can use it)
-;      slot number where Mockingboard was detected + $C0
+; WaitForVBL (label is in constants.a)
+         jmp   WaitForVBL_iie        ; SMC to RTS on a II+
+
+; UnwaitForVBL (label is in constants.a)
+         rts                         ; SMC to JMP on a IIc
+         !word iUnwaitForVBL
+
+; MockingboardStuff (label is in constants.a)
+;      slot number where Mockingboard was detected and type of board
 ;      #$00 if no Mockingboard detected
-         !byte $FD                   ; MockingboardSlot ($FFF8)
+         !byte $FD                   ; MockingboardStuff ($FFF8)
 ; MachineStatus (label is in constants.a so prelaunchers can use it)
 ;      7 6 5 4 3 2 1 0
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
 ;      | | | | | +----- bit 2 reserved
-;      | | | | +------- bit 3 reserved
-;      | | | +--------- bit 4 = 1 if cheats are enabled
-;      | | +----------- bit 5 = 1 if VidHD or IIgs
+;      | | | | +------- bit 3 = 1 if cheats are enabled
+;      | | | +--------- bit 4 = 1 if VidHD
+;      | | +----------- bit 5 = 1 if IIgs
 ;      | +------------- bit 6 = 1 if 128K
 ;      +--------------- bit 7 = 1 if joystick
 ; Use the bit masks defined in constants.a

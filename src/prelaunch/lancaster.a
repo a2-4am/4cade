@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/LANCASTER",plain
@@ -7,10 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS_AND_MOCKINGBOARD_SLOT
-         and   #CHEATS_ENABLED
-         sta   cheat+1
-         stx   mbslot+1
          lda   #<cheat
          sta   $10da
          lda   #>cheat
@@ -18,29 +14,36 @@
          jmp   $1000
 
 cheat
-         lda   #0         ; SMC (will be non-zero if cheats are enabled)
-         beq   +
+         +GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   mbslot
                           ; lives in $0ED7
          lda   #$ad
          sta   $1661
          sta   $1476
-+
 
 mbslot
-         ldx #0           ; SMC (will be non-zero if mockingboard slot is valid)
-         beq skipmb
-         stx $6609        ;Replace #$C4 with configured slot
-         ldy #$20         ;Start scan at $6720
--
-         lda $6700,Y      ;Find #$C4's (21 locations) in code
-         cmp #$C4
-         bne +
+         bcs   +
+         lda   #$60
+         sta   $16A1      ; no MB, don't write to random slot
+         sta   $671A      ; no MB, don't write to random slot
+         bne   skipmb
++        cpx   #$C4
+         beq   skipmb
+         stx   $6609      ; Replace #$C4 with configured slot
          txa
-         sta $6700,Y      ;Replace #$C4 with configured slot
-;         iny              ;potential optimisation to finish quicker
-;	      iny              ;not tested
-+		 iny              ;Finish scan at $67FF
-         bne -
+         ldy   #00
+-        ldx   $16AD,Y    ; Find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $16AD,Y    ; Replace #$C4 with configured slot
++        ldx   $6720,Y    ; Find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $6720,Y    ; Replace #$C4 with configured slot
++        iny
+         bne   -
+
 skipmb
          jmp   $1000
 

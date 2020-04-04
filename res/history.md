@@ -1,3 +1,82 @@
+# Revision 4.0 / unreleased
+
+## New games
+
+ - A.E.
+ - Ardy the Aardvark
+ - Battle Cruiser
+ - Bejeweled
+ - California Games
+ - Castle Smurfenstein
+ - Columns
+ - Congo Bongo
+ - Crystal Castles
+ - Dino Smurf
+ - Double Trouble
+ - Flapple Bird
+ - Force 7
+ - Fuji Speed Way
+ - Gauntlet
+ - Genius
+ - Genius 2
+ - I.O. Silver
+ - Into The Eagle's Nest
+ - Little Computer People
+ - Mating Zone
+ - Matterhorn Screamer
+ - Miner 2049er II
+ - Ming's Challenge
+ - One on One
+ - Penetrator
+ - Randamn
+ - Saracen
+ - Soko-Ban
+ - Solo Flight
+ - Station 5
+ - Street Sports Baseball
+ - Street Sports Basketball
+ - Street Sports Football
+ - Street Sports Soccer
+ - Summer Games
+ - Summer Games II
+ - Super Zaxxon
+ - TechnoCop
+ - Test Drive
+ - The Heist
+ - The Last Ninja
+ - Triad
+ - Wings of Fury
+ - Winter Games
+
+## Removed games
+
+ - Alien Rain (play Alien Typhoon instead)
+ - Apple Galaxian (play Alien Typhoon instead)
+ - Puck Man (play Snoggle instead)
+
+## New demos
+
+ - Cannonball Blitz
+ - Crime Wave
+ - Laser Bounce
+ - Night Stalker
+ - N.O.R.A.D
+ - Phaser Fire
+ - Space Quarks
+ - Tunnel Terror
+
+## Enhancements & bug fixes
+
+ - Added more game cheats
+ - Display double hi-res title screens in search and browse modes
+ - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Flapple Bird to latest version (thanks Dagen)
+ - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
+ - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
+ - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lady Tut, Lancaster, Pitfall II) (thanks Andrew R.)
+ - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
+ - Fixed acceleration on Laser 128 (thanks Tom G.)
+
 # Revision 3.0 / serial number 20200121
 
 ## New & changed games

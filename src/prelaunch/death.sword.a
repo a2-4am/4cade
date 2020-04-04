@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/DEATH.SWORD",plain
@@ -8,7 +8,7 @@
     !source "src/prelaunch/common.a"
 
            lda   #$8b
-           sta   $bf23      ; disable ROM mapping
+           sta   $bf0e      ; disable ROM mapping
            jmp   $2000
 
 !if * > $1C0 {

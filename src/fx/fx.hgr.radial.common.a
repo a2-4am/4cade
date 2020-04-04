@@ -3,9 +3,9 @@
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS copymasks, mirror_copymasks
          +LDADDR Coordinates
-         +STAY input
+         +ST16 input
          +LDADDR EndCoordinates-2
-         +STAY reverse_input
+         +ST16 reverse_input
          jmp   Loop
 Exit     rts
 Loop     ldy   #0

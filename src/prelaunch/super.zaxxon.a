@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SUPER.ZAXXON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #0
+         sta   $21C2
+         lda   #$71
+         sta   $21C3
+         ldy   #(callback_e - callback) - 1
+-        lda   callback, y
+         sta   $7100, y
+         dey
+         bpl   -
++        jmp   $2000      ; decompress
+
+callback !pseudopc $7100 {
+         jsr   $415
+         lda   #$bd
+         sta   $1999      ; patch - don't decrease lives
+         rts
+}
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

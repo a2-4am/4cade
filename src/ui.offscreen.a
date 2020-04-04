@@ -1,5 +1,5 @@
 ;License:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; functions for managing which HGR page is showing, and doing things on the other one
 ;
@@ -11,6 +11,7 @@
 ; - ResyncPage
 ; - ShowOtherPage
 ; - ToggleOffscreenPage
+; - ClearScreens
 ; - ClearOffscreen
 ; - ClearHGR1
 ; - ClearMem
@@ -70,6 +71,7 @@ LoadCoverOffscreen
          lda   #<kCoverFile
 LoadOffscreenFromAY
          sta   @fname
+         jsr   ForceHGRMode
          jsr   GetOffscreenAddress
          sta   +
          jsr   LoadFile
@@ -81,17 +83,52 @@ LoadOffscreenFromAY
          rts
 
 LoadGameTitleOffscreen
-; in:    gGameToLaunch = index into gGamesListStore
+; in:    gGameToLaunch = index into gGamesListStore (word)
          jsr   GetGameToLaunch
-         +STAY +
+         +ST16 @fname
+         bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
+         bvc   @hgr
+         jsr   okvs_get_current
+                                     ; (PTR) -> game display name + bitfield of game info
+                                     ; Y = 0
+         lda   (PTR),y               ; A = game display name length + 1
+         sta   SAVE
+         tay
+         lda   (PTR),y               ; A = game info bitfield
+         ;;and   #HAS_DHGR_TITLE
+         bmi   @dhgr
+@hgr
+         jsr   ForceHGRMode
          jsr   GetOffscreenAddress
-         sta   ++
+         sta   @addrhi
          jsr   LoadFile
          !word kHGRTitleDirectory
-+        !word $FDFD                 ; SMC
+@fname   !word $FDFD                 ; SMC
          !byte $00
-++       !byte $FD                   ; SMC
+@addrhi  !byte $FD                   ; SMC
          rts
+@dhgr
+         jsr   BlankDHGR
+         +LD16 @fname
+         +ST16 +
+         jsr   LoadDHRFile
+         !word kDHGRTitleDirectory
++        !word $FDFD
+         rts
+
+;------------------------------------------------------------------------------
+; ClearScreens
+; clear and display text screen and then clear both hires screens
+; (in this order so that the erasing isn't visible)
+;
+; in:    none
+; out:   $400..$7FF and $2000..$5FFF cleared
+;------------------------------------------------------------------------------
+ClearScreens
+         jsr   Home
+         lda   #$20                  ; clear both hi-res pages
+         ldx   #$40                  ; to flash previous bits of the launcher UI)
+         bne   ClearMem              ; always
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen
@@ -113,15 +150,33 @@ ClearHGR1
          lda   #$20                  ; note to self: LDX #$20 can't move here
          ldx   #$20
 ClearMem
-         sta   @a+2
-         lda   #$80
+         ldy   #$2C                  ; BIT
+         bne   +                     ; always
+
+;------------------------------------------------------------------------------
+; CopyHGR
+;
+; in:    source and destination page pointers set
+; out:   all registers clobbered
+;        8kb memory region duplicated
+;------------------------------------------------------------------------------
+CopyHGR
+         ldx   #$20
+         ldy   #$B9                  ; LDY
++        sty   PageFrom
+         sta   PageTo+2
+         lda   #$00
+ClearGR
          ldy   #0
-@a       sta   $2000,y
+PageFrom lda   $FD00,y               ; SMC
+PageTo   sta   $FD00,y               ; SMC
          iny
-         bne   @a
-         inc   @a+2
+         bne   PageFrom
+         inc   PageFrom+2
+         inc   PageTo+2
          dex
-         bne   @a
+         bne   PageFrom
+         sta   READMAINMEM
          rts
 
 ResyncPage

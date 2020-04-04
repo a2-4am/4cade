@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am
 ;
 ; Parser for global preferences file
 ;
@@ -33,29 +33,29 @@ kCheat
 
 .kEquals !byte 1
          !raw  "="
-.kLF     !byte 1,$0D
+.kLF     !byte 1,$0A
 .kFluff1 !byte .kFluff2-*-1
-         !raw  "# Total Replay preferences file",$0D
-         !raw  "# Do not edit by hand.",$0D
-         !raw  "# Or do. I'm a comment, not a cop.",$0D
-         !byte $0D
-         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0D
+         !raw  "# Total Replay preferences file",$0A
+         !raw  "# Do not edit by hand.",$0A
+         !raw  "# Or do. I'm a comment, not a cop.",$0A
+         !byte $0A
+         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0A
 .kFluff2 !byte .kFluff3-*-1
-         !byte $0D
-         !raw  "# value=transition effect listed in FX.CONF, or empty",$0D
+         !byte $0A
+         !raw  "# value=transition effect listed in FX.CONF, or empty",$0A
 .kFluff3 !byte .kFluff4-*-1
-         !byte $0D
-         !raw  "# value=transition effect listed in DFX.CONF, or empty",$0D
+         !byte $0A
+         !raw  "# value=transition effect listed in DFX.CONF, or empty",$0A
 .kFluff4 !byte .kEOF-*-1
-         !byte $0D
-         !raw  "# value=0 or 1",$0D
+         !byte $0A
+         !raw  "# value=0 or 1",$0A
 .kEOF    !byte ._-*-1
-         !byte $0D
-         !raw  "[eof]",$0D
+         !byte $0A
+         !raw  "[eof]",$0A
 ._
 
 .addStringFromStore
-         +STAY .key
+         +ST16 .key
          jsr   .addString
          +LDADDR .kEquals
          jsr   .addString
@@ -66,7 +66,7 @@ kCheat
          +LDADDR .kLF
          ; execution falls through here
 .addString
-         +STAY $00
+         +ST16 $00
          ldy   #0
          lda   ($00),y
          beq   PREFRTS
@@ -103,7 +103,7 @@ PREFRTS  rts
 ;          +3 [word] address of OKVS, or 0
 ;        gGlobalPrefsStore must be initialized (this is done in 4cade.init)
 ; out:   A/Y = address of pref value
-;        X = index of pref value in passed store
+;        $WINDEX = index of pref value in passed store
 ;        (if OKVS parameter is 0, no validation occurs and X=0 and Z=1 on exit,
 ;         some callers rely on this behavior, so don't change it!)
 ;        PARAM clobbered
@@ -122,8 +122,8 @@ pref_get
          bcs   .useDefaultValue      ; if pref key is not found, use default value
          ldx   .store1+1
          beq   PREFRTS               ; if no OKVS to validate against, we're done
-         +STAY +
-         +STAY PTR
+         +ST16 +
+         +ST16 PTR
          ldy   #0
          lda   (PTR),y
          beq   .useDefaultValue      ; if pref value is empty, use default value
@@ -132,9 +132,11 @@ pref_get
 +        !word $FDFD                 ; SMC
          bcc   +                     ; found key, continue
 .useDefaultValue                     ; did not find key, use first key in passed store as a default value
-         ldx   #0
+         lda   #0
+         sta   WINDEX
+         sta   WINDEX+1
 +
-         +LDAY .store1
+         +LD16 .store1
          jmp   okvs_nth
 
 ;------------------------------------------------------------------------------
@@ -161,7 +163,7 @@ pref_set
 ++       !word $FDFD                 ; SMC
 
          +LDADDR kGlobalPrefsBuffer  ; clear prefs buffer
-         +STAY   $FE
+         +ST16   $FE
          ldx     #$02
          ldy     #$00
          tya
@@ -199,7 +201,7 @@ pref_set
 
          +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
          jsr   SetPath
-         +LDAY kGlobalPrefsBuffer
+         +LD16 kGlobalPrefsBuffer
          ; /!\ execution falls through here to glue.prorwts/SaveSmallFile
 ;------------------------------------------------------------------------------
 ; SaveSmallFile
@@ -215,7 +217,7 @@ pref_set
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 SaveSmallFile
-         +STAY ldrlo                 ; set data buffer address for ProRWTS2
+         +ST16 ldrlo                 ; set data buffer address for ProRWTS2
          jsr   SwitchToBank2
          jsr   SaveSmallFileInternal
          jmp   SwitchToBank1

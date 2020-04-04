@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2020 by qkumba
+;
+; Functions to enable and disable VBL polling on various
+; Apple II models
+
+iWaitForVBL   
+         sei              ; IIc is special
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05B      ; enable VBL polling
+         sta   $C07E      ; disable access to VBL register
+WaitForVBL_iie            ; IIe/IIgs have a relatively sane VBL
+                          ; but it's reversed between the two
+                          ; so we default to IIe, and patch in
+                          ; the reverse case if it's a IIGS.
+-        bit   $C019
+patch_VBL_iigs1
+         bpl   -
+patch_VBL_iic1
+-        lda   $C019      ; $c019 bit 7 is sticky, reset it (SMC->#$70 for IIc)
+patch_VBL_iic2
+patch_VBL_iigs2
+         bmi   -
+WaitForVBL_nop            ; II/II+ have no easy VBL
+         rts
+
+iUnwaitForVBL
+-        bit   $C019
+         bpl   -
+         lda   $C070      ; $c019 bit 7 is sticky, reset it
+         sta   $C07F      ; enable access to VBL register
+         sta   $C05A      ; disable VBL polling
+         sta   $C07E      ; disable access to VBL register
+         cli
+         rts
