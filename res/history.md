@@ -68,8 +68,9 @@
 
 ## Enhancements & bug fixes
 
- - Added more game cheats
+ - Per-game help screens (select a game and press `?`)
  - Display double hi-res title screens in search and browse modes
+ - Added more game cheats
  - Upgrade Bejeweled to latest version (thanks Jeremy)
  - Upgrade Flapple Bird to latest version (thanks Dagen)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
