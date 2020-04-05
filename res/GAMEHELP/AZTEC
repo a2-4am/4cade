@@ -1,0 +1,21 @@
+
+       Find the Idol and return
+
+            move  A S D  move
+                 
+W * * *walk    R* * * *run   J* * *jump
+
+C * * * * * climb    G* * crouch & crawl
+  
+O* * * * * * open chest & search rubbish
+
+L* *look in chest    T * * * *take items
+
+Z* * * *inventory    P * *place dynamite
+
+F * * *fight mode    L* * *lunge / shoot
+
+M * * aim down  G * *gun    space *shoot
+
+ESC * * * * * * Help (allows Save / Quit)
+[eof]
