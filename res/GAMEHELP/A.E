@@ -2,7 +2,7 @@
 
            Eliminate the A.E.
 
- You need 3 perfect attacks to advance
+ You need 3+ perfect attacks to advance
 
 
 
