@@ -5,7 +5,7 @@
             move  A S D  move
    
    
-W * * *walk     R * * *run  J* * * *jump
+W * * *walk     R * * *run  J * * * jump
 
 C * * * * * climb    G* * crouch & crawl
   
