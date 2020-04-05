@@ -2,15 +2,17 @@
 
 
 
-         keyboard to move 8-way
+          joystick or keyboard
+
+             8-way movement
 
 
 Player #1                      Player #2
 
 
 Q   W   E                      I   O   P
-                  move
-A       D                      K       ;
+
+A       D         move         K       ;
 
 Z   X   C                      ,   .   /
 
@@ -18,8 +20,6 @@ Z   X   C                      ,   .   /
     $          accelerate          %
 
 
-         or just use a joystick
 
-
-Esc* * * * * * * * * * * * * * * * pause
+              Esc to pause
 [eof]
