@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CAVRNS.CALLISTO",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>callback
+         sta   $8D9
+         lda   #<callback
+         sta   $8D8
+         jmp   $800       ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   $BFC
+         cmp   #$C6
+         bne   +
+         lda   #$A5
+         sta   $BFC       ; patch - don't decrease lives
++
+         jsr   $BD82
+         +DISABLE_ACCEL
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

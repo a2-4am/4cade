@@ -8,6 +8,7 @@
  - Bejeweled
  - California Games
  - Castle Smurfenstein
+ - Caverns of Callisto
  - Columns
  - Congo Bongo
  - Crystal Castles
