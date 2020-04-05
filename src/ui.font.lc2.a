@@ -36,7 +36,7 @@ DrawPageInternal
          beq   @donePage
 +        cmp   #$0A
          beq   @doneParsingLine
-         ldx   #3
+         ldx   #5
 -        cmp   @subs_a,x
          bne   @nosub
          lda   @subs_b,x
@@ -68,9 +68,9 @@ DrawPageInternal
          plp
          rts
 @subs_a
-         !byte $2A,$7E,$3C,$3E
+         !byte $2A,$7E,$3C,$3E,$24,$25
 @subs_b
-         !byte $10,$11,$08,$15
+         !byte $10,$11,$08,$15,$0E,$0F
 
 Draw40CharsInternal
 ; A/Y contains address of character buffer

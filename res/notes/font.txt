@@ -34,8 +34,8 @@ $0A  (TODO down arrow)
 $0B  (TODO up arrow)
 $0C  rounded bottom-left quadrant circuit path
 $0D  carriage return symbol
-$0E
-$0F
+$0E  open apple
+$0F  closed apple
 $10  dot, small
 $11  dot, medium
 $12  dot, large
