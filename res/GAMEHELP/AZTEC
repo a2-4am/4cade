@@ -6,19 +6,19 @@
 
 
 
-W * * * * * * *walk  R * * * * * * * run
+W* * * * * * * walk  R * * * * * * * run
 
-J * * * * * * *jump  G * * * * * * crawl
+J* * * * * * * jump  G * * * * * * crawl
 
-C * * * * * * climb  P * *place dynamite
+C* * * * * * *climb  P * *place dynamite
 
-O * * * *open chest  L * * look in chest
+O* * * * open chest  L * * look in chest
 
-T * * * * * * *take  Z * * * * inventory
+T* * * * * * * take  Z * * * * inventory
 
-F * * * * * * fight  L * * * * * * lunge
+F* * * * * * *fight  L * * * * * * lunge
 
-G * * * * * * * gun  M * * * * *aim down
+G* * * * * * * *gun  M * * * * *aim down
 
-Space * * * * shoot  Esc * * * * * *help
+Space* * * * *shoot  Esc * * * * * *help
 [eof]
