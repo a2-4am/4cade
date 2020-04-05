@@ -1,0 +1,24 @@
+             Find the idol
+
+
+
+           move  A S D  move
+
+
+
+W * * * * * * *walk  R * * * * * * * run
+
+J * * * * * * *jump  G * * * * * * crawl
+
+C * * * * * * climb  P * *place dynamite
+
+O * * * *open chest  L * * look in chest
+
+T * * * * * * *take  Z * * * * inventory
+
+F * * * * * * fight  L * * * * * * lunge
+
+G * * * * * * * gun  M * * * * *aim down
+
+Space * * * * shoot  Esc * * * * * *help
+[eof]
