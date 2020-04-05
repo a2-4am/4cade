@@ -8,7 +8,7 @@ if (d.substr(0, 2) == '*.')
 }
 for (b = new Enumerator(a.GetFolder(c).files); !b.atEnd(); b.moveNext())
 {
-    if ((d == '*') || (d == a.getextensionname(b.item().name)))
+    if ((d == '*') || (d == b.item().name) || (d == a.getextensionname(b.item().name)))
     {
         e = WScript.Arguments(1) + "\\" + b.item().Name
         if (!a.fileexists(e) || (a.getfile(e).datelastmodified < b.item().datelastmodified))

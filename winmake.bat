@@ -52,8 +52,12 @@ cscript /nologo bin\padto.js 512 build\PREFS.CONF
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 for %%q in (res\*.CONF) do if "%%q" neq "res\PREFS.CONF" %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CREDITS" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELPTEXT" >>build\log
+cscript /nologo bin\rsync.js "res\CREDITS" "build\" >>build\log
+cscript /nologo bin\dumpcr.js "build\CREDITS"
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
+cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
+cscript /nologo bin\dumpcr.js "build\HELPTEXT"
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
