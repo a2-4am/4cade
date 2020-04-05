@@ -5,20 +5,20 @@
             move  A S D  move
    
    
-W * * *walk     R * * *run  J * * * jump
+W* * * walk     R* * * run  J* * * *jump
 
-C * * * * * climb    G* * crouch & crawl
+C* * * * * *climb    G * *crouch & crawl
   
-O * * * * * *open chest & search rubbish
+O* * * * * * open chest & search rubbish
 
-L * *look in chest   T* * * * take items
+L* * look in chest   T * * * *take items
 
-Z * * * inventory    P* * place dynamite
+Z* * * *inventory    P * *place dynamite
 
 
-F * * *fight mode    L* * *lunge / shoot
+F* * * fight mode    L * * lunge / shoot
 
-M * * aim down  G * * *gun  space *shoot
+M* * * aim down G* * * gun  space* shoot
 
-ESC * * * * * *Help (allows Save / Quit)
+ESC* * * * * * Help (allows Save / Quit)
 [eof]
