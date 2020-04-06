@@ -54,7 +54,6 @@ Space Cadette
 
 //qkumba crack
 Bandits
-Jawbreaker ][ [priority]
 
 //other
 Battle Chess [DHGR]
