@@ -22,6 +22,7 @@
  - Genius 2
  - I.O. Silver
  - Into The Eagle's Nest
+ - Jawbreaker II
  - Little Computer People
  - Mating Zone
  - Matterhorn Screamer
