@@ -8,7 +8,7 @@ Championship Wrestling
 Conquering Worlds
 Dive Bomber
 Elite
-G.I. Joe
+G.I. Joe [proiority]
 GBA Championship Basketball
 Impossible Mission II [DHGR][priority]
 Kung Fu Master
@@ -30,7 +30,7 @@ Run For It
 Shanghai
 Shifty Sam
 Shuttle Intercept
-Spindizzy
+Spindizzy [priority]
 Super Bunny
 Super Huey
 Super Taxman II
@@ -42,10 +42,10 @@ The World's Greatest Baseball Game
 //4am crack (unreleased)
 Bop N Wrestle
 Congo
-County Fair
+County Fair [priority]
 Frazzle
 Galactic Attack
-Ghostbusters
+Ghostbusters [priority]
 Pentapus
 Rear Guard
 Ski Crazed
@@ -55,7 +55,7 @@ Space Cadette
 Bandits
 
 //other
-Battle Chess [DHGR]
+Battle Chess [DHGR][priority]
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
