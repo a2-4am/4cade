@@ -1,0 +1,23 @@
+
+    Destroy replicators, avoid walls
+
+
+
+Q   W   E                      I   O   P
+
+A   S   D         move         K   L   ;
+
+Z   X   C                      ,   .   /
+
+
+
+1 & :* * * * * * * * * * * * turret left
+
+2 & -* * * * * * * * * * * *turret right
+
+Space* * * * * * * * * * * * * * * *fire
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+[eof]
