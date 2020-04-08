@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/ZAXXON",plain
@@ -7,23 +7,42 @@
 
     !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         sta   cheat+1
-         lda   #<cheat
-         sta   $208c
-         lda   #>cheat
-         sta   $208d
-         jmp   $2000
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   MachineStatus
+         pha
+         lda   MockingboardStuff
+         pha
+         lda   #$60
+         sta   $41C6
+         jsr   $4000      ; decompress
+         pla
+         beq   @skip_mb
+         pha
+         jsr   $D15B      ; decompress Mockingboard code
+         tax
+         pla
+         ora   #$C0
+-        ldy   $70B, x
+         cpy   #$C4
+         bne   +
+         sta   $70B, x
++        inx
+         bne   -
+         sta   $81D
 
-cheat
-         ldy   #0         ; SMC
+@skip_mb
+         pla
+         and   #CHEATS_ENABLED
          beq   +
          ldy   #$bd
          sty   $1a40
          sty   $1a61
-+
-         jmp   $200
++        inc   $BF87
+         bit   $C083
+         jsr   DisableAccelerator
+         ldy   #0
+         jmp   $41D0
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
