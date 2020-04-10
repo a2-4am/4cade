@@ -63,6 +63,7 @@
  - Crime Wave
  - Laser Bounce
  - Night Stalker
+ - Nightmare Gallery
  - N.O.R.A.D
  - Phaser Fire
  - Space Quarks

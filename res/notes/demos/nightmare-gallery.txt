@@ -1,0 +1,9 @@
+$8C24: 8DF28C -> 4C0001 to exit on keypress (context is AD00C010078DF28C8D10C060)
+$8C35: AD097E -> 4C0001 to exit on button press (context is AD62C010F5AD097ED0F0A9A08DF28C60)
+$1669: 4C8E12 -> 4C5003 to jump to custom routine in loader and eventually exit after multiple demo cycles (context is 20039020A41620BA164C8E12)
+
+$034F: 03
+$0350: DEC $034F
+       BEQ +
+       JMP $128E
+     + JMP $0100
