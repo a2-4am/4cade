@@ -62,6 +62,7 @@
  - Cannonball Blitz
  - Crime Wave
  - Laser Bounce
+ - Lazer Silk
  - Night Stalker
  - Nightmare Gallery
  - N.O.R.A.D
