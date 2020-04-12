@@ -21,6 +21,14 @@
          ; re-patch reset vector
          +RESET_VECTOR $100
 
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$60
+         sta   $5BE6      ; patch - don't decrease ammo
++
+         +READ_ROM_NO_WRITE
          jmp   $42BC
 
 !if * > $1C0 {
