@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba/Tom Greene
 
 !cpu 6502
 !to "build/PRELAUNCH/BEYOND.WOLFEN",plain
@@ -18,18 +18,49 @@
          sta   $B749
          jmp   $B700
 
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
 
 callback
-         lda   #>reset
+         lda   #$01
          sta   $9E31
-         lda   #<reset
+         lda   #$00
          sta   $9E3C      ; reset vector patch
+
+         lda   #<patch    ; intercept BRUN command before
+         sta   $A395      ; it jumps to the loaded file
+         lda   #>patch
+         sta   $A396
 
          +DISABLE_ACCEL
          jmp   $9D84
+
+patch
+         !word brunpatch
+
+brunpatch
+         lda   $AA76      ; check second character of filename
+         cmp   #$C9       ; = I, filename = @INIT
+         bne   +         
+
+         ldx   #$00       ; Patch it to return to TR
+         stx   $0DB4      ; instead of exiting to BASIC
+         inx
+         stx   $0DB5
+
+         inc   $0C85      ; prevent language card detection
+
++        cmp   #$C6       ; = F, filename = @FHR
+         bne   ++
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   ++
+         ldx   #$2C
+         stx   $15AE      ; don't decrement bullets
+
+++       jmp   ($AA72)    ; finally jump to the loaded file
+
+
+ 
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
