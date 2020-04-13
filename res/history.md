@@ -22,6 +22,8 @@
  - Genius 2
  - I.O. Silver
  - Into The Eagle's Nest
+ - Jawbreaker II
+ - Karate Champ
  - Little Computer People
  - Mating Zone
  - Matterhorn Screamer
@@ -60,7 +62,9 @@
  - Cannonball Blitz
  - Crime Wave
  - Laser Bounce
+ - Lazer Silk
  - Night Stalker
+ - Nightmare Gallery
  - N.O.R.A.D
  - Phaser Fire
  - Space Quarks

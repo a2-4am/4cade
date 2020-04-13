@@ -25,10 +25,12 @@
 +
          lda   #$4C
          sta   $A3DC
-         lda   #0
-         sta   $A3DD
-         lda   #1
-         sta   $A3DE      ; reset vector patch
+         ldx   #0
+         stx   $A3DD
+         stx   $2C0E   
+         inx
+         stx   $A3DE      ; reset vector patch
+         stx   $2C0F      ; quit handler patch
          +DISABLE_ACCEL
          jmp   $3e00
 
