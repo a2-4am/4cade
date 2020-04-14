@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ZAXXON",plain
@@ -7,6 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
+         +LC_REBOOT
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
          lda   MachineStatus
