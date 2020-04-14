@@ -18,16 +18,12 @@
          sta   $B749
          jmp   $B700
 
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
-
 callback
          +READ_RAM2_WRITE_RAM2
-         lda   #<reset
+         lda   #0
          sta   $9E52
          sta   $FFFC
-         lda   #>reset
+         lda   #1
          sta   $9E53
          sta   $FFFD       ; reset vector patch
          +READ_ROM_NO_WRITE
