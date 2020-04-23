@@ -161,6 +161,7 @@ TextRankCallback
          clc
          adc   tmp
          lsr
+         adc   #0                    ; round fractions up
          pha
          ldy   #1
          lda   (zpstring),y
