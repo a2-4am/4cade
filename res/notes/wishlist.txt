@@ -15,9 +15,9 @@ Mad Rat
 Marauder
 Mars Cars
 Microwave
-Minit Man
+Minit Man [priority]
 MIRV
-Monster Mash
+Monster Mash [priority]
 The Movie Monster Game
 Neutrons
 Oil's Well
@@ -28,7 +28,7 @@ Run For It
 Shanghai
 Shifty Sam
 Shuttle Intercept
-Super Bunny
+Super Bunny [priority]
 Super Huey
 Super Taxman II
 Tharolian Tunnels
@@ -48,7 +48,7 @@ Ski Crazed
 Space Cadette
 
 //qkumba crack
-Bandits
+Bandits [priority]
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
@@ -56,7 +56,7 @@ Arcade Boot Camp
 Beach-Head
 Beach-Head II
 Boa
-Borg
+Borg [priority]
 Copts and Robbers
 The Dam Busters
 Fight Night
