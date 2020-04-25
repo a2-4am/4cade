@@ -1,0 +1,25 @@
+
+               Kill snakes
+
+          joystick or keyboard
+
+                    A
+            move  <   >  move
+                    Z
+
+/* * * * * * * * * * *toggle auto repeat
+
+Space* * * * * * * * * * * * * * * *stop
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * * * * restart
+
+Ctrl-C * * * * * * * * * * * define keys
+
+Ctrl-K, Ctrl-P * * * keyboard / joystick
+
+H, V * * * reverse horizontal / vertical
+[eof]
