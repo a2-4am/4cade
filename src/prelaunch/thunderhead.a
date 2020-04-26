@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/THUNDERHEAD",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $2046
+         lda   #>callback
+         sta   $2047
+         jmp   $800        ; decompress
+
+callback
+         jsr   DisableAccelerator
+         jmp   $204B
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
