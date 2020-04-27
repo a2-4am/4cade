@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020 by qkumba/Frank M./Tom Greene
 
 !cpu 6502
 !to "build/PRELAUNCH/SMURFEN",plain
@@ -19,17 +19,46 @@
          jmp   $B700
 
 callback
-         +READ_RAM2_WRITE_RAM2
          lda   #0
          sta   $9E52
-         sta   $FFFC
          lda   #1
          sta   $9E53
-         sta   $FFFD       ; reset vector patch
-         +READ_ROM_NO_WRITE
+
+         lda   #$00        ; intercept BRUN command before
+         sta   $A395       ; it jumps to the loaded file
+         lda   #$03
+         sta   $A396
+
+         ldx   #patchend-patch
+-        lda   patch,x     ; The game code has a stack leak and will
+         sta   $0300,x     ; clobber all of page 1 after repeated plays
+         dex               ; so move the patch code to page 3
+         bpl   -
 
          +DISABLE_ACCEL
          jmp   $9B00
+
+patch
+         !word $0302
+
+         lda   $AA76       ; check second character of filename
+         cmp   #$D7        ; = W, filename = @WOLF
+         bne   +
+
+         ldx   #$01        ; Patch it to return to TR
+         stx   $1EFA       ; instead of exiting to BASIC
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #$03
+         stx   $4048       ; start with 3 grenades
+         ldx   #$2C
+         stx   $14AD       ; don't decrement bullets
+         stx   $1999       ; or grenades
+
++        jmp   ($AA72)     ; finally jump to the loaded file
+patchend
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
