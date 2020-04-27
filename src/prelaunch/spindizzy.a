@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SPINDIZZY",plain
@@ -8,9 +8,20 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+
+         +READ_RAM1_WRITE_RAM1
+         +LC_REBOOT
+         +READ_ROM_NO_WRITE
+
          lda   #$60
          sta   $855
          jsr   $800       ; decompress
+
+         ldx   #0
+         stx   $9344
+         inx
+         stx   $934F      ; fix reboot
+
          +DISABLE_ACCEL
          jmp   $9300
 
