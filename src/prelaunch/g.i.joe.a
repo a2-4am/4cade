@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/G.I.JOE",plain
@@ -25,6 +25,7 @@
          sta   $D5A3
 +
          bit   $C083
+         +LC_REBOOT
          jsr   DisableAccelerator
          bit   $C08B
          jmp   $D400

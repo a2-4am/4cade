@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MINIT.MAN",plain
@@ -18,6 +18,11 @@
          lda   #$a5
          sta   $B13D      ; patch - don't decrease lives
 +
+         ldx   #0
+         stx   $9E31
+         inx
+         stx   $9E3C      ; reset vector patch
+
          +DISABLE_ACCEL
          jmp   $B700
 
