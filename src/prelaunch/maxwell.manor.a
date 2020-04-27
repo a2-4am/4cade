@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MAXWELL.MANOR",plain
@@ -15,6 +15,7 @@
          jmp   $800        ; decompress
 
 callback
+         +LC_REBOOT
          jsr   DisableAccelerator
          jmp   $204B
 
