@@ -16,6 +16,11 @@
 
 callback
          +LC_REBOOT
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         inc   $45FA      ; patch - don't decrease energy
++
          jsr   DisableAccelerator
          jmp   $204B
 
