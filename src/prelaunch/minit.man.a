@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/MINIT.MAN",plain
@@ -7,22 +7,48 @@
 
     !source "src/prelaunch/common.a"
 
+         jmp   main
+
+callback
+         jsr   $BD57
+         ldx   $B7EC
+         ldy   $B7ED
+         cpx   #$19
+         beq   +
+         cpx   #$18
+         bne   ++
++        cpy   #$0E
+         bne   ++
+         lda   #0
+         sta   $BA48
+         rol
+         sta   $BA4D      ; hook in-game reset
+++
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         cpx   #$13
+         bne   +
+         cpy   #$03
+         bne   +
+         lda   #$a5
+         sta   $BBD2      ; patch - don't decrease lives
++        rts
+
+main
          +ENABLE_ACCEL
          lda   #$60
          sta   $9FD
          jsr   $800       ; load DOS
-
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$a5
-         sta   $B13D      ; patch - don't decrease lives
+         lda   #$A9
+         sta   $BF24
+         lda   #$01
+         sta   $BF25      ; hook loader reset
+         lda   #<callback
+         sta   $BD26
+         lda   #>callback
+         sta   $BD27
 +
-         ldx   #0
-         stx   $9E31
-         inx
-         stx   $9E3C      ; reset vector patch
-
          +DISABLE_ACCEL
          jmp   $B700
 
