@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<callback
-         sta   $2046
+         sta   $21C8
          lda   #>callback
-         sta   $2047
+         sta   $21C9
          jmp   $800        ; decompress
 
 callback
@@ -22,7 +22,7 @@ callback
          inc   $45FA      ; patch - don't decrease energy
 +
          jsr   DisableAccelerator
-         jmp   $204B
+         jmp   $BE77
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

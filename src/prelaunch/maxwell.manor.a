@@ -9,15 +9,15 @@
 
          +ENABLE_ACCEL
          lda   #<callback
-         sta   $203F
+         sta   $21C8
          lda   #>callback
-         sta   $2040
+         sta   $21C9
          jmp   $800        ; decompress
 
 callback
          +LC_REBOOT
          jsr   DisableAccelerator
-         jmp   $204B
+         jmp   $21CD
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
