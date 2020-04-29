@@ -18,7 +18,7 @@ S* * * * * * * * * * * * * *toggle sound
 
 B* * * * * * * * * * * toggle color/mono
 
-C* * * * * * * * * * keyboard / joystick
+C* * * * * * camera mode (3 zone/scroll)
 
 Esc* * * * * * * * * * * * * * * * *quit
 [eof]
