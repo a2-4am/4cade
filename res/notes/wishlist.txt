@@ -45,9 +45,6 @@ Rear Guard
 Ski Crazed
 Space Cadette
 
-//qkumba crack
-Bandits [priority]
-
 //TODO(woz-imaged but uncracked)
 Alien Lander
 Arcade Boot Camp
