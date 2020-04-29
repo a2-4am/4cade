@@ -31,6 +31,7 @@
 +        inx
          bne   -
          sta   $81D
+         inc   $BF87
 
 @skip_mb
          pla
@@ -39,8 +40,7 @@
          ldy   #$bd
          sty   $1a40
          sty   $1a61
-+        inc   $BF87
-         bit   $C083
++        bit   $C083
          jsr   DisableAccelerator
          ldy   #0
          jmp   $41D0
