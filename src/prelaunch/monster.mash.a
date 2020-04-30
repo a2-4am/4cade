@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MONSTER.MASH",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A16
+         jsr   $800       ; load DOS
+         +DISABLE_ACCEL
+         jmp   $B700
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
