@@ -1,0 +1,39 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SUPER.BUNNY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A32
+         jsr   $800       ; load DOS
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BD26
+         lda   #>callback
+         sta   $BD27
++
+         +DISABLE_ACCEL
+         jmp   $B700
+
+callback
+         jsr   $BE07
+         lda   $B7EC
+         cmp   #$14
+         bne   +
+         lda   $B7ED
+         cmp   #$06
+         bne   +
+         lda   #$AD
+         sta   $BB01      ; patch - don't decrease lives
++        rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
