@@ -1,4 +1,5 @@
 //4am crack
+Aliens [DHGR][priority]
 The American Challenge
 Arcticfox
 Boulder Dash
@@ -7,7 +8,6 @@ Championship Baseball
 Championship Wrestling
 Conquering Worlds
 Dive Bomber
-Elite
 GBA Championship Basketball
 Kung Fu Master
 Lock 'N' Chase
@@ -23,8 +23,6 @@ Pandora's Box
 Pegasus ][
 Roundabout
 Run For It
-Shanghai
-Shifty Sam
 Shuttle Intercept
 Super Huey
 Super Taxman II
@@ -46,8 +44,8 @@ Space Cadette
 //TODO(woz-imaged but uncracked)
 Alien Lander
 Arcade Boot Camp
-Beach-Head
-Beach-Head II
+Beach-Head [priority]
+Beach-Head II [priority]
 Boa
 Copts and Robbers
 The Dam Busters
@@ -61,6 +59,7 @@ Lemmings
 Lunar Leepers
 Peeping Tom
 Pulsar II
+Raid Over Moscow [priority]
 Retro-Ball
 Roach Hotel
 The Asteroid Field
