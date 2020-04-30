@@ -9,7 +9,7 @@ Championship Wrestling
 Conquering Worlds
 Dive Bomber
 GBA Championship Basketball
-Kung Fu Master
+Kung Fu Master [priority]
 Lock 'N' Chase
 Mad Rat
 Marauder
@@ -49,7 +49,7 @@ Beach-Head II [priority]
 Boa
 Copts and Robbers
 The Dam Busters
-Fight Night
+Fight Night [priority]
 Hardball
 Infiltrator
 Infiltrator II
@@ -58,8 +58,10 @@ Jawbreaker
 Lemmings
 Lunar Leepers
 Peeping Tom
+Pharoah's Revenge
 Pulsar II
 Raid Over Moscow [priority]
+Realm of Impossibility
 Retro-Ball
 Roach Hotel
 The Asteroid Field
@@ -77,3 +79,7 @@ Zargs
 Fly Wars
 Jellyfish
 Minotaur
+
+//TODO(unacquired)
+Outworld
+
