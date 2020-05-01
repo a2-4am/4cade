@@ -91,3 +91,5 @@ clean:
 	rm -rf build/ || rm -rf build
 
 all: clean dsk mount
+
+al: all
