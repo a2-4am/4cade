@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BOULDER.DASH",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $71FA
+         jsr   $3FC0      ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$b5
+         sta   $181A      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $14DD
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
