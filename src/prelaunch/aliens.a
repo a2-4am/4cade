@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ALIENS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $B9B
+         jsr   $800       ; load "DOS"
+         lda   #$60
+         sta   $2429
+         jsr   $22AA      ; decrypt
+         +DISABLE_ACCEL
+         jmp   $1FA0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
