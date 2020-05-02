@@ -3,6 +3,8 @@
 AIRHEART=Type(06),AuxType(3FF8),Access(C3)
 AIRHEART2=Type(06),AuxType(3FF8),Access(C3)
 AIRHEART3=Type(06),AuxType(3FF8),Access(C3)
+ALIENS=Type(06),AuxType(3FF8),Access(C3)
+ALIENS2=Type(06),AuxType(3FF8),Access(C3)
 BAD.DUDES=Type(06),AuxType(3FF8),Access(C3)
 BAD.DUDES2=Type(06),AuxType(3FF8),Access(C3)
 BAD.DUDES3=Type(06),AuxType(3FF8),Access(C3)
