@@ -42,7 +42,6 @@ Space Cadette
 //TODO(woz-imaged but uncracked)
 Alien Lander
 Arcade Boot Camp
-Beach-Head [priority]
 Beach-Head II [priority]
 Boa
 Copts and Robbers
