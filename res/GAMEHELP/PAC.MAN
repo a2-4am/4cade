@@ -1,0 +1,23 @@
+
+
+              Avoid ghosts
+
+          Eat all the pellets
+
+  Power pellets make ghosts vulnerable
+
+
+
+                    A
+            move  <   >  move
+                    Z
+
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * *toggle sound
+
+Space Bar* * * * * * * * * * *start game
+
+[eof]
