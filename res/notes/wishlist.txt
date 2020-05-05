@@ -44,7 +44,6 @@ Arcade Boot Camp
 Boa
 Copts and Robbers [priority]
 The Dam Busters [priority]
-Fight Night [priority]
 Hardball
 Infiltrator
 Infiltrator II
