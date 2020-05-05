@@ -1,6 +1,6 @@
 //4am crack
 The American Challenge
-Arcticfox
+Arcticfox [priority]
 C'est La Vie
 Championship Baseball
 Championship Wrestling
@@ -11,7 +11,7 @@ Lock 'N' Chase
 Mad Rat
 Marauder
 Mars Cars
-Microwave
+Microwave [priority]
 MIRV
 The Movie Monster Game
 Neutrons
@@ -42,8 +42,8 @@ Space Cadette
 Alien Lander
 Arcade Boot Camp
 Boa
-Copts and Robbers
-The Dam Busters
+Copts and Robbers [priority]
+The Dam Busters [priority]
 Fight Night [priority]
 Hardball
 Infiltrator
@@ -53,9 +53,9 @@ Jawbreaker
 Lemmings
 Lunar Leepers
 Peeping Tom
-Pharoah's Revenge
+Pharoah's Revenge [priority]
 Pulsar II
-Realm of Impossibility
+Realm of Impossibility [priority]
 Retro-Ball
 Roach Hotel
 The Asteroid Field
@@ -73,7 +73,3 @@ Zargs
 Fly Wars
 Jellyfish
 Minotaur
-
-//TODO(unacquired)
-Outworld
-
