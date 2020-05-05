@@ -3,10 +3,6 @@
 
  Use square/triangle objects for puzzles
  
- Tips: Shoot X objects, avoid collisions
- 
-    The sequence of sounds is a clue
-
        Fire        Move (Space to stop)
 
          E                 I
@@ -22,4 +18,8 @@ Ctrl-(Fire direction)* * * * take object
 V* * * * * * * * * * * * * * * * *volume
 
 Esc* * * * * * * * * * * * * * * * pause
+
+ Tips: Shoot X objects, avoid collisions
+ 
+Short guided tour > http://a2.click/ankh
 [eof]
