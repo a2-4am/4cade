@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/THE.DAM.BUSTERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9B3
+         jsr   $800       ; decompress
+
+         +LC_REBOOT
+         jsr   DisableAccelerator
+         jsr   $BE44
+         jmp   $9B6
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
