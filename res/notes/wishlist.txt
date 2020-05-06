@@ -42,7 +42,6 @@ Space Kadet
 Alien Lander
 Arcade Boot Camp
 Boa
-Copts and Robbers [priority]
 Hardball
 Infiltrator
 Infiltrator II
