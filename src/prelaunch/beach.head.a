@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BEACH.HEAD",plain
@@ -12,6 +12,7 @@
          sta   $887
          jsr   $800       ; decompress
 
+         +NEW_RESET_VECTOR $BFF0
          +DISABLE_ACCEL
          jmp   $8000
 
