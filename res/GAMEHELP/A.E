@@ -19,4 +19,7 @@ Esc* * * * * * * * * * * * * * * * pause
 Ctrl-S * * * * * * * * * * * * * * sound
 
 Ctrl-R * * * * * * * * * * * * * restart
+
+
+         (space bar skips intro)
 [eof]
