@@ -12,6 +12,7 @@
          sta   $A21
          jsr   $800       ; load "DOS"
 
+         +READ_RAM1_WRITE_RAM1
          +LC_REBOOT
          +DISABLE_ACCEL
          jmp   $B700
