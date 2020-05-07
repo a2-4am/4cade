@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MICRO.INVADERS",plain
@@ -19,6 +19,7 @@
          sta   $144B      ; patch - don't decrease lives
          sta   $E96       ; patch - don't increase lives
 +
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          jmp   $305
 
