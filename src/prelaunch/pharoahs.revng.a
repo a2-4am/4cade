@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PHAROAHS.REVNG",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $3D61
+         jsr   $3AFE      ; decompress
+
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         php
+         jsr   DisableAccelerator
+         lda   #$60
+         sta   $85F
+         jsr   $862
+         jsr   $844
+         plp
+         beq   +
+         lda   #$a5
+         sta   $CF7       ; patch - don't decrease lives
++
+         jmp   $A00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
