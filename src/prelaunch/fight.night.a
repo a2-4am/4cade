@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/FIGHT.NIGHT",plain
@@ -12,6 +12,7 @@
          sta   $A21
          jsr   $800       ; load "DOS"
 
+         +READ_RAM1_WRITE_RAM1
          +LC_REBOOT
          +DISABLE_ACCEL
          jmp   $B700
