@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/HARDBALL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2FA0
+         jsr   $2580      ; decompress
+
+         jsr   DisableAccelerator
+         jsr   $A001
+         jmp   $9FE9
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
