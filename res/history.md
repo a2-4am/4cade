@@ -3,38 +3,64 @@
 ## New games
 
  - A.E.
+ - Aliens
  - Ardy the Aardvark
+ - Bandits
+ - Battle Chess
  - Battle Cruiser
+ - Beach-Head
+ - Beach-Head II
  - Bejeweled
+ - Borg
+ - Boulder Dash
  - California Games
  - Castle Smurfenstein
  - Caverns of Callisto
  - Columns
  - Congo Bongo
+ - Copts and Robbers
+ - County Fair
  - Crystal Castles
+ - Dangerous Dave
  - Dino Smurf
  - Double Trouble
+ - Fight Night
  - Flapple Bird
  - Force 7
  - Fuji Speed Way
+ - G.I. Joe
  - Gauntlet
  - Genius
  - Genius 2
+ - Ghostbusters
  - I.O. Silver
+ - Impossible Mission II
  - Into The Eagle's Nest
  - Jawbreaker II
  - Karate Champ
+ - Kung Fu Master
  - Little Computer People
+ - Manic Miner
  - Mating Zone
  - Matterhorn Screamer
+ - Maxwell Manor
+ - Micro Invaders
  - Miner 2049er II
  - Ming's Challenge
+ - Minit Man
+ - Mission on Thunderhead
+ - Monster Mash
  - One on One
+ - Outworld
  - Penetrator
+ - Pharaoh's Revenge
+ - Raid Over Moscow
  - Randamn
  - Saracen
  - Soko-Ban
  - Solo Flight
+ - Spindizzy
+ - Starglider
  - Station 5
  - Street Sports Baseball
  - Street Sports Basketball
@@ -42,9 +68,12 @@
  - Street Sports Soccer
  - Summer Games
  - Summer Games II
+ - Super Bunny
  - Super Zaxxon
  - TechnoCop
  - Test Drive
+ - The Asteroid Field
+ - The Dam Busters
  - The Heist
  - The Last Ninja
  - Triad
