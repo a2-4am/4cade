@@ -1,0 +1,40 @@
+;license:MIT
+;(c) 2020 by Tom Greene
+
+!cpu 6502
+!to "build/PRELAUNCH/DANGEROUS.DAVE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60       ; patch loader to return
+         sta   $20C6
+         jsr   $2000
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #$2C
+         stx   $8A61      ; don't decrement lives
+
++
+         ; the game calls the Applesoft RND function in ROM
+         ; so we need to copy the seed into ZP, otherwise it
+         ; will get stuck in an infinite loop
+         ldx   #$04
+-        lda   seed,x
+         sta   $C9,x
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+         jmp   $20EC
+
+seed
+         !byte   $80, $4F, $C7, $52, $FF
+
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
