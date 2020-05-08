@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/NEPTUNE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $7E81
+         jsr   $3FF8      ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $AC30      ; patch - don't decrease lives
+         sta   $AC4E      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   ($20)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
