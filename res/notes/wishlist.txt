@@ -2,15 +2,13 @@
 The American Challenge
 Arcticfox [priority]
 C'est La Vie
-Championship Baseball
-Championship Wrestling
 Conquering Worlds
 Dive Bomber
-GBA Championship Basketball
 Lock 'N' Chase
 Mad Rat
 Marauder
 Mars Cars
+MegaBots [priority]
 Microwave [priority]
 MIRV
 The Movie Monster Game
@@ -19,14 +17,12 @@ Oil's Well
 Pandora's Box
 Pegasus ][
 Roundabout
-Run For It
+Run For It [priority]
 Shuttle Intercept
 Super Huey
 Super Taxman II
 Tharolian Tunnels
 Video Vegas
-World Karate Championship
-The World's Greatest Baseball Game
 
 //4am crack (unreleased)
 Congo
@@ -42,7 +38,6 @@ Arcade Boot Camp
 Boa
 Infiltrator
 Infiltrator II
-International Hockey
 Jawbreaker
 Lemmings
 Lunar Leepers
@@ -51,17 +46,25 @@ Pulsar II
 Realm of Impossibility [priority]
 Retro-Ball
 Roach Hotel
-The Last Gladiator
+The Last Gladiator [priority]
 The Space Ark
 The Snapper
 Star Cruiser
-Superstar Ice Hockey
 Trick Shot
-Wayout
-World Games [DHGR]
+Wayout [priority]
 Zargs
 
 //TODO(flux-imaged but not woz)
 Fly Wars
 Jellyfish
-Minotaur
+Minotaur [priority]
+
+//Sports
+Championship Baseball
+Championship Wrestling
+GBA Championship Basketball
+International Hockey
+Superstar Ice Hockey
+The World's Greatest Baseball Game
+World Games [DHGR]
+World Karate Championship
