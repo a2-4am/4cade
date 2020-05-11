@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/FALCONS",plain
@@ -9,8 +9,18 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $3f0e
-         jsr   $3ebd      ; decompress
+         sta   $3f0b
+         jsr   $3eba      ; decompress
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   @iiplus
+         ldx   #$CA
+         stx   $944F
+         inx
+         stx   $9457
+         inx
+         stx   $9453
+@iiplus
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
