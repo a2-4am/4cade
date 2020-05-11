@@ -12,15 +12,12 @@
          sta   $3f0b
          jsr   $3eba      ; decompress
          lda   ROM_MACHINEID
-         cmp   #$06
-         bne   @iiplus
          ldx   #$CA
          stx   $944F
          inx
          stx   $9457
          inx
          stx   $9453
-@iiplus
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
