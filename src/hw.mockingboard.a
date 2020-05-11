@@ -135,6 +135,18 @@ GetMockingboardStuff
          sta   $fffe
          lda   #>Ignore
          sta   $ffff
+
+         ldy   #0
+         tya
+         sta   ($80),y
+         lda   #4
+         sta   ($80),y
+         tya
+         ldy   #$80
+         sta   ($80),y
+         lda   #4
+         sta   ($80),y
+
          rts                         ; found
 
 @timercheck
