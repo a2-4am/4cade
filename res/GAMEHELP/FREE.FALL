@@ -1,5 +1,5 @@
 
-   Maneuver through holes at bottom
+ Maneuver through colored gaps at bottom
  
    avoid needles, bombs and hazards
 
@@ -21,5 +21,5 @@ Ctrl-K * * * * * * * * * * * * *keyboard
 
 Ctrl-P * * * * * * * * * * * * *joystick
 
-   Tip: orange hole gives extra life
+   Tip: orange gap gives extra life
 [eof]
