@@ -8,7 +8,23 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +USES_TEXT_PAGE_2
+
+         lda   ROM_MACHINEID
+         cmp   #$06
+         beq   +
+
+         lda   #$E9
+         sta   $36
+         lda   #$BD
+         sta   $37
+         bne   ++
+
++        sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   ++
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
+++
+
          lda   #$60
          sta   $A0B
          jsr   $800        ; find and load "DOS"
@@ -20,27 +36,25 @@
 
 callback
          lda   #0
-         sta   $9E52
-         lda   #1
-         sta   $9E53
+         stx   $9E52
+         inx
+         stx   $9E53
 
-         lda   #$00        ; intercept BRUN command before
+         lda   #<patch     ; intercept BRUN command before
          sta   $A395       ; it jumps to the loaded file
-         lda   #$03
+         lda   #>patch
          sta   $A396
 
-         ldx   #patchend-patch
--        lda   patch,x     ; The game code has a stack leak and will
-         sta   $0300,x     ; clobber all of page 1 after repeated plays
-         dex               ; so move the patch code to page 3
-         bpl   -
-
+@notiiplus
          +DISABLE_ACCEL
          jmp   $9B00
 
 patch
-         !word $0302
+         !word brunpatch
 
+brunpatch
+         ldx   #$FF
+         txs
          lda   $AA76       ; check second character of filename
          cmp   #$D7        ; = W, filename = @WOLF
          bne   +
@@ -58,7 +72,6 @@ patch
          stx   $1999       ; or grenades
 
 +        jmp   ($AA72)     ; finally jump to the loaded file
-patchend
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
