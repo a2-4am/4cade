@@ -35,7 +35,7 @@
          jmp   $B700
 
 callback
-         lda   #0
+         ldx   #0
          stx   $9E52
          inx
          stx   $9E53
