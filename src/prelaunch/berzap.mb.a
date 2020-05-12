@@ -18,7 +18,7 @@
          bne   +
          sta   $3d94      ; patch - don't decrease lives
          sta   $6573      ; patch - don't increase lives
-         sta   $76ba      ; patch - don't increase lives
+         sta   $76b9      ; patch - don't increase lives
 +        ldy   $684e
          cpy   #$ee
          bne   +
@@ -86,4 +86,4 @@
 ++
 
 skipmb
-         jmp   ($b2ce)
+         jmp   ($b599)

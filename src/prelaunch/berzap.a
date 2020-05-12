@@ -16,19 +16,19 @@
 
 callback1
          lda   #$4c
-         sta   $b20b
+         sta   $b4d6
          lda   #<callback2
-         sta   $b20c
+         sta   $b4d7
          lda   #>callback2
-         sta   $b20d
+         sta   $b4d8
          jmp   $b000
 
 callback2
          lda   #0
-         sta   $b20c
+         sta   $b4d7
          lda   #2
          sta   $56        ; ldrhi
-         sta   $b20d
+         sta   $b4d8
          +READ_RAM2_WRITE_RAM2
          lda   $D401
          pha
