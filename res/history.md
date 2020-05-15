@@ -11,6 +11,7 @@
  - Beach-Head
  - Beach-Head II
  - Bejeweled
+ - Bop'n Wrestle
  - Borg
  - Boulder Dash
  - California Games
@@ -33,6 +34,7 @@
  - Genius
  - Genius 2
  - Ghostbusters
+ - Hardball
  - I.O. Silver
  - Impossible Mission II
  - Into The Eagle's Nest
@@ -50,15 +52,18 @@
  - Minit Man
  - Mission on Thunderhead
  - Monster Mash
+ - Neptune
  - One on One
  - Outworld
  - Penetrator
+ - Pentapus
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
  - Saracen
  - Soko-Ban
  - Solo Flight
+ - Spectre
  - Spindizzy
  - Starglider
  - Station 5
@@ -75,6 +80,7 @@
  - The Asteroid Field
  - The Dam Busters
  - The Heist
+ - The Last Gladiator
  - The Last Ninja
  - Triad
  - Wings of Fury
@@ -105,8 +111,10 @@
  - Display double hi-res title screens in search and browse modes
  - Added more game cheats
  - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Berzap to latest version
  - Upgrade Flapple Bird to latest version (thanks Dagen)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
+ - Lots of new super hi-res artwork for IIgs users (thanks Alex L, Andrew R.)
  - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
  - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lady Tut, Lancaster, Pitfall II) (thanks Andrew R.)
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
