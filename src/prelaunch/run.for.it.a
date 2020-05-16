@@ -21,8 +21,17 @@
          sta   $906
          sta   $1286
 +
+         lda   #<callback
+         sta   $15C8
+         lda   #>callback
+         sta   $15C9
          +DISABLE_ACCEL
          jmp   $800
+
+callback
+         lda   #1
+         sta   $A393
+         jmp   $A19A
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
