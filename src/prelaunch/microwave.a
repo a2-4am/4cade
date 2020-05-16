@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MICROWAVE",plain
@@ -22,6 +22,7 @@ callback
          sta   $8EB       ; patch - don't increase lives
          sta   $C41       ; patch - don't decrease lives
 +
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          lda   #0
          jmp   $8974
