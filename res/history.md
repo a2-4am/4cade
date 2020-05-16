@@ -60,6 +60,7 @@
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
+ - Run For It
  - Saracen
  - Soko-Ban
  - Solo Flight
