@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BCS.QUEST",plain
@@ -8,6 +8,8 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         ldx   #$e0
+         txs              ; no DOS, stack pointer is too high
          lda   #<cheat
          sta   $3e09
          lda   #>cheat
