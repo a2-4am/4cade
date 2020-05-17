@@ -49,7 +49,6 @@ The Space Ark
 The Snapper
 Star Cruiser
 Trick Shot
-Wayout [priority]
 Zargs
 
 //TODO(flux-imaged but not woz)
