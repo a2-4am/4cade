@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/REALM.IMPOSS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $41AD
+         jsr   $4000      ; decompress
+
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2C
+         sta   $AF1D      ; patch - don't decrease hit-points
++
+         bit   $C083
+         jsr   DisableAccelerator
+         bit   $C08B
+         jmp   $1953
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
