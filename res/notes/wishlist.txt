@@ -54,7 +54,6 @@ Zargs
 //TODO(flux-imaged but not woz)
 Fly Wars
 Jellyfish
-Minotaur [priority]
 
 //Sports
 Championship Baseball
