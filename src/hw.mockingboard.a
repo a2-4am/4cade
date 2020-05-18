@@ -53,10 +53,10 @@ GetMockingboardStuff
          ldy   #$0c
          sty   @mb_smc1 + 1
          iny
-         sty   @mb_smc8 + 1
+         sty   @mb_smc10 + 1
          iny
          sty   @mb_smc5 + 1
-         sty   @mb_smc12 + 1
+         sty   @mb_smc14 + 1
 
          +HIDE_NEXT_2_BYTES
 @foundII  ;stereo
@@ -75,6 +75,8 @@ GetMockingboardStuff
          sta   @mb_smc10 + 2
          sta   @mb_smc11 + 2
          sta   @mb_smc12 + 2
+         sta   @mb_smc13 + 2
+         sta   @mb_smc14 + 2
 
          ; detect speech chip
 
@@ -127,9 +129,12 @@ GetMockingboardStuff
          lda   #7
 @mb_smc7
          sta   $c402
+@mb_smc8
+         sty   $c483
+@mb_smc9
+         sta   $c482
 
-         lda   $81
-         and   #7
+         and   $81
          ora   $82
          tax
          lda   #<Ignore
@@ -138,6 +143,7 @@ GetMockingboardStuff
          sta   $ffff
 
          iny
+         sty   $80
          tya
          sta   ($80),y
          lda   #4
@@ -161,20 +167,20 @@ GetMockingboardStuff
 
 @mb_irq
          lda   #2
-@mb_smc8
+@mb_smc10
          sta   $c48d
          lda   #$80
-@mb_smc9
+@mb_smc11
          sta   $c443
          lda   #0
-@mb_smc10
+@mb_smc12
          sta   $c440
          lda   #$70
-@mb_smc11
+@mb_smc13
          sta   $c443
          sta   $80
          lda   #2
-@mb_smc12
+@mb_smc14
          sta   $c48e
          lda   $45
          rti
