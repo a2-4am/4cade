@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/WAYOUT",plain
@@ -19,6 +19,7 @@
          jsr   $8D53      ; decompress even more
          lda   #$20
          sta   $8D75
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
          jmp   $8D75
 
