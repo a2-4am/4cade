@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/STAR.CRUISER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2048
+         jsr   $2000      ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $1F84      ; patch - don't increase lives
+         sta   $61C8      ; patch - don't decrease lives
+         sta   $62D8      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $67B0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

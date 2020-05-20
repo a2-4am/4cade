@@ -44,7 +44,6 @@ Retro-Ball
 Roach Hotel
 The Space Ark
 The Snapper
-Star Cruiser
 Trick Shot
 Zargs
 
