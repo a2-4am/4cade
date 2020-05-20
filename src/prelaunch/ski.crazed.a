@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SKI.CRAZED",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $A23
+         jsr   $800       ; load "DOS"
+         lda   #0
+         sta   $E084
+         lsr   $E08F
+         lda   #$82
+         sta   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+         inc   $3F4       ; force reboot
+         jmp   $E03A
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
