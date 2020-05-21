@@ -3,8 +3,8 @@ The American Challenge
 C'est La Vie
 Conquering Worlds
 Dive Bomber
-Fat City
-Lock 'N' Chase
+Fat City [priority]
+Lock 'N' Chase [priority]
 Mad Rat
 Marauder
 Mars Cars
@@ -12,13 +12,13 @@ MIRV
 The Movie Monster Game
 Neutrons
 Oil's Well
-Pandora's Box
+Pandora's Box [priority]
 Pegasus ][
-Roundabout
+Roundabout [priority]
 Shuttle Intercept
 Super Huey
 Super Taxman II
-Tharolian Tunnels
+Tharolian Tunnels [priority]
 Video Vegas
 
 //4am crack (unreleased)
@@ -30,7 +30,7 @@ Space Kadet
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
-Arcade Boot Camp
+Arcade Boot Camp [priority]
 Boa
 Infiltrator
 Infiltrator II
@@ -44,7 +44,7 @@ Roach Hotel
 The Space Ark
 The Snapper
 Trick Shot
-Zargs
+Zargs [priority]
 
 //TODO(flux-imaged but not woz)
 Fly Wars
