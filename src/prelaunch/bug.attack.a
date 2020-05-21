@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BUG.ATTACK",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $641A
+         lda   #<(callback-1)
+         sta   $641D
+         jmp   $6400      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $F8D       ; patch - don't decrease lives
+         sta   $41B9      ; patch - don't increase lives
+         sta   $42F1      ; patch - don't increase lives
+         sta   $4434      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $4D36
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
