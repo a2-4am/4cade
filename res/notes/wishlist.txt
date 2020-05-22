@@ -28,7 +28,6 @@ Space Kadet
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
-Arcade Boot Camp [priority]
 Boa
 Infiltrator
 Infiltrator II
