@@ -1,0 +1,25 @@
+
+    Aim for orange / white / purple
+
+          joystick or keyboard
+
+  button 0/1 to increase/decrease speed
+  
+     both buttons or space to fire
+
+            A                  .
+    move  <   >  move        speed
+            Z                  ,
+
+/* * * * * * * * * * * straighten flight
+
+1 - 5* * * * * steering & speed response
+
+Esc* * * * *pause    S * * * * * * sound
+
+H* * * * * flip X    V * * * * * *flip Y
+
+Ctrl-R * *restart    Ctrl-K* * *keyboard
+
+Consult manual:  https://a2.click/hadron
+[eof]
