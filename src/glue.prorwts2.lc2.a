@@ -12,6 +12,14 @@ LoadFileInternal
 LoadFileAuxInternal
          sta   @auxreq+1             ; call with A=1 to load directly into aux memory
          +LDADDR gPathname
+!if RELBASE != $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !if * != $DAF3 {
+      !error "LoadFileDirect=",*, ", adjust !if and fix Berzap"
+    }
+  }
+}
          +ST16 namlo                 ; set filename
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
