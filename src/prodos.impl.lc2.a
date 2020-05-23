@@ -214,7 +214,7 @@ ProDOS_enter
          sta   sizelo
          jsr   hddopendir
          stx   blkidx
-         beq   @jmp_zp ;always
+         beq   @link_jmpzp ;always
 
 resetval=$f0
 @imp_seek
@@ -226,7 +226,14 @@ resetval=$f0
          stx   reqcmd
          jsr   @reset
          ldx   sizelo
-         beq   @seek64
+         bne   @seek64
+         cmp   ldrhi
+         bcc   @seek64
+         bne   @seek32
+         ldx   ldrlo
+         beq   @seek32
+
+@seek64
          sta   sizehi
          sta   sizelo
          jsr   @seekreset
@@ -234,7 +241,7 @@ resetval=$f0
          sbc   #resetval
          sta   ldrhi
 
-@seek64
+@seek32
          lda   ldrhi
          sta   sizehi
          lda   ldrlo
@@ -244,6 +251,7 @@ resetval=$f0
          ora   ldrlo
          bne   @jmp_zp
          dec   blkidx
+@link_jmpzp
          beq   @jmp_zp ;always
 
 @seekreset

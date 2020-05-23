@@ -15,7 +15,7 @@ LoadFileAuxInternal
 !if RELBASE != $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
-    !if * != $DAF3 {
+    !if * != $DAFD {
       !error "LoadFileDirect=",*, ", adjust !if and fix Berzap"
     }
   }
