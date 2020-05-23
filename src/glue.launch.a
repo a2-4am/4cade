@@ -253,4 +253,9 @@ PlayGame
          ; execution falls through here
 Launch
          jsr   SwitchToBank2
+         lda   #$BD
+         sta   launchpatch
+         jsr   saveslot              ; set proper slot information
+         lda   #$9D
+         sta   launchpatch
          jmp   LaunchInternal

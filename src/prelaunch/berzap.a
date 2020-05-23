@@ -36,7 +36,7 @@ callback2
          pha
          lda   #<berzap_mb
          ldy   #>berzap_mb
-         jsr   $DAFD      ; ahem, LoadFileDirect
+         jsr   LoadFileDirect
          pla
          sta   $D403
          pla

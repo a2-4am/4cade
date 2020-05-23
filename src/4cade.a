@@ -172,7 +172,7 @@ COPYSRC = *
          !source "src/hw.accel.lc2.a"
   STACKBASE = *
   LCRAM2_END = STACKBASE + 15
-  !if LCRAM2_END > DisableAccelerator {
+  !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }
   FONTDST = (LCRAM2_END + 255) and -256
@@ -191,7 +191,7 @@ EvenLasterMover
     !set PASS2=1
     !warn "ProRWTS ends at ", hdddataend - 1
     !warn "STACK at ", STACKBASE
-    !warn "LCRAM2 ends at ", LCRAM2_END - 1
+    !warn "LCRAM2 ends at ", LCRAM2_END
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
 }
