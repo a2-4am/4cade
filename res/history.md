@@ -4,6 +4,8 @@
 
  - A.E.
  - Aliens
+ - Arcade Boot Camp
+ - Arctic Fox
  - Ardy the Aardvark
  - Bandits
  - Battle Chess
@@ -14,6 +16,7 @@
  - Bop'n Wrestle
  - Borg
  - Boulder Dash
+ - Bug Attack
  - California Games
  - Castle Smurfenstein
  - Caverns of Callisto
@@ -25,6 +28,8 @@
  - Dangerous Dave
  - Dino Smurf
  - Double Trouble
+ - Exterminator
+ - Fat City
  - Fight Night
  - Flapple Bird
  - Force 7
@@ -43,13 +48,17 @@
  - Kung Fu Master
  - Little Computer People
  - Manic Miner
+ - Mars Cars
  - Mating Zone
  - Matterhorn Screamer
  - Maxwell Manor
+ - Megabots
  - Micro Invaders
+ - Microwave
  - Miner 2049er II
  - Ming's Challenge
  - Minit Man
+ - Minotaur
  - Mission on Thunderhead
  - Monster Mash
  - Neptune
@@ -60,12 +69,15 @@
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
+ - Realm of Impossibility
  - Run For It
  - Saracen
+ - Ski Crazed
  - Soko-Ban
  - Solo Flight
  - Spectre
  - Spindizzy
+ - Star Cruiser
  - Starglider
  - Station 5
  - Street Sports Baseball
@@ -84,8 +96,10 @@
  - The Last Gladiator
  - The Last Ninja
  - Triad
+ - Wayout
  - Wings of Fury
  - Winter Games
+ - World Karate Championship
 
 ## Removed games
 
@@ -120,6 +134,7 @@
  - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lady Tut, Lancaster, Pitfall II) (thanks Andrew R.)
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
  - Fixed acceleration on Laser 128 (thanks Tom G.)
+ - New GS/OS Finder icon (thanks fatdog projects)
 
 # Revision 3.0 / serial number 20200121
 
