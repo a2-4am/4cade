@@ -1,0 +1,19 @@
+
+   Gobble all the dots, avoid ghosts
+   
+   Energize, chase ghosts for bonus
+
+
+          joystick or keyboard
+
+
+                    A
+            move  <   >  move
+                    Z
+
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+[eof]
