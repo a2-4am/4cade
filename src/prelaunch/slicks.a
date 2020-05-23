@@ -1,0 +1,46 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SLICKS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $5612
+         jsr   $800       ; decompress
+
+         lda   #$88
+         sta   $BF0E      ; don't bank out
+         inc   $3F4       ; reboot on reset
+
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         bcc   skipmb
+         cpx   #$C4
+         beq   skipmb
+         txa
+         ldy   #0
+-        ldx   $1D77,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $1D77,Y    ;Replace #$C4 with detected slot
++        ldx   $1E77,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $1E77,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+
+skipmb
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $803
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
