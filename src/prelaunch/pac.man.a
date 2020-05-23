@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019 by qkumba/Frank M./4am
 
 !cpu 6502
 !to "build/PRELAUNCH/PAC.MAN",plain
@@ -18,6 +18,14 @@
          lda   #1
          sta   $104A      ; reset vector patch
 
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A5
+         sta   $5C0E      ; patch - don't decrease lives
+         sta   $4135      ; patch - don't increase lives
++
          +DISABLE_ACCEL
          jmp   $1000
 
