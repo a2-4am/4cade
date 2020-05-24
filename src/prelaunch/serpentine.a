@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am
 
 !cpu 6502
 !to "build/PRELAUNCH/SERPENTINE",plain
@@ -13,16 +13,16 @@
          +NEW_RESET_VECTOR $3C0
          ldx   #$0E       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
-         sta   $F1,x
+         sta   $3B0,x
          dex
          bpl   -
-         lda   #$F1       ; call patch instead of $233
+         lda   #$B0       ; call patch instead of $233
          sta   $8C96
-         lda   #$00
+         lda   #$03
          sta   $8C97
          jmp   $43F5      ; decompress and show title
 patch
-         jsr   $0100      ; decompress
+         jsr   $00F0      ; decompress
 cheat=*+1
          lda   #0         ; SMC
          beq   +
