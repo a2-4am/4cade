@@ -2,6 +2,7 @@
 
 ## New games
 
+ - 8bit-Slicks
  - A.E.
  - Aliens
  - Arcade Boot Camp
