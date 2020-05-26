@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/GENESIS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $3D0A
+         lda   #<(callback-1)
+         sta   $3D0D
+         jmp   $800       ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1527      ; patch - don't decrease lives
+         sta   $820F      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $900
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
