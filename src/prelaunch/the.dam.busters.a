@@ -12,9 +12,9 @@
          sta   $9B3
          jsr   $800       ; decompress
 
-         +LC_REBOOT
          jsr   DisableAccelerator
          jsr   $BE44
+         +LC_REBOOT
          jmp   $9B6
 
 !if * > $1C0 {

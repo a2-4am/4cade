@@ -13,7 +13,19 @@
          jsr   $2000      ; decompress
          jsr   DisableAccelerator
          jsr   $B801
-         jmp   $21C1
+         lda   #$4C
+         sta   $21C8
+         jsr   $21C1
+         ldx   #0
+         stx   $600D
+         inx
+         stx   $6012
+         inc   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+         jmp   $21CB
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

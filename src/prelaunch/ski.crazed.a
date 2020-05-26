@@ -10,17 +10,39 @@
          lda   #$60
          sta   $A23
          jsr   $800       ; load "DOS"
-         lda   #0
-         sta   $E084
-         lsr   $E08F
          lda   #$82
          sta   $101
          lda   #$A6
          sta   $104
          lda   #$FA
          sta   $105       ; update reset hook to reboot
-         inc   $3F4       ; force reboot
+         lda   #<callback1
+         sta   $E0BD
+         lda   #>callback1
+         sta   $E0BE
          jmp   $E03A
+
+callback1
+         ldy   #$4C
+         sty   $DA9D
+         ldy   #<callback2
+         sty   $DA9E
+         ldy   #>callback2
+         sty   $DA9F
+         jmp   $D000
+
+callback2
+         lda   #$A2
+         sta   $DA9D
+         ldx   #$FF
+         stx   $DA9E
+         lda   #$9A
+         sta   $DA9F
+         inc   $3F4
+         inx
+         stx   $A2C
+         lsr   $A37
+         jmp   $A00
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/PHAROAHS.REVNG",plain
+!to "build/PRELAUNCH/PHARAOHS.REVNG",plain
 *=$106
 
     !source "src/prelaunch/common.a"
@@ -16,6 +16,7 @@
          and   #CHEATS_ENABLED
          php
          jsr   DisableAccelerator
+         +LC_REBOOT
          lda   #$60
          sta   $85F
          jsr   $862
@@ -25,6 +26,8 @@
          lda   #$a5
          sta   $CF7       ; patch - don't decrease lives
 +
+         lda   #1
+         sta   $AC6
          jmp   $A00
 
 !if * > $1C0 {

@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/LAST.GLADIATOR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $11EA
+         jsr   $1000      ; decompress
+
+         lda   #$4C
+         sta   $BC00
+         lda   #<callback
+         sta   $BC01
+         lda   #>callback
+         sta   $BC02
+
+         +DISABLE_ACCEL
+         jmp   $11EF
+
+callback
+         +RESET_VECTOR $100
+         rts
+         
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -12,7 +12,10 @@
          sta   $9F4
          jsr   $800       ; load "DOS"
 
-         +DISABLE_ACCEL
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         +LC_REBOOT
+         +READ_ROM_NO_WRITE
          jmp   $B700
 
 !if * > $1C0 {

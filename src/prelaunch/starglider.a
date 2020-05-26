@@ -14,9 +14,22 @@
 
          jsr   DisableAccelerator
          jsr   $B8C2
-         +LC_REBOOT
-         inc   $3F4
-         jmp   $B840
+
+         lda   #$60
+         sta   $B859
+         jsr   $B840
+
+         ldx   #0
+         stx   $7323
+         inx
+         stx   $732B
+         inc   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+
+         jmp   $800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
