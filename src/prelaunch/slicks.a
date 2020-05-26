@@ -21,9 +21,8 @@
          cmp   #1
          ora   #$C0
          bcc   skipmb
-         cpx   #$C4
+         cmp   #$C4
          beq   skipmb
-         txa
          ldy   #0
 -        ldx   $1D77,Y    ;find #$C4s
          cpx   #$C4
