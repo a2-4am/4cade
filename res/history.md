@@ -37,6 +37,7 @@
  - Fuji Speed Way
  - G.I. Joe
  - Gauntlet
+ - Genesis
  - Genius
  - Genius 2
  - Ghostbusters
