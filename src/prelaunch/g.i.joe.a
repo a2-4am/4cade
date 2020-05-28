@@ -24,10 +24,10 @@
          sta   $D45D
          sta   $D5A3
 +
-         bit   $C083
          +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
-         bit   $C08B
+         +READ_RAM1_WRITE_RAM1
          jmp   $D400
 
 callback1

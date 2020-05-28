@@ -22,10 +22,9 @@
          lda   #$2C
          sta   $AF1D      ; patch - don't decrease hit-points
 +
-         bit   $C083
-         +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
-         bit   $C08B
+         +READ_RAM1_WRITE_RAM1
          jmp   $1953
 
 !if * > $1C0 {
