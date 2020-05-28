@@ -29,6 +29,7 @@
  - Dangerous Dave
  - Dino Smurf
  - Double Trouble
+ - Evolution
  - Exterminator
  - Fat City
  - Fight Night
@@ -36,6 +37,7 @@
  - Force 7
  - Fuji Speed Way
  - G.I. Joe
+ - Galaxian
  - Gauntlet
  - Genesis
  - Genius
