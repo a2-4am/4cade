@@ -391,6 +391,12 @@ resetval=$f0
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
+!ifdef PASS2 {
+} else { ;PASS2
+  !if * != itraverse {
+    !error "itraverse=",*, ", fix constants.a"
+  }
+}
 traverse
          +LD16 gRootDirectory
          sta   (reloc + unrhddblocklo - unrelochdd) + 1

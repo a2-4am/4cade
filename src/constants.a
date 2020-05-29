@@ -6,7 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E820 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E863 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
 ; E91E..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
@@ -16,8 +16,8 @@
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D66F - ProRWTS code
-; D670..DBA2 - HGR font code & ProRWTS glue code
+; D400..D66D - ProRWTS code
+; D66E..DBA2 - HGR font code & ProRWTS glue code
 ; DBA3..DBB2 - backup of stack (during gameplay and self-running demos)
 ; ...unused... yes, just one byte to spare
 ; DBB4..DBFF - (de)acceleration function
@@ -145,3 +145,7 @@ CHEATS_ENABLED = %00001000
 ; hacks
 LoadFileDirect = $DAFB
 launchpatch    = $D613
+iAddToPath     = $FECC
+itraverse      = $D8D9
+namlo          = $57
+namhi          = $58

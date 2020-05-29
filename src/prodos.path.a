@@ -24,6 +24,14 @@ kRootDirectory=*+1
          ldx   #0
          stx   gPathname
          ; execution falls through here
+!if RELBASE != $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !if * != iAddToPath {
+      !error "iAddToPath=",*, ", fix constants.a"
+    }
+  }
+}
 AddToPath
          +ST16 PTR
          ldy   #0
