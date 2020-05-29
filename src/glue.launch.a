@@ -159,11 +159,15 @@ GetGameDisplayName
          sta   @or                   ; first character remains capitalized
          ldy   #1
 -        lda   (SAVE), y
-         cmp   #$2E
+         cmp   #$49                  ; 'I'
+         bne   +
+         cmp   gValLen-1,y
+         beq   ++                    ; preserve 'II' casing
++        cmp   #$2E
          bne   @or
          lda   #$20                  ; convert '.' to ' '
 @or      ora   #$20                  ; SMC (opcode)
-         sta   gValLen, y
+++       sta   gValLen, y
          cmp   #$20
          bne   +
          lda   #$24                  ; first character after ' ' remains capitalized
