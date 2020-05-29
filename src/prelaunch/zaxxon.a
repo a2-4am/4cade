@@ -7,9 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
-         +LC_REBOOT
          +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
          lda   MachineStatus
          pha
          lda   MockingboardStuff
@@ -40,8 +38,10 @@
          ldy   #$bd
          sty   $1a40
          sty   $1a61
-+        bit   $C083
-         jsr   DisableAccelerator
++        +READ_RAM2_WRITE_RAM2
+
+         +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
          ldy   #0
          jmp   $41D0
 
