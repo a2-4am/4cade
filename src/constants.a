@@ -6,7 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E7F3 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E802 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
 ; E915..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
