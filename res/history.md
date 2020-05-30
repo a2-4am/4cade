@@ -28,6 +28,7 @@
  - Crystal Castles
  - Dangerous Dave
  - Dino Smurf
+ - Dogfight II
  - Double Trouble
  - Evolution
  - Exterminator
@@ -51,6 +52,7 @@
  - Karate Champ
  - Kung Fu Master
  - Little Computer People
+ - Lock 'n' Chase
  - Manic Miner
  - Mars Cars
  - Mating Zone
@@ -66,6 +68,7 @@
  - Mission on Thunderhead
  - Monster Mash
  - Neptune
+ - Oid Zone
  - One on One
  - Outworld
  - Penetrator
@@ -101,6 +104,7 @@
  - The Last Ninja
  - Triad
  - Wayout
+ - Who Framed Roger Rabbit
  - Wings of Fury
  - Winter Games
  - World Karate Championship
