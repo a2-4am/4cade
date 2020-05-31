@@ -6,15 +6,14 @@
        Find keys to change levels
 
 
-
           joystick or keyboard
 
-     button 0 / 1 to fire east / west
+     button 1 / 0 to fire west / east
 
 
-                    A
-            move  <   >  move
-                    Z
+     Fire               I
+                move  J   K  move
+    Z    X              M
 
 
 Esc* * * * * * * * * * * * * * * * pause
