@@ -10,7 +10,6 @@
 
      button 1 / 0 to fire west / east
 
-
      Fire               I
                 move  J   K  move
     Z    X              M
@@ -21,4 +20,6 @@ Esc* * * * * * * * * * * * * * * * pause
 1* * * * * * * * * * * * * * * * * sound
 
 Ctrl-] * * * * * * * * * * * * * options
+
+      Tip: The gun is on level 3
 [eof]
