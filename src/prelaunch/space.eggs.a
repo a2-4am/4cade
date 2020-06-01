@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2020 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/SPACE.EGGS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +NEW_RESET_VECTOR $280
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $2056
+         jsr   $2000      ; decompress
+
+         +DISABLE_ACCEL
+         jmp   $4880      ; run it
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
