@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by Andrew Roughan, qkumba, 4am
+;(c) 2019-2020 by Andrew Roughan, qkumba, 4am, Tom Charlesworth
 ;
 ; Mockingboard support functions
 ;
@@ -51,12 +51,12 @@ GetMockingboardStuff
          beq   @foundII
 
          ldy   #$0c
-         sty   @mb_smc3 + 1
+         sty   @mb_smc1 + 1
          iny
-         sty   @mb_smc8 + 1
+         sty   @mb_smc10 + 1
          iny
-         sty   @mb_smc7 + 1
-         sty   @mb_smc11 + 1
+         sty   @mb_smc5 + 1
+         sty   @mb_smc14 + 1
 
          +HIDE_NEXT_2_BYTES
 @foundII  ;stereo
@@ -76,6 +76,7 @@ GetMockingboardStuff
          sta   @mb_smc11 + 2
          sta   @mb_smc12 + 2
          sta   @mb_smc13 + 2
+         sta   @mb_smc14 + 2
 
          ; detect speech chip
 
@@ -87,25 +88,20 @@ GetMockingboardStuff
          sta   $3ff
          sta   $ffff
 
-         lda   #0
-@mb_smc1
-         sta   $c403
-@mb_smc2
-         sta   $c402
          lda   #$0c
-@mb_smc3
+@mb_smc1
          sta   $c48c
          lda   #$80
-@mb_smc4
+@mb_smc2
          sta   $c443
          lda   #$c0
-@mb_smc5
+@mb_smc3
          sta   $c440
          lda   #$70
-@mb_smc6
+@mb_smc4
          sta   $c443
          lda   #$82
-@mb_smc7
+@mb_smc5
          sta   $c48e
 
          ldx   #0
@@ -127,14 +123,37 @@ GetMockingboardStuff
          ror   $82
 
 @onlyI
-         lda   $81
-         and   #7
+         ldy   #$ff
+@mb_smc6
+         sty   $c403
+         lda   #7
+@mb_smc7
+         sta   $c402
+@mb_smc8
+         sty   $c483
+@mb_smc9
+         sta   $c482
+
+         and   $81
          ora   $82
          tax
          lda   #<Ignore
          sta   $fffe
          lda   #>Ignore
          sta   $ffff
+
+         iny
+         sty   $80
+         tya
+         sta   ($80),y
+         lda   #4
+         sta   ($80),y
+         tya
+         ldy   #$80
+         sta   ($80),y
+         lda   #4
+         sta   ($80),y
+
          rts                         ; found
 
 @timercheck
@@ -148,24 +167,21 @@ GetMockingboardStuff
 
 @mb_irq
          lda   #2
-@mb_smc8
+@mb_smc10
          sta   $c48d
+         lda   #$80
+@mb_smc11
+         sta   $c443
          lda   #0
-@mb_smc9
+@mb_smc12
          sta   $c440
          lda   #$70
-@mb_smc10
+@mb_smc13
          sta   $c443
          sta   $80
          lda   #2
-@mb_smc11
+@mb_smc14
          sta   $c48e
-         lda   #$ff
-@mb_smc12
-         sta   $c403
-         lda   #7
-@mb_smc13
-         sta   $c402
          lda   $45
          rti
 

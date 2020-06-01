@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am
 
 !cpu 6502
 !to "build/PRELAUNCH/NIGHT.MISSION",plain
@@ -11,7 +11,13 @@
          lda   #$60
          sta   $8C36
          jsr   $44E5      ; decompress
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #HAS_JOYSTICK
+         bne   +
+         inc   $AFA       ; force keyboard
++        jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $0800
 
 !if * > $1C0 {

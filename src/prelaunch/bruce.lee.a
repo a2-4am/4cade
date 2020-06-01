@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BRUCE.LEE",plain
@@ -9,12 +9,12 @@
 
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         lda   #$4c
+         lda   #$2c
          sta   $bb8
          lda   #<callback
-         sta   $bb9
+         sta   $bb6
          lda   #>callback
-         sta   $bba
+         sta   $bb7
          ldx   #<cheat2
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -38,11 +38,12 @@
 
 callback
          +DISABLE_ACCEL
+         jsr   $6000
          jsr   $7f8
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
          +READ_RAM1_WRITE_RAM1
-         jmp   $bbb
+         rts
 
 cheat !pseudopc $cf {
 cheat1

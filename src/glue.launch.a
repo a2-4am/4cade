@@ -16,7 +16,7 @@
 ;
 
 gGameToLaunch
-         !word $FF,$FF
+         !word $FFFF
 
 ;------------------------------------------------------------------------------
 ; AnyGameSelected
@@ -30,10 +30,9 @@ gGameToLaunch
 ;------------------------------------------------------------------------------
 AnyGameSelected
          +LD16 gGameToLaunch
-         +CMP16 $FFFF                ; CMP sets carry when equal
-         beq   +
-         clc
-+        rts
+         +CMP16 $FFFF
+         bne   ForceGoodResult
+         rts                         ; CMP sets carry when equal
 
 ;------------------------------------------------------------------------------
 ; GetGameToLaunch
@@ -46,12 +45,14 @@ AnyGameSelected
 ;------------------------------------------------------------------------------
 GetGameToLaunch
          jsr   AnyGameSelected
-         bcs   @exit
+         bcs   _gameToLaunchExit
          +ST16 WINDEX
          +LDADDR gGamesListStore
          jsr   okvs_nth
+ForceGoodResult
          clc
-@exit    rts
+_gameToLaunchExit
+         rts
 
 ;------------------------------------------------------------------------------
 ; FindGame
@@ -71,7 +72,7 @@ FindGame
          jsr   okvs_find
          !word gGamesListStore
 @key     !word $FDFD                 ; SMC
-         bcc   @exit
+         bcc   GlueLaunchRTS
 ; Hack to allow self-running demos that don't correspond to a game
 ; filename. If the name ends in a '.', accept it unconditionally.
          ldx   #$FF
@@ -84,12 +85,10 @@ FindGame
          tay
          lda   (PARAM),y
          cmp   #"."
-         beq   @forceGoodResult
+         beq   ForceGoodResult
          sec
+GlueLaunchRTS
          rts
-@forceGoodResult
-         clc
-@exit    rts
 
 ;------------------------------------------------------------------------------
 ; FindGameInActionSlideshow
@@ -108,7 +107,7 @@ FindGame
 FindGameInActionSlideshow
          +ST16 @sskey
          jsr   FindGame
-         bcc   +
+         bcc   GetGameDisplayName
 ; if the game was not found, try getting the value of the current record from
 ; gSlideshowStore (some games have multiple action screenshots, in which case
 ; the key is only the screenshot filename, and the value is the actual game
@@ -117,11 +116,8 @@ FindGameInActionSlideshow
          !word gSlideshowStore
 @sskey   !word $FDFD                 ; SMC
          jsr   FindGame
-         bcs   @exit
-+
-         jsr   GetGameDisplayName
-         clc
-@exit    rts
+         bcs   GlueLaunchRTS
+         ; /!\ execution falls through here to GetGameDisplayName
 
 ;------------------------------------------------------------------------------
 ; GetGameDisplayName
@@ -134,6 +130,7 @@ FindGameInActionSlideshow
 ;        out of thin air)
 ;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
 ;        X preserved
+;        C clear
 ;------------------------------------------------------------------------------
 GetGameDisplayName
          +ST16 SAVE
@@ -144,6 +141,7 @@ GetGameDisplayName
          cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
          beq   +
          +LD16 PTR
+         clc
          rts
 +                                    ; game display name is truncated, we must expand it
          iny                         ; Y = 1
@@ -159,11 +157,15 @@ GetGameDisplayName
          sta   @or                   ; first character remains capitalized
          ldy   #1
 -        lda   (SAVE), y
-         cmp   #$2E
+         cmp   #$49                  ; 'I'
+         bne   +
+         cmp   gValLen-1,y
+         beq   ++                    ; preserve 'II' casing
++        cmp   #$2E
          bne   @or
          lda   #$20                  ; convert '.' to ' '
 @or      ora   #$20                  ; SMC (opcode)
-         sta   gValLen, y
+++       sta   gValLen, y
          cmp   #$20
          bne   +
          lda   #$24                  ; first character after ' ' remains capitalized
@@ -177,6 +179,7 @@ GetGameDisplayName
          pla
          sta   gValLen, y
          +LDADDR gValLen
+         clc
          rts
 
 ;------------------------------------------------------------------------------
@@ -253,4 +256,9 @@ PlayGame
          ; execution falls through here
 Launch
          jsr   SwitchToBank2
+         lda   #$BD
+         sta   launchpatch
+         jsr   saveslot              ; set proper slot information
+         lda   #$9D
+         sta   launchpatch
          jmp   LaunchInternal

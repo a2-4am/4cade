@@ -2,39 +2,90 @@
 
 ## New games
 
+ - 8bit-Slicks
  - A.E.
+ - Aliens
+ - Arcade Boot Camp
+ - Arctic Fox
  - Ardy the Aardvark
+ - Bandits
+ - Battle Chess
  - Battle Cruiser
+ - Beach-Head
+ - Beach-Head II
  - Bejeweled
+ - Bop'n Wrestle
+ - Borg
+ - Boulder Dash
+ - Bug Attack
  - California Games
  - Castle Smurfenstein
  - Caverns of Callisto
  - Columns
  - Congo Bongo
+ - Copts and Robbers
+ - County Fair
  - Crystal Castles
+ - Dangerous Dave
  - Dino Smurf
+ - Dogfight II
  - Double Trouble
+ - Evolution
+ - Exterminator
+ - Fat City
+ - Fight Night
  - Flapple Bird
  - Force 7
  - Fuji Speed Way
+ - G.I. Joe
+ - Galaxian
  - Gauntlet
+ - Genesis
  - Genius
  - Genius 2
+ - Ghostbusters
+ - Hardball
  - I.O. Silver
+ - Impossible Mission II
  - Into The Eagle's Nest
  - Jawbreaker II
  - Karate Champ
+ - Kung Fu Master
  - Little Computer People
+ - Lock 'n' Chase
+ - Manic Miner
+ - Mars Cars
  - Mating Zone
  - Matterhorn Screamer
+ - Maxwell Manor
+ - Megabots
+ - Micro Invaders
+ - Microwave
  - Miner 2049er II
  - Ming's Challenge
+ - Minit Man
+ - Minotaur
+ - Mission on Thunderhead
+ - Monster Mash
+ - Neptune
+ - Oid Zone
  - One on One
+ - Outworld
  - Penetrator
+ - Pentapus
+ - Pharaoh's Revenge
+ - Raid Over Moscow
  - Randamn
+ - Realm of Impossibility
+ - Run For It
  - Saracen
+ - Ski Crazed
  - Soko-Ban
  - Solo Flight
+ - Spectre
+ - Spindizzy
+ - Star Cruiser
+ - Starglider
  - Station 5
  - Street Sports Baseball
  - Street Sports Basketball
@@ -42,14 +93,21 @@
  - Street Sports Soccer
  - Summer Games
  - Summer Games II
+ - Super Bunny
  - Super Zaxxon
  - TechnoCop
  - Test Drive
+ - The Asteroid Field
+ - The Dam Busters
  - The Heist
+ - The Last Gladiator
  - The Last Ninja
  - Triad
+ - Wayout
+ - Who Framed Roger Rabbit
  - Wings of Fury
  - Winter Games
+ - World Karate Championship
 
 ## Removed games
 
@@ -76,12 +134,15 @@
  - Display double hi-res title screens in search and browse modes
  - Added more game cheats
  - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Berzap to latest version
  - Upgrade Flapple Bird to latest version (thanks Dagen)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
+ - Lots of new super hi-res artwork for IIgs users (thanks Alex L, Andrew R.)
  - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
  - Auto-detect Mockingboard in any slot and auto-configure support in supported games (e.g. Berzap, Lady Tut, Lancaster, Pitfall II) (thanks Andrew R.)
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
  - Fixed acceleration on Laser 128 (thanks Tom G.)
+ - New GS/OS Finder icon (thanks fatdog projects)
 
 # Revision 3.0 / serial number 20200121
 

@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SPECTRE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $5F08
+         lda   #<(callback-1)
+         sta   $5F0B
+         jmp   $5E2B      ; decompress
+
+callback
+         jsr   $BD78
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $6A6B      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ARCTIC.FOX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $4280
+         lda   #<(callback-1)
+         sta   $4283
+         jmp   $3FFD      ; decompress
+
+callback
+         +LC_REBOOT
+         inc   $3F4       ; force reboot
+         bit   $C083
+         jsr   DisableAccelerator
+         +READ_RAM1_WRITE_RAM1
+         jmp   $1170
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

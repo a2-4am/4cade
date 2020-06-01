@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/WORLD.KARATE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $21BE
+         jsr   $2000      ; decompress
+         jsr   DisableAccelerator
+         jsr   $B801
+         lda   #$4C
+         sta   $21C8
+         jsr   $21C1
+         ldx   #0
+         stx   $600D
+         inx
+         stx   $6012
+         inc   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+         jmp   $21CB
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

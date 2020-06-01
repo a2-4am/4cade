@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MARS.CARS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $51CD
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jsr   $1100
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $BE5A
+         jsr   $BE24      ; decompress more
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $70A0      ; patch - don't decrease lives
+         sta   $74E0      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         jmp   $7000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

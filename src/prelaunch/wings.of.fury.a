@@ -15,18 +15,25 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
-         lda   #<cheat
-         sta   $8276
-         lda   #>cheat
-         sta   $8277
+         ldy   #(cheat_e-cheat)-1
+-        lda   cheat,y
+         sta   $200,y
+         dey
+         bpl   -
+         iny
+         sty   $8274
+         lda   #2
+         sta   $8275
 +
          jmp   $800       ; decompress
 
-cheat
+cheat !pseudopc $200 {
          jsr   $2000
          lda   #$AD
          sta   $AAAC      ; patch - don't decrease lives
          rts
+}
+cheat_e
 
 callback
          jsr   DisableAccelerator

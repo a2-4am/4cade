@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # run from project root directory
 

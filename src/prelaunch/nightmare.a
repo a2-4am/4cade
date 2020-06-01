@@ -1,0 +1,44 @@
+;license:MIT
+;(c) 2020 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/NIGHTMARE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $404B
+         jsr   $4000      ; decompress
+
+         lda   #<callback ; lets fix ROM calls to WAIT/$FCA8
+         sta   $16A9      ; which behave differently
+         sta   $80EE      ; on different machines
+         sta   $8799      ; (fixes slow scream on //c+ & //gs)
+         sta   $8C8F
+         sta   $8CC4
+         sta   $8CE1
+         lda   #>callback
+         sta   $16AA
+         sta   $80EF
+         sta   $879A
+         sta   $8C90
+         sta   $8CC5
+         sta   $8CE2
+
+         +DISABLE_ACCEL
+         jmp   $1206
+
+callback sec              ; non-ROM WAIT
+wait2    pha
+wait3    sbc   #$01
+         bne   wait3
+         pla
+         sbc   #$01
+         bne   wait2
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

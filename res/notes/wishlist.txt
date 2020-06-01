@@ -1,75 +1,35 @@
 //4am crack
 The American Challenge
-Arcticfox
-Boulder Dash
 C'est La Vie
-Championship Baseball
-Championship Wrestling
 Conquering Worlds
 Dive Bomber
-Elite
-G.I. Joe [proiority]
-GBA Championship Basketball
-Kung Fu Master
-Lock 'N' Chase
 Mad Rat
 Marauder
-Mars Cars
-Microwave
-Minit Man
 MIRV
-Monster Mash
 The Movie Monster Game
 Neutrons
 Oil's Well
-Pandora's Box
+Pandora's Box [priority]
 Pegasus ][
-Roundabout
-Run For It
-Shanghai
-Shifty Sam
+Roundabout [priority]
 Shuttle Intercept
-Spindizzy [priority]
-Super Bunny
 Super Huey
 Super Taxman II
-Tharolian Tunnels
+Tharolian Tunnels [priority]
 Video Vegas
-World Karate Championship
-The World's Greatest Baseball Game
 
 //4am crack (unreleased)
-Bop N Wrestle
 Congo
-County Fair [priority]
 Frazzle
 Galactic Attack
-Ghostbusters [priority]
-Pentapus
 Rear Guard
-Ski Crazed
-Space Cadette
-
-//qkumba crack
-Bandits
-
-//other
-Battle Chess [DHGR][priority]
+Space Kadet
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
-Arcade Boot Camp
-Beach-Head
-Beach-Head II
 Boa
-Borg
-Copts and Robbers
-The Dam Busters
-Fight Night
-Hardball
 Infiltrator
 Infiltrator II
-International Hockey
 Jawbreaker
 Lemmings
 Lunar Leepers
@@ -77,18 +37,20 @@ Peeping Tom
 Pulsar II
 Retro-Ball
 Roach Hotel
-The Asteroid Field
-The Last Gladiator
 The Space Ark
 The Snapper
-Star Cruiser
-Superstar Ice Hockey
 Trick Shot
-Wayout
-World Games [DHGR]
-Zargs
+Zargs [priority]
 
 //TODO(flux-imaged but not woz)
 Fly Wars
 Jellyfish
-Minotaur
+
+//Sports
+Championship Baseball
+Championship Wrestling
+GBA Championship Basketball
+International Hockey
+Superstar Ice Hockey
+The World's Greatest Baseball Game
+World Games [DHGR]

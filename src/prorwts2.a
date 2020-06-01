@@ -2747,8 +2747,6 @@ encbufpatch1
       } ;allow_subdir = 1
       !if allow_aux = 0 {
                 rts
-      } else { ;allow_aux = 1
-                beq     hddrdwrdone
       } ;allow_aux = 0
     } ;one_shot = 0
   } else { ;aligned_read = 1
@@ -3264,6 +3262,13 @@ saveslot
                 lda     scrn_array, x
 initpatch       lda     ($48), y
                 pla
+
+!ifdef PASS2 {
+} else { ;PASS2
+  !if * != launchpatch {
+    !error "launchpatch=",*, ", fix constants.a"
+  }
+}
                 sta     scrn_array, x
                 inx
                 tya

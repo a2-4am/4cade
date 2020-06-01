@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/LOCK.N.CHASE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4326
+         sta   $4345
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $647B
+         jsr   $6400
+         jsr   $BE16
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $11C0      ; patch - don't increase lives
+         sta   $1595      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

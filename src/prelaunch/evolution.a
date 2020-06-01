@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/EVOLUTION",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   +
+
+cheat
+         pha
+         jsr   $BB01
+         pla
+         tax
+         lda   cheat_lo-1,x
+         sta   cheat_patch+1
+         lda   cheat_hi-1,x
+         sta   cheat_patch+2
+         lda   #$A5
+cheat_patch
+         sta   $d1d1      ; patch - don't decrease lives
+         rts
+
+cheat_lo !byte $0E, $C7, $3A, $64, $48, $36
+cheat_hi !byte $0A, $0A, $0B, $0A, $0B, $0B
+
++
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $870
+         jsr   $800       ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<cheat
+         sta   $BA02
+         lda   #>cheat
+         sta   $BA03
++
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

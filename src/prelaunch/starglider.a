@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/STARGLIDER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $80FE
+         jsr   $800       ; decompress
+
+         jsr   DisableAccelerator
+         jsr   $B8C2
+
+         lda   #$60
+         sta   $B859
+         jsr   $B840
+
+         ldx   #0
+         stx   $7323
+         inx
+         stx   $732B
+         inc   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

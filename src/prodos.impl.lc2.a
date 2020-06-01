@@ -193,7 +193,7 @@ ProDOS_enter
          sta   (buffer), y
          ldy   #1
          sta   (buffer), y
-         bne   @jmp_zp2
+         bne   @jmp_zp2 ;always
 
 @imp_open
          ldx   #namlo
@@ -213,28 +213,35 @@ ProDOS_enter
          sta   sizehi
          sta   sizelo
          jsr   hddopendir
-         lda   #0
-         sta   blkidx
-         beq   @jmp_zp ;always
+         stx   blkidx
+         beq   @link_jmpzp ;always
 
+resetval=$f0
 @imp_seek
          jsr   @set_rdwrbuff
-         lda   #0
-         sta   blkidx
-         sta   blkofflo
-         sta   blkoffhi
-         sta   reqcmd
+         ldx   #0
+         stx   blkidx
+         stx   blkofflo
+         stx   blkoffhi
+         stx   reqcmd
          jsr   @reset
          ldx   sizelo
-         beq   @seek64
+         bne   @seek64
+         cmp   ldrhi
+         bcc   @seek64
+         bne   @seek32
+         ldx   ldrlo
+         beq   @seek32
+
+@seek64
          sta   sizehi
          sta   sizelo
          jsr   @seekreset
-         inc   ldrlo
-         bne   @seek64
-         inc   ldrhi
+         lda   ldrhi
+         sbc   #resetval
+         sta   ldrhi
 
-@seek64
+@seek32
          lda   ldrhi
          sta   sizehi
          lda   ldrlo
@@ -244,14 +251,15 @@ ProDOS_enter
          ora   ldrlo
          bne   @jmp_zp
          dec   blkidx
+@link_jmpzp
          beq   @jmp_zp ;always
 
 @seekreset
          jsr   hddrdwrpart
 @reset
-         lda   #$f0
+         lda   #resetval
          sta   blefthi
-         sta   bleftlo
+         stx   bleftlo
          rts
 
 @imp_read
@@ -383,6 +391,12 @@ ProDOS_enter
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
+!ifdef PASS2 {
+} else { ;PASS2
+  !if * != itraverse {
+    !error "itraverse=",*, ", fix constants.a"
+  }
+}
 traverse
          +LD16 gRootDirectory
          sta   (reloc + unrhddblocklo - unrelochdd) + 1

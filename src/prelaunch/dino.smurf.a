@@ -16,7 +16,20 @@
          beq   +
          lda   #$ad
          sta   $1895      ; patch - don't decrease lives
-+        +DISABLE_ACCEL
+
++        lda   ROM_MACHINEID
+         cmp   #$06
+         beq   ++
+         ldy   #$2C
+-        lda   $AE4A,Y
+         cmp   #$E1
+         bcc   +
+         and   #$DF
+         sta   $AE4A,Y
++        dey
+         bne   -
+
+++       +DISABLE_ACCEL
          jmp   $A892
 
 !if * > $1C0 {

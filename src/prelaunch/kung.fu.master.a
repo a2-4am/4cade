@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/KUNG.FU.MASTER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9A0
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         ldx   #0
+         lda   #$C4
+         jsr   $BB00
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2c
+         sta   $805D      ; patch - don't decrease lives
++
+         jmp   $9A3
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

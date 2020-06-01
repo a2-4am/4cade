@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ZAXXON",plain
@@ -8,7 +8,6 @@
     !source "src/prelaunch/common.a"
 
          +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
          lda   MachineStatus
          pha
          lda   MockingboardStuff
@@ -30,6 +29,7 @@
 +        inx
          bne   -
          sta   $81D
+         inc   $BF87
 
 @skip_mb
          pla
@@ -38,9 +38,10 @@
          ldy   #$bd
          sty   $1a40
          sty   $1a61
-+        inc   $BF87
-         bit   $C083
-         jsr   DisableAccelerator
++        +READ_RAM2_WRITE_RAM2
+
+         +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
          ldy   #0
          jmp   $41D0
 

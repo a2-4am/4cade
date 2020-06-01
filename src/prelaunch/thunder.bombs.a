@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2019 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/THUNDER.BOMBS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $887F
+         jsr   $87F9      ; load/title
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $7818
+         jsr   $7800      ; unpack/setup
+
+         lda   #0
+         sta   $3F2
+         +DISABLE_ACCEL
+
+         lda   $323
+         jmp   $781B
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

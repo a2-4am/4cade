@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2020 by qkumba/Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/MICRO.INVADERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4013
+         jsr   $4000      ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $144B      ; patch - don't decrease lives
+         sta   $E96       ; patch - don't increase lives
++
+         +RESET_VECTOR $100
+         +DISABLE_ACCEL
+         jmp   $305
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

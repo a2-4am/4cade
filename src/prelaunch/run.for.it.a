@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/RUN.FOR.IT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9DC
+         jsr   $800       ; load DOS
+         lda   #$60
+         sta   $B727
+         jsr   $B700      ; load game
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $906
+         sta   $1286
++
+         lda   #<callback
+         sta   $15C8
+         lda   #>callback
+         sta   $15C9
+         +DISABLE_ACCEL
+         lda   #<callback2
+         sta   $88E
+         lda   #>callback2
+         sta   $88F
+         jmp   $800
+
+callback
+         lda   #1
+         sta   $A393
+         jmp   $A19A
+
+callback2
+         ldx   #0
+         stx   $A1C2
+         inx
+         stx   $A1C7
+         jmp   $A190
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

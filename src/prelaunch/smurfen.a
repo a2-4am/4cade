@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020 by qkumba/Frank M./Tom Greene
 
 !cpu 6502
 !to "build/PRELAUNCH/SMURFEN",plain
@@ -8,7 +8,23 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +USES_TEXT_PAGE_2
+
+         lda   ROM_MACHINEID
+         cmp   #$06
+         beq   +
+
+         lda   #$E9
+         sta   $36
+         lda   #$BD
+         sta   $37
+         bne   ++
+
++        sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   ++
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
+++
+
          lda   #$60
          sta   $A0B
          jsr   $800        ; find and load "DOS"
@@ -18,22 +34,44 @@
          sta   $B749
          jmp   $B700
 
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
-
 callback
-         +READ_RAM2_WRITE_RAM2
-         lda   #<reset
-         sta   $9E52
-         sta   $FFFC
-         lda   #>reset
-         sta   $9E53
-         sta   $FFFD       ; reset vector patch
-         +READ_ROM_NO_WRITE
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53
 
+         lda   #<patch     ; intercept BRUN command before
+         sta   $A395       ; it jumps to the loaded file
+         lda   #>patch
+         sta   $A396
+
+@notiiplus
          +DISABLE_ACCEL
          jmp   $9B00
+
+patch
+         !word brunpatch
+
+brunpatch
+         ldx   #$FF
+         txs
+         lda   $AA76       ; check second character of filename
+         cmp   #$D7        ; = W, filename = @WOLF
+         bne   +
+
+         ldx   #$01        ; Patch it to return to TR
+         stx   $1EFA       ; instead of exiting to BASIC
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #$03
+         stx   $4048       ; start with 3 grenades
+         ldx   #$2C
+         stx   $14AD       ; don't decrement bullets
+         stx   $1999       ; or grenades
+
++        jmp   ($AA72)     ; finally jump to the loaded file
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

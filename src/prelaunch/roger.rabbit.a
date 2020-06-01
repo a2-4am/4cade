@@ -1,0 +1,71 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ROGER.RABBIT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   +
+
+@cheat
+         lda   $1A2E
+         cmp   #$17
+         bne   @donecheat
+         ldy   #$AD
+         lda   $1A2D
+         cmp   #$4C
+         beq   @cheatfac
+         cmp   #$3C
+         beq   @cheatben
+         cmp   #$2C
+         beq   @cheatink
+         cmp   #$0C
+         bne   @donecheat
+
+@cheatben
+         sty   $6DC4      ; patch - don't decrease lives
+         beq   @donecheat
+
+@cheatink
+         sty   $67E5      ; patch - don't decrease lives
+         sty   $67F8      ; patch - don't decrease lives
+         beq   @donecheat
+
+@cheatfac
+         sty   $604A      ; patch - don't decrease lives
+         sty   $6066      ; patch - don't decrease lives
+
+@donecheat
+         ldy   $1A39
+         rts
+
++
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LDADDR @path
+         jsr   iAddToPath
+         +LDADDR gPathname
+         +ST16 namlo
+         jsr   itraverse  ; enter subdirectory
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$4C
+         sta   $1A16
+         lda   #<@cheat
+         sta   $1A17
+         lda   #>@cheat
+         sta   $1A18
++
+         +DISABLE_ACCEL
+         jmp   $1000
+
+@path    !byte @path_e-@path_b
+@path_b  !text "/GAME/X"  ; the 'X' is a dummy character
+@path_e
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

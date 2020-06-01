@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/COPTS.ROBBERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $5C92
+         lda   #<(callback-1)
+         sta   $5C95
+         jmp   $3FFD      ; decompress
+
+callback
+         +NEW_RESET_VECTOR $110
+         +DISABLE_ACCEL
+         jmp   $8340
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

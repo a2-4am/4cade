@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BATTLE.CHESS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$50
+         sta   $933
+         lda   #2
+         sta   $934
+         ldy   #(callback_e - callback) - 1
+-        lda   callback, y
+         sta   $250, y
+         dey
+         bpl   -
+         jmp   $800       ; decompress
+
+callback !pseudopc $250 {
+         sta   $C008
+         bit   $C083
+         jsr   DisableAccelerator
+         bit   $C08B
+         sta   $C009
+         jmp   $C00
+}
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

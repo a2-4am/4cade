@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2020 by qkumba/Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/MAXWELL.MANOR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $21C8
+         lda   #>callback
+         sta   $21C9
+         jmp   $800        ; decompress
+
+callback
+         +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         jmp   $21CD
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

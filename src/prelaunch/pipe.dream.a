@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PIPE.DREAM",plain
+*=$106
+
+my_vbl   
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM1_NO_WRITE
+         lda   WaitForVBL+1
+         sta   @copy_vbl+1
+         lda   WaitForVBL+2
+         sta   @copy_vbl+2
+         ldy   #0
+
+@copy_vbl
+         lda   $d1d1,y    ; SMC
+         sta   my_vbl,y
+         iny
+         cmp   #$60
+         bne   @copy_vbl
+         sta   $207E
+         jsr   $2000
+         jsr   $939
+         lda   #$4C
+         sta   $9D52
+         lda   #<my_vbl
+         sta   $9D53
+         lda   #>my_vbl
+         sta   $9D54
+         jmp   $881
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

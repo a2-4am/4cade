@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019-2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/DONKEY.KONG",plain
@@ -11,7 +11,14 @@
          lda   #$60
          sta   $3eab
          jsr   $3e36      ; decompress
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         pha
+         and   #HAS_JOYSTICK
+         bne   +
+         inc   $7CB7      ; force keyboard
++
+         pla
          and   #CHEATS_ENABLED
          beq   +
          lda   #$2c

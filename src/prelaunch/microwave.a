@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MICROWAVE",plain
+*=$106
+
+         jmp   ++
+
+callback
+         bit   $C080
+         lda   MachineStatus
+
+         !source "src/constants.a"   ; no code in these
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $8EB       ; patch - don't increase lives
+         sta   $C41       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         bit   $C082
+         lda   #0
+         jmp   $8974
+
+++
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $40A3
+         lda   #>callback
+         sta   $40A4
+         jmp   $4000      ; decompress
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

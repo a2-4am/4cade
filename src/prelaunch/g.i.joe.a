@@ -1,0 +1,45 @@
+;license:MIT
+;(c) 2020 by qkumba/Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/G.I.JOE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $99f
+         jsr   $800       ; decompress
+
+         +READ_RAM1_WRITE_RAM1
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback1
+         sta   $D45C
+         lda   #<callback2
+         sta   $D5A2
+         lda   #>callback1
+         sta   $D45D
+         sta   $D5A3
++
+         +LC_REBOOT
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         +READ_RAM1_WRITE_RAM1
+         jmp   $D400
+
+callback1
+         lda   #$AD
+         sta   $63FA      ; patch - don't increase hits
+         jmp   $6000
+
+callback2
+         lda   #$AD
+         sta   $14B5      ; patch - don't decrease lives
+         jmp   $1100
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

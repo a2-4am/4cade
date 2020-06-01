@@ -309,8 +309,7 @@
 ; for 64k games on ][+ which either hang or restart
 ; updates reset hook to reboot on ctrl-reset
 !macro   LC_REBOOT {
-         lda   #$82       ; (assumes LC is switched in)
-         sta   $101
+         inc   $101       ; (assumes LC is switched in)
          lda   #$A6
          sta   $104
          lda   #$FA
