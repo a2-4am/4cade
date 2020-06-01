@@ -143,6 +143,7 @@ SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
 ; hacks
+iProDOS_enter  = $D66E
 LoadFileDirect = $DAFB
 launchpatch    = $D613
 iAddToPath     = $FECC
