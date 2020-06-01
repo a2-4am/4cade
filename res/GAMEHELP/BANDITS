@@ -1,0 +1,26 @@
+
+             Shoot aliens
+
+
+               keyboard
+
+  A stop  S shield   move  <   >  move
+
+Space* * * * * * * * * * * * * * * *fire
+
+
+Ctrl-P * * * * * * * * * * * * * *paddle
+
+           button 0 to fire
+
+Space* * * * * * * * * * * * * * *shield
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-V * * * * * * * * * * * * * *volume
+
+Ctrl-R * * * * * * * * * * * * * restart
+[eof]
