@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PANDORAS.BOX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $833
+         sta   $85A
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jsr   $85D
+         +ENABLE_ACCEL
+         jsr   $836
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $158D      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $7BC8
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

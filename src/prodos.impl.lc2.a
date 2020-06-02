@@ -18,6 +18,14 @@
 ipacket = first_zp ;word
 buffer = first_zp+2 ;word
 
+!if RELBASE != $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !if * != iProDOS_enter {
+      !error "iProDOS_enter=",*, ", fix constants.a"
+    }
+  }
+}
 ProDOS_enter
 !set CloseHandles = @imp_close
          stx   ProDOS_savedX+1
