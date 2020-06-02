@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/HARDBALL",plain
@@ -14,6 +14,7 @@
 
          jsr   DisableAccelerator
          jsr   $A001
+         +RESET_VECTOR $100
          +LC_REBOOT
          jmp   $9FE9
 
