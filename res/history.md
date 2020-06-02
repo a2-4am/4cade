@@ -27,6 +27,7 @@
  - County Fair
  - Crystal Castles
  - Dangerous Dave
+ - Darkstar Unhinged
  - Dino Smurf
  - Dogfight II
  - Double Trouble
@@ -71,12 +72,14 @@
  - Oid Zone
  - One on One
  - Outworld
+ - Pandora's Box
  - Penetrator
  - Pentapus
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
  - Realm of Impossibility
+ - Roundabout
  - Run For It
  - Saracen
  - Ski Crazed
