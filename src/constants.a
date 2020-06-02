@@ -142,7 +142,7 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
-; hacks
+; shared symbols
 iProDOS_enter  = $D66E
 LoadFileDirect = $DAFB
 launchpatch    = $D613
