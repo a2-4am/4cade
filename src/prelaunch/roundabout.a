@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ROUNDABOUT",plain
@@ -20,6 +20,11 @@
          sta   $928C      ; patch - don't decrease lives
          sta   $9758      ; patch - don't increase lives
 +
+         lda   #$2C       ; BIT
+         sta   $9093
+         sta   $9098
+         sta   $909D      ; reset vector patch
+      
          +DISABLE_ACCEL
          jmp   $7000
 
