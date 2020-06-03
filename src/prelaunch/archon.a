@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ARCHON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $5EC0
+         lda   #<(callback-1)
+         sta   $5EC3
+         jmp   $3FF8      ; decompress
+
+hookreset
+         sta   $BD01
+         jsr   $BC08
+         lda   $867
+         cmp   #$A9
+         bne   +
+         +READ_ROM_WRITE_RAM1
+         ldx   #0
+         stx   $868
+         stx   $FFFE
+         inx
+         stx   $86D
+         stx   $FFFF
++        rts
+
+callback
+         lda   #$4C
+         sta   $BC05
+         lda   #<hookreset
+         sta   $BC06
+         lda   #>hookreset
+         sta   $BC07
+         inc   $101
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; update reset hook to reboot
+         +DISABLE_ACCEL
+         jmp   $5FF8
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
