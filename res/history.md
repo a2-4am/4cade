@@ -6,6 +6,8 @@
  - A.E.
  - Aliens
  - Arcade Boot Camp
+ - Archon
+ - Archon II
  - Arctic Fox
  - Ardy the Aardvark
  - Bandits
