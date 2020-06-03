@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ZARGS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $51BB
+         lda   #<(callback-1)
+         sta   $51BE
+         jmp   $800       ; decompress
+
+callback
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
