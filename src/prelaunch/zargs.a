@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ZARGS",plain
@@ -15,6 +15,8 @@
          jmp   $800       ; decompress
 
 callback
+         lda   #1
+         sta   $60B0      ; reset vector fix
          +DISABLE_ACCEL
          jmp   $6000
 
