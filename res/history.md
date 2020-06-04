@@ -102,6 +102,7 @@
  - Super Zaxxon
  - TechnoCop
  - Test Drive
+ - Tharolian Tunnels
  - The Asteroid Field
  - The Dam Busters
  - The Heist
@@ -113,6 +114,7 @@
  - Wings of Fury
  - Winter Games
  - World Karate Championship
+ - Zargs
 
 ## Removed games
 
@@ -138,9 +140,9 @@
  - Per-game help screens (select a game and press `?`)
  - Display double hi-res title screens in search and browse modes
  - Added more game cheats
- - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Bejeweled to latest version (thanks Jeremy R.)
  - Upgrade Berzap to latest version
- - Upgrade Flapple Bird to latest version (thanks Dagen)
+ - Upgrade Flapple Bird to latest version (thanks Dagen B.)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
  - Lots of new super hi-res artwork for IIgs users (thanks Alex L, Andrew R.)
  - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
