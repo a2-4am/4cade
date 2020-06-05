@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #>(callback-1)
-         sta   $51BB
-         lda   #<(callback-1)
          sta   $51BE
+         lda   #<(callback-1)
+         sta   $51C1
          jmp   $800       ; decompress
 
 callback
