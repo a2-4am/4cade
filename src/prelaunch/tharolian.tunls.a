@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/THAROLIAN.TUNLS",plain
@@ -32,7 +32,8 @@ callback
          beq   +
          lda   #$ad
          sta   $1DA0      ; patch - don't decrease lives
-+        +DISABLE_ACCEL
++        +RESET_VECTOR $100
+         +DISABLE_ACCEL
          rts
 
 !if * > $1C0 {
