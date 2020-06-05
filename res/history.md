@@ -1,4 +1,4 @@
-# Revision 4.0 / unreleased
+# 4.0-alpha.1 / 2020-06-05
 
 ## New games
 
@@ -151,7 +151,7 @@
  - Fixed acceleration on Laser 128 (thanks Tom G.)
  - New GS/OS Finder icon (thanks fatdog projects)
 
-# Revision 3.0 / serial number 20200121
+# Revision 3 / serial number 20200121
 
 ## New & changed games
 
