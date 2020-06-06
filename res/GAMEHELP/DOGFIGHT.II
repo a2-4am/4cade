@@ -1,0 +1,25 @@
+
+       Shoot anything that moves
+	  
+     joystick,  paddle or keyboard
+
+              <  Shoot  >      Speed
+
+   Plane 1:   Z    X    C      S   D
+
+   Plane 3:   M    ,    .      K   L
+
+Ctrl-E * * * * * * * *pause (if enabled)
+
+Ctrl-R x3* * * * * * * * * * * * restart
+
+        When score visible:
+
+Space* * * * * * * * * * * * *start game
+		
+Ctrl-E * * * * *enable pause during game
+
+Ctrl-R * * * * * * * * * * * * * restart
+
+Ctrl-I * * * * * * * * * * * * * options
+[eof]
