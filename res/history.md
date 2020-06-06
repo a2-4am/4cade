@@ -1,4 +1,4 @@
-# Revision 4.0 / unreleased
+# 4.0-alpha.1 / 2020-06-05
 
 ## New games
 
@@ -6,6 +6,8 @@
  - A.E.
  - Aliens
  - Arcade Boot Camp
+ - Archon
+ - Archon II
  - Arctic Fox
  - Ardy the Aardvark
  - Bandits
@@ -27,6 +29,7 @@
  - County Fair
  - Crystal Castles
  - Dangerous Dave
+ - Darkstar Unhinged
  - Dino Smurf
  - Dogfight II
  - Double Trouble
@@ -71,12 +74,14 @@
  - Oid Zone
  - One on One
  - Outworld
+ - Pandora's Box
  - Penetrator
  - Pentapus
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
  - Realm of Impossibility
+ - Roundabout
  - Run For It
  - Saracen
  - Ski Crazed
@@ -97,6 +102,7 @@
  - Super Zaxxon
  - TechnoCop
  - Test Drive
+ - Tharolian Tunnels
  - The Asteroid Field
  - The Dam Busters
  - The Heist
@@ -108,6 +114,7 @@
  - Wings of Fury
  - Winter Games
  - World Karate Championship
+ - Zargs
 
 ## Removed games
 
@@ -133,9 +140,9 @@
  - Per-game help screens (select a game and press `?`)
  - Display double hi-res title screens in search and browse modes
  - Added more game cheats
- - Upgrade Bejeweled to latest version (thanks Jeremy)
+ - Upgrade Bejeweled to latest version (thanks Jeremy R.)
  - Upgrade Berzap to latest version
- - Upgrade Flapple Bird to latest version (thanks Dagen)
+ - Upgrade Flapple Bird to latest version (thanks Dagen B.)
  - Combined Thexder 64K and Thexder 128K; just launch Thexder and it'll figure it out
  - Lots of new super hi-res artwork for IIgs users (thanks Alex L, Andrew R.)
  - New slideshows for Ankh, Bruce Lee, Dig Dug, H.E.R.O, Kid Niki, Montezuma's Revenge, Mr. Robot (thanks Frank M., Tom G., qkumba)
@@ -144,7 +151,7 @@
  - Fixed acceleration on Laser 128 (thanks Tom G.)
  - New GS/OS Finder icon (thanks fatdog projects)
 
-# Revision 3.0 / serial number 20200121
+# Revision 3 / serial number 20200121
 
 ## New & changed games
 

@@ -10,11 +10,9 @@ The Movie Monster Game
 Neutrons
 Oil's Well
 Pegasus ][
-Roundabout [priority]
 Shuttle Intercept
 Super Huey
 Super Taxman II
-Tharolian Tunnels [priority]
 Video Vegas
 
 //4am crack (unreleased)
@@ -39,7 +37,6 @@ Roach Hotel
 The Space Ark
 The Snapper
 Trick Shot
-Zargs [priority]
 
 //TODO(flux-imaged but not woz)
 Fly Wars

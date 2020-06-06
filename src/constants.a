@@ -6,7 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E853 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E8C9 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
 ; E91D..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
@@ -142,7 +142,7 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
-; hacks
+; shared symbols
 iProDOS_enter  = $D66E
 LoadFileDirect = $DAFB
 launchpatch    = $D613

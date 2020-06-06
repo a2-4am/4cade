@@ -31,7 +31,12 @@ Credits
          jsr   ShowOtherPage         ; show credits
          jsr   WaitForKeyFor30Seconds; wait
          bit   CLEARKBD              ; don't care about key
-         sec                         ; if called from search mode, tell caller to refresh
+         cmp   #$81                  ; Ctrl-A = about
+         beq   Credits
+         cmp   #$83                  ; Ctrl-C = toggle cheat mode
+         bne   +
+         jsr   ToggleCheat
++        sec                         ; if called from search mode, tell caller to refresh
          rts
 
 ;------------------------------------------------------------------------------

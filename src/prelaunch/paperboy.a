@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/PAPERBOY",plain
@@ -7,9 +7,15 @@
 
     !source "src/prelaunch/common.a"
 
-           lda   #$8b
-           sta   $bf23      ; disable ROM mapping
-           jmp   $800
+           +ENABLE_ACCEL
+           lda   #$60
+           sta   $8E1
+           inc   $bf0e      ; disable ROM mapping
+           jsr   $800
+           lda   #$20
+           sta   $8E1
+           jsr   DisableAccelerator
+           jmp   $8E1
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
