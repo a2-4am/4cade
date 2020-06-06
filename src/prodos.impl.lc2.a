@@ -280,20 +280,12 @@ resetval=$f0
          jsr   @set_rdwrbuff
          plp
          bcc   @skip_align
-         lda   sizelo
-         adc   #$fe
-         lda   sizehi
-         adc   #1
-         and   #$fe
-         sta   sizehi
-         lda   bleftlo
-         adc   #$ff
+         ldx   #sizelo
+         jsr   @round
          lda   #0
-         sta   bleftlo
-         lda   blefthi
-         adc   #1
-         and   #$fe
-         sta   blefthi
+         sta   sizelo
+         ldx   #bleftlo
+         jsr   @round
 
 @skip_align
          jsr   hddrdwrpart
@@ -369,6 +361,16 @@ resetval=$f0
          lda   (ipacket), y
          sta   $1,x
          iny
+         rts
+
+@round
+         clc
+         lda   $0,x
+         adc   #$ff
+         lda   $1,x
+         adc   #1
+         and   #$fe
+         sta   $1,x
          rts
 
 @swap_zp
