@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019-2020 by Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SWASHBUCKLER",plain
@@ -16,14 +16,7 @@
          sta   $BC81      ; stop2
          jsr   $BC00      ; title
 
-         ldy   #6
--        lda   $100-1,y
-         sta   $180-1,y   ; move hook to $180
-         dey
-         bne   -
-
-         lda   #$80
-         sta   $3F2       ; reset vector patch
+         +NEW_RESET_VECTOR $BFF0
 
          jmp   $1B34
 
