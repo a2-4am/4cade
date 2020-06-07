@@ -14,7 +14,31 @@
          sta   $5C50
          jmp   $3FF8      ; decompress
 
+hookreset
+         sta   $BD05
+         jsr   $BC09
+         ldx   #0
+         lda   $8E3
+         cmp   #$A9
+         bne   +
+         stx   $8E4
+         inx
+         stx   $8E9
+         rts
++        cmp   #$89
+         bne   +
+         stx   $1C7B
+         inx
+         stx   $1C80
++        rts
+
 callback
+         lda   #$4C
+         sta   $BC06
+         lda   #<hookreset
+         sta   $BC07
+         lda   #>hookreset
+         sta   $BC08
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          jsr   DisableAccelerator

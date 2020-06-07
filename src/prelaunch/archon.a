@@ -17,17 +17,23 @@
 hookreset
          sta   $BD01
          jsr   $BC08
+         ldx   #0
          lda   $867
          cmp   #$A9
          bne   +
          +READ_ROM_WRITE_RAM1
-         ldx   #0
          stx   $868
+         stx   $1B3D
          stx   $FFFE
          inx
          stx   $86D
+         stx   $1B42
          stx   $FFFF
-+        rts
+         rts
++        stx   $2029
+         inx
+         stx   $202E
+         rts
 
 callback
          lda   #$4C
