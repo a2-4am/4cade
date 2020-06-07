@@ -14,7 +14,7 @@
 
          lda   #$88
          sta   $BF0E      ; don't bank out
-         inc   $3F4       ; reboot on reset
+         +RESET_VECTOR $FAA6
 
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
