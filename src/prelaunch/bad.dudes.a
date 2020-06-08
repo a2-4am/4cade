@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BAD.DUDES",plain
@@ -22,6 +22,7 @@ cheat
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
          dec   $1195
          jsr   $1000
          lda   MachineStatus

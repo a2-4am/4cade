@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SLICKS",plain
@@ -8,13 +8,14 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
+
          lda   #$60
          sta   $5612
          jsr   $800       ; decompress
 
          lda   #$88
          sta   $BF0E      ; don't bank out
-         +RESET_VECTOR $FAA6
 
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
@@ -36,6 +37,9 @@
          bne   -
 
 skipmb
+         lda   #$2C
+         sta   $974C      ; skip reset vector subroutine
+
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $803
