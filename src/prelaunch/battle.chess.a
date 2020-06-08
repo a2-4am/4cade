@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BATTLE.CHESS",plain
@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
          lda   #$50
          sta   $933
          lda   #2

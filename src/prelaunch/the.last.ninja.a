@@ -1,13 +1,14 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/LAST.NINJA",plain
+!to "build/PRELAUNCH/THE.LAST.NINJA",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
          lda   #$60
          sta   $9F7
          jsr   $800       ; load DOS

@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2020 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/PLATOON",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         inc   $3F4       ; force reboot
+         jmp   $1000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
