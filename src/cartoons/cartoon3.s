@@ -26,6 +26,10 @@ sta $19c7
 lda #$4c
 sta $1832
 jsr $2000
+lda #$b0
+sta $963b
+lda #$6c
+sta $963c
 jmp $100
 
 
