@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BEJEWELED",plain
@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
          lda   #<callback
          sta   $4569
          lda   #>callback
@@ -28,6 +29,7 @@ helper
          dec   $8AFF      ; write address
 
 nohelp
+         inc   $3F4       ; force reboot again
          jmp   iProDOS_enter
 
 nocall
