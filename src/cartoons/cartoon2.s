@@ -1,6 +1,6 @@
 !cpu 65c02
-!to "cartoon.2#0602d0",plain
-*=$2d0
+!to "cartoon.2#0602c8",plain
+*=$2c8
 
 cartoon=2
 
