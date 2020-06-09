@@ -7,7 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
          inc   $3F4       ; force reboot
          lda   #$60
          sta   $9F7
@@ -21,9 +20,6 @@
          lda   #$a5
          sta   $A027      ; patch - don't decrease lives
 +
-         +READ_RAM2_NO_WRITE
-         jsr   DisableAccelerator
-         +READ_RAM1_WRITE_RAM1
          jmp   $9B5F
 
 !if * > $1C0 {
