@@ -9,15 +9,11 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $80FE
+         sta   $81FC
          jsr   $800       ; decompress
 
          jsr   DisableAccelerator
-         jsr   $B8C2
-
-         lda   #$60
-         sta   $B859
-         jsr   $B840
+         jsr   $BA7B
 
          ldx   #0
          stx   $7323
@@ -29,7 +25,7 @@
          lda   #$FA
          sta   $105       ; update reset hook to reboot
 
-         jmp   $800
+         jmp   $BA00
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
