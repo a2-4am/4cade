@@ -1,4 +1,4 @@
-# 4.0-alpha.1 / 2020-06-05
+# Revision 4 / unreleased
 
 ## New games
 
@@ -24,6 +24,7 @@
  - Castle Smurfenstein
  - Caverns of Callisto
  - Columns
+ - Congo
  - Congo Bongo
  - Copts and Robbers
  - County Fair
@@ -39,6 +40,7 @@
  - Fight Night
  - Flapple Bird
  - Force 7
+ - Frazzle
  - Fuji Speed Way
  - G.I. Joe
  - Galaxian
@@ -51,11 +53,13 @@
  - I.O. Silver
  - Impossible Mission II
  - Into The Eagle's Nest
+ - Jawbreaker
  - Jawbreaker II
  - Karate Champ
  - Kung Fu Master
  - Little Computer People
  - Lock 'n' Chase
+ - Mad Rat
  - Manic Miner
  - Mars Cars
  - Mating Zone
@@ -77,6 +81,7 @@
  - Pandora's Box
  - Penetrator
  - Pentapus
+ - Pulsar II
  - Pharaoh's Revenge
  - Raid Over Moscow
  - Randamn
