@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PULSAR.II",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $7B26
+         lda   #>callback
+         sta   $7B27
+         jmp   $3FF8      ; decompress
+
+callback
+         jsr   $BF00
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $9400      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $1F00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

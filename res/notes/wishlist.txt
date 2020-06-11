@@ -3,7 +3,6 @@ The American Challenge
 C'est La Vie
 Conquering Worlds
 Dive Bomber
-Mad Rat
 Marauder
 MIRV
 The Movie Monster Game
@@ -16,22 +15,17 @@ Super Taxman II
 Video Vegas
 
 //4am crack (unreleased)
-Congo
-Frazzle
 Galactic Attack
 Rear Guard
 Space Kadet
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
-Boa
 Infiltrator
 Infiltrator II
-Jawbreaker
 Lemmings
 Lunar Leepers
 Peeping Tom
-Pulsar II
 Retro-Ball
 Roach Hotel
 The Space Ark

@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MAD.RAT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $75C2
+         lda   #<(callback-1)
+         sta   $75C5
+         jmp   $3FF8      ; decompress
+
+callback
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $692D      ; patch - don't decrease lives
++
+         +DISABLE_ACCEL
+         jmp   $91D0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
