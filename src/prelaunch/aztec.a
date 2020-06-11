@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/AZTEC",plain
@@ -17,11 +17,39 @@
          sta   $B749
          jmp   $B700
 
+keypress
+         lda   $C000
+         bpl   keypress
+         cmp   #$8D
+         bne   keypress
+         lda   #$8D
+         rts
+
+intercept
+         jsr   $BC5E
+         jsr   $BC03
+         lda   $656B
+         cmp   #$2C
+         bne   +
+         lda   #$20
+         sta   $656B
+         lda   #<keypress
+         sta   $656C
+         lda   #>keypress
+         sta   $656D
++        rts
+
 callback
          ldx   #0
          stx   $9E52
          inx
          stx   $9E53      ; reset vector patch
+         lda   #$4C
+         sta   $BC00
+         lda   #<intercept
+         sta   $BC01
+         lda   #>intercept
+         sta   $BC02
 
          +DISABLE_ACCEL
          jmp   $9D84
