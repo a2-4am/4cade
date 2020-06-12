@@ -59,6 +59,8 @@ cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log
@@ -67,6 +69,7 @@ cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "res\ATTRACT" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "res\SS" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
