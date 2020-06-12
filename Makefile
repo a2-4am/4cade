@@ -50,8 +50,8 @@ dsk: md asm
 	for f in build/X/*; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f"; done >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
-	rsync -aP res/GAMEHELP build/ >>build/log
-	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/GAMEHELP/STANDARD build/GAMEHELP/$$(basename $$f); done
+	rsync -aP --exclude=STANDARD res/GAMEHELP build/ >>build/log
+	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing res/GAMEHELP/STANDARD build/GAMEHELP/$$(basename $$f); done
 	bin/buildfileinfo.sh build/GAMEHELP "04" "8000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/GAMEHELP" "build/GAMEHELP" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" res/proboothd
@@ -69,6 +69,7 @@ asmfx:
 asmprelaunch:
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
+	rm -f build/PRELAUNCH/STANDARD
 
 chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log

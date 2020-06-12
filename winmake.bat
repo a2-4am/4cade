@@ -59,6 +59,8 @@ cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log
@@ -67,6 +69,7 @@ cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "res\ATTRACT" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "res\SS" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
@@ -84,6 +87,7 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 cscript /nologo bin\rsync.js "res\GAMEHELP\*" "build\GAMEHELP" >>build\log
 for %%q in (res\title.hgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
+1>nul 2>nul del /s build\GAMEHELP\STANDARD
 cscript /nologo bin\dumpcr.js "build\GAMEHELP\*"
 cscript /nologo bin\buildfileinfo.js build\GAMEHELP "06" "6000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/GAMEHELP" "build\GAMEHELP" >>build\log
@@ -134,6 +138,7 @@ for %%q in (src\prelaunch\*.a) do (
 for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 )
+1>nul 2>nul del /s build\PRELAUNCH\STANDARD
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
 
