@@ -69,7 +69,6 @@ asmfx:
 asmprelaunch:
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
-	rm -f build/PRELAUNCH/STANDARD
 
 chd:	dsk
 	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
