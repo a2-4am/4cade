@@ -138,7 +138,6 @@ for %%q in (src\prelaunch\*.a) do (
 for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 )
-1>nul 2>nul del /s build\PRELAUNCH\STANDARD
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
 
