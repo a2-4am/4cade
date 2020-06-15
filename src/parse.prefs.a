@@ -39,13 +39,13 @@ kCheat
          !raw  "# Do not edit by hand.",$0A
          !raw  "# Or do. I'm a comment, not a cop.",$0A
          !byte $0A
-         !raw  "# value=attract mode module listed in ATTRACT.CONF, or empty",$0A
+         !raw  "# value=module listed in ATTRACT.CONF",$0A
 .kFluff2 !byte .kFluff3-*-1
          !byte $0A
-         !raw  "# value=transition effect listed in FX.CONF, or empty",$0A
+         !raw  "# value=effect listed in FX.CONF",$0A
 .kFluff3 !byte .kFluff4-*-1
          !byte $0A
-         !raw  "# value=transition effect listed in DFX.CONF, or empty",$0A
+         !raw  "# value=effect listed in DFX.CONF",$0A
 .kFluff4 !byte .kEOF-*-1
          !byte $0A
          !raw  "# value=0 or 1",$0A

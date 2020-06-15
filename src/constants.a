@@ -8,7 +8,7 @@
 ; LC RAM BANK 1
 ; D000..E908 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
-; E912..FFF1 - main program code
+; E926..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -146,7 +146,7 @@ CHEATS_ENABLED = %00001000
 iProDOS_enter  = $D66E
 LoadFileDirect = $DAFB
 launchpatch    = $D613
-iAddToPath     = $FECC
+iAddToPath     = $FEC3
 itraverse      = $D8D9
 namlo          = $57
 namhi          = $58

@@ -165,3 +165,7 @@ kSFXFizzleFile
 kDecrunchFile
          !byte 8
          !raw  "DECRUNCH"
+
+kJoystickFile
+         !byte 8
+         !raw  "JOYSTICK"

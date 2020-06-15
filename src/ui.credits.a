@@ -33,7 +33,10 @@ Credits
          bit   CLEARKBD              ; don't care about key
          cmp   #$81                  ; Ctrl-A = about
          beq   Credits
-         cmp   #$83                  ; Ctrl-C = toggle cheat mode
+         cmp   #$90                  ; Ctrl-P = launch joystick calibration program
+         bne   +
+         jmp   Joystick
++        cmp   #$83                  ; Ctrl-C = toggle cheat mode
          bne   +
          jsr   ToggleCheat
 +        sec                         ; if called from search mode, tell caller to refresh
@@ -64,5 +67,5 @@ Help
          lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
-         ldx   #8
+         ldx   #7
          bne   -                     ; always branches

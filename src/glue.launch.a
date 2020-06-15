@@ -262,3 +262,16 @@ Launch
          lda   #$9D
          sta   launchpatch
          jmp   LaunchInternal
+
+Joystick
+         jsr   LoadFile
+         !word kPrelaunchDirectory
+         !word kStandardPrelaunch
+         !word $0106
+
+         jsr   LoadFile
+         !word kRootDirectory
+         !word kJoystickFile
+         !word 0
+
+         jmp   Launch
