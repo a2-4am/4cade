@@ -28,10 +28,11 @@ BuildVBLFunction
 @NotGS
          rts
 @build_iic
+         sta   patch_VBL_iic2+1
          lda   #$70
          sta   patch_VBL_iic1+1
-         lda   #$60
-         sta   patch_VBL_iic2
+         lda   #$10
+         sta   patch_VBL_iic3
          lda   #<iWaitForVBL
          sta   WaitForVBL+1
          lda   #>iWaitForVBL
