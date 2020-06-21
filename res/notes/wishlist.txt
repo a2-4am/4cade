@@ -16,13 +16,13 @@ Video Vegas
 
 //4am crack (unreleased)
 Galactic Attack
+Infiltrator
+Infiltrator II
 Rear Guard
 Space Kadet
 
 //TODO(woz-imaged but uncracked)
 Alien Lander
-Infiltrator
-Infiltrator II
 Lemmings
 Lunar Leepers
 Peeping Tom
