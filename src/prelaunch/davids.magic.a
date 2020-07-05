@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/DAVIDS.MAGIC",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $82B
+         lda   #>callback
+         sta   $82C
+         lda   #$60
+         sta   $A54
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $614
+         jsr   $600
+         +DISABLE_ACCEL
+         +USES_TEXT_PAGE_2
+         jmp   $802
+
+callback
+         +DISABLE_ACCEL
+         lda   #$BA
+         jsr   $8BBB
+         +ENABLE_ACCEL
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
