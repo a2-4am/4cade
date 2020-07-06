@@ -22,10 +22,10 @@
 
 callback
          +ENABLE_ACCEL
+         jsr   $B050
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
-         beq   +
-         jsr   $B050
+         beq   ++
          ldx   #$A5
          lda   $B158
          cmp   #$30
