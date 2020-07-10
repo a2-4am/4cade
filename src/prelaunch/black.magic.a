@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BLACK.MAGIC",plain
@@ -7,28 +7,55 @@
 
     !source "src/prelaunch/common.a"
 
+         lda   $FBBF
+         cmp   #5         ; disable acceleration on //c+
+         beq   +          ; because of coloring issues
          +ENABLE_ACCEL
-         lda   #$60
++        lda   #$60
          sta   $9C2
          jsr   $800       ; decompress
 
          lda   #$60
          sta   $1B2D
          sta   $D6E6
+
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          jsr   DisableAccelerator
-         jsr   $1B00
++        jsr   $1B00
+
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          jsr   EnableAccelerator
-         jsr   $D000
++        jsr   $D000
+
          lda   #<callback
          sta   $8D5
          lda   #>callback
          sta   $8D6
+
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          jsr   DisableAccelerator
-         jmp   $800
++        jmp   $800
 
 callback
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          jsr   EnableAccelerator
-         jsr   $D003
++        jsr   $D003
          ldx   #5
 -        lda   reset, x
          sta   $4182, x
@@ -36,7 +63,14 @@ callback
          bpl   -
          lda   #$20
          sta   $D6EB
+
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          jmp   DisableAccelerator
++        rts
 
 reset
          +READ_ROM_NO_WRITE

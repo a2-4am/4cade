@@ -7,8 +7,11 @@
 
     !source "src/prelaunch/common.a"
 
+         lda   $FBBF
+         cmp   #5         ; disable acceleration on //c+
+         beq   +          ; because of coloring issues
          +ENABLE_ACCEL
-         lda   #$60
++        lda   #$60
          sta   $97e
          jsr   $800
 
@@ -19,9 +22,14 @@
          sta   $145c
          sta   $1d65
 +
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          lda   $c083
          jsr   DisableAccelerator
-         lda   $c08b
++        lda   $c08b
          jsr   $ee1f
 
          +LC_REBOOT
