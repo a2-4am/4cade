@@ -9,8 +9,17 @@
 
          +ENABLE_ACCEL
          lda   #$60
+         sta   $49D4
          sta   $6B18
          jsr   $495E      ; decompress
+         jsr   $BD41
+         lda   #$60
+         sta   $B5DB
+         +DISABLE_ACCEL
+         jsr   $B59B
+         lda   $C054
+         +ENABLE_ACCEL
+         jsr   $B5DE
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
