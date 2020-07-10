@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/MATING.ZONE",plain
@@ -10,14 +10,18 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $6B18
+         sta   $49D4
          jsr   $495E      ; decompress
+         jsr   $BD41
+         +DISABLE_ACCEL
+         jsr   $B59B
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $729F      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
          jmp   $BF8
 
 !if * > $1C0 {
