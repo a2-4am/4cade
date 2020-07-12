@@ -194,6 +194,8 @@ maccheck
 iic
          lda   #$9D
          sta   fixiic
+         lda   #$C0
+         sta   fixiic+2
          ldx   romid_c
          cpx   #ROMID_CPLUS
          bne   build_addon ; not a //c+, eventually hit Zip
@@ -383,9 +385,9 @@ FASTChip
          lda   #FC_LOCK
          sta   fc_lock
 
-         lda   gMachineInDHGRMode
+         ldx   gMachineInDHGRMode
 fixiic
-         bit   $C05F     ; fix colouring on IIc (SMC to STA,X on IIc)
+         bit   $D05F     ; fix colouring on IIc (SMC to STA,X on IIc)
 +        plp             ; restore interrupt state
          rts
 end_addon
