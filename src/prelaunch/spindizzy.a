@@ -7,9 +7,12 @@
 
     !source "src/prelaunch/common.a"
 
+         lda   $FBBF
+         cmp   #5         ; disable acceleration on //c+
+         beq   +          ; because of coloring issues
          +ENABLE_ACCEL
 
-         +READ_RAM1_WRITE_RAM1
++        +READ_RAM1_WRITE_RAM1
          +LC_REBOOT
          +READ_ROM_NO_WRITE
 
@@ -22,8 +25,13 @@
          inx
          stx   $934F      ; fix reboot
 
+         +READ_ROM_NO_WRITE
+         lda   $FBBF
+         +READ_RAM1_WRITE_RAM1
+         cmp   #5
+         beq   +
          +DISABLE_ACCEL
-         jmp   $9300
++        jmp   $9300
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

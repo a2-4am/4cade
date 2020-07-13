@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ARCTIC.FOX",plain
@@ -7,8 +7,11 @@
 
     !source "src/prelaunch/common.a"
 
+         lda   $FBBF
+         cmp   #5         ; disable acceleration on //c+
+         beq   +          ; because of coloring issues
          +ENABLE_ACCEL
-         lda   #>(callback-1)
++        lda   #>(callback-1)
          sta   $4280
          lda   #<(callback-1)
          sta   $4283
@@ -17,9 +20,12 @@
 callback
          +LC_REBOOT
          inc   $3F4       ; force reboot
+         lda   $FBBF
+         cmp   #5
+         beq   +
          bit   $C083
          jsr   DisableAccelerator
-         +READ_RAM1_WRITE_RAM1
++        +READ_RAM1_WRITE_RAM1
          jmp   $1170
 
 !if * > $1C0 {
