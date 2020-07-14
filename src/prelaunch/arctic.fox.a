@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/ARCTIC.FOX",plain
@@ -19,6 +19,7 @@ callback
          inc   $3F4       ; force reboot
          bit   $C083
          jsr   DisableAccelerator
+         sta   $C05F      ; fix //c and //c+ HGR color
          +READ_RAM1_WRITE_RAM1
          jmp   $1170
 

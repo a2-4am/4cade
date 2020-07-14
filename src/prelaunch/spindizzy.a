@@ -23,6 +23,7 @@
          stx   $934F      ; fix reboot
 
          +DISABLE_ACCEL
+         sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $9300
 
 !if * > $1C0 {
