@@ -24,6 +24,7 @@
 +
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
+         sta   $C05F      ; fix //c and //c+ DHGR setting
          +READ_RAM1_WRITE_RAM1
          jmp   $1953
 

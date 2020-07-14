@@ -21,6 +21,7 @@
 +
          lda   $c083
          jsr   DisableAccelerator
+         sta   $C05F      ; fix //c and //c+ DHGR setting
          lda   $c08b
          jsr   $ee1f
 
