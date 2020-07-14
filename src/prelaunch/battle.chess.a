@@ -24,6 +24,7 @@ callback !pseudopc $250 {
          sta   $C008
          bit   $C083
          jsr   DisableAccelerator
+         sta   $C05E      ; fix //c and //c+ DHGR setting
          bit   $C08B
          sta   $C009
          jmp   $C00
