@@ -24,10 +24,14 @@
          lda   #>callback
          sta   $8D6
          jsr   DisableAccelerator
+         sta   $C05F
          jmp   $800
 
 callback
+         lda   #$4C
+         sta   $D6EB
          jsr   EnableAccelerator
+         sta   $C05F
          jsr   $D003
          ldx   #5
 -        lda   reset, x
@@ -36,7 +40,9 @@ callback
          bpl   -
          lda   #$20
          sta   $D6EB
-         jmp   DisableAccelerator
+         jsr   DisableAccelerator
+         sta   $C05F
+         jmp   $D6EE
 
 reset
          +READ_ROM_NO_WRITE
