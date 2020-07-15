@@ -7,34 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
-         +USES_TEXT_PAGE_2
-         lda   #$60
-         sta   $97C
-         jsr   $800       ; find and load "DOS"
-         lda   #<callback
-         sta   $B748
-         lda   #>callback
-         sta   $B749
-         jmp   $B700
-
-
-callback
-         lda   #$01
-         sta   $9E31
-         lda   #$00
-         sta   $9E3C      ; reset vector patch
-
-         lda   #<patch    ; intercept BRUN command before
-         sta   $A395      ; it jumps to the loaded file
-         lda   #>patch
-         sta   $A396
-
-         +DISABLE_ACCEL
-         jmp   $9D84
-
-patch
-         !word brunpatch
+         jmp   main
 
 brunpatch
          lda   $AA76      ; check second character of filename
@@ -58,9 +31,35 @@ brunpatch
          stx   $15AE      ; don't decrement bullets
 
 ++       jmp   ($AA72)    ; finally jump to the loaded file
+patch
+         !word brunpatch
 
+main
+         +ENABLE_ACCEL
+         +USES_TEXT_PAGE_2
+         lda   #$60
+         sta   $97C
+         jsr   $800       ; find and load "DOS"
+         lda   #<callback
+         sta   $B748
+         lda   #>callback
+         sta   $B749
+         jmp   $B700
 
- 
+callback
+         lda   #$01
+         sta   $9E31
+         lda   #$00
+         sta   $9E3C      ; reset vector patch
+
+         lda   #<patch    ; intercept BRUN command before
+         sta   $A395      ; it jumps to the loaded file
+         lda   #>patch
+         sta   $A396
+
+         +DISABLE_ACCEL
+         jmp   $9D84
+
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
