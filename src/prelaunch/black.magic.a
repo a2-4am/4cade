@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Tom Greene/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BLACK.MAGIC",plain
@@ -7,7 +7,8 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
+                          ; acceleration has problems with Fastchip
+                          ; let's remove it
          lda   #$60
          sta   $9C2
          jsr   $800       ; decompress
@@ -15,23 +16,17 @@
          lda   #$60
          sta   $1B2D
          sta   $D6E6
-         jsr   DisableAccelerator
          jsr   $1B00
-         jsr   EnableAccelerator
          jsr   $D000
          lda   #<callback
          sta   $8D5
          lda   #>callback
          sta   $8D6
-         jsr   DisableAccelerator
-         sta   $C05F
          jmp   $800
 
 callback
          lda   #$4C
          sta   $D6EB
-         jsr   EnableAccelerator
-         sta   $C05F
          jsr   $D003
          ldx   #5
 -        lda   reset, x
@@ -40,8 +35,6 @@ callback
          bpl   -
          lda   #$20
          sta   $D6EB
-         jsr   DisableAccelerator
-         sta   $C05F
          jmp   $D6EE
 
 reset
