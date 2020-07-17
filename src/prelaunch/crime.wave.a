@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2019-2020 by 4am/Frank M./qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/CRIME.WAVE",plain
@@ -11,7 +11,8 @@
          lda   #$60
          sta   $244B
          jsr   $2400      ; decompress
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5
@@ -20,7 +21,18 @@
 +
                           ; reset vector in high score file
                           ; gets loaded directly to $300
-         +DISABLE_ACCEL
+         lda   MockingboardStuff
+         asl
+         bpl   skipmb
+         lsr
+         and   #7
+         sta   $A0C9
+         lda   #2
+         sta   $A0C4
+
+skipmb
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $0800
 
 !if * > $1C0 {
