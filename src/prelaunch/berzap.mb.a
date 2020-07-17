@@ -86,4 +86,17 @@
 ++
 
 skipmb
+         lda   $65AB
+         cmp   #3
+         bne   ++
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         asl
+         bpl   +
+         lda   #3
+         adc   #0
+         sta   $380
++        +READ_ROM_NO_WRITE
+         
+++
          jmp   ($b599)
