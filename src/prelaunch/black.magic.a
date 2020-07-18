@@ -9,6 +9,11 @@
 
                           ; acceleration has problems with Fastchip
                           ; let's remove it
+
+         lda   #<reset    ; fix reset during title
+         sta   $9AE
+         sta   $80FC
+
          lda   #$60
          sta   $9C2
          jsr   $800       ; decompress
@@ -17,14 +22,26 @@
          sta   $1B2D
          sta   $D6E6
          jsr   $1B00
+
+         lda   #<callback1
+         sta   $D7E9
+         lda   #>callback1
+         sta   $D7EA
          jsr   $D000
-         lda   #<callback
+
+         lda   #<callback2
          sta   $8D5
-         lda   #>callback
+         lda   #>callback2
          sta   $8D6
          jmp   $800
 
-callback
+callback1
+         lda   #<reset
+         sta   $5029      ; fix tamper check
+         sta   $80FC      ; re-cloned to $FFFC
+         jmp   $5000
+
+callback2
          lda   #$4C
          sta   $D6EB
          jsr   $D003
@@ -35,6 +52,9 @@ callback
          bpl   -
          lda   #$20
          sta   $D6EB
+         lda   #$63       ; back to original vector
+         sta   $3F2
+         sta   $FFFC
          jmp   $D6EE
 
 reset
