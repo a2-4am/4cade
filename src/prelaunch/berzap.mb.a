@@ -96,6 +96,8 @@ skipmb
          lda   #3
          adc   #0
          sta   $380
+         lda   #$0D
+         sta   $FF
 +        +READ_ROM_NO_WRITE
          
 ++
