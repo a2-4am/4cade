@@ -1,0 +1,71 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/RESQ.RAIDERS.MB",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         lda   #$60
+         sta   $A37
+         jsr   $800        ; find and load "DOS"
+         ldx   #$60
+         stx   $BFE5
+         jsr   $BFC8
+         lda   #$4C
+         sta   $4047
+         +GET_MOCKINGBOARD_SPEECH
+         bcs   +
+         lda   #$60
+         sta   $40FB       ; no speech chip, pretend no MB
++
+         lda   #$60
+         sta   $4024
+         +DISABLE_ACCEL    ; otherwise Mockingboard detection fails
+         lda   #0
+         jsr   $4000
+         lda   #$20
+         sta   $4024
+         lda   #$4C
+         sta   $4110
+         sta   $411A
+         lda   #<callback1
+         sta   $4111
+         lda   #>callback1
+         sta   $4112
+         lda   #<callback2
+         sta   $411B
+         lda   #>callback2
+         sta   $411C
+         jsr   $4024
+
+         +READ_RAM1_WRITE_RAM1 ; fix crash on //c+
+         lda   #<reset
+         sta   $3F2
+         sta   $FFFC
+         lda   #>reset
+         sta   $FFFD
+         lda   #$4C
+         sta   $BFE5
+         jmp   $404A
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+callback1
+         sec
+         sbc   #5
+         cmp   #2
+         bcc   +
+-        jmp   $4144
++        jmp   $4114
+
+callback2
+         sec
+         sbc   #4
+         cmp   #3
+         bcs   -
+         jmp   $411E

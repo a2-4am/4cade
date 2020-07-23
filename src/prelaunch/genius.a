@@ -16,6 +16,10 @@
          pha
          lda   #$60
          sta   $9462
+         lda   #<callback1
+         sta   $950E
+         lda   #>callback1
+         sta   $950F
          jsr   $9442
          pla
          beq   +
@@ -25,6 +29,23 @@
          +DISABLE_ACCEL
          inc   $9d        ; game relies on it
          jmp   $9600
+
+callback1
+         lda   #$4C
+         sta   $D7D9
+         lda   #<callback2
+         sta   $D7DA
+         lda   #>callback2
+         sta   $D7DB
+         jmp   $D7C5
+
+callback2
+         sec
+         sbc   #7
+         cmp   #2
+         bcc   +
+         jmp   $D7E7
++        jmp   $D7DD
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

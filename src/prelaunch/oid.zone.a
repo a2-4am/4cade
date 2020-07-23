@@ -18,8 +18,34 @@
          lda   #$ad
          sta   $7FD5      ; patch - don't decrease lives
 +
+         lda   #$4C
+         sta   $AF79
+         sta   $AF8C
+         lda   #<callback1
+         sta   $AF7A
+         lda   #>callback1
+         sta   $AF7B
+         lda   #<callback2
+         sta   $AF8D
+         lda   #>callback2
+         sta   $AF8E
          +DISABLE_ACCEL
          jmp   $3FFD
+
+callback1
+         sec
+         sbc   #8
+         cmp   #2
+         bcc   +
+-        jmp   $AF93
++        jmp   $AF7D
+
+callback2
+         sec
+         sbc   #8
+         cmp   #2
+         bcs   -
+         jmp   $AF90
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/SPY.STRIKES.BAK",plain
@@ -11,7 +11,8 @@
          lda   #$60
          sta   $0849
          jsr   $0800      ; decompress
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $17
@@ -19,7 +20,19 @@
          sta   $6AE7      ; patch - don't decrease lives
          sta   $87EE      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL
+         lda   MockingboardStuff
+         asl
+         bpl   skipmb
+         lsr
+         and   #7
+         ora   #$30
+         sta   $8F33
+         lda   #3
+         sta   $8FEC
+
+skipmb
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $6000
 
 !if * > $1C0 {

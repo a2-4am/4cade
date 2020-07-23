@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019-2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SKYFOX",plain
@@ -38,6 +38,7 @@
          jmp   $67BD
 
 callback
+         sec
          sbc   #8
          cmp   #2
          rts

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/PITFALL.II",plain
@@ -12,12 +12,38 @@
          sta   $3D34
          jsr   $0800      ; decompress
          +RESET_VECTOR reset
+         lda   #$4C
+         sta   $2DF5
+         sta   $2E06
+         lda   #<callback1
+         sta   $2DF6
+         lda   #>callback1
+         sta   $2DF7
+         lda   #<callback2
+         sta   $2E07
+         lda   #>callback2
+         sta   $2E08
          +DISABLE_ACCEL
          jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
 
 reset
          +READ_RAM2_NO_WRITE
          jmp   ($FFFC)
+
+callback1
+         sec
+         sbc   #8
+         cmp   #2
+         bcc   +
+-        jmp   $AE0A
++        jmp   $ADF9
+
+callback2
+         sec
+         sbc   #8
+         cmp   #2
+         bcs   -
+         jmp   $AE21
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
