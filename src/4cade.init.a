@@ -271,7 +271,7 @@ LoadingBuild
 } else {
 LoadingVersion
          !byte 10
-         !text "4.0-alpha1"
+         !text "4.0-alpha2"
 }
 Loading64K
          !byte 3
