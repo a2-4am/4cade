@@ -190,11 +190,8 @@
 
          +READ_ROM_WRITE_RAM2
          jsr   BuildVBLFunction
-         +READ_RAM2_WRITE_RAM2
+         +DISABLE_ACCEL              ; cycle counting in Mockingboard detection requires 1MHz
 
-         jsr   DisableAccelerator    ; cycle counting in Mockingboard detection requires 1MHz
-
-         +READ_ROM_WRITE_RAM2
          +LDADDR FoundMockingboardCallback
          jsr   GetMockingboardStuff
          stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM

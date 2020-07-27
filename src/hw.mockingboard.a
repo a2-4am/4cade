@@ -35,7 +35,7 @@ GetMockingboardStuff
          stx   $81
          ldy   #$04                  ; 6522 #1 $Cx04
          jsr   @timercheck
-         beq   @foundI
+         bcc   @foundI
 
 @nextSlot
          inx
@@ -48,7 +48,7 @@ GetMockingboardStuff
          jsr   @callback
          ldy   #$84                  ; 6522 #2 $Cx84
          jsr   @timercheck
-         beq   @foundII
+         bcc   @foundII
 
          ldy   #$0c
          sty   @mb_smc1 + 1
@@ -81,6 +81,7 @@ GetMockingboardStuff
          ; detect speech chip
 
          sei
+         +READ_RAM2_WRITE_RAM2
          lda   #<@mb_irq
          sta   $3fe
          sta   $fffe
@@ -141,6 +142,7 @@ GetMockingboardStuff
          sta   $fffe
          lda   #>Ignore
          sta   $ffff
+         +READ_ROM_NO_WRITE
 
          iny
          sty   $80
@@ -160,10 +162,10 @@ GetMockingboardStuff
          sec
          lda   ($80),y               ; read 6522 timer low byte
          sbc   ($80),y               ; second time 
-         cmp   #5                    ; looking for (-)8 cycles between reads
-         beq   +
-         cmp   #6                    ; FastChip //e clock is different
-+        rts
+         sec
+         sbc   #5                    ; looking for 5 cycles between reads
+         cmp   #2                    ; or 6 cycles with the FastChip //e
+         rts
 
 @mb_irq
          lda   #2
