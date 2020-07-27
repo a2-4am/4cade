@@ -82,6 +82,12 @@ GetMockingboardStuff
 
          sei
          +READ_RAM2_WRITE_RAM2
+         lda   #$40
+         sta   $3fb
+         lda   #$fb
+         sta   $fffa
+         lda   #3
+         sta   $fffb
          lda   #<@mb_irq
          sta   $3fe
          sta   $fffe
