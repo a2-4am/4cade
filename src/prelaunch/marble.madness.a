@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/MARBLE.MADNESS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $4C9C
+         lda   #<(callback-1)
+         sta   $4C9F
+         jmp   $4A86      ; decompress
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+callback
+         lda   #<reset
+         sta   $8DCD
+         lda   #>reset
+         sta   $8DD5
+         sta   $8DDD
+         +DISABLE_ACCEL
+         jmp   $1000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
