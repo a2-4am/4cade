@@ -29,21 +29,34 @@ cheat1
          bne   $19e
 
 cheat3
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
+
          lda   #$60
          sta   $83f
-+        jsr   $800
-         lda   $847
+         jsr   $800
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         pha
+
++        lda   $847
          beq   cheat48
+
          lda   #$60
          sta   $d15
          jsr   $ce8
+
+         pla
+         beq   +
+
          lda   #<cheat4
          sta   $d137
          lda   #>cheat4
          sta   $d138
+
++        lda   #<fixgs
+         sta   $89ee
+         lda   #>fixgs
+         sta   $89ef
          jmp   $d100
 
 cheat4
@@ -51,11 +64,17 @@ cheat4
          jmp   cheat64
 
 cheat48
+         pla
+         beq   +
          lda   #<cheat1
          sta   $1040
          lda   #>cheat1
          sta   $1041
-         jmp   $1000
++        jmp   $1000
+
+fixgs
+         sei
+         jmp   $08b2
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

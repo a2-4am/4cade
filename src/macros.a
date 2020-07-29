@@ -276,6 +276,7 @@
          jsr   $FE1F                 ; check for IIgs
          bcs   +
          jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
+         cli                         ; enable VBL interrupts
 +
 }
 

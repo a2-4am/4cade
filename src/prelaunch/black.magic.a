@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Tom Greene/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/BLACK.MAGIC",plain
@@ -7,7 +7,13 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
+                          ; acceleration has problems with Fastchip
+                          ; let's remove it
+
+         lda   #<reset    ; fix reset during title
+         sta   $9AE
+         sta   $80FC
+
          lda   #$60
          sta   $9C2
          jsr   $800       ; decompress
@@ -15,19 +21,29 @@
          lda   #$60
          sta   $1B2D
          sta   $D6E6
-         jsr   DisableAccelerator
          jsr   $1B00
-         jsr   EnableAccelerator
+
+         lda   #<callback1
+         sta   $D7E9
+         lda   #>callback1
+         sta   $D7EA
          jsr   $D000
-         lda   #<callback
+
+         lda   #<callback2
          sta   $8D5
-         lda   #>callback
+         lda   #>callback2
          sta   $8D6
-         jsr   DisableAccelerator
          jmp   $800
 
-callback
-         jsr   EnableAccelerator
+callback1
+         lda   #<reset
+         sta   $5029      ; fix tamper check
+         sta   $80FC      ; re-cloned to $FFFC
+         jmp   $5000
+
+callback2
+         lda   #$4C
+         sta   $D6EB
          jsr   $D003
          ldx   #5
 -        lda   reset, x
@@ -36,7 +52,10 @@ callback
          bpl   -
          lda   #$20
          sta   $D6EB
-         jmp   DisableAccelerator
+         lda   #$63       ; back to original vector
+         sta   $3F2
+         sta   $FFFC
+         jmp   $D6EE
 
 reset
          +READ_ROM_NO_WRITE

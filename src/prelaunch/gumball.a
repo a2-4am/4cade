@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/GUMBALL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $851
+         jsr   $800       ; load "DOS"
+         lda   #$20
+         sta   $B21E
+         lda   #<callback
+         sta   $B21F
+         lda   #>callback
+         sta   $B220
+         +DISABLE_ACCEL
+         jmp   $B2F1
+
+callback
+         lda   $5F
+         asl
+         bne   +
+         dec   $E09
++        rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BUCK.ROGERS",plain
@@ -19,7 +19,11 @@
          sta   $803       ; patch - don't decrease lives
          sta   $998       ; patch - don't decrease lives
 +
+         lda   $7fe       ; Buck Rogers code
+         pha
          +DISABLE_ACCEL
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
          jmp   $400
 
 !if * > $1C0 {

@@ -24,7 +24,24 @@
          sta   $D45D
          sta   $D5A3
 +
-         +LC_REBOOT
+         lda   #$2C       ; vehicle level overwrites $100-102 explicitly
+         sta   $110
+         lda   #$89
+         sta   $111
+         lda   #$C0
+         sta   $112
+         lda   #$4C
+         sta   $113
+         lda   #$A6
+         sta   $114
+         lda   #$FA
+         sta   $115       ; update reset hook to reboot
+         inc   $3F4
+         lda   #1
+         sta   $FFFD
+         lda   #$10
+         sta   $FFFC      ; LC reset vector fix
+
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1

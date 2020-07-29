@@ -99,6 +99,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.offscreen.a"
          !source "src/ui.cheats.a"
          !source "src/ui.credits.a"
+         !source "src/ui.reboot.a"
          !source "src/ui.common.a"
          !source "src/ui.font.a"
          !source "src/ui.overlay.a"

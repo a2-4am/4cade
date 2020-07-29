@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019-2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SKYFOX",plain
@@ -24,8 +24,24 @@
          lda   #1
          sta   $5FFD      ; moved to LC $FFFC/D
 
+         lda   #$4C
+         sta   $6872
+         lda   #<callback
+         sta   $6873
+         lda   #>callback
+         sta   $6874
+         lda   #$B0
+         sta   $685B
+         lda   #$90
+         sta   $6862
          +DISABLE_ACCEL
          jmp   $67BD
+
+callback
+         sec
+         sbc   #8
+         cmp   #2
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

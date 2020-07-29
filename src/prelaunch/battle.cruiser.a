@@ -24,8 +24,37 @@
          lda   #$a5
          sta   $A22       ; patch - don't decrease lives
 +
+         lda   #$4C
+         sta   $8FFF
+         sta   $9010
+         lda   #<callback1
+         sta   $9000
+         lda   #>callback1
+         sta   $9001
+         lda   #<callback2
+         sta   $9011
+         lda   #>callback2
+         sta   $9012
+         lda   #$C5
+         sta   $902A
          +DISABLE_ACCEL
          jmp   $845
+
+callback1
+         sec
+         sbc   #8
+         cmp   #2
+         bcc   +
+-        jmp   $9014
++        ldy   #$84
+         jmp   $9003
+
+callback2
+         sec
+         sbc   #8
+         cmp   #2
+         bcs   -
+         jmp   $902C
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

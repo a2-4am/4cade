@@ -100,7 +100,7 @@ sCheatDescriptionSuffix
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 DrawUIWithoutDots
-         lda   #" " * 2
+         lda   #$40                  ; " " * 2
          +HIDE_NEXT_2_BYTES
 DrawUI
          lda   #$FF                  ; #$7F * 2

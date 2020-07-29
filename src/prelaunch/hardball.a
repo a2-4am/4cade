@@ -12,7 +12,11 @@
          sta   $2FA0
          jsr   $2580      ; decompress
 
+         lda   $7fe       ; Hardball code
+         pha
          jsr   DisableAccelerator
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
          jsr   $A001
          +RESET_VECTOR $100
          +LC_REBOOT

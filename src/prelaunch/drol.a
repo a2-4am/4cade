@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/DROL",plain
@@ -26,7 +26,11 @@
          sta   $4217
          jsr   $4000
          jsr   $40e0
+         lda   $7fe       ; Drol code
+         pha
          +DISABLE_ACCEL
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
          jmp   $407c
 
 cheat_b !pseudopc $bf70 {

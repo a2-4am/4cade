@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/LOCK.N.CHASE",plain
@@ -24,6 +24,12 @@
          sta   $11C0      ; patch - don't increase lives
          sta   $1595      ; patch - don't decrease lives
 +
+         lda   #1
+         sta   $6F01
+         sta   $6F0B
+         lda   #0
+         sta   $6F06      ; fix reset vector
+
          +DISABLE_ACCEL
          jmp   $800
 
