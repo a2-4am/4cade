@@ -11,15 +11,15 @@
 
 
 
-
-
-
-
-
-
-
-
 ANY KEY* * * * * * * * * * * * * * *flap
 
 ESC * * * * * * * * * * * * * * * *pause
+
+Q * * * * * * * * * * * * * * * * * quit
+
+
+
+    To toggle top secret text mode,
+
+       press t or T while paused
 [eof]
