@@ -15,11 +15,11 @@ Space * * * * * * * * * * * * * * *start
 
 Esc * * * * * * * * * * *menu / settings    
 
-T * * take back      R * * * * * *replay
+T * * take back     R * * * * * * replay
 
-F * *force move      S * * *suggest move
+F * *force move     S * * * suggest move
 
-V *toggle sound      W * * * toggle walk
+V *toggle sound     W * * * *toggle walk
 
 C toggle combat
 [eof]
