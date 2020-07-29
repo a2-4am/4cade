@@ -1,0 +1,25 @@
+The classic game of rescue the hostages
+
+Avoid the tank fire, watch out for jets
+
+          and drone air mines
+
+
+            Joystick to move
+
+
+
+BUTTON 0 * * * * * * * * * * * * * *fire
+
+BUTTON 1 * * * * * * * *change direction
+
+ANY KEY* * * * * * * * * * * * * * start
+
+ESC* * * * * * * * * * * * * * * * pause
+
+CTRL-S * * * * * * * * * * *toggle sound
+
+CTRL-V * * * * * * * * * reverse up/down
+
+CTRL-A * * * * * * * *reverse left/right
+[eof]
