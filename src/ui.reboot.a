@@ -1,23 +1,23 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/4am
 ;
 ; reboot system
 ;
 ; Public functions
-; - OnRageQuit
+; - OnQuit
 ;
 
 ;------------------------------------------------------------------------------
-; OnRageQuit
+; OnQuit
 ; reboot system
 ;
 ; in:    none
 ; out:   nothing
 ;------------------------------------------------------------------------------
-OnRageQuit
+OnQuit
+         jsr   SwitchToBank2
+         jsr   EnableAcceleratorAndSwitchToBank1
          inc   $101       ; bank in ROM
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; JMP $FAA6
+         +LDADDR ROM_REBOOT
+         +ST16 $104
          jmp   $100
