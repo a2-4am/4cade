@@ -20,6 +20,7 @@ kInputCredits  = 7
 kInputCheat    = 8
 kInputError    = 9
 kInputJoystick = 10
+kInputRageQuit = 11
 
 InputDispatchTableLo
          !byte <OnSearch
@@ -33,6 +34,7 @@ InputDispatchTableLo
          !byte <OnCheat
          !byte <OnError
          !byte <Joystick
+         !byte <OnRageQuit
 InputDispatchTableHi
          !byte >OnSearch
          !byte >OnClear
@@ -45,8 +47,10 @@ InputDispatchTableHi
          !byte >OnCheat
          !byte >OnError
          !byte >Joystick
+         !byte >OnRageQuit
 
-kNumInputKeys = 11                   ; number of entries in next 2 tables (each)
+kNumInputKeys = 12
+                                     ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $81                   ; Ctrl-A = about
@@ -61,6 +65,7 @@ InputKeys
          !byte $9B                   ; Esc = clear input buffer (if any)
                                      ;   or switch to mega attract mode
          !byte $90                   ; Ctrl-P = launch joystick calibration program
+         !byte $92                   ; Ctrl-R = reboot
 InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
@@ -73,6 +78,7 @@ InputKeyDispatch
          !byte kInputLaunch
          !byte kInputClear
          !byte kInputJoystick
+         !byte kInputRageQuit
 
 .noKeyMatch
          jsr   IsSearchKey

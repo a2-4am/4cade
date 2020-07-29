@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2020 by qkumba
+;
+; reboot system
+;
+; Public functions
+; - OnRageQuit
+;
+
+;------------------------------------------------------------------------------
+; OnRageQuit
+; reboot system
+;
+; in:    none
+; out:   nothing
+;------------------------------------------------------------------------------
+OnRageQuit
+         inc   $101       ; bank in ROM
+         lda   #$A6
+         sta   $104
+         lda   #$FA
+         sta   $105       ; JMP $FAA6
+         jmp   $100
