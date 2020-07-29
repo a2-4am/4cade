@@ -10,16 +10,16 @@
             move  <   >  move
                     Z
 
-Button 0 / Space Bar   * * * * * * *jump
+Button 0 / Space Bar* * * * * * * * jump
 
 Button 1 / Return * * * * drop rivet gun    
 
-Ctrl-C change keys   Esc * * * * * pause    
+Ctrl-C *change keys  Esc* * * * * *pause    
 
-Ctrl-R * * restart   Ctrl-S* * * * sound
+Ctrl-R * * *restart  Ctrl-S * * * *sound
 
   Press 2 or 3 at title to jump levels
 
-Button 0 / Space Bar * * * * *start game
+Button 0 / Space Bar* * * * * start game
 
 [eof]
