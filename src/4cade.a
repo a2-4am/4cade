@@ -46,6 +46,11 @@ Reenter
          jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
                                      ; which restores default speed on Ctrl-Reset)
          jsr   CloseHandles          ; close any open handles to restore ProRWTS
+         ldx   #(end_promote-promote-1)
+-        lda   promote,x             ; copy ProDOS shim to main memory for GS/OS exit
+         sta   $bf00,x
+         dex
+         bpl   -
          ldx   #5
 -        lda   ResetVector,x         ; copy reentry wrapper to bottom of stack
          sta   $100,x                ; (used as reset vector because //e always

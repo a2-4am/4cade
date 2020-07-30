@@ -18,11 +18,6 @@ LaunchInternal
          sty   RestoreStackNextTime + 1
                                      ; tell |Reenter| to restore the stack and stack pointer
 
-         ldx   #(end_promote-promote-1)
--        lda   promote,x             ; copy ProDOS shim to main memory
-         sta   $bf00,x
-         dex
-         bpl   -
          tya
          ldy   #$18
 -        sta   $bf57,y
