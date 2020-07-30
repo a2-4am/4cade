@@ -43,8 +43,6 @@
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
          bcs   @NotGS
-         lda   #$40                  ; enable auxmem-to-bank-E1 shadowing on IIgs
-         sta   SHADOW
          sec
          +HIDE_NEXT_BYTE
 @NotGS   clc
