@@ -123,14 +123,12 @@ SHRArtworkCallback
 BlankSHR
          jsr   Home
 
-         lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on linearize
-         ora   #%01000000            ; can't use TSB here - might not be 65816
+         lda   #%01000001             ; set GS NEWVIDEO mode to turn on linearize
          sta   NEWVIDEO
 
          sta   WRITEAUXMEM           ; writes go to auxmem
 
-         lda   SHADOW                ; enable auxmem-to-bank-E1 shadowing on IIgs
-         and   #$F7                  ; can't use TRB here - might not be 65816
+         lda   #$00                  ; enable auxmem-to-bank-E1 shadowing on IIgs
          sta   SHADOW
 
          lda   #$20                  ; clear $2000..$9FFF in auxmem
@@ -139,8 +137,7 @@ BlankSHR
 
          sta   WRITEMAINMEM          ; writes go to main memory
 
-         lda   NEWVIDEO              ; set GS NEWVIDEO mode to turn on SHR mode
-         ora   #%10000001            ; can't use TSB here - might not be 65816
+         lda   #%11000001            ; set GS NEWVIDEO mode to turn on SHR mode
          sta   NEWVIDEO
 
          rts

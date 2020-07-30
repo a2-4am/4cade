@@ -22,11 +22,11 @@ Home
          lda   MachineStatus
          and   #SUPPORTS_SHR
          beq   @noSHR
-         lda   NEWVIDEO
-         and   #%00011111            ; bit 7 = 0 -> IIgs Apple II-compatible video modes
+         lda   #%00000001            ; bit 7 = 0 -> IIgs Apple II-compatible video modes
                                      ; bit 6 = 0 -> IIgs 128K memory map is the same as the Apple IIe
                                      ; bit 5 = 0 -> IIgs DHGR is color, not monochrome
-                                     ; bits 0-4 unchanged
+                                     ; bits 1-4 reserved
+                                     ; bit 0 = 1 -> disable bank latch
          sta   NEWVIDEO
          lda   #$F0
          sta   TBCOLOR               ; white text on black background
