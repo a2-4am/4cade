@@ -17,6 +17,7 @@
 OnQuit
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
+PatchQuit
          inc   $101       ; bank in ROM
          +LDADDR ROM_REBOOT
          +ST16 $104

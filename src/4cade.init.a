@@ -330,6 +330,19 @@ PrintAsDecimal
 OneTimeSetup
          lda   zpMachineStatus
          sta   MachineStatus         ; save machine status in LC RAM
+         and   #IS_IIGS
+         beq   @NotGSOS
+!cpu 65816
+         lda   $E100BD               ; Make sure GS/OS was the boot OS
+!cpu 6502
+         beq   @NotGSOS
+         ldx   #5
+-        lda   QuitToGSOS,x
+         sta   PatchQuit,x
+         dex
+         bpl   -
+@NotGSOS
+
          ldy   #$0b
 CopyDevs
          lda   $BF13,y
@@ -439,3 +452,10 @@ CopyDevs
          !byte 100
          !byte 10
          !byte 1
+
+QuitToGSOS
+!cpu 65816
+         clc
+         xce
+         jmp   $E0D000
+!cpu 6502
