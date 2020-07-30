@@ -35,18 +35,6 @@
          sta   zpMachineStatus
          sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
-         bcc   +
-
-         ldy   #@VidHDlen
--        lda   @s_VidHD,y
-         sta   $68A,y
-         dey
-         bpl   -
-@hang2   bmi   @hang2
-@s_VidHD !scrxor $80,"CANNOT RUN WITH VIDHD"
-@VidHDlen=(*-@s_VidHD)-1
-
-+
          sta   CLRC3ROM
          ror   zpMachineStatus
          lda   ROM_MACHINEID
