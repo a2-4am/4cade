@@ -1,0 +1,23 @@
+
+         Collect all cherries
+
+                 - or -
+
+        shoot all alphamonsters
+
+                 - or -
+
+          collect the diamond
+
+
+
+            joystick to move
+
+         button 0 to shoot ball
+
+
+
+Space* * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+[eof]
