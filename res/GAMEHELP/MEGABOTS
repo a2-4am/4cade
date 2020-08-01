@@ -1,0 +1,24 @@
+
+          Locate the Power Cell
+
+        
+Space* * * * * * *cycle through weapons
+
+Return * * * * * * * * * *select weapon
+
+   fire weapon        jump direction
+
+       1                     5
+
+       2                  3     4
+
+                             6
+
+7* * *ask friendly robot for power cell
+
+8* * * * * * * * *search for power cell
+
+9* * * drain energy from defeated enemy
+
+0* * *ask defeated enemy for power cell
+[eof]
