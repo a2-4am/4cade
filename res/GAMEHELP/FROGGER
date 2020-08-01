@@ -1,15 +1,11 @@
+
        Hop home to your lily pad
 
       Don't get hit, don't get wet
 
 
 
-
-
-          Keyboard or Joystick
-
-
-
+          joystick or keyboard
 
 
                    A
@@ -18,8 +14,11 @@
 
 
 
+J* * * * * * * * * * * * * * * *joystick
 
-J* * * * * joystick  D* * * *define keys
+D* * * * * * * * * * * * * * define keys
 
-SPACE* * * * * play  ESC* * * * * *pause
+Space* * * * * * * * * * * * * * * *play
+
+Esc* * * * * * * * * * * * * * * * pause
 [eof]

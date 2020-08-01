@@ -18,7 +18,7 @@ button 1 * * * * * * * * * * *decelerate
 button 0+1 or space  * * * * * * * *fire
 
 1-5* * * * * * * * * * * * * *game speed
-  
+
 Esc* * * * * * * * * * * * * * * * pause
 
 S* * * * * * * * * * * * * * * * * sound

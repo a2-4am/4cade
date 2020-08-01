@@ -1,10 +1,9 @@
-
     Play Chess with cartoon violence
 
           joystick or keyboard
 
    move selection with arrow keys or
- 
+
                     I
             move  J   L  move
                     K
@@ -13,7 +12,7 @@
 
 Space* * * * * * * * * * * * * * * start
 
-Esc* * * * * * * * * * * menu / settings    
+Esc* * * * * * * * * * * menu / settings
 
 T* * * * take back   R * * * * * *replay
 

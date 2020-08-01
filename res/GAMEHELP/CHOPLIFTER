@@ -1,25 +1,24 @@
-The classic game of rescue the hostages
+          Rescue the hostages
 
-Avoid the tank fire, watch out for jets
-
-          and drone air mines
-
-
-            Joystick to move
+   Avoid jets, tank fire, & air mines
 
 
 
-BUTTON 0 * * * * * * * * * * * * * *fire
+            joystick to move
 
-BUTTON 1 * * * * * * * *change direction
 
-ANY KEY* * * * * * * * * * * * * * start
 
-ESC* * * * * * * * * * * * * * * * pause
+Button 0 * * * * * * * * * * * * * *fire
 
-CTRL-S * * * * * * * * * * *toggle sound
+Button 1 * * * * * * * *change direction
 
-CTRL-V * * * * * * * * * reverse up/down
+Any key* * * * * * * * * * * * * * start
 
-CTRL-A * * * * * * * *reverse left/right
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * *toggle sound
+
+Ctrl-V * * * * * * * * * reverse up/down
+
+Ctrl-A * * * * * * * *reverse left/right
 [eof]

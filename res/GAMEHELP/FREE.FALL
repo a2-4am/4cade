@@ -1,15 +1,14 @@
-
  Maneuver through colored gaps at bottom
- 
+
    avoid needles, bombs and hazards
 
 
          joystick or keyboard
 
-          move  <   >  move
+            move  < >  move
+
 
 Space / button 0 * * * * * *release grip
-
 
 Esc* * * * * * * * * * * * * * * * pause
 
@@ -20,6 +19,7 @@ Ctrl-R * * * * * * * * * * * * * restart
 Ctrl-K * * * * * * * * * * * * *keyboard
 
 Ctrl-P * * * * * * * * * * * * *joystick
+
 
    Tip: orange gap gives extra life
 [eof]

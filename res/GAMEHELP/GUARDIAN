@@ -1,4 +1,3 @@
-
       Navigate through 6 sectors
 
    Get to highlighted corner quickly
@@ -19,7 +18,7 @@
 
 Esc* * * * * * * * * * * * * * * * pause
 
-ESC S* * * * * * * * * * * * * * * sound
+Esc S* * * * * * * * * * * * * * * sound
 
-ESC J / K* * * * * * joystick / keyboard
+Esc J / K* * * * * * joystick / keyboard
 [eof]

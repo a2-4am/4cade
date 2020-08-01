@@ -1,7 +1,7 @@
-
        Shoot anything that moves
-	  
-     joystick,  paddle or keyboard
+
+
+      joystick, paddle or keyboard
 
               <  Shoot  >      Speed
 
@@ -13,10 +13,10 @@ Ctrl-E * * * * * * * *pause (if enabled)
 
 Ctrl-R x3* * * * * * * * * * * * restart
 
-        When score visible:
+          When score visible:
 
 Space* * * * * * * * * * * * *start game
-		
+
 Ctrl-E * * * * *enable pause during game
 
 Ctrl-R * * * * * * * * * * * * * restart

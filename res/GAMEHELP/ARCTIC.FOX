@@ -1,25 +1,24 @@
-
        Destroy the alien fortress
 
           joystick or keyboard
 
                Move (K stop)
-           
+
                  U I O
 
                  J   L
-                
+
                  M , .
 
-    Button 0 shoot * * 1 drop mine  
+    Button 0 shoot * * 1 drop mine
 
-Q* * * *aim height   A *reverse when aim 
+Q* * * *aim height   A *reverse when aim
 
-W* * * * *aft view   S * *guided missile 
+W* * * * *aft view   S * *guided missile
 
-E* * * * drop mine   D * * * * * *dig in 
+E* * * * drop mine   D * * * * * *dig in
 
-Space* * * * shoot   Esc * * * * * pause 
+Space* * * * shoot   Esc * * * * * pause
 
-Ctrl-S * * * sound   Ctrl-R* end mission 
+Ctrl-S * * * sound   Ctrl-R* end mission
 [eof]

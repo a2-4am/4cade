@@ -7,17 +7,17 @@
    1 - 2 joysticks or joystick + keys
 
 
-        joystick(s)    keyboard 
+        joystick(s)    keyboard
 
-                        U I O                      
-move     joy1/joy2       J K L                             
-                          M , .              
+                        U I O
+move     joy1/joy2       J K L
+                          M , .
 
-fire     button            F       
+fire     button            F
 
 
 
-Ctrl-S * * * *sound   Esc* * * * *pause 
+Ctrl-S * * * *sound   Esc* * * * *pause
 
 Return * begin game   Ctrl-R * end game
 [eof]

@@ -1,8 +1,9 @@
+
               It's a bird!
 
                It flaps!
 
-           It's on an Apple!
+          It's on an Apple II!
 
 
 
@@ -11,15 +12,13 @@
 
 
 
-ANY KEY* * * * * * * * * * * * * * *flap
-
-ESC* * * * * * * * * * * * * * * * pause
+Any key* * * * * * * * * * * * * * *flap
 
 Q* * * * * * * * * * * * * * * * * *quit
 
+Esc* * * * * * * * * * * * * * * * pause
 
+t (while paused) * * * *secret text mode
 
-    To toggle top secret text mode,
-
-       press t or T while paused
+T* * * * * * * * *restore graphical mode
 [eof]

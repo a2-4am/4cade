@@ -1,5 +1,4 @@
 
-
            Eliminate the A.E.
 
  You need 3+ perfect attacks to advance
