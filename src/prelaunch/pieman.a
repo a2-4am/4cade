@@ -21,8 +21,10 @@
          sta   $948
          jsr   $940
 
-         ; re-patch reset vector
-         +RESET_VECTOR $100
+         ldx   #0
+         stx   $10AD
+         inx
+         stx   $10B2
 
          jmp   $950
 
