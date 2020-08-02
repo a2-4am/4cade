@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019-2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/PLASMANIA",plain
@@ -10,7 +10,25 @@
          +USES_TEXT_PAGE_2
          inc   $3f4 ; mismatch checksum to trigger reboot
                     ; game overwrites LC during title
+         lda   #>(callback1-1)
+         sta   $84E
+         lda   #<(callback1-1)
+         sta   $851
          jmp   $800
+
+callback2
+         php
+         sei
+         jsr   $72ED
+         plp
+         rts
+
+callback1
+         lda   #<callback2
+         sta   $7353
+         lda   #>callback2
+         sta   $7354
+         jmp   $6000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
