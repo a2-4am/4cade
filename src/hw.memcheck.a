@@ -43,9 +43,11 @@ Has128K
          +READ_ROM_NO_WRITE
          sta   STOREOFF
          lda   ROM_MACHINEID
+         cmp   #$A0
+         beq   +                     ; Spectrum ED
          cmp   #6
          bne   @no                   ; earlier than //e -> no 128K
-         lda   SLOT3STATUS
++        lda   SLOT3STATUS
          bmi   @no                   ; no 80-column card -> no 128K
          ldx   #@checklen
 -        lda   @checker,x

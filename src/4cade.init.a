@@ -59,6 +59,8 @@
 
          ; accommodate uppercase-only machines (64K ][+ is supported)
          lda   ROM_MACHINEID
+         cmp   #$A0
+         beq   +                     ; Spectrum ED
          cmp   #$06
          beq   +
          lda   #$DF
