@@ -26,7 +26,11 @@ callback
          dec   $8DE       ; patch - don't decrease lives
 +
          +RESET_VECTOR $100
+         lda   $7fe       ; Saracen code
+         pha
          +DISABLE_ACCEL
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
          jmp   $400
 
 !if * > $1C0 {
