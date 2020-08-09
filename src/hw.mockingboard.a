@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by Andrew Roughan, qkumba, 4am, Tom Charlesworth
+;(c) 2019-2020 by Andrew Roughan, qkumba, 4am, Tom Charlesworth, Rob Justice
 ;
 ; Mockingboard support functions
 ;
@@ -79,41 +79,47 @@ GetMockingboardStuff
          sta   @mb_smc12 + 2
          sta   @mb_smc13 + 2
          sta   @mb_smc14 + 2
+         sta   @mb_smc15 + 2
+         sta   @mb_smc17 + 2
+         sta   @mb_smc18 + 2
+         sta   @mb_smc19 + 2
+         sta   @mb_smc20 + 2
+         sta   @mb_smc21 + 2
 
-         ; detect speech chip
+         ; detect speech - SSI263
 
          sei
          +READ_RAM2_WRITE_RAM2
-         lda   #$40
+         lda   #$40                  ; setup NMI vector (rti)
          sta   $3fb
          lda   #$fb
          sta   $fffa
          lda   #3
          sta   $fffb
-         lda   #<@mb_irq
+         lda   #<@mb_irq             ; setup IRQ vector
          sta   $3fe
          sta   $fffe
          lda   #>@mb_irq
          sta   $3ff
          sta   $ffff
 
-         lda   #$0c
+         lda   #$0c                  ; CB2 - input neg edge, CB1 neg edge, CA2 low output, CA1 neg edge
 @mb_smc1
-         sta   $c48c
-         lda   #$80
+         sta   $c48c                 ; peripheral control register 6522#2
+         lda   #$80                  ; ctl=1
 @mb_smc2
-         sta   $c443
-         lda   #$c0
+         sta   $c443                 ; C = SSI reg 3, S/S I or A = 6522#1 ddr a
+         lda   #$c0                  ; duration=11 phoneme=000000 (pause)
 @mb_smc3
-         sta   $c440
-         lda   #$70
+         sta   $c440                 ; C = SSI reg 0, S/S I or A = 6522#1 port b data
+         lda   #$70                  ; ctl=0 (A/R active - phoneme timing response)
 @mb_smc4
-         sta   $c443
-         lda   #$82
+         sta   $c443                 ; C = SSI reg 3, S/S I or A = 6522#1 ddr a
+         lda   #$82                  ; enable CA1 interrupt
 @mb_smc5
-         sta   $c48e
+         sta   $c48e                 ; interrupt enable register 6522#2
 
-         ldx   #0
+         ldx   #$80                  ; 0= ~650ms, 80 = ~325ms
          ldy   #0
          sec
          cli
@@ -125,7 +131,42 @@ GetMockingboardStuff
          bne   @wait_irq
          inx
          bne   @wait_irq
-         clc
+
+         ; detect speech - SC-01
+         ;based on S/S I demo dsk
+         ;init sc-01 interface
+         lda   #$ff
+@mb_smc15
+         sta   $c402                 ; ddr portb - all outputs
+         lda   #$b0                  ; cb2 pulse output,cb1 pos edge
+@mb_smc17
+         sta   $c40c                 ; pcr 
+         lda   #$10                  ; clear all interrupt flags
+@mb_smc18
+         sta   $c40d                 ; ifr
+         ;output stop phoneme
+         lda   #$3f                  ; stop
+@mb_smc19
+         sta   $c400                 ; orb, write phoneme & pitch
+
+         ldx   #$D0                  ; wait ~120ms, stop takes 47ms
+-        lda   #$10
+@mb_smc20
+         bit   $c40d                 ; ifr, check for cb1 interrupt flag
+         bne   +                     ; flag set, we found one
+         iny
+         bne   -
+         inx
+         bne   -
+         clc                         ; not found
+         bcc   @got_irq
+
+@mb_smc21
++        sta   $c40d                 ; ifr, clear flag
+         sec                         ; found, we have an S/S I
+         ror   $82
+         ldy   #$ff
+         bcc   @ssI
 
 @got_irq
          sei
@@ -134,15 +175,33 @@ GetMockingboardStuff
 @onlyI
          ldy   #$ff
 @mb_smc6
-         sty   $c403
+         sty   $c403                 ; 6522#1 ddra
          lda   #7
 @mb_smc7
-         sta   $c402
-@mb_smc8
-         sty   $c483
-@mb_smc9
-         sta   $c482
+         sta   $c402                 ; 6522#1 ddrb
 
+         iny
+         sty   $80
+         tya
+         sta   ($80),y               ; 6522#1 orb
+         lda   #4
+         sta   ($80),y               ; 6522#1 orb
+         dey
+@ssI
+@mb_smc8
+         sty   $c483                 ; 6522#2 ddra
+         lda   #7
+@mb_smc9
+         sta   $c482                 ; 6522#2 ddrb
+
+         iny
+         tya
+         ldy   #$80
+         sta   ($80),y               ; 6522#2 orb
+         lda   #4
+         sta   ($80),y               ; 6522#2 orb
+
+         lda   #7
          and   $81
          ora   $82
          tax
@@ -151,18 +210,6 @@ GetMockingboardStuff
          lda   #>Ignore
          sta   $ffff
          +READ_ROM_NO_WRITE
-
-         iny
-         sty   $80
-         tya
-         sta   ($80),y
-         lda   #4
-         sta   ($80),y
-         tya
-         ldy   #$80
-         sta   ($80),y
-         lda   #4
-         sta   ($80),y
 
          rts                         ; found
 
@@ -176,22 +223,22 @@ GetMockingboardStuff
          rts
 
 @mb_irq
-         lda   #2
+         lda   #2                    ; clear CA1 interrupt flag
 @mb_smc10
-         sta   $c48d
-         lda   #$80
+         sta   $c48d                 ; interrupt flag register 6522#2
+         lda   #$80                  ; ctl=1
 @mb_smc11
-         sta   $c443
-         lda   #0
+         sta   $c443                 ; C = SSI reg 3, S/S I or A = 6522#1 ddr a
+         lda   #0                    ; duration=00 phoneme=000000 (pause)
 @mb_smc12
-         sta   $c440
-         lda   #$70
+         sta   $c440                 ; C = SSI reg 0, S/S I or A = 6522#1 port b data
+         lda   #$70                  ; ctl=0 (A/R active - phoneme timing response)
 @mb_smc13
-         sta   $c443
-         sta   $80
-         lda   #2
+         sta   $c443                 ; C = SSI reg 3, S/S I or A = 6522#1 ddr a
+         sta   $80                   ; found
+         lda   #2                    ; disable CA1 interrupt
 @mb_smc14
-         sta   $c48e
+         sta   $c48e                 ; interrupt enable register 6522#2
          lda   $45
          rti
 
