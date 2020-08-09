@@ -57,9 +57,11 @@ GetMockingboardStuff
          iny
          sty   @mb_smc5 + 1
          sty   @mb_smc14 + 1
+         clc
 
-         +HIDE_NEXT_2_BYTES
+         +HIDE_NEXT_BYTE
 @foundII  ;stereo
+         sec
          ror   $82
 
          lda   $81
