@@ -196,7 +196,9 @@
 
          +LDADDR FoundMockingboardCallback
          jsr   GetMockingboardStuff
+         +READ_RAM2_WRITE_RAM2
          stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM
+         +READ_ROM_NO_WRITE
 
          ; if Mockingboard AND HAS_SPEECH then print CR & '...and it talks!'
          txa
