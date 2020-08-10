@@ -12,20 +12,12 @@
          sta   $11EA
          jsr   $1000      ; decompress
 
-         lda   #$4C
+         lda   #$60
          sta   $BC00
-         lda   #<callback
-         sta   $BC01
-         lda   #>callback
-         sta   $BC02
 
          +DISABLE_ACCEL
          jmp   $11EF
 
-callback
-         +RESET_VECTOR $100
-         rts
-         
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }
