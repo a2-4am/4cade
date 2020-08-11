@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BOUNCING.KMNGAS",plain
@@ -26,8 +26,12 @@
          sta   $6C9A      ; patch - don't increase lives
          sta   $6C9D      ; patch - don't increase lives
 +
+         lda   #$4C
+         sta   $7215
+         jsr   $7200
+         +RESET_VECTOR $100
          +DISABLE_ACCEL
-         jmp   $7200
+         jmp   $7218
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
