@@ -85,6 +85,7 @@ GetMockingboardStuff
          sta   @mb_smc19 + 2
          sta   @mb_smc20 + 2
          sta   @mb_smc21 + 2
+         sta   @mb_smc22 + 2
 
          ; detect speech - SSI263
 
@@ -163,6 +164,9 @@ GetMockingboardStuff
 
 @mb_smc21
 +        sta   $c40d                 ; ifr, clear flag
+         lda   #$d0                  ; turn off cb2 pulse mode to disable false writes to sc01
+@mb_smc22
+         sta   $c40c                 ; pcr
          sec                         ; found, we have an S/S I
          ror   $82
          ldy   #$ff
