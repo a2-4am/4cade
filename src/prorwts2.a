@@ -1037,32 +1037,20 @@ foundname       iny
 
   !if override_adr = 0 {
                 ldy     #AUX_TYPE
-                lda     (scratchlo), y
-    !if (allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
-                sta     ldrlo
-                iny
-                lda     (scratchlo), y
+                jsr     fetchscratch
+                stx     ldrlo
                 sta     ldrhi
-    } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
-                pha
-                iny
-                lda     (scratchlo), y
-                pha
-    } ;allow_subdir = 1 or allow_saplings = 1 or allow_trees = 1 or aligned_read = 0
   } ;override_adr = 0
 
                 ;cache KEY_POINTER
 
                 ldy     #KEY_POINTER
-                lda     (scratchlo), y
-                tax
+                jsr     fetchscratch
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
-                sta     dirbuf
+                stx     dirbuf
     !if (allow_trees + (fast_trees xor 1)) > 1 {
-                sta     treeblklo
+                stx     treeblklo
     } ;allow_trees = 1 and fast_trees = 0
-                iny
-                lda     (scratchlo), y
                 sta     dirbuf + 256
     !if (allow_trees + (fast_trees xor 1)) > 1 {
                 sta     treeblkhi
@@ -3237,8 +3225,11 @@ hddwriteimm     lda     adrhi ;for Trackstar support
                 jsr     saveslot
 } ;swap_scrn = 1
 
+                php
+                sei
 unrentry = unrelochdd + (* - reloc)
                 jsr     $d1d1
+                plp
 !if use_smartport = 1 {
 unrpcommand = unrelochdd + (* - reloc)
 pcommand        !byte   $2c ;hide packet in non-SmartPort mode
@@ -3281,6 +3272,13 @@ initpatch       lda     ($48), y
                 dec     $4a
                 bne     --
 } ;swap_scrn = 1
+                rts
+
+fetchscratch
+                lda     (scratchlo), y
+                tax
+                iny
+                lda     (scratchlo), y
                 rts
 
 !if use_smartport = 1 {

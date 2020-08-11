@@ -169,10 +169,7 @@ ProDOS_enter
          lda   ldrlo2+1
          sta   (ipacket), y
          ldy   #$13
-         lda   (scratchlo), y
-         tax
-         iny
-         lda   (scratchlo), y
+         jsr   fetchscratch
          ldy   #9
          sta   (ipacket), y
          txa
