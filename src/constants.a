@@ -144,7 +144,7 @@ CHEATS_ENABLED = %00001000
 
 ; shared symbols
 iProDOS_enter  = $D66E
-LoadFileDirect = $DAFB
+LoadFileDirect = $DAFA
 launchpatch    = $D613
 iAddToPath     = $FEC3
 itraverse      = $D8D9

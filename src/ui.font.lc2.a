@@ -16,16 +16,16 @@ DrawPageInternal
 ; drawing starts at VTAB 0
 ; each line starts at column X which was passed in (0-indexed)
 ; clobbers PTR
+; clobbers $FF
 ; clobbers A/X/Y
 ; preserves all flags, by a quirk of implementation
          php
-         stx   @leftMargin
+         stx   $FF
          ldx   #0
          stx   VTAB
          +ST16 PTR
 @drawLine
-@leftMargin=*+1
-         lda   #$FD                  ; SMC
+         lda   $FF
          sta   HTAB
          ldy   #0
 @parseLine
@@ -75,7 +75,7 @@ DrawPageInternal
 Draw40CharsInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
+;v carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; drawing starts at HTAB 0
 ; increments VTAB
