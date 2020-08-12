@@ -22,13 +22,11 @@
          sta   $1B2D
          sta   $D6E6
          jsr   $1B00
-
          lda   #<callback1
          sta   $D7E9
          lda   #>callback1
          sta   $D7EA
          jsr   $D000
-
          lda   #<callback2
          sta   $8D5
          lda   #>callback2
@@ -55,6 +53,7 @@ callback2
          lda   #$63       ; back to original vector
          sta   $3F2
          sta   $FFFC
+         +READ_RAM2_WRITE_RAM2      ; fix on //c+
          jmp   $D6EE
 
 reset
