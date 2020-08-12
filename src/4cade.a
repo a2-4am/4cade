@@ -15,6 +15,7 @@ RELBASE=$2000
          ; first-run initialization, relocates code to language card and jumps
          ; to |Reenter|
          !source "src/4cade.init.a"
+         !source "src/4cade.init.cffa.a"
 
 FirstMover
 !pseudopc RELBASE {

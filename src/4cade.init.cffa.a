@@ -1,0 +1,89 @@
+;license:MIT
+;(c) 2020 by qkumba
+;
+; CFFA-specific work-around for an issue on the GS
+;
+
+HackThaCFFA
+         ldx   #0
+         beq   @CFFAbase1
+@loopCFFA
+         cmp   @CFFA_ID-1,x
+         bne   @nextslot
+@CFFAbase1
+         lda   $C7F6,x
+         inx
+         cpx   #5
+         bne   @loopCFFA
+         sbc   #'0'
+         cmp   #2                    ; only 3.0x and 3.1x
+         bcc   @foundCFFA
+         rts
+
+@nextslot
+         dec   @CFFAbase1+2
+         lda   @CFFAbase1+2
+         cmp   #$C0
+         bne   HackThaCFFA
+         rts
+
+@foundCFFA
+         lda   @CFFAbase1+2
+         sta   @CFFAbase2+2
+
+!cpu 65816
+         clc
+         xce
+         ldx   #0
+-        inx
+         lda   $FE0002,x
+         cmp   #$FE                   ; find anything we can use as bank==#$FE
+         bne   -
+         stx   @patchROM+1
+         rep   #$30
+!al
+!rl
+         sei
+         ldx   #$00A0
+         lda   $CFFF
+@CFFAbase2
+         lda   $D100                  ; SMC
+-        dex
+         beq   @returnCFFA
+         lda   $CC04,x
+         eor   #$02AE
+         bne   -
+         tay
+-        lda   @patchCFFA_b,y
+         sta   $CC00,x
+         inx
+         inx
+         iny
+         iny
+         cpy   #(@patchCFFA_e-@patchCFFA_b)
+         bcc   -
+         
+@returnCFFA
+         cli
+         sec
+         xce
+         rts
+
+!as
+!rs
+@patchCFFA_b
+         stz   $C806
+         stz   $C807                  ; no error
+@patchROM
+         lda   #$D1                   ; SMC
+         sta   $C808
+         stz   $C809
+         lda   #$FE
+         sta   $C80A                  ; handle at FE/00xx
+         stz   $C80B
+         rts
+@patchCFFA_e
+
+@CFFA_ID !text "CF3K"
+
+!cpu 6502

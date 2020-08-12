@@ -144,6 +144,14 @@
 +
 
 @Relocate
+         ; if zpMachineStatus AND IS_IIGS then check for CFFA
+         ; before performing any further disk access
+         lda   zpMachineStatus
+         and   #IS_IIGS
+         beq   +
+         jsr   HackThaCFFA
+
++
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
                                      ; ProRWTS2 disk-data live at $D000-D3FF
