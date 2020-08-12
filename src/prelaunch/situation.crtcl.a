@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/SITUATION.CRTCL",plain
@@ -7,21 +7,26 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
-         lda   #<callback
-         sta   $84E
-         lda   #>callback
-         sta   $84F
-         jmp   $800      ; decompress
+         jmp   +
 
 callback
+         +ENABLE_ACCEL
+         jsr   $BD8E
          +RESET_VECTOR reset
          +DISABLE_ACCEL
-         jmp   $10DD
+         lda   #0
+         rts
 
 reset
          +READ_RAM1_NO_WRITE
          jmp   ($FFFC)
+
++
+         lda   #<callback
+         sta   $8BF
+         lda   #>callback
+         sta   $8C0
+         jmp   $800      ; decompress
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
