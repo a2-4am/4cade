@@ -1,0 +1,105 @@
+;license:MIT
+;(c) 2020 by qkumba
+;
+; GS-specific code to support return-to-GS/OS
+;
+
+PrepareGSOS
+!cpu 65816
+         clc
+         xce
+         rep   #$30
+!al
+!rl
+         pha                         ; reserve word return
+         pea   $1100                 ; application-type, auxId #1
+         ldx   #$2003                ; GetNewID
+         jsl   $E10000
+         ply
+         sty   @userID+1
+         pha
+         pha                         ; reserve dword return
+         pha
+         pea   @return_e-@return_b   ; dword size
+         phy                         ; ID
+         pea   $8010                 ; attrib (locked, can't cross bank)
+         pha
+         pha                         ; dword 0
+         ldx   #$0902                ; NewHandle
+         jsl   $E10000
+         plx
+         ply                         ; handle
+         pha
+         pea   @return_b             ; ptr
+         phy
+         phx                         ; handle
+         pha
+         pea   @return_e-@return_b   ; size
+         tya
+         xba
+         sta   @handle2+2
+         stx   @handle2+1
+         inx
+         inx
+         sta   @handle1+2
+         stx   @handle1+1
+
+         lda   #$FB18                ; CLC / XCE
+         sta   PatchQuit
+         lda   #$005C                ; JML
+         sta   PatchQuit+2
+
+@handle1
+         lda   $D1D1D1               ; SMC
+         sta   PatchQuit+5
+         xba
+         sta   @copycallback+2
+@handle2
+         lda   $D1D1D1               ; SMC
+         sta   PatchQuit+3
+         adc   #@callback_b-@return_b
+         sta   @copycallback+1
+
+         ldx   #$2802                ; PtrToHand
+         jsl   $E10000               ; copy hook code to allocated memory
+
+         sec
+         xce
+         rts
+
+@return_b
+         rep   #$30                  ; called from 8-bit code but with e=0
+         ldx   #((@callback_e-@callback_b)+1) and -2
+
+@copycallback
+         lda   $D1D1D1,x             ; SMC
+         sta   $BF00,x
+         dex
+         dex
+         bpl   @copycallback
+@userID  pea   $D1D1                 ; SMC
+         ldx   #$1102                ; DisposeAll
+         phb
+         pea   ($BF00+@jmpGSOS-@callback_b)-1
+         jmp   $E10000
+
+@callback_b
+!cpu 65C02
+         plx
+         inx
+         inx
+         inx
+         phx
+         lda   #$B3
+         sta   $204
+         lda   #0
+         sta   $280
+         rts
+!cpu 65816
+@jmpGSOS
+         sep   #$30                  ; revert to 8-bit mode
+         jmp   $E0D000
+@callback_e
+@return_e
+
+!cpu 6502

@@ -16,6 +16,7 @@ RELBASE=$2000
          ; to |Reenter|
          !source "src/4cade.init.a"
          !source "src/4cade.init.cffa.a"
+         !source "src/4cade.init.gs.a"
 
 FirstMover
 !pseudopc RELBASE {

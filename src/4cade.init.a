@@ -348,11 +348,7 @@ OneTimeSetup
          lda   $E100BD               ; Make sure GS/OS was the boot OS
 !cpu 6502
          beq   @NotGSOS
-         ldx   #(QuitToGSOS_e-QuitToGSOS)-1
--        lda   QuitToGSOS,x
-         sta   PatchQuit,x
-         dex
-         bpl   -
+         jsr   PrepareGSOS
 @NotGSOS
 
          ldy   #$0b
@@ -464,16 +460,3 @@ CopyDevs
          !byte 100
          !byte 10
          !byte 1
-
-QuitToGSOS
-         lda   #$8B
-         sta   ProDOS_exit+1         ; restore bank 1
-         lda   #$FF                  ; no prefix
-         sta   ProDOS_prefix
-
-!cpu 65816
-         clc
-         xce
-         jmp   $E0D000
-!cpu 6502
-QuitToGSOS_e
