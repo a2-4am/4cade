@@ -87,6 +87,7 @@
 
 skipmb
          lda   $65AB
+patchmb
          cmp   #3
          bne   ++
          +READ_RAM2_NO_WRITE
@@ -98,6 +99,8 @@ skipmb
          sta   $380
          lda   #$0D
          sta   $FF
+         lda   #$FF
+         sta   patchmb+1
 +        +READ_ROM_NO_WRITE
          
 ++
