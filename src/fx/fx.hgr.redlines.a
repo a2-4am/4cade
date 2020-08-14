@@ -1,0 +1,100 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/REDLINES",plain
+*=$6000
+
+row1 = $fe
+row2 = $ff
+
+         !source "src/constants.a"
+
+         lda   #$00
+         sta   row1
+         lda   #$BF
+         sta   row2
+@loop1
+         jsr   WaitForVBL
+         lda   row1
+         jsr   DrawRedLine
+         lda   row2
+         jsr   DrawRedLine
+         ldx   row1
+         beq   +
+         dex
+         txa
+         jsr   DrawBlackLine
++        ldx   row2
+         inx
+         cpx   #$C0
+         beq   +
+         txa
+         jsr   DrawBlackLine
++
+         lda   #$30
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$60
+         bne   @loop1
+
+@loop2
+         jsr   WaitForVBL
+         lda   row1
+         cmp   #$C0
+         beq   +
+         jsr   DrawRedLine
++        lda   row2
+         bmi   +
+         jsr   DrawRedLine
++        ldx   row1
+         dex
+         txa
+         jsr   CopyLine
+         ldx   row2
+         inx
+         txa
+         jsr   CopyLine
+         lda   #$30
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$C1
+         bne   @loop2
+@exit    jmp   UnwaitForVBL
+
+DrawRedLine
+         jsr   HGRCalc
+         ldy   #$27
+         lda   #$AA
+-        eor   #$7F
+         sta   ($26), y
+         dey
+         bpl   -
+         rts
+
+DrawBlackLine
+         jsr   HGRCalc
+         ldy   #$27
+         lda   #$00
+-        sta   ($26), y
+         dey
+         bpl   -
+         rts
+
+CopyLine
+         jsr   HGRCalc
+         ldy   #$27
+-        lda   ($3c), y
+         sta   ($26), y
+         dey
+         bpl   -
+         rts
+
+         !source "src/wait.a"
+         !source "src/fx/fx.hgr.common.a"
