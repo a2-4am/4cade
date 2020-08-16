@@ -29,7 +29,8 @@ reset
          +READ_ROM_NO_WRITE
          jmp   $FAA6
 
-+        +DISABLE_ACCEL
++        inc   $3F4       ; force reboot
+         +DISABLE_ACCEL
          jmp   $1200
 
 !if * > $1C0 {
