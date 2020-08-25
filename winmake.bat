@@ -7,7 +7,7 @@ rem a qkumba monstrosity from 2018-10-29
 rem
 
 setlocal enabledelayedexpansion
-set DISK=4cade.2mg
+set DISK=4cade.hdv
 set VOLUME=TOTAL.REPLAY
 
 rem third-party tools required to build (must be in path)
@@ -42,7 +42,7 @@ if "%1" equ "dsk" (
 call :asm
 call :compress
 2>nul del build\log
-1>nul copy /y res\blank.2mg "build\%DISK%" >>build\log
+1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 1>nul copy /y res\PREFS.CONF build\ >>build\log

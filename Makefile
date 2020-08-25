@@ -10,7 +10,7 @@
 # adapted by 4am on 2018-08-19
 #
 
-DISK=4cade.2mg
+DISK=4cade.hdv
 VOLUME=TOTAL.REPLAY
 
 # third-party tools required to build
@@ -26,7 +26,7 @@ CADIUS=cadius
 EXOMIZER=exomizer mem -q -P23 -lnone
 
 dsk: md asm
-	cp res/blank.2mg build/"$(DISK)" >>build/log
+	cp res/blank.hdv build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	rsync -aP res/PREFS.CONF build/PREFS.CONF >> build/log
