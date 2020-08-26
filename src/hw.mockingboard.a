@@ -164,7 +164,7 @@ GetMockingboardStuff
 
 @mb_smc21
 +        sta   $c40d                 ; ifr, clear flag
-         lda   #$d0                  ; turn off cb2 pulse mode to disable false writes to sc01
+         lda   #$00                  ; turn off cb2 pulse mode to disable false writes to sc01
 @mb_smc22
          sta   $c40c                 ; pcr
          sec                         ; found, we have an S/S I
