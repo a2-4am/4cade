@@ -98,7 +98,7 @@ goto :EOF
 
 if "%1" equ "chd" (
 call :dsk
-chdman createhd -c none -isb 64 -i "build\%DISK%" -o "build\%DISK%.chd" >>build\log
+chdman createhd -c none -i "build\%DISK%" -o "build\%DISK%.chd" >>build\log
 goto :EOF
 )
 

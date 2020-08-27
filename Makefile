@@ -71,7 +71,7 @@ asmprelaunch:
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
 chd:	dsk
-	chdman createhd -c none -isb 64 -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
+	chdman createhd -c none -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
 
 compress:
 	for f in res/ACTION.HGR.UNCOMPRESSED/*; do  o=res/ACTION.HGR/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
