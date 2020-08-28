@@ -155,6 +155,10 @@
  - Fixed IRQ vectors causing hangs with certain demos on ][+ with Super Serial Card and/or Videx 80-column card installed (thanks Frank M.)
  - Fixed acceleration on Laser 128 (thanks Tom G.)
  - New GS/OS Finder icon (thanks fatdog projects)
+ - `Ctrl-Q` quits to GS/OS if possible, otherwise reboots
+ - Fixed CFFA3000 incompatibility on IIgs
+ - Fixed VidHD incompatibility on non-IIgs (thanks John B., Tom G.)
+ - Support Spectrum ED (Brazilian //e clone)
 
 # Revision 3 / serial number 20200121
 
