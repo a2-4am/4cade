@@ -1,0 +1,25 @@
+ Destroy aliens before your fuel runs
+
+   out, repair buildings and capture
+
+ critters to trade for fuel and repairs
+
+Button 0 for joystick game
+Spacebar for keyboard game
+
+
+Up  Down    Fire    Fuel   Left    Right
+ A   Z    spacebar    F     <        >
+
+Repair buildings, capture aliens:
+  R   or   button 0 and 1 simultaneously
+
+
+Esc * * * * * * * * * * * * * * *  pause
+
+Ctrl-C * * * * * * * * * * redefine keys
+
+Ctrl-R * * * * * * * * * *  restart game
+
+Ctrl-S * * * * * * * * * *  toggle sound
+[eof]
