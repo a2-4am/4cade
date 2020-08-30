@@ -19,7 +19,7 @@ $ cd 4cade/
 $ make
 ```
 
-If all goes well, the `build/` subdirectory will contain a `4cade.2mg` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
+If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
 
 ## Windows
 
