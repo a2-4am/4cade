@@ -36,7 +36,7 @@ Then open a `CMD.EXE` window and type
 C:\> CD 4CADE
 C:\4cade> WINMAKE
 ```
-If all goes well, the `BUILD\` subdirectory will contain a `4CADE.2MG` image which can be mounted in emulators like [AppleWin](https://github.com/AppleWin/AppleWin).
+If all goes well, the `BUILD\` subdirectory will contain a `4CADE.HDV` image which can be mounted in emulators like [AppleWin](https://github.com/AppleWin/AppleWin).
 
 # Navigating the code
 
