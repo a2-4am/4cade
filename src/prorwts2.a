@@ -552,8 +552,7 @@ slot            ldx     $cfff
                 sta     hackstar
 
 iterunit        inc     unrunit2
-                jsr     unrentry
-                bcs     iterunit
+                jsr     unrentrysei
 
 +               ldy     #$10
 -               lda     readbuff + 3, y
@@ -3225,17 +3224,18 @@ hddwriteimm     lda     adrhi ;for Trackstar support
                 jsr     saveslot
 } ;swap_scrn = 1
 
+unrentrysei = unrelochdd + (* - reloc)
                 php
                 sei
 unrentry = unrelochdd + (* - reloc)
                 jsr     $d1d1
-                plp
 !if use_smartport = 1 {
 unrpcommand = unrelochdd + (* - reloc)
 pcommand        !byte   $2c ;hide packet in non-SmartPort mode
 unrppacket = unrelochdd + (* - reloc)
                 !word   unrelochdd + (packet - reloc)
 } ;use_smartport = 1
+                plp
 hackstar = unrelochdd + (* - reloc)
                 pla
                 sta     adrhi ;Trackstar does not preserve adrhi
