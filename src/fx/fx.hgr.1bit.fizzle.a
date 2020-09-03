@@ -17,12 +17,13 @@ rnd2=$ff
 
          ;iterate
 
+         ldx   #0
 @loop
          lda   rnd1
+@loop2
          eor   #$ff
          sta   $26
          sta   $3c
-         ldx   rnd2
          lsr   rnd2
          ror   rnd1
          bcc   +
@@ -62,14 +63,14 @@ rnd2=$ff
 
          ;wait while checking for keypress
 
-         ldx   $c000
+         lda   $c000
          bmi   @exit
 
          ;exit condition 2
 
-         ldx   rnd1
-         dex
-         bne   @loop
+         lda   rnd1
+         cmp   #1
+         bne   @loop2
 
 @exit    rts
 
