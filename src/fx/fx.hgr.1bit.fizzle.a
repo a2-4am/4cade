@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2017-2019 by qkumba
+;(c) 2017-2020 by qkumba/4am
 
 !cpu 6502
 !to "build/FX/BIT.FIZZLE",plain

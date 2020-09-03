@@ -1,16 +1,19 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2020 by qkumba/4am
 
 !cpu 6502
 !to "build/FX/SHR.FIZZLE",plain
 *=$a000
 
+rnd1=$fe
+rnd2=$ff
+
          ;init RNG
 
          ldy   #1
-         sty   @rnd1+1
+         sty   rnd1
          dey
-         sty   @rnd2+1
+         sty   rnd2
 
          ;copy SCB and palette
 
@@ -37,59 +40,55 @@
          ;iterate
 
 @loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
+         ldx   rnd1
+@loop2
+         stx   $26
+         stx   $3c
+         ldx   rnd2
+         lsr   rnd2
+         ror   rnd1
          bcc   +
 
          ;feedback polynomial forms #$4001 for period of 32767
 
-         lda   @rnd1+1
+         lda   rnd1
          eor   #1
-         sta   @rnd1+1
-         lda   @rnd2+1
+         sta   rnd1
+         lda   rnd2
          eor   #$40
-         sta   @rnd2+1
+         sta   rnd2
 
          ;don't rewrite SCB or palette
          ;it will make the fizzle take longer than obviously needed
 
 +        cpx   #$7d
          bcs   +
-         sty   $26
-         sty   $3c
          txa
 
          ;select address
 
-         ;clc
          adc   #$20
          sta   $27
          sta   $3d
 
          ;copy pixel from other page to this page
 
-         ldy   #0
          lda   ($3c),y
          sta   $c005
          sta   ($26),y
          sta   $c004
 
-         ;wait while checking for keypress
++
+         ;exit conditions
 
-+        ;ldx   #2
-@wait    lda   $c000
+         ldx   rnd2
+         bne   @loop
+
+         ldx   $c000
          bmi   @exit
-         ;dex
-         ;bne   @wait
 
-         ;and exit condition
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
-         bne   @loop
+         ldx   rnd1
+         cpx   #1
+         bne   @loop2
 
 @exit    rts
