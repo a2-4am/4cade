@@ -125,8 +125,6 @@ FC_UNLOCK       =    $6A     ; write 4 times
 FC_LOCK         =    $A6
 FC_1MHZ         =    9
 FC_ON           =    40      ; doco says 16.6Mhz
-FC_SPKR         =    2
-FC_HIFI         =    4
 
 ; TransWarp I
 ; may overlap with paddle trigger
@@ -214,19 +212,6 @@ build_setspeed
          rts
 
 build_addon
-         lda   #FC_UNLOCK            ; change Fastchip speaker setting to 'HIFI'
-         sta   fc_lock               ; (improves sound on most games)
-         sta   fc_lock               ; (setting reverts on power cycle)
-         sta   fc_lock
-         sta   fc_lock
-         sta   fc_enable
-         lda   #FC_SPKR
-         sta   fc_config
-         lda   #FC_HIFI
-         sta   fc_data
-         lda   #FC_LOCK
-         sta   fc_lock
-
          lda   #<addon
          ldy   #>addon
          ldx   #(end_addon-addon)

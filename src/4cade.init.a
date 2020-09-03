@@ -31,6 +31,35 @@
 @no64Klen=(*-@s_no64K)-1
 
 +
+; FASTChip
+fc_lock         =    $C06A
+fc_enable       =    $C06B
+fc_config       =    $C06E
+fc_data         =    $C06F
+FC_UNLOCK       =    $6A     ; write 4 times
+FC_LOCK         =    $A6
+FC_SPKR         =    2       ; speaker delay register
+FC_HIFI         =    4       ; set to 'HIFI'
+FC_JOY          =    3       ; joystick delay register
+FC_LONG         =    2       ; set to 'LONG'
+
+         lda   #FC_UNLOCK
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_lock
+         sta   fc_enable
+         lda   #FC_SPKR              ; change Fastchip speaker delay setting to 'HIFI'
+         sta   fc_config             ; (improves sound on most games)
+         lda   #FC_HIFI
+         sta   fc_data
+         lda   #FC_JOY               ; change Fastchip joystick delay setting to 'LONG'
+         sta   fc_config             ; (improves joystick detection)
+         lda   #FC_LONG
+         sta   fc_data
+         lda   #FC_LOCK              ; (settings revert on power cycle)
+         sta   fc_lock
+
          lda   #0
          sta   zpMachineStatus
          sta   SETC3ROM
