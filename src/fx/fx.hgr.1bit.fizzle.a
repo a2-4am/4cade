@@ -5,51 +5,39 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
-copymask=$ff
+rnd1=$fe
+rnd2=$ff
 
          ;init RNG
 
-         ldx   #1
-         stx   @rnd1+1
-         dex
-         stx   @rnd2+1
+         ldy   #1
+         sty   rnd1
+         dey
+         sty   rnd2
 
          ;iterate
 
 @loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
+         lda   rnd1
+         eor   #$ff
+         sta   $26
+         sta   $3c
+         ldx   rnd2
+         lsr   rnd2
+         ror   rnd1
          bcc   +
 
          ;feedback polynomial forms #$8016 for period of 65535
 
-         lda   @rnd1+1
+         lda   rnd1
          eor   #$16
-         sta   @rnd1+1
-         lda   @rnd2+1
+         sta   rnd1
+         lda   rnd2
          eor   #$80
-         sta   @rnd2+1
+         sta   rnd2
 
-         ;little hack to avoid missing offset zero
-         ;screen hole at $xxFF is missed instead
-
-+        tya
-         eor   #$ff
-         sta   $26
-         sta   $3c
-
-         lda   #%00000001
-         sta   copymask
++
          txa
-         and   #$e0
-         beq   +
--        asl   copymask
-         adc   #$e0
-         bne   -
-
-+        txa
          and   #$1f
 
          ;target page 1
@@ -61,25 +49,36 @@ copymask=$ff
 
          ;copy pixel from other page to this page
 
-         ldy   #0
+         lda   ($26), y
+         eor   ($3c), y              ; merge source and destination bits
+         and   @copymasks, x         ; isolate the bits to replace, zero the rest
+         eor   ($26), y              ; unmerge source and destination bits, leaves "to keep" destination bits intact
+         sta   ($26), y              ; write the result
 
-         lda   ($26),y
-         eor   ($3c),y  ; merge source and destination bits
-         and   copymask ; isolate the bits to replace, zero the rest
-         eor   ($26),y ; unmerge source and destination bits, leaves "to keep" destination bits intact
-         sta   ($26),y ; write the result
+         ;exit condition 1
+
+         ldx   rnd2
+         bne   @loop
 
          ;wait while checking for keypress
 
-@wait    lda   $c000
+         ldx   $c000
          bmi   @exit
 
-         ;and exit condition
+         ;exit condition 2
 
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
+         ldx   rnd1
+         dex
          bne   @loop
 
 @exit    rts
+
+@copymasks
+         !byte 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+         !byte 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+         !byte 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
+         !byte 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+         !byte 16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16
+         !byte 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
+         !byte 64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64
+         !byte 128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128
