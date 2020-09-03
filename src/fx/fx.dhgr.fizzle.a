@@ -1,45 +1,52 @@
 ;license:MIT
-;(c) 2017-2018 by qkumba
+;(c) 2017-2020 by qkumba/4am
 ;
 !cpu 6502
 !to "build/FX/DHGR.FIZZLE",plain
 *=$6000
 
+rnd1=$fe
+rnd2=$ff
+
+; performance notes:
+; old:                    10657266..12247971 = 1590705
+; new:                    10196445..11493278 = 1296833
+
          jsr   CopySelfToAuxmem
 
          ;init RNG
 
-         ldx   #1
-         stx   @rnd1+1
-         dex
-         stx   @rnd2+1
+         ldy   #1
+         sty   rnd1
+         dey
+         sty   rnd2
 
          ;iterate
 
+         ldx   rnd2
 @loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
+         lda   rnd1
+@loop2
+         eor   #$ff
+         sta   $26
+         sta   $3c
+         lsr   rnd2
+         ror   rnd1
          bcc   +
 
          ;feedback polynomial forms #$2015 for period of 16383
 
-         lda   @rnd1+1
+         lda   rnd1
          eor   #$15
-         sta   @rnd1+1
-         lda   @rnd2+1
+         sta   rnd1
+         lda   rnd2
          eor   #$20
-         sta   @rnd2+1
+         sta   rnd2
 
          ;little hack to avoid missing offset zero
          ;screen hole at $xxFF is missed instead
 
-+        tya
-         eor   #$ff
-         sta   $26
-         sta   $3c
-         txa
++        txa
          and   #$1f
 
          ;target page 1
@@ -51,7 +58,6 @@
 
          ;copy pixel from other page to this page
 
-         ldy   #0
          cpx   #$20
          bcc   +
          sta   $c003
@@ -61,18 +67,17 @@
          sta   $c002
          sta   $c004
 
-        ;check for keypress
+        ;exit conditions
+
+         ldx   rnd2
+         bne   @loop
 
          lda   $c000
          bmi   @exit
 
-        ;and exit condition
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
+         lda   rnd1
          cmp   #1
-         bne   @loop
+         bne   @loop2
 
 @exit    rts
 
