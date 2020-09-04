@@ -5,12 +5,13 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
-copymasks = $6100         ; [256 bytes]
-addrs     = $6200         ; [256 bytes]
+copymasks = $6100                    ; [256 bytes, page-aligned]
+addrs     = $6200                    ; [256 bytes, page-aligned]
 
-         jsr   swapzp
-         ldx   #0
-         lda   #1
+         jsr   swapzp                ; copy LFSR code to zerp page
+
+         inx
+         lda   #1                    ; create copymask lookup table
 --       ldy   #$20
          ora   #$80
 -        sta   copymasks, x
@@ -19,8 +20,9 @@ addrs     = $6200         ; [256 bytes]
          bne   -
          asl
          bne   --
+
          clc
---       ldy   #$20
+--       ldy   #$20                  ; create address lookup table
          tya
 -        sta   addrs, x
          adc   #1
@@ -29,14 +31,17 @@ addrs     = $6200         ; [256 bytes]
          bne   -
          txa
          bne   --
-         jsr   $0
+
+         jsr   $0                    ; call LFSR code on zero page
+
+         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
+         sta   $2000
+                                     ; fall through to restore and exit
 swapzp   ldx   #(end-start-1)
--        lda   $0, x
-         pha
-         lda   start, x
-         sta   $0, x
-         pla
+-        ldy   start, x
+         lda   $0, x
          sta   start, x
+         sty   $0, x
          dex
          bpl   -
          rts
@@ -45,31 +50,30 @@ start
 !pseudopc 0 {
 ; in: X,Y=0
 loop     txa
-loop1    eor   #$B4
-         tax
-loop2    lda   addrs, x
-         sta   <dst+2
-         eor   #$60
+loop1    eor   #$B4                  ; LFSR form 0xB400 for period 65535
+         tax                         ; X is LFSR high byte, Y is LFSR low byte
+loop2    lda   addrs, x              ; which means X is the index into the base address lookup table
+         sta   <dst+2                ; and Y is the offset from the base address
+         eor   #$60                  ; which works out well with the available addressing modes
          sta   <src+2
+
          lda   (<dst+1), y
-src      eor   $FD00, y
-         and   copymasks, x
-         eor   (<dst+1), y
-dst      sta   $FD00, y
+src      eor   $FD00, y              ; merge source and destination bits
+         and   copymasks, x          ; isolate the bits to replace, zero the rest
+         eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+dst      sta   $FD00, y              ; write the result
          txa
          lsr
          tax
          tya
          ror
          tay
-         bcc   loop2
-         bne   loop
+         bcc   loop2                 ; C set by ror
+         bne   loop                  ; Z set by tay
          bit   $C000
          bmi   exit
          txa
          bne   loop1
-exit     lda   $4000
-         sta   $2000
-         rts
+exit     rts
 }
 end
