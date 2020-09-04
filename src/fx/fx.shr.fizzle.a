@@ -1,94 +1,73 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba/4am
+;(c) 2019-2020 by qkumba/4am/John Brooks
 
 !cpu 6502
 !to "build/FX/SHR.FIZZLE",plain
-*=$a000
+*=$A000
 
-rnd1=$fe
-rnd2=$ff
+addrs=$A100               ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
 
-         ;init RNG
+         jsr   swapzp     ; copy LFSR code to zero page
 
-         ldy   #1
-         sty   rnd1
-         dey
-         sty   rnd2
-
-         ;copy SCB and palette
-
-         lda   #$9d
-         sta   $3d
-         sty   $3c
-         ldx   #$23                  ; copy SCB+palette+this code to auxmem
-         sta   $c005
-@copystuff
-         lda   ($3c),y
-         sta   ($3c),y
-         iny
-         bne   @copystuff
-         inc   $3d
+         ldx   #$7F       ; create address lookup table
+         lda   #$9F
+         sec
+-        sta   addrs, x
+         sbc   #1
          dex
-         bne   @copystuff
+         bpl   -
+         inx
 
-         ;force write offset 0 otherwise it will be missed
+         sta   $C005      ; pre-copy SHR SCB and palette
+         ldy   #0
+-        lda   $9D00, y
+         sta   $9D00, y
+         lda   $9E00, y
+         sta   $9E00, y
+         lda   $9F00, y
+         sta   $9F00, y
+         iny
+         bne   -
 
-         lda   $2000
+         jsr   $0         ; call LFSR code on zero page
+
+         lda   $2000      ; last lousy byte (because LFSR never hits 0)
          sta   $2000
-         sta   $c004
 
-         ;iterate
+         sta   $C004      ; restore and exit
+swapzp   ldx   #(end-start-1)
+-        lda   $0, x
+         pha
+         lda   start, x
+         sta   $0, x
+         pla
+         sta   start, x
+         dex
+         bpl   -
+         rts
 
-@loop
-         ldx   rnd1
-@loop2
-         stx   $26
-         stx   $3c
-         ldx   rnd2
-         lsr   rnd2
-         ror   rnd1
-         bcc   +
-
-         ;feedback polynomial forms #$4001 for period of 32767
-
-         lda   rnd1
-         eor   #1
-         sta   rnd1
-         lda   rnd2
-         eor   #$40
-         sta   rnd2
-
-         ;don't rewrite SCB or palette
-         ;it will make the fizzle take longer than obviously needed
-
-+        cpx   #$7d
-         bcs   +
+start
+!pseudopc 0 {
+; in: X,Y=0
+loop     txa
+loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
+         tax
+loop2    lda   addrs, x
+         sta   <dst+2
+         lda   (<dst+1), y
+dst      sta   $FD00, y
          txa
-
-         ;select address
-
-         adc   #$20
-         sta   $27
-         sta   $3d
-
-         ;copy pixel from other page to this page
-
-         lda   ($3c),y
-         sta   $c005
-         sta   ($26),y
-         sta   $c004
-
-+
-         ;exit conditions
-
-         ldx   rnd2
-         bne   @loop
-
-         ldx   $c000
-         bmi   @exit
-
-         ldx   rnd1
-         cpx   #1
-         bne   @loop2
-
-@exit    rts
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+exit     rts
+}
+end
