@@ -5,12 +5,16 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
+src=$fc
+dst=$fe
+
          jsr   swap
-         inx
-         ldy   #1
-         sty+1 rnd1+1
-         dey
-         sty+1 rnd2+1
+         ldx   #1
+         stx+1 rnd1+1
+         dex
+         stx+1 rnd2+1
+         stx   src
+         stx   dst
          jsr   $0
 swap     ldx   #(End-Start-1)
 -        lda   $0, x
@@ -27,26 +31,22 @@ Start
 !pseudopc 0 {
 loop     lda+1 rnd1+1
 loop2    eor   #$ff
-         sta+1 dst+1
-         sta+1 src+1
+         tay
          lsr+1 rnd2+1
          ror+1 rnd1+1
          bcc   +
-         lda+1 rnd1+1
-         eor   #$16
-         sta+1 rnd1+1
          lda+1 rnd2+1
-         eor   #$80
+         eor   #$B4
          sta+1 rnd2+1
 +        lda   addrs, x
-         sta+1 dst+2
+         sta   dst+1
          eor   #$60
-         sta+1 src+2
-         lda+1 (dst+1), y
-src      eor   $FDFD
+         sta   src+1
+         lda   (dst), y
+         eor   (src), y
          and   copymasks, x
-         eor+1 (dst+1), y
-dst      sta   $FDFD
+         eor   (dst), y
+         sta   (dst), y
 rnd2     ldx   #$FD
          bne   loop
          lda   $c000
