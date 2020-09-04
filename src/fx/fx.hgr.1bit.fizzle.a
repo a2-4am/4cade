@@ -12,6 +12,7 @@ addrs     = $6200         ; [256 bytes]
          ldx   #0
          lda   #1
 --       ldy   #$20
+         ora   #$80
 -        sta   copymasks, x
          inx
          dey
