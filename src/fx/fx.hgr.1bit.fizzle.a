@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2017-2020 by qkumba/4am
+;(c) 2017-2020 by qkumba/4am/John Brooks
 
 !cpu 6502
 !to "build/FX/BIT.FIZZLE",plain
@@ -22,15 +22,12 @@ addrs     = $6200         ; [256 bytes]
 --       ldy   #$20
          tya
 -        sta   addrs, x
-         adc   #$1
+         adc   #1
          inx
          dey
          bne   -
          txa
          bne   --
-         sty   <rnd2+1
-         iny
-         sty   <rnd1+1
          jsr   $0
 swapzp   ldx   #(end-start-1)
 -        lda   $0, x
@@ -45,16 +42,11 @@ swapzp   ldx   #(end-start-1)
 
 start
 !pseudopc 0 {
-loop     lda   <rnd1+1
-loop2    eor   #$ff
-         tay
-         lsr   <rnd2+1
-         ror   <rnd1+1
-         bcc   +
-         lda   <rnd2+1
-         eor   #$B4
-         sta   <rnd2+1
-+        lda   addrs, x
+; in: X,Y=0
+loop     txa
+loop1    eor   #$B4
+         tax
+loop2    lda   addrs, x
          sta   <dst+2
          eor   #$60
          sta   <src+2
@@ -63,13 +55,20 @@ src      eor   $FD00, y
          and   copymasks, x
          eor   (<dst+1), y
 dst      sta   $FD00, y
-rnd2     ldx   #$FD
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
          bne   loop
-         lda   $c000
+         bit   $C000
          bmi   exit
-rnd1     lda   #$FD
-         cmp   #1
-         bne   loop2
-exit     rts
+         txa
+         bne   loop1
+exit     lda   $4000
+         sta   $2000
+         rts
 }
 end
