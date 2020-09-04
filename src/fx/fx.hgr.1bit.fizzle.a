@@ -5,71 +5,61 @@
 !to "build/FX/BIT.FIZZLE",plain
 *=$6000
 
-rnd1=$fe
-rnd2=$ff
-
-         ;init RNG
-
+         jsr   swap
+         inx
          ldy   #1
-         sty   rnd1
+         sty+1 rnd1+1
          dey
-         sty   rnd2
+         sty+1 rnd2+1
+         jsr   $0
+swap     ldx   #(End-Start-1)
+-        lda   $0, x
+         pha
+         lda   Start, x
+         sta   $0, x
+         pla
+         sta   Start, x
+         dex
+         bpl   -
+         rts
 
-         ;iterate
-
-         ldx   #0
-@loop
-         lda   rnd1
-@loop2
-         eor   #$ff
-         sta   $26
-         sta   $3c
-         lsr   rnd2
-         ror   rnd1
+Start
+!pseudopc 0 {
+loop     lda+1 rnd1+1
+loop2    eor   #$ff
+         sta+1 dst+1
+         sta+1 src+1
+         lsr+1 rnd2+1
+         ror+1 rnd1+1
          bcc   +
-
-         ;feedback polynomial forms #$8016 for period of 65535
-
-         lda   rnd1
+         lda+1 rnd1+1
          eor   #$16
-         sta   rnd1
-         lda   rnd2
+         sta+1 rnd1+1
+         lda+1 rnd2+1
          eor   #$80
-         sta   rnd2
-
-+        lda   @addrs, x
-         sta   $27
+         sta+1 rnd2+1
++        lda   addrs, x
+         sta+1 dst+2
          eor   #$60
-         sta   $3d
-
-         ;copy pixel from other page to this page
-
-         lda   ($26), y
-         eor   ($3c), y              ; merge source and destination bits
-         and   @copymasks, x         ; isolate the bits to replace, zero the rest
-         eor   ($26), y              ; unmerge source and destination bits, leaves "to keep" destination bits intact
-         sta   ($26), y              ; write the result
-
-         ;exit condition 1
-
-         ldx   rnd2
-         bne   @loop
-
-         ;wait while checking for keypress
-
+         sta+1 src+2
+         lda+1 (dst+1), y
+src      eor   $FDFD
+         and   copymasks, x
+         eor+1 (dst+1), y
+dst      sta   $FDFD
+rnd2     ldx   #$FD
+         bne   loop
          lda   $c000
-         bmi   @exit
-
-         ;exit condition 2
-
-         lda   rnd1
+         bmi   exit
+rnd1     lda   #$FD
          cmp   #1
-         bne   @loop2
+         bne   loop2
+exit     rts
+}
+End
 
-@exit    rts
-
-!align 255,0
-@copymasks
+!align 255, 0
+copymasks
          !byte 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
          !byte 2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
          !byte 4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
@@ -78,7 +68,7 @@ rnd2=$ff
          !byte 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32
          !byte 64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64
          !byte 128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128
-@addrs
+addrs
          !byte $20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$2A,$2B,$2C,$2D,$2E,$2F,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$3A,$3B,$3C,$3D,$3E,$3F
          !byte $20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$2A,$2B,$2C,$2D,$2E,$2F,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$3A,$3B,$3C,$3D,$3E,$3F
          !byte $20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$2A,$2B,$2C,$2D,$2E,$2F,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$3A,$3B,$3C,$3D,$3E,$3F
