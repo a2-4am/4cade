@@ -5,11 +5,11 @@
 !to "build/FX/SHR.FIZZLE",plain
 *=$A000
 
-addrs=$A100               ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
+addrs=$A100                          ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
 
-         jsr   swapzp     ; copy LFSR code to zero page
+         jsr   swapzp                ; copy LFSR code to zero page
 
-         ldx   #$7F       ; create address lookup table
+         ldx   #$7F                  ; create address lookup table
          lda   #$9F
          sec
 -        sta   addrs, x
@@ -18,7 +18,7 @@ addrs=$A100               ; [128 bytes, can be anywhere in main memory but don't
          bpl   -
          inx
 
-         sta   $C005      ; pre-copy SHR SCB and palette
+         sta   $C005                 ; pre-copy SHR SCB and palette
          ldy   #0
 -        lda   $9D00, y
          sta   $9D00, y
@@ -29,19 +29,17 @@ addrs=$A100               ; [128 bytes, can be anywhere in main memory but don't
          iny
          bne   -
 
-         jsr   $0         ; call LFSR code on zero page
+         jsr   $0                    ; call LFSR code on zero page
 
-         lda   $2000      ; last lousy byte (because LFSR never hits 0)
+         lda   $2000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
 
-         sta   $C004      ; restore and exit
+         sta   $C004                 ; restore and exit
 swapzp   ldx   #(end-start-1)
--        lda   $0, x
-         pha
-         lda   start, x
-         sta   $0, x
-         pla
+-        ldy   start, x
+         lda   $0, x
          sta   start, x
+         sty   $0, x
          dex
          bpl   -
          rts

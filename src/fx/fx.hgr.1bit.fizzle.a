@@ -8,7 +8,7 @@
 copymasks = $6100                    ; [256 bytes, page-aligned]
 addrs     = $6200                    ; [256 bytes, page-aligned]
 
-         jsr   swapzp                ; copy LFSR code to zerp page
+         jsr   swapzp                ; copy LFSR code to zero page
 
          inx
          lda   #1                    ; create copymask lookup table
@@ -62,14 +62,15 @@ src      eor   $FD00, y              ; merge source and destination bits
          and   copymasks, x          ; isolate the bits to replace, zero the rest
          eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
 dst      sta   $FD00, y              ; write the result
+
          txa
          lsr
          tax
          tya
          ror
          tay
-         bcc   loop2                 ; C set by ror
-         bne   loop                  ; Z set by tay
+         bcc   loop2                 ; C modified by ror
+         bne   loop                  ; Z modified by tay
          bit   $C000
          bmi   exit
          txa
