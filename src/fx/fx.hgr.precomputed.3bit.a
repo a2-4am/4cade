@@ -1,13 +1,6 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am
 ;
-src1           = $F0      ; word
-dest1          = $F2      ; word
-src2           = $F4      ; word
-dest2          = $F6      ; word
-src3           = $F8      ; word
-dest3          = $FA      ; word
-input          = $FE      ; word
 
 copymasks      = $0200    ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00, $20, $40...
 tmplo          = $0300    ; $C0 bytes
@@ -91,75 +84,99 @@ hgrhi3c        = $BE80    ; $80 bytes
 
 !macro ROW_X_TO_3BIT_BASE_ADDRESSES {
          ; X = $00..$3F, mapping to row 0, 3, 6, 9, 12, ... 189
-         lda   hgrlo3a,x
-         sta   dest1
-         sta   src1
-         lda   hgrhi3a,x
-         sta   dest1+1
+         lda   hgrlo3a, x
+         sta   <dest1
+         sta   <src1
+         lda   hgrhi3a, x
+         sta   <dest1+1
          eor   #$60
-         sta   src1+1
-         lda   hgrlo3b,x
-         sta   dest2
-         sta   src2
-         lda   hgrhi3b,x
-         sta   dest2+1
+         sta   <src1+1
+         lda   hgrlo3b, x
+         sta   <dest2
+         sta   <src2
+         lda   hgrhi3b, x
+         sta   <dest2+1
          eor   #$60
-         sta   src2+1
-         lda   hgrlo3c,x
-         sta   dest3
-         sta   src3
-         lda   hgrhi3c,x
-         sta   dest3+1
+         sta   <src2+1
+         lda   hgrlo3c, x
+         sta   <dest3
+         sta   <src3
+         lda   hgrhi3c, x
+         sta   <dest3+1
          eor   #$60
-         sta   src3+1
-}
-
-!macro INC_INPUT_AND_LOOP .loop {
-         inc   input
-         beq   +
-         jmp   .loop
-+        bit   $c000
-         bmi   +
-         inc   input+1
-         jmp   .loop
-+        rts
+         sta   <src3+1
 }
 
 !macro FX_PRECOMPUTED_3BIT .coords {
          +BUILD_3BIT_HGR_LOOKUP_TABLES
          +BUILD_EXTRA_COLS
          +BUILD_SPARSE_BITMASKS_3BIT
+         ldx   #(end-start)          ; copy InputLoop code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
          +LDADDR .coords
-         +ST16 input
-         jmp   InputLoop
+         sta   <input
+         sty   <input+1
+         lda   #0
+         pha
+         pha
+start
+!pseudopc 0 {
 Exit3Bit rts
 InputLoop
          ldy   #0
-         lda   (input),y
+input=*+1
+         lda   $FDFD, y
          bmi   Exit3Bit              ; if high bit is 1 then we're done
          cmp   #$40
          php
          tax
          +ROW_X_TO_3BIT_BASE_ADDRESSES
 
-         inc   input
-         lda   (input),y
+         inc   <input
+         lda   (<input), y
          and   #%11100000
          tax
-         eor   (input),y
+         eor   (<input), y
          plp
          bcc   +
          tay
-         lda   extra_cols,y
+         lda   extra_cols, y
 +        tay
 
          ; 2x3 block
-         +COPY_BIT src1, dest1, copymasks
-         +COPY_BIT src2, dest2, copymasks
-         +COPY_BIT src3, dest3, copymasks
+src1=*+1
+         lda   $FDFD, y
+         eor   (<dest1), y
+         and   copymasks, x
+         eor   (<dest1), y
+dest1=*+1
+         sta   $FDFD, y
+src2=*+1
+         lda   $FDFD, y
+         eor   (<dest2), y
+         and   copymasks, x
+         eor   (<dest2), y
+dest2=*+1
+         sta   $FDFD, y
+src3=*+1
+         lda   $FDFD, y
+         eor   (<dest3), y
+         and   copymasks, x
+         eor   (<dest3), y
+dest3=*+1
+         sta   $FDFD, y
 
-         +INC_INPUT_AND_LOOP InputLoop
-         rts
+         inc   <input
+         bne   InputLoop
+         bit   $c000
+         bmi   Exit3Bit
+         inc   <input+1
+         bne   InputLoop             ; always branches
+}
+end
 !if * and 1 {
          !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
 }
