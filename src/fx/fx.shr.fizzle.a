@@ -16,7 +16,7 @@ addrs=$A100                          ; [128 bytes, can be anywhere in main memor
          sbc   #1
          dex
          bpl   -
-         inx
+         inx                         ; X=0
 
          sta   $C005                 ; pre-copy SHR SCB and palette
          ldy   #0
@@ -28,13 +28,13 @@ addrs=$A100                          ; [128 bytes, can be anywhere in main memor
          sta   $9F00, y
          iny
          bne   -
-
+                                     ; X,Y=0
          jsr   $0                    ; call LFSR code on zero page
 
          lda   $2000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
-
-         sta   $C004                 ; restore and exit
+         sta   $C004
+                                     ; fall through to restore and exit
 swapzp   ldx   #(end-start-1)
 -        ldy   start, x
          lda   $0, x

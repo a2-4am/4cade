@@ -10,7 +10,7 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
 
          jsr   swapzp                ; copy LFSR code to zero page
 
-         ldx   #0
+         inx                         ; X=0
          lda   #%00000011            ; create copymask lookup table
 --       ldy   #$20
          ora   #%10000000
@@ -21,8 +21,9 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          asl
          asl
          bne   --
+
+         tax                         ; X=0
          clc
-         ldx   #0
 --       ldy   #$20                  ; create address lookup table
          tya
 -        sta   addrs, x
@@ -32,7 +33,7 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          bne   -
          txa
          bne   --
-
+                                     ; X,Y=0
          jsr   $0                    ; call LFSR code on zero page
 
          lda   $4000                 ; last lousy byte (because LFSR never hits 0)
@@ -45,7 +46,7 @@ swapzp   ldx   #(end-start-1)
          sty   $0, x
          dex
          bpl   -
-         rts
+         rts                         ; X=#$FF
 
 start
 !pseudopc 0 {
