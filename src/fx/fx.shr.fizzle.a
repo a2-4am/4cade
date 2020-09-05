@@ -7,20 +7,24 @@
 
 addrs=$A100                          ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
 
-         jsr   swapzp                ; copy LFSR code to zero page
-
-         ldx   #$7F                  ; create address lookup table
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        lda   start-1, x
+         sta   $0, x
+         dex
+         bne   -
+         ldx   #$80                  ; create address lookup table
          lda   #$9F
          sec
--        sta   addrs, x
+-        sta   addrs-1, x
          sbc   #1
          dex
-         bpl   -
-         inx                         ; X=0
-
-         sta   $C005                 ; pre-copy SHR SCB and palette
-         ldy   #0
--        lda   $9D00, y
+         bne   -
+         sta   $C005
+         txa
+         pha
+         pha
+         tay
+-        lda   $9D00, y              ; pre-copy SHR SCB and palette
          sta   $9D00, y
          lda   $9E00, y
          sta   $9E00, y
@@ -28,24 +32,10 @@ addrs=$A100                          ; [128 bytes, can be anywhere in main memor
          sta   $9F00, y
          iny
          bne   -
-                                     ; X,Y=0
-         jsr   $0                    ; call LFSR code on zero page
-
-         lda   $2000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
-         sta   $C004
-                                     ; fall through to restore and exit
-swapzp   ldx   #(end-start-1)
--        ldy   start, x
-         lda   $0, x
-         sta   start, x
-         sty   $0, x
-         dex
-         bpl   -
-         rts
+         rts                         ; exit via LFSR code on zero page
 
 start
-!pseudopc 0 {
+!pseudopc 1 {
 ; in: X,Y=0
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
@@ -66,6 +56,9 @@ dst      sta   $FD00, y
          bmi   exit
          txa
          bne   loop1
-exit     rts
+exit     lda   $2000                 ; last lousy byte (because LFSR never hits 0)
+         sta   $2000
+         sta   $C004
+         rts
 }
 end

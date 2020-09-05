@@ -8,9 +8,11 @@
 addrs     = $6100                    ; [256 bytes, page-aligned]
 copymasks = $6200                    ; [128 bytes, should not cross page boundary]
 
-         jsr   swapzp                ; copy LFSR code to zero page
-
-         inx                         ; X=0
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        lda   start-1, x
+         sta   $0, x
+         dex
+         bne   -
          lda   #%00000011            ; create copymask lookup table
 --       ldy   #$20
          ora   #%10000000
@@ -21,7 +23,8 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          asl
          asl
          bne   --
-
+         pha
+         pha
          tax                         ; X=0
          clc
 --       ldy   #$20                  ; create address lookup table
@@ -33,23 +36,10 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          bne   -
          txa
          bne   --
-                                     ; X,Y=0
-         jsr   $0                    ; call LFSR code on zero page
-
-         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
-                                     ; fall through to restore and exit
-swapzp   ldx   #(end-start-1)
--        ldy   start, x
-         lda   $0, x
-         sta   start, x
-         sty   $0, x
-         dex
-         bpl   -
-         rts                         ; X=#$FF
+         rts                         ; exit via LFSR code on zero page
 
 start
-!pseudopc 0 {
+!pseudopc 1 {
 ; in: X,Y=0
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
@@ -58,13 +48,11 @@ loop2    lda   addrs, x              ; which means X is the index into the base 
          sta   <dst+2                ; and Y is the offset from the base address
          eor   #$60                  ; which works out well with the available addressing modes
          sta   <src+2
-
          lda   (<dst+1), y
 src      eor   $FD00, y              ; merge source and destination bits
          and   copymasks, x          ; isolate the bits to replace, zero the rest
          eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
 dst      sta   $FD00, y              ; write the result
-
          txa
          lsr
          tax
@@ -77,6 +65,8 @@ dst      sta   $FD00, y              ; write the result
          bmi   exit
          txa
          bne   loop1
-exit     rts
+exit     lda   $4000                 ; last lousy byte (because LFSR never hits 0)
+         sta   $2000
+         rts
 }
 end
