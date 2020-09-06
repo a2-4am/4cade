@@ -86,14 +86,11 @@ hgr1himirror   = $BF40    ; $C0 bytes
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
-         ldx   #(end-start)          ; copy InputLoop code to zero page
--        lda   start-1, x
-         sta   $FF, x
+         ldx   #(end-start-1)        ; copy InputLoop code to zero page
+-        lda   start, x
+         sta   $0, x
          dex
-         bne   -
-         +LDADDR .coords
-         sta   <input
-         sty   <input+1
+         bpl   -
          lda   #0
          pha
          pha
@@ -103,7 +100,7 @@ Exit2Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         lda   $FDFD, y              ; first value: HGR row + 1
+         lda   .coords, y            ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
          tax
          +ROW_X_TO_2BIT_BASE_ADDRESSES

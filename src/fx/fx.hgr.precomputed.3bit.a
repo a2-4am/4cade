@@ -111,14 +111,11 @@ hgrhi3c        = $BE80    ; $80 bytes
          +BUILD_3BIT_HGR_LOOKUP_TABLES
          +BUILD_EXTRA_COLS
          +BUILD_SPARSE_BITMASKS_3BIT
-         ldx   #(end-start)          ; copy InputLoop code to zero page
--        lda   start-1, x
-         sta   $FF, x
+         ldx   #(end-start-1)        ; copy InputLoop code to zero page
+-        lda   start, x
+         sta   $0, x
          dex
-         bne   -
-         +LDADDR .coords
-         sta   <input
-         sty   <input+1
+         bpl   -
          lda   #0
          pha
          pha
@@ -128,7 +125,7 @@ Exit3Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         lda   $FDFD, y
+         lda   .coords, y
          bmi   Exit3Bit              ; if high bit is 1 then we're done
          cmp   #$40
          php
