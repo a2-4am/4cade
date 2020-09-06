@@ -5,6 +5,16 @@
 !to "build/FX/RADIAL",plain
 *=$6000
 
+mirror_src1    = $E8      ; word
+mirror_dest1   = $EA      ; word
+mirror_src2    = $EC      ; word
+mirror_dest2   = $EE      ; word
+src1           = $F0      ; word
+dest1          = $F2      ; word
+src2           = $F4      ; word
+dest2          = $F6      ; word
+input          = $FE      ; word
+
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
