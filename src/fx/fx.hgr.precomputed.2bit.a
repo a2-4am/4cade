@@ -104,21 +104,6 @@ hgr1himirror   = $BF40    ; $C0 bytes
 +        rts
 }
 
-!macro DEC_INPUT_AND_LOOP .loop {
-         lda   input
-         beq   +
-         dec   input
-         dec   input
-         jmp   .loop
-+        dec   input
-         dec   input
-         dec   input+1
-         bit   $c000
-         bmi   +
-         jmp   .loop
-+        rts
-}
-
 !macro FX_PRECOMPUTED_2BIT .coords {
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
