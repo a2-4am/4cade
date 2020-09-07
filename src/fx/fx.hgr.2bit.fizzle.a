@@ -6,7 +6,7 @@
 *=$6000
 
 addrs     = $6100                    ; [256 bytes, page-aligned]
-copymasks = $6200                    ; [128 bytes, should not cross page boundary]
+copymasks = $80                      ; [128 bytes, should not cross page boundary]
 
          ldx   #(end-start)          ; copy LFSR code to zero page
 -        lda   start-1, x
