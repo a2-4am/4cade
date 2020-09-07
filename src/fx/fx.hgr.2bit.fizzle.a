@@ -10,11 +10,10 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
 
          ldx   #(end-start)          ; copy LFSR code to zero page
 -        lda   start-1, x
-         sta   $0, x
+         sta   $FF, x
          dex
          bne   -
-         lda   #%00000011            ; create copymask lookup table
---       ldy   #$20
+--       ldy   #$20                  ; create copymask table
          ora   #%10000000
 -        sta   copymasks, x
          inx
@@ -25,7 +24,7 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          bne   --
          pha
          pha
-         tax                         ; X=0
+         tax
          clc
 --       ldy   #$20                  ; create address lookup table
          tya
@@ -39,8 +38,9 @@ copymasks = $6200                    ; [128 bytes, should not cross page boundar
          rts                         ; exit via LFSR code on zero page
 
 start
-!pseudopc 1 {
+!pseudopc 0 {
 ; in: X,Y=0
+         !byte %00000011
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax                         ; X is LFSR high byte, Y is LFSR low byte

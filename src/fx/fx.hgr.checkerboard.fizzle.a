@@ -33,7 +33,6 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          inx
          cpx   #$C0
          bne   -
-
          ldx   #0                    ; create shapemask table
 --       lda   hgrlo, x
          sta   $FE
@@ -71,26 +70,12 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          inx
          cpx   #$C0
          bne   --
-
          ldx   #(end-start)          ; copy LFSR code to zero page
 -        lda   start-1, x
-         sta   $0, x
+         sta   $FF, x
          dex
          bne   -
-
-         clc                         ; create shapemaskaddrs lookup table
---       ldy   #$20
-         lda   #>shapemask
--        sta   shapemaskaddrs, x
-         adc   #1
-         inx
-         dey
-         bne   -
-         txa
-         bne   --
-
-         lda   #%00000011            ; create copymask lookup table
---       ldy   #$20
+--       ldy   #$20                  ; create copymask lookup table
          ora   #%10000000
 -        sta   copymasks, x
          inx
@@ -99,11 +84,21 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          asl
          asl
          bne   --
-         tax                         ; X=0
+         tax
          clc
 --       ldy   #$20                  ; create address lookup table
          tya
 -        sta   addrs, x
+         adc   #1
+         inx
+         dey
+         bne   -
+         txa
+         bne   --
+         clc                         ; create shapemaskaddrs lookup table
+--       ldy   #$20
+         lda   #>shapemask
+-        sta   shapemaskaddrs, x
          adc   #1
          inx
          dey
@@ -118,8 +113,9 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          jmp   $1
 
 start
-!pseudopc 1 {
+!pseudopc 0 {
 ; in: X,Y=0
+         !byte %00000011
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax                         ; X is LFSR high byte, Y is LFSR low byte

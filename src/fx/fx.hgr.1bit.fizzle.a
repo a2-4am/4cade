@@ -10,11 +10,10 @@ copymasks = $6200                    ; [256 bytes, page-aligned]
 
          ldx   #(end-start)          ; copy LFSR code to zero page
 -        lda   start-1, x
-         sta   $0, x
+         sta   $FF, x
          dex
          bne   -
-         lda   #%00000001            ; create copymask lookup table
---       ldy   #$20
+--       ldy   #$20                  ; create copymask table
          ora   #%10000000
 -        sta   copymasks, x
          inx
@@ -37,8 +36,9 @@ copymasks = $6200                    ; [256 bytes, page-aligned]
          rts                         ; exit via LFSR code on zero page
 
 start
-!pseudopc 1 {
+!pseudopc 0 {
 ; in: X,Y=0
+         !byte %00000001
 loop     txa
 loop1    eor   #$B4                  ; LFSR form 0xB400 with period 65535
          tax                         ; X is LFSR high byte, Y is LFSR low byte
