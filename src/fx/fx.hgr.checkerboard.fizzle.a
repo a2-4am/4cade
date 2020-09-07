@@ -1,0 +1,153 @@
+;license:MIT
+;(c) 2020 by 4am
+
+!cpu 6502
+!to "build/FX/CHECKERB.FIZZLE",plain
+*=$6000
+
+addrs     = $6100                    ; [256 bytes, page-aligned]
+copymasks = $6200                    ; [128 bytes, should not cross page boundary]
+shapemaskaddrs = $6300               ; [256 bytes, page-aligned]
+hgrlo     = $6400                    ; [$C0 bytes, should not cross page boundary]
+hgrhi     = $6500                    ; [$C0 bytes, should not cross page boundary]
+shapemask = $8000                    ; [$2000 bytes, page-aligned]
+
+         ldx   #0                    ; build an HGR base address lookup table,
+-        txa                         ; except the first address is |shapemask| instead of $2000
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   hgrlo,x
+         txa
+         and   #7
+         rol
+         asl   hgrlo,x
+         rol
+         ora   #>shapemask
+         sta   hgrhi,x
+         inx
+         cpx   #$C0
+         bne   -
+
+         ldx   #0                    ; create shapemask table
+--       lda   hgrlo, x
+         sta   $FE
+         lda   hgrhi, x
+         sta   $FF
+         txa
+         lsr
+         lsr
+         lsr
+         lsr
+         lsr
+         lsr
+         lda   #%00000000
+         bcc   +
+         eor   #%11111111
++        ldy   #$27
+-        eor   #%11111111
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         sta   ($FE), y
+         dey
+         bpl   -
+         inx
+         cpx   #$C0
+         bne   --
+
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        lda   start-1, x
+         sta   $0, x
+         dex
+         bne   -
+
+         clc                         ; create shapemaskaddrs lookup table
+--       ldy   #$20
+         lda   #>shapemask
+-        sta   shapemaskaddrs, x
+         adc   #1
+         inx
+         dey
+         bne   -
+         txa
+         bne   --
+
+         lda   #%00000011            ; create copymask lookup table
+--       ldy   #$20
+         ora   #%10000000
+-        sta   copymasks, x
+         inx
+         dey
+         bne   -
+         asl
+         asl
+         bne   --
+         tax                         ; X=0
+         clc
+--       ldy   #$20                  ; create address lookup table
+         tya
+-        sta   addrs, x
+         adc   #1
+         inx
+         dey
+         bne   -
+         txa
+         bne   --
+         jsr   $1
+         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
+         sta   $2000
+         lda   #$2C                  ; BIT
+         sta   <applyshapemask
+         jmp   $1
+
+start
+!pseudopc 1 {
+; in: X,Y=0
+loop     txa
+loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
+         tax                         ; X is LFSR high byte, Y is LFSR low byte
+loop2    lda   addrs, x              ; which means X is the index into the base address lookup table
+         sta   <dst+2                ; and Y is the offset from the base address
+         eor   #$60                  ; which works out well with the available addressing modes
+         sta   <src+2
+         lda   shapemaskaddrs, x
+         sta   <applyshapemask+2
+         lda   (<dst+1), y
+src      eor   $FD00, y              ; merge source and destination bits
+         and   copymasks, x          ; isolate the bits to replace, zero the rest
+applyshapemask
+         and   $FD00, y
+         eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+dst      sta   $FD00, y              ; write the result
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2                 ; C modified by ror
+         bne   loop                  ; Z modified by tay
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+exit     rts
+}
+end
