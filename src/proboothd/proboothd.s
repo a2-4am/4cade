@@ -37,6 +37,7 @@ slot            lda $cfff
                 sta $be00+fakeMLI_e-fakeMLI, y
                 iny
                 bne -
+                sty adrlo
                 stx $bf30
                 sty $200
 
