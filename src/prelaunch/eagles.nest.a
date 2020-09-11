@@ -36,6 +36,7 @@ callback2
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
+         sta   $78DD      ; patch - don't allow heal
          sta   $8580      ; patch - don't increase hits
 +
          +DISABLE_ACCEL
