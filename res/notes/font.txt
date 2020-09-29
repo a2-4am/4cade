@@ -1,11 +1,13 @@
 CIRCUITOUS font information
-2019-07 last updated
+2020-09 last updated
 
 - $80 characters only (high bit is always 0)
 - $20 and above are standard ASCII
 - $00..$1F are various shapes and characters in no standard order
 - Capital letters are full-width, which makes all-caps drawing look bad, so
   don't do that
+- Capital letters are also full-height, which makes single-spaced text look
+  bad, so don't do that either
 
 Font routines are near the top of LC RAM, accessible to either bank. However,
 font data is stored in LC RAM bank 2, because that's where we have space. Note
@@ -30,8 +32,8 @@ $06  rounded top-left quadrant circuit path
 $07  rounded top-right quadrant circuit path
 $08  left arrow
 $09  rounded bottom-right quadrant circuit path
-$0A  (TODO down arrow)
-$0B  (TODO up arrow)
+$0A
+$0B  up arrow
 $0C  rounded bottom-left quadrant circuit path
 $0D  carriage return symbol
 $0E  open apple
@@ -46,7 +48,7 @@ $16  bolt
 $17  times
 $18
 $19
-$1A
+$1A  down arrow
 $1B  lowercase a with umlaut
 $1C  lowercase e with accent
 $1D  lowercase i with accent
