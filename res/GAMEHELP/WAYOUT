@@ -1,0 +1,25 @@
+ Escape the maze, avoid the Cleptangle
+
+          joystick or keyboard
+
+    Compass                 Regular
+
+   W   E   R                G  K  H
+
+   S   D   F                 J   L
+
+   X   C   V             Space to stop
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * * * * restart
+
+Shift + 1-9* * * * * * * * save position
+
+1-9* * * * * * * * * * *restore position
+
+Ctrl-K / Ctrl-J* * * keyboard / joystick
+[eof]
