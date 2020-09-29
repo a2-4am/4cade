@@ -5,18 +5,18 @@
 
 During demo, spacebar to start
 
-P * * * * * * * * * paddle/joystick game
+P* * * * * * * * * *paddle/joystick game
 
-K * * * * * * * * * * * *  keyboard game
+K* * * * * * * * * * * * * keyboard game
 
 
 
-       Left      Fire      Right   
+       Left      Fire      Right
          <     spacebar      >
 
 
 
-Esc * * * * * * * * * * * * * * *  pause
+Esc* * * * * * * * * * * * * * * * pause
 
 Ctrl-R * * * * * * * * * *  restart game
 
