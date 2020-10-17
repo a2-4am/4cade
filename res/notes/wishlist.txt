@@ -1,49 +1,52 @@
-//4am crack
-The American Challenge
+//ported
+Alien Lander
 C'est La Vie
+Championship Baseball [sports]
+Championship Wrestling [sports]
+GBA Championship Basketball [sports]
+Defender (Joe Holt)
+Dive Bomber
+Fly Wars
+Infiltrator
+Jellyfish
+Peeping Tom
+Pegasus ][
+Rear Guard
+Super Taxman II
+The American Challenge
+The Movie Monster Game
+The Snapper
+Titan Cronus
+World Games [DHGR][sports]
+
+//4am crack
 Cavern Creatures
 Chivalry
 Conquering Worlds
-Dive Bomber
 Marauder
 MIRV
-The Movie Monster Game
 Neutrons
 Oil's Well
-Pegasus ][
 Shuttle Intercept
 Super Huey
-Super Taxman II
 Video Vegas
 
 //4am crack (unreleased)
 Galactic Attack
-Infiltrator
 Infiltrator II
-Rear Guard
+Pig Pen
 Space Kadet
 
 //TODO(woz-imaged but uncracked)
-Alien Lander
 Lemmings
 Lunar Leepers
-Peeping Tom
 Retro-Ball
 Roach Hotel
 The Space Ark
-The Snapper
 Track Attack
 Trick Shot
 
-//TODO(flux-imaged but not woz)
-Fly Wars
-Jellyfish
-
 //Sports
-Championship Baseball
-Championship Wrestling
-GBA Championship Basketball
 International Hockey
 Superstar Ice Hockey
 The World's Greatest Baseball Game
-World Games [DHGR]
