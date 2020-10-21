@@ -159,6 +159,7 @@
  - Fixed CFFA3000 incompatibility on IIgs
  - Fixed VidHD incompatibility on non-IIgs (thanks John B., Tom G.)
  - Support Spectrum ED (Brazilian //e clone)
+ - Support Apple High-Speed SCSI card
 
 # Revision 3 / serial number 20200121
 

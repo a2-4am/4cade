@@ -280,7 +280,7 @@ LoadingBuild
 } else {
 LoadingVersion
          !byte 10
-         !text "4.0-alpha3"
+         !text "4.0-beta.1"
 }
 Loading64K
          !byte 3

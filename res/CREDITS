@@ -3,7 +3,7 @@
 
                     ~
 
- revision 04a3 / serial number 20200828
+ revision 04b1 / serial number 20201021
 
                     ~
 
@@ -13,11 +13,11 @@ ports & rwts * * * * * * * * * * *qkumba
 
 testing & patches* * * * * * * * * * * *
 
-       Frank M * Tom G * option8
+   Frank M * Tom G * option8 * Josh M
 
-      Josh M * crayone * Andrew R
+   crayone * Brian T * Rob J * Alex L
 
-              Lady Ailuros
+    Kirk J * Lady Ailuros  * Andrew R
 
                     ~
 
