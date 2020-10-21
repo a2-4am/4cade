@@ -1,0 +1,25 @@
+  Shoot the enemies, protect the eggs
+
+
+             joystick moves
+
+ button 0 fires * 1 for disruptor bomb
+
+          Shoot          Move
+
+            E              I
+          S   F          J   L
+            D              K
+
+        Space for disruptor bomb
+
+Return (in menu) * * * keyboard/joystick
+
+Arrows (in menu) * * * * * *select level
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * *restart game
+[eof]

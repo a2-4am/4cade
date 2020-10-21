@@ -1,0 +1,25 @@
+     Collect all gold, climb to top
+
+    Dig to fall down or trap enemies
+
+
+          < dig  U   O  dig >
+                   I
+           move  J   L  move
+                   K
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-A * * * * * * * * * * restart level
+
+Ctrl-R * * * * * * * * * * *restart game
+
+Ctrl-K / Ctrl-J* * * keyboard / joystick
+
+Ctrl-X / Ctrl-Y* * * *flip joystick axis
+
+Return * * * * * * * * *show high scores
+[eof]
