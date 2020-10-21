@@ -1,6 +1,6 @@
-As a single guard or as co-operative
+  As a single guard or as co-operative
 
-   defenders, prevent powerpods from 
+   defenders, prevent powerpods from
 
       being stolen by the thieves
 
@@ -11,8 +11,7 @@ K * * * * * *Single Player keyboard game
 
 2 * * * * * Co-op two player paddle game
 
-S * * * * * * * * * * * * * toggle sound
-
+S * * * * * * * * * * * * * * * * *sound
 
 Rotate-left  Rotate-right   Thrust  Fire
    D            F             <       >

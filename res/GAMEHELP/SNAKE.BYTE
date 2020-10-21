@@ -1,25 +1,24 @@
-Eat all the apples in the room and exit
-   out the door. But beware, your snake
-     gets longer & faster as you eat.
+ Eat all the apples, exit through door
+
+          Don't touch yourself
 
 
-Absolute keys
 
-       Up  Left  Right  Down
-        I   J     K      M
+Absolute movement      Relative movement
 
-Relative keys
+        I
+      J   K                  <   >
+        M
 
-  Counter-Clockwise     Clockwise
-        <                   >
 
-Press C at How many plums? to change
 
-Esc* * * *pause     Ctrl-R * * * restart 
+C (at plums prompt)* * * * * change keys
 
-Ctrl-Shift-P * * * * * *  Sirius Joyport
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * *restart game
 
 Ctrl-K * * * * * * * * * * Keyboard mode
-
-Ctrl-S * * * * * * * * * *  toggle sound
 [eof]

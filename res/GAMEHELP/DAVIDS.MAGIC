@@ -1,24 +1,24 @@
-   Hit targets, set multipliers and   
-     lock 3 balls in the S-shaped
-       collector for multi-ball
+Hit targets, score points, lock 3 balls
+
+  in S-shaped collector for multi-ball
 
 
-     Button 0 or open-apple to start
-  Spacebar to choose number of players
-Paddle 1 or Joystick launch ball tension
+         Button 0 or $ to start
 
+Joystick up/down controls launch tension
 
 Left Flipper     Nudge     Right Flipper
- open-apple    spacebar    closed-apple 
+
+      $          Space           %
 
 Left Magicsave   Launch  Right Magicsave
- zxcv         closed-apple        m./
 
-Esc  * * * * * * * * * * * * * * * pause
+    zxcv           %            m./
 
-Ctrl-R * * * * * * * * * *  restart game
 
-Ctrl-S * * * * * * * * * *  toggle sound
+Esc* * * * * * * * * * * * * * * * pause
 
-Ctrl-H * * * * * * * * * * * high scores
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * *restart game
 [eof]

@@ -2,7 +2,7 @@
        Navigate through 64 rooms
 
  Use square/triangle objects for puzzles
- 
+
        Fire        Move (Space to stop)
 
          E                 I
@@ -20,6 +20,6 @@ V* * * * * * * * * * * * * * * * *volume
 Esc* * * * * * * * * * * * * * * * pause
 
  Tips: Shoot X objects, avoid collisions
- 
+
 Short guided tour > http://a2.click/ankh
 [eof]
