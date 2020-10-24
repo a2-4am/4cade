@@ -1,0 +1,522 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+
+src      = $00                       ; [word, must be at $00]
+dst      = $02                       ; [word]
+box      = $04                       ; [byte]
+stage    = $05                       ; [byte]
+any      = $06                       ; [byte]
+x        = $07
+rowcount = $07                       ; [byte]
+BoxStages = $10                      ; [$30 bytes][must be at $10]
+hgrhi    = $40                       ; [$C0 bytes]
+hgrlo    = $300                      ; [$C0 bytes]
+
+!macro RECALC_HIGH_ONLY {
+         lda   hgrhi, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+}
+
+; recalculate HGR base addresses
+; in:    X =  HGR row (00..BF)
+; out:   preserves X, Y
+;        clobbers A
+!macro RECALC {
+         lda   hgrlo, x
+         sta   src
+         sta   dst
+         +RECALC_HIGH_ONLY
+}
+
+         !source "src/fx/macros.a"
+
+; actual code starts here
+
+         ldx   #0
+-        lda   BoxInitialStages-BoxStages, x
+         sta   $00, x
+         lda   CLEAR_STAGE0, x
+         sta   clear00, x
+         lda   CLEAR_STAGE1, x
+         sta   clear01, x
+         lda   COPY_STAGE0, x
+         sta   copy00, x
+         lda   COPY_STAGE1, x
+         sta   copy01, x
+         lda   #0
+         sta   EndStagesHi, x
+         dex
+         bne   -
+
+         ldx   #13
+         stx   x
+--       ldx   x
+         ldy   #$7F
+-        lda   MIDDLE_STAGE, y
+         sta   ($0C), y
+         lda   OUTER_STAGE, y
+         sta   ($0E), y
+         dey
+         bpl   -
+
+         lda   MiddleRowCounts, x
+         ldy   #m_rowcount
+         sta   ($0C), y
+         lda   OuterRowCounts, x
+         ldy   #o_rowcount
+         sta   ($0E), y
+
+         lda   MiddleFirstRows, x
+         ldy   #m_firstrow
+         sta   ($0C), y
+         lda   OuterFirstRows, x
+         ldy   #o_firstrow
+         sta   ($0E), y
+
+         lda   EdgeLeftMasks, x
+         ldy   #m_edgeleftmask
+         sta   ($0C), y
+         ldy   #o_edgeleftmask
+         sta   ($0E), y
+
+         lda   EdgeRightMasks, x
+         ldy   #m_edgerightmask
+         sta   ($0C), y
+         ldy   #o_edgerightmask
+         sta   ($0E), y
+
+         lda   LeftMasks, x
+         ldy   #m_leftmask
+         sta   ($0C), y
+         ldy   #o_leftmask
+         sta   ($0E), y
+
+         lda   RightMasks, x
+         ldy   #m_rightmask
+         sta   ($0C), y
+         ldy   #o_rightmask
+         sta   ($0E), y
+
+         lda   CopyFlags, x
+         bne   +
+
+         lda   #$A9
+         ldy   #m_lda
+         sta   ($0C), y
+         ldy   #o_lda1
+         sta   ($0E), y
+
+         lda   #$24
+         ldx   #5
+-        ldy   MiddleBits, x
+         sta   ($0C), y
+         ldy   OuterBits, x
+         sta   ($0E), y
+         dex
+         bpl   -
+
++        dec   $0D
+         dec   $0F
+         dec   x
+         +LBPL --
+
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgrhi
+
+MainLoop lda   #0
+         sta   any
+         ldx   #47
+BoxLoop  stx   box
+         lda   BoxStages, x          ; for each box, get its current stage
+         bmi   NextBox               ; if stage >= $80, nothing to do
+         tax
+         lda   StagesHi, x
+         beq   NextBox               ; if stage's drawing routine is 0, nothing to do
+         sta   j+2
+         ldx   box
+         lda   BoxesX, x
+         ldy   BoxesY, x             ; Y = starting byte offset for this box
+         tax                         ; X = starting HGR row for this box
+         inc   any
+         clc
+j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
+NextBox  ldx   box
+         inc   BoxStages, x          ; increment every box's stage every time through the loop,
+                                     ; even if we didn't call a drawing routine
+         dex
+         bpl   BoxLoop
+         lda   any
+         beq   Exit                  ; if we didn't draw anything in any box, we're done
+         bit   $C000
+         bpl   MainLoop
+Exit     rts
+
+         !source "src/wait.a"
+
+CLEAR_STAGE0
+         bit   Exit
+         !byte $A9
+COPY_STAGE0
+         clv
+         php
+         txa
+         adc   #$0F
+         tax
+         plp
+         +RECALC
+         iny
+         iny
+         lda   (dst), y
+         bvs   +
+         eor   (src), y
++        and   #%10111110
+         eor   (dst), y
+         sta   (dst), y
+         inx
+         +RECALC
+         lda   (dst), y
+         bvs   +
+         eor   (src), y
++        and   #%10111110
+         eor   (dst), y
+         sta   (dst), y
+         rts
+CLEAR_STAGE1
+         bit   Exit
+         !byte $A9
+COPY_STAGE1
+         clv
+         php
+         txa
+         adc   #$0E
+         tax
+         plp
+         +RECALC
+         iny
+         iny
+         lda   #0
+         bvs   +
+         lda   (src), y
++        sta   (dst), y
+         inx
+         +RECALC_HIGH_ONLY
+         lda   #0
+         bvs   +
+         lda   (src), y
++        sta   (dst), y
+         inx
+         +RECALC
+         lda   #0
+         bvs   +
+         lda   (src), y
++        sta   (dst), y
+         inx
+         +RECALC_HIGH_ONLY
+         lda   #0
+         bvs   +
+         lda   (src), y
++        sta   (dst), y
+         rts
+MIDDLE_STAGE
+m_rowcount=*+1-MIDDLE_STAGE
+         lda   #$FD                  ; SMC
+         sta   rowcount
+         txa
+m_firstrow=*+1-MIDDLE_STAGE
+         adc   #$FD                  ; SMC
+         tax
+         +RECALC
+         iny
+--
+         lda   (dst), y
+m_bit1=*-MIDDLE_STAGE
+         eor   (src), y              ; SMC
+m_edgeleftmask=*+1-MIDDLE_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         iny
+
+m_lda=*-MIDDLE_STAGE
+         lda   (src), y
+         sta   (dst), y
+
+         iny
+
+         lda   (dst), y
+m_bit2=*-MIDDLE_STAGE
+         eor   (src), y              ; SMC
+m_edgerightmask=*+1-MIDDLE_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         dey
+         dey
+-
+         lda   (dst), y
+m_bit3=*-MIDDLE_STAGE
+         eor   (src), y              ; SMC
+m_leftmask=*+1-MIDDLE_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         iny
+         iny
+
+         lda   (dst), y
+m_bit4=*-MIDDLE_STAGE
+         eor   (src), y              ; SMC
+m_rightmask=*+1-MIDDLE_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         dey
+         dey
+         inx
+         +RECALC
+         dec   rowcount
+         beq   --
+         bpl   -
+         rts
+MIDDLE_STAGE_END
+
+OUTER_STAGE
+o_rowcount=*+1-OUTER_STAGE
+         lda   #$FD                  ; SMC
+         sta   rowcount
+         txa
+o_firstrow=*+1-OUTER_STAGE
+         adc   #$FD                  ; SMC
+         tax
+         +RECALC
+--
+         lda   (dst), y
+o_bit1=*-OUTER_STAGE
+         eor   (src), y              ; SMC
+o_edgeleftmask=*+1-OUTER_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         iny
+
+o_lda1=*-OUTER_STAGE
+         lda   (src), y              ; SMC
+         sta   (dst), y
+
+         iny
+
+o_lda2=*-OUTER_STAGE
+         lda   (src), y              ; SMC
+         sta   (dst), y
+
+         iny
+
+o_lda3=*-OUTER_STAGE
+         lda   (src), y              ; SMC
+         sta   (dst), y
+
+         iny
+
+         lda   (dst), y
+o_bit2=*-OUTER_STAGE
+         eor   (src), y              ; SMC
+o_edgerightmask=*+1-OUTER_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         dey
+         dey
+         dey
+         dey
+-
+         lda   (dst), y
+o_bit3=*-OUTER_STAGE
+         eor   (src), y              ; SMC
+o_leftmask=*+1-OUTER_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         iny
+         iny
+         iny
+         iny
+
+         lda   (dst), y
+o_bit4=*-OUTER_STAGE
+         eor   (src), y              ; SMC
+o_rightmask=*+1-OUTER_STAGE
+         and   #$FD                  ; SMC
+         eor   (dst), y
+         sta   (dst), y
+
+         dey
+         dey
+         dey
+         dey
+         inx
+         +RECALC
+         dec   rowcount
+         beq   --
+         bpl   -
+         rts
+OUTER_STAGE_END
+
+clear00=$9C00
+clear01=$9D00
+clear02=$8000
+clear03=$8100
+clear04=$8200
+clear05=$8300
+clear06=$8400
+clear07=$8500
+clear08=$8600
+clear09=$8E00
+clear0A=$8F00
+clear0B=$9000
+clear0C=$9100
+clear0D=$9200
+clear0E=$9300
+clear0F=$9400
+copy00=$9E00
+copy01=$9F00
+copy02=$8700
+copy03=$8800
+copy04=$8900
+copy05=$8A00
+copy06=$8B00
+copy07=$8C00
+copy08=$8D00
+copy09=$9500
+copy0A=$9600
+copy0B=$9700
+copy0C=$9800
+copy0D=$9900
+copy0E=$9A00
+copy0F=$9B00
+
+MiddleFirstRows
+         !byte $0D,$0C,$0B,$0A,$09,$08,$07
+         !byte $0D,$0C,$0B,$0A,$09,$08,$07
+OuterFirstRows
+         !byte $06,$05,$04,$03,$02,$01,$00
+         !byte $06,$05,$04,$03,$02,$01,$00
+MiddleRowCounts
+         !byte $05,$07,$09,$0B,$0D,$0F,$11
+         !byte $05,$07,$09,$0B,$0D,$0F,$11
+OuterRowCounts
+         !byte $13,$15,$17,$19,$1B,$1D,$1F
+         !byte $13,$15,$17,$19,$1B,$1D,$1F
+EdgeLeftMasks
+         !byte %11000000
+         !byte %11100000
+         !byte %11110000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111110
+         !byte %11111111
+         !byte %11000000
+         !byte %11100000
+         !byte %11110000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111110
+         !byte %11111111
+EdgeRightMasks
+         !byte %10000001
+         !byte %10000011
+         !byte %10000111
+         !byte %10001111
+         !byte %10011111
+         !byte %10111111
+         !byte %11111111
+         !byte %10000001
+         !byte %10000011
+         !byte %10000111
+         !byte %10001111
+         !byte %10011111
+         !byte %10111111
+         !byte %11111111
+LeftMasks
+         !byte %11000000
+         !byte %10100000
+         !byte %10010000
+         !byte %10001000
+         !byte %10000100
+         !byte %10000010
+         !byte %10000001
+         !byte %11000000
+         !byte %10100000
+         !byte %10010000
+         !byte %10001000
+         !byte %10000100
+         !byte %10000010
+         !byte %10000001
+RightMasks
+         !byte %10000001
+         !byte %10000010
+         !byte %10000100
+         !byte %10001000
+         !byte %10010000
+         !byte %10100000
+         !byte %11000000
+         !byte %10000001
+         !byte %10000010
+         !byte %10000100
+         !byte %10001000
+         !byte %10010000
+         !byte %10100000
+         !byte %11000000
+CopyFlags
+         !byte 0,0,0,0,0,0,0
+         !byte 1,1,1,1,1,1,1
+MiddleBits
+         !byte m_bit1, m_bit2, m_bit3, m_bit4, m_bit4, m_bit4
+OuterBits
+         !byte o_lda2, o_lda3, o_bit1, o_bit2, o_bit3, o_bit4
+
+;
+; Boxes are laid out in a grid, left-to-right, top-down:
+; 0  1  2  3  4  5  6  7
+; 8  9  10 11 12 13 14 15
+; 16 17 18 19 20 21 22 23
+; 24 25 26 27 28 29 30 31
+; 32 33 34 35 36 37 38 39
+; 40 41 42 43 44 45 46 47
+;
+; Each box is 35x32 pixels, so each row of each box is 5 consecutive
+; bytes in memory once you calculate the HGR base address for that row.
+;
+BoxesX   ; starting HGR row for each box
+         !byte $00,$00,$00,$00,$00,$00,$00,$00
+         !byte $20,$20,$20,$20,$20,$20,$20,$20
+         !byte $40,$40,$40,$40,$40,$40,$40,$40
+         !byte $60,$60,$60,$60,$60,$60,$60,$60
+         !byte $80,$80,$80,$80,$80,$80,$80,$80
+         !byte $A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0
+BoxesY   ; starting byte offset for each box
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+
+CopyParams ; must be immediately before BoxInitialStages
+         !word $8D00
+         !word $9B00
+
+; The initial grid of stages for each box.
+; Each box's stage is incremented on each iteration.
+; Negative stages (80..FF) are no-ops.
+; Positive stages (00..7F) are indexes into StagesHi array
+; to find the actual drawing routine for this stage (if any).
+BoxInitialStages
