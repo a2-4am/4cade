@@ -106,6 +106,12 @@
 +
 }
 
+!macro   LBMI .target {
+         bpl   +
+         jmp   .target
++
+}
+
 !macro   LBNE .target {
          beq   +
          jmp   .target
