@@ -153,8 +153,6 @@ NextBox  ldx   box
          bpl   MainLoop
 Exit     rts
 
-         !source "src/wait.a"
-
 CLEAR_STAGE0
          bit   Exit
          !byte $A9
