@@ -64,8 +64,7 @@ hgrlo    = $300                      ; [$C0 bytes]
          bne   -
          pla
 
-
-         ldx   #0
+         ; X=0
 -        lda   BoxInitialStages-BoxStages, x
          sta   $00, x
          lda   CLEAR_STAGE0, x
