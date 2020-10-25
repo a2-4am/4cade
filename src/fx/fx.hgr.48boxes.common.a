@@ -39,6 +39,31 @@ hgrlo    = $300                      ; [$C0 bytes]
          !source "src/fx/macros.a"
 
 ; actual code starts here
+         ldx   #48
+         ldy   #$A0
+         lda   #$23
+         pha
+-        tya
+         sta   BoxesX-1,x
+         pla
+         sta   BoxesY-1,x
+         sec
+         sbc   #5
+         bcs   +
+         lda   #$23
++        pha
+         dex
+         txa
+         and   #7
+         bne   -
+         tya
+         sec
+         sbc   #$20
+         tay
+         txa
+         bne   -
+         pla
+
 
          ldx   #0
 -        lda   BoxInitialStages-BoxStages, x
@@ -71,20 +96,21 @@ hgrlo    = $300                      ; [$C0 bytes]
          ldy   #m_rowcount
          sta   (m_dst), y
          lda   OuterRowCounts, x
-         ldy   #o_rowcount
+;;         ldy   #o_rowcount
          sta   (o_dst), y
 
          lda   MiddleFirstRows, x
          ldy   #m_firstrow
          sta   (m_dst), y
          lda   OuterFirstRows, x
-         ldy   #o_firstrow
+;;         ldy   #o_firstrow
          sta   (o_dst), y
 
          lda   EdgeLeftMasks, x
          ldy   #m_edgeleftmask
          sta   (m_dst), y
-         ldy   #o_edgeleftmask
+         dey
+;;         ldy   #o_edgeleftmask
          sta   (o_dst), y
 
          lda   EdgeRightMasks, x
@@ -377,6 +403,18 @@ o_rightmask=*+1-OUTER_STAGE
          rts
 OUTER_STAGE_END
 
+!if (m_rowcount - o_rowcount) != 0 {
+  !error "uncomment ';;ldy   #o_rowcount'"
+}
+
+!if (m_firstrow - o_firstrow) != 0 {
+  !error "uncomment ';;ldy   #o_firstrow'"
+}
+
+!if (m_edgeleftmask - o_edgeleftmask) != 1 {
+  !error "comment 'dey', uncomment ';;ldy   #o_edgeleftmask'"
+}
+
 clear00=$9C00
 clear01=$9D00
 clear02=$8000
@@ -470,20 +508,8 @@ OuterBits
 ; Each box is 35x32 pixels, so each row of each box is 5 consecutive
 ; bytes in memory once you calculate the HGR base address for that row.
 ;
-BoxesX   ; starting HGR row for each box
-         !byte $00,$00,$00,$00,$00,$00,$00,$00
-         !byte $20,$20,$20,$20,$20,$20,$20,$20
-         !byte $40,$40,$40,$40,$40,$40,$40,$40
-         !byte $60,$60,$60,$60,$60,$60,$60,$60
-         !byte $80,$80,$80,$80,$80,$80,$80,$80
-         !byte $A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0
-BoxesY   ; starting byte offset for each box
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
-         !byte $00,$05,$0A,$0F,$14,$19,$1E,$23
+BoxesX=EndStagesHi+256
+BoxesY=BoxesX+48   ; starting byte offset for each box
 
 CopyParams
          ; must be immediately before BoxInitialStages so they get
