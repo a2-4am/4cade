@@ -131,9 +131,9 @@ hgrlo    = $300                      ; [$C0 bytes]
          ldy   #o_rightmask
          sta   (o_dst), y
 
-         ldx   stage
-         lda   CopyFlags, x
-         bne   +
+         lda   stage
+         cmp   #7
+         bcs   +
 
          lda   #$A9                  ; LDA #$44 opcode
          ldy   #m_lda
@@ -488,9 +488,6 @@ RightMasks
          !byte %10010000
          !byte %10100000
          !byte %11000000
-CopyFlags
-         !byte 0,0,0,0,0,0,0
-         !byte 1,1,1,1,1,1,1
 MiddleBits
          !byte m_bit1, m_bit2, m_bit3, m_bit4, m_bit4, m_bit4
 OuterBits
