@@ -81,8 +81,8 @@ hgrlo    = $300                      ; [$C0 bytes]
          bne   -
 
 ---      ldx   #6
-         stx   maskindex
---       ldy   #$7F
+--       stx   maskindex
+         ldy   #$7F
 -        lda   MIDDLE_STAGE, y
          sta   (m_dst), y
          lda   OUTER_STAGE, y
@@ -90,26 +90,27 @@ hgrlo    = $300                      ; [$C0 bytes]
          dey
          bpl   -
 
-         ldx   maskindex
          lda   MiddleRowCounts, x
          ldy   #m_rowcount
          sta   (m_dst), y
-         lda   OuterRowCounts, x
-;;         ldy   #o_rowcount
+         clc
+         adc   #$0E
+;;       ldy   #o_rowcount
          sta   (o_dst), y
 
          lda   MiddleFirstRows, x
          ldy   #m_firstrow
          sta   (m_dst), y
-         lda   OuterFirstRows, x
-;;         ldy   #o_firstrow
+         sec
+         sbc   #$07
+;;       ldy   #o_firstrow
          sta   (o_dst), y
 
          lda   EdgeLeftMasks, x
          ldy   #m_edgeleftmask
          sta   (m_dst), y
          dey
-;;         ldy   #o_edgeleftmask
+;;       ldy   #o_edgeleftmask
          sta   (o_dst), y
 
          lda   EdgeRightMasks, x
@@ -153,7 +154,8 @@ hgrlo    = $300                      ; [$C0 bytes]
          dec   o_dst+1
          dec   stage
          bmi   +
-         dec   maskindex
+         ldx   maskindex
+         dex
          +LBMI ---
          jmp   --
 +
@@ -449,12 +451,8 @@ copy0F=$9B00
 
 MiddleFirstRows
          !byte $0D,$0C,$0B,$0A,$09,$08,$07
-OuterFirstRows
-         !byte $06,$05,$04,$03,$02,$01,$00
 MiddleRowCounts
          !byte $05,$07,$09,$0B,$0D,$0F,$11
-OuterRowCounts
-         !byte $13,$15,$17,$19,$1B,$1D,$1F
 EdgeLeftMasks
          !byte %11000000
          !byte %11100000
