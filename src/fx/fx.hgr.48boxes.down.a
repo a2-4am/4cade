@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+!cpu 6502
+!to "build/FX/BOXES48.DOWN",plain
+*=$6000
+
+USES_CLEAR = 0
+
+         !source "src/fx/fx.hgr.48boxes.common.a"
+
+         !byte $00,$FF,$00,$FF,$00,$FF,$00,$FF
+         !byte $FE,$FD,$FE,$FD,$FE,$FD,$FE,$FD
+         !byte $FC,$FB,$FC,$FB,$FC,$FB,$FC,$FB
+         !byte $FA,$F9,$FA,$F9,$FA,$F9,$FA,$F9
+         !byte $F8,$F7,$F8,$F7,$F8,$F7,$F8,$F7
+         !byte $F6,$F5,$F6,$F5,$F6,$F5,$F6,$F5
+
+StagesHi ; high bytes of address of drawing routine for each stage
+         !byte copy0F
+         !byte copy0E
+         !byte copy0D
+         !byte copy0C
+         !byte copy0B
+         !byte copy0A
+         !byte copy09
+         !byte copy08
+         !byte copy07
+         !byte copy06
+         !byte copy05
+         !byte copy04
+         !byte copy03
+         !byte copy02
+         !byte copy01
+         !byte copy00
+EndStagesHi
