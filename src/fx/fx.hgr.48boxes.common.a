@@ -71,8 +71,8 @@
 src      = $00                       ; [word][must be at $00] used by drawing routines
 dst      = $02                       ; [word] used by drawing routines
 box      = $04                       ; [byte] counter in main loop
-any      = $05                       ; [byte] counter in main loop
-rowcount = $06                       ; [byte] used by drawing routines
+rowcount = $05                       ; [byte] used by drawing routines
+any      = $0D                       ; [byte][must be at $0D] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 hgrhi    = $40                       ; [$C0 bytes] HGR base addresses
 hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
@@ -188,32 +188,32 @@ k_right_mask              = 17
          inx
          bne   -
 
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgrhi
+         ; X=0 here
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
 
-MainLoop lda   #0
-         sta   any
-         ldx   #47
+         ; any (zero page $0D) was initialized by the BoxStages copy loop
+MainLoop ldx   #48
 BoxLoop  stx   box
-         lda   BoxStages, x          ; for each box, get its current stage
+         lda   BoxStages-1, x        ; for each box, get its current stage
          bmi   NextBox               ; if stage >= $80, nothing to do
-         tax
-         lda   StagesHi, x
+         tay
+         lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          sta   j+2
-         ldx   box
-         lda   BoxesX, x
-         ldy   BoxesY, x             ; Y = starting byte offset for this box
+         lda   BoxesX-1, x
+         ldy   BoxesY-1, x           ; Y = starting byte offset for this box
          tax                         ; X = starting HGR row for this box
          inc   any
          clc
 j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
 NextBox  ldx   box
-         inc   BoxStages, x          ; increment every box's stage every time through the loop,
+         inc   BoxStages-1, x        ; increment every box's stage every time through the loop,
                                      ; even if we didn't call a drawing routine
          dex
-         bpl   BoxLoop
+         bne   BoxLoop
          lda   any
          beq   +                     ; if we didn't draw anything in any box, we're done
+         stx   any                   ; X=0 here
          bit   $C000
          bpl   MainLoop
 +        rts
@@ -465,22 +465,6 @@ OUTER_STAGE
          !byte k_outer_branches
          !byte k_rts
 
-codegen_stage
-         !byte 27
-codegen_maskindex
-         !byte 0
-codegen_get_next_token
-codegen_token_x=*+1
-         ldx   #$00
-codegen_token_src=*+1
-         lda   <OUTER_STAGE, x
-         inc   <codegen_token_x
-         rts
-codegen_store_byte
-         !byte $99,$00               ; STA $4400, Y
-codegen_dst
-         !byte copy01
-         rts
 EdgeRightMasks
          !byte %10000001
          !byte %10000011
@@ -511,6 +495,24 @@ EdgeLeftMasks
          !byte %11111100
          !byte %11111110
          !byte %11111111
+
+codegen_stage
+         !byte 27
+codegen_maskindex
+         !byte 0
+codegen_get_next_token
+codegen_token_x=*+1
+         ldx   #$00
+codegen_token_src=*+1
+         lda   <OUTER_STAGE, x
+         inc   <codegen_token_x
+         rts
+codegen_store_byte
+         !byte $99,$00               ; STA $4400, Y
+                                     ; note: this 0 byte is later copied to zero page $0D (any) and used in MainLoop
+codegen_dst
+         !byte copy01
+         rts
 }
 
 BoxInitialStages

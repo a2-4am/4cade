@@ -7,6 +7,10 @@
 ; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
 !macro BUILD_HGR_LOOKUP_TABLES .hgrlo, .hgr1hi {
          ldx   #0
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi
+}
+
+!macro BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi {
 -        txa
          and   #$F8
          bpl   +
