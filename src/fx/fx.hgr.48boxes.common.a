@@ -221,6 +221,7 @@ CODEGEN_COPY_START
 !pseudopc 0 {
 RTS0                                 ; 1 byte
          rts
+RTS0_E
 INX_AND_RECALC                       ; 16 bytes
          inx
 RECALC_AND_INY                       ; 16 bytes
@@ -232,7 +233,10 @@ RECALC                               ; 15 bytes
          sta   dst+1
          eor   #$60
          sta   src+1
+RECALC_E
+INX_AND_RECALC_E
          iny
+RECALC_AND_INY_E
 STAGE_INIT                           ; 8 bytes
 ROW_COUNT=*+1
          lda   #$1F                  ; SMC
@@ -241,62 +245,82 @@ ROW_COUNT=*+1
 FIRST_ROW=*+1
          adc   #$0E                  ; SMC
          tax
+STAGE_INIT_E
 MASKCOPY_PRE                         ; 5 bytes
          lda   (dst), y
 BIT_FOR_CLEAR
          eor   (src), y
          !byte $29                   ; (AND #$44 opcode)
+MASKCOPY_PRE_E
 MASKCOPY_POST_AND_INY                ; 5 bytes
 MASKCOPY_POST                        ; 4 bytes
          eor   (dst), y
          sta   (dst), y
+MASKCOPY_POST_E
          iny
+MASKCOPY_POST_AND_INY_E
 COPY_AND_INY                         ; 5 bytes
 COPY                                 ; 4 bytes
          lda   (src), y
          sta   (dst), y
+COPY_E
 INY2                                 ; 2 bytes
          iny
+COPY_AND_INY_E
          iny
+INY2_E
 DEY2                                 ; 2 bytes
          dey
          dey
+DEY2_E
 MIDDLE_BRANCHES                      ; 6 bytes
          dec   rowcount
-         !byte $F0,$B8               ; /!\ hardcoded branches
-         !byte $10,$D2               ; /!\ very fragile
+         ; these monsters avoid hard-coded branching
+         ; trailing -2 for dec rowcount, -2 for branch itself
+         !byte $F0,MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_LEFT_MASK-EDGE_LEFT_MASK_E+MASKCOPY_POST_AND_INY-MASKCOPY_POST_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_RIGHT_MASK-EDGE_RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2
+         ; another -2 for the previous branch as well
+         !byte $10,MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2-2
+MIDDLE_BRANCHES_E
 OUTER_BRANCHES                       ; 6 bytes
          dec   rowcount
-         !byte $F0,$A8               ; /!\ hardcoded branches
-         !byte $10,$CE               ; /!\ very fragile
+         ; these monsters avoid hard-coded branching
+         ; trailing -2 for dec rowcount, -2 for branch itself
+         !byte $F0,MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_LEFT_MASK-EDGE_LEFT_MASK_E+MASKCOPY_POST_AND_INY-MASKCOPY_POST_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_RIGHT_MASK-EDGE_RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2
+         ; another -2 for the previous branch as well
+         !byte $10,MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2-2
+OUTER_BRANCHES_E
 EDGE_LEFT_MASK                       ; 1 byte
          !byte $FD
+EDGE_LEFT_MASK_E
 EDGE_RIGHT_MASK                      ; 1 byte
          !byte $FD
+EDGE_RIGHT_MASK_E
 LEFT_MASK                            ; 1 byte
          !byte $FD
+LEFT_MASK_E
 RIGHT_MASK                           ; 1 byte
          !byte $FD
+RIGHT_MASK_E
 
 codegen_piece_lengths
-         !byte 1                     ; RTS0
-         !byte 16                    ; INX_AND_RECALC
-         !byte 15                    ; RECALC
-         !byte 16                    ; RECALC_AND_INY
-         !byte 8                     ; STAGE_INIT
-         !byte 5                     ; MASKCOPY_PRE
-         !byte 5                     ; MASKCOPY_POST_AND_INY
-         !byte 4                     ; MASKCOPY_POST
-         !byte 5                     ; COPY_AND_INY
-         !byte 4                     ; COPY
-         !byte 2                     ; DEY2
-         !byte 2                     ; INY2
-         !byte 6                     ; MIDDLE_BRANCHES
-         !byte 6                     ; OUTER_BRANCHES
-         !byte 1                     ; EDGE_LEFT_MASK
-         !byte 1                     ; EDGE_RIGHT_MASK
-         !byte 1                     ; LEFT_MASK
-         !byte 1                     ; RIGHT_MASK
+         !byte RTS0_E-RTS0
+         !byte INX_AND_RECALC_E-INX_AND_RECALC
+         !byte RECALC_E-RECALC
+         !byte RECALC_AND_INY_E-RECALC_AND_INY
+         !byte STAGE_INIT_E-STAGE_INIT
+         !byte MASKCOPY_PRE_E-MASKCOPY_PRE
+         !byte MASKCOPY_POST_AND_INY_E-MASKCOPY_POST_AND_INY
+         !byte MASKCOPY_POST_E-MASKCOPY_POST
+         !byte COPY_AND_INY_E-COPY_AND_INY
+         !byte COPY_E-COPY
+         !byte DEY2_E-DEY2
+         !byte INY2_E-INY2
+         !byte MIDDLE_BRANCHES_E-MIDDLE_BRANCHES
+         !byte OUTER_BRANCHES_E-OUTER_BRANCHES
+         !byte EDGE_LEFT_MASK_E-EDGE_LEFT_MASK
+         !byte EDGE_RIGHT_MASK_E-EDGE_RIGHT_MASK
+         !byte LEFT_MASK_E-LEFT_MASK
+         !byte RIGHT_MASK_E-RIGHT_MASK
 
 codegen_pieces
          !byte <RTS0
