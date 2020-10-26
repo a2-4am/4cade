@@ -16,9 +16,8 @@
 ; bytes in memory once you calculate the HGR base address for that row.
 ;
 ; |BoxInitialStages| defines the initial grid of stages for each box.
-; Negative stages (80..FF) are no-ops.
-; Positive stages (00..7F) are indexes into the |StagesHi| array
-; to find the drawing routine for this stage (if any).
+; Each stage is used an index into the |StagesHi| array
+; to find the drawing routine for that stage (if any).
 ; Each box's stage is incremented after each iteration through the main loop.
 ; When the main loop iterates through all 48 boxes without drawing anything,
 ; the program exits.
@@ -195,7 +194,6 @@ k_right_mask              = 17
 MainLoop ldx   #48
 BoxLoop  stx   box
          ldy   BoxStages-1, x        ; for each box, get its current stage
-         bmi   NextBox               ; if stage >= $80, nothing to do
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          sta   j+2
