@@ -68,6 +68,8 @@
 ;
 
 !ifndef USES_CLEAR {
+  ; if an effect doesn't use any clear stages, you can reduce code size
+  ; by setting USES_CLEAR=0 before including this file
   USES_CLEAR = 1
 }
 
@@ -82,7 +84,17 @@ hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
 BoxesX   = $200                      ; [$30 bytes] starting row for each box
 BoxesY   = $230                      ; [$30 bytes] starting byte offset for each box
 
-; high bytes of drawing routines for each stage (actual routine will be page-aligned)
+; High bytes of drawing routines for each stage (actual routines will be page-aligned).
+; To minimize code size, we build drawing routines in this order:
+; - copy01 (STAGE1 template)
+; - copy00 (STAGE0 template)
+; - copy0F..copy09 (OUTER_STAGE template)
+; - copy08..copy02 (MIDDLE_STAGE template)
+; - change some opcodes to turn the 'copy' routines into 'clear' routines
+; - clear0F..clear08 (OUTER_STAGE)
+; - clear07..clear02 (MIDDLE_STAGE)
+; - clear01 (STAGE1)
+; - clear00 (STAGE0)
 clear00  = $64
 clear01  = $65
 clear02  = $66
@@ -117,7 +129,9 @@ copy00   = $82
 copy01   = $83
 
 ; tokens for code generation
-k_rts                     = 0
+; used as indexes into |codegen_pieces| and |codegen_piece_lengths|,
+; so keep all three in sync
+k_rts                     = 0        ; must be 0
 k_inx_and_recalc          = 1
 k_recalc                  = 2
 k_recalc_and_iny          = 3
@@ -180,7 +194,9 @@ k_right_mask              = 17
          bne   -
          pla
 
-         jsr   GenerateStages
+         ; drawing routines for each stage are constructed dynamically
+         ; and stored at copy00..copy0F and clear00..clear0F
+         jsr   BuildDrawingRoutines
 
          ; set up zero page for drawing phase
          ; A=0 here
@@ -194,7 +210,6 @@ k_right_mask              = 17
          ; X=0 here
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
 
-         ; any was initialized by the BoxStages copy loop
 MainLoop ldx   #48
 BoxLoop  stx   box
          ldy   BoxStages-1, x        ; for each box, get its current stage
@@ -205,7 +220,7 @@ BoxLoop  stx   box
          lda   BoxesX-1, x
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
          tax                         ; X = starting HGR row for this box
-         inc   any
+         inc   any                   ; was initialized by the BoxStages copy loop
          clc
 j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
          ldx   box
@@ -217,10 +232,18 @@ NextBox  dex
          bit   $C000
          bpl   MainLoop
 +
+         ; execution falls through here
+
+; These are all the pieces of code we need to construct the drawing routines.
+; There are 32 drawing routines (16 if USES_CLEAR=0), which we construct from
+; four templates (below). Templates use tokens to refer to these code pieces.
+; Note that several pieces overlap in order to minimize code size.
+; Everything from CODEGEN_COPY_START and onward is copied to zero page for
+; the code generation phase on program startup.
 CODEGEN_COPY_START
 !pseudopc 0 {
 RTS0                                 ; 1 byte
-         rts
+         rts                         ; also terminates MainLoop
 RTS0_E
 INX_AND_RECALC                       ; 16 bytes
          inx
@@ -302,7 +325,7 @@ RIGHT_MASK                           ; 1 byte
          !byte $FD
 RIGHT_MASK_E
 
-codegen_piece_lengths
+codegen_piece_lengths                ; length of each of the pieces
          !byte RTS0_E-RTS0
          !byte INX_AND_RECALC_E-INX_AND_RECALC
          !byte RECALC_E-RECALC
@@ -322,7 +345,7 @@ codegen_piece_lengths
          !byte LEFT_MASK_E-LEFT_MASK
          !byte RIGHT_MASK_E-RIGHT_MASK
 
-codegen_pieces
+codegen_pieces                       ; address of each of the pieces (on zero page, so 1 byte)
          !byte <RTS0
          !byte <INX_AND_RECALC
          !byte <RECALC
@@ -342,6 +365,8 @@ codegen_pieces
          !byte <LEFT_MASK
          !byte <RIGHT_MASK
 
+; Template for 'stage 0' routine (copy00), which copies the innermost
+; part of the box (labeled '0' in diagram above).
 STAGE0
          !byte k_stage_init
          !byte k_recalc
@@ -349,7 +374,10 @@ STAGE0
          !byte k_maskcopy_pre, k_left_mask, k_maskcopy_post
          !byte k_inx_and_recalc
          !byte k_maskcopy_pre, k_left_mask, k_maskcopy_post
-         !byte k_rts
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for 'stage 1' routine (copy01), which copies the pixels
+; around the innermost box (labeled '1' in diagram above).
 STAGE1
          !byte k_stage_init
          !byte k_recalc
@@ -361,7 +389,9 @@ STAGE1
          !byte k_copy
          !byte k_inx_and_recalc
          !byte k_copy
-         !byte k_rts
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 2-8 (copy02..copy08)
 MIDDLE_STAGE
          !byte k_stage_init
          !byte k_recalc_and_iny
@@ -375,7 +405,9 @@ MIDDLE_STAGE
          !byte k_dey2
          !byte k_inx_and_recalc
          !byte k_middle_branches
-         !byte k_rts
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 9-15 (copy09..copy0F)
 OUTER_STAGE
          !byte k_stage_init
          !byte k_recalc
@@ -394,7 +426,7 @@ OUTER_STAGE
          !byte k_dey2
          !byte k_inx_and_recalc
          !byte k_outer_branches
-         !byte k_rts
+         !byte k_rts                 ; also serves as an end-of-template marker
 
 EdgeRightMasks
          !byte %10000001
@@ -455,7 +487,7 @@ piece_src=*+1
          lda   $FD, x                ; SMC
          !byte $99,$00               ; STA $4400, Y
 codegen_dst
-         !byte copy01
+         !byte copy01                ; SMC
          iny
          inx
 piece_length=*+1
@@ -468,7 +500,7 @@ piece_length=*+1
          rts
 }
 
-GenerateStages
+BuildDrawingRoutines
          ; copy codegen data to zero page
          ; X=0 here
 -        lda   CODEGEN_COPY_START, x
@@ -477,7 +509,7 @@ GenerateStages
          bne   -
 
          ; generate drawing routines for copy01, then copy00
-         jsr   GenerateStage1And0
+         jsr   BuildStage1And0
          ; A=0 here
          sta   <FIRST_ROW
 
@@ -499,7 +531,7 @@ GenerateStages
          dec   <ROW_COUNT
          dec   <ROW_COUNT
          dec   <codegen_stage
-         bmi   GenerateStage1And0
+         bmi   BuildStage1And0
          lda   <codegen_stage
          eor   #13
          bne   +
@@ -521,8 +553,8 @@ GenerateStages
          bmi   ---
          bpl   --                    ; always branches
 
-         ; generate drawing routines for clear01, then clear00, then exit
-GenerateStage1And0
+         ; generate drawing routines for copy01, copy00 (or clear01, clear00)
+BuildStage1And0
          lda   #%10111110
          sta   <LEFT_MASK
          lda   #<STAGE1
