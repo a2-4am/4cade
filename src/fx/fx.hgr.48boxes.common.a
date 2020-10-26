@@ -67,11 +67,15 @@
 ; 1F |FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF
 ;
 
+!ifndef USES_CLEAR {
+  USES_CLEAR = 1
+}
+
 src      = $00                       ; [word][must be at $00] used by drawing routines
 dst      = $02                       ; [word] used by drawing routines
-box      = $04                       ; [byte] counter in main loop
-rowcount = $05                       ; [byte] used by drawing routines
-any      = $0D                       ; [byte][must be at $0D] counter in main loop
+rowcount = $04                       ; [byte] used by drawing routines
+box      = $0E                       ; [byte] counter in main loop
+any      = $0F                       ; [byte][must be at $0F] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 hgrhi    = $40                       ; [$C0 bytes] HGR base addresses
 hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
@@ -190,10 +194,11 @@ k_right_mask              = 17
          ; X=0 here
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
 
-         ; any (zero page $0D) was initialized by the BoxStages copy loop
+         ; any was initialized by the BoxStages copy loop
 MainLoop ldx   #48
 BoxLoop  stx   box
          ldy   BoxStages-1, x        ; for each box, get its current stage
+         inc   BoxStages-1, x        ; increment every box's stage every time through the loop
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          sta   j+2
@@ -204,109 +209,14 @@ BoxLoop  stx   box
          clc
 j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
          ldx   box
-NextBox  inc   BoxStages-1, x        ; increment every box's stage every time through the loop,
-                                     ; even if we didn't call a drawing routine
-         dex
+NextBox  dex
          bne   BoxLoop
          lda   any
          beq   +                     ; if we didn't draw anything in any box, we're done
          stx   any                   ; X=0 here
          bit   $C000
          bpl   MainLoop
-+        rts
-
-GenerateStages
-         ; copy codegen data to zero page
-         ; X=0 here
--        lda   CODEGEN_COPY_START, x
-         sta   $00, x
-         inx
-         bne   -
-
-         ; generate drawing routines for copy01, then copy00
-         jsr   GenerateStage1And0
-         ; A=0 here
-         sta   <FIRST_ROW
-
-         ; generate drawing routines for copy0F..copy02, then clear0F..clear02
-         lda   #<MIDDLE_STAGE
----      eor   #(<OUTER_STAGE XOR <MIDDLE_STAGE)
-         sta   <codegen_token_src
-         ldx   #6
---       stx   <codegen_maskindex
-         lda   <EdgeLeftMasks, x
-         sta   <EDGE_LEFT_MASK
-         lda   <EdgeRightMasks, x
-         sta   <EDGE_RIGHT_MASK
-         lda   <LeftMasks, x
-         sta   <LEFT_MASK
-         lda   <RightMasks, x
-         sta   <RIGHT_MASK
-         jsr   BuildDrawingRoutine
-         dec   <ROW_COUNT
-         dec   <ROW_COUNT
-         inc   <FIRST_ROW
-         dec   <codegen_stage
-         bmi   GenerateStage1And0
-         lda   <codegen_stage
-         eor   #13
-         bne   +
-         ; reset counts and switch from copy to clear
-         sta   <FIRST_ROW
-         lda   #$1F
-         sta   <ROW_COUNT
-         lda   #$A9
-         sta   <COPY
-         lda   #$24
-         sta   <BIT_FOR_CLEAR
-+        lda   <codegen_token_src
-         ldx   <codegen_maskindex
-         dex
-         bmi   ---
-         bpl   --                    ; always branches
-
-         ; generate drawing routines for clear01, then clear00, then exit
-GenerateStage1And0
-         lda   #%10111110
-         sta   <LEFT_MASK
-         lda   #<STAGE1
-         jsr   BuildDrawingRoutineFrom
-         inc   <FIRST_ROW
-         lda   #<STAGE0
-         +HIDE_NEXT_2_BYTES
-         ; execution falls through here
-
-BuildDrawingRoutine
-         lda   <codegen_token_src
-         ; execution falls through here
-
-BuildDrawingRoutineFrom
-         sta   <codegen_token_src
-         ldy   #0
-         sty   <codegen_token_x
-@tokenLoop
-         jsr   codegen_get_next_token
-         pha
-         tax
-         lda   <codegen_piece_lengths, x
-         sta   @length
-         lda   <codegen_pieces, x
-         sta   @src
-         ldx   #0
-@pieceLoop
-@src=*+1
-         lda   $FD, x                ; SMC
-         jsr   codegen_store_byte
-         iny
-         inx
-@length=*+1
-         cpx   #$FD                  ; SMC
-         bcc   @pieceLoop
-         pla
-         bne   @tokenLoop
-         dec   <codegen_dst
-         ; execution falls through here
-
++
 CODEGEN_COPY_START
 !pseudopc 0 {
 RTS0                                 ; 1 byte
@@ -497,19 +407,106 @@ codegen_stage
          !byte 27
 codegen_maskindex
          !byte 0
-codegen_get_next_token
+
+BuildDrawingRoutineFrom
+         sta   <codegen_token_src
+BuildDrawingRoutine
+         ldy   #0
+         sty   <codegen_token_x
+BuildTokenLoop
 codegen_token_x=*+1
          ldx   #$00
 codegen_token_src=*+1
          lda   <OUTER_STAGE, x
          inc   <codegen_token_x
-         rts
-codegen_store_byte
+         pha
+         tax
+         lda   <codegen_piece_lengths, x
+         sta   <piece_length
+         lda   <codegen_pieces, x
+         sta   <piece_src
+         ldx   #0
+BuildPieceLoop
+piece_src=*+1
+         lda   $FD, x                ; SMC
          !byte $99,$00               ; STA $4400, Y
-                                     ; note: this 0 byte is later copied to zero page $0D (any) and used in MainLoop
 codegen_dst
          !byte copy01
+         iny
+         inx
+piece_length=*+1
+         cpx   #$FD                  ; SMC
+         bcc   BuildPieceLoop
+         pla
+         bne   BuildTokenLoop
+         dec   <codegen_dst
+         inc   <FIRST_ROW
          rts
 }
+
+GenerateStages
+         ; copy codegen data to zero page
+         ; X=0 here
+-        lda   CODEGEN_COPY_START, x
+         sta   $00, x
+         inx
+         bne   -
+
+         ; generate drawing routines for copy01, then copy00
+         jsr   GenerateStage1And0
+         ; A=0 here
+         sta   <FIRST_ROW
+
+         ; generate drawing routines for copy0F..copy02, then clear0F..clear02
+         lda   #<MIDDLE_STAGE
+---      eor   #(<OUTER_STAGE XOR <MIDDLE_STAGE)
+         sta   <codegen_token_src
+         ldx   #6
+--       stx   <codegen_maskindex
+         lda   <EdgeLeftMasks, x
+         sta   <EDGE_LEFT_MASK
+         lda   <EdgeRightMasks, x
+         sta   <EDGE_RIGHT_MASK
+         lda   <LeftMasks, x
+         sta   <LEFT_MASK
+         lda   <RightMasks, x
+         sta   <RIGHT_MASK
+         jsr   BuildDrawingRoutine
+         dec   <ROW_COUNT
+         dec   <ROW_COUNT
+         dec   <codegen_stage
+         bmi   GenerateStage1And0
+         lda   <codegen_stage
+         eor   #13
+         bne   +
+!if USES_CLEAR {
+         ; reset counts and switch from copy to clear
+         sta   <FIRST_ROW
+         lda   #$1F
+         sta   <ROW_COUNT
+         lda   #$A9
+         sta   <COPY
+         lda   #$24
+         sta   <BIT_FOR_CLEAR
+} else {
+         rts
+}
++        lda   <codegen_token_src
+         ldx   <codegen_maskindex
+         dex
+         bmi   ---
+         bpl   --                    ; always branches
+
+         ; generate drawing routines for clear01, then clear00, then exit
+GenerateStage1And0
+         lda   #%10111110
+         sta   <LEFT_MASK
+         lda   #<STAGE1
+         jsr   BuildDrawingRoutineFrom
+         lda   #<STAGE0
+         jmp   BuildDrawingRoutineFrom
+         ; note: the high byte of the final JMP is later copied
+         ; to zero page $0F and used in MainLoop, so don't put any
+         ; more code before BoxInitialStages
 
 BoxInitialStages
