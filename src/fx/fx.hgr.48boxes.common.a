@@ -73,7 +73,6 @@ dst      = $02                       ; [word] used by drawing routines
 box      = $04                       ; [byte] counter in main loop
 any      = $05                       ; [byte] counter in main loop
 rowcount = $06                       ; [byte] used by drawing routines
-alwaysFF = $0F                       ; [byte] used to set V flag
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 hgrhi    = $40                       ; [$C0 bytes] HGR base addresses
 hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
@@ -119,29 +118,20 @@ k_rts                     = 0
 k_inx_and_recalc          = 1
 k_recalc                  = 2
 k_recalc_and_iny          = 3
-k_recalc_high_only        = 4
-k_clear_stage_01_init     = 5
-k_copy_stage_01_init      = 6
-k_stage0_precalc          = 7
-k_stage0_maskcopy_and_inx = 8
-k_stage0_maskcopy         = 9
-k_stage1_precalc          = 10
-k_stage1_copy_and_inx     = 11
-k_stage1_copy             = 12
-k_stage_init              = 13
-k_maskcopy_pre            = 14
-k_maskcopy_post_and_iny   = 15
-k_maskcopy_post           = 16
-k_copy_and_iny            = 17
-k_copy                    = 18
-k_dey2                    = 19
-k_iny2                    = 20
-k_middle_branches         = 21
-k_outer_branches          = 22
-k_edge_left_mask          = 23
-k_edge_right_mask         = 24
-k_left_mask               = 25
-k_right_mask              = 26
+k_stage_init              = 4
+k_maskcopy_pre            = 5
+k_maskcopy_post_and_iny   = 6
+k_maskcopy_post           = 7
+k_copy_and_iny            = 8
+k_copy                    = 9
+k_dey2                    = 10
+k_iny2                    = 11
+k_middle_branches         = 12
+k_outer_branches          = 13
+k_edge_left_mask          = 14
+k_edge_right_mask         = 15
+k_left_mask               = 16
+k_right_mask              = 17
 
          !source "src/fx/macros.a"
 
@@ -187,61 +177,7 @@ k_right_mask              = 26
          bne   -
          pla
 
-         ; copy codegen data to zero page
-         ; X=0 here
--        lda   PIECES_COPY_START, x
-         sta   $00, x
-         inx
-         bne   -
-
-         ; generate drawing routines for copy01, then copy00
-         lda   #<COPY_STAGE1
-         jsr   BuildDrawingRoutineFrom
-         lda   #<COPY_STAGE0
-         jsr   BuildDrawingRoutineFrom
-
-         ; generate drawing routines for copy0F..copy02, then clear0F..clear02
-         lda   #<MIDDLE_STAGE
----      eor   #(<OUTER_STAGE XOR <MIDDLE_STAGE)
-         sta   <codegen_token_src
-         ldx   #6
---       stx   <codegen_maskindex
-         lda   <EdgeLeftMasks, x
-         sta   <EDGE_LEFT_MASK
-         lda   <EdgeRightMasks, x
-         sta   <EDGE_RIGHT_MASK
-         lda   <LeftMasks, x
-         sta   <LEFT_MASK
-         lda   <RightMasks, x
-         sta   <RIGHT_MASK
-         jsr   BuildDrawingRoutine
-         dec   <ROW_COUNT
-         dec   <ROW_COUNT
-         inc   <FIRST_ROW
-         dec   <codegen_stage
-         bmi   ++
-         lda   <codegen_stage
-         eor   #13
-         bne   +
-         ; reset counts and switch from copy to clear
-         sta   <FIRST_ROW
-         lda   #$1F
-         sta   <ROW_COUNT
-         lda   #$A9
-         sta   <LDA_IMM_FOR_CLEAR
-         lda   #$24
-         sta   <BIT_FOR_CLEAR
-+        lda   <codegen_token_src
-         ldx   <codegen_maskindex
-         dex
-         bmi   ---
-         bpl   --                    ; always branches
-
-         ; generate drawing routines for clear01, then clear00
-++       lda   #<CLEAR_STAGE1
-         jsr   BuildDrawingRoutineFrom
-         lda   #<CLEAR_STAGE0
-         jsr   BuildDrawingRoutineFrom
+         jsr   GenerateStages
 
          ; set up zero page for drawing phase
          ; A=0 here
@@ -249,7 +185,7 @@ k_right_mask              = 26
 -        ldy   BoxInitialStages-BoxStages, x
          sty   $00, x
          sta   EndStagesHi, x
-         dex
+         inx
          bne   -
 
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgrhi
@@ -282,8 +218,71 @@ NextBox  ldx   box
          bpl   MainLoop
 +        rts
 
+GenerateStages
+         ; copy codegen data to zero page
+         ; X=0 here
+-        lda   CODEGEN_COPY_START, x
+         sta   $00, x
+         inx
+         bne   -
+
+         ; generate drawing routines for copy01, then copy00
+         jsr   GenerateStage1And0
+         ; A=0 here
+         sta   <FIRST_ROW
+
+         ; generate drawing routines for copy0F..copy02, then clear0F..clear02
+         lda   #<MIDDLE_STAGE
+---      eor   #(<OUTER_STAGE XOR <MIDDLE_STAGE)
+         sta   <codegen_token_src
+         ldx   #6
+--       stx   <codegen_maskindex
+         lda   <EdgeLeftMasks, x
+         sta   <EDGE_LEFT_MASK
+         lda   <EdgeRightMasks, x
+         sta   <EDGE_RIGHT_MASK
+         lda   <LeftMasks, x
+         sta   <LEFT_MASK
+         lda   <RightMasks, x
+         sta   <RIGHT_MASK
+         jsr   BuildDrawingRoutine
+         dec   <ROW_COUNT
+         dec   <ROW_COUNT
+         inc   <FIRST_ROW
+         dec   <codegen_stage
+         bmi   GenerateStage1And0
+         lda   <codegen_stage
+         eor   #13
+         bne   +
+         ; reset counts and switch from copy to clear
+         sta   <FIRST_ROW
+         lda   #$1F
+         sta   <ROW_COUNT
+         lda   #$A9
+         sta   <COPY
+         lda   #$24
+         sta   <BIT_FOR_CLEAR
++        lda   <codegen_token_src
+         ldx   <codegen_maskindex
+         dex
+         bmi   ---
+         bpl   --                    ; always branches
+
+         ; generate drawing routines for clear01, then clear00, then exit
+GenerateStage1And0
+         lda   #%10111110
+         sta   <LEFT_MASK
+         lda   #<STAGE1
+         jsr   BuildDrawingRoutineFrom
+         inc   <FIRST_ROW
+         lda   #<STAGE0
+         +HIDE_NEXT_2_BYTES
+         ; execution falls through here
+
 BuildDrawingRoutine
          lda   <codegen_token_src
+         ; execution falls through here
+
 BuildDrawingRoutineFrom
          sta   <codegen_token_src
          ldy   #0
@@ -309,61 +308,31 @@ BuildDrawingRoutineFrom
          pla
          bne   @tokenLoop
          dec   <codegen_dst
-PIECES_COPY_START
+         ; execution falls through here
+
+CODEGEN_COPY_START
 !pseudopc 0 {
 RTS0                                 ; 1 byte
          rts
-STAGE0_MASKCOPY_AND_INX              ; 13 bytes
-STAGE0_MASKCOPY                      ; 12 bytes
-         lda   (dst), y
-         bvs   +
-         eor   (src), y
-+        and   #%10111110
-         eor   (dst), y
-         sta   (dst), y
 INX_AND_RECALC                       ; 16 bytes
          inx
-RECALC                               ; 15 bytes
 RECALC_AND_INY                       ; 16 bytes
+RECALC                               ; 15 bytes
          lda   hgrlo, x
          sta   src
          sta   dst
-RECALC_HIGH_ONLY                     ; 8 bytes
          lda   hgrhi, x
          sta   dst+1
          eor   #$60
          sta   src+1
          iny
-CLEAR_STAGE01_INIT                   ; 3 bytes
-         bit   alwaysFF
-         !byte $A9
-COPY_STAGE01_INIT                    ; 4 bytes
-         clv
-         php
-         txa
-         !byte $69                   ; (ADC #$44)
-STAGE0_PRECALC                       ; 3 bytes
-         !byte $0F
-         tax
-         plp
-STAGE1_PRECALC                       ; 3 bytes
-         !byte $0E
-         tax
-         plp
-STAGE1_COPY_AND_INX                  ; 9 bytes
-STAGE1_COPY                          ; 8 bytes
-         lda   #0
-         bvs   +
-         lda   (src), y
-+        sta   (dst), y
-         inx
 STAGE_INIT                           ; 8 bytes
 ROW_COUNT=*+1
          lda   #$1F                  ; SMC
          sta   rowcount
          txa
 FIRST_ROW=*+1
-         adc   #$00                  ; SMC
+         adc   #$0E                  ; SMC
          tax
 MASKCOPY_PRE                         ; 5 bytes
          lda   (dst), y
@@ -377,7 +346,6 @@ MASKCOPY_POST                        ; 4 bytes
          iny
 COPY_AND_INY                         ; 5 bytes
 COPY                                 ; 4 bytes
-LDA_IMM_FOR_CLEAR
          lda   (src), y
          sta   (dst), y
 INY2                                 ; 2 bytes
@@ -408,15 +376,6 @@ codegen_piece_lengths
          !byte 16                    ; INX_AND_RECALC
          !byte 15                    ; RECALC
          !byte 16                    ; RECALC_AND_INY
-         !byte 8                     ; RECALC_HIGH_ONLY
-         !byte 3                     ; CLEAR_STAGE01_INIT
-         !byte 4                     ; COPY_STAGE01_INIT
-         !byte 3                     ; STAGE0_PRECALC
-         !byte 13                    ; STAGE0_MASKCOPY_AND_INX
-         !byte 12                    ; STAGE0_MASKCOPY
-         !byte 3                     ; STAGE1_PRECALC
-         !byte 9                     ; STAGE1_COPY_AND_INX
-         !byte 8                     ; STAGE1_COPY
          !byte 8                     ; STAGE_INIT
          !byte 5                     ; MASKCOPY_PRE
          !byte 5                     ; MASKCOPY_POST_AND_INY
@@ -437,15 +396,6 @@ codegen_pieces
          !byte <INX_AND_RECALC
          !byte <RECALC
          !byte <RECALC_AND_INY
-         !byte <RECALC_HIGH_ONLY
-         !byte <CLEAR_STAGE01_INIT
-         !byte <COPY_STAGE01_INIT
-         !byte <STAGE0_PRECALC
-         !byte <STAGE0_MASKCOPY_AND_INX
-         !byte <STAGE0_MASKCOPY
-         !byte <STAGE1_PRECALC
-         !byte <STAGE1_COPY_AND_INX
-         !byte <STAGE1_COPY
          !byte <STAGE_INIT
          !byte <MASKCOPY_PRE
          !byte <MASKCOPY_POST_AND_INY
@@ -461,31 +411,25 @@ codegen_pieces
          !byte <LEFT_MASK
          !byte <RIGHT_MASK
 
-CLEAR_STAGE0
-         !byte k_clear_stage_01_init
-COPY_STAGE0
-         !byte k_copy_stage_01_init
-         !byte k_stage0_precalc
+STAGE0
+         !byte k_stage_init
+         !byte k_recalc
          !byte k_iny2
-         !byte k_recalc
-         !byte k_stage0_maskcopy_and_inx
-         !byte k_recalc
-         !byte k_stage0_maskcopy
+         !byte k_maskcopy_pre, k_left_mask, k_maskcopy_post
+         !byte k_inx_and_recalc
+         !byte k_maskcopy_pre, k_left_mask, k_maskcopy_post
          !byte k_rts
-CLEAR_STAGE1
-         !byte k_clear_stage_01_init
-COPY_STAGE1
-         !byte k_copy_stage_01_init
-         !byte k_stage1_precalc
+STAGE1
+         !byte k_stage_init
+         !byte k_recalc
          !byte k_iny2
-         !byte k_recalc
-         !byte k_stage1_copy_and_inx
-         !byte k_recalc_high_only
-         !byte k_stage1_copy_and_inx
-         !byte k_recalc
-         !byte k_stage1_copy_and_inx
-         !byte k_recalc_high_only
-         !byte k_stage1_copy
+         !byte k_copy
+         !byte k_inx_and_recalc
+         !byte k_copy
+         !byte k_inx_and_recalc
+         !byte k_copy
+         !byte k_inx_and_recalc
+         !byte k_copy
          !byte k_rts
 MIDDLE_STAGE
          !byte k_stage_init
@@ -526,17 +470,14 @@ codegen_stage
 codegen_maskindex
          !byte 0
 codegen_get_next_token
-         !byte $A2                   ; LDX #$44
-codegen_token_x
-         !byte $00
-         !byte $B5                   ; LDA $44, X
-codegen_token_src
-         !byte <OUTER_STAGE
+codegen_token_x=*+1
+         ldx   #$00
+codegen_token_src=*+1
+         lda   <OUTER_STAGE, x
          inc   <codegen_token_x
          rts
 codegen_store_byte
-         !byte $99                   ; STA $4400, Y
-         !byte $00
+         !byte $99,$00               ; STA $4400, Y
 codegen_dst
          !byte copy01
          rts
@@ -569,10 +510,7 @@ EdgeLeftMasks
          !byte %11111000
          !byte %11111100
          !byte %11111110
-         !byte %11111111             ; also copied to zero page $0F after codegen phase
-}
-!if (*-PIECES_COPY_START > $100) {
-         !error "out of room on zero page"
+         !byte %11111111
 }
 
 BoxInitialStages
