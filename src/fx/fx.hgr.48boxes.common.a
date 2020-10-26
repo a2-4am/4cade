@@ -203,8 +203,8 @@ BoxLoop  stx   box
          inc   any
          clc
 j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
-NextBox  ldx   box
-         inc   BoxStages-1, x        ; increment every box's stage every time through the loop,
+         ldx   box
+NextBox  inc   BoxStages-1, x        ; increment every box's stage every time through the loop,
                                      ; even if we didn't call a drawing routine
          dex
          bne   BoxLoop
