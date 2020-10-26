@@ -1,4 +1,4 @@
-;License:MIT
+;license:MIT
 ;(c) 2020 by 4am & qkumba
 ;
 
@@ -236,6 +236,7 @@ k_right_mask              = 26
          dex
          bmi   ---
          bpl   --                    ; always branches
+
          ; generate drawing routines for clear01, then clear00
 ++       lda   #<CLEAR_STAGE1
          jsr   BuildDrawingRoutineFrom
@@ -245,9 +246,8 @@ k_right_mask              = 26
          ; set up zero page for drawing phase
          ; A=0 here
          tax
--        lda   BoxInitialStages-BoxStages, x
-         sta   $00, x
-         lda   #0
+-        ldy   BoxInitialStages-BoxStages, x
+         sty   $00, x
          sta   EndStagesHi, x
          dex
          bne   -
