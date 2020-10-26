@@ -194,9 +194,8 @@ k_right_mask              = 17
          ; any (zero page $0D) was initialized by the BoxStages copy loop
 MainLoop ldx   #48
 BoxLoop  stx   box
-         lda   BoxStages-1, x        ; for each box, get its current stage
+         ldy   BoxStages-1, x        ; for each box, get its current stage
          bmi   NextBox               ; if stage >= $80, nothing to do
-         tay
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          sta   j+2
