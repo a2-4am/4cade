@@ -194,7 +194,6 @@ k_right_mask              = 17
 MainLoop ldx   #48
 BoxLoop  stx   box
          ldy   BoxStages-1, x        ; for each box, get its current stage
-         inc   BoxStages-1, x        ; increment every box's stage every time through the loop
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          sta   j+2
@@ -205,7 +204,9 @@ BoxLoop  stx   box
          clc
 j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
          ldx   box
-NextBox  dex
+NextBox  inc   BoxStages-1, x        ; increment every box's stage every time through the loop,
+                                     ; even if we didn't call a drawing routine
+         dex
          bne   BoxLoop
          lda   any
          beq   +                     ; if we didn't draw anything in any box, we're done
