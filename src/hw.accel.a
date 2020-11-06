@@ -190,6 +190,10 @@ maccheck
          bne   build_setspeed ; always branches
 
 iic
+         lda   #$D0
+         sta   FASTChip
+         lda   #(skip_fc-FASTChip)-2
+         sta   FASTChip+1
          lda   #$9D
          sta   fixiic
          lda   #$C0
@@ -369,7 +373,7 @@ FASTChip
          sty   fc_speed
          lda   #FC_LOCK
          sta   fc_lock
-
+skip_fc
          ldx   gMachineInDHGRMode
 fixiic
          bit   $D05F     ; fix colouring on IIc (SMC to STA,X on IIc)
