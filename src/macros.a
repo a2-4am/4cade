@@ -114,8 +114,9 @@
 }
 
 ; compare a 16-bit value in A (low) and Y (high) to an absolute address
+; zeroes A!
 !macro   CMP16ADDR .addr {
-         cmp   .addr
+         eor   .addr
          bne   +
          cpy   .addr+1
 +
@@ -219,15 +220,6 @@
 
 !macro   READ_ROM_NO_WRITE {
          bit   $C082
-}
-
-!macro   LOW_ASCII_TO_LOWER {
-         cmp   #$41
-         bcc   +
-         cmp   #$5B
-         bcs   +
-         ora   #$20
-+
 }
 
 ; requires setting zpCharMask in zero page to #$FF or #$DF before use

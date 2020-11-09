@@ -99,9 +99,9 @@ TextRankCallback
          +ST16 zpword
          ldy   #0
          lda   (zpstring),y
-         sec
-         sbc   #1
-         cmp   InputLength
+         tax
+         dex
+         cpx   InputLength
          bcc   ++
          sta   gamelength
          sty   runningscore
@@ -110,11 +110,11 @@ TextRankCallback
          sty   startat
 -        sty   i
          lda   (zpword),y
-         +LOW_ASCII_TO_LOWER
+         jsr   tolower
          sta   tmp
          ldy   startat
 --       lda   (zpstring),y
-         +LOW_ASCII_TO_LOWER
+         jsr   tolower
          cmp   tmp
          beq   +
          cpy   gamelength
@@ -165,7 +165,7 @@ TextRankCallback
          pha
          ldy   #1
          lda   (zpstring),y
-         +LOW_ASCII_TO_LOWER
+         jsr   tolower
          sta   firstletter
          pla
          ldx   InputBuffer
@@ -208,3 +208,11 @@ TextRankCallback
          bne   -
          lda   num1
          rts
+
+tolower
+         cmp   #$41
+         bcc   +
+         cmp   #$5B
+         bcs   +
+         ora   #$20
++        rts

@@ -231,7 +231,7 @@ okvs_append
 ; out:   if C clear, record was found
 ;          A/Y = lo/hi address of key (okvs_find) or value (okvs_get)
 ;          $WINDEX = index of found record (word)
-;        if C set, keyrecord was not found and all registers are clobbered
+;        if C set, keyrecord was not found and X/Y are clobbered, A=0
 ;        all other flags clobbered
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
@@ -268,15 +268,13 @@ okvs_get
          iny
          sty   KEYLEN
 @matchRecordLoop
-         lda   PTR+1
-         sta   DEST+1
-         lda   PTR
+         +LD16 PTR
          clc
          adc   #2
-         sta   DEST
          bcc   +
-         inc   DEST+1                ; DEST -> key of this record
-+        ldy   #0
+         iny                         ; DEST -> key of this record
++        +ST16 DEST
+         ldy   #0
 @matchKeyLoop
          lda   (SRC),y
          cmp   (DEST),y
@@ -302,7 +300,7 @@ KEYLEN = *+1
          cmp   WCOUNT
          bne   @matchRecordLoop
          lda   WINDEX+1
-         cmp   WCOUNT+1
+         eor   WCOUNT+1
          bne   @matchRecordLoop
 @fail    sec
          rts
@@ -338,7 +336,6 @@ okvs_next
          +LD16 WINDEX
          +CMP16ADDR WCOUNT
          bne   +
-         lda   #0
          sta   WINDEX
          sta   WINDEX+1
 +
@@ -367,13 +364,13 @@ okvs_nth
          jmp   @next
 -        jsr   derefptr
 @next
-         dec   SAVE
          lda   SAVE
-         cmp   #$FF
+         dec   SAVE
+         tay
          bne   -
-         dec   SAVE+1
          lda   SAVE+1
-         cmp   #$FF
+         dec   SAVE+1
+         tay
          bne   -
          jsr   incptr2
          +LD16 PTR
@@ -473,7 +470,7 @@ okvs_iter_values
          lda   #2                    ; for iter, skip length = 2
 @branch  bne   +                     ; SMC (iter_values puts a BIT here, so no branch)
                                      ; for iter_values, skip length = length(key) + 2 + 1
-         ldy   #2
+         tay ;;ldy   #2
          lda   (PTR),y               ; A = length of key
          clc
          adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)

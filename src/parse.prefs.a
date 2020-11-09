@@ -132,7 +132,6 @@ pref_get
 +        !word $FDFD                 ; SMC
          bcc   +                     ; found key, continue
 .useDefaultValue                     ; did not find key, use first key in passed store as a default value
-         lda   #0
          sta   WINDEX
          sta   WINDEX+1
 +
