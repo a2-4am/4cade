@@ -128,10 +128,20 @@ BlankSHR
 
          sta   WRITEAUXMEM           ; writes go to auxmem
 
-         lda   #$00                  ; enable auxmem-to-bank-E1 shadowing on IIgs
-         sta   SHADOW
+         ldx   #$00                  ; enable auxmem-to-bank-E1 shadowing on IIgs
+         stx   SHADOW
 
-         lda   #$20                  ; clear $2000..$9FFF in auxmem
+; VIDHD-SPECIFIC HACK HERE!
+; On the II/II+/IIe, all $C03x are aliases for $C030, i.e. the speaker.
+; Any single access of the speaker register requires a second access within a short
+; time to balance the level if we want to avoid an audible click, which we do here.
+; Since we can't read from SHADOW before writing to it (VidHD will crash the machine
+; if we do that - ask us how we know), we have to balance the speaker access by
+; accessing a speaker address explicitly because let's not make VIDHD angry.
+; Hence the write to SPEAKER.  Do not remove.
+         stx   SPEAKER
+
+         lsr                         ; clear $2000..$9FFF in auxmem
          ldx   #$80
          jsr   ClearMem
 

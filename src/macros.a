@@ -60,9 +60,21 @@
          ldy   .ptr+1
 }
 
+; load a 16-bit value into X (low) and Y (high)
+!macro   LDX16 .ptr {
+         ldx   .ptr
+         ldy   .ptr+1
+}
+
 ; store a 16-bit value from A (low) and Y (high)
 !macro   ST16 .ptr {
          sta   .ptr
+         sty   .ptr+1
+}
+
+; store a 16-bit value from X (low) and Y (high)
+!macro   STX16 .ptr {
+         stx   .ptr
          sty   .ptr+1
 }
 
@@ -75,10 +87,27 @@
 +
 }
 
+; decrement a 16-bit value in X (low) and Y (high)
+; destroys A!
+!macro   DEX16 {
+         txa
+         bne   +
+         dey
++        dex
+}
+
 ; increment a 16-bit value in A (low) and Y (high)
 !macro   INC16 {
          clc
          adc   #1
+         bne   +
+         iny
++
+}
+
+; increment a 16-bit value in X (low) and Y (high)
+!macro   INX16 {
+         inx
          bne   +
          iny
 +
@@ -92,11 +121,28 @@
 +
 }
 
+; compare a 16-bit value in X (low) and Y (high) to an absolute address
+!macro   CPX16ADDR .addr {
+         cpx   .addr
+         bne   +
+         cpy   .addr+1
++
+}
+
 ; compare a 16-bit value in A (low) and Y (high) to an immediate value
 !macro   CMP16 .val {
          cmp   #<.val
          bne   +
          cpy   #>.val
++
+}
+
+; compare a 16-bit value in X (low) and Y (high) against zero
+; requires LDX16 immediately prior, since Y comparison is implicit!
+; destroys A!
+!macro   CPX16_0 {
+         bne   +
+         txa
 +
 }
 

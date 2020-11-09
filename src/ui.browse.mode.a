@@ -66,24 +66,23 @@ OnBrowseSearch
          jmp   SearchMode
 
 OnBrowsePrevious
-         +LD16 gGameToLaunch
-         +CMP16 0
+         +LDX16 gGameToLaunch
+         +CPX16_0
          bne   @notFirstGame
-         +LD16 GameCount
+         +LDX16 GameCount
 @notFirstGame
-         +DEC16
-         +ST16 gGameToLaunch
-         jmp   OnBrowseChanged
+         +DEX16
+         jmp   notLastGame
 
 OnBrowseNext
-         +LD16 gGameToLaunch
-         +INC16
-         +CMP16ADDR GameCount
-         bne   @notLastGame
-         lda   #0
-         tay
-@notLastGame
-         +ST16 gGameToLaunch
+         +LDX16 gGameToLaunch
+         +INX16
+         +CPX16ADDR GameCount
+         bne   notLastGame
+         ldx   #0
+         ldy   #0
+notLastGame
+         +STX16 gGameToLaunch
          jmp   OnBrowseChanged
 
 OnBrowseLaunch
