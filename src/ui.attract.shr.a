@@ -132,14 +132,14 @@ BlankSHR
          stx   SHADOW
 
 ; VIDHD-SPECIFIC HACK HERE!
-; On the II/II+/IIe, all $C03x are aliases for $C030, i.e. the speaker.
+; On the II/II+/IIe, all $C03x addresses are aliases for $C030, i.e. the speaker.
 ; Any single access of the speaker register requires a second access within a short
 ; time to balance the level if we want to avoid an audible click, which we do here.
-; Since we can't read from SHADOW before writing to it (VidHD will crash the machine
-; if we do that - ask us how we know), we have to balance the speaker access by
-; accessing a speaker address explicitly because let's not make VIDHD angry.
-; Hence the write to SPEAKER.  Do not remove.
-         stx   SPEAKER
+; Since we can't read from SHADOW before writing to it (it returns random values on
+; 8-bit machines, which VidHD interprets as invalid graphic modes and crashes hard),
+; we instead balance the speaker access with a second write to the same speaker-
+; aliased softswitch. Do not remove.
+         stx   SHADOW
 
          lsr                         ; clear $2000..$9FFF in auxmem
          ldx   #$80
