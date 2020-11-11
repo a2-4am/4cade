@@ -142,11 +142,14 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
-; shared symbols
+; shared symbols for prelaunch and effects to call ProRWTS2 functions
+iCurBlockLo    = $D401
+iCurBlockHi    = $D403
 iProDOS_enter  = $D678
 LoadFileDirect = $DB01
 launchpatch    = $D616
 iAddToPath     = $FEC3
 itraverse      = $D8E0
+ldrhi          = $56
 namlo          = $57
 namhi          = $58

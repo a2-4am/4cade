@@ -27,20 +27,9 @@ callback2
          lda   #0
          sta   $b4d7
          lda   #2
-         sta   $56        ; ldrhi
          sta   $b4d8
          +READ_RAM2_WRITE_RAM2
-         lda   $D401
-         pha
-         lda   $D403
-         pha
-         lda   #<berzap_mb
-         ldy   #>berzap_mb
-         jsr   LoadFileDirect
-         pla
-         sta   $D403
-         pla
-         sta   $D401
+         +LOAD_FILE_AT berzap_mb, $200
          jsr   DisableAccelerator
          jmp   $200
 

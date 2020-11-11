@@ -9,19 +9,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         lda   #3
-         sta   $56        ; ldrhi
-         lda   $D401
-         pha
-         lda   $D403
-         pha
-         lda   #<rraiders_mb
-         ldy   #>rraiders_mb
-         jsr   LoadFileDirect
-         pla
-         sta   $D403
-         pla
-         sta   $D401
+         +LOAD_FILE_AT rraiders_mb, $300
          +READ_ROM_NO_WRITE
          jmp   $300
 

@@ -364,3 +364,21 @@
          lsr
          sta   $FFFC      ; LC reset vector fix
 }
+
+; load an external file by pathname
+; LC RAM 2 MUST BE BANKED IN
+; LOW BYTE OF .addr MUST BE $00
+!macro   LOAD_FILE_AT .filepath, .addr {
+         lda   #>.addr
+         sta   ldrhi
+         lda   iCurBlockLo
+         pha
+         lda   iCurBlockHi
+         pha
+         +LDADDR .filepath
+         jsr   LoadFileDirect
+         pla
+         sta   iCurBlockHi
+         pla
+         sta   iCurBlockLo
+}
