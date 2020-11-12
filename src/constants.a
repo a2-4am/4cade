@@ -23,6 +23,8 @@
 ; DC00..DFFF - HGR font data
 ;------------------------------------------------------------------------------
 
+!ifndef _CONSTANTS_ {
+
 ; soft switches
 KBD =          $C000      ; last key pressed (if any)
 CLEARKBD =     $C010      ; clear last key pressed
@@ -153,3 +155,6 @@ itraverse      = $D8E0
 ldrhi          = $56
 namlo          = $57
 namhi          = $58
+
+_CONSTANTS_=*
+}

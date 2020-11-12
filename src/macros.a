@@ -4,6 +4,9 @@
 ; common assembler macros (6502 compatible)
 ;
 
+!ifndef _MACROS_ {
+         !source "src/constants.a"
+
 ; for functions that take parameters on the stack
 ; set (PARAM) to point to the parameters and
 ; move the stack pointer to the first byte after the parameters
@@ -381,4 +384,7 @@
          sta   iCurBlockHi
          pla
          sta   iCurBlockLo
+}
+
+_MACROS_=*
 }

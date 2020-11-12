@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 ;
 ; https://thenounproject.com/ArtZ91/collection/pure-lines/?i=550425
 ; Lightning Bolt by Arthur Shlain from the Noun Project
@@ -10,8 +10,11 @@
 
          !source "src/fx/fx.hgr.precomputed.3bit.a"
 
-         +FX_PRECOMPUTED_3BIT Coordinates
+         +FX_INITONCE_3BIT CoordinatesFile, Start
+         +FX_REVERSE_3BIT
+Start
+         +FX_PRECOMPUTED_3BIT Coordinates3Bit
 
-Coordinates
-         !source "src/fx/fx.hgr.bolt.in.data.a"
-         !byte $00
+CoordinatesFile
+         !byte 12
+         !text "FX/BOLT.DATA"

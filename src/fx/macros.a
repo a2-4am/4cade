@@ -1,4 +1,4 @@
-!ifndef _HGRMACROS_ {
+!ifndef _FX_MACROS_ {
          !source "src/macros.a"
 
 ; .hgrlo, .hgr1hi will each be filled with $C0 bytes
@@ -132,5 +132,5 @@
 ++
 }
 
-_HGRMACROS_=*
+_FX_MACROS_=*
 }

@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/BOLT.DATA",plain
+*=$6B00
          !byte $1F,%11110011
          !byte $1F,%00010100
          !byte $1F,%00110100

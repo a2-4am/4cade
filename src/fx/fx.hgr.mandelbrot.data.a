@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/MANDELBROT.DATA",plain
+*=$6B00
          !byte $1F,%00010100
          !byte $20,%00010100
          !byte $20,%00110100
