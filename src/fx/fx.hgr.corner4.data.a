@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/CORNER4.DATA",plain
+*=$8800
          !byte $5F,%11010011
          !byte $5F,%10110011
          !byte $5F,%10010011

@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/BUBBLES.DATA",plain
+*=$8800
          !byte $0C,%01100010
          !byte $0C,%01110001
          !byte $54,%01110001

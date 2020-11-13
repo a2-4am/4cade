@@ -8,6 +8,7 @@ hgrlomirror    = $BD40    ; $C0 bytes
 mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
 hgr1himirror   = $BF40    ; $C0 bytes
+Coordinates1Bit= $8800    ; $3481 bytes ($3480 on disk + 1 byte EOF marker)
 
          !source "src/fx/macros.a"
 
@@ -118,6 +119,148 @@ hgr1himirror   = $BF40    ; $C0 bytes
          bmi   +
          jmp   .loop
 +        rts
+}
+
+!macro FX_INITONCE_1BIT .CoordinatesFile, .Start {
+InitOnce
+         bit   .Start
+         lda   #$4C
+         sta   InitOnce
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT .CoordinatesFile, Coordinates1Bit
+         +READ_RAM1_WRITE_RAM1
+         lda   #$80
+         sta   Coordinates1Bit + $3480
+}
+
+!macro FX_REVERSE_1BIT {
+         lda   #$80
+         sta   Coordinates1Bit + $3480
+         ldy   #0                    ; <Coordinates1Bit
+         sty   $f0
+         lda   #>Coordinates1Bit
+         sta   $f1
+         lda   #<(Coordinates1Bit + $3480 - 2)
+         sta   $f2
+         lda   #>(Coordinates1Bit + $3480 - 2)
+         sta   $f3
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
++        lda   $f1
+         eor   #>(Coordinates1Bit + $1A40)
+         bne   +
+         lda   $f0
+         eor   #<(Coordinates1Bit + $1A40)
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always
+++
+}
+
+!macro FX_RIPPLE_1BIT {
+         lda   #$80
+         sta   Coordinates1Bit + $3480
+
+         lda   #2                    ; <(Coordinates1Bit + 2)
+         sta   $f0
+         ldy   #0
+         sty   $f1
+         lda   #$16                  ; <(Coordinates1Bit + 22)
+         sta   $f2
+         sty   $f3
+
+         lda   #$1f
+         sta   $ee
+         lda   #$0d
+         sta   $ef
+
+         lda   Coordinates1Bit + 2
+         sta   $e0
+         lda   Coordinates1Bit + 3
+         sta   $e1
+         lda   Coordinates1Bit + 22
+         sta   $e2
+         lda   Coordinates1Bit + 23
+         sta   $e3
+
+---      ldx   #4
+--       ldy   $ee, x
+         lda   $ef, x
+         jsr   aslmod
+         sty   $ee, x
+         sta   $ef, x
+         sty   $ec
+         clc
+         adc   #>Coordinates1Bit
+         sta   $ed
+         ldy   #0
+         !byte $24
+-        sec
+         lda   ($ec), y
+         pha
+         lda   $de, x
+         sta   ($ec), y
+         pla
+         sta   $de, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
+         dex
+         dex
+         bne   --
+         dec   $ee
+         bne   ---
+         dec   $ef
+         bpl   ---
+         bmi   +++                   ; always branches
+aslmod
+         jsr   +
++        cmp   #$1A
+         bcc   +
+         bne   ++
+         cpy   #$40
+         bcc   +
+++       iny
++        pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         cmp   #$34
+         bcc   +
+         bne   ++
+         cpy   #$80
+         bcc   +
+++       pha
+         tya
+         sbc   #$80
+         tay
+         pla
+         sbc   #$34
++        rts
++++
 }
 
 !macro FX_PRECOMPUTED_1BIT .coords {

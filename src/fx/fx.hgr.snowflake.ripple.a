@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/SNOWFLAKE.RIP",plain
@@ -7,8 +7,11 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_PRECOMPUTED_1BIT Coordinates
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_RIPPLE_1BIT
+Start
+         +FX_PRECOMPUTED_1BIT Coordinates1Bit
 
-Coordinates
-         !source "src/fx/fx.hgr.snowflake.ripple.data.a"
-         !byte $80
+CoordinatesFile
+         !byte 17
+         !text "FX/SNOWFLAKE.DATA"
