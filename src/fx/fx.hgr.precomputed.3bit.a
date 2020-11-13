@@ -233,7 +233,7 @@ ripplezp
          sta   $0, x
          dex
          bpl   -
-         jmp   $1
+         jmp   InputLoop
 start
 !pseudopc 0 {
 Exit3Bit rts

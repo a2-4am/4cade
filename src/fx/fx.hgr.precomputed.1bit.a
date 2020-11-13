@@ -130,9 +130,7 @@ hgr1himirror   = $BF40    ; $C0 bytes
          sta   $FF, x
          dex
          bne   -
-         txa
-         pha
-         pha
+         jmp   InputLoop
 start
 !pseudopc 0 {
 Exit1Bit rts
