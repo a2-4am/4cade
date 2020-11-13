@@ -1,0 +1,17 @@
+;license:MIT
+;(c) 2019-2020 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX/CORNER4.RIP",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_RIPPLE_1BIT
+Start
+         +FX_PRECOMPUTED_1BIT Coordinates1Bit
+
+CoordinatesFile
+         !byte 15
+         !text "FX/CORNER4.DATA"
