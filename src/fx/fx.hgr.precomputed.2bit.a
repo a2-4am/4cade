@@ -8,6 +8,7 @@ hgrlomirror    = $BD40    ; $C0 bytes
 mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
 hgr1himirror   = $BF40    ; $C0 bytes
+Coordinates2Bit= $8100    ; $3C01 bytes ($3C00 on disk + 1 byte as EOF)
 
          !source "src/fx/macros.a"
 
@@ -82,6 +83,57 @@ hgr1himirror   = $BF40    ; $C0 bytes
          tay
 }
 
+!macro FX_INITONCE_2BIT .CoordinatesFile, .Start {
+InitOnce
+         bit   .Start
+         lda   #$4C
+         sta   InitOnce
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT .CoordinatesFile, Coordinates2Bit
+         +READ_RAM1_WRITE_RAM1
+         lda   #$00
+         sta   Coordinates2Bit + $3C00
+}
+
+!macro FX_REVERSE_2BIT {
+         ldy   #0                    ; <Coordinates2Bit
+         sty   $f0
+         lda   #>Coordinates2Bit
+         sta   $f1
+         lda   #<(Coordinates2Bit + $3C00 - 2)
+         sta   $f2
+         lda   #>(Coordinates2Bit + $3C00 - 2)
+         sta   $f3
+
+         ldx   #$1E                  ; #$3C/2
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
+         dex
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always branches
+++
+}
+
 !macro FX_PRECOMPUTED_2BIT .coords {
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
@@ -91,9 +143,7 @@ hgr1himirror   = $BF40    ; $C0 bytes
          sta   $0, x
          dex
          bpl   -
-         lda   #0
-         pha
-         pha
+         jmp   $1
 start
 !pseudopc 0 {
 Exit2Bit rts

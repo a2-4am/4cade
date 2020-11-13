@@ -133,7 +133,7 @@ InitOnce
          lda   #>(Coordinates3Bit + $5000 - 2)
          sta   $f3
 
-         ldx   #$28
+         ldx   #$28                  ; #$50/2
          clc
          !byte $24
 -        sec

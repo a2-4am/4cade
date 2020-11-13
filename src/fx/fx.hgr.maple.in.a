@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/MAPLE.IN",plain
@@ -7,8 +7,11 @@
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"
 
-         +FX_PRECOMPUTED_2BIT Coordinates
+         +FX_INITONCE_2BIT CoordinatesFile, Start
+         +FX_REVERSE_2BIT
+Start
+         +FX_PRECOMPUTED_2BIT Coordinates2Bit
 
-Coordinates
-         !source "src/fx/fx.hgr.maple.in.data.a"
-         !byte $00
+CoordinatesFile
+         !byte 13
+         !text "FX/MAPLE.DATA"

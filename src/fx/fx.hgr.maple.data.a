@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/MAPLE.DATA",plain
+*=$8100
          !byte $61,%11110011
          !byte $5F,%11010011
          !byte $61,%10110011

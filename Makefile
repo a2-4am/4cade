@@ -25,7 +25,7 @@ CADIUS=cadius
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: md asm
+dsk: asm
 	cp res/blank.hdv build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
@@ -56,17 +56,19 @@ dsk: md asm
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/GAMEHELP" "build/GAMEHELP" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" res/proboothd
 
-asm: md asmlauncher asmfx asmprelaunch
+asm: asmlauncher asmfx asmprelaunch
 
-asmlauncher:
+asmlauncher: md
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
-asmfx:
+asmfx: md
+	touch build/log
 	for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log || true; done
 	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 
-asmprelaunch:
+asmprelaunch: md
+	touch build/log
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
