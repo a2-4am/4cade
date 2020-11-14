@@ -88,3 +88,5 @@ copymasks4
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         +HGR_BLOCK_COPY_ROUTINES
+         +HGR_COPY_MASK_ROUTINES

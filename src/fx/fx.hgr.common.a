@@ -3,6 +3,7 @@
 ;
          !source "src/fx/macros.a"
 
+!macro HGR_CALC_ROUTINES {
 HGRCalc
 ; in:    A = HGR row (0x00..0xBF)
 ; out:   A/X clobbered
@@ -14,7 +15,9 @@ HGRCalc
 ; http://www.txbobsc.com/aal/1986/aal8612.html#a9
          +HGR_CALC
          rts
+}
 
+!macro HGR_BLOCK_COPY_ROUTINES {
 HGRBlockCopy
 ; in:    A = HGR row / 8 (0x00..0x17)
 ;        Y = HGR column (0x00..0x27)
@@ -34,26 +37,9 @@ HGRBlockCopyNoRecalc
          dex
          bne   @loop
          rts
+}
 
-HGRBlockToWhite
-; in:    A = HGR row / 8 (0x00..0x17)
-;        Y = HGR column (0x00..0x27)
-; out:   Y preserved
-;        X = #$00
-;        Z set
-;        C clear
-;        all other flags and registers clobbered
-         +HGR_ROW_CALC
-         clc
-         ldx   #$08
-@loop
-         lda   #$7F
-         sta   ($26),y
-         +HGR_INC_WITHIN_BLOCK
-         dex
-         bne   @loop
-         rts
-
+!macro HGR_HALF_BLOCK_COPY_ROUTINES {
 HGRHalfBlockCopy
 ; in:    A = HGR row / 4 (0x00..0x2F)
 ;        Y = HGR column (0x00..0x27)
@@ -70,6 +56,27 @@ HGRStaggerCopy
          ldx   #$04
 @loop
          lda   ($3c),y
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @loop
+         rts
+}
+
+!macro HGR_WHITE_ROUTINES {
+HGRBlockToWhite
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         +HGR_ROW_CALC
+         clc
+         ldx   #$08
+@loop
+         lda   #$7F
          sta   ($26),y
          +HGR_INC_WITHIN_BLOCK
          dex
@@ -97,7 +104,9 @@ HGRStaggerToWhite
          dex
          bne   @loop
          rts
+}
 
+!macro HGR_COPY_MASK_ROUTINES {
 SetCopyMask
 ; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
          +ST16 CopyMaskAddr
@@ -125,3 +134,4 @@ CopyMaskAddr=*+1
          dex
          bpl   HGRBlockCopyWithMasksLoop
          rts
+}

@@ -62,3 +62,5 @@ copymasks
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         +HGR_COPY_MASK_ROUTINES
+         +HGR_BLOCK_COPY_ROUTINES

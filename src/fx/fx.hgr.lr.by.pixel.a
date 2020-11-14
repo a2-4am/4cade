@@ -112,3 +112,4 @@ copymasks
          !byte $FF,$BF,$9F,$8F,$87,$83,$81
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
+         +HGR_CALC_ROUTINES
