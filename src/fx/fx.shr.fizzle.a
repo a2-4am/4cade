@@ -5,25 +5,21 @@
 !to "build/FX/SHR.FIZZLE",plain
 *=$A000
 
-addrs=$A100                          ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
+addrs=$80                            ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
 
          ldx   #(end-start)          ; copy LFSR code to zero page
 -        lda   start-1, x
          sta   $0, x
          dex
          bne   -
-         ldx   #$80                  ; create address lookup table
+         ldy   #$80                  ; create address lookup table
          lda   #$9F
          sec
--        sta   addrs-1, x
+-        sta   addrs-1, y
          sbc   #1
-         dex
+         dey
          bne   -
          sta   $C005
-         txa
-         pha
-         pha
-         tay
 -        lda   $9D00, y              ; pre-copy SHR SCB and palette
          sta   $9D00, y
          lda   $9E00, y
@@ -32,7 +28,7 @@ addrs=$A100                          ; [128 bytes, can be anywhere in main memor
          sta   $9F00, y
          iny
          bne   -
-         rts                         ; exit via LFSR code on zero page
+         jmp   loop                  ; exit via LFSR code on zero page
 
 start
 !pseudopc 1 {

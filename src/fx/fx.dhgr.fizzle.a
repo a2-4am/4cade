@@ -5,7 +5,7 @@
 !to "build/FX/DHGR.FIZZLE",plain
 *=$6000
 
-addrs=$6100
+addrs=$C0                            ; [$40 bytes]
 
          ldx   #$1F                  ; build address lookup table
 -        txa
