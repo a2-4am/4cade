@@ -134,8 +134,6 @@ InitOnce
 }
 
 !macro FX_REVERSE_1BIT {
-         lda   #$80
-         sta   Coordinates1Bit + $3480
          ldy   #0                    ; <Coordinates1Bit
          sty   $f0
          lda   #>Coordinates1Bit
@@ -177,9 +175,6 @@ InitOnce
 }
 
 !macro FX_RIPPLE_1BIT {
-         lda   #$80
-         sta   Coordinates1Bit + $3480
-
          lda   #2                    ; <(Coordinates1Bit + 2)
          sta   $f0
          ldy   #0

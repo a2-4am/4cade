@@ -136,7 +136,6 @@ InitOnce
 
 !macro FX_RIPPLE_2BIT {
          ldy   #0
-         sty   Coordinates2Bit + $3C00
 
          ldx   #$33
 -        lda   ptrtbl, x
