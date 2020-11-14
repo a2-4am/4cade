@@ -5,19 +5,15 @@
 !to "build/FX/SHR.FIZZLE",plain
 *=$A000
 
-addrs=$80                            ; [128 bytes, can be anywhere in main memory but don't cross page boundary]
+addrs=$80                            ; [128 bytes]
+src=addrs-$20                        ; [word]
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $0, x
+         lda   #$A0                  ; create address lookup table
+         tax
+         tay
+-        dey
+         sty   addrs-$21, x
          dex
-         bne   -
-         ldy   #$80                  ; create address lookup table
-         lda   #$9F
-         sec
--        sta   addrs-1, y
-         sbc   #1
-         dey
          bne   -
          sta   $C005
 -        lda   $9D00, y              ; pre-copy SHR SCB and palette
@@ -28,18 +24,13 @@ addrs=$80                            ; [128 bytes, can be anywhere in main memor
          sta   $9F00, y
          iny
          bne   -
-         jmp   loop                  ; exit via LFSR code on zero page
-
-start
-!pseudopc 1 {
-; in: X,Y=0
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax
 loop2    lda   addrs, x
-         sta   <dst+2
-         lda   (<dst+1), y
-dst      sta   $FD00, y
+         sta   src+1
+         lda   (src), y
+         sta   (src), y
          txa
          lsr
          tax
@@ -56,5 +47,3 @@ exit     lda   $2000                 ; last lousy byte (because LFSR never hits 
          sta   $2000
          sta   $C004
          rts
-}
-end
