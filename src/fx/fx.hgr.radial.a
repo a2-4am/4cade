@@ -18,6 +18,7 @@ input          = $FE      ; word
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
+         sta   Coordinates-2
 
 Start
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
