@@ -14,7 +14,7 @@ Start
          !source "src/fx/fx.hgr.radial.common.a"
 
 CoordinatesFile
-         !byte 15
+         !byte 14
          !text "FX/RADIAL.DATA"
 
 Coordinates = Coordinates1Bit

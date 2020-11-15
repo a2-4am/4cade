@@ -95,7 +95,7 @@ DoneBR
          rts
 
 CoordinatesFile
-         !byte 15
+         !byte 14
          !text "FX/RADIAL.DATA"
 
 Coordinates = Coordinates1Bit
