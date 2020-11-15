@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/RADIAL.DATA",plain
+*=$8800
          !byte $5E,%00000000
          !byte $5E,%00100000
          !byte $5E,%01000000
