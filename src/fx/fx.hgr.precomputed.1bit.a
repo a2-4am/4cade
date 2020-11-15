@@ -174,7 +174,7 @@ InitOnce
 ++
 }
 
-!macro FX_RIPPLE_1BIT .target {
+!macro FX_RIPPLE_1BIT {
          lda   #2                    ; <(Coordinates1Bit + 2)
          sta   $f0
          ldy   #0
@@ -200,7 +200,7 @@ InitOnce
 ---      ldx   #4
 --       ldy   $ee, x
          lda   $ef, x
-         jsr   .target
+         jsr   aslmod
          sty   $ee, x
          sta   $ef, x
          sty   $ec
@@ -229,9 +229,8 @@ InitOnce
          dec   $ef
          bpl   ---
          bmi   +++                   ; always branches
-aslmod2
-         jsr   +
 aslmod
+         jsr   +
 +        cmp   #$1A
          bcc   +
          bne   ++
