@@ -29,7 +29,7 @@ Start
          +ST16 input
          +LDADDR EndCoordinates1Bit-2
          +ST16 reverse_input
-         jmp   Loop
+         +HIDE_NEXT_BYTE
 Exit     rts
 Loop     ldy   #0
          lda   (input),y
@@ -89,5 +89,3 @@ Loop     ldy   #0
 CoordinatesFile
          !byte 14
          !text "FX/RADIAL.DATA"
-Coordinates=Coordinates1Bit
-EndCoordinates=EndCoordinates1Bit

@@ -18,6 +18,7 @@ input          = $FE      ; word
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
+         lda   #$80
          sta   Coordinates1Bit-2
 
 Start

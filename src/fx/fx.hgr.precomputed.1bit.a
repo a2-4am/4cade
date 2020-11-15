@@ -130,8 +130,9 @@ InitOnce
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT .CoordinatesFile, Coordinates1Bit
          +READ_RAM1_WRITE_RAM1
-         lda   #$80
-         sta   EndCoordinates1Bit
+         ; data file must contain this EOF marker
+         ;lda   #$80
+         ;sta   EndCoordinates1Bit
 }
 
 !macro FX_REVERSE_1BIT {
