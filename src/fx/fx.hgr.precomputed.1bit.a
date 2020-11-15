@@ -9,6 +9,7 @@ mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
 hgr1himirror   = $BF40    ; $C0 bytes
 Coordinates1Bit= $8800    ; $3481 bytes ($3480 on disk + 1 byte EOF marker)
+EndCoordinates1Bit=Coordinates1Bit+$3480
 
          !source "src/fx/macros.a"
 
@@ -130,7 +131,7 @@ InitOnce
          +LOAD_FILE_AT .CoordinatesFile, Coordinates1Bit
          +READ_RAM1_WRITE_RAM1
          lda   #$80
-         sta   Coordinates1Bit + $3480
+         sta   EndCoordinates1Bit
 }
 
 !macro FX_REVERSE_1BIT {
@@ -138,9 +139,9 @@ InitOnce
          sty   $f0
          lda   #>Coordinates1Bit
          sta   $f1
-         lda   #<(Coordinates1Bit + $3480 - 2)
+         lda   #<(EndCoordinates1Bit - 2)
          sta   $f2
-         lda   #>(Coordinates1Bit + $3480 - 2)
+         lda   #>(EndCoordinates1Bit - 2)
          sta   $f3
          clc
          !byte $24

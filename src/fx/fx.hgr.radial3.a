@@ -91,4 +91,4 @@ CoordinatesFile
          !text "FX/RADIAL.DATA"
 
 Coordinates = Coordinates1Bit
-EndCoordinates = Coordinates + $3480
+EndCoordinates = EndCoordinates1Bit
