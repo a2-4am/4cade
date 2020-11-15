@@ -18,7 +18,7 @@ input          = $FE      ; word
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
-         sta   Coordinates-2
+         sta   Coordinates1Bit-2
 
 Start
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
@@ -26,7 +26,7 @@ Start
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS copymasks, mirror_copymasks
 
-         +LDADDR EndCoordinates-2
+         +LDADDR EndCoordinates1Bit-2
          +ST16 input
 LoopBL                               ; bottom-left quadrant (opposite row, original column, reverse input order)
          ldy   #0
@@ -42,7 +42,7 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
          +DEC_INPUT_AND_LOOP LoopBL
 DoneBL
 
-         +LDADDR Coordinates
+         +LDADDR Coordinates1Bit
          +ST16 input
 LoopTL                               ; top-left quadrant
          ldy   #0
@@ -58,7 +58,7 @@ LoopTL                               ; top-left quadrant
          +INC_INPUT_AND_LOOP LoopTL
 DoneTL
 
-         +LDADDR EndCoordinates-2
+         +LDADDR EndCoordinates1Bit-2
          +ST16 input
 LoopTR                               ; top-right quadrant (same row, opposite column, reverse input order)
          ldy   #0
@@ -76,7 +76,7 @@ LoopTR                               ; top-right quadrant (same row, opposite co
          +DEC_INPUT_AND_LOOP LoopTR
 DoneTR
 
-         +LDADDR Coordinates
+         +LDADDR Coordinates1Bit
          +ST16 input
 LoopBR                               ; bottom-right quadrant (opposite row, opposite column, original input order)
          ldy   #0
@@ -98,6 +98,3 @@ DoneBR
 CoordinatesFile
          !byte 14
          !text "FX/RADIAL.DATA"
-
-Coordinates = Coordinates1Bit
-EndCoordinates = EndCoordinates1Bit

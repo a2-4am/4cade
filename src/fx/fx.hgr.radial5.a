@@ -1,17 +1,18 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/RADIAL5",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_RIPPLE_1BIT aslmod3
+
+Start
          !source "src/fx/fx.hgr.radial.common.a"
 
-!if * and 1 {
-         !byte 0
-}
-Coordinates
-         !source "src/fx/fx.hgr.radial5.data.a"
-EndCoordinates
-         !byte $80
+CoordinatesFile
+         !byte 14
+         !text "FX/RADIAL.DATA"
