@@ -16,3 +16,5 @@ Start
 CoordinatesFile
          !byte 14
          !text "FX/RADIAL.DATA"
+Coordinates=Coordinates1Bit
+EndCoordinates=EndCoordinates1Bit
