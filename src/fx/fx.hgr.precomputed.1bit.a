@@ -230,6 +230,7 @@ InitOnce
          dec   $ef
          bpl   ---
          bmi   +++                   ; always branches
+aslmod4  jsr   aslmod
 aslmod3  jsr   aslmod
 aslmod2  jsr   aslmod
 aslmod   cmp   #$1A
