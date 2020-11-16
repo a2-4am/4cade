@@ -119,8 +119,8 @@ InitOnce
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT .CoordinatesFile, Coordinates3Bit
          +READ_RAM1_WRITE_RAM1
-         lda   #$80
-         sta   Coordinates3Bit + $5000
+         sec
+         ror   Coordinates3Bit + $5000
 }
 
 !macro FX_REVERSE_3BIT {
