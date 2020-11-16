@@ -139,18 +139,6 @@ RowLoop
          +LBNE ColLoop
 @exit    rts
 
-sourcemasks1
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks2
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks3
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks4
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks5
-         !byte 0,0,0,0,0,0,0,0       ; SMC
-sourcemasks6
-         !byte 0,0,0,0,0,0,0,0       ; SMC
 copymasks1
          !byte %10000000
          !byte %10000000
