@@ -22,6 +22,10 @@ addrs=$C0                            ; [$40 bytes]
          bne   -
          txa
          tay
+         clv
+         php
+         bit   <knownrts             ; set V flag
+         php
          pha
          pha
          rts
@@ -38,7 +42,9 @@ loop2    lda   addrs, x
          sta   $C003
          sta   $C005
 +        sta   <dst+2
-         lda   #$FF
+op       ora   #$FF                  ; SMC
+         sta   <src+2
+src      ora   $FD00, y              ; SMC
 dst      sta   $FD00, y
          sta   $C002
          sta   $C004
@@ -54,8 +60,19 @@ dst      sta   $FD00, y
          bmi   exit
          txa
          bne   loop1
-exit     lda   #$FF                  ; last lousy byte (because LFSR never hits 0)
+         lda   #$49
+         sta   op
+         lda   #$60
+         sta   op + 1
+         lda   #$B9
+         sta   <src
+         plp
+         bvs   loop
+         !byte $a9
+exit     plp
+         bvs   exit
+         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
-         rts
+knownrts rts
 }
 end
