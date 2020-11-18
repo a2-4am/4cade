@@ -3841,4 +3841,3 @@
          !byte 0,1
          !byte 0,79
          !byte 0,0
-         !byte $80        ; EOF

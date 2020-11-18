@@ -2,8 +2,8 @@
 ;(c) 2018-9 by 4am
 ;
 coord = $FE
-CoordinatesDHGR = $A000    ; $1E09 bytes ($1E08 on disk + 1 byte EOF marker)
-;EndCoordinatesDHGR=CoordinatesDHGR+$1E08
+CoordinatesDHGR = $A000    ; $1E01 bytes ($1E00 on disk + 1 byte EOF marker)
+EndCoordinatesDHGR=CoordinatesDHGR+$1E00
 
          jmp   Start
 

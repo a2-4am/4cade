@@ -8,6 +8,8 @@
          !source "src/fx/fx.dhgr.precomputed.a"
 
          +FX_INITONCE_DHGR CoordinatesFile, PostInit
+         lda   #$80
+         sta   EndCoordinatesDHGR
          +COPY_SELF_TO_AUXMEM
 PostInit
          +FX_PRECOMPUTED_DHGR HGRHalfBlockToWhite, Coordinates, $0
