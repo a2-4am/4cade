@@ -1,0 +1,82 @@
+;license:MIT
+;(c) 2017-2020 by qkumba/4am/John Brooks
+
+!cpu 6502
+!to "build/FX/DHGR.FIZZLE2BIT",plain
+*=$6000
+
+addrs     = $6100                    ; [256 bytes, page-aligned, does not need to be duplicated to auxmem]
+copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in auxmem]
+
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+--       ldy   #$40                  ; create identical copymask tables in main and aux memory
+         ora   #%10000000
+-        sta   copymasks, x
+         sta   $C005
+         sta   copymasks, x
+         sta   $C004
+         inx
+         dey
+         bne   -
+         asl
+         asl
+         bne   --
+         clc
+--       ldy   #$20                  ; create address lookup table (main memory only)
+         tya
+-        sta   addrs, x
+         eor   #$80
+         sta   addrs+1, x
+         eor   #$80
+         adc   #1
+         inx
+         inx
+         dey
+         bne   -
+         txa
+         bne   --
+         jmp   loop                  ; exit via LFSR code on zero page
+
+start
+!pseudopc 0 {
+; in: X,Y=0
+         !byte %00000011
+loop     txa
+loop1    eor   #$B4                  ; LFSR form 0xB400 with period 65535
+         tax                         ; X is LFSR high byte, Y is LFSR low byte
+loop2    lda   addrs, x              ; which means X is the index into the base address lookup table
+         bpl   +                     ; and Y is the offset from the base address
+         and   #$7F                  ; which works out well with the available addressing modes
+         sta   $C003                 ; (half the addresses have their high bit set, which we strip and
+         sta   $C005                 ;  use as an indicator to switch to auxmem)
++        sta   <dst+2
+         eor   #$60
+         sta   <src+2
+         lda   (<dst+1), y
+src      eor   $FD00, y              ; merge source and destination bits
+         and   copymasks, x          ; isolate the bits to replace, zero the rest
+         eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+dst      sta   $FD00, y              ; write the result
+         sta   $C002
+         sta   $C004
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2                 ; C modified by ror
+         bne   loop                  ; Z modified by tay
+         lda   $C000
+         bmi   exit
+         txa
+         bne   loop1
+         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
+         sta   $2000
+exit     rts
+}
+end
