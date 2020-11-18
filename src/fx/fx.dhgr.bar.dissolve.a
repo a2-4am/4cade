@@ -1,0 +1,82 @@
+;license:MIT
+;(c) 2020 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.BAR.DISSLV",plain
+*=$6000
+
+hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jmp   loop
+
+start
+!pseudopc 0 {
+row1=*+1
+loop     ldx   #$00
+         lda   hgrlo, x
+         sta   <src1+1
+         sta   <dst1+1
+         lda   hgr1hi, x
+         sta   <dst1+2
+         eor   #$60
+         sta   <src1+2
+         clc
+         +HIDE_NEXT_BYTE
+-        sec
+         ldy   #$27
+src1     lda   $FDFD, y
+dst1     sta   $FDFD, y
+         dey
+         dey
+         bpl   src1
+         sta   $C003
+         sta   $C005
+         bcc   -
+         sta   $C002
+         sta   $C004
+
+row2=*+1
+         ldx   #$BF
+         lda   hgrlo, x
+         sta   <src2+1
+         sta   <dst2+1
+         lda   hgr1hi, x
+         sta   <dst2+2
+         eor   #$60
+         sta   <src2+2
+         clc
+         +HIDE_NEXT_BYTE
+-        sec
+         ldy   #$26
+src2     lda   $FDFD, y
+dst2     sta   $FDFD, y
+         dey
+         dey
+         bpl   src2
+         sta   $C003
+         sta   $C005
+         bcc   -
+         sta   $C002
+         sta   $C004
+         lda   #$30
+         jsr   WaitForKeyWithTimeout
+         bmi   exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$C0
+         bne   loop
+exit     rts
+
+         !source "src/wait.a"
+}
+end
