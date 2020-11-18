@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 coord = $FE
 CoordinatesDHGR = $A000    ; $1E01 bytes ($1E00 on disk + 1 byte EOF marker)
@@ -23,6 +23,101 @@ InitOnce
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT .CoordinatesFile, CoordinatesDHGR
          +READ_RAM1_WRITE_RAM1
+}
+
+!macro FX_RIPPLE_DHGR {
+         ldx   #$0f
+-        lda   ptrtbl, x
+         sta   $c0, x
+         dex
+         bpl   -
+
+         lda   #$66
+         sta   $fe
+         ldx   #3
+         stx   $ff
+
+-        lda   CoordinatesDHGR + 2, x
+         sta   $80, x
+         dex
+         bpl   -
+         dex
+-        lda   CoordinatesDHGR + 22 - 254, x
+         sta   $86, x
+         lda   CoordinatesDHGR + 34 - 254, x
+         sta   $88, x
+         lda   CoordinatesDHGR + 44 - 254, x
+         sta   $8a, x
+         lda   CoordinatesDHGR + 68 - 254, x
+         sta   $8c, x
+         lda   CoordinatesDHGR + 698 - 254, x
+         sta   $8e, x
+         lda   CoordinatesDHGR + 1396 - 254, x
+         sta   $90, x
+         inx
+         bne   -
+
+---      ldx   #$10
+--       lda   $bf, x
+         bmi   +
+         ldy   $be, x
+         jsr   aslmod2
+         sty   $be, x
+         sta   $bf, x
+         sty   $fc
+         clc
+         adc   #>CoordinatesDHGR
+         sta   $fd
+         ldy   #0
+         !byte $a9
+-        sec
+         lda   ($fc), y
+         pha
+         lda   $7e, x
+         sta   ($fc), y
+         pla
+         sta   $7e, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
++        dex
+         dex
+         bne   --
+         dex
+         lda   $fe
+         eor   #<(871 - 5)
+         bne   +
+         stx   $cd
+         stx   $cf
++        eor   #<(871 - 5) xor <(871 - 174)
+         bne   +
+         lda   $ff
+         eor   #>(871 - 174)
+         bne   +
+         stx   $c5
+         stx   $c9
++        dec   $fe
+         bne   ---
+         dec   $ff
+         bpl   ---
+         bmi   ++                    ; always branches
+aslmod2  jsr   aslmod
+aslmod   cmp   #$0F
+         pha
+         tya
+         adc   #0
+         asl
+         tay
+         pla
+         rol
+         cmp   #$1E
+         bcc   +
+         sbc   #$1E
++        rts
+ptrtbl   !word 2, 4, 22, 34, 44, 68, 698, 1396
+++ 
 }
 
 !macro FX_RADIAL2_DHGR .coords {
