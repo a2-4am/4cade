@@ -8,6 +8,7 @@
          !source "src/fx/fx.dhgr.precomputed.a"
 
          +FX_INITONCE_DHGR CoordinatesFile, PostInit
+         +FX_RADIAL5_DHGR Coordinates
          +COPY_SELF_TO_AUXMEM
 PostInit
          +FX_PRECOMPUTED_DHGR HGRHalfBlockToWhite, Coordinates, $0
@@ -17,5 +18,5 @@ PostInit
 
 Coordinates=CoordinatesDHGR
 CoordinatesFile
-         !byte 17
-         !text "FX/DHGR.RAD5.DATA"
+         !byte 16
+         !text "FX/DHGR.RAD.DATA"
