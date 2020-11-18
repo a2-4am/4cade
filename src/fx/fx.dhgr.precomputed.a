@@ -295,6 +295,141 @@ zerochk  !word 1194 - 493
 posttransform
 }
 
+!macro FX_RADIAL5_DHGR .coords {
+         lda   #<(.coords + 1004)
+         sta   $c4
+         ldx   #3                    ; >(.coords + 1004)
+         stx   $c5
+         lda   #<(.coords + 452)
+         sta   $c2
+         dex
+         stx   $c0
+         dex                         ; >(Coordinates + 452)
+         stx   $c3
+         lda   #0
+         sta   $c1
+
+         lda   #$fc
+         sta   $fe
+         lda   #$0e
+         sta   $ff
+
+-        lda   .coords + 2, x
+         sta   $80, x
+         lda   .coords + 452, x
+         sta   $82, x
+         lda   .coords + 1004, x
+         sta   $84, x
+         dex
+         bpl   -
+
+---      ldx   #6
+--       lda   $bf, x
+         bmi   +
+         ldy   $be, x
+         jsr   aslmod
+         sty   $be, x
+         sta   $bf, x
+         sty   $fc
+         clc
+         adc   #>.coords
+         sta   $fd
+         ldy   #0
+         !byte $a9
+-        sec
+         lda   ($fc), y
+         pha
+         lda   $7e, x
+         sta   ($fc), y
+         pla
+         sta   $7e, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
++        dex
+         dex
+         bne   --
+         dex
+         lda   $fe
+         eor   #<(3837 - 2)
+         bne   +
+         stx   $c3
++        eor   #<(3837 - 2) xor <(3837 - 6)
+         bne   +
+         stx   $c5
++        dec   $fe
+         bne   ---
+         dec   $ff
+         bpl   ---
+         bmi   posttransform
+
+aslmod
+         sec
+         pha
+         tya
+         sbc   #2
+         tay
+         pla
+         sbc   #0
+         pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         cmp   #$1E
+         bpl   +
+         eor   #$ff
+         pha
+         tya
+         eor   #$ff
+         clc
+         adc   #$FF
+         tay
+         pla
+         adc   #$1D
+         rts
++        cmp   #$3C
+         bcc   +
+         bne   ++
+         cpy   #8
+         bcs   ++
++        sec
+         sbc   #$1E
+         rts
+++       cmp   #$5A
+         bcc   +
+         bne   ++
+         cpy   #$10
+         bcs   ++
++        eor   #$ff
+         pha
+         tya
+         eor   #$ff
+         clc
+         adc   #$0B
+         tay
+         pla
+         adc   #$5A
+         rts
+++       pha
+         tya
+         sbc   #$0C
+         tay
+         pla
+         sbc   #$5A
+         rts
+posttransform
+}
+
 !macro FX_PRECOMPUTED_DHGR .copy, .coords, .wait {
          lda   #<.coords
          sta   coord
