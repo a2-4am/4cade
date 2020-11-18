@@ -1,6 +1,6 @@
 !cpu 6502
 !to "build/FX/CORNER4.DATA",plain
-*=$8800
+*=$8600
          !byte $5F,%11010011
          !byte $5F,%10110011
          !byte $5F,%10010011
@@ -6722,3 +6722,7 @@
          !byte $01,%00000000
          !byte $01,%00100000
          !byte $80
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+         +FX_RIPPLE_1BIT aslmod2
+         rts

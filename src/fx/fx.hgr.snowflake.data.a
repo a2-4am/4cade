@@ -1,6 +1,6 @@
 !cpu 6502
 !to "build/FX/SNOWFLAKE.DATA",plain
-*=$8800
+*=$8600
          !byte $5E,%10110011
          !byte $5E,%11010011
          !byte $5C,%01010011
@@ -6722,3 +6722,7 @@
          !byte $5E,%00100000
          !byte $5E,%00000000
          !byte $80
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+         +FX_RIPPLE_1BIT aslmod2
+         rts

@@ -1,6 +1,6 @@
 !cpu 6502
 !to "build/FX/RADIAL.DATA",plain
-*=$8800
+*=$8600
          !byte $5E,%00000000
          !byte $5E,%00100000
          !byte $5E,%01000000
@@ -6722,3 +6722,7 @@
          !byte $02,%11010011
          !byte $00,%11010011
          !byte $80
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+         +FX_RIPPLE_1BIT aslmod2
+         rts

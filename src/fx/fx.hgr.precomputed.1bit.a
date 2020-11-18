@@ -8,7 +8,7 @@ hgrlomirror    = $BD40    ; $C0 bytes
 mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
 hgr1himirror   = $BF40    ; $C0 bytes
-Coordinates1Bit= $8800    ; $3481 bytes ($3480 on disk + 1 byte EOF marker)
+Coordinates1Bit= $8600    ; $3481 bytes ($3480 on disk + 1 byte EOF marker)
 EndCoordinates1Bit=Coordinates1Bit+$3480
 
          !source "src/fx/macros.a"

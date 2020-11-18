@@ -1,6 +1,6 @@
 !cpu 6502
 !to "build/FX/SLOW.STAR.DATA",plain
-*=$8800
+*=$8600
          !byte $30,%00001010
          !byte $30,%00101010
          !byte $30,%11001001
