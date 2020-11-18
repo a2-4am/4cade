@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/DHGR.IRIS.DATA",plain
+*=$A000
          !byte 24,40
          !byte 24,41
          !byte 25,40
@@ -3838,3 +3841,4 @@
          !byte 0,1
          !byte 0,79
          !byte 0,0
+         !byte $80        ; EOF

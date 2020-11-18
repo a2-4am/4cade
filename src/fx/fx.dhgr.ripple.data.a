@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/DHGR.RIPP.DATA",plain
+*=$A000
          !byte 24,40
          !byte 9,36
          !byte 38,62
@@ -3838,3 +3841,4 @@
          !byte 37,63
          !byte 0,25
          !byte 0,0
+         !byte $80        ; EOF

@@ -5,7 +5,9 @@
 !to "build/FX/DHGR.FIZZLEWH",plain
 *=$6000
 
-         jsr   CopySelfToAuxmem
+         !source "src/fx/fx.dhgr.common.a"
+
+         +COPY_SELF_TO_AUXMEM
          jsr   FizzleToWhite
          jmp   FizzleCopy
 
@@ -146,5 +148,3 @@ FizzleCopy
          bne   @loop
 
 @exit    rts
-
-         !source "src/fx/fx.dhgr.common.a"

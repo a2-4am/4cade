@@ -1,4 +1,4 @@
-CopySelfToAuxmem
+!macro COPY_SELF_TO_AUXMEM {
          lda   #$00
          sta   $FE
          tay
@@ -14,4 +14,4 @@ CopySelfToAuxmem
          dex
          bne   -
          sta   $c004
-         rts
+}

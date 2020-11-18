@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/DHGR.RAD.DATA",plain
+*=$A000
          !byte 47,39
          !byte 46,39
          !byte 45,39
@@ -3842,3 +3845,4 @@
          !byte 45,40
          !byte 46,40
          !byte 47,40
+         !byte $80        ; EOF

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/DHGR.RADIAL2",plain
@@ -7,10 +7,15 @@
 
          !source "src/fx/fx.dhgr.precomputed.a"
 
+         +FX_INITONCE_DHGR CoordinatesFile, PostInit
+         +FX_RADIAL2_DHGR Coordinates
+         +COPY_SELF_TO_AUXMEM
+PostInit
          +FX_PRECOMPUTED_DHGR HGRHalfBlockCopy, Coordinates, $1
 
          rts
 
-Coordinates
-         !source "src/fx/fx.dhgr.radial2.data.a"
-         !byte $80
+Coordinates=CoordinatesDHGR
+CoordinatesFile
+         !byte 16
+         !text "FX/DHGR.RAD.DATA"
