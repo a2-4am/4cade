@@ -21,11 +21,11 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
 start
 !pseudopc 0 {
 row1=*+1
-loop     ldx   #$00
-         lda   hgrlo, x
+loop     ldx   #$40
+         lda   hgrlo-$40, x
          sta   <src1+1
          sta   <dst1+1
-         lda   hgr1hi, x
+         lda   hgr1hi-$40, x
          sta   <dst1+2
          eor   #$60
          sta   <src1+2
@@ -33,16 +33,14 @@ loop     ldx   #$00
          +HIDE_NEXT_BYTE
 -        sec
          ldy   #$27
-src1     lda   $FDFD, y
-dst1     sta   $FDFD, y
+src1     lda   $FDFD, y              ; SMC
+dst1     sta   $FDFD, y              ; SMC
          dey
          dey
          bpl   src1
-         sta   $C003
-         sta   $C005
+         jsr   toaux
          bcc   -
-         sta   $C002
-         sta   $C004
+         jsr   tomain
 
 row2=*+1
          ldx   #$BF
@@ -57,25 +55,26 @@ row2=*+1
          +HIDE_NEXT_BYTE
 -        sec
          ldy   #$26
-src2     lda   $FDFD, y
-dst2     sta   $FDFD, y
+src2     lda   $FDFD, y              ; SMC
+dst2     sta   $FDFD, y              ; SMC
          dey
          dey
          bpl   src2
-         sta   $C003
-         sta   $C005
+         jsr   toaux
          bcc   -
-         sta   $C002
-         sta   $C004
+         jsr   tomain
          lda   #$30
          jsr   WaitForKeyWithTimeout
          bmi   exit
-         inc   row1
          dec   row2
-         lda   row1
-         cmp   #$C0
+         inc   row1
          bne   loop
+tomain   sta   $C002
+         sta   $C004
 exit     rts
+toaux    sta   $C003
+         sta   $C005
+         rts
 
          !source "src/wait.a"
 }
