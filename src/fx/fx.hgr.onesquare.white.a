@@ -1,13 +1,84 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/ONESQUARE",plain
 *=$6000
 
-         lda   #<@coords
+         ldy   #0
+         sty   $FA
+         ldx   #40
+         stx   $FB
+         dex
+         stx   $FC
+         lda   #23
+         sta   $FD
+         lda   #<Coordinates
          sta   $FE
-         lda   #>@coords
+         lda   #>Coordinates
+         sta   $FF
+--       ldx   $FA
+-        lda   $FA
+         sta   ($FE), y
+         iny
+         txa
+         sta   ($FE), y
+         iny
+         bne   +
+         inc   $FF
++        inx
+         cpx   $FB
+         bne   -
+         ldx   $FA
+-        inx
+         cpx   $FD
+         bcs   +
+         txa
+         sta   ($FE), y
+         iny
+         lda   $FA
+         sta   ($FE), y
+         iny
+         txa
+         sta   ($FE), y
+         iny
+         lda   $FC
+         sta   ($FE), y
+         iny
+         bne   -
+         inc   $FF
+         bne   -                     ; always branches
++        ldx   $FA
+-        lda   $FD
+         sta   ($FE), y
+         iny
+         txa
+         sta   ($FE), y
+         iny
+         bne   +
+         inc   $FF
++        inx
+         cpx   $FB
+         bne   -
+         lda   #$FF
+         sta   ($FE), y
+         iny
+         sta   ($FE), y
+         iny
+         dec   $FB
+         dec   $FC
+         dec   $FD
+         inc   $FA
+         lda   $FA
+         cmp   #12
+         bne   --
+
+         lda   #$80
+         sta   Coordinates+$798
+
+         lda   #<Coordinates
+         sta   $FE
+         lda   #>Coordinates
          sta   $FF
          ldy   #$00
 @loop1
@@ -67,11 +138,10 @@
          beq   @loop2                ; always branches
 @exit    rts
 
-         !byte $80,$80
-@coords
-         !source "src/fx/fx.hgr.onesquare.data.a"
-         !byte $80
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
+
+         !byte $80,$80
+Coordinates
