@@ -1,0 +1,62 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.TWOPASS.LR",plain
+*=$6000
+
+hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jmp   loop
+
+start
+!pseudopc 0 {
+loop     ldy   #$00
+         inc   <startx
+columnloop
+startx=*+1
+         ldx   #$FF
+rowloop
+         lda   hgrlo, x
+         sta   <src+1
+         sta   <dst+1
+         lda   hgr1hi, x
+         sta   <dst+2
+         eor   #$60
+         sta   <src+2
+         clc
+         !byte $A9
+-        sec
+src      lda   $FDFD, y              ; SMC
+dst      sta   $FDFD ,y              ; SMC
+         sta   $C003
+         sta   $C005
+         bcc   -
+         sta   $C002
+         sta   $C004
+         inx
+         inx
+         cpx   #$C0
+         bcc   rowloop
+         lda   #$10
+         jsr   WaitForKeyWithTimeout
+         bmi   exit
+         iny
+         cpy   #$28
+         bne   columnloop
+         lda   <startx
+         beq   loop
+exit     rts
+
+         !source "src/wait.a"
+}
+end
