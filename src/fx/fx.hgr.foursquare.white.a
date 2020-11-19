@@ -1,13 +1,55 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/FOURSQUARE",plain
 *=$6000
 
-         lda   #<@coords
+         lda   #23
+         sta   $FD
+         lda   #<Coordinates
          sta   $FE
-         lda   #>@coords
+         lda   #>Coordinates
+         sta   $FF
+         ldy   #0
+         sty   $F7
+         ldx   #11
+         stx   $F8
+         txa
+         inx
+         stx   $F9
+         ldx   #19
+         stx   $FA
+         inx
+         stx   $FB
+         ldx   #39
+         stx   $FC
+-        lda   $F7
+         ldx   $F8
+         jsr   @box2
+         lda   $F9
+         ldx   $FD
+         jsr   @box2
+         lda   #$FF
+         jsr   stainc
+         jsr   stainc
+         dec   $F8
+         inc   $F9
+         dec   $FA
+         inc   $FB
+         dec   $FC
+         dec   $FD
+         inc   $F7
+         lda   $F7
+         cmp   #6
+         bne   -
+
+         sec
+         ror   Coordinates+$798
+
+         lda   #<Coordinates
+         sta   $FE
+         lda   #>Coordinates
          sta   $FF
          ldy   #$00
 @loop1
@@ -67,11 +109,57 @@
          beq   @loop2                ; always branches
 @exit    rts
 
-         !byte $80,$80
-@coords
-         !source "src/fx/fx.hgr.foursquare.data.a"
-         !byte $80
+@box2    sta   $F4
+         stx   $F5
+         jsr   @box1
+         ldx   $F4
+-        inx
+         cpx   $F5
+         bcs   +
+         jsr   txasta
+         lda   $F7
+         jsr   statxa
+         lda   $FA
+         jsr   statxa
+         lda   $FB
+         jsr   statxa
+         lda   $FC
+         jsr   stainc
+         bne   -                     ; always branches
++        txa
+
+         ; fall through
+
+@box1    ldx   $FA
+         stx   $F6
+         ldx   $F7
+         jsr   +
+         ldx   $FC
+         stx   $F6
+         ldx   $FB
++
+-        jsr   stainc
+         pha
+         txa
+         jsr   stainc
+         pla
+         cpx   $F6
+         inx
+         bcc   -
+         rts
+
+statxa   jsr   stainc
+txasta   txa
+stainc   sta   ($FE), y
+         iny
+         bne   +
+         inc   $FF
++        rts
+
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
+
+         !byte $80,$80
+Coordinates

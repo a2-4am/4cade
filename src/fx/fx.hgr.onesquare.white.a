@@ -73,8 +73,8 @@
          cmp   #12
          bne   --
 
-         lda   #$80
-         sta   Coordinates+$798
+         sec
+         ror   Coordinates+$798
 
          lda   #<Coordinates
          sta   $FE
