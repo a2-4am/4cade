@@ -1,0 +1,139 @@
+;license:MIT
+;(c) 2020 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.REDLINES",plain
+*=$6000
+
+; for red line:
+; mainmem alternate #$11/#$44
+; auxmem  alternate #$08/#$22
+
+hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jmp   loop
+
+start
+!pseudopc 0 {
+loop     jsr   WaitForVBL
+row1=*+1
+         ldx   #$00                  ; SMC
+         jsr   DrawRedLine
+row2=*+1
+         ldx   #$BF                  ; SMC
+         jsr   DrawRedLine
+         ldx   row1
+         beq   +
+         dex
+         jsr   DrawBlackLine
++        ldx   row2
+         inx
+         cpx   #$C0
+         beq   +
+         jsr   DrawBlackLine
++
+         lda   $C000
+         bmi   exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$60
+         bne   loop
+
+loop2    jsr   WaitForVBL
+         ldx   row1
+         cpx   #$C0
+         beq   +
+         jsr   DrawRedLine
++        ldx   row2
+         bmi   +
+         jsr   DrawRedLine
++        ldx   row1
+         dex
+         jsr   CopyLine
+         ldx   row2
+         inx
+         jsr   CopyLine
+         lda   $C000
+         bmi   exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$C1
+         bne   loop2
+exit     jmp   UnwaitForVBL
+
+DrawRedLine
+         lda   hgrlo, x
+         sta   <reddst1+1
+         sta   <reddst2+1
+         lda   hgr1hi, x
+         sta   <reddst1+2
+         sta   <reddst2+2
+         ldy   #$27
+         lda   #$11
+-        eor   #$55
+reddst1  sta   $FDFD, y              ; SMC
+         dey
+         bpl   -
+         sta   $C005
+         ldy   #$27
+         lda   #$08
+-        eor   #$2A
+reddst2  sta   $FDFD, y              ; SMC
+         dey
+         bpl   -
+         sta   $C004
+         rts
+
+DrawBlackLine
+         lda   hgrlo, x
+         sta   <blackdst+1
+         lda   hgr1hi, x
+         sta   <blackdst+2
+         lda   #$00
+         clc
+         +HIDE_NEXT_BYTE
+--       sec
+         ldy   #$27
+blackdst sta   $FDFD, y              ; SMC
+         dey
+         bpl   blackdst
+         sta   $C005
+         bcc   --
+         sta   $C004
+         rts
+
+CopyLine
+         lda   hgrlo, x
+         sta   <copysrc+1
+         sta   <copydst+1
+         lda   hgr1hi, x
+         sta   <copydst+2
+         eor   #$60
+         sta   <copysrc+2
+         clc
+         +HIDE_NEXT_BYTE
+-        sec
+         ldy   #$27
+copysrc  lda   $FDFD, y              ; SMC
+copydst  sta   $FDFD, y              ; SMC
+         dey
+         bpl   copysrc
+         sta   $C003
+         sta   $C005
+         bcc   -
+         sta   $C002
+         sta   $C004
+         rts
+}
+end
