@@ -1,0 +1,101 @@
+;license:MIT
+;(c) 2018 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.R.BY.PIXEL",plain
+*=$6000
+
+hgrlo    =     $0201                 ; [$C0 bytes, main memory only, offset by 1 because lookups will be based on $0200,x]
+hgr1hi   =     $0301                 ; [$C0 bytes, main memory only]
+copymasks=     $02C1                 ; [$07 bytes, different values in main and auxmem]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+
+         ldy   #7                    ; copy copymask arrays into place in main and auxmem
+-        lda   copymasks_main-1, y
+         sta   copymasks-1, y
+         lda   copymasks_aux-1, y
+         sta   $C005
+         sta   copymasks-1, y
+         sta   $C004
+         dey
+         bne   -
+
+         jmp   loop
+
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+copymasks_aux                        ; used in reverse order
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %11111111
+         !byte %10111111
+         !byte %10001111
+         !byte %10000011
+copymasks_main                       ; used in reverse order
+         !byte %11111111
+         !byte %10011111
+         !byte %10000111
+         !byte %10000001
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+
+start
+!pseudopc 0 {
+;in: Y=0 (HGR column index)
+loop
+         lda   #6                    ; copymask index, 6 -> 0 inclusive
+         sta   <maskindex
+         jsr   WaitForVBL
+maskloop
+         lda   #$C0
+         sta   <rowindex
+rowloop
+rowindex=*+1
+         ldx   #$FD                  ; HGR row index, offset by 1 to simplify branch later
+         lda   hgrlo-1, x
+         sta   <src+1
+         sta   <dst+1
+         lda   hgr1hi-1, x
+         sta   <dst+2
+         eor   #$60
+         sta   <src+2
+maskindex=*+1
+         ldx   #$FD                  ; SMC
+         clc
+         !byte $A9
+-        sec
+         lda   copymasks, x          ; Skip copy if we wouldn't copy anything. This speeds up the
+         beq   +                     ; effect about 10% overall, even with the added instructions.
+         lda   (<dst+1), y
+src      eor   $FDFD, y              ; SMC
+         and   copymasks, x          ; bank-specific copymasks are at the same address in main and auxmem, which is neat
+         eor   (<dst+1), y
+dst      sta   $FDFD, y              ; SMC
++        sta   $C003
+         sta   $C005
+         bcc   -
+         sta   $C002
+         sta   $C004
+         dec   <rowindex
+         bne   rowloop
+         dec   <maskindex
+         bpl   maskloop
+         bit   $C000
+         bmi   exit
+         iny
+         cpy   #$28
+         bne   loop
+exit     jmp   UnwaitForVBL
+}
+end
