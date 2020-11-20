@@ -10,8 +10,21 @@ row = $fd
 col = $fe
 counter = $ff
 
+hgrlo    =     $0200                 ; [$C0 bytes]
+hgr1hi   =     $0300                 ; [$C0 bytes]
+
          !source "src/fx/macros.a"
-         !source "src/constants.a"
+
+!macro RESET_HGR_CALC_BY_7 {
+         lda   $27
+         sec
+         sbc   #$1c
+         sta   $27
+         eor   #$60
+         sta   $3d
+}
+
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
 
          lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
          sta   counter
@@ -29,108 +42,121 @@ RowLoop
          asl
          asl
          asl
-         +HGR_CALC
+         tax
+         lda   hgrlo, x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi, x
+         sta   $27
+         eor   #$60
+         sta   $3d
 
          ldy   y
          +IS_Y_OFFSCREEN
-         bcs   @block2
+         +LBCS @block2
 
          ; [speedopt] HGRBlockCopyWithMask but hardcoded for this block's masks
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks1
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
+         +HGR_INC_WITHIN_BLOCK
+}
+}
          ; [speedopt] reset HGR base addresses instead of recalculating them from scratch
-         +RESET_HGR_CALC
+         +RESET_HGR_CALC_BY_7
 @block2
          iny
          +IS_Y_OFFSCREEN
-         bcs   @block3
+         +LBCS @block3
 
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks2
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
-         +RESET_HGR_CALC
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
 @block3
          iny
          +IS_Y_OFFSCREEN
-         bcs   @block4
+         +LBCS @block4
 
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks3
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
-         +RESET_HGR_CALC
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
 @block4
          iny
          +IS_Y_OFFSCREEN
-         bcs   @block5
+         +LBCS @block5
 
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks4
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
-         +RESET_HGR_CALC
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
 @block5
          iny
          +IS_Y_OFFSCREEN
-         bcs   @block6
+         +LBCS @block6
 
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks5
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
-         +RESET_HGR_CALC
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
 @block6
          iny
          +IS_Y_OFFSCREEN
-         bcs   @block7
+         +LBCS @block7
 
          ldx   #7
          clc
--
+!for i, 0, 7 {
          +COPY_BIT $3c, $26, copymasks6
-         +HGR_INC_WITHIN_BLOCK
+!if i < 7 {
          dex
-         bpl   -
-
-         +RESET_HGR_CALC
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
 @block7
          iny
          +IS_Y_OFFSCREEN
-         bcs   @nextrow
+         +LBCS @nextrow
 
          ; [speedopt] HGRBlockCopy but inlined
-         ldx   #7
          clc
--        lda   ($3c),y
+!for i, 0, 7 {
+         lda   ($3c),y
          sta   ($26),y
+!if i < 7 {
          +HGR_INC_WITHIN_BLOCK
-         dex
-         bpl   -
-
-         ; don't need RESET_HGR_CALC here because we're done with this row
+}
+}
+         ; don't need RESET_HGR_CALC_BY_7 here because we're done with this row
 @nextrow
          ldy   y
          iny
