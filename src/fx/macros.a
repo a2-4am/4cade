@@ -10,6 +10,7 @@
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi
 }
 
+; use this macro instead if you know X is already 0 on entry, to save 2 bytes
 !macro BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi {
 -        txa
          and   #$F8
@@ -60,6 +61,14 @@
 }
 
 !macro HGR_CALC {
+; in:    A = HGR row (0x00..0xBF)
+; out:   A/X clobbered
+;        Y preserved
+;        ($26) points to first byte of given HGR row on hi-res page 1
+;        ($3C) points to same byte on hi-res page 2
+; based on 'Woz Recodes Hi-Res Address Calculations'
+; Apple Assembly Line vol. 7 issue 3 (December 1986)
+; http://www.txbobsc.com/aal/1986/aal8612.html#a9
          asl
          tax
          and   #$F0

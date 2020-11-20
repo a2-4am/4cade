@@ -1,0 +1,166 @@
+;license:MIT
+;(c) 2019 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.DIAGONAL",plain
+*=$6000
+
+hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+copymasks=     $02C0                 ; [$08 bytes, different values in main and auxmem]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+
+         ldy   #8                    ; copy copymask arrays into place in main and auxmem
+-        lda   copymasks_main-1, y
+         sta   copymasks-1, y
+         lda   copymasks_aux-1, y
+         sta   $C005
+         sta   copymasks-1, y
+         sta   $C004
+         dey
+         bne   -
+
+         jmp   loop
+
+;1GFEDCBA ->
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+copymasks_aux                        ; used in reverse order
+         !byte %11111111
+         !byte %11111100
+         !byte %11110000
+         !byte %11000000
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+copymasks_main                       ; used in reverse order
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111110
+         !byte %11111000
+         !byte %11100000
+         !byte %00000000
+
+start
+!pseudopc 0 {
+loop     lda   #23
+         sta   <row
+         ldy   <col
+         jsr   WaitForVBL
+rowloop  lda   <row
+         asl
+         asl
+         asl
+         tax
+         lda   hgrlo, x
+         sta   <src+1
+         sta   <dst+1
+         lda   hgr1hi, x
+         sta   <dst+2
+         eor   #$60
+         sta   <src+2
+         cpy   #40
+         bcs   +
+         jsr   DHGRBlockCopyWithMask
++        iny
+         cpy   #40
+         bcs   +
+         jsr   DHGRBlockCopy
++        dec   <row
+         bpl   rowloop
+         lda   $C000
+         bmi   exit
+         dec   <col
+         dec   <counter
+         bne   loop
+exit     jmp   UnwaitForVBL
+
+DHGRBlockCopyWithMask
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+;        mainmem banked in
+; out:   Y preserved
+;        A/X clobbered
+         lda   #$02
+         sta   <pass
+--       ldx   #7
+         clc
+-        lda   (<dst+1), y
+src      eor   $FDFD, y
+         and   copymasks, x
+         eor   (<dst+1), y
+dst      sta   $FDFD, y
+         lda   <src+2
+         adc   #$04
+         sta   <src+2
+         eor   #$60
+         sta   <dst+2
+         dex
+         bpl   -
+         lda   <src+2
+         sec
+         sbc   #$20
+         sta   <src+2
+         eor   #$60
+         sta   <dst+2
+         sta   $C003
+         sta   $C005
+         dec   <pass
+         bne   --
+         sta   $C002
+         sta   $C004
+         rts
+
+DHGRBlockCopy
+--       ldx   #7
+         clc
+-        lda   (<src+1), y
+         sta   (<dst+1), y
+         lda   <src+2
+         adc   #$04
+         sta   <src+2
+         eor   #$60
+         sta   <dst+2
+         dex
+         bpl   -
+         lda   <src+2
+         sec
+         sbc   #$20
+         sta   <src+2
+         eor   #$60
+         sta   <dst+2
+         sta   $C003
+         sta   $C005
+         ldx   #7
+         clc
+-        lda   (<src+1), y
+         sta   (<dst+1), y
+         lda   <src+2
+         adc   #$04
+         sta   <src+2
+         eor   #$60
+         sta   <dst+2
+         dex
+         bpl   -
+         sta   $C002
+         sta   $C004
+         rts
+
+row      !byte 23
+col      !byte 39
+counter  !byte 64
+pass
+}
+end
