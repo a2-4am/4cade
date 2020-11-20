@@ -1,0 +1,300 @@
+;license:MIT
+;(c) 2019-2020 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.SOFT.DIAG",plain
+*=$6000
+
+pass = $fb
+y = $fc
+row = $fd
+col = $fe
+counter = $ff
+
+hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+
+!macro RESET_HGR_CALC_BY_7 {
+         lda   $27
+         sec
+         sbc   #$1c
+         sta   $27
+         eor   #$60
+         sta   $3d
+}
+
+         !source "src/fx/macros.a"
+         !source "src/fx/fx.dhgr.common.a"
+
+         +COPY_SELF_TO_AUXMEM
+
+         sta   $C005
+         ldx   #48
+-        lda   copymasks1_aux-1, x
+         sta   copymasks1-1, x
+         dex
+         bne   -
+         sta   $C004
+
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+
+         lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
+         sta   counter
+
+         lda   #39
+         sta   col
+ColLoop
+         lda   #23
+         sta   row
+         ldy   col
+         sty   y
+RowLoop
+         lda   row
+         asl
+         asl
+         asl
+         tax
+         lda   hgrlo, x
+         sta   $26
+         sta   $3c
+         lda   hgr1hi, x
+         sta   $27
+         eor   #$60
+         sta   $3d
+
+         lda   #2
+         sta   pass
+PassLoop
+         ldy   y
+         +IS_Y_OFFSCREEN
+         +LBCS @block2
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks1
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block2
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block3
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks2
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block3
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block4
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks3
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block4
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block5
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks4
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block5
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block6
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks5
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block6
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block7
+
+         ldx   #7
+         clc
+!for i, 0, 7 {
+         +COPY_BIT $3c, $26, copymasks6
+!if i < 7 {
+         dex
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block7
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @nextrow
+
+         clc
+!for i, 0, 7 {
+         lda   ($3c),y
+         sta   ($26),y
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@nextrow
+         sta   $C003
+         sta   $C005
+         dec   pass
+         +LBNE PassLoop
+         sta   $C002
+         sta   $C004
+         ldy   y
+         iny
+         sty   y
+         dec   row
+         +LBPL RowLoop
+         lda   $c000
+         bmi   @exit
+         dec   col
+         dec   counter
+         +LBNE ColLoop
+@exit    rts
+
+;1GFEDCBA ->
+;1GGFFEED (main) +
+;1DCCBBAA (aux)
+copymasks1
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %10000001
+         !byte %10000001
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+copymasks2
+         !byte %00000000
+         !byte %00000000
+         !byte %10000110
+         !byte %10000001
+         !byte %10000001
+         !byte %10010110
+         !byte %00000000
+         !byte %00000000
+copymasks3
+         !byte %00000000
+         !byte %00000000
+         !byte %10000111
+         !byte %10000111
+         !byte %10000111
+         !byte %10000111
+         !byte %10000000
+         !byte %10000000
+copymasks4
+         !byte %00000000
+         !byte %10011001
+         !byte %10000001
+         !byte %10011111
+         !byte %10000111
+         !byte %10000111
+         !byte %10011001
+         !byte %00000000
+copymasks5
+         !byte %00000000
+         !byte %10011111
+         !byte %10011111
+         !byte %10011111
+         !byte %10011111
+         !byte %10011111
+         !byte %10011111
+         !byte %00000000
+copymasks6
+         !byte %11100110
+         !byte %10011111
+         !byte %11111111
+         !byte %10011111
+         !byte %11111111
+         !byte %10011111
+         !byte %10011111
+         !byte %11100110
+copymasks1_aux
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %11000000
+         !byte %11000000
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+copymasks2_aux
+         !byte %00000000
+         !byte %00000000
+         !byte %10110000
+         !byte %11000000
+         !byte %11000000
+         !byte %10110000
+         !byte %00000000
+         !byte %00000000
+copymasks3_aux
+         !byte %00000000
+         !byte %00000000
+         !byte %11110000
+         !byte %11110000
+         !byte %11110000
+         !byte %11110000
+         !byte %00000000
+         !byte %00000000
+copymasks4_aux
+         !byte %00000000
+         !byte %11001100
+         !byte %11110000
+         !byte %11111100
+         !byte %11110000
+         !byte %11110000
+         !byte %11001100
+         !byte %00000000
+copymasks5_aux
+         !byte %00000000
+         !byte %11111100
+         !byte %11111100
+         !byte %11111100
+         !byte %11111100
+         !byte %11111100
+         !byte %11111100
+         !byte %00000000
+copymasks6_aux
+         !byte %10110011
+         !byte %11111100
+         !byte %11111111
+         !byte %11111100
+         !byte %11111111
+         !byte %11111100
+         !byte %11111100
+         !byte %10110011

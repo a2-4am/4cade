@@ -224,5 +224,3 @@ copymasks6
          !byte %10111110
          !byte %10111110
          !byte %11010101
-
-         !source "src/fx/fx.hgr.common.a"
