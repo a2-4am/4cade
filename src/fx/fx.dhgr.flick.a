@@ -1,0 +1,97 @@
+;license:MIT
+;(c) 2020 by 4am
+;
+!cpu 6502
+!to "build/FX/DHGR.FLICK",plain
+*=$6000
+
+hgrlo = $200                         ; [$C0 bytes, main memory only]
+startrows_by_column = $2C0           ; [$28 bytes, main memory only]
+hgr1hi = $300                        ; [$C0 bytes, main memory only]
+
+         !source "src/fx/macros.a"
+
+         ldx   #(end-start)          ; copy code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         lda   #0
+         sta   startrows_by_column-1, x
+         dex
+         bne   -
+
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+
+         jmp   loop
+
+start
+!pseudopc 0 {
+loop
+         ldy   #$27
+columnloop
+         ldx   startrows_by_column, y
+         cpx   #$C0
+         bcs   nextcolumn
+         lda   rowcounts_by_column, y
+         beq   nextcolumn
+         bmi   nextcolumn
+         sta   <rowcount
+rowloop  lda   hgrlo, x
+         sta   <src+1
+         sta   <dst+1
+         lda   hgr1hi, x
+         sta   <dst+2
+         eor   #$60
+         sta   <src+2
+         clc
+         !byte $A9
+bankloop sec
+src      lda   $FDFD, y
+dst      sta   $FDFD, y
+         sta   $C003
+         sta   $C005
+         bcc   bankloop
+         sta   $C002
+         sta   $C004
+         inx
+         dec   <rowcount
+         bne   rowloop
+nextcolumn
+         dey
+         bpl   columnloop
+
+         ldy   #$27
+-        lda   <rowcounts_by_column, y
+         bmi   +
+         beq   +
+         tax
+         clc
+         adc   startrows_by_column, y
+         sta   startrows_by_column, y
+         lda   <next_rowcount, x
+         sta   <rowcounts_by_column, y
+         bne   ++                    ; always branches
++        clc
+         adc   #1
+         sta   <rowcounts_by_column, y
+++       dey
+         bpl   -
+         lda   $C000
+         bmi   exit
+         lda   <rowcounts_by_column+$27
+         cmp   #$80
+         bne   loop
+exit     rts
+
+rowcounts_by_column
+         !byte $01,$01,$00,$00,$FF,$FF,$FE,$FE
+         !byte $FD,$FD,$FC,$FC,$FB,$FB,$FA,$FA
+         !byte $F9,$F9,$F8,$F8,$F7,$F7,$F6,$F6
+         !byte $F5,$F5,$F4,$F4,$F3,$F3,$F2,$F2
+         !byte $F1,$F1,$F0,$F0,$EF,$EF,$EE,$EE
+next_rowcount
+         !byte $01,$03,$80,$05,$02,$07,$04,$09
+         !byte $06,$0B,$08,$0D,$0A,$0F,$0C,$11
+         !byte $0E,$15,$10,$FD,$FD,$12
+rowcount
+}
+end

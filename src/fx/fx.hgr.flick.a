@@ -64,7 +64,7 @@ nextcolumn
          sta   rowcounts_by_column, y
 ++       dey
          bpl   -
-         lda   #$30
+         lda   #$48
          jsr   WaitForKeyWithTimeout
          bmi   exit
          lda   rowcounts_by_column+$27
