@@ -21,13 +21,11 @@ zpcopymasks3_aux = $E0
 zpcopymasks4_aux = $E8
 zpcopymasks5_aux = $F0
 zpcopymasks6_aux = $F8
-hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
-hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+hgrlo    =     $BE00                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $BF00                 ; [$C0 bytes, main memory only]
 
 !macro RESET_HGR_CALC_BY_7 {
-         lda   $27
-         sec
-         sbc   #$1c
+         lda   hgr1hi, x
          sta   $27
          eor   #$60
          sta   $3d
@@ -49,8 +47,6 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
          !source "src/fx/macros.a"
          !source "src/fx/fx.dhgr.common.a"
 
-         +COPY_SELF_TO_AUXMEM
-
          ldx   #$60
 -        lda   copymasks1-1, x
          sta   zpcopymasks1-1, x
@@ -58,6 +54,8 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
          bne   -
 
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+
+         +COPY_SELF_TO_AUXMEM
 
          lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
          sta   counter
