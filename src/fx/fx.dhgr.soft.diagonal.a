@@ -81,7 +81,7 @@ RowLoop
          sta   dst
          +RESET_HGR_HI
 
-         tya
+         ldy   y
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
@@ -262,9 +262,7 @@ RowLoop
 @switchtomain
          sta   $C002
          sta   $C004
-         ldy   y
-         iny
-         sty   y
+         inc   y
          dex
          +LBPL RowLoop
          lda   $c000
