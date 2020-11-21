@@ -81,7 +81,7 @@ RowLoop
          sta   dst
          +RESET_HGR_HI
 
-         ldy   y
+         tya
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
