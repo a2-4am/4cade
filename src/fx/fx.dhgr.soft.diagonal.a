@@ -5,12 +5,22 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
-pass = $fb
-y = $fc
-row = $fd
-col = $fe
-counter = $ff
-
+y = $9C
+row = $9D
+col = $9E
+counter = $9F
+zpcopymasks1 = $A0
+zpcopymasks2 = $A8
+zpcopymasks3 = $B0
+zpcopymasks4 = $B8
+zpcopymasks5 = $C0
+zpcopymasks6 = $C8
+zpcopymasks1_aux = $D0
+zpcopymasks2_aux = $D8
+zpcopymasks3_aux = $E0
+zpcopymasks4_aux = $E8
+zpcopymasks5_aux = $F0
+zpcopymasks6_aux = $F8
 hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
 hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
 
@@ -23,12 +33,17 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
          sta   $3d
 }
 
+; .copymask must be in zero page and must be the exact address
+; (it is not indexed by X)
 !macro COPY_BIT_BY .src1, .dest1, .copymask {
+         lda   <.copymask
+         beq   +
          lda   (.src1),y
          eor   (.dest1),y            ; merge source and destination bits
-         and   .copymask             ; isolate the bits to replace, zero the rest
+         and   <.copymask            ; isolate the bits to replace, zero the rest
          eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (.dest1),y            ; write the result
++
 }
 
          !source "src/fx/macros.a"
@@ -36,13 +51,11 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
 
          +COPY_SELF_TO_AUXMEM
 
-         sta   $C005
-         ldx   #48
--        lda   copymasks1_aux-1, x
-         sta   copymasks1-1, x
+         ldx   #$60
+-        lda   copymasks1-1, x
+         sta   zpcopymasks1-1, x
          dex
          bne   -
-         sta   $C004
 
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
 
@@ -70,16 +83,12 @@ RowLoop
          eor   #$60
          sta   $3d
 
-         lda   #2
-         sta   pass
-PassLoop
          ldy   y
          +IS_Y_OFFSCREEN
          +LBCS @block2
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks1+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks1+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -90,9 +99,8 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block3
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks2+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks2+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -103,9 +111,8 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block4
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks3+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks3+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -116,9 +123,8 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block5
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks4+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks4+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -129,9 +135,8 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block6
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks5+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks5+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -142,9 +147,8 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block7
 
-         clc
 !for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, copymasks6+i
+         +COPY_BIT_BY $3c, $26, zpcopymasks6+i
 !if i < 7 {
          +HGR_INC_WITHIN_BLOCK
 }
@@ -155,7 +159,6 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @nextrow
 
-         clc
 !for i, 0, 7 {
          lda   ($3c),y
          sta   ($26),y
@@ -167,8 +170,92 @@ PassLoop
 @nextrow
          sta   $C003
          sta   $C005
-         dec   pass
-         +LBNE PassLoop
+
+         ldy   y
+         +IS_Y_OFFSCREEN
+         +LBCS @block2_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks1_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block2_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block3_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks2_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block3_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block4_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks3_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block4_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block5_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks4_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block5_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block6_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks5_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block6_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @block7_aux
+
+!for i, 0, 7 {
+         +COPY_BIT_BY $3c, $26, zpcopymasks6_aux+i
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+         +RESET_HGR_CALC_BY_7
+@block7_aux
+         iny
+         +IS_Y_OFFSCREEN
+         +LBCS @nextrow_aux
+
+!for i, 0, 7 {
+         lda   ($3c),y
+         sta   ($26),y
+!if i < 7 {
+         +HGR_INC_WITHIN_BLOCK
+}
+}
+@nextrow_aux
+
          sta   $C002
          sta   $C004
          ldy   y
