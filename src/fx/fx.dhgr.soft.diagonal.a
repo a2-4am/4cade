@@ -121,7 +121,7 @@ RowLoop
          +RESET_HGR_HI
 @block4
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block5
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block5
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
          +INC_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %10011001
@@ -134,7 +134,7 @@ RowLoop
          +RESET_HGR_HI
 @block5
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block6
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block6
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
          +INC_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %10011111
@@ -147,7 +147,7 @@ RowLoop
          +RESET_HGR_HI
 @block6
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block7
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block7
          +COPY_WITH_MASK_IMM_AND_INC %11100110
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %11111111
@@ -212,7 +212,7 @@ RowLoop
          +RESET_HGR_HI
 @block4_aux
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block5_aux
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block5_aux
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
          +INC_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %11001100
@@ -225,7 +225,7 @@ RowLoop
          +RESET_HGR_HI
 @block5_aux
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
          +INC_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %11111100
@@ -238,7 +238,7 @@ RowLoop
          +RESET_HGR_HI
 @block6_aux
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @block7_aux
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block7_aux
          +COPY_WITH_MASK_IMM_AND_INC %10110011
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111111

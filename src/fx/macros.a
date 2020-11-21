@@ -141,6 +141,11 @@
 ++
 }
 !macro BRANCH_IF_Y_IS_OFFSCREEN .target {
+         bmi   .target
+         cpy   #40
+         bcs   .target
+}
+!macro LONG_BRANCH_IF_Y_IS_OFFSCREEN .target {
          bpl   +
 -        jmp   .target
 +        cpy   #40
