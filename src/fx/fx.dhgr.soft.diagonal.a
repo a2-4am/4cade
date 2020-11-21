@@ -25,9 +25,9 @@ counter = $FF
 
 !macro RESET_HGR_HI {
          txa
-         sta   dst+1
-         eor   #$60
          sta   src+1
+         eor   #$60
+         sta   dst+1
 }
 
 ; note: .copymask is an immediate value, not an indexed array or a memory address
@@ -73,16 +73,19 @@ RowLoop
          sta   src
          sta   dst
          lda   hgrrowhi, x
-         sta   dst+1
          tax
-         eor   #$60
          sta   src+1
+         eor   #$60
+         sta   dst+1
 
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
-         +INC_HGR_HI_BY 3
+         adc   #12
+         sta   dst+1
+         eor   #$60
+         sta   src+1
          +COPY_WITH_MASK_IMM_AND_INC %10000001
          +COPY_WITH_MASK_IMM         %10000001
 ;        +COPY_WITH_MASK_IMM_AND_INC %00000000
@@ -282,9 +285,9 @@ hgrrowlo
          !align 255, 0
 }
 hgrrowhi
-         !byte $20,$20,$21,$21,$22,$22,$23,$23
-         !byte $20,$20,$21,$21,$22,$22,$23,$23
-         !byte $20,$20,$21,$21,$22,$22,$23,$23
+         !byte $40,$40,$41,$41,$42,$42,$43,$43
+         !byte $40,$40,$41,$41,$42,$42,$43,$43
+         !byte $40,$40,$41,$41,$42,$42,$43,$43
 
 !if * > $6700 {
          !error "Code too large, adjust COPY_TO_AUXMEM macro"
