@@ -1,10 +1,10 @@
-!macro COPY_SELF_TO_AUXMEM {
+!macro COPY_TO_AUXMEM .startpage, .pagecount {
+         ldx   #.pagecount
+         lda   #.startpage
+         sta   $FF
          lda   #$00
          sta   $FE
          tay
-         lda   #$60
-         sta   $FF
-         tax
          sta   $c005
 -        lda   ($FE),y
          sta   ($FE),y
@@ -14,4 +14,8 @@
          dex
          bne   -
          sta   $c004
+}
+
+!macro COPY_SELF_TO_AUXMEM {
+         +COPY_TO_AUXMEM $60, $60
 }

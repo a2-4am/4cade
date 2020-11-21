@@ -5,14 +5,12 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
-row = $C8
-src = $C9
-dst = $CB
-y = $CD
-col = $CE
-counter = $CF
-zphgrrowlo = $D0
-zphgrrowhi = $E8
+src = $F0
+dst = $F2
+row = $FC
+y = $FD
+col = $FE
+counter = $FF
 
 !macro INC_HGR_HI_BY .blocks {
          lda   dst+1
@@ -59,13 +57,7 @@ zphgrrowhi = $E8
          !source "src/fx/macros.a"
          !source "src/fx/fx.dhgr.common.a"
 
-         +COPY_SELF_TO_AUXMEM
-
-         ldx   #$30
--        lda   hgrrowlo-1, x
-         sta   zphgrrowlo-1, x
-         dex
-         bne   -
+         +COPY_TO_AUXMEM $60, $07
 
          lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
          sta   counter
@@ -79,10 +71,10 @@ ColLoop
          sty   y
 RowLoop
          ldx   row
-         lda   zphgrrowlo, x
+         lda   hgrrowlo, x
          sta   src
          sta   dst
-         lda   zphgrrowhi, x
+         lda   hgrrowhi, x
          sta   dst+1
          tax
          eor   #$60
@@ -279,11 +271,24 @@ RowLoop
          +LBNE ColLoop
 @exit    rts
 
+; next table can not cross a page boundary
+!if <* > $E8 {
+         !align 255, 0
+}
 hgrrowlo
          !byte $00,$80,$00,$80,$00,$80,$00,$80
          !byte $28,$A8,$28,$A8,$28,$A8,$28,$A8
          !byte $50,$D0,$50,$D0,$50,$D0,$50,$D0
+
+; next table can not cross a page boundary
+!if <* > $E8 {
+         !align 255, 0
+}
 hgrrowhi
          !byte $20,$20,$21,$21,$22,$22,$23,$23
          !byte $20,$20,$21,$21,$22,$22,$23,$23
          !byte $20,$20,$21,$21,$22,$22,$23,$23
+
+!if * > $6700 {
+         !error "Code too large, adjust COPY_TO_AUXMEM macro"
+}
