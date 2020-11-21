@@ -131,7 +131,7 @@
          sta   CopyMaskAddr+1
 }
 
-; must set N flag based on Y immediately before using this macro
+; must set N flag based on Y immediately before using these macros
 ; e.g. LDY, INY, DEY, TYA
 !macro IS_Y_OFFSCREEN {
          bpl   +
@@ -139,6 +139,12 @@
          bcs   ++
 +        cpy   #40
 ++
+}
+!macro BRANCH_IF_Y_IS_OFFSCREEN .target {
+         bpl   +
+-        jmp   .target
++        cpy   #40
+         bcs   -
 }
 
 _FX_MACROS_=*
