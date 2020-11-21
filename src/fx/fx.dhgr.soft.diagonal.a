@@ -5,7 +5,7 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
-lastdsthi = $C8
+row = $C8
 src = $C9
 dst = $CB
 y = $CD
@@ -27,7 +27,7 @@ zphgrrowhi = $E8
 }
 
 !macro RESET_HGR_HI {
-         lda   lastdsthi
+         txa
          sta   dst+1
          eor   #$60
          sta   src+1
@@ -73,16 +73,18 @@ zphgrrowhi = $E8
          lda   #39
          sta   col
 ColLoop
-         ldx   #23
+         lda   #23
+         sta   row
          ldy   col
          sty   y
 RowLoop
+         ldx   row
          lda   zphgrrowlo, x
          sta   src
          sta   dst
          lda   zphgrrowhi, x
          sta   dst+1
-         sta   lastdsthi
+         tax
          eor   #$60
          sta   src+1
 
@@ -268,7 +270,7 @@ RowLoop
          sta   $C002
          sta   $C004
          inc   y
-         dex
+         dec   row
          +LBPL RowLoop
          lda   $c000
          bmi   @exit
