@@ -5,42 +5,54 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
-y = $6D
-col = $6E
-counter = $6F
-zphgrrowlo = $70
-zphgrrowhi = $88
-zpcopymasks1 = $A0
-zpcopymasks2 = $A8
-zpcopymasks3 = $B0
-zpcopymasks4 = $B8
-zpcopymasks5 = $C0
-zpcopymasks6 = $C8
-zpcopymasks1_aux = $D0
-zpcopymasks2_aux = $D8
-zpcopymasks3_aux = $E0
-zpcopymasks4_aux = $E8
-zpcopymasks5_aux = $F0
-zpcopymasks6_aux = $F8
+src = $C9
+dst = $CB
+y = $CD
+col = $CE
+counter = $CF
+zphgrrowlo = $D0
+zphgrrowhi = $E8
 
-!macro RESET_HGR_CALC_BY_7 {
-         lda   zphgrrowhi, x
-         sta   $27
+!macro INC_HGR_HI_BY .blocks {
+         lda   dst+1
+         adc   #(.blocks*4)
+         sta   dst+1
          eor   #$60
-         sta   $3d
+         sta   src+1
 }
 
-; .copymask must be in zero page and must be the exact address
-; (it is not indexed by X)
-!macro COPY_BIT_BY .src1, .dest1, .copymask {
-         lda   <.copymask
-         beq   +
-         lda   (.src1),y
-         eor   (.dest1),y            ; merge source and destination bits
-         and   <.copymask            ; isolate the bits to replace, zero the rest
-         eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
-         sta   (.dest1),y            ; write the result
-+
+!macro INC_HGR_HI {
+         +INC_HGR_HI_BY 1
+}
+
+!macro RESET_HGR_HI {
+         lda   zphgrrowhi, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+}
+
+; note: .copymask is an immediate value, not an indexed array or a memory address
+!macro COPY_WITH_MASK_IMM .copymask {
+         lda   (src), y
+         eor   (dst), y              ; merge source and destination bits
+         and   #.copymask            ; isolate the bits to replace, zero the rest
+         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst), y              ; write the result
+}
+!macro COPY_WITH_MASK_IMM_AND_INC .copymask {
+         +COPY_WITH_MASK_IMM .copymask
+         +INC_HGR_HI
+}
+
+!macro COPY_BYTE {
+         lda   (src), y
+         sta   (dst), y
+}
+
+!macro COPY_BYTE_AND_INC {
+         +COPY_BYTE
+         +INC_HGR_HI
 }
 
          !source "src/fx/macros.a"
@@ -48,7 +60,7 @@ zpcopymasks6_aux = $F8
 
          +COPY_SELF_TO_AUXMEM
 
-         ldx   #$90
+         ldx   #$30
 -        lda   hgrrowlo-1, x
          sta   zphgrrowlo-1, x
          dex
@@ -65,172 +77,189 @@ ColLoop
          sty   y
 RowLoop
          lda   zphgrrowlo, x
-         sta   $26
-         sta   $3c
-         lda   zphgrrowhi, x
-         sta   $27
-         eor   #$60
-         sta   $3d
+         sta   src
+         sta   dst
+         +RESET_HGR_HI
 
          ldy   y
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks1+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 3
+         +COPY_WITH_MASK_IMM_AND_INC %10000001
+         +COPY_WITH_MASK_IMM_AND_INC %10000001
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block2
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block3
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks2+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 2
+         +COPY_WITH_MASK_IMM_AND_INC %10000110
+         +COPY_WITH_MASK_IMM_AND_INC %10000001
+         +COPY_WITH_MASK_IMM_AND_INC %10000001
+         +COPY_WITH_MASK_IMM_AND_INC %10010110
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block3
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block4
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks3+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 2
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+;        +COPY_WITH_MASK_IMM_AND_INC %10000000
+;        +COPY_WITH_MASK_IMM         %10000000
+         +RESET_HGR_HI
 @block4
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block5
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks4+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI
+         +COPY_WITH_MASK_IMM_AND_INC %10011001
+         +COPY_WITH_MASK_IMM_AND_INC %10000001
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+         +COPY_WITH_MASK_IMM_AND_INC %10000111
+         +COPY_WITH_MASK_IMM_AND_INC %10011001
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block5
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block6
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks5+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block6
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block7
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks6+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+         +COPY_WITH_MASK_IMM_AND_INC %11100110
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %11111111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %11111111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM_AND_INC %10011111
+         +COPY_WITH_MASK_IMM         %11100110
+         +RESET_HGR_HI
 @block7
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @nextrow
-
-!for i, 0, 7 {
-         lda   ($3c),y
-         sta   ($26),y
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
-@nextrow
+         +BRANCH_IF_Y_IS_OFFSCREEN @switchtoaux
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE
+         +RESET_HGR_HI
+@switchtoaux
          sta   $C003
          sta   $C005
-
          ldy   y
          +BRANCH_IF_Y_IS_OFFSCREEN @block2_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks1_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 3
+         +COPY_WITH_MASK_IMM_AND_INC %11000000
+         +COPY_WITH_MASK_IMM_AND_INC %11000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block2_aux
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block3_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks2_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 2
+         +COPY_WITH_MASK_IMM_AND_INC %10110000
+         +COPY_WITH_MASK_IMM_AND_INC %11000000
+         +COPY_WITH_MASK_IMM_AND_INC %11000000
+         +COPY_WITH_MASK_IMM_AND_INC %10110000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block3_aux
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block4_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks3_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI_BY 2
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block4_aux
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block5_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks4_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI
+         +COPY_WITH_MASK_IMM_AND_INC %11001100
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11110000
+         +COPY_WITH_MASK_IMM_AND_INC %11001100
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block5_aux
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks5_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+;        +COPY_WITH_MASK_IMM_AND_INC %00000000
+         +INC_HGR_HI
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+;        +COPY_WITH_MASK_IMM         %00000000
+         +RESET_HGR_HI
 @block6_aux
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block7_aux
-
-!for i, 0, 7 {
-         +COPY_BIT_BY $3c, $26, zpcopymasks6_aux+i
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-         +RESET_HGR_CALC_BY_7
+         +COPY_WITH_MASK_IMM_AND_INC %10110011
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111111
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111111
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM_AND_INC %11111100
+         +COPY_WITH_MASK_IMM         %10110011
+         +RESET_HGR_HI
 @block7_aux
          iny
-         +BRANCH_IF_Y_IS_OFFSCREEN @nextrow_aux
-
-!for i, 0, 7 {
-         lda   ($3c),y
-         sta   ($26),y
-!if i < 7 {
-         +HGR_INC_WITHIN_BLOCK
-}
-}
-@nextrow_aux
-
+         +BRANCH_IF_Y_IS_OFFSCREEN @switchtomain
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE_AND_INC
+         +COPY_BYTE
+@switchtomain
          sta   $C002
          sta   $C004
          ldy   y
@@ -253,114 +282,3 @@ hgrrowhi
          !byte $20,$20,$21,$21,$22,$22,$23,$23
          !byte $20,$20,$21,$21,$22,$22,$23,$23
          !byte $20,$20,$21,$21,$22,$22,$23,$23
-;1GFEDCBA ->
-;1GGFFEED (main) +
-;1DCCBBAA (aux)
-copymasks1
-         !byte %00000000
-         !byte %00000000
-         !byte %00000000
-         !byte %10000001
-         !byte %10000001
-         !byte %00000000
-         !byte %00000000
-         !byte %00000000
-copymasks2
-         !byte %00000000
-         !byte %00000000
-         !byte %10000110
-         !byte %10000001
-         !byte %10000001
-         !byte %10010110
-         !byte %00000000
-         !byte %00000000
-copymasks3
-         !byte %00000000
-         !byte %00000000
-         !byte %10000111
-         !byte %10000111
-         !byte %10000111
-         !byte %10000111
-         !byte %10000000
-         !byte %10000000
-copymasks4
-         !byte %00000000
-         !byte %10011001
-         !byte %10000001
-         !byte %10011111
-         !byte %10000111
-         !byte %10000111
-         !byte %10011001
-         !byte %00000000
-copymasks5
-         !byte %00000000
-         !byte %10011111
-         !byte %10011111
-         !byte %10011111
-         !byte %10011111
-         !byte %10011111
-         !byte %10011111
-         !byte %00000000
-copymasks6
-         !byte %11100110
-         !byte %10011111
-         !byte %11111111
-         !byte %10011111
-         !byte %11111111
-         !byte %10011111
-         !byte %10011111
-         !byte %11100110
-copymasks1_aux
-         !byte %00000000
-         !byte %00000000
-         !byte %00000000
-         !byte %11000000
-         !byte %11000000
-         !byte %00000000
-         !byte %00000000
-         !byte %00000000
-copymasks2_aux
-         !byte %00000000
-         !byte %00000000
-         !byte %10110000
-         !byte %11000000
-         !byte %11000000
-         !byte %10110000
-         !byte %00000000
-         !byte %00000000
-copymasks3_aux
-         !byte %00000000
-         !byte %00000000
-         !byte %11110000
-         !byte %11110000
-         !byte %11110000
-         !byte %11110000
-         !byte %00000000
-         !byte %00000000
-copymasks4_aux
-         !byte %00000000
-         !byte %11001100
-         !byte %11110000
-         !byte %11111100
-         !byte %11110000
-         !byte %11110000
-         !byte %11001100
-         !byte %00000000
-copymasks5_aux
-         !byte %00000000
-         !byte %11111100
-         !byte %11111100
-         !byte %11111100
-         !byte %11111100
-         !byte %11111100
-         !byte %11111100
-         !byte %00000000
-copymasks6_aux
-         !byte %10110011
-         !byte %11111100
-         !byte %11111111
-         !byte %11111100
-         !byte %11111111
-         !byte %11111100
-         !byte %11111100
-         !byte %10110011
