@@ -5,6 +5,7 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
+lastdsthi = $C8
 src = $C9
 dst = $CB
 y = $CD
@@ -26,7 +27,7 @@ zphgrrowhi = $E8
 }
 
 !macro RESET_HGR_HI {
-         lda   zphgrrowhi, x
+         lda   lastdsthi
          sta   dst+1
          eor   #$60
          sta   src+1
@@ -79,7 +80,11 @@ RowLoop
          lda   zphgrrowlo, x
          sta   src
          sta   dst
-         +RESET_HGR_HI
+         lda   zphgrrowhi, x
+         sta   dst+1
+         sta   lastdsthi
+         eor   #$60
+         sta   src+1
 
          ldy   y
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
