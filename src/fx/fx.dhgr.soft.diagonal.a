@@ -23,6 +23,14 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
          sta   $3d
 }
 
+!macro COPY_BIT_BY .src1, .dest1, .copymask {
+         lda   (.src1),y
+         eor   (.dest1),y            ; merge source and destination bits
+         and   .copymask             ; isolate the bits to replace, zero the rest
+         eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (.dest1),y            ; write the result
+}
+
          !source "src/fx/macros.a"
          !source "src/fx/fx.dhgr.common.a"
 
@@ -69,12 +77,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block2
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks1
+         +COPY_BIT_BY $3c, $26, copymasks1+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
@@ -84,12 +90,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block3
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks2
+         +COPY_BIT_BY $3c, $26, copymasks2+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
@@ -99,12 +103,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block4
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks3
+         +COPY_BIT_BY $3c, $26, copymasks3+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
@@ -114,12 +116,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block5
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks4
+         +COPY_BIT_BY $3c, $26, copymasks4+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
@@ -129,12 +129,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block6
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks5
+         +COPY_BIT_BY $3c, $26, copymasks5+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
@@ -144,12 +142,10 @@ PassLoop
          +IS_Y_OFFSCREEN
          +LBCS @block7
 
-         ldx   #7
          clc
 !for i, 0, 7 {
-         +COPY_BIT $3c, $26, copymasks6
+         +COPY_BIT_BY $3c, $26, copymasks6+i
 !if i < 7 {
-         dex
          +HGR_INC_WITHIN_BLOCK
 }
 }
