@@ -48,18 +48,28 @@ counter = $FF
          !source "src/fx/macros.a"
          !source "src/fx/fx.dhgr.common.a"
 
+exit=*+3
          +COPY_TO_AUXMEM $60, $07
 
-         lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
+         lda   #(40+24+7) ; columns + rows + blocks per row
          sta   counter
 
-         lda   #39
+         lda   #40
          sta   col
+
 ColLoop
-         lda   #23
+         lda   $c000
+         bmi   exit
+         dec   col
+         dec   counter
+         beq   exit
+
+         lda   #24
          sta   row
          ldy   col
 RowLoop
+         dec   row
+         bmi   ColLoop
          ldx   row
          lda   hgrrowlo, x
          sta   src
@@ -189,14 +199,7 @@ RowLoop
          sta   $C002
          sta   $C004
          iny
-         dec   row
-         +LBPL RowLoop
-         lda   $c000
-         bmi   @exit
-         dec   col
-         dec   counter
-         +LBNE ColLoop
-@exit    rts
+         jmp   RowLoop
 
 ; next table can not cross a page boundary
 !if <* > $E8 {
