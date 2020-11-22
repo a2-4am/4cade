@@ -5,7 +5,7 @@
 !to "build/FX/DHGR.FIZZLE2BIT",plain
 *=$6000
 
-addrs     = $6100                    ; [256 bytes, page-aligned, does not need to be duplicated to auxmem]
+addrs     = $6100                    ; [256 bytes, page-aligned, duplicated in auxmem]
 copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in auxmem]
 
          ldx   #(end-start)          ; copy LFSR code to zero page
@@ -26,11 +26,17 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
          asl
          bne   --
          clc
---       ldy   #$20                  ; create address lookup table (main memory only)
+--       ldy   #$20                  ; create identical address tables in main and aux memory
          tya
 -        sta   addrs, x
+         sta   $C005
+         sta   addrs, x
+         sta   $C004
          eor   #$80
          sta   addrs+1, x
+         sta   $C005
+         sta   addrs+1, x
+         sta   $C004
          eor   #$80
          adc   #1
          inx
@@ -39,21 +45,32 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
          bne   -
          txa
          bne   --
-         jmp   loop                  ; exit via LFSR code on zero page
+         jmp   copyaux              ; exit via LFSR code on zero page
 
 start
 !pseudopc 0 {
-; in: X,Y=0
          !byte %00000011
+copyaux  sta   $C003
+         sta   $C005
+         ldx   #$20
+         ldy   #$00
+a        lda   $4000, y
+b        sta   $A000, y
+         iny
+         bne   a
+         inc   a+2
+         inc   b+2
+         dex
+         bne   a
+; X,Y=0 on entry to LFSR
 loop     txa
 loop1    eor   #$B4                  ; LFSR form 0xB400 with period 65535
          tax                         ; X is LFSR high byte, Y is LFSR low byte
 loop2    lda   addrs, x              ; which means X is the index into the base address lookup table
-         bpl   +                     ; and Y is the offset from the base address
-         and   #$7F                  ; which works out well with the available addressing modes
-         sta   $C003                 ; (half the addresses have their high bit set, which we strip and
-         sta   $C005                 ;  use as an indicator to switch to auxmem)
-+        sta   <dst+2
+         bmi   aux                   ; and Y is the offset from the base address
+         sta   $C002
+         sta   $C004
+         sta   <dst+2
          eor   #$60
          sta   <src+2
          lda   (<dst+1), y
@@ -61,8 +78,6 @@ src      eor   $FD00, y              ; merge source and destination bits
          and   copymasks, x          ; isolate the bits to replace, zero the rest
          eor   (<dst+1), y           ; unmerge source and destination bits, leaves 'to keep' destination bits intact
 dst      sta   $FD00, y              ; write the result
-         sta   $C002
-         sta   $C004
          txa
          lsr
          tax
@@ -75,8 +90,32 @@ dst      sta   $FD00, y              ; write the result
          bmi   exit
          txa
          bne   loop1
-         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
+exit     lda   $4000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
-exit     rts
+         rts
+
+aux      sta   $C003
+         sta   $C005
+         sta   <auxsrc+2
+         eor   #$80
+         sta   <auxdst+2
+         lda   (<auxdst+1), y
+auxsrc   eor   $FD00, y
+         and   copymasks, x
+         eor   (<auxdst+1), y
+auxdst   sta   $FD00, y
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         lda   $C000
+         bmi   exit
+         txa
+         bne   loop1
+         beq   exit
 }
 end
