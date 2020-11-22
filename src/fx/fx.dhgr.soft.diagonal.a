@@ -30,6 +30,14 @@ counter = $FF
          +SET_HGR_HI
 }
 
+!macro RESET_HGR_HI_AND_INC_BY .blocks {
+         txa
+         adc   #(.blocks*4)
+         sta   src+1
+         eor   #$60
+         sta   dst+1
+}
+
 ; note: .copymask is an immediate value, not an indexed array or a memory address
 !macro COPY_WITH_MASK_IMM .copymask {
          lda   (src), y
@@ -82,50 +90,46 @@ RowLoop
          +INC_HGR_HI_BY 3
          +COPY_WITH_MASK_IMM_AND_INC %10000001
          +COPY_WITH_MASK_IMM         %10000001
-         +RESET_HGR_HI
 @block2
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block3
-         +INC_HGR_HI_BY 2
+         +RESET_HGR_HI_AND_INC_BY 2
          +COPY_WITH_MASK_IMM_AND_INC %10000110
          +COPY_WITH_MASK_IMM_AND_INC %10000001
          +COPY_WITH_MASK_IMM_AND_INC %10000001
          +COPY_WITH_MASK_IMM         %10010110
-         +RESET_HGR_HI
 @block3
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block4
-         +INC_HGR_HI_BY 2
+         +RESET_HGR_HI_AND_INC_BY 2
          +COPY_WITH_MASK_IMM_AND_INC %10000111
          +COPY_WITH_MASK_IMM_AND_INC %10000111
          +COPY_WITH_MASK_IMM_AND_INC %10000111
          +COPY_WITH_MASK_IMM         %10000111
-         +RESET_HGR_HI
 @block4
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block5
-         +INC_HGR_HI_BY 1
+         +RESET_HGR_HI_AND_INC_BY 1
          +COPY_WITH_MASK_IMM_AND_INC %10011001
          +COPY_WITH_MASK_IMM_AND_INC %10000001
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10000111
          +COPY_WITH_MASK_IMM_AND_INC %10000111
          +COPY_WITH_MASK_IMM         %10011001
-         +RESET_HGR_HI
 @block5
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @block6
-         +INC_HGR_HI_BY 1
+         +RESET_HGR_HI_AND_INC_BY 1
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM         %10011111
-         +RESET_HGR_HI
 @block6
          iny
          +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block7
+         +RESET_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %11100110
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_BYTE_AND_INC
@@ -134,10 +138,10 @@ RowLoop
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM_AND_INC %10011111
          +COPY_WITH_MASK_IMM         %11100110
-         +RESET_HGR_HI
 @block7
          iny
          +BRANCH_IF_Y_IS_OFFSCREEN @switchtoaux
+         +RESET_HGR_HI
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
@@ -146,11 +150,11 @@ RowLoop
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
          +COPY_BYTE
-         +RESET_HGR_HI
 @switchtoaux
          sta   $C003
          sta   $C005
          +BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
+         +RESET_HGR_HI
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
@@ -159,10 +163,10 @@ RowLoop
          +COPY_BYTE_AND_INC
          +COPY_BYTE_AND_INC
          +COPY_BYTE
-         +RESET_HGR_HI
 @block6_aux
          dey
          +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block5_aux
+         +RESET_HGR_HI
          +COPY_WITH_MASK_IMM_AND_INC %10110011
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_BYTE_AND_INC
@@ -171,51 +175,46 @@ RowLoop
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM         %10110011
-         +RESET_HGR_HI
 @block5_aux
          dey
          +BRANCH_IF_Y_IS_OFFSCREEN @block4_aux
-         +INC_HGR_HI_BY 1
+         +RESET_HGR_HI_AND_INC_BY 1
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM         %11111100
-         +RESET_HGR_HI
 @block4_aux
          dey
          +BRANCH_IF_Y_IS_OFFSCREEN @block3_aux
-         +INC_HGR_HI_BY 1
+         +RESET_HGR_HI_AND_INC_BY 1
          +COPY_WITH_MASK_IMM_AND_INC %11001100
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM_AND_INC %11111100
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM         %11001100
-         +RESET_HGR_HI
 @block3_aux
          dey
          +BRANCH_IF_Y_IS_OFFSCREEN @block2_aux
-         +INC_HGR_HI_BY 2
+         +RESET_HGR_HI_AND_INC_BY 2
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM_AND_INC %11110000
          +COPY_WITH_MASK_IMM         %11110000
-         +RESET_HGR_HI
 @block2_aux
          dey
          +BRANCH_IF_Y_IS_OFFSCREEN @block1_aux
-         +INC_HGR_HI_BY 2
+         +RESET_HGR_HI_AND_INC_BY 2
          +COPY_WITH_MASK_IMM_AND_INC %10110000
          +COPY_WITH_MASK_IMM_AND_INC %11000000
          +COPY_WITH_MASK_IMM_AND_INC %11000000
          +COPY_WITH_MASK_IMM         %10110000
-         +RESET_HGR_HI
 @block1_aux
          dey
          +BRANCH_IF_Y_IS_OFFSCREEN @switchtomain
-         +INC_HGR_HI_BY 3
+         +RESET_HGR_HI_AND_INC_BY 3
          +COPY_WITH_MASK_IMM_AND_INC %11000000
          +COPY_WITH_MASK_IMM         %11000000
 @switchtomain
