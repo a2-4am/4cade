@@ -6,13 +6,14 @@
 
 !macro BUILD_SPARSE_BITMASKS_DHGR .copymasks, .mirror_copymasks {
          ; build sparse lookup tables for bitmasks
+         ldx   #$00
          lda   #%00000000
-         sta   .copymasks
-         sta   .mirror_copymasks+$C0
-         sta   .copymasks+$20
-         sta   .mirror_copymasks+$A0
-         sta   .copymasks+$40
-         sta   .mirror_copymasks+$80
+-        sta   .copymasks, x
+         sta   $C005
+         sta   .copymasks, x
+         sta   $C004
+         inx
+         bne   -
 
          lda   #%10000001
          sta   .copymasks+$60
@@ -47,14 +48,6 @@
          lda   #%11000000
          sta   .copymasks+$60
          sta   .mirror_copymasks+$60
-
-         lda   #%00000000
-         sta   .copymasks+$80
-         sta   .mirror_copymasks+$40
-         sta   .copymasks+$A0
-         sta   .mirror_copymasks+$20
-         sta   .copymasks+$C0
-         sta   .mirror_copymasks
 
          sta   $C004
 }
