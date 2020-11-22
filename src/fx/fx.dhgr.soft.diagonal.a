@@ -5,7 +5,6 @@
 !to "build/FX/DHGR.SOFT.DIAG",plain
 *=$6000
 
-y   = $EF
 src = $F0
 dst = $F2
 row = $FD
@@ -49,36 +48,7 @@ counter = $FF
          !source "src/fx/macros.a"
          !source "src/fx/fx.dhgr.common.a"
 
-         lda   #<switchtoaux
-         sta   jmpa+1
-         sta   jmpb+1
-         sta   jmpc+1
-         sta   jmpd+1
-         sta   jmpe+1
-         sta   jmpf+1
-         lda   #>switchtoaux
-         sta   jmpa+2
-         sta   jmpb+2
-         sta   jmpc+2
-         sta   jmpd+2
-         sta   jmpe+2
-         sta   jmpf+2
-         lda   #<switchtomain
-         sta   jmpg+1
-         sta   jmph+1
-         sta   jmpi+1
-         sta   jmpj+1
-         sta   jmpk+1
-         sta   jmpl+1
-         lda   #>switchtomain
-         sta   jmpg+2
-         sta   jmph+2
-         sta   jmpi+2
-         sta   jmpj+2
-         sta   jmpk+2
-         sta   jmpl+2
-
-         +COPY_TO_AUXMEM $60, $08
+         +COPY_TO_AUXMEM $60, $07
 
          lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
          sta   counter
@@ -89,7 +59,6 @@ ColLoop
          lda   #23
          sta   row
          ldy   col
-         sty   y
 RowLoop
          ldx   row
          lda   hgrrowlo, x
@@ -97,67 +66,46 @@ RowLoop
          sta   dst
          lda   hgrrowhi, x
          tax                         ; X = high byte of src throughout RowLoop
-         ldy   y
-         cpy   #40
-         bcc   +
-jmpa     jmp   switchtoaux
-+
+
+         +BRANCH_IF_Y_IS_OFFSCREEN @block2
          +SET_HGR_HI_WITH_OFFSET 3
          +COPY_WITH_MASK %10000001
          +COPY_WITH_OFFSET_AND_MASK 4, %10000001
-block2
+@block2
          iny
-         cpy   #40
-         bcc   +
-jmpb     jmp   switchtoaux
-+
+         +BRANCH_IF_Y_IS_OFFSCREEN @block3
          +COPY_WITH_OFFSET_AND_MASK 2, %10000110
          +COPY_WITH_OFFSET_AND_MASK 3, %10000001
          +COPY_WITH_OFFSET_AND_MASK 4, %10000001
          +COPY_WITH_OFFSET_AND_MASK 5, %10010110
-block3
+@block3
          iny
-         cpy   #40
-         bcc   +
-jmpc     jmp   switchtoaux
-+
+         +BRANCH_IF_Y_IS_OFFSCREEN @block4
          +COPY_WITH_OFFSET_AND_MASK 2, %10000111
          +COPY_WITH_OFFSET_AND_MASK 3, %10000111
          +COPY_WITH_OFFSET_AND_MASK 4, %10000111
          +COPY_WITH_OFFSET_AND_MASK 5, %10000111
-block4
+@block4
          iny
-         cpy   #40
-         bcc   +
-jmpd     jmp   switchtoaux
-+
-         +LONG_BRANCH_IF_Y_IS_OFFSCREEN switchtoaux
+         +BRANCH_IF_Y_IS_OFFSCREEN @block5
          +COPY_WITH_OFFSET_AND_MASK 1, %10011001
          +COPY_WITH_OFFSET_AND_MASK 2, %10000001
          +COPY_WITH_OFFSET_AND_MASK 3, %10011111
          +COPY_WITH_OFFSET_AND_MASK 4, %10000111
          +COPY_WITH_OFFSET_AND_MASK 5, %10000111
          +COPY_WITH_OFFSET_AND_MASK 6, %10011001
-block5
+@block5
          iny
-         cpy   #40
-         bcc   +
-jmpe     jmp   switchtoaux
-+
-         +LONG_BRANCH_IF_Y_IS_OFFSCREEN switchtoaux
+         +BRANCH_IF_Y_IS_OFFSCREEN @block6
          +COPY_WITH_OFFSET_AND_MASK 1, %10011111
          +COPY_WITH_OFFSET_AND_MASK 2, %10011111
          +COPY_WITH_OFFSET_AND_MASK 3, %10011111
          +COPY_WITH_OFFSET_AND_MASK 4, %10011111
          +COPY_WITH_OFFSET_AND_MASK 5, %10011111
          +COPY_WITH_OFFSET_AND_MASK 6, %10011111
-block6
+@block6
          iny
-         cpy   #40
-         bcc   +
-jmpf     jmp   switchtoaux
-+
-         +LONG_BRANCH_IF_Y_IS_OFFSCREEN switchtoaux
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block7
          +COPY_WITH_OFFSET_AND_MASK 0, %11100110
          +COPY_WITH_OFFSET_AND_MASK 1, %10011111
          +COPY_BYTE                 2
@@ -166,10 +114,9 @@ jmpf     jmp   switchtoaux
          +COPY_WITH_OFFSET_AND_MASK 5, %10011111
          +COPY_WITH_OFFSET_AND_MASK 6, %10011111
          +COPY_WITH_OFFSET_AND_MASK 7, %11100110
-block7
+@block7
          iny
-         cpy   #40
-         bcs   switchtoaux
+         +BRANCH_IF_Y_IS_OFFSCREEN @switchtoaux
          +COPY_BYTE 0
          +COPY_BYTE 1
          +COPY_BYTE 2
@@ -178,65 +125,21 @@ block7
          +COPY_BYTE 5
          +COPY_BYTE 6
          +COPY_BYTE 7
-switchtoaux
+@switchtoaux
          sta   $C003
          sta   $C005
-         ldy   y
-         cpy   #40
-         bcc   +
-jmpg     jmp   switchtomain
-         +COPY_WITH_OFFSET_AND_MASK 3, %11000000
-         +COPY_WITH_OFFSET_AND_MASK 4, %11000000
-block2_aux
-         iny
-         cpy   #40
-         bcc   +
-jmph     jmp   switchtomain
-+
-         +COPY_WITH_OFFSET_AND_MASK 2, %10110000
-         +COPY_WITH_OFFSET_AND_MASK 3, %11000000
-         +COPY_WITH_OFFSET_AND_MASK 4, %11000000
-         +COPY_WITH_OFFSET_AND_MASK 5, %10110000
-block3_aux
-         iny
-         cpy   #40
-         bcc   +
-jmpi     jmp   switchtomain
-+
-         +COPY_WITH_OFFSET_AND_MASK 2, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 3, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 4, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 5, %11110000
-block4_aux
-         iny
-         cpy   #40
-         bcc   +
-jmpj     jmp   switchtomain
-+
-         +COPY_WITH_OFFSET_AND_MASK 1, %11001100
-         +COPY_WITH_OFFSET_AND_MASK 2, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 3, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 4, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 5, %11110000
-         +COPY_WITH_OFFSET_AND_MASK 6, %11001100
-block5_aux
-         iny
-         cpy   #40
-         bcc   +
-jmpk     jmp   switchtomain
-+
-         +COPY_WITH_OFFSET_AND_MASK 1, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 2, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 3, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 4, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 5, %11111100
-         +COPY_WITH_OFFSET_AND_MASK 6, %11111100
-block6_aux
-         iny
-         cpy   #40
-         bcc   +
-jmpl     jmp   switchtomain
-+
+         +BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
+         +COPY_BYTE 0
+         +COPY_BYTE 1
+         +COPY_BYTE 2
+         +COPY_BYTE 3
+         +COPY_BYTE 4
+         +COPY_BYTE 5
+         +COPY_BYTE 6
+         +COPY_BYTE 7
+@block6_aux
+         dey
+         +LONG_BRANCH_IF_Y_IS_OFFSCREEN @block5_aux
          +COPY_WITH_OFFSET_AND_MASK 0, %10110011
          +COPY_WITH_OFFSET_AND_MASK 1, %11111100
          +COPY_BYTE                 2
@@ -245,104 +148,55 @@ jmpl     jmp   switchtomain
          +COPY_WITH_OFFSET_AND_MASK 5, %11111100
          +COPY_WITH_OFFSET_AND_MASK 6, %11111100
          +COPY_WITH_OFFSET_AND_MASK 7, %10110011
-block7_aux
-         cpy   #40
-         bcs   switchtomain
-         +COPY_BYTE 0
-         +COPY_BYTE 1
-         +COPY_BYTE 2
-         +COPY_BYTE 3
-         +COPY_BYTE 4
-         +COPY_BYTE 5
-         +COPY_BYTE 6
-         +COPY_BYTE 7
-switchtomain
+@block5_aux
+         dey
+         +BRANCH_IF_Y_IS_OFFSCREEN @block4_aux
+         +COPY_WITH_OFFSET_AND_MASK 1, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 2, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 3, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 4, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 5, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 6, %11111100
+@block4_aux
+         dey
+         +BRANCH_IF_Y_IS_OFFSCREEN @block3_aux
+         +COPY_WITH_OFFSET_AND_MASK 1, %11001100
+         +COPY_WITH_OFFSET_AND_MASK 2, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 3, %11111100
+         +COPY_WITH_OFFSET_AND_MASK 4, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 5, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 6, %11001100
+@block3_aux
+         dey
+         +BRANCH_IF_Y_IS_OFFSCREEN @block2_aux
+         +COPY_WITH_OFFSET_AND_MASK 2, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 3, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 4, %11110000
+         +COPY_WITH_OFFSET_AND_MASK 5, %11110000
+@block2_aux
+         dey
+         +BRANCH_IF_Y_IS_OFFSCREEN @block1_aux
+         +COPY_WITH_OFFSET_AND_MASK 2, %10110000
+         +COPY_WITH_OFFSET_AND_MASK 3, %11000000
+         +COPY_WITH_OFFSET_AND_MASK 4, %11000000
+         +COPY_WITH_OFFSET_AND_MASK 5, %10110000
+@block1_aux
+         dey
+         +BRANCH_IF_Y_IS_OFFSCREEN @switchtomain
+         +COPY_WITH_OFFSET_AND_MASK 3, %11000000
+         +COPY_WITH_OFFSET_AND_MASK 4, %11000000
+@switchtomain
          sta   $C002
          sta   $C004
-         inc   y
+         iny
          dec   row
          +LBPL RowLoop
+         lda   $c000
+         bmi   @exit
          dec   col
-         bne   +
-         clc
-         !byte $A9
--        sec
-         lda   #<block2
-         sta   jmpa+1
-         lda   #<block3
-         sta   jmpb+1
-         lda   #<block4
-         sta   jmpc+1
-         lda   #<block5
-         sta   jmpd+1
-         lda   #<block6
-         sta   jmpe+1
-         lda   #<block7
-         sta   jmpf+1
-         lda   #>block2
-         sta   jmpa+2
-!if >block3 != >block2 {
-         lda   #>block3
-}
-         sta   jmpb+2
-!if >block4 != >block3 {
-         lda   #>block4
-}
-         sta   jmpc+2
-!if >block5 != >block4 {
-         lda   #>block5
-}
-         sta   jmpd+2
-!if >block6 != >block5 {
-         lda   #>block6
-}
-         sta   jmpe+2
-!if >block7 != >block6 {
-         lda   #>block7
-}
-         sta   jmpf+2
-         lda   #<block2_aux
-         sta   jmpg+1
-         lda   #<block3_aux
-         sta   jmph+1
-         lda   #<block4_aux
-         sta   jmpi+1
-         lda   #<block5_aux
-         sta   jmpj+1
-         lda   #<block6_aux
-         sta   jmpk+1
-         lda   #<block7_aux
-         sta   jmpl+1
-         lda   #>block2_aux
-         sta   jmpg+2
-!if >block3_aux != block2_aux {
-         lda   #>block3_aux
-}
-         sta   jmph+2
-!if >block4_aux != block3_aux {
-         lda   #>block4_aux
-}
-         sta   jmpi+2
-!if >block5_aux != block4_aux {
-         lda   #>block5_aux
-}
-         sta   jmpj+2
-!if >block6_aux != block5_aux {
-         lda   #>block6_aux
-}
-         sta   jmpk+2
-!if >block7_aux != block6_aux {
-         lda   #>block7_aux
-}
-         sta   jmpl+2
-         sta   $C005
-         bcc   -
-         sta   $C004
-+        lda   $c000
-         bmi   exit
          dec   counter
          +LBNE ColLoop
-exit     rts
+@exit    rts
 
 ; next table can not cross a page boundary
 !if <* > $E8 {
@@ -362,6 +216,6 @@ hgrrowhi
          !byte $40,$40,$41,$41,$42,$42,$43,$43
          !byte $40,$40,$41,$41,$42,$42,$43,$43
 
-!if * > $6800 {
+!if * > $6700 {
          !error "Code too large, adjust COPY_TO_AUXMEM macro"
 }
