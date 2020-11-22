@@ -1,23 +1,17 @@
 ;license:MIT
-;(c) 2018-2020 by 4am/qkumba
+;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/DHGR.RIPPLE",plain
 *=$6000
 
-         !source "src/fx/fx.dhgr.precomputed.a"
+         !source "src/fx/fx.dhgr.precomputed.1bit.a"
 
-         +FX_INITONCE_DHGR CoordinatesFile, PostInit
-         sec
-         ror   EndCoordinatesDHGR
-         +FX_RIPPLE_DHGR
-         +COPY_SELF_TO_AUXMEM
-PostInit
-         +FX_PRECOMPUTED_DHGR HGRHalfBlockCopy, Coordinates, $1
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         jsr EndCoordinates1Bit+1
+Start
+         +FX_PRECOMPUTED_1BIT_DHGR Coordinates1Bit
 
-         rts
-
-Coordinates=CoordinatesDHGR
 CoordinatesFile
-         !byte 17
-         !text "FX/DHGR.IRIS.DATA"
+         !byte 12
+         !text "FX/IRIS.DATA"

@@ -1,0 +1,151 @@
+;license:MIT
+;(c) 2020 by 4am
+;
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+         !source "src/fx/fx.dhgr.common.a"
+
+!macro BUILD_SPARSE_BITMASKS_DHGR .copymasks, .mirror_copymasks {
+         ; build sparse lookup tables for bitmasks
+         lda   #%00000000
+         sta   .copymasks
+         sta   .mirror_copymasks+$C0
+         sta   .copymasks+$20
+         sta   .mirror_copymasks+$A0
+         sta   .copymasks+$40
+         sta   .mirror_copymasks+$80
+
+         lda   #%10000001
+         sta   .copymasks+$60
+         sta   .mirror_copymasks+$60
+
+         lda   #%10000110
+         sta   .copymasks+$80
+         sta   .mirror_copymasks+$40
+
+         lda   #%10011000
+         sta   .copymasks+$A0
+         sta   .mirror_copymasks+$20
+
+         lda   #%11100000
+         sta   .copymasks+$C0
+         sta   .mirror_copymasks
+
+         sta   $C005
+
+         lda   #%10000011
+         sta   .copymasks
+         sta   .mirror_copymasks+$C0
+
+         lda   #%10001100
+         sta   .copymasks+$20
+         sta   .mirror_copymasks+$A0
+
+         lda   #%10110000
+         sta   .copymasks+$40
+         sta   .mirror_copymasks+$80
+
+         lda   #%11000000
+         sta   .copymasks+$60
+         sta   .mirror_copymasks+$60
+
+         lda   #%00000000
+         sta   .copymasks+$80
+         sta   .mirror_copymasks+$40
+         sta   .copymasks+$A0
+         sta   .mirror_copymasks+$20
+         sta   .copymasks+$C0
+         sta   .mirror_copymasks
+
+         sta   $C004
+}
+
+!macro FX_PRECOMPUTED_1BIT_DHGR .coords {
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
+         +BUILD_MIRROR_COLS mirror_cols
+         +BUILD_SPARSE_BITMASKS_DHGR copymasks, mirror_copymasks
+         +COPY_SELF_TO_AUXMEM
+         ldx   #(end-start)          ; copy InputLoop code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+         jmp   InputLoop
+start
+!pseudopc 0 {
+Exit1Bit rts
+InputLoop
+         ldy   #0
+input=*+1
+         lda   .coords, y            ; first value: HGR row (only 0..95 will be in input array)
+         bmi   Exit1Bit              ; if > 127 then we're done
+         tax
+         +ROW_X_TO_BASE_ADDRESSES
+         +ROW_X_TO_MIRROR_ADDRESSES
+
+         inc   input
+         clc
+         !byte $2C
+bankloop sec
+         tay
+         lda   (input), y
+         +HIGH_3_LOW_5 input
+
+         ; main 1x2 block in top-left quadrant
+src1=*+1
+         lda   $FDFD, y
+         eor   (<dest1), y
+         and   copymasks, x
+         eor   (<dest1), y
+dest1=*+1
+         sta   $FDFD, y
+src2=*+1
+         lda   $FDFD, y
+         eor   (<dest2), y
+         and   copymasks, x
+         eor   (<dest2), y
+dest2=*+1
+         sta   $FDFD, y
+
+         ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
+         lda   mirror_cols, y
+         tay
+         +COPY_BIT src1, dest1, mirror_copymasks
+         +COPY_BIT src2, dest2, mirror_copymasks
+
+         ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
+mirror_src1=*+1
+         lda   $FDFD, y
+         eor   (<mirror_dest1), y
+         and   mirror_copymasks, x
+         eor   (<mirror_dest1), y
+mirror_dest1=*+1
+         sta   $FDFD, y
+mirror_src2=*+1
+         lda   $FDFD, y
+         eor   (<mirror_dest2), y
+         and   mirror_copymasks, x
+         eor   (<mirror_dest2), y
+mirror_dest2=*+1
+         sta   $FDFD, y
+
+         ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
+         lda   mirror_cols, y
+         tay
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks
+
+         lda   #0
+         sta   $C003
+         sta   $C005
+         bcc   bankloop
+         sta   $C002
+         sta   $C004
+
+         +INC_INPUT_AND_LOOP InputLoop
+}
+end
+!if * and 1 {
+         !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
+}
+}
