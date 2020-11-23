@@ -70,9 +70,8 @@ Exit1Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         lda   .coords, y            ; first value: HGR row (only 0..95 will be in input array)
+         ldx   .coords, y            ; first value: HGR row (only 0..95 will be in input array)
          bmi   Exit1Bit              ; if > 127 then we're done
-         tax
          +ROW_X_TO_BASE_ADDRESSES
          +ROW_X_TO_MIRROR_ADDRESSES
 
