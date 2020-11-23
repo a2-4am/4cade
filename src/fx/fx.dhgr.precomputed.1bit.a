@@ -81,9 +81,7 @@ input=*+1
          +HIGH_3_LOW_5 input
          sty   <y
          clc
-         !byte $A9
-bankloop sec
-
+bankloop
          ; main 1x2 block in top-left quadrant
 src1=*+1
          lda   $FDFD, y
@@ -128,12 +126,14 @@ mirror_dest2=*+1
          +COPY_BIT mirror_src1, mirror_dest1, copymasks
          +COPY_BIT mirror_src2, mirror_dest2, copymasks
 
-y=*+1
-         ldy   #$FD
+         bcs   +
          sta   $C003
          sta   $C005
-         bcc   bankloop
-         sta   $C002
+y=*+1
+         ldy   #$FD
+         sec
+         bcs   bankloop
++        sta   $C002
          sta   $C004
 
          +INC_INPUT_AND_LOOP InputLoop
