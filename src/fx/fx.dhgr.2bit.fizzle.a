@@ -50,8 +50,7 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
 start
 !pseudopc 0 {
          !byte %00000011
-copyaux  sta   $C003
-         sta   $C005
+copyaux  sta   $C003                 ; copy $4000/aux to $A000/main
          ldx   #$20
          ldy   #$00
 a        lda   $4000, y
@@ -62,14 +61,15 @@ b        sta   $A000, y
          inc   b+2
          dex
          bne   a
+         sta   $C002
+         sta   $C001                 ; 80STORE mode
 ; X,Y=0 on entry to LFSR
 loop     txa
 loop1    eor   #$B4                  ; LFSR form 0xB400 with period 65535
          tax                         ; X is LFSR high byte, Y is LFSR low byte
 loop2    lda   addrs, x              ; which means X is the index into the base address lookup table
          bmi   aux                   ; and Y is the offset from the base address
-         sta   $C002
-         sta   $C004
+         sta   $C054                 ; switch $2000 access to main memory
          sta   <dst+2
          eor   #$60
          sta   <src+2
@@ -92,10 +92,10 @@ dst      sta   $FD00, y              ; write the result
          bne   loop1
 exit     lda   $4000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
+         sta   $C000                 ; 80STORE mode off
          rts
 
-aux      sta   $C003
-         sta   $C005
+aux      sta   $C055                 ; switch $2000 access to aux memory (read/write!)
          sta   <auxsrc+2
          eor   #$80
          sta   <auxdst+2
