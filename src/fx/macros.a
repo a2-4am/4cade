@@ -124,6 +124,14 @@
          sta   (.dest1),y            ; write the result
 }
 
+!macro COPY_BIT_ZP .src1, .dest1, .zpcopymask {
+         lda   (.src1),y
+         eor   (.dest1),y            ; merge source and destination bits
+         and   <.zpcopymask          ; isolate the bits to replace, zero the rest
+         eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (.dest1),y            ; write the result
+}
+
 !macro SWITCH_TO_MASKS .copy {
          lda   #<.copy
          sta   CopyMaskAddr
