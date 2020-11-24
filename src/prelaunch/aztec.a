@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $98A
+         sta   $A00
          jsr   $800       ; find and load "DOS"
          lda   #<callback
          sta   $B748
@@ -26,8 +26,8 @@ keypress
          rts
 
 intercept
-         jsr   $BC5E
-         jsr   $BC03
+         jsr   $BD5F
+         jsr   $BD09
          lda   $656B
          cmp   #$2C
          bne   +
@@ -45,11 +45,11 @@ callback
          inx
          stx   $9E53      ; reset vector patch
          lda   #$4C
-         sta   $BC00
+         sta   $BD06
          lda   #<intercept
-         sta   $BC01
+         sta   $BD07
          lda   #>intercept
-         sta   $BC02
+         sta   $BD08
 
          +DISABLE_ACCEL
          jmp   $9D84
