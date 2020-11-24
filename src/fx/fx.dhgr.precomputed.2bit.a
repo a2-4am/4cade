@@ -1,0 +1,135 @@
+;license:MIT
+;(c) 2019-2020 by 4am
+;
+         !source "src/fx/fx.hgr.precomputed.2bit.a"
+         !source "src/fx/fx.dhgr.common.a"
+
+!macro BUILD_SPARSE_BITMASKS_2BIT_DHGR .copymasks, .mirror_copymasks {
+         ; build sparse lookup tables for bitmasks
+         ldx   #$00
+         txa
+-        sta   .copymasks, x
+         sta   $C005
+         sta   .copymasks, x
+         sta   $C004
+         inx
+         bne   -
+
+         lda   #%10011111
+         sta   .copymasks+$40
+         sta   .mirror_copymasks+$A0
+
+         lda   #%11100000
+         sta   .copymasks+$60
+         sta   .mirror_copymasks+$80
+
+         lda   #%10000111
+         sta   .copymasks+$C0
+         sta   .mirror_copymasks+$20
+
+         lda   #%11111000
+         sta   .copymasks+$E0
+         sta   .mirror_copymasks
+
+         sta   $C005
+
+         lda   #%10001111
+         sta   .copymasks
+         sta   .mirror_copymasks+$E0
+
+         lda   #%11110000
+         sta   .copymasks+$20
+         sta   .mirror_copymasks+$C0
+
+         lda   #%10000011
+         sta   .copymasks+$80
+         sta   .mirror_copymasks+$60
+
+         lda   #%11111100
+         sta   .copymasks+$A0
+         sta   .mirror_copymasks+$40
+
+         sta   $C004
+}
+
+!macro FX_PRECOMPUTED_2BIT_DHGR .coords {
+         +BUILD_SPARSE_BITMASKS_2BIT_DHGR copymasks, mirror_copymasks
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         +BUILD_MIRROR_COLS mirror_cols
+         +COPY_SELF_TO_AUXMEM
+         ldx   #(end-start)          ; copy InputLoop code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+         jmp   InputLoop
+
+start
+!pseudopc 0 {
+Exit2Bit rts
+InputLoop
+         ldy   #0
+input=*+1
+         ldx   .coords, y            ; first value: HGR row + 1
+         beq   Exit2Bit              ; if 0 then we're done
+         +ROW_X_TO_2BIT_BASE_ADDRESSES
+
+         inc   <input
+         lda   (<input), y
+         +HIGH_3_LOW_5 input
+
+         ; main 2x2 block in left half
+         clc
+-        lda   copymasks, x
+         beq   +
+src1=*+1
+         lda   $FDFD, y
+         eor   (<dest1), y
+         and   copymasks, x
+         eor   (<dest1), y
+dest1=*+1
+         sta   $FDFD, y
+src2=*+1
+         lda   $FDFD, y
+         eor   (<dest2), y
+         and   copymasks, x
+         eor   (<dest2), y
+dest2=*+1
+         sta   $FDFD, y
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+         ; corresponding 2x2 block in right half (same row, opposite column)
+         lda   mirror_cols, y
+         tay
+         clc
+-        lda   mirror_copymasks, x
+         beq   +
+         +COPY_BIT src1, dest1, mirror_copymasks
+         +COPY_BIT src2, dest2, mirror_copymasks
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+         inc   <input
+         +LBNE InputLoop
+         bit   $c000
+         bmi   +
+         inc   <input+1
+         jmp   InputLoop
++        rts
+}
+end
+!if * and 1 {
+         !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
+}
+}

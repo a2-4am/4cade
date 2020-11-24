@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/DHGR.STAR",plain
+!to "build/FX/DHGR.WAVY.IRIS",plain
 *=$6000
 
          !source "src/fx/fx.dhgr.precomputed.2bit.a"
@@ -12,5 +12,5 @@ Start
          +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
 
 CoordinatesFile
-         !byte 12
-         !text "FX/STAR.DATA"
+         !byte 17
+         !text "FX/WAVY.IRIS.DATA"

@@ -277,9 +277,8 @@ Exit2Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         lda   .coords, y            ; first value: HGR row + 1
+         ldx   .coords, y            ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
-         tax
          +ROW_X_TO_2BIT_BASE_ADDRESSES
 
          inc   <input

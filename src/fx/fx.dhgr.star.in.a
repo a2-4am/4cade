@@ -2,12 +2,13 @@
 ;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/DHGR.STAR",plain
+!to "build/FX/DHGR.STAR.IN",plain
 *=$6000
 
          !source "src/fx/fx.dhgr.precomputed.2bit.a"
 
          +FX_INITONCE_2BIT CoordinatesFile, Start
+         +FX_REVERSE_2BIT
 Start
          +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
 
