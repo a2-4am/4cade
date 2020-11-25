@@ -35,6 +35,14 @@ LoadFileAuxInternal
          +ST16 ldrlo
 +        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
+!if RELBASE != $2000 {
+  !ifdef PASS2 {
+  } else { ;PASS2
+    !if *+1 != iAuxReq {
+      !error "iAuxReq=",*+1, ", fix constants.a"
+    }
+  }
+}
 @auxreq
          lda   #0
          sta   auxreq

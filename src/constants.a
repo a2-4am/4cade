@@ -149,6 +149,7 @@ iCurBlockLo    = $D401
 iCurBlockHi    = $D403
 iProDOS_enter  = $D678
 LoadFileDirect = $DB01
+iAuxReq        = $DB27
 launchpatch    = $D616
 iAddToPath     = $FEC3
 itraverse      = $D8E0
