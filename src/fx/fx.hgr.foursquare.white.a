@@ -44,8 +44,8 @@
          cmp   #6
          bne   -
 
-         sec
-         ror   Coordinates+$798
+         lda   #$80
+         sta   Coordinates+$798
 
          lda   #<Coordinates
          sta   $FE
