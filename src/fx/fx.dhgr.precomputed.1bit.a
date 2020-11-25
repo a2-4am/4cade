@@ -46,6 +46,7 @@
          sta   .mirror_copymasks+$60
 
          sta   $C004
+; X=0
 }
 
 !macro FX_PRECOMPUTED_1BIT_DHGR .coords {

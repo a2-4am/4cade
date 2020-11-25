@@ -15,13 +15,14 @@ EndCoordinates1Bit=Coordinates1Bit+$3480
 
 !macro BUILD_MIRROR_COLS .mirror_cols {
          ; build lookup table to get $27-y for y in $00..$27
-         ldx   #$27
+         ldx   #$28
          ldy   #$00
 -        tya
-         sta   .mirror_cols, x
+         sta   .mirror_cols-1, x
          iny
          dex
-         bpl   -
+         bne   -
+; X=0
 }
 
 !macro BUILD_SPARSE_BITMASKS .copymasks, .mirror_copymasks {
@@ -109,17 +110,17 @@ EndCoordinates1Bit=Coordinates1Bit+$3480
 
 !macro DEC_INPUT_AND_LOOP .loop {
          lda   input
-         beq   +
+         php
          dec   input
          dec   input
-         jmp   .loop
-+        dec   input
-         dec   input
+         plp
+         bne   +
          dec   input+1
          bit   $c000
-         bmi   +
-         jmp   .loop
-+        rts
+         bpl   .loop
+         bmi   ++
++        jmp   .loop
+++       rts
 }
 
 !macro FX_INITONCE_1BIT .CoordinatesFile, .Start {

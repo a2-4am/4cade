@@ -62,14 +62,13 @@ Loop     ldy   #0
          bne   +
          inc   input+1
 +        lda   reverse_input
-         beq   +
+         php
          dec   reverse_input
          dec   reverse_input
-         jmp   Loop
-+        dec   reverse_input
-         dec   reverse_input
+         plp
+         bne   +
          dec   reverse_input+1
          bit   $c000
-         bmi   +
-         jmp   Loop
-+        rts
+         bmi   ++
++        jmp   Loop
+++       rts
