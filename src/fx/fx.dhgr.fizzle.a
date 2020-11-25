@@ -11,7 +11,7 @@ addrs=$C0                            ; [$40 bytes]
 -        txa
          eor   #$20
          sta   addrs, x
-         eor   #$80
+         eor   #$A0
          sta   addrs+$20, x
          dex
          bpl   -
@@ -24,11 +24,11 @@ addrs=$C0                            ; [$40 bytes]
 
 start
 !pseudopc 0 {
-copyaux  sta   $C003                 ; copy $4000/aux to $A000/main
+copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
          ldx   #$20
          ldy   #$00
 a        lda   $4000, y
-b        sta   $A000, y
+b        sta   $8000, y
          iny
          bne   a
          inc   a+2
@@ -68,7 +68,7 @@ exit     lda   $4000                 ; last lousy byte (because LFSR never hits 
          rts
 aux      sta   $C055                 ; switch $2000 access to aux memory (read/write!)
          sta   <auxsrc+2
-         eor   #$80
+         eor   #$A0
          sta   <auxdst+2
 auxsrc   lda   $FD00, y
 auxdst   sta   $FD00, y

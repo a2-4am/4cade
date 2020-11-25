@@ -32,12 +32,12 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
          sta   $C005
          sta   addrs, x
          sta   $C004
-         eor   #$80
+         eor   #$A0
          sta   addrs+1, x
          sta   $C005
          sta   addrs+1, x
          sta   $C004
-         eor   #$80
+         eor   #$A0
          adc   #1
          inx
          inx
@@ -50,11 +50,11 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
 start
 !pseudopc 0 {
          !byte %00000011
-copyaux  sta   $C003                 ; copy $4000/aux to $A000/main
+copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
          ldx   #$20
          ldy   #$00
 a        lda   $4000, y
-b        sta   $A000, y
+b        sta   $8000, y
          iny
          bne   a
          inc   a+2
@@ -97,7 +97,7 @@ exit     lda   $4000                 ; last lousy byte (because LFSR never hits 
 
 aux      sta   $C055                 ; switch $2000 access to aux memory (read/write!)
          sta   <auxsrc+2
-         eor   #$80
+         eor   #$A0
          sta   <auxdst+2
          lda   (<auxdst+1), y
 auxsrc   eor   $FD00, y
