@@ -13,6 +13,7 @@
          stx   $50
          ldx   #$17
          stx   $53
+         +READ_ROM_NO_WRITE
 ---      lda   $53
          jsr   $FBC1                 ; BASCALC
          ldy   #$27
@@ -66,6 +67,7 @@
          lda   $54
          cmp   #4
          bne   ---
+         +READ_RAM1_WRITE_RAM1
 
          lda   #$80
          sta   Coordinates+$840
