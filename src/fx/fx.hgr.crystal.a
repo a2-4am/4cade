@@ -7,6 +7,8 @@
 !to "build/FX/CRYSTAL",plain
 *=$6000
 
+         !source "src/fx/macros.a"
+
          ldx   #0
          stx   $51
          ldx   #4
