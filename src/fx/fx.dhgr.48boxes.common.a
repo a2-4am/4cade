@@ -81,20 +81,21 @@ k_current_page            = 9
 k_switch_to_main          = 10
 k_switch_to_aux           = 11
 k_inx_and_recalc          = 12
-k_set_row_count           = 13
-k_set_first_row           = 14
-k_iny                     = 15
-k_dey                     = 16
-k_save_y                  = 17
-k_restore_y               = 18
-k_middle_jsr              = 19
-k_outer_jsr               = 20
-k_middle_branch           = 21
-k_outer_branch            = 22
-k_bitcopy                 = 23
-k_mask_copy_pre           = 24
-k_mask_copy_post          = 25
-k_byte_copy               = 26
+k_recalc                  = 13
+k_set_row_count           = 14
+k_set_first_row           = 15
+k_iny                     = 16
+k_dey                     = 17
+k_save_y                  = 18
+k_restore_y               = 19
+k_middle_jsr              = 20
+k_outer_jsr               = 21
+k_middle_branch           = 22
+k_outer_branch            = 23
+k_bitcopy                 = 24
+k_mask_copy_pre           = 25
+k_mask_copy_post          = 26
+k_byte_copy               = 27
 
          !source "src/fx/macros.a"
 
@@ -212,6 +213,7 @@ SWITCH_TO_AUX_E
 ;
 INX_AND_RECALC
          inx
+RECALC
          lda   hgrlo, x
          sta   src
          sta   dst
@@ -219,6 +221,7 @@ INX_AND_RECALC
          sta   dst+1
          eor   #$60
          sta   src+1
+RECALC_E
 INX_AND_RECALC_E
 ;
 SET_ROW_COUNT
@@ -230,7 +233,7 @@ SET_ROW_COUNT_E
 SET_FIRST_ROW
          txa
 FIRST_ROW=*+1
-         adc   #$0D                  ; SMC
+         adc   #$0E                  ; SMC
          tax
 SET_FIRST_ROW_E
 ;
@@ -268,10 +271,10 @@ RESTORE_Y
 RESTORE_Y_E
 ;
 MIDDLE_JSR
-         !byte $20,$46
+         !byte $20,$47
 MIDDLE_JSR_E
 OUTER_JSR
-         !byte $20,$47
+         !byte $20,$48
 OUTER_JSR_E
 MIDDLE_BRANCH
          dec   rowcount
@@ -297,6 +300,7 @@ codegen_piece_lengths                ; length of each of the pieces
          !byte SWITCH_TO_MAIN_E-SWITCH_TO_MAIN
          !byte SWITCH_TO_AUX_E-SWITCH_TO_AUX
          !byte INX_AND_RECALC_E-INX_AND_RECALC
+         !byte RECALC_E-RECALC
          !byte SET_ROW_COUNT_E-SET_ROW_COUNT
          !byte SET_FIRST_ROW_E-SET_FIRST_ROW
          !byte INY1_E-INY1
@@ -326,6 +330,7 @@ codegen_pieces                       ; address of each of the pieces (on zero pa
          !byte <SWITCH_TO_MAIN
          !byte <SWITCH_TO_AUX
          !byte <INX_AND_RECALC
+         !byte <RECALC
          !byte <SET_ROW_COUNT
          !byte <SET_FIRST_ROW
          !byte <INY1
@@ -497,7 +502,6 @@ BuildDrawingRoutines
          ; generate drawing routines for copy01, then copy00
          jsr   BuildStage1And0
          ; A=0 here
-         lda   #$FF
          sta   <FIRST_ROW
 
          ; generate drawing routines for copy0F..copy02, then clear0F..clear02
@@ -532,7 +536,6 @@ BuildDrawingRoutines
          bne   +
 !if USES_CLEAR {
          ; reset counts and switch from copy to clear
-         lda   #$FF
          sta   <FIRST_ROW
          lda   #$1D
          sta   <ROW_COUNT
@@ -568,7 +571,7 @@ STAGE0
          !byte k_set_first_row
          !byte k_iny
          !byte k_iny
-         !byte k_inx_and_recalc
+         !byte k_recalc
          !byte k_bitcopy, k_left_mask_main
          !byte k_switch_to_aux
          !byte k_bitcopy, k_left_mask_main
@@ -586,7 +589,7 @@ STAGE1
          !byte k_set_first_row
          !byte k_iny
          !byte k_iny
-         !byte k_inx_and_recalc
+         !byte k_recalc
          !byte k_byte_copy
          !byte k_switch_to_aux
          !byte k_byte_copy
