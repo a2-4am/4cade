@@ -428,14 +428,6 @@ CopyAuxDHGRToMain
          rts
 }
 
-EdgeLeftMasks
-         !byte %01100000
-         !byte %01111000
-         !byte %11111111
-         !byte %11111111
-         !byte %11111111
-         !byte %11111111
-         !byte %11111111
 EdgeRightMasks
          !byte %00000000
          !byte %00000000
@@ -456,7 +448,14 @@ RightMasks
          !byte %00000001
          !byte %00000110
          !byte %00011000
-         !byte %01100000
+EdgeLeftMasks
+         !byte %01100000             ; also terminates RightMasks
+         !byte %01111000
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
 EdgeLeftMasksAux
          !byte %00000000
          !byte %00000000
