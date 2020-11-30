@@ -1,0 +1,694 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+
+!ifndef USES_CLEAR {
+  ; if an effect doesn't use any clear stages, you can reduce code size
+  ; by setting USES_CLEAR=0 before including this file
+  USES_CLEAR = 1
+}
+
+src      = $00                       ; [word][must be at $00] used by drawing routines
+dst      = $02                       ; [word] used by drawing routines
+rowcount = $04                       ; [byte] used by drawing routines
+tmpy     = $05                       ; [byte] used by drawing routines
+box      = $0E                       ; [byte] counter in main loop
+any      = $0F                       ; [byte][must be at $0F] counter in main loop
+BoxStages = $10                      ; [$30 bytes] current stage for each box
+auxsrc_hgrhi = $BC00                 ; [$C0 bytes] HGR base addresses (hi) starting at $8000
+hgrhi    = $BD00                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000
+hgrlo    = $BE00                     ; [$C0 bytes] HGR base addresses (lo) starting at $2000
+BoxesX   = $BDC0                     ; [$30 bytes] starting row for each box
+BoxesY   = $BEC0                     ; [$30 bytes] starting byte offset for each box
+
+; High bytes of drawing routines for each stage (actual routines will be page-aligned).
+; To minimize code size, we build drawing routines in this order:
+; - copy01 (STAGE1 template)
+; - copy00 (STAGE0 template)
+; - copy0F..copy09 (OUTER_STAGE template)
+; - copy08..copy02 (MIDDLE_STAGE template)
+; - change some opcodes to turn the 'copy' routines into 'clear' routines
+; - clear0F..clear08 (OUTER_STAGE)
+; - clear07..clear02 (MIDDLE_STAGE)
+; - clear01 (STAGE1)
+; - clear00 (STAGE0)
+clear00  = $70
+clear01  = $71
+clear02  = $72
+clear03  = $73
+clear04  = $74
+clear05  = $75
+clear06  = $76
+clear07  = $77
+clear08  = $78
+clear09  = $79
+clear0A  = $7A
+clear0B  = $7B
+clear0C  = $7C
+clear0D  = $7D
+clear0E  = $7E
+clear0F  = $7F
+copy02   = $80
+copy03   = $81
+copy04   = $82
+copy05   = $83
+copy06   = $84
+copy07   = $85
+copy08   = $86
+copy09   = $87
+copy0A   = $88
+copy0B   = $89
+copy0C   = $8A
+copy0D   = $8B
+copy0E   = $8C
+copy0F   = $8D
+copy00   = $8E
+copy01   = $8F
+
+; tokens for code generation
+; used as indexes into |codegen_pieces| and |codegen_piece_lengths|,
+; so keep all three in sync
+k_rts                     = 0        ; must be 0
+k_edge_left_mask_main     = 1        ; must be 1
+k_edge_right_mask_main    = 2        ; must be 2
+k_left_mask_main          = 3        ; must be 3
+k_right_mask_main         = 4        ; must be 4
+k_edge_left_mask_aux      = 5        ; must be 5
+k_edge_right_mask_aux     = 6        ; must be 6
+k_left_mask_aux           = 7        ; must be 7
+k_right_mask_aux          = 8        ; must be 8
+k_current_page            = 9
+k_switch_to_main          = 10
+k_switch_to_aux           = 11
+k_inx_and_recalc          = 12
+k_set_row_count           = 13
+k_set_first_row           = 14
+k_iny                     = 15
+k_dey                     = 16
+k_save_y                  = 17
+k_restore_y               = 18
+k_middle_jsr              = 19
+k_outer_jsr               = 20
+k_middle_branch           = 21
+k_outer_branch            = 22
+k_bitcopy                 = 23
+k_mask_copy_pre           = 24
+k_mask_copy_post          = 25
+k_byte_copy               = 26
+
+         !source "src/fx/macros.a"
+
+; generate |BoxesX| and |BoxesY| arrays
+         ldx   #48
+         ldy   #$A0
+         lda   #$23
+         pha
+-        tya
+         sta   BoxesX-1, x
+         pla
+         sta   BoxesY-1, x
+         sec
+         sbc   #5
+         bcs   +
+         lda   #$23
++        pha
+         dex
+         txa
+         and   #7
+         bne   -
+         tya
+         sec
+         sbc   #$20
+         tay
+         txa
+         bne   -
+         pla
+
+         ; construct drawing routines for each stage
+         jsr   BuildDrawingRoutines
+         ; A=0 here
+
+         ; set up zero page for drawing phase
+         tax
+-        ldy   BoxInitialStages-BoxStages, x
+         sty   $00, x
+         sta   EndStagesHi, x
+         inx
+         bne   -
+         ; X=0 here
+
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
+         ; X=$C0 here
+
+-        lda   hgrhi-1, x
+         clc
+         adc   #$70
+         sta   auxsrc_hgrhi-1, x
+         dex
+         bne   -
+
+         sta   $C001                 ; 80STORE mode so we can bank $2000/aux in & out with STA $C055 & $C054
+MainLoop ldx   #48
+BoxLoop  stx   box
+         ldy   BoxStages-1, x        ; for each box, get its current stage
+         inc   BoxStages-1, x        ; increment every box's stage every time through the loop
+         lda   StagesHi, y
+         beq   NextBox               ; if stage's drawing routine is 0, nothing to do
+         sta   j+2
+         lda   BoxesX-1, x
+         ldy   BoxesY-1, x           ; Y = starting byte offset for this box
+         tax                         ; X = starting HGR row for this box
+         inc   any                   ; was initialized by the BoxStages copy loop
+         clc
+j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
+         ldx   box
+NextBox  dex
+         bne   BoxLoop
+         lda   any
+         beq   +                     ; if we didn't draw anything in any box, we're done
+         stx   any                   ; X=0 here
+         bit   $C000                 ; check for key
+         bpl   MainLoop
++        sta   $C000                 ; 80STORE off
+         ; execution falls through here
+
+; These are all the pieces of code we need to construct the drawing routines.
+; There are 32 drawing routines (16 if USES_CLEAR=0), which we construct from
+; four templates (below). Templates use tokens to refer to these code pieces.
+; Note that several pieces overlap in order to minimize code size.
+; Everything from CODEGEN_COPY_START and onward is copied to zero page for
+; the code generation phase on program startup.
+CODEGEN_COPY_START
+!pseudopc 0 {
+RTS0
+         rts                         ; also terminates MainLoop
+RTS0_E
+;
+EDGE_LEFT_MASK_MAIN                  ; must be at address $01 to match token
+         !byte $FD
+EDGE_RIGHT_MASK_MAIN                 ; must be at address $02 to match token
+         !byte $FD
+LEFT_MASK_MAIN                       ; must be at address $03 to match token
+         !byte $FD
+RIGHT_MASK_MAIN                      ; must be at address $04 to match token
+         !byte $FD
+EDGE_LEFT_MASK_AUX                   ; must be at address $05 to match token
+         !byte $FD
+EDGE_RIGHT_MASK_AUX                  ; must be at address $06 to match token
+         !byte $FD
+LEFT_MASK_AUX                        ; must be at address $07 to match token
+         !byte $FD
+RIGHT_MASK_AUX                       ; must be at address $08 to match token
+         !byte $FD
+SWITCH_TO_MAIN
+         sta   $C054
+SWITCH_TO_MAIN_E
+;
+SWITCH_TO_AUX
+         sta   $C055
+         lda   auxsrc_hgrhi, x
+         sta   src+1
+SWITCH_TO_AUX_E
+;
+INX_AND_RECALC
+         inx
+         lda   hgrlo, x
+         sta   src
+         sta   dst
+         lda   hgrhi, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+INX_AND_RECALC_E
+;
+SET_ROW_COUNT
+ROW_COUNT=*+1
+         lda   #$1D                  ; SMC
+         sta   rowcount
+SET_ROW_COUNT_E
+;
+SET_FIRST_ROW
+         txa
+FIRST_ROW=*+1
+         adc   #$0D                  ; SMC
+         tax
+SET_FIRST_ROW_E
+;
+MASKCOPY_PRE
+         lda   (dst), y
+BIT_FOR_CLEAR
+         eor   (src), y
+         !byte $29                   ; (AND #$44 opcode)
+MASKCOPY_PRE_E
+;
+MASKCOPY_POST
+         eor   (dst), y
+         sta   (dst), y
+MASKCOPY_POST_E
+;
+BYTECOPY
+         lda   (src), y
+         sta   (dst), y
+BYTECOPY_E
+;
+DEY1
+         dey
+DEY1_E
+;
+INY1
+         iny
+INY1_E
+;
+SAVE_Y
+         sty   tmpy
+SAVE_Y_E
+;
+RESTORE_Y
+         ldy   tmpy
+RESTORE_Y_E
+;
+MIDDLE_JSR
+         !byte $20,$46
+MIDDLE_JSR_E
+OUTER_JSR
+         !byte $20,$47
+OUTER_JSR_E
+MIDDLE_BRANCH
+         dec   rowcount
+         !byte $10,$C8
+MIDDLE_BRANCH_E
+;
+OUTER_BRANCH
+         dec   rowcount
+         !byte $10,$C6
+OUTER_BRANCH_E
+
+codegen_piece_lengths                ; length of each of the pieces
+         !byte RTS0_E-RTS0
+         !byte 1                     ; edge left mask main
+         !byte 1                     ; edge right mask main
+         !byte 1                     ; left mask main
+         !byte 1                     ; right mask main
+         !byte 1                     ; edge left mask aux
+         !byte 1                     ; edge right mask aux
+         !byte 1                     ; left mask aux
+         !byte 1                     ; right mask aux
+         !byte 1                     ; current page
+         !byte SWITCH_TO_MAIN_E-SWITCH_TO_MAIN
+         !byte SWITCH_TO_AUX_E-SWITCH_TO_AUX
+         !byte INX_AND_RECALC_E-INX_AND_RECALC
+         !byte SET_ROW_COUNT_E-SET_ROW_COUNT
+         !byte SET_FIRST_ROW_E-SET_FIRST_ROW
+         !byte INY1_E-INY1
+         !byte DEY1_E-DEY1
+         !byte SAVE_Y_E-SAVE_Y
+         !byte RESTORE_Y_E-RESTORE_Y
+         !byte MIDDLE_JSR_E-MIDDLE_JSR
+         !byte OUTER_JSR_E-OUTER_JSR
+         !byte MIDDLE_BRANCH_E-MIDDLE_BRANCH
+         !byte OUTER_BRANCH_E-OUTER_BRANCH
+         !byte $FF                   ; negative length -> do special bitcopy logic during codegen
+         !byte MASKCOPY_PRE_E-MASKCOPY_PRE
+         !byte MASKCOPY_POST_E-MASKCOPY_POST
+         !byte BYTECOPY_E-BYTECOPY
+
+codegen_pieces                       ; address of each of the pieces (on zero page, so 1 byte)
+         !byte <RTS0
+         !byte <EDGE_LEFT_MASK_MAIN
+         !byte <EDGE_RIGHT_MASK_MAIN
+         !byte <LEFT_MASK_MAIN
+         !byte <RIGHT_MASK_MAIN
+         !byte <EDGE_LEFT_MASK_AUX
+         !byte <EDGE_RIGHT_MASK_AUX
+         !byte <LEFT_MASK_AUX
+         !byte <RIGHT_MASK_AUX
+         !byte <codegen_dst          ; current page
+         !byte <SWITCH_TO_MAIN
+         !byte <SWITCH_TO_AUX
+         !byte <INX_AND_RECALC
+         !byte <SET_ROW_COUNT
+         !byte <SET_FIRST_ROW
+         !byte <INY1
+         !byte <DEY1
+         !byte <SAVE_Y
+         !byte <RESTORE_Y
+         !byte <MIDDLE_JSR
+         !byte <OUTER_JSR
+         !byte <MIDDLE_BRANCH
+         !byte <OUTER_BRANCH
+         !byte 0                     ; bitcopy pseudo-opcode has no piece of its own
+         !byte <MASKCOPY_PRE
+         !byte <MASKCOPY_POST
+         !byte <BYTECOPY
+
+codegen_stage
+         !byte 27
+codegen_maskindex
+         !byte 0
+
+BuildDrawingRoutineFrom
+         sta   <codegen_token_src
+BuildDrawingRoutine
+         ldy   #0
+         sty   <codegen_token_x
+-        jsr   GetNextToken
+         pha
+         jsr   ProcessToken
+         pla
+         bne   -
+         dec   <codegen_dst
+         inc   <FIRST_ROW
+         rts
+
+GetNextToken
+codegen_token_x=*+1
+         ldx   #$00
+codegen_token_src=*+1
+         lda   OUTER_STAGE, x
+         inc   <codegen_token_x
+         rts
+
+ProcessBitcopyToken
+         jsr   GetNextToken
+         sta   <bitcopy_mask
+bitcopy_mask=*+1
+         lda   $FD                   ; SMC
+         beq   ExitProcessToken      ; copymask=0 -> nothing to generate
+         bmi   +                     ; copymask>$80 -> assume full byte
+         lda   #k_mask_copy_pre
+         jsr   ProcessToken
+         lda   <bitcopy_mask
+         jsr   ProcessToken
+         lda   #k_mask_copy_post
+         +HIDE_NEXT_BYTE
++        lda   #k_byte_copy
+         ; execution falls through here
+
+ProcessToken
+         tax
+         lda   <codegen_piece_lengths, x
+         bmi   ProcessBitcopyToken   ; only bitcopy has length>$80
+         sta   <piece_length
+         lda   <codegen_pieces, x
+         sta   <piece_src
+         ldx   #0
+-
+piece_src=*+1
+         lda   $FD, x                ; SMC
+         !byte $99,$00               ; STA $4400, Y
+codegen_dst
+         !byte copy01                ; SMC
+         iny
+         inx
+piece_length=*+1
+         cpx   #$FD                  ; SMC
+         bcc   -
+ExitProcessToken
+         rts
+
+CopyAuxDHGRToMain
+; X=0
+         sta   $C003                 ; copy $4000-5FFF/aux to $9000-AFFF/main
+         ldy   #$20
+@a       lda   $4000, x
+@b       sta   $9000, x
+         inx
+         bne   @a
+         inc   <@a+2
+         inc   <@b+2
+         dey
+         bne   @a
+         sta   $C002
+; X=0,Y=0
+         rts
+}
+
+EdgeLeftMasks
+         !byte %01100000
+         !byte %01111000
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+EdgeRightMasks
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %00000001
+         !byte %00000111
+         !byte %00011111
+         !byte %11111111
+LeftMasks
+         !byte %01100000
+         !byte %00011000
+         !byte %00000111
+         !byte %00000000
+RightMasks
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000             ; also terminates LeftMasks
+         !byte %00000001
+         !byte %00000110
+         !byte %00011000
+         !byte %01100000
+EdgeLeftMasksAux
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000
+         !byte %01000000
+         !byte %01110000
+         !byte %01111100
+         !byte %11111111
+RightMasksAux
+         !byte %00000011
+         !byte %00001100
+         !byte %01110000
+         !byte %00000000
+LeftMasksAux
+         !byte %00000000
+         !byte %00000000
+         !byte %00000000             ; also terminates RightMasksAux
+         !byte %01000000
+         !byte %00110000
+         !byte %00001100
+EdgeRightMasksAux
+         !byte %00000011             ; also terminates LeftMasksAux
+         !byte %00001111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+         !byte %11111111
+
+BuildDrawingRoutines
+         ; copy codegen data to zero page
+         ldx   #0
+-        lda   CODEGEN_COPY_START, x
+         sta   $00, x
+         inx
+         bne   -
+         ;X=0 here
+
+         ; copy the half of the source image from $4000/aux to main memory
+         jsr   CopyAuxDHGRToMain
+         ;X,Y=0 here
+
+         ; generate drawing routines for copy01, then copy00
+         jsr   BuildStage1And0
+         ; A=0 here
+         lda   #$FF
+         sta   <FIRST_ROW
+
+         ; generate drawing routines for copy0F..copy02, then clear0F..clear02
+         lda   #<MIDDLE_STAGE
+---      eor   #(<OUTER_STAGE XOR <MIDDLE_STAGE)
+         sta   <codegen_token_src
+         ldx   #6
+--       stx   <codegen_maskindex
+         lda   EdgeLeftMasks, x
+         sta   <EDGE_LEFT_MASK_MAIN
+         lda   EdgeRightMasks, x
+         sta   <EDGE_RIGHT_MASK_MAIN
+         lda   LeftMasks, x
+         sta   <LEFT_MASK_MAIN
+         lda   RightMasks, x
+         sta   <RIGHT_MASK_MAIN
+         lda   EdgeLeftMasksAux, x
+         sta   <EDGE_LEFT_MASK_AUX
+         lda   EdgeRightMasksAux, x
+         sta   <EDGE_RIGHT_MASK_AUX
+         lda   LeftMasksAux, x
+         sta   <LEFT_MASK_AUX
+         lda   RightMasksAux, x
+         sta   <RIGHT_MASK_AUX
+         jsr   BuildDrawingRoutine
+         dec   <ROW_COUNT
+         dec   <ROW_COUNT
+         dec   <codegen_stage
+         bmi   BuildStage1And0
+         lda   <codegen_stage
+         eor   #13
+         bne   +
+!if USES_CLEAR {
+         ; reset counts and switch from copy to clear
+         lda   #$FF
+         sta   <FIRST_ROW
+         lda   #$1D
+         sta   <ROW_COUNT
+         lda   #$A9
+         sta   <BYTECOPY
+         lda   #$24
+         sta   <BIT_FOR_CLEAR
+} else {
+         rts
+}
++        lda   <codegen_token_src
+         ldx   <codegen_maskindex
+         dex
+         bmi   ---
+         bpl   --                    ; always branches
+
+         ; generate drawing routines for copy01, copy00 (or clear01, clear00)
+BuildStage1And0
+         lda   #%00011111
+         sta   <LEFT_MASK_MAIN
+         lda   #%01111100
+         sta   <LEFT_MASK_AUX
+         lda   #<STAGE1
+         jsr   BuildDrawingRoutineFrom
+         lda   #<STAGE0
+         jmp   BuildDrawingRoutineFrom
+
+; All template p-code must be on the same page
+;!align 255,0
+; Template for 'stage 0' routine (copy00), which copies the innermost
+; part of the box (labeled '0' in diagram above).
+STAGE0
+         !byte k_set_first_row
+         !byte k_iny
+         !byte k_iny
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for 'stage 1' routine (copy01), which copies the pixels
+; around the innermost box (labeled '1' in diagram above).
+STAGE1
+         !byte k_set_first_row
+         !byte k_iny
+         !byte k_iny
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux
+         !byte k_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux
+         !byte k_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux
+         !byte k_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux
+         !byte k_byte_copy
+         !byte k_switch_to_main
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 2-8 (copy02..copy08)
+MIDDLE_STAGE
+         !byte k_set_row_count
+         !byte k_set_first_row
+         !byte k_iny
+         !byte k_save_y
+         !byte k_middle_jsr, k_current_page
+         ;-
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_iny
+         !byte k_iny
+         !byte k_bitcopy, k_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_right_mask_aux
+         !byte k_restore_y
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_middle_branch
+         ;+
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_edge_left_mask_main
+         !byte k_iny
+         !byte k_byte_copy
+         !byte k_iny
+         !byte k_bitcopy, k_edge_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_edge_right_mask_aux
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_bitcopy, k_edge_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 9-15 (copy09..copy0F)
+OUTER_STAGE
+         !byte k_set_row_count
+         !byte k_set_first_row
+         !byte k_save_y
+         !byte k_outer_jsr, k_current_page
+         ;-
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_iny
+         !byte k_iny
+         !byte k_iny
+         !byte k_iny
+         !byte k_bitcopy, k_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_right_mask_aux
+         !byte k_restore_y
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_outer_branch
+         ;+
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_edge_left_mask_main
+         !byte k_iny
+         !byte k_byte_copy
+         !byte k_iny
+         !byte k_byte_copy
+         !byte k_iny
+         !byte k_byte_copy
+         !byte k_iny
+         !byte k_bitcopy, k_edge_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_edge_right_mask_aux
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_bitcopy, k_edge_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_rts                 ; also serves as an end-of-template marker
+!if >* != >STAGE0 {
+         !error "Templates are not all on same page"
+}
+; Note: the final k_rts is later copied to zero page $0F and used in MainLoop,
+;       so don't put any more code before BoxInitialStages.
+BoxInitialStages

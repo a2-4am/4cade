@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+!cpu 6502
+!to "build/FX/DHGR.48.SPIRAL",plain
+*=$6000
+
+USES_CLEAR = 0
+
+         !source "src/fx/fx.dhgr.48boxes.common.a"
+
+         !byte $00,$E9,$EA,$EB,$EC,$ED,$EE,$EF
+         !byte $FF,$E8,$D9,$DA,$DB,$DC,$DD,$F0
+         !byte $FE,$E7,$D8,$D1,$D2,$D3,$DE,$F1
+         !byte $FD,$E6,$D7,$D6,$D5,$D4,$DF,$F2
+         !byte $FC,$E5,$E4,$E3,$E2,$E1,$E0,$F3
+         !byte $FB,$FA,$F9,$F8,$F7,$F6,$F5,$F4
+
+StagesHi ; high bytes of address of drawing routine for each stage
+         !byte copy0F
+         !byte copy0E
+         !byte copy0D
+         !byte copy0C
+         !byte copy0B
+         !byte copy0A
+         !byte copy09
+         !byte copy08
+         !byte copy07
+         !byte copy06
+         !byte copy05
+         !byte copy04
+         !byte copy03
+         !byte copy02
+         !byte copy01
+         !byte copy00
+EndStagesHi

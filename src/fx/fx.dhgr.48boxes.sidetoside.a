@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+!cpu 6502
+!to "build/FX/DHGR.48.SIDES",plain
+*=$6000
+
+USES_CLEAR = 0
+
+         !source "src/fx/fx.dhgr.48boxes.common.a"
+
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4
+         !byte $E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4
+         !byte $E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4
+         !byte $E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+
+StagesHi ; high bytes of address of drawing routine for each stage
+         !byte copy00
+         !byte copy01
+         !byte copy02
+         !byte copy03
+         !byte copy04
+         !byte copy05
+         !byte copy06
+         !byte copy07
+         !byte copy08
+         !byte copy09
+         !byte copy0A
+         !byte copy0B
+         !byte copy0C
+         !byte copy0D
+         !byte copy0E
+         !byte copy0F
+EndStagesHi

@@ -1,0 +1,254 @@
+!macro AUXMEM {
+         sta   $C055
+         lda   auxsrc_hgrhi, x
+         sta   src+1
+}
+
+!macro MAINMEM {
+         sta   $C054
+}
+
+!macro INX_AND_RECALC {
+         inx
+         lda   hgrlo, x
+         sta   src
+         sta   dst
+         lda   hgrhi, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+}
+
+!macro BITCOPY .copy, .mask {
+!if .mask != %00000000 {
+!if .mask = %11111111 {
+!if .copy != 0 {
+         lda   (src), y
+} else {
+         lda   #$00
+}
+         sta   (dst), y
+} else {
+         lda   (dst), y
+!if .copy != 0 {
+         eor   (src), y
+} else {
+         bit   src
+}
+         and   #.mask
+         eor   (dst), y
+         sta   (dst), y
+}
+}
+}
+
+!macro MIDDLE_STAGE_DHGR .copy, .rowcount, .firstrow, .edge_left_mask_main, .edge_right_mask_main, .left_mask_main, .right_mask_main, .edge_left_mask_aux, .edge_right_mask_aux, .left_mask_aux, .right_mask_aux {
+         lda   #(.rowcount-2)                              ;k_set_row_count
+         sta   rowcount
+         txa                                               ;k_set_first_row
+         adc   #(.firstrow-1)
+         tax
+         iny                                               ;k_iny
+         sty   tmpy                                        ;k_save_y
+         jsr   +                                           ;k_middle_jsr, k_current_page
+-
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, .left_mask_main                   ;k_bitcopy, k_left_mask_main
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         +BITCOPY .copy, .right_mask_main                  ;k_bitcopy, k_right_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, .right_mask_aux                   ;k_bitcopy, k_right_mask_aux
+         ldy   tmpy                                        ;k_restore_y
+         +BITCOPY .copy, .left_mask_aux                    ;k_bitcopy, k_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         dec   rowcount                                    ;k_middle_branch
+         bpl   -
++
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, .edge_left_mask_main              ;k_bitcopy, k_edge_left_mask_main
+         iny                                               ;k_iny
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         iny                                               ;k_iny
+         +BITCOPY .copy, .edge_right_mask_main             ;k_bitcopy, k_edge_right_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, .edge_right_mask_aux              ;k_bitcopy, k_edge_right_mask_aux
+         dey                                               ;k_dey
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         dey                                               ;k_dey
+         +BITCOPY .copy, .edge_left_mask_aux               ;k_bitcopy, k_edge_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         rts
+}
+
+!macro OUTER_STAGE_DHGR .copy, .rowcount, .firstrow, .edge_left_mask_main, .edge_right_mask_main, .left_mask_main, .right_mask_main, .edge_left_mask_aux, .edge_right_mask_aux, .left_mask_aux, .right_mask_aux {
+         lda   #(.rowcount-2)                              ;k_set_row_count
+         sta   rowcount
+         txa                                               ;k_set_first_row
+         adc   #(.firstrow-1)
+         tax
+         sty   tmpy                                        ;k_save_y
+         jsr   +                                           ;k_outer_jsr
+-
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, .left_mask_main                   ;k_bitcopy, k_left_mask_main
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         +BITCOPY .copy, .right_mask_main                  ;k_bitcopy, k_right_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, .right_mask_aux                   ;k_bitcopy, k_right_mask_aux
+         ldy   tmpy                                        ;k_restore_y
+         +BITCOPY .copy, .left_mask_aux                    ;k_bitcopy, k_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         dec   rowcount                                    ;k_outer_branch
+         bpl   -
++
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, .edge_left_mask_main              ;k_bitcopy, k_edge_left_mask_main
+         iny                                               ;k_iny
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         iny                                               ;k_iny
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         iny                                               ;k_iny
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         iny                                               ;k_iny
+         +BITCOPY .copy, .edge_right_mask_main             ;k_bitcopy, k_edge_right_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, .edge_right_mask_aux              ;k_bitcopy, k_edge_right_mask_aux
+         dey                                               ;k_dey
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         dey                                               ;k_dey
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         dey                                               ;k_dey
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         dey                                               ;k_dey
+         +BITCOPY .copy, .edge_left_mask_aux               ;k_bitcopy, k_edge_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         rts
+}
+
+!macro STAGE0 .copy {
+         txa                                               ;k_set_first_row
+         adc   #($0F-1)
+         tax
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %00011111                         ;k_bitcopy, k_left_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %01111100                         ;k_bitcopy, k_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %00011111                         ;k_bitcopy, k_left_mask_main
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %01111100                         ;k_bitcopy, k_left_mask_aux
+         +MAINMEM                                          ;k_switch_to_main
+         rts
+}
+
+!macro STAGE1 .copy {
+         txa                                               ;k_set_first_row
+         adc   #($0E-1)
+         tax
+         iny                                               ;k_iny
+         iny                                               ;k_iny
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +MAINMEM                                          ;k_switch_to_main
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +MAINMEM                                          ;k_switch_to_main
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +MAINMEM                                          ;k_switch_to_main
+         +INX_AND_RECALC                                   ;k_inx_and_recalc
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +AUXMEM                                           ;k_switch_to_aux
+         +BITCOPY .copy, %11111111                         ;k_bitcopy, k_full_mask
+         +MAINMEM                                          ;k_switch_to_main
+         rts
+}
+
+;clear00
+*=$7000
+         +STAGE0 0
+;clear01
+*=$7100
+         +STAGE1 0
+;clear02-0F
+*=$7200
+         +MIDDLE_STAGE_DHGR 0, $05, $0D, %01100000, %00000000, %01100000, %00000000, %00000000, %00000011, %00000000, %00000011
+*=$7300
+         +MIDDLE_STAGE_DHGR 0, $07, $0C, %01111000, %00000000, %00011000, %00000000, %00000000, %00001111, %00000000, %00001100
+*=$7400
+         +MIDDLE_STAGE_DHGR 0, $09, $0B, %11111111, %00000000, %00000111, %00000000, %00000000, %11111111, %00000000, %01110000
+*=$7500
+         +MIDDLE_STAGE_DHGR 0, $0B, $0A, %11111111, %00000001, %00000000, %00000001, %01000000, %11111111, %01000000, %00000000
+*=$7600
+         +MIDDLE_STAGE_DHGR 0, $0D, $09, %11111111, %00000111, %00000000, %00000110, %01110000, %11111111, %00110000, %00000000
+*=$7700
+         +MIDDLE_STAGE_DHGR 0, $0F, $08, %11111111, %00011111, %00000000, %00011000, %01111100, %11111111, %00001100, %00000000
+*=$7800
+         +MIDDLE_STAGE_DHGR 0, $11, $07, %11111111, %11111111, %00000000, %01100000, %11111111, %11111111, %00000011, %00000000
+*=$7900
+         +OUTER_STAGE_DHGR  0, $13, $06, %01100000, %00000000, %01100000, %00000000, %00000000, %00000011, %00000000, %00000011
+*=$7A00
+         +OUTER_STAGE_DHGR  0, $15, $05, %01111000, %00000000, %00011000, %00000000, %00000000, %00001111, %00000000, %00001100
+*=$7B00
+         +OUTER_STAGE_DHGR  0, $17, $04, %11111111, %00000000, %00000111, %00000000, %00000000, %11111111, %00000000, %01110000
+*=$7C00
+         +OUTER_STAGE_DHGR  0, $19, $03, %11111111, %00000001, %00000000, %00000001, %01000000, %11111111, %01000000, %00000000
+*=$7D00
+         +OUTER_STAGE_DHGR  0, $1B, $02, %11111111, %00000111, %00000000, %00000110, %01110000, %11111111, %00110000, %00000000
+*=$7E00
+         +OUTER_STAGE_DHGR  0, $1D, $01, %11111111, %00011111, %00000000, %00011000, %01111100, %11111111, %00001100, %00000000
+*=$7F00
+         +OUTER_STAGE_DHGR  0, $1F, $00, %11111111, %11111111, %00000000, %01100000, %11111111, %11111111, %00000011, %00000000
+
+;copy02-08
+;                           cp rowc frow edgeleft   edgeright  left       right      edgeltaux  edgertaux  leftaux    rightaux
+*=$A000
+         +MIDDLE_STAGE_DHGR 1, $05, $0D, %01100000, %00000000, %01100000, %00000000, %00000000, %00000011, %00000000, %00000011
+*=$A100
+         +MIDDLE_STAGE_DHGR 1, $07, $0C, %01111000, %00000000, %00011000, %00000000, %00000000, %00001111, %00000000, %00001100
+*=$A200
+         +MIDDLE_STAGE_DHGR 1, $09, $0B, %11111111, %00000000, %00000111, %00000000, %00000000, %11111111, %00000000, %01110000
+*=$A300
+         +MIDDLE_STAGE_DHGR 1, $0B, $0A, %11111111, %00000001, %00000000, %00000001, %01000000, %11111111, %01000000, %00000000
+*=$A400
+         +MIDDLE_STAGE_DHGR 1, $0D, $09, %11111111, %00000111, %00000000, %00000110, %01110000, %11111111, %00110000, %00000000
+*=$A500
+         +MIDDLE_STAGE_DHGR 1, $0F, $08, %11111111, %00011111, %00000000, %00011000, %01111100, %11111111, %00001100, %00000000
+*=$A600
+         +MIDDLE_STAGE_DHGR 1, $11, $07, %11111111, %11111111, %00000000, %01100000, %11111111, %11111111, %00000011, %00000000
+;copy09-0F
+*=$A700
+         +OUTER_STAGE_DHGR  1, $13, $06, %01100000, %00000000, %01100000, %00000000, %00000000, %00000011, %00000000, %00000011
+*=$A800
+         +OUTER_STAGE_DHGR  1, $15, $05, %01111000, %00000000, %00011000, %00000000, %00000000, %00001111, %00000000, %00001100
+*=$A900
+         +OUTER_STAGE_DHGR  1, $17, $04, %11111111, %00000000, %00000111, %00000000, %00000000, %11111111, %00000000, %01110000
+*=$AA00
+         +OUTER_STAGE_DHGR  1, $19, $03, %11111111, %00000001, %00000000, %00000001, %01000000, %11111111, %01000000, %00000000
+*=$AB00
+         +OUTER_STAGE_DHGR  1, $1B, $02, %11111111, %00000111, %00000000, %00000110, %01110000, %11111111, %00110000, %00000000
+*=$AC00
+         +OUTER_STAGE_DHGR  1, $1D, $01, %11111111, %00011111, %00000000, %00011000, %01111100, %11111111, %00001100, %00000000
+*=$AD00
+         +OUTER_STAGE_DHGR  1, $1F, $00, %11111111, %11111111, %00000000, %01100000, %11111111, %11111111, %00000011, %00000000
+
+;copy00
+*=$AE00
+         +STAGE0 1
+;copy01
+*=$AF00
+         +STAGE1 1
+
