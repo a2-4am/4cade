@@ -80,22 +80,25 @@ k_right_mask_aux          = 8        ; must be 8
 k_current_page            = 9
 k_switch_to_main          = 10
 k_switch_to_aux           = 11
-k_inx_and_recalc          = 12
-k_recalc                  = 13
-k_set_row_count           = 14
-k_set_first_row           = 15
-k_iny                     = 16
-k_dey                     = 17
-k_save_y                  = 18
-k_restore_y               = 19
-k_middle_jsr              = 20
-k_outer_jsr               = 21
-k_middle_branch           = 22
-k_outer_branch            = 23
-k_bitcopy                 = 24
-k_mask_copy_pre           = 25
-k_mask_copy_post          = 26
-k_byte_copy               = 27
+k_switch_to_aux_and_byte_copy = 12
+k_inx_and_recalc          = 13
+k_recalc                  = 14
+k_set_row_count           = 15
+k_set_first_row           = 16
+k_iny2                    = 17
+k_iny                     = 18
+k_dey                     = 19
+k_save_y                  = 20
+k_restore_y               = 21
+k_middle_jsr              = 22
+k_outer_jsr               = 23
+k_middle_branch           = 24
+k_outer_branch            = 25
+k_mask_copy_pre           = 26
+k_mask_copy_post          = 27
+k_byte_copy               = 28
+k_byte_copy_and_iny       = 29
+k_bitcopy                 = 30       ; must be last token
 
          !source "src/fx/macros.a"
 
@@ -179,37 +182,54 @@ NextBox  dex
 ; Note that several pieces overlap in order to minimize code size.
 ; Everything from CODEGEN_COPY_START and onward is copied to zero page for
 ; the code generation phase on program startup.
+EDGE_LEFT_MASK_MAIN       = $01      ; address $01 to match token
+EDGE_RIGHT_MASK_MAIN      = $02      ; address $02 to match token
+LEFT_MASK_MAIN            = $03      ; address $03 to match token
+RIGHT_MASK_MAIN           = $04      ; address $04 to match token
+EDGE_LEFT_MASK_AUX        = $05      ; address $05 to match token
+EDGE_RIGHT_MASK_AUX       = $06      ; address $06 to match token
+LEFT_MASK_AUX             = $07      ; address $07 to match token
+RIGHT_MASK_AUX            = $08      ; address $08 to match token
 CODEGEN_COPY_START
-!pseudopc 0 {
+!pseudopc 9 {
 RTS0
-         rts                         ; also terminates MainLoop
-RTS0_E
-;
-EDGE_LEFT_MASK_MAIN                  ; must be at address $01 to match token
-         !byte $FD
-EDGE_RIGHT_MASK_MAIN                 ; must be at address $02 to match token
-         !byte $FD
-LEFT_MASK_MAIN                       ; must be at address $03 to match token
-         !byte $FD
-RIGHT_MASK_MAIN                      ; must be at address $04 to match token
-         !byte $FD
-EDGE_LEFT_MASK_AUX                   ; must be at address $05 to match token
-         !byte $FD
-EDGE_RIGHT_MASK_AUX                  ; must be at address $06 to match token
-         !byte $FD
-LEFT_MASK_AUX                        ; must be at address $07 to match token
-         !byte $FD
-RIGHT_MASK_AUX                       ; must be at address $08 to match token
-         !byte $FD
 SWITCH_TO_MAIN
          sta   $C054
 SWITCH_TO_MAIN_E
+         rts                         ; also terminates MainLoop
+RTS0_E
 ;
+SWITCH_TO_AUX_AND_BYTE_COPY
 SWITCH_TO_AUX
          sta   $C055
          lda   auxsrc_hgrhi, x
          sta   src+1
 SWITCH_TO_AUX_E
+BYTECOPY_AND_INY
+BYTECOPY
+         lda   (src), y
+         sta   (dst), y
+BYTECOPY_E
+SWITCH_TO_AUX_AND_BYTE_COPY_E
+INY2
+INY1
+         iny
+INY1_E
+BYTECOPY_AND_INY_E
+         iny
+INY2_E
+;
+DEY1
+         dey
+DEY1_E
+;
+SAVE_Y
+         sty   tmpy
+SAVE_Y_E
+;
+RESTORE_Y
+         ldy   tmpy
+RESTORE_Y_E
 ;
 INX_AND_RECALC
          inx
@@ -244,38 +264,19 @@ BIT_FOR_CLEAR
          !byte $29                   ; (AND #$44 opcode)
 MASKCOPY_PRE_E
 ;
-MASKCOPY_POST
-         eor   (dst), y
-         sta   (dst), y
-MASKCOPY_POST_E
+
+codegen_pieces                       ; address of each of the pieces (on zero page, so 1 byte)
+         !byte <RTS0
+         ; these 8 addresses are never used so we stuff 8 bytes of unrelated data here
+         ;!byte <EDGE_LEFT_MASK_MAIN
+         ;!byte <EDGE_RIGHT_MASK_MAIN
+         ;!byte <LEFT_MASK_MAIN
+         ;!byte <RIGHT_MASK_MAIN
+         ;!byte <EDGE_LEFT_MASK_AUX
+         ;!byte <EDGE_RIGHT_MASK_AUX
+         ;!byte <LEFT_MASK_AUX
+         ;!byte <RIGHT_MASK_AUX
 ;
-BYTECOPY
-         lda   (src), y
-         sta   (dst), y
-BYTECOPY_E
-;
-DEY1
-         dey
-DEY1_E
-;
-INY1
-         iny
-INY1_E
-;
-SAVE_Y
-         sty   tmpy
-SAVE_Y_E
-;
-RESTORE_Y
-         ldy   tmpy
-RESTORE_Y_E
-;
-MIDDLE_JSR
-         !byte $20,$47
-MIDDLE_JSR_E
-OUTER_JSR
-         !byte $20,$48
-OUTER_JSR_E
 MIDDLE_BRANCH
          dec   rowcount
          !byte $10,$C8
@@ -285,54 +286,16 @@ OUTER_BRANCH
          dec   rowcount
          !byte $10,$C6
 OUTER_BRANCH_E
-
-codegen_piece_lengths                ; length of each of the pieces
-         !byte RTS0_E-RTS0
-         !byte 1                     ; edge left mask main
-         !byte 1                     ; edge right mask main
-         !byte 1                     ; left mask main
-         !byte 1                     ; right mask main
-         !byte 1                     ; edge left mask aux
-         !byte 1                     ; edge right mask aux
-         !byte 1                     ; left mask aux
-         !byte 1                     ; right mask aux
-         !byte 1                     ; current page
-         !byte SWITCH_TO_MAIN_E-SWITCH_TO_MAIN
-         !byte SWITCH_TO_AUX_E-SWITCH_TO_AUX
-         !byte INX_AND_RECALC_E-INX_AND_RECALC
-         !byte RECALC_E-RECALC
-         !byte SET_ROW_COUNT_E-SET_ROW_COUNT
-         !byte SET_FIRST_ROW_E-SET_FIRST_ROW
-         !byte INY1_E-INY1
-         !byte DEY1_E-DEY1
-         !byte SAVE_Y_E-SAVE_Y
-         !byte RESTORE_Y_E-RESTORE_Y
-         !byte MIDDLE_JSR_E-MIDDLE_JSR
-         !byte OUTER_JSR_E-OUTER_JSR
-         !byte MIDDLE_BRANCH_E-MIDDLE_BRANCH
-         !byte OUTER_BRANCH_E-OUTER_BRANCH
-         !byte $FF                   ; negative length -> do special bitcopy logic during codegen
-         !byte MASKCOPY_PRE_E-MASKCOPY_PRE
-         !byte MASKCOPY_POST_E-MASKCOPY_POST
-         !byte BYTECOPY_E-BYTECOPY
-
-codegen_pieces                       ; address of each of the pieces (on zero page, so 1 byte)
-         !byte <RTS0
-         !byte <EDGE_LEFT_MASK_MAIN
-         !byte <EDGE_RIGHT_MASK_MAIN
-         !byte <LEFT_MASK_MAIN
-         !byte <RIGHT_MASK_MAIN
-         !byte <EDGE_LEFT_MASK_AUX
-         !byte <EDGE_RIGHT_MASK_AUX
-         !byte <LEFT_MASK_AUX
-         !byte <RIGHT_MASK_AUX
+;
          !byte <codegen_dst          ; current page
          !byte <SWITCH_TO_MAIN
          !byte <SWITCH_TO_AUX
+         !byte <SWITCH_TO_AUX_AND_BYTE_COPY
          !byte <INX_AND_RECALC
          !byte <RECALC
          !byte <SET_ROW_COUNT
          !byte <SET_FIRST_ROW
+         !byte <INY2
          !byte <INY1
          !byte <DEY1
          !byte <SAVE_Y
@@ -341,18 +304,61 @@ codegen_pieces                       ; address of each of the pieces (on zero pa
          !byte <OUTER_JSR
          !byte <MIDDLE_BRANCH
          !byte <OUTER_BRANCH
-         !byte 0                     ; bitcopy pseudo-opcode has no piece of its own
          !byte <MASKCOPY_PRE
          !byte <MASKCOPY_POST
          !byte <BYTECOPY
+         !byte <BYTECOPY_AND_INY
+         ;!byte 0                    ; bitcopy pseudo-opcode has no piece of its own
 
-codegen_stage
-         !byte 27
-codegen_maskindex
-         !byte 0
+codegen_piece_lengths                ; length of each of the pieces
+         !byte RTS0_E-RTS0
+         ; these 8 lengths are never used so we stuff 8 bytes of unrelated data here
+         ;!byte 1                     ; edge left mask main
+         ;!byte 1                     ; edge right mask main
+         ;!byte 1                     ; left mask main
+         ;!byte 1                     ; right mask main
+         ;!byte 1                     ; edge left mask aux
+         ;!byte 1                     ; edge right mask aux
+         ;!byte 1                     ; left mask aux
+         ;!byte 1                     ; right mask aux
+;
+MASKCOPY_POST
+         eor   (dst), y
+         sta   (dst), y
+MASKCOPY_POST_E
+;
+MIDDLE_JSR
+         !byte $20,$47
+MIDDLE_JSR_E
+OUTER_JSR
+         !byte $20,$48
+OUTER_JSR_E
+;
+         !byte 1                     ; current page
+         !byte SWITCH_TO_MAIN_E-SWITCH_TO_MAIN
+         !byte SWITCH_TO_AUX_E-SWITCH_TO_AUX
+         !byte SWITCH_TO_AUX_AND_BYTE_COPY_E-SWITCH_TO_AUX_AND_BYTE_COPY
+         !byte INX_AND_RECALC_E-INX_AND_RECALC
+         !byte RECALC_E-RECALC
+         !byte SET_ROW_COUNT_E-SET_ROW_COUNT
+         !byte SET_FIRST_ROW_E-SET_FIRST_ROW
+         !byte INY2_E-INY2
+         !byte INY1_E-INY1
+         !byte DEY1_E-DEY1
+         !byte SAVE_Y_E-SAVE_Y
+         !byte RESTORE_Y_E-RESTORE_Y
+         !byte MIDDLE_JSR_E-MIDDLE_JSR
+         !byte OUTER_JSR_E-OUTER_JSR
+         !byte MIDDLE_BRANCH_E-MIDDLE_BRANCH
+         !byte OUTER_BRANCH_E-OUTER_BRANCH
+         !byte MASKCOPY_PRE_E-MASKCOPY_PRE
+         !byte MASKCOPY_POST_E-MASKCOPY_POST
+         !byte BYTECOPY_E-BYTECOPY
+         !byte BYTECOPY_AND_INY_E-BYTECOPY_AND_INY
+         ;!byte $FF                  ; negative length -> do special bitcopy logic during codegen
 
 BuildDrawingRoutineFrom
-         sta   <codegen_token_src
+         sta   <codegen_token_src    ; STA opcode ($85) also serves as 'length' of k_bitcopy token
 BuildDrawingRoutine
          ldy   #0
          sty   <codegen_token_x
@@ -379,22 +385,25 @@ ProcessBitcopyToken
 bitcopy_mask=*+1
          lda   $FD                   ; SMC
          beq   ExitProcessToken      ; copymask=0 -> nothing to generate
-         bmi   +                     ; copymask>$80 -> assume full byte
+         bmi   +                     ; copymask>=$80 -> assume full byte
          lda   #k_mask_copy_pre
          jsr   ProcessToken
+         lda   #1
+         sta   <piece_length
          lda   <bitcopy_mask
-         jsr   ProcessToken
+         jsr   ProcessMaskToken
          lda   #k_mask_copy_post
          +HIDE_NEXT_2_BYTES
 +        lda   #k_byte_copy
          ; execution falls through here
-
 ProcessToken
          tax
          lda   <codegen_piece_lengths, x
-         bmi   ProcessBitcopyToken   ; only bitcopy has length>$80
+         bmi   ProcessBitcopyToken   ; only bitcopy has length>=$80
          sta   <piece_length
          lda   <codegen_pieces, x
+         ; execution falls through here
+ProcessMaskToken
          sta   <piece_src
          ldx   #0
 -
@@ -410,6 +419,11 @@ piece_length=*+1
          bcc   -
 ExitProcessToken
          rts
+
+codegen_stage
+         !byte 27
+codegen_maskindex
+         !byte 0
 
 CopyAuxDHGRToMain
 ; X=0
@@ -489,7 +503,7 @@ BuildDrawingRoutines
          ; copy codegen data to zero page
          ldx   #0
 -        lda   CODEGEN_COPY_START, x
-         sta   $00, x
+         sta   $09, x
          inx
          bne   -
          ;X=0 here
@@ -568,8 +582,7 @@ BuildStage1And0
 ; part of the box (labeled '0' in diagram above).
 STAGE0
          !byte k_set_first_row
-         !byte k_iny
-         !byte k_iny
+         !byte k_iny2
          !byte k_recalc
          !byte k_bitcopy, k_left_mask_main
          !byte k_switch_to_aux
@@ -579,35 +592,28 @@ STAGE0
          !byte k_bitcopy, k_left_mask_aux
          !byte k_switch_to_aux
          !byte k_bitcopy, k_left_mask_aux
-         !byte k_switch_to_main
          !byte k_rts                 ; also serves as an end-of-template marker
 
 ; Template for 'stage 1' routine (copy01), which copies the pixels
 ; around the innermost box (labeled '1' in diagram above).
 STAGE1
          !byte k_set_first_row
-         !byte k_iny
-         !byte k_iny
+         !byte k_iny2
          !byte k_recalc
          !byte k_byte_copy
-         !byte k_switch_to_aux
-         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
          !byte k_switch_to_main
          !byte k_inx_and_recalc
          !byte k_byte_copy
-         !byte k_switch_to_aux
-         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
          !byte k_switch_to_main
          !byte k_inx_and_recalc
          !byte k_byte_copy
-         !byte k_switch_to_aux
-         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
          !byte k_switch_to_main
          !byte k_inx_and_recalc
          !byte k_byte_copy
-         !byte k_switch_to_aux
-         !byte k_byte_copy
-         !byte k_switch_to_main
+         !byte k_switch_to_aux_and_byte_copy
          !byte k_rts                 ; also serves as an end-of-template marker
 
 ; Template for stages 2-8 (copy02..copy08)
@@ -620,8 +626,7 @@ MIDDLE_STAGE
          ;-
          !byte k_inx_and_recalc
          !byte k_bitcopy, k_left_mask_main
-         !byte k_iny
-         !byte k_iny
+         !byte k_iny2
          !byte k_bitcopy, k_right_mask_main
          !byte k_switch_to_aux
          !byte k_bitcopy, k_right_mask_aux
@@ -633,8 +638,7 @@ MIDDLE_STAGE
          !byte k_inx_and_recalc
          !byte k_bitcopy, k_edge_left_mask_main
          !byte k_iny
-         !byte k_byte_copy
-         !byte k_iny
+         !byte k_byte_copy_and_iny
          !byte k_bitcopy, k_edge_right_mask_main
          !byte k_switch_to_aux
          !byte k_bitcopy, k_edge_right_mask_aux
@@ -642,7 +646,6 @@ MIDDLE_STAGE
          !byte k_byte_copy
          !byte k_dey
          !byte k_bitcopy, k_edge_left_mask_aux
-         !byte k_switch_to_main
          !byte k_rts                 ; also serves as an end-of-template marker
 
 ; Template for stages 9-15 (copy09..copy0F)
@@ -654,10 +657,8 @@ OUTER_STAGE
          ;-
          !byte k_inx_and_recalc
          !byte k_bitcopy, k_left_mask_main
-         !byte k_iny
-         !byte k_iny
-         !byte k_iny
-         !byte k_iny
+         !byte k_iny2
+         !byte k_iny2
          !byte k_bitcopy, k_right_mask_main
          !byte k_switch_to_aux
          !byte k_bitcopy, k_right_mask_aux
@@ -669,12 +670,9 @@ OUTER_STAGE
          !byte k_inx_and_recalc
          !byte k_bitcopy, k_edge_left_mask_main
          !byte k_iny
-         !byte k_byte_copy
-         !byte k_iny
-         !byte k_byte_copy
-         !byte k_iny
-         !byte k_byte_copy
-         !byte k_iny
+         !byte k_byte_copy_and_iny
+         !byte k_byte_copy_and_iny
+         !byte k_byte_copy_and_iny
          !byte k_bitcopy, k_edge_right_mask_main
          !byte k_switch_to_aux
          !byte k_bitcopy, k_edge_right_mask_aux
@@ -686,7 +684,6 @@ OUTER_STAGE
          !byte k_byte_copy
          !byte k_dey
          !byte k_bitcopy, k_edge_left_mask_aux
-         !byte k_switch_to_main
          !byte k_rts                 ; also serves as an end-of-template marker
 !if >* != >STAGE0 {
          !error "Templates are not all on same page"
