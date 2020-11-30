@@ -380,7 +380,7 @@ bitcopy_mask=*+1
          lda   <bitcopy_mask
          jsr   ProcessToken
          lda   #k_mask_copy_post
-         +HIDE_NEXT_BYTE
+         +HIDE_NEXT_2_BYTES
 +        lda   #k_byte_copy
          ; execution falls through here
 
