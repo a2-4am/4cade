@@ -7,17 +7,18 @@
 
 phase = $FC               ; byte, $80 or $00
 maskindex = $FD           ; byte
-coord = $FE               ; word
+
+         !source "src/fx/fx.hgr.block.fizzle.common.a"
+
+         +BUILD_BLOCK_FIZZLE_DATA
 
          lda   #$80
          sta   phase
          lda   #0
          sta   maskindex
 @outerloop
-         lda   #<Coordinates
-         sta   coord
-         lda   #>Coordinates
-         sta   coord+1
+         +LDADDR Coordinates
+         +ST16 coord
 @loop
          dec   maskindex
          bpl   +
@@ -105,10 +106,6 @@ mask4
          !byte %11111100
          !byte %11111110
          !byte %11111111
-
-
-Coordinates
-         !source "src/fx/fx.hgr.block.fizzle.data.a"
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"

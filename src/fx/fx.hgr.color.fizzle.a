@@ -7,19 +7,18 @@
 
 phase = $FC               ; byte, $80 or $00
 color = $FD               ; byte
-coord = $FE               ; word
 
-         !source "src/fx/macros.a"
+         !source "src/fx/fx.hgr.block.fizzle.common.a"
+
+         +BUILD_BLOCK_FIZZLE_DATA
 
          lda   #$80
          sta   phase
 @outerloop
          lda   #0
          sta   color
-         lda   #<Coordinates
-         sta   coord
-         lda   #>Coordinates
-         sta   coord+1
+         +LDADDR Coordinates
+         +ST16 coord
 @loop
          dec   color
          bpl   +
@@ -74,9 +73,6 @@ colors
          !byte %11010101
          !byte %11010101
          !byte %11111111
-
-Coordinates
-         !source "src/fx/fx.hgr.block.fizzle.data.a"
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"

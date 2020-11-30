@@ -1,17 +1,17 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/BLOCK.FIZZLE",plain
 *=$6000
 
-coord = $FE
+         !source "src/fx/fx.hgr.block.fizzle.common.a"
 
-         lda   #<@coords
-         sta   coord
-         lda   #>@coords
-         sta   coord+1
-@loop
+         +BUILD_BLOCK_FIZZLE_DATA
+
+         +LDADDR Coordinates
+         +ST16 coord
+@loop2
          ldy   #0
          lda   (coord),y
          bmi   @exit
@@ -30,11 +30,8 @@ coord = $FE
 +        inc   coord
          bne   +
          inc   coord+1
-+        bne   @loop
++        bne   @loop2
 @exit    rts
-
-@coords
-         !source "src/fx/fx.hgr.block.fizzle.data.a"
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"

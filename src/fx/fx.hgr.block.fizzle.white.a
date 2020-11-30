@@ -5,12 +5,12 @@
 !to "build/FX/BLOCK.MOSAIC",plain
 *=$6000
 
-coord = $FE
+         !source "src/fx/fx.hgr.block.fizzle.common.a"
 
-         lda   #<@coords
-         sta   coord
-         lda   #>@coords
-         sta   coord+1
+         +BUILD_BLOCK_FIZZLE_DATA
+
+         +LDADDR Coordinates
+         +ST16 coord
 @whiteloop
          ldy   #0
          lda   (coord),y
@@ -32,10 +32,8 @@ coord = $FE
          inc   coord+1
 +        bne   @whiteloop
 @endwhite
-         lda   #<@coords
-         sta   coord
-         lda   #>@coords
-         sta   coord+1
+         +LDADDR Coordinates
+         +ST16 coord
 @copyloop
          ldy   #0
          lda   (coord),y
@@ -57,9 +55,6 @@ coord = $FE
          inc   coord+1
 +        bne   @copyloop
 @exit    rts
-
-@coords
-         !source "src/fx/fx.hgr.block.fizzle.data.a"
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
