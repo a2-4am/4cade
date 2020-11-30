@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2020 by 4am & qkumba
+;
+!cpu 6502
+!to "build/FX/BOXES48.SPIRALC",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.48boxes.common.a"
+
+         !byte $00,$FE,$FC,$FA,$F8,$F6,$F4,$F2
+         !Byte $D0,$CE,$CC,$CA,$C8,$C6,$C4,$F0
+         !Byte $D2,$B0,$AE,$AC,$AA,$A8,$C2,$EE
+         !Byte $D4,$B2,$A0,$A2,$A4,$A6,$C0,$EC
+         !Byte $D6,$B4,$B6,$B8,$BA,$BC,$BE,$EA
+         !Byte $D8,$DC,$DE,$E0,$E2,$E4,$E6,$E8
+
+StagesHi ; high bytes of address of drawing routine for each stage
+         !byte clear00
+         !byte clear01
+         !byte clear02
+         !byte clear03
+         !byte clear04
+         !byte clear05
+         !byte clear06
+         !byte clear07
+         !byte clear08
+         !byte clear09
+         !byte clear0A
+         !byte clear0B
+         !byte clear0C
+         !byte clear0D
+         !byte clear0E
+         !byte clear0F
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+         !byte copy00
+         !byte copy01
+         !byte copy02
+         !byte copy03
+         !byte copy04
+         !byte copy05
+         !byte copy06
+         !byte copy07
+         !byte copy08
+         !byte copy09
+         !byte copy0A
+         !byte copy0B
+         !byte copy0C
+         !byte copy0D
+         !byte copy0E
+         !byte copy0F
+EndStagesHi
