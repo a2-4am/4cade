@@ -1,13 +1,12 @@
 ;license:MIT
 ;(c) 2020 by qkumba
 ;
-
 coord = $FE
 Coordinates = $7000       ; about $700 bytes, can be anywhere
 
          !source "src/fx/macros.a"
 
-!macro BUILD_BLOCK_FIZZLE_DATA {
+!macro BUILD_HALFBLOCK_FIZZLE_DATA {
          +LDADDR Coordinates
          +ST16 coord
 
@@ -27,13 +26,10 @@ Coordinates = $7000       ; about $700 bytes, can be anywhere
          ror   @rnd1+1
          bcc   +
 
-         ;feedback polynomial forms #$204 for period of 1023
+         ;feedback polynomial forms #$500 for period of 2047
 
-         lda   @rnd1+1
-         eor   #4
-         sta   @rnd1+1
          lda   @rnd2+1
-         eor   #2
+         eor   #5
          sta   @rnd2+1
 
 +        tya
@@ -52,7 +48,7 @@ Coordinates = $7000       ; about $700 bytes, can be anywhere
          iny
          bne   -
 
-++       cpy   #24
+++       cpy   #48
          bcs   @rnd2
          tax
          tya
@@ -84,6 +80,5 @@ Coordinates = $7000       ; about $700 bytes, can be anywhere
          bne   +
          inc   coord+1
 +        rts
-
 ++
 }

@@ -5,79 +5,12 @@
 !to "build/FX/HALF.FIZZLE",plain
 *=$6000
 
-coord = $FE
+         !source "src/fx/fx.hgr.halfblock.fizzle.common.a"
 
-         lda   #<Coordinates
-         sta   coord
-         lda   #>Coordinates
-         sta   coord+1
+         +BUILD_HALFBLOCK_FIZZLE_DATA
 
-         ;init RNG
-
-         ldx   #1
-         stx   @rnd1+1
-         dex
-         stx   @rnd2+1
-
-         ;iterate
-
-@loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
-         bcc   +
-
-         ;feedback polynomial forms #$500 for period of 2047
-
-         lda   @rnd2+1
-         eor   #5
-         sta   @rnd2+1
-
-+        tya
-         eor   #$ff
-         ldy   #0
--        cpx   #0
-         bne   +
-         cmp   #40
-         bcc   ++
-+        sbc   #40
-         pha
-         txa
-         sbc   #0
-         tax
-         pla
-         iny
-         bne   -
-
-++       cpy   #48
-         bcs   @rnd2
-         tax
-         tya
-         jsr   @stainc
-         txa
-         jsr   @stainc
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
-         bne   @loop
-
-         ;include the missing point
-
-         lda   #6
-         jsr   @stainc
-         lda   #15
-         jsr   @stainc
-
-         lda   #$ff
-         jsr   @stainc
-
-         lda   #<Coordinates
-         sta   coord
-         lda   #>Coordinates
-         sta   coord+1
+         +LDADDR Coordinates
+         +ST16 coord
 @loop2
          ldy   #0
          lda   (coord),y
@@ -100,16 +33,6 @@ coord = $FE
 +        bne   @loop2
 @exit    rts
 
-@stainc
-         ldy   #0
-         sta   (coord), y
-         inc   coord
-         bne   +
-         inc   coord+1
-+        rts
-
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES
-
-Coordinates
