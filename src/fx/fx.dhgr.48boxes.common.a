@@ -2,6 +2,72 @@
 ;(c) 2020 by 4am & qkumba
 ;
 
+; The screen is separated into 48 boxes.
+; Boxes are laid out in a grid, left-to-right, top-down:
+;
+; 0  1  2  3  4  5  6  7
+; 8  9  10 11 12 13 14 15
+; 16 17 18 19 20 21 22 23
+; 24 25 26 27 28 29 30 31
+; 32 33 34 35 36 37 38 39
+; 40 41 42 43 44 45 46 47
+;
+; Each box is 70x32 pixels, so each row of each box is 5 consecutive
+; bytes in main memory and another 5 in auxiliary memory, all of which
+; are easy to find once you calculate the base address for that row.
+;
+; |BoxInitialStages| defines the initial grid of stages for each box.
+; Each stage is used an index into the |StagesHi| array
+; to find the drawing routine for that stage (if any).
+; Each box's stage is incremented after each iteration through the main loop.
+; When the main loop iterates through all 48 boxes without drawing anything,
+; the program exits.
+;
+; There are 16 clear routines that set certain bits to 0 (black),
+; labeled clear00..clear0F. clear00 clears the inner-most box, and
+; clear0F clears the outermost box (see diagram).
+; There are 16 copy routines that copy certain bits from the source
+; image on page 2 to the destination image on page 1, labeled copy00..copy0F.
+;
+; row|                 pixels
+; ---+---------------------------------------
+; 00 |FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF
+; 01 |FEEEEEE|EEEEEEE|EEEEEEE|EEEEEEE|EEEEEEF
+; 02 |FEDDDDD|DDDDDDD|DDDDDDD|DDDDDDD|DDDDDEF
+; 03 |FEDCCCC|CCCCCCC|CCCCCCC|CCCCCCC|CCCCDEF
+; 04 |FEDCBBB|BBBBBBB|BBBBBBB|BBBBBBB|BBBCDEF
+; 05 |FEDCBAA|AAAAAAA|AAAAAAA|AAAAAAA|AABCDEF
+; 06 |FEDCBA9|9999999|9999999|9999999|9ABCDEF
+; 07 |FEDCBA9|8888888|8888888|8888888|9ABCDEF
+; ---+-------+-------+-------+-------+-------
+; 08 |FEDCBA9|8777777|7777777|7777778|9ABCDEF
+; 09 |FEDCBA9|8766666|6666666|6666678|9ABCDEF
+; 0A |FEDCBA9|8765555|5555555|5555678|9ABCDEF
+; 0B |FEDCBA9|8765444|4444444|4445678|9ABCDEF
+; 0C |FEDCBA9|8765433|3333333|3345678|9ABCDEF
+; 0D |FEDCBA9|8765432|2222222|2345678|9ABCDEF
+; 0E |FEDCBA9|8765432|1111111|2345678|9ABCDEF
+; 0F |FEDCBA9|8765432|1000001|2345678|9ABCDEF
+; ---+-------+-------+-------+-------+-------
+; 10 |FEDCBA9|8765432|1000001|2345678|9ABCDEF
+; 11 |FEDCBA9|8765432|1111111|2345678|9ABCDEF
+; 12 |FEDCBA9|8765432|2222222|2345678|9ABCDEF
+; 13 |FEDCBA9|8765433|3333333|3345678|9ABCDEF
+; 14 |FEDCBA9|8765444|4444444|4445678|9ABCDEF
+; 15 |FEDCBA9|8765555|5555555|5555678|9ABCDEF
+; 16 |FEDCBA9|8766666|6666666|6666678|9ABCDEF
+; 17 |FEDCBA9|8777777|7777777|7777778|9ABCDEF
+; ---+-------+-------+-------+-------+-------
+; 18 |FEDCBA9|8888888|8888888|8888888|9ABCDEF
+; 19 |FEDCBA9|9999999|9999999|9999999|9ABCDEF
+; 1A |FEDCBAA|AAAAAAA|AAAAAAA|AAAAAAA|AABCDEF
+; 1B |FEDCBBB|BBBBBBB|BBBBBBB|BBBBBBB|BBBCDEF
+; 1C |FEDCCCC|CCCCCCC|CCCCCCC|CCCCCCC|CCCCDEF
+; 1D |FEDDDDD|DDDDDDD|DDDDDDD|DDDDDDD|DDDDDEF
+; 1E |FEEEEEE|EEEEEEE|EEEEEEE|EEEEEEE|EEEEEEF
+; 1F |FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF|FFFFFFF
+;
+
 !ifndef USES_CLEAR {
   ; if an effect doesn't use any clear stages, you can reduce code size
   ; by setting USES_CLEAR=0 before including this file
