@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX/HALF.FIZZLE",plain
@@ -7,11 +7,78 @@
 
 coord = $FE
 
-         lda   #<@coords
+         lda   #<Coordinates
          sta   coord
-         lda   #>@coords
+         lda   #>Coordinates
          sta   coord+1
+
+         ;init RNG
+
+         ldx   #1
+         stx   @rnd1+1
+         dex
+         stx   @rnd2+1
+
+         ;iterate
+
 @loop
+         ldy   @rnd1+1
+         ldx   @rnd2+1
+         lsr   @rnd2+1
+         ror   @rnd1+1
+         bcc   +
+
+         ;feedback polynomial forms #$500 for period of 2047
+
+         lda   @rnd2+1
+         eor   #5
+         sta   @rnd2+1
+
++        tya
+         eor   #$ff
+         ldy   #0
+-        cpx   #0
+         bne   +
+         cmp   #40
+         bcc   ++
++        sbc   #40
+         pha
+         txa
+         sbc   #0
+         tax
+         pla
+         iny
+         bne   -
+
+++       cpy   #48
+         bcs   @rnd2
+         tax
+         tya
+         jsr   @stainc
+         txa
+         jsr   @stainc
+
+@rnd2    lda   #0
+         bne   @loop
+@rnd1    lda   #0
+         cmp   #1
+         bne   @loop
+
+         ;include the missing point
+
+         lda   #6
+         jsr   @stainc
+         lda   #15
+         jsr   @stainc
+
+         lda   #$ff
+         jsr   @stainc
+
+         lda   #<Coordinates
+         sta   coord
+         lda   #>Coordinates
+         sta   coord+1
+@loop2
          ldy   #0
          lda   (coord),y
          bmi   @exit
@@ -30,12 +97,19 @@ coord = $FE
 +        inc   coord
          bne   +
          inc   coord+1
-+        bne   @loop
++        bne   @loop2
 @exit    rts
 
-@coords
-         !source "src/fx/fx.hgr.halfblock.fizzle.data.a"
+@stainc
+         ldy   #0
+         sta   (coord), y
+         inc   coord
+         bne   +
+         inc   coord+1
++        rts
 
          !source "src/wait.a"
          !source "src/fx/fx.hgr.common.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES
+
+Coordinates
