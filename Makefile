@@ -63,19 +63,17 @@ asmlauncher: md
 	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
 asmfx: md
-	touch build/log
 	for f in src/fx/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log || true; done
 	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 
 asmprelaunch: md
-	touch build/log
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
 chd:	dsk
 	chdman createhd -c none -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
 
-compress:
+compress: md
 	for f in res/ACTION.HGR.UNCOMPRESSED/*; do  o=res/ACTION.HGR/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ACTION.DHGR.UNCOMPRESSED/*; do o=res/ACTION.DHGR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ARTWORK.SHR.UNCOMPRESSED/*; do o=res/ARTWORK.SHR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
@@ -89,6 +87,7 @@ mount: dsk
 
 md:
 	mkdir -p build/X build/FX build/PRELAUNCH build/GAMEHELP
+	touch build/log
 
 clean:
 	rm -rf build/ || rm -rf build
