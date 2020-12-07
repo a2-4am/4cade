@@ -1,46 +1,71 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2020 by 4am/qkumba
 ;
 ; randomized fade-to-black routine customized for a specific piece of cover art
 ; with 75 fill rectangles
 ;
-; Linear Congruential Pseudo-Random Number Generator
-; (c) 2004 Bruce Clark
-; http://www.6502.org/source/integers/random/random.html
 
 !cpu 6502
 !to "build/FX/COVERFADE",plain
 *=$6000
 
-COUNTER  = $F7
-SEED     = $F8                       ; 4 bytes
-TMP      = $FC                       ; 4 bytes
+         !source "src/fx/macros.a"
 
-         jsr   InitPRNG
+         +READ_ROM_NO_WRITE
 
-         lda   #$80
-         sta   COUNTER
--        jsr   PRNG
-         lda   SEED+3
-         tax
-         ldy   COUNTER
-         lda   Order,x
-         pha
-         lda   Order,y
-         sta   Order,x
-         pla
-         sta   Order,y
-         inc   COUNTER
+         ;init RNG
+
+         lda   $C050
+         and   #$7F
+         bne   +
+         lda   #$01
++        sta   @rnd+1
+         sta   @exit+1
+
+         lda   #$20
+         sta   $e6
+
+         ;iterate
+
+@loop    ldy   @rnd+1
+         tya
+         lsr
+         bcc   +
+
+         ;feedback polynomial forms #$41 for period of 127
+
+         eor   #$41
++        sta   @rnd+1
+         cpy   #75+1
+         bcs   +
+
+         lda   width - 1, y
+         sta   $fd
+         lda   height - 1, y
+         sta   $fe
+         lda   startx - 1, y
+         sta   $ff
+         lda   starty - 1, y
+
+--       pha
+
+         ldx   #0
+         ldy   #0
+         jsr   $f411   ;hposn
+
+         lda   #0
+         ldx   $fd
+         ldy   $ff
+-        sta   ($26), y
+         iny
+         dex
          bne   -
+         pla
+         clc
+         adc   #1
+         dec   $fe
+         bne   --
 
--        ldx   COUNTER
-         ldy   Order,x
-         bmi   +
-         lda   TransformHi,y
-         sta   @j+2
-         lda   TransformLo,y
-         sta   @j+1
-@j       jsr   $FDFD                 ; SMC
          lda   #80
          sec
 @wait1   pha
@@ -49,131 +74,58 @@ TMP      = $FC                       ; 4 bytes
          pla
          sbc   #1
          bne   @wait1
-+        inc   COUNTER
-         bne   -
+
++
+@rnd     lda   #0
+@exit    cmp   #1
+         bne   @loop
+         +READ_RAM1_WRITE_RAM1
          rts
 
-InitPRNG
-         lda   $4E
-         sta   SEED
-         lda   $4F
-         sta   SEED+1
-         lda   $c050
-         sta   SEED+2
-         lda   $c000
-         sta   SEED+3
-         rts
+width
+         !byte 02, 03, 03, 05, 03, 03, 03, 03
+         !byte 03, 03, 03, 03, 04, 04, 03, 02
+         !byte 03, 03, 04, 07, 03, 02, 03, 03
+         !byte 03, 03, 03, 03, 03, 03, 03, 03
+         !byte 02, 03, 07, 04, 05, 03, 05, 05
+         !byte 03, 04, 06, 07, 04, 03, 03, 03
+         !byte 03, 02, 04, 05, 03, 03, 04, 06
+         !byte 03, 02, 04, 06, 03, 03, 03, 03
+         !byte 04, 03, 02, 03, 02, 03, 03, 03
+         !byte 03, 03, 02
 
-PRNG
-         lda   #$01
-         ldx   #$03
--        sta   TMP,x
-         lsr
-         dex
-         bpl   -
-         ldy   #$20
-         bne   @rotateseed           ; always branches
-@loop    bcc   @rotatetmp
-         clc
-         ldx   #$03
--        lda   TMP,x
-         adc   @randtable,x
-         sta   TMP,x
-         dex
-         bpl   -
-@rotatetmp
-         ror   TMP
-         ror   TMP+1
-         ror   TMP+2
-         ror   TMP+3
-@rotateseed
-         ror   SEED+3
-         ror   SEED+2
-         ror   SEED+1
-         ror   SEED
-         dey
-         bpl   @loop
-         rts
-@randtable
-         !byte $00,$19,$66,$0D
+height
+         !byte 12, 16, 26, 13, 15, 09, 24, 18
+         !byte 11, 23, 17, 15, 13, 20, 22, 13
+         !byte 16, 12, 21, 18, 10, 15, 10, 21
+         !byte 17, 12, 12, 12, 17, 12, 08, 26
+         !byte 18, 13, 44, 23, 21, 19, 17, 30
+         !byte 11, 10, 25, 18, 07, 14, 13, 15
+         !byte 11, 12, 28, 16, 15, 17, 35, 17
+         !byte 07, 13, 12, 06, 11, 12, 19, 15
+         !byte 11, 08, 13, 07, 16, 12, 24, 16
+         !byte 23, 22, 11
 
-Order
-         !byte 73
-         !byte 31
-         !byte 71
-         !byte 13
-         !byte 50
-         !byte 36
-         !byte 66
-         !byte 46
-         !byte 57
-         !byte 18
-         !byte 15
-         !byte 55
-         !byte 45
-         !byte 26
-         !byte  6
-         !byte  0
-         !byte  9
-         !byte  8
-         !byte 35
-         !byte 23
-         !byte 43
-         !byte 44
-         !byte  2
-         !byte 48
-         !byte  5
-         !byte 52
-         !byte 41
-         !byte 25
-         !byte 67
-         !byte 56
-         !byte 12
-         !byte 29
-         !byte  7
-         !byte 34
-         !byte 74
-         !byte 40
-         !byte  1
-         !byte 72
-         !byte 54
-         !byte 19
-         !byte 39
-         !byte 58
-         !byte 68
-         !byte 51
-         !byte 28
-         !byte 33
-         !byte  4
-         !byte 42
-         !byte 64
-         !byte 60
-         !byte  3
-         !byte 24
-         !byte 17
-         !byte 27
-         !byte 53
-         !byte 65
-         !byte 37
-         !byte 69
-         !byte 11
-         !byte 70
-         !byte 22
-         !byte 63
-         !byte 30
-         !byte 32
-         !byte 21
-         !byte 61
-         !byte 47
-         !byte 16
-         !byte 62
-         !byte 49
-         !byte 59
-         !byte 38
-         !byte 10
-         !byte 20
-         !byte 14
-         !fill 181,$FF
+startx
+         !byte 000, 000, 001, 000, 000, 000, 000, 002
+         !byte 003, 001, 004, 003, 003, 003, 006, 007
+         !byte 005, 006, 006, 007, 008, 009, 008, 009
+         !byte 010, 011, 011, 012, 012, 012, 013, 014
+         !byte 015, 015, 014, 016, 017, 018, 017, 018
+         !byte 020, 020, 021, 021, 022, 022, 024, 025
+         !byte 024, 026, 027, 026, 028, 029, 028, 027
+         !byte 030, 031, 031, 032, 034, 033, 033, 033
+         !byte 032, 033, 034, 035, 036, 037, 037, 037
+         !byte 037, 037, 038
 
-         !source "src/wait.a"
-         !source "src/fx/fx.cover.fade.data.a"
+starty
+         !byte 000, 016, 042, 076, 103, 153, 167, 003
+         !byte 027, 123, 049, 098, 152, 172, 008, 036
+         !byte 139, 119, 071, 154, 101, 131, 181, 009
+         !byte 040, 070, 115, 134, 091, 177, 008, 030
+         !byte 068, 109, 128, 169, 003, 031, 058, 091
+         !byte 150, 179, 117, 072, 025, 046, 002, 151
+         !byte 178, 095, 008, 046, 069, 094, 118, 173
+         !byte 040, 018, 058, 003, 015, 034, 079, 106
+         !byte 147, 163, 178, 133, 051, 178, 148, 106
+         !byte 073, 022, 000
