@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/GENIUS.3",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9CD
+         jsr   $800       ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         pha
+         lda   #$60
+         sta   $95E2
+         lda   #<callback1
+         sta   $9684
+         lda   #>callback1
+         sta   $9685
+         jsr   $9592
+         pla
+         beq   +
+         dec   $1A89      ; patch - don't decrease lives
+         dec   $1AA1      ; patch - don't increase lives
++
+         +DISABLE_ACCEL
+         inc   $9d        ; game relies on it
+         jmp   $95E5
+
+callback1
+         lda   #$4C
+         sta   $D7D5
+         lda   #<callback2
+         sta   $D7D6
+         lda   #>callback2
+         sta   $D7D7
+         jmp   $D7C2
+
+callback2
+         sec
+         sbc   #7
+         cmp   #2
+         bcc   +
+         jmp   $D7E2
++        jmp   $D7D9
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
