@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/WORLD.GAMES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   #$60
+         sta   $405E
+         sta   $422A
+         jsr   $4000
+         +READ_RAM2_WRITE_RAM2
+         lda   #<game
+         ldy   #>game
+         jsr   iAddToPath
+         +LDADDR gPathname
+         +ST16 namlo
+         jsr   itraverse
+         jsr   $4001
+         lda   #9
+         sta   $C72       ; disable /RAM shenanigans
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         inc   $BF0E      ; disable ROM remapping
+         jmp   $BF5
+
+game     !byte 7
+         !text "/GAME/X"
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
