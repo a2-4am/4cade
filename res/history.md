@@ -48,6 +48,7 @@
  - Genesis
  - Genius
  - Genius 2
+ - Genius 3
  - Ghostbusters
  - Hardball
  - I.O. Silver
