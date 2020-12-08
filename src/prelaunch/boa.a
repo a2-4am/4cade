@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2020 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BOA",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $835
+         jsr   $800       ; decompress
+         lda   #1
+         sta   $F0
+         lsr
+         sta   $F1
+         lda   #$0A
+         sta   $F2
+         +DISABLE_ACCEL
+         jmp   ($6000)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
