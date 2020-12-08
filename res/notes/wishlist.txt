@@ -1,17 +1,24 @@
 //ported
 Alien Lander
+Apple Invader
+Autobahn
+Boulder Dash II
 C'est La Vie
 Championship Baseball [sports]
 Championship Wrestling [sports]
 GBA Championship Basketball [sports]
+Gran Prix Circuit
 Defender (Joe Holt)
 Dive Bomber
 Fly Wars
 Infiltrator
+It's The Pits
 Jellyfish
 Peeping Tom
 Pegasus ][
+Pengo
 Rear Guard
+Super Puckman
 Super Taxman II
 The American Challenge
 The Movie Monster Game
