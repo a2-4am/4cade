@@ -1,13 +1,13 @@
 
-
-
-
-
       Eat the rats, don't get eaten
 
       Eat frogs to gain more length
 
-       Joystick, paddles, keyboard
+
+
+     joystick, paddles, or keyboard
+
+
 
                     I
             move  J   K  move
@@ -15,11 +15,9 @@
 
 
 
-
-
 Esc* * * * * * * * * * * * * * * * pause
 
-Ctrl-R * * * * * * * * * * *restart game
+Ctrl-S * * * * * * * * * * * * * * sound
 
-Ctrl-S * * * * * * * * * * *toggle sound
+Ctrl-R * * * * * * * * * * * * * restart
 [eof]

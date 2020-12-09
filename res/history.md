@@ -16,6 +16,7 @@
  - Beach-Head
  - Beach-Head II
  - Bejeweled
+ - Boa
  - Bop'n Wrestle
  - Borg
  - Boulder Dash
