@@ -27,7 +27,7 @@ FontDataRow0
          !byte $80        ; 13
          !byte $B6        ; 14
          !byte $80        ; 15
-         !byte $B8        ; 16
+         !byte %10011100  ; 16
          !byte $80        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -156,7 +156,7 @@ FontDataRow1
          !byte $9C        ; 13
          !byte $FF        ; 14
          !byte $98        ; 15
-         !byte $9C        ; 16
+         !byte %10110110  ; 16
          !byte $E6        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -285,7 +285,7 @@ FontDataRow2
          !byte $BE        ; 13
          !byte $FF        ; 14
          !byte $B0        ; 15
-         !byte $8E        ; 16
+         !byte %10000110  ; 16
          !byte $BC        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -414,7 +414,7 @@ FontDataRow3
          !byte $BE        ; 13
          !byte $FF        ; 14
          !byte $FF        ; 15
-         !byte $FF        ; 16
+         !byte %10111110  ; 16
          !byte $98        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -543,7 +543,7 @@ FontDataRow4
          !byte $BE        ; 13
          !byte $BE        ; 14
          !byte $FF        ; 15
-         !byte $B8        ; 16
+         !byte %11111111  ; 16
          !byte $BC        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -672,7 +672,7 @@ FontDataRow5
          !byte $BE        ; 13
          !byte $9C        ; 14
          !byte $B0        ; 15
-         !byte $9C        ; 16
+         !byte %11110111  ; 16
          !byte $E6        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -801,7 +801,7 @@ FontDataRow6
          !byte $9C        ; 13
          !byte $88        ; 14
          !byte $98        ; 15
-         !byte $8E        ; 16
+         !byte %11110111  ; 16
          !byte $80        ; 17
          !byte $00        ; 18
          !byte $00        ; 19
@@ -930,7 +930,7 @@ FontDataRow7
          !byte $80        ; 13
          !byte $80        ; 14
          !byte $80        ; 15
-         !byte $87        ; 16
+         !byte %11111111  ; 16
          !byte $80        ; 17
          !byte $00        ; 18
          !byte $00        ; 19

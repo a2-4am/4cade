@@ -44,7 +44,7 @@ $12  dot, large
 $13  dot, extra large
 $14  heart
 $15  right arrow
-$16  bolt
+$16  open padlock
 $17  times
 $18
 $19
