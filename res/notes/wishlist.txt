@@ -44,6 +44,7 @@ Pig Pen
 Space Kadet
 
 //TODO(woz-imaged but uncracked)
+Firebug
 Lemmings
 Lunar Leepers
 Retro-Ball
