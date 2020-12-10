@@ -26,6 +26,7 @@
          dec   $1A89      ; patch - don't decrease lives
          dec   $1AA1      ; patch - don't increase lives
 +
+         +LC_REBOOT
          +DISABLE_ACCEL
          inc   $9d        ; game relies on it
          jmp   $95E5
