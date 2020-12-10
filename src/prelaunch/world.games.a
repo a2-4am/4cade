@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/WORLD.GAMES",plain
@@ -26,6 +26,7 @@
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          inc   $BF0E      ; disable ROM remapping
+         inc   $D6A       ; set power up byte to reboot
          jmp   $BF5
 
 game     !byte 7
