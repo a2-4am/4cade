@@ -1,0 +1,23 @@
+
+   Move crosshairs to target enemies
+
+
+
+            joystick to move
+
+            button 0 to fire
+
+
+
+Esc* * * * * * * * * * pause & show menu
+
+while menu is active:
+
+  S* * * * * * * * * * * * * * * * sound
+
+  R* * * * * * * * * * * * * * * restart
+
+  C* * * * * * * * * * clear high scores
+
+  W* * * * * * * * * * write high scores
+[eof]
