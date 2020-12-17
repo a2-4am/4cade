@@ -1,5 +1,4 @@
 
-
  Weaken the shields, destroy the pulsar
 
       Shoot or avoid energy beams
@@ -18,4 +17,6 @@
 
 
 Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-R + 1-8 * * * * * * * *change level
 [eof]
