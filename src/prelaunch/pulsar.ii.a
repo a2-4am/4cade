@@ -7,23 +7,53 @@
 
     !source "src/prelaunch/common.a"
 
+callback0
          +ENABLE_ACCEL
-         lda   #<callback
-         sta   $7B26
-         lda   #>callback
-         sta   $7B27
+         lda   #<callback1
+         sta   $7B7B
+         lda   #>callback1
+         sta   $7B7C
          jmp   $3FF8      ; decompress
 
-callback
-         jsr   $BF00
+callback1
+         jsr   $BE00
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $9400      ; patch - don't decrease lives
 +
+         lda   #<callback2
+         sta   $A6AD
+         lda   #>callback2
+         sta   $A6AE
          +DISABLE_ACCEL
-         jmp   $1F00
+         rts
+
+         ;Worm Wall section
+
+callback2
+         +ENABLE_ACCEL
+         lda   #<callback3
+         sta   $6E41
+         lda   #>callback3
+         sta   $6E42
+         jmp   $3FF8      ; decompress
+
+callback3
+         jsr   $BE00
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $1C43      ; patch - don't decrease lives
++
+         lda   #<callback0
+         sta   $B757
+         lda   #>callback0
+         sta   $B758
+         +DISABLE_ACCEL
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
