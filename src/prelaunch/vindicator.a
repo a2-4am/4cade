@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019-2020 by Frank M./qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/VINDICATOR",plain
@@ -10,7 +10,7 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $1867
-         jsr   $181C      ; decompress
+         jsr   $180F      ; decompress
 
          +NEW_RESET_VECTOR $BFF0
          lda   #$F0
@@ -21,6 +21,13 @@
          lda   #$60       ; annunciator fix - kills Gizmo/joyport support
          sta   $5B77      ; but fixes ][+ 80-col softswitch
          sta   $5B43      ; and //c+ coloring
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $5F31      ; patch - don't decrease lives
++
 
          +DISABLE_ACCEL
          jmp   $4000
