@@ -8,6 +8,8 @@ romid           =    $FBB3
 ROMID_IIECOMPAT =    6
 romid_ec        =    $FBC0
 ; $EA=//e original, $E0=//e enhanced, $E1=//e EDM, $00=//c
+romid_mac       =    $FBDD
+ROMID_IIECARD   =    2
 
 ; IIGS
 idroutine       =    $FE1F   ; SEC, JSR $FE1F, BCS notgs
@@ -18,6 +20,9 @@ BuildVBLFunction
          bne   @build_none           ; not a //e
          lda   romid_ec
          beq   @build_iic            ; //c family
+         lda   romid_mac
+         cmp   #ROMID_IIECARD
+         beq   @build_none           ; broken in some versions, disable
          sec
          jsr   idroutine             ; check for IIgs
          bcs   @NotGS
