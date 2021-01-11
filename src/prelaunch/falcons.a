@@ -21,8 +21,8 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
-         dec   $9d19
-         dec   $9d06
+         dec   $9d19      ; patch - don't decrease lives
+         dec   $9d06      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
          jmp   $6000
