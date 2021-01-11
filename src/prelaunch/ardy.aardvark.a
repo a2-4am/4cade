@@ -18,7 +18,7 @@
 callback1
          lda   $C000
          bpl   callback1
-         ldy   #callback2_e - callback2
+         ldy   #(callback2_e - callback2) - 1
 -        lda   callback2, y
          sta   $200, y
          dey
