@@ -17,7 +17,7 @@
                           ; lives in $17
          lda   #$A5
          sta   $6D8A      ; patch - don't decrease lives
-         sta   $6DD0      ; patch - don't increase lives
+         sta   $6DDA      ; patch - don't increase lives
 +
          +DISABLE_ACCEL
          jmp   $6000
