@@ -17,6 +17,13 @@ callback nop
          sty   $0D8E
          iny
          sty   $0D93
+         
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $739D      ; patch - don't decrease timer
++
          jmp   $0451
 
 !if * > $1C0 {
