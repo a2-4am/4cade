@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020-2021 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SPINDIZZY",plain
@@ -22,7 +22,16 @@
          inx
          stx   $934F      ; fix reboot
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2C       ; BIT
+         sta   $999A
+         sta   $99AF      ; kill timer
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $9300
 
