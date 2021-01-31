@@ -25,6 +25,9 @@
          plp
          php
          bcc   skipmb
+         plp
+         cli              ; enable MB music on title
+         php
          cmp   #$C4
          beq   skipmb
 
