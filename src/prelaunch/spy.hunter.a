@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2021 by 4am/xot
 
 !cpu 6502
 !to "build/PRELAUNCH/SPY.HUNTER",plain
@@ -17,6 +17,13 @@ callback nop
          sty   $0D8E
          iny
          sty   $0D93
+         
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $739D      ; patch - don't decrease timer
++
          jmp   $0451
 
 !if * > $1C0 {
