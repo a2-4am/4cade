@@ -20,6 +20,7 @@ Peeping Tom
 Pegasus ][
 Pengo
 Rear Guard
+Starball
 Super Puckman
 Super Taxman II
 The American Challenge
@@ -69,7 +70,6 @@ Retro-Ball
 Roach Hotel
 Robot Battle [unprotected]
 Star Dance
-Starball [unprotected]
 Teleport
 The Caverns of Freitag
 The Space Ark
