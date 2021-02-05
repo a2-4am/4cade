@@ -3,9 +3,11 @@ Alien Lander
 Apple Invader
 Autobahn
 Boulder Dash II
+Black Belt [sports]
 C'est La Vie
 Championship Baseball [sports]
 Championship Wrestling [sports]
+Chivalry
 GBA Championship Basketball [sports]
 Gran Prix Circuit
 Defender (Joe Holt)
@@ -26,29 +28,50 @@ The Snapper
 Titan Cronus
 
 //4am crack
+Arena
+Artesians
+Bezare
 Cavern Creatures
-Chivalry
 Conquering Worlds
+Cosmic Combat
+Cricketeer
+Deep Space
+Early Bird
+Handy Dandy
 Marauder
 MIRV
 Neutrons
 Oil's Well
+Pig Pen
 Shuttle Intercept
 Super Huey
 Video Vegas
+Vortex
 
 //4am crack (unreleased)
 Galactic Attack
 Infiltrator II
 Pig Pen
 Space Kadet
+Zoo Master
 
 //TODO(woz-imaged but uncracked)
+A City Dies Whenever Night Falls [unprotected]
+Bats in the Belfry
+Bug Battle [unprotected]
+Escape!
 Firebug
 Lemmings
 Lunar Leepers
+Mouskattack
+On The Run
 Retro-Ball
 Roach Hotel
+Robot Battle [unprotected]
+Star Dance
+Starball [unprotected]
+Teleport
+The Caverns of Freitag
 The Space Ark
 Track Attack
 Trick Shot
