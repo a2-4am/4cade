@@ -30,6 +30,7 @@ intercept
          jsr   $BD09
          lda   $656B
          cmp   #$2C
+         clc
          bne   +
          lda   #$20
          sta   $656B
@@ -50,6 +51,7 @@ callback
          sta   $BD07
          lda   #>intercept
          sta   $BD08
+         sta   $656B
 
          +DISABLE_ACCEL
          jmp   $9D84
