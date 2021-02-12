@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019, 2021 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/WARP.DESTROYER",plain
@@ -15,10 +15,14 @@
          stx   $6692
          dex
          stx   $669C
+         lda   #$B0
+         sta   $76D1
+         lda   #$13
+         sta   $76D2     ; disable unknown hardware support
+                         ; otherwise hangs on IIGS
          +DISABLE_ACCEL
          lda   #0
          jmp   $896
-
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }
