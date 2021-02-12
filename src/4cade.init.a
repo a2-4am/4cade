@@ -279,8 +279,8 @@ LoadingBuild
          !word BUILDNUMBER
 } else {
 LoadingVersion
-         !byte 8
-         !text "4.0-rc.1"
+         !byte 10
+         !text "      v4.0"
 }
 Loading64K
          !byte 3
