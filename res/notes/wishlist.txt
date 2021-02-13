@@ -1,24 +1,30 @@
 //ported
 Alien Lander
 Apple Invader
+Arena
 Autobahn
+Bezare
 Boulder Dash II
-Black Belt [sports]
+Bug Battle
 C'est La Vie
-Championship Baseball [sports]
-Championship Wrestling [sports]
 Chivalry
-GBA Championship Basketball [sports]
-Gran Prix Circuit
+Cosmic Combat
 Defender (Joe Holt)
 Dive Bomber
+Early Bird
+Firebug
 Fly Wars
 Infiltrator
 It's The Pits
 Jellyfish
+Lamb Chops!
+Lunar Leepers
+Mouskattack
+On The Run
 Peeping Tom
 Pegasus ][
 Pengo
+Pig Pen
 Rear Guard
 Starball
 Super Puckman
@@ -29,21 +35,16 @@ The Snapper
 Titan Cronus
 
 //4am crack
-Arena
 Artesians
-Bezare
 Cavern Creatures
 Conquering Worlds
-Cosmic Combat
 Cricketeer
 Deep Space
-Early Bird
 Handy Dandy
 Marauder
 MIRV
 Neutrons
 Oil's Well
-Pig Pen
 Shuttle Intercept
 Super Huey
 Video Vegas
@@ -52,20 +53,14 @@ Vortex
 //4am crack (unreleased)
 Galactic Attack
 Infiltrator II
-Pig Pen
 Space Kadet
 Zoo Master
 
 //TODO(woz-imaged but uncracked)
 A City Dies Whenever Night Falls [unprotected]
 Bats in the Belfry
-Bug Battle [unprotected]
 Escape!
-Firebug
 Lemmings
-Lunar Leepers
-Mouskattack
-On The Run
 Retro-Ball
 Roach Hotel
 Robot Battle [unprotected]
@@ -74,9 +69,3 @@ Teleport
 The Caverns of Freitag
 The Space Ark
 Track Attack
-Trick Shot
-
-//Sports
-International Hockey
-Superstar Ice Hockey
-The World's Greatest Baseball Game
