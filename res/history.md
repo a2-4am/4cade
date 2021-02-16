@@ -3,6 +3,8 @@
 ## Games moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports)
 
  - Summer Games
+ - Summer Games II
+ - World Games
 
 # Revision 4 / serial number 20210212
 
