@@ -14,11 +14,14 @@ Dive Bomber
 Early Bird
 Firebug
 Fly Wars
+Handy Dandy
 Infiltrator
 It's The Pits
 Jellyfish
 Lamb Chops!
 Lunar Leepers
+Marauder
+Mazeblox
 Mouskattack
 On The Run
 Peeping Tom
@@ -40,12 +43,11 @@ Cavern Creatures
 Conquering Worlds
 Cricketeer
 Deep Space
-Handy Dandy
-Marauder
 MIRV
 Neutrons
 Oil's Well
 Shuttle Intercept
+Star Dance
 Super Huey
 Video Vegas
 Vortex
@@ -64,7 +66,6 @@ Lemmings
 Retro-Ball
 Roach Hotel
 Robot Battle [unprotected]
-Star Dance
 Teleport
 The Caverns of Freitag
 The Space Ark
