@@ -9,8 +9,7 @@
 You will need
  - [Xcode command line tools](https://www.google.com/search?q=xcode+command+line+tools)
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
- - [sicklittlemonkey's Cadius fork](https://github.com/sicklittlemonkey/cadius)
- - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
+ - [Cadius](https://github.com/mach-kernel/cadius)
 
 Then open a terminal window and type
 
@@ -26,7 +25,6 @@ If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image whi
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Cadius for Windows](https://www.brutaldeluxe.fr/products/crossdevtools/cadius/)
- - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
 (Those tools will need to be added to your command-line PATH.)
 
@@ -68,7 +66,7 @@ If the user presses `Esc` from any other mode, or does not type anything for 30 
 
 The format of the `GAMES.CONF` file has changed as new requirements have appeared, and it may change again in the future. There is up-to-date format information at the bottom of the file itself, which I will not duplicate here. However, in general, each record is 1 line and contains the name and flags for 1 game. The file is parsed once at program startup, and the (possibly filtered) list of available games is stored persistently in the language card.
 
-Many records in `GAMES.CONF` do not list the game's display name, i.e. the mixed-case, human-readable name displayed in search mode, browse mode, and slideshows. Wherever possible, display names are calculated from a game's filename, so `WAVY.NAVY` is displayed as `Wavy Navy`, while `SUMMER.GAMES.II` is displayed as `Summer Games II`, and so on.
+Many records in `GAMES.CONF` do not list the game's display name, i.e. the mixed-case, human-readable name displayed in search mode, browse mode, and slideshows. Wherever possible, display names are calculated from a game's filename, so `WAVY.NAVY` is displayed as `Wavy Navy`, while `ARCHON.II` is displayed as `Archon II`, and so on.
 
 Each game's filename is used as a "foreign key" (in database terms) to build directory paths, to locate files in subdirectories, and to reference the game in other configuration files.
 
