@@ -1,12 +1,12 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am
 ;
 
 ;------------------------------------------------------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E92C - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..E63E - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; E92D..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
