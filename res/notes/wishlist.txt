@@ -29,6 +29,8 @@ Pegasus ][
 Pengo
 Pig Pen
 Rear Guard
+Robot Battle
+Shuttle Intercept
 Starball
 Super Puckman
 Super Taxman II
@@ -46,7 +48,6 @@ Deep Space
 MIRV
 Neutrons
 Oil's Well
-Shuttle Intercept
 Star Dance
 Super Huey
 Video Vegas
@@ -63,9 +64,7 @@ A City Dies Whenever Night Falls [unprotected]
 Bats in the Belfry
 Escape!
 Lemmings
-Retro-Ball
 Roach Hotel
-Robot Battle [unprotected]
 Teleport
 The Caverns of Freitag
 The Space Ark
