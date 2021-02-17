@@ -8,9 +8,12 @@
  - Fight Night
  - Formula 1 Racer
  - Fuji Crowded Speedway
+ - Hardball
  - International Gran Prix
  - Karate Champ
+ - One on One
  - Shuffleboard
+ - Ski Crazed
  - Speedway Classic
  - Summer Games
  - Summer Games II

@@ -102,7 +102,6 @@ def driver():
     rename("MS.PACMAN", "MP")
     rename("NIGHT.MISSION", "NM")
     rename("NIGHTMARE", "NI")
-    rename("ONE.ON.ONE", "OO")
     rename("ORILEYS.MINE", "OM")
     rename("OOTW", "OW")
     rename("PANDORAS.BOX", "PB")
