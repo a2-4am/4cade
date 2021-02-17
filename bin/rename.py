@@ -85,7 +85,6 @@ def driver():
     rename("DARKSTAR.UNHNGD", "DU")
     rename("DAVIDS.MAGIC", "DM")
     rename("EGGS.IT", "EI")
-    rename("FUJI.SPEED.WAY", "FC")
     rename("IMPOSSIBLE.MISS", "I1")
     rename("IMPOSSIBLE.M.II", "I2")
     rename("INTL.GRAN.PRIX", "IG")
