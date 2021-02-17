@@ -75,7 +75,6 @@ def driver():
     rename("BRAINTEASERBLVD", "BB")
     rename("BUCK.ROGERS", "BR")
     rename("BURGERTIME", "BU")
-    rename("CALI.GAMES", "CA")
     rename("CANNONBALL.BLTZ", "CB")
     rename("CAPTN.GOODNIGHT", "CG")
     rename("SMURFEN", "CS")
