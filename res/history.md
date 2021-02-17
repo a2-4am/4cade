@@ -8,6 +8,7 @@
  - Fight Night
  - Formula 1 Racer
  - Fuji Crowded Speedway
+ - International Gran Prix
  - Karate Champ
  - Speedway Classic
  - Summer Games

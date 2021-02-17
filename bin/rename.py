@@ -87,7 +87,6 @@ def driver():
     rename("EGGS.IT", "EI")
     rename("IMPOSSIBLE.MISS", "I1")
     rename("IMPOSSIBLE.M.II", "I2")
-    rename("INTL.GRAN.PRIX", "IG")
     rename("EAGLES.NEST", "IE")
     rename("I.O.SILVER", "IO")
     rename("LITTLE.COMP.PPL", "LP")
