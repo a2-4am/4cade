@@ -3,6 +3,7 @@
 ## Games moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports)
 
  - Battle Chess
+ - Bop'n Wrestle
  - California Games
  - Karate Champ
  - Summer Games

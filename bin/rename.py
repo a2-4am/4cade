@@ -70,7 +70,6 @@ def driver():
     rename("BEYOND.WOLFEN", "BW")
     rename("BUDGETRILOGY", "BT")
     rename("BLOCKCHAIN", "BC")
-    rename("BOP.N.WRESTLE", "BN")
     rename("BOUNCING.KMNGAS", "BK")
     rename("BRAINTEASERBLVD", "BB")
     rename("BUCK.ROGERS", "BR")
