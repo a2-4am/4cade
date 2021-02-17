@@ -11,6 +11,7 @@
  - Speedway Classic
  - Summer Games
  - Summer Games II
+ - Tag Team Wrestling
  - The Games: Summer Edition
  - The Games: Winter Edition
  - Winter Games

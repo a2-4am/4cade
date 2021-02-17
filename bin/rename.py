@@ -121,7 +121,6 @@ def driver():
     rename("SS.FOOTBALL", "SF")
     rename("SS.SOCCER", "SS")
     rename("SUICIDE", "SU")
-    rename("TAG.TEAM", "TT")
     rename("TECHNOCOP", "TC")
     rename("THAROLIAN.TUNLS", "TU")
     rename("ASTEROID.FIELD", "AF")
