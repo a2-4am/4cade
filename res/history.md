@@ -6,6 +6,8 @@
  - Summer Games
  - Summer Games II
  - The Games: Summer Edition
+ - The Games: Winter Edition
+ - Winter Games
  - World Games
 
 # Revision 4 / serial number 20210212
