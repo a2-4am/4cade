@@ -15,6 +15,10 @@
  - Shuffleboard
  - Ski Crazed
  - Speedway Classic
+ - Street Sports Baseball
+ - Street Sports Basketball
+ - Street Sports Football
+ - Street Sports Soccer
  - Summer Games
  - Summer Games II
  - Tag Team Wrestling
