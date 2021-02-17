@@ -3,12 +3,14 @@
 ## Games moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports)
 
  - California Games
+ - Karate Champ
  - Summer Games
  - Summer Games II
  - The Games: Summer Edition
  - The Games: Winter Edition
  - Winter Games
  - World Games
+ - World Karate Championship
 
 # Revision 4 / serial number 20210212
 

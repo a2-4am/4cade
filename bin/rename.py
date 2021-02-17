@@ -134,7 +134,6 @@ def driver():
     rename("UP.N.DOWN", "UD")
     rename("ROGER.RABBIT", "RR")
     rename("WINGS.OF.FURY", "WF")
-    rename("WORLD.KARATE", "WK")
 
 if __name__ == '__main__':
     driver()
