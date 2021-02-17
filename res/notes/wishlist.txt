@@ -31,6 +31,7 @@ Pig Pen
 Rear Guard
 Robot Battle
 Shuttle Intercept
+Space Kadet
 Starball
 Super Puckman
 Super Taxman II
@@ -56,7 +57,6 @@ Vortex
 //4am crack (unreleased)
 Galactic Attack
 Infiltrator II
-Space Kadet
 Zoo Master
 
 //TODO(woz-imaged but uncracked)
