@@ -127,7 +127,6 @@ def driver():
     rename("TECHNOCOP", "TC")
     rename("THAROLIAN.TUNLS", "TU")
     rename("ASTEROID.FIELD", "AF")
-    rename("SUMMER.EDITION", "SE")
     rename("WINTER.EDITION", "WE")
     rename("LAST.GLADIATOR", "LG")
     rename("SPY.STRIKES.BAK", "S2")
