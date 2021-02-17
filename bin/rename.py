@@ -126,7 +126,6 @@ def driver():
     rename("ASTEROID.FIELD", "AF")
     rename("LAST.GLADIATOR", "LG")
     rename("SPY.STRIKES.BAK", "S2")
-    rename("TRACK.AND.FIELD", "TF")
     rename("TUBEWAY", "TB")
     rename("UP.N.DOWN", "UD")
     rename("ROGER.RABBIT", "RR")
