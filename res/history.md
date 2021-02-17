@@ -2,8 +2,10 @@
 
 ## Games moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports)
 
+ - California Games
  - Summer Games
  - Summer Games II
+ - The Games: Summer Edition
  - World Games
 
 # Revision 4 / serial number 20210212
