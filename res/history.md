@@ -5,6 +5,7 @@
  - Battle Chess
  - Bop'n Wrestle
  - California Games
+ - Fight Night
  - Karate Champ
  - Summer Games
  - Summer Games II
