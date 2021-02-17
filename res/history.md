@@ -8,6 +8,7 @@
  - Fight Night
  - Formula 1 Racer
  - Karate Champ
+ - Speedway Classic
  - Summer Games
  - Summer Games II
  - The Games: Summer Edition

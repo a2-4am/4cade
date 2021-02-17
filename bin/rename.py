@@ -115,7 +115,6 @@ def driver():
     rename("REALM.IMPOSS", "RI")
     rename("SITUATION.CRTCL", "SC")
     rename("SOKO.BAN", "SO")
-    rename("SPDWAY.CLASSIC", "SP")
     rename("SPYS.DEMISE", "SD")
     rename("SS.BASEBALL", "SB")
     rename("SS.BASKETBALL", "SK")
