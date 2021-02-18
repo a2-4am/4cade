@@ -37,6 +37,7 @@ Super Puckman
 Super Taxman II
 Teritory
 The American Challenge
+The Caverns of Freitag
 The Movie Monster Game
 The Snapper
 Titan Cronus
@@ -67,6 +68,5 @@ Escape!
 Lemmings
 Roach Hotel
 Teleport
-The Caverns of Freitag
 The Space Ark
 Track Attack
