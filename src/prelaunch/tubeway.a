@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/TUBEWAY",plain
+!to "build/PRELAUNCH/TB",plain
 *=$106
 
          !source "src/prelaunch/common.a"

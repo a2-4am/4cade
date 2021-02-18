@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/BRAINTEASERBLVD",plain
+!to "build/PRELAUNCH/BB",plain
 *=$106
 
          !source "src/prelaunch/common.a"

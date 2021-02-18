@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/MONTEZUMA",plain
+!to "build/PRELAUNCH/MZ",plain
 *=$106
 
     !source "src/prelaunch/common.a"

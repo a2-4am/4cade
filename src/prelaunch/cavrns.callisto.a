@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/CAVRNS.CALLISTO",plain
+!to "build/PRELAUNCH/CC",plain
 *=$106
 
     !source "src/prelaunch/common.a"

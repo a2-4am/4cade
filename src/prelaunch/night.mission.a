@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/NIGHT.MISSION",plain
+!to "build/PRELAUNCH/NM",plain
 *=$106
 
          !source "src/prelaunch/common.a"

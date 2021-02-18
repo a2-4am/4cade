@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/BEACH.HEAD",plain
+!to "build/PRELAUNCH/B1",plain
 *=$106
 
     !source "src/prelaunch/common.a"

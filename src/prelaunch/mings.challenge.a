@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/MINGS.CHALLENGE",plain
+!to "build/PRELAUNCH/MI",plain
 *=$106
 
     !source "src/prelaunch/common.a"

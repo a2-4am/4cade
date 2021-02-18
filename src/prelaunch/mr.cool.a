@@ -2,7 +2,7 @@
 ;(c) 2021 by 4am/xot
 
 !cpu 6502
-!to "build/PRELAUNCH/MR.COOL",plain
+!to "build/PRELAUNCH/MC",plain
 *=$106
 
         !source "src/prelaunch/common.a"

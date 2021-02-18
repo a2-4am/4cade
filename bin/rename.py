@@ -4,6 +4,7 @@ import fileinput
 import glob
 import subprocess
 import sys
+import tempfile
 
 def replace_string_in_file(filename, old_string, new_string):
     for line in fileinput.input(glob.glob(filename), inplace=True):
@@ -19,10 +20,37 @@ def rename_one_file_in_directory(dirname, old_filename, new_filename):
 
 def rename_inside_disk_image(filename, old_name, new_name):
     rt = subprocess.run(['cadius', 'CATALOG', filename], stdout=subprocess.PIPE, text=True)
+    if not rt:
+        print('cadius CATALOG command failed')
     if not [line for line in rt.stdout.split('\n') if line == f'/{old_name}/']:
         return
-    subprocess.run(['cadius', 'RENAMEFILE', filename, f'/{old_name}/{old_name}', new_name], stdout=subprocess.PIPE, text=True)
-    subprocess.run(['cadius', 'RENAMEVOLUME', filename, new_name], stdout=subprocess.PIPE, text=True)
+    rt = subprocess.run(['cadius', 'RENAMEFILE', filename, f'/{old_name}/{old_name}', new_name], stdout=subprocess.PIPE, text=True)
+    if not rt:
+        print('cadius RENAMEFILE command failed')
+    rt = subprocess.run(['cadius', 'RENAMEVOLUME', filename, new_name], stdout=subprocess.PIPE, text=True)
+    if not rt:
+        print('cadius RENAMEVOLUME command failed')
+    with tempfile.TemporaryDirectory() as tmpdir:
+        rt = subprocess.run(['cadius', 'EXTRACTFILE', filename, f'/{new_name}/LOADER.SYSTEM', tmpdir], stdout=subprocess.PIPE, text=True)
+        if not rt:
+            print('cadius EXTRACTFILE command failed')
+        try:
+            loader_file = glob.glob(tmpdir + "/LOADER.SYSTEM*").pop()
+        except IndexError:
+            return
+        with open(loader_file, 'rb') as f:
+            loader = f.read()
+        loader_as_list = list(loader)
+        while loader_as_list.pop() >= 0x10:
+            pass
+        loader_as_list.append(len(new_name))
+        loader_as_list.extend([ord(x) for x in new_name])
+        new_loader = bytes(loader_as_list)
+        with open(loader_file, 'wb') as f:
+            f.write(new_loader)
+        rt = subprocess.run(['cadius', 'REPLACEFILE', filename, f'/{new_name}/', loader_file], stdout=subprocess.PIPE, text=True)
+        if not rt:
+            print('cadius REPLACEFILE command failed')
 
 def rename(old_game_name, new_game_name):
     print(old_game_name)
@@ -59,7 +87,7 @@ def rename(old_game_name, new_game_name):
         rename_files_in_directory(dirname, old_game_name, new_game_name)
 
 def driver():
-    rename("SLICKS", "S8")
+    #rename("SLICKS", "S8")
     rename("CIDER.SPIDER", "AC")
     rename("ARCADE.BT.CAMP", "AB")
     rename("ARDY.AARDVARK", "AA")
@@ -92,7 +120,7 @@ def driver():
     rename("LITTLE.COMP.PPL", "LP")
     rename("LOCK.N.CHASE", "LC")
     rename("MARIO.BROS", "MB")
-    rename("MATTERHORN", "MS")
+    #rename("MATTERHORN", "MS")
     rename("MINGS.CHALLENGE", "MI")
     rename("THUNDERHEAD", "MT")
     rename("MONTEZUMA", "MZ")
@@ -125,4 +153,5 @@ def driver():
     rename("WINGS.OF.FURY", "WF")
 
 if __name__ == '__main__':
+    #rename("MR.DO", "MD")
     driver()

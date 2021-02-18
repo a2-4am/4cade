@@ -2,7 +2,7 @@
 ;(c) 2020 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/NIGHTMARE",plain
+!to "build/PRELAUNCH/NI",plain
 *=$106
 
     !source "src/prelaunch/common.a"
