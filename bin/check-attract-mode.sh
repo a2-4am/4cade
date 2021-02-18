@@ -39,12 +39,31 @@ check_action_slideshow() {
         done
 }
 
+# fatal error if an attract mode module is listed more than once
+dupes=$(cat res/ATTRACT.CONF |
+    grep -v "^#" |
+    grep -v "^$" |
+    sort |
+    uniq -d)
+if [[ $dupes ]]; then
+    fatal_error "Duplicate ATTRACT.CONF module:" "$dupes"
+fi
+
 cat res/GAMES.CONF |
     grep -v "^#" |
     grep -v "^\[" |
     grep -v "^$" |
     cut -d"," -f2 |
     cut -d"=" -f1 > /tmp/games
+
+# warn about unused self-running demos
+cat res/DEMO/_FileInformation.txt |
+    grep "Type(06)" |
+    grep -v "SPCARTOON" |
+    cut -d"=" -f1 |
+    while read f; do
+        grep "$f=0" res/ATTRACT.CONF >/dev/null || echo "unused demo: $f";
+    done
 
 cat res/ATTRACT.CONF |
     grep "=" |
