@@ -1,45 +1,7 @@
 //ported
-Alien Lander
-Apple Invader
-Arena
-Autobahn
-Bezare
-Boulder Dash II
-Bug Battle
-C'est La Vie
-Chivalry
-Cosmic Combat
 Defender (Joe Holt)
-Dive Bomber
-Early Bird
-Firebug
-Fly Wars
-Handy Dandy
-Infiltrator
-It's The Pits
-Jellyfish
-Lamb Chops!
-Lunar Leepers
-Marauder
 Mazeblox
-Mouskattack
-On The Run
-Peeping Tom
-Pegasus ][
-Pengo
-Pig Pen
-Rear Guard
-Robot Battle
-Shuttle Intercept
-Space Kadet
-Starball
-Super Puckman
-Super Taxman II
-Teritory
 The American Challenge
-The Caverns of Freitag
-The Movie Monster Game
-The Snapper
 Titan Cronus
 
 //4am crack
