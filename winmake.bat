@@ -136,9 +136,9 @@ for %%q in (src\prelaunch\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
+)
 for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
-)
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
 
