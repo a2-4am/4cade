@@ -1,6 +1,56 @@
 # Revision 5 / unreleased
 
-## Games moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports)
+## New Games
+
+ - A City Dies Whenever Night Falls
+ - Alien Lander
+ - Apple Invader
+ - Arena
+ - Bezare
+ - Boulder Dash II
+ - Bug Battle
+ - C'est La Vie
+ - Chivalry
+ - Cosmic Combat
+ - Defender (Joe Holt)
+ - Depth Charge
+ - Dive Bomber
+ - Early Bird
+ - Firebug
+ - Fly Wars
+ - Handy Dandy
+ - Infiltrator
+ - It's The Pits
+ - Jellyfish
+ - Jump Jet
+ - Lamb Chops!
+ - Lunar Leepers
+ - Marauder
+ - Mazeblox
+ - Mouskattack
+ - Neut Tower
+ - On The Run
+ - Peeping Tom
+ - Pegasus ][
+ - Pengo
+ - Pig Pen
+ - Rear Guard
+ - Robot Battle
+ - Shuttle Intercept
+ - Space Kadet
+ - Star Dance
+ - Starball
+ - Super Puckman
+ - Super Taxman 2
+ - Teritory
+ - The Caverns of Freitag
+ - The Movie Monster Game
+ - The Snapper
+ - Titan Cronus
+ - Video Vegas
+ - Vortex
+
+## Removed games (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
  - Battle Chess
  - Bop'n Wrestle
@@ -29,6 +79,12 @@
  - Winter Games
  - World Games
  - World Karate Championship
+
+# Revision 4.01 / serial number 20210218
+
+## Enhancements & bug fixes
+
+ - fix screensaver looping so all modules display in the proper order
 
 # Revision 4 / serial number 20210212
 
