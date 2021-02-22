@@ -39,7 +39,7 @@ main
          +ENABLE_ACCEL
          +USES_TEXT_PAGE_2
          lda   #$60
-         sta   $21E8
+         sta   $21D8
          jsr   $2000       ; find and load "DOS"
          lda   #<callback
          sta   $B748
