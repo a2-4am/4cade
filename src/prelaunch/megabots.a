@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $9F8
+         sta   $9F1
          jsr   $800       ; load DOS
 
          +DISABLE_ACCEL
