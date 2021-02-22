@@ -61,8 +61,8 @@ callback1
          cmp   #2
          bcc   +
 -        jmp   $4144
-         sec
-+        jmp   $4114
++        sec
+         jmp   $4114
 
 callback2
          sec
