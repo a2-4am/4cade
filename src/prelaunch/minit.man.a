@@ -13,23 +13,28 @@ callback
          jsr   $BD57
          ldx   $B7EC
          ldy   $B7ED
-         cpx   #$19
-         beq   +
-         cpx   #$18
-         bne   ++
-+        cpy   #$0E
+         cpx   #$17
          bne   ++
          lda   #0
-         sta   $BA48
+         cpy   #8
+         beq   +
+         cpy   #5
+         bne   ++
+         sta   $BB48
+         rol
+         sta   $BB4D      ; hook in-game reset
+         bne   ++
++        sta   $BA48
          rol
          sta   $BA4D      ; hook in-game reset
+
 ++
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
-         cpx   #$13
+         cpx   #$14
          bne   +
-         cpy   #$03
+         cpy   #$0B
          bne   +
          lda   #$a5
          sta   $BBD2      ; patch - don't decrease lives
