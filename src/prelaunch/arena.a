@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/ARENA",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9490
+         jsr   $6000      ; decompress
+         +DISABLE_ACCEL
+
+         jmp   $80D       ; skip changing the reset vector
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
