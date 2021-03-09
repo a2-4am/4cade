@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/EARLY.BIRD",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #<hook
+         sta   $941D
+         lda   #>hook
+         sta   $941E
+         jmp   $6D00      ; decompress
+
+hook     lda   #0
+         sta   $BB5
+         lda   #1
+         sta   $BBA       ; reset vector fix
+
+         +DISABLE_ACCEL
+         jmp   $BB0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

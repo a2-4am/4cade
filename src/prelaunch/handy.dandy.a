@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/HANDY.DANDY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #<hook
+         sta   $933D
+         lda   #>hook
+         sta   $933E
+         jmp   $7000      ; decompress
+
+hook     lda   #1
+         sta   $75DD      ; reset vector fix
+
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
