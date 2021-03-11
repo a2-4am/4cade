@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/PEEPING.TOM",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ;+ENABLE_ACCEL   ; shows title right away
+
+         lda   #<hook1
+         sta   $6969+1
+         lda   #>hook1
+         sta   $6969+2
+         jmp   $68F5      ; decompress1
+
+hook1    lda   #<hook2
+         sta   $BEA4+1
+         lda   #>hook2
+         sta   $BEA4+2
+         jmp   $BE81      ; decompress2
+
+hook2    +RESET_VECTOR $100
+         jmp   $17E3
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

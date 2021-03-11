@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/SPACE.KADET",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #<hook1
+         sta   $3631+1
+         lda   #>hook1
+         sta   $3631+2
+         jmp   $3600      ; decompress1
+
+hook1    lda   #<hook2
+         sta   $9A68+1
+         lda   #>hook2
+         sta   $9A68+2
+         jmp   $9A4A      ; decompress2
+
+hook2    lda   #<hook3
+         sta   $9A7A+1
+         lda   #>hook3
+         sta   $9A7A+2
+         +DISABLE_ACCEL
+         jmp   $800       ; show title
+
+hook3    lda   #0
+         sta   $6914
+         lda   #1
+         sta   $690F
+         lda   #$A4
+         sta   $690A      ; reset vector fix
+
+         jmp   $1200
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

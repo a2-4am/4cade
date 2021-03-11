@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/ARTESIANS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook
+         sta   $87B+1
+         lda   #>hook
+         sta   $87B+2
+         jmp   $800       ; decompress
+
+hook     +RESET_VECTOR $100
+         +DISABLE_ACCEL
+         jmp   $B31B
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

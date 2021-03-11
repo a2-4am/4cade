@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/JELLYFISH",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #<reset
+         sta   $2049+1
+         lda   #>reset
+         sta   $2049+2
+
+         ldx   #(reset_e-reset)-1
+-        lda   callback,x
+         sta   $50,x
+         dex
+         bpl   -
+
+         jmp   $2000
+
+callback !pseudopc $50 {
+reset    +NEW_RESET_VECTOR $2F0
+         +DISABLE_ACCEL
+         jmp   $B800
+reset_e
+}
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/ON.THE.RUN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ;+ENABLE_ACCEL   ; can't, shows title
+
+         lda   #<hook
+         sta   $9436
+         lda   #>hook
+         sta   $9437
+         jmp   $9400      ; decompress
+
+hook     +RESET_VECTOR $100
+
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

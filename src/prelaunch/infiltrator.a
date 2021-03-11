@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/INFILTRATOR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM1_WRITE_RAM1
+         +LC_REBOOT
+         +READ_ROM_NO_WRITE
+         lda   #$B4
+         sta   $98E
+         lda   #$EF
+         sta   $98D      ; reset vector fix
+
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

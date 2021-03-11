@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/STAR.DANCE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook
+         sta   $1FB9+1
+         lda   #>hook
+         sta   $1FB9+2
+         jmp   $1F74      ; decompress
+
+hook     lda   #0
+         sta   $7007
+         lda   #1
+         sta   $700C      ; reset vector fix
+
+         +DISABLE_ACCEL
+         jmp   $7000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
