@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/TITAN.CRONUS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook
+         sta   $1053+1
+         lda   #>hook
+         sta   $1053+2
+         jmp   $1000      ; decompress
+
+hook     +NEW_RESET_VECTOR $280
+
+         lda   #$8C       ; CALL
+         sta   $C84
+         lda   #$36       ; "640" / $280
+         sta   $C84+1
+         lda   #$34
+         sta   $C84+2     ; return to TR instead of BASIC
+         lda   #$30
+         sta   $C84+3     ; (replaces TEXT:HOME:END)
+
+         +DISABLE_ACCEL
+         jmp   $D566
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/MARAUDER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $864
+         jsr   $800       ; decompress
+
+         +NEW_RESET_VECTOR $1A0
+         lda   #$2C
+         sta   $B5D1
+         sta   $B5D4
+         sta   $B5D9      ; reset vector fix
+
+         +DISABLE_ACCEL
+         jmp   $B5B9
+
+!if * > $1A0 {
+  !error "code is too large for reset vector hook, ends at ", *
+}

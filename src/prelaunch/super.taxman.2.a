@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/SUPER.TAXMAN.2",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook
+         sta   $C81+1
+         lda   #>hook
+         sta   $C81+2
+         jmp   $C00       ; decompress
+
+hook     lda   #0
+         sta   $4056
+         lda   #1
+         sta   $4061      ; reset vector fix
+
+         lda   #$2C       ; annunciator fix - kills Gizmo/joyport support
+         sta   $666A      ; but fixes ][+ 80-col softswitch and //c+ coloring
+
+         +DISABLE_ACCEL
+         jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/MAZEBLOX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook1
+         sta   $A10+1
+         lda   #>hook1
+         sta   $A10+2
+         jmp   $800       ; decompress1
+
+hook1    lda   #<hook2
+         sta   $B747+1
+         lda   #>hook2
+         sta   $B747+2
+         jmp   $B700      ; decompress2
+
+hook2    lda   #<hook3
+         sta   $9E4D+1
+         lda   #>hook3
+         sta   $9E4D+2
+         jmp   $9D84      ; decompress3
+
+hook3    +RESET_VECTOR $100
+         +DISABLE_ACCEL
+         jmp   $A180
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

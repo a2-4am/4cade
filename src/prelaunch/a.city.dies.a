@@ -22,16 +22,10 @@
          sta   $B743
          jmp   $B700      ; decompress2
 
-hook     lda   #$A9
-         sta   $9E30
-         sta   $9E3B
-         lda   #$EA
-         sta   $9E32
-         sta   $9E3D
-         lda   #$02
-         sta   $9E31
-         lda   #$80
-         sta   $9E3C      ; change vector to $280
+hook     lda   #$80
+         sta   $9E52
+         lda   #2
+         sta   $9E53      ; reset vector fix
 
          +DISABLE_ACCEL
          jmp   $BFC8

@@ -1,0 +1,27 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/STARBALL",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<hook
+         sta   $A1E+1
+         lda   #>hook
+         sta   $A1E+2
+         jmp   $800       ; decompress
+
+hook     lda   #0
+         sta   $9E52
+         lda   #1
+         sta   $9E53      ; reset vector fix
+
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
