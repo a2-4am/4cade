@@ -23,7 +23,7 @@ hook     +NEW_RESET_VECTOR $280
          lda   #$34
          sta   $C84+2     ; return to TR instead of BASIC
          lda   #$30
-         sta   $C84+3     ; (replaces TEXT, HOME, END)
+         sta   $C84+3     ; (replaces TEXT:HOME:END)
 
          +DISABLE_ACCEL
          jmp   $D566
