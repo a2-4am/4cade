@@ -1,5 +1,4 @@
 //4am crack
-Artesians
 Cavern Creatures
 Conquering Worlds
 Cricketeer
@@ -16,7 +15,6 @@ Zoo Master
 
 //TODO(woz-imaged but uncracked)
 Bats in the Belfry
-Escape!
 Lemmings
 Roach Hotel
 Teleport
