@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CP",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +LC_REBOOT
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
