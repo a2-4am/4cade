@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4043
+         sta   $406A
+         sta   $408E
+         jsr   $4000
+         jsr   $4097      ; decompress
+         +DISABLE_ACCEL
+         jsr   $4046
+         +ENABLE_ACCEL
+         jsr   $4097      ; decompress
+         jsr   $406D      ; decompress
+         lda   #1
+         sta   $6010
+         lda   #$A4
+         sta   $6011      ; reset vector
+         +DISABLE_ACCEL
+         lda   #$5F
+         jmp   $4090
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
