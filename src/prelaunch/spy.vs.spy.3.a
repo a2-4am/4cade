@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SS3",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $20BB
+         sta   $2217
+         jsr   $2000      ; decompress
+         +DISABLE_ACCEL
+         jsr   $12FD
+         +ENABLE_ACCEL
+         jsr   $90FD      ; decompress
+         jsr   DisableAccelerator
+         jsr   $9000
+         jmp   $915C
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
