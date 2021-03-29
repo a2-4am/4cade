@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CRICKATEER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9474
+         sta   $949A
+         jsr   $5212
+         jsr   $868       ; decompress
+         +DISABLE_ACCEL
+         jsr   $839
+         +ENABLE_ACCEL
+         jsr   $868       ; decompress
+         +DISABLE_ACCEL
+         jmp   $813
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
