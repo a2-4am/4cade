@@ -1,0 +1,45 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ROACH.HOTEL",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback2
+         sta   $5164
+         lda   #>callback2
+         sta   $5165
+         lda   #<pcallback2
+         sta   $5034
+         lda   #>pcallback2
+         sta   $5035
+         lda   #<pcallback1
+         sta   $5154
+         lda   #>pcallback1
+         sta   $5155
+         jmp   $800       ; decompress
+
+callback1
+         +DISABLE_ACCEL
+         jmp   ($202)
+
+callback2
+         +ENABLE_ACCEL
+         jmp   $BDF4      ; decompress
+
+callback3
+         +DISABLE_ACCEL
+         jmp   ($200)
+
+pcallback1
+         !word callback1
+
+pcallback2
+         !word callback3
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
