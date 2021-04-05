@@ -33,7 +33,7 @@
 
 ++       bcc   skipmb
          cpx   #$C4
-         beq   skipmb
+         beq   skipslot
          txa
 
          ldx   $3FCD      ;find #$C4s
@@ -70,7 +70,7 @@
 
 ++       ldx   $89D5      ;find #$C4s
          cpx   #$C4
-         bne   ++
+         bne   skipslot
          ldy   #0
 -        ldx   $89D5,Y    ;find #$C4s
          cpx   #$C4
@@ -83,25 +83,35 @@
 +        iny
          bne   -
 
-++
-
+skipslot
+         jsr   setopt
+         
 skipmb
+         jmp   ($b599)
+
+setopt
          lda   $65AB
-patchmb
          cmp   #3
          bne   ++
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
+         ldx   #3         ; MB/A
+         ldy   #0
          asl
          bpl   +
-         lda   #3
-         adc   #0
-         sta   $380
+         ldx   #1         ; Sound2
++        bcc   +
+         txa
+         eor   #2
+         tax
+         inx              ; Sound/Speech or MB/C
+         lsr
+         tay              ; Speech1 or Speech2
++        stx   $380
+         sty   $381
          lda   #$0D
          sta   $FF
-         lda   #$FF
-         sta   patchmb+1
-+        +READ_ROM_NO_WRITE
-         
-++
-         jmp   ($b599)
+         lda   #$2C
+         sta   skipslot
+         +READ_ROM_NO_WRITE
+++       rts
