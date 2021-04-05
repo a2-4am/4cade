@@ -97,20 +97,23 @@ setopt
          lda   MockingboardStuff
          ldx   #3         ; MB/A
          ldy   #0
+         sty   $382       ; joystick
          asl
          bpl   +
          ldx   #1         ; Sound2
 +        bcc   +
          txa
          eor   #2
-         tax
-         inx              ; Sound/Speech or MB/C
+         adc   #0
+         tax              ; Sound/Speech or MB/C
          lsr
          tay              ; Speech1 or Speech2
 +        stx   $380
          sty   $381
          lda   #$0D
          sta   $FF
+         lda   #$30
+         sta   $385
          lda   #$2C
          sta   skipslot
          +READ_ROM_NO_WRITE
