@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ZOO.MASTER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $60A4
+         jsr   $6000      ; decompress
+         +RESET_VECTOR $100
+         lda   #$60
+         sta   $89F
+         jsr   $800       ; decompress more
+         +DISABLE_ACCEL
+         jmp   $8A0
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
