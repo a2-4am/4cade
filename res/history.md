@@ -80,6 +80,10 @@
  - World Games
  - World Karate Championship
 
+## Enhancements & bug fixes
+
+ - Even more super hi-res artwork for IIgs users (thanks Brian Wiser)
+
 # Revision 4.01 / serial number 20210218
 
 ## Enhancements & bug fixes
