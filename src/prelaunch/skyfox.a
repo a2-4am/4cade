@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba/Frank M.
+;(c) 2019-2021 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/SKYFOX",plain
@@ -10,8 +10,8 @@
          +ENABLE_ACCEL
          inc   $80        ; requires a non-zero value for the RNG
          lda   #$60
-         sta   $7E31
-         jsr   $4621
+         sta   $7E3A
+         jsr   $4635
 
          lda   #$82       ; READ_ROM_NO_WRITE
          sta   $101
