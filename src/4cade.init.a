@@ -18,6 +18,24 @@
          jsr   ROM_NORMAL
          jsr   ROM_IN0
          jsr   ROM_PR0
+         ; print text title in same place as graphical title will appear
+         ldy   #9
+-        lda   TOTAL-1,y
+         ora   #$80
+         sta   $04B7-1,y
+         dey
+         bne   -
+         ldy   #11
+-        lda   REPLAY-1,y
+         ora   #$80
+         sta   $0536-1,y
+         dey
+         bne   -
+
+         ; proboothd duplicates the above code and jumps here,
+         ; so if you make any changes before this comment, you
+         ; MUST adjust the final JMP in src/proboothd/proboothd.a
+
          jsr   Has64K                ; check for 64K (required)
          bcc   +
 
@@ -67,20 +85,6 @@
          +HIDE_NEXT_2_BYTES
 +        lda   #$FF
          sta   zpCharMask
-
-         ; print text title in same place as graphical title will appear
-         ldy   #8
--        lda   TOTAL,y
-         ora   #$80
-         sta   $04B7,y
-         dey
-         bpl   -
-         ldy   #10
--        lda   REPLAY,y
-         ora   #$80
-         sta   $0536,y
-         dey
-         bpl   -
 
          ; increase text window width so we can print to the edge of the screen without scrolling
          inc   $21
