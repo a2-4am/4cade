@@ -18,6 +18,27 @@
 
          lda   #0
          sta   $3F2
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         +READ_ROM_NO_WRITE
+         cmp   #1
+         bcc   ++
+         tax
+         ora   #$C0
+         sta   $341
+         txa
+         asl
+         and   #$80
+         ora   #1         ; sound i
+         bpl   +
+         eor   #$85       ; sound ii
++
+         bcc   +
+         lda   #6         ; +speech
++
+         sta   $340
+         jsr   $7CB4
+++
          +DISABLE_ACCEL
 
          lda   $323
