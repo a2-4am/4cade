@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am/qkumba
+;(c) 2019-2021 by 4am/qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BK",plain
@@ -7,31 +7,15 @@
 
          !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
-         lda   #$60
-         sta   $52DB
-         jsr   $527C      ; decompress 1
-         +DISABLE_ACCEL
-         jsr   $8d4
-         +ENABLE_ACCEL
-         lda   #$60
-         sta   $BD40
-         jsr   $BD20      ; decompress 2
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-                          ; lives in $0213
-         lda   #$AD
-         sta   $69DC      ; patch - don't decrease lives
-         sta   $6C9A      ; patch - don't increase lives
-         sta   $6C9D      ; patch - don't increase lives
-+
-         lda   #$4C
-         sta   $7215
-         jsr   $7200
-         +RESET_VECTOR $100
-         +DISABLE_ACCEL
-         jmp   $7218
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT kamungas_mb, $200
+         +READ_ROM_NO_WRITE
+         jmp   $200
+
+kamungas_mb
+         !byte 21
+         !text "PRELAUNCH/KAMUNGAS.MB"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

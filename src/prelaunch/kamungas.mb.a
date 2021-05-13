@@ -1,0 +1,86 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/KAMUNGAS.MB",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $52DB
+         jsr   $527C      ; decompress 1
+         +DISABLE_ACCEL
+         jsr   $8d4
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $BD40
+         jsr   $BD20      ; decompress 2
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+                          ; lives in $0213
+         lda   #$AD
+         sta   $69DC      ; patch - don't decrease lives
+         sta   $6C9A      ; patch - don't increase lives
+         sta   $6C9D      ; patch - don't increase lives
++
+         lda   MockingboardStuff
+         +READ_ROM_NO_WRITE
+         cmp   #1
+         bcc   ++
+         tax
+         ora   #$C0
+         sta   mbslot+1
+         txa
+         asl
+         and   #$80
+         ora   #2         ; sound i
+         bpl   +
+         eor   #$88       ; sound ii
++
+         bcc   +
+         ora   #4         ; +speech
++
+         sta   mbtype+1
+         lda   #$4C
+         sta   $BD00
+         lda   #<callback
+         sta   $BD01
+         lda   #>callback
+         sta   $BD02
+++
+         lda   #$4C
+         sta   $7215
+         jsr   $7200
+         +RESET_VECTOR $100
+         +DISABLE_ACCEL
+         jmp   $7218
+
+!if * < $2A0 {
+*=$2A0
+} else {
+  !error "code is misplaced from $2A0, begins at ", *
+}
+callback
+         cpy   #$C4
+         bne   +
+         ldx   #$CA
+         jsr   $BD07     ; read high scores
+mbtype
+         lda   #$D1      ; SMC
+         sta   $305
+mbslot
+         lda   #$D1      ; SMC
+         sta   $306
+         rts
++
+         ldx   #$CB
+         jmp   $BD07
+
+!if * > $2FF {
+  !error "code is too large, ends at ", *
+}
