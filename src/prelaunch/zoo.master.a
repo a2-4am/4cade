@@ -15,8 +15,28 @@
          lda   #$60
          sta   $89F
          jsr   $800       ; decompress more
-         +DISABLE_ACCEL
-         jmp   $8A0
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         lda   MockingboardStuff
+         pha
+         +READ_ROM_NO_WRITE
+         pla
+         bmi   +
+         jmp   $8C0
++
+         ora   #$C0
+         ldx   #0
+-        ldy   $9A00, x
+         cpy   #$C4
+         bne   +
+         sta   $9A00, x
++        ldy   $9B00, x
+         cpy   #$C4
+         bne   +
+         sta   $9B00, x
++        inx
+         bne   -
+         jmp   $8C8
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
