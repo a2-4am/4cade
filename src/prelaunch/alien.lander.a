@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ALIEN.LANDER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $85D
+         jsr   $800       ; load "DOS"
+         lda   #$4C
+         sta   $307
+         sta   $329
+         jsr   $300       ; decompress
+         +DISABLE_ACCEL
+         jsr   $800
+         +ENABLE_ACCEL
+         jsr   $30D       ; decompress
+         +DISABLE_ACCEL
+         jmp   $209
