@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/ARGOS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $852
+         jsr   $800       ; load "DOS"
+         lda   #<callback
+         sta   $B64F
+         lda   #>callback
+         sta   $B650
+         +DISABLE_ACCEL
+         jmp   $300
+
+callback
+         +ENABLE_ACCEL
+         jsr   $B65A      ; decompress
+         +DISABLE_ACCEL
+         rts
