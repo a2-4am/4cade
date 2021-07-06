@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020-2021 by qkumba/xot
 
 !cpu 6502
 !to "build/PRELAUNCH/RUN.FOR.IT",plain
@@ -21,6 +21,9 @@
          sta   $906
          sta   $1286
 +
+         lda   #$fb       ; fix unpause
+         sta   $e29
+
          lda   #<callback
          sta   $15C8
          lda   #>callback
