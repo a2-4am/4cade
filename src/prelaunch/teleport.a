@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/TELEPORT",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $548B
+         jsr   $52D1      ; decompress
+         +DISABLE_ACCEL
+         jmp   $803
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

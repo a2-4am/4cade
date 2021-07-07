@@ -6,7 +6,6 @@ Oil's Well
 
 //4am crack (unreleased)
 Infiltrator II
-Teleport
 
 //TODO(woz-imaged but uncracked)
 Lemmings
