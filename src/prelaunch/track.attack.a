@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/TRACK.ATTACK",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9C9
+         jsr   $800       ; load "DOS"
+         lda   #<callback
+         sta   $BF08
+         lda   #>callback
+         sta   $BF09
+         jmp   $BF00      ; decompress
+
+callback
+         pha
+         txa
+         pha
+         +ENABLE_ACCEL
+         pla
+         tax
+         pla
+         jsr   $400
+         +DISABLE_ACCEL
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
