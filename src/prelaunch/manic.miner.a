@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020-2021 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/MANIC.MINER",plain
@@ -9,14 +9,14 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $82A
+         sta   $83E
          jsr   $800       ; decompress
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
-         sta   $7C5A      ; patch - don't decrease lives
+         sta   $87FE      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
          jmp   $6000
