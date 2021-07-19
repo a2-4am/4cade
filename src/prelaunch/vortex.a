@@ -14,7 +14,7 @@
          sta   $407E+2
          jmp   $4000      ; decompress2
 
-hook     +RESET_VECTOR $100
+hook     +NEW_RESET_VECTOR $BFF0
          +DISABLE_ACCEL
          jmp   $D566
 
