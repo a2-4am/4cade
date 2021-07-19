@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH/ESCAPE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +NEW_RESET_VECTOR $BFF0
+
+         jmp   $523E
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
