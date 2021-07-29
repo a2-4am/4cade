@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/WB",plain
+!to "build/PRELAUNCH/WILLY.BYTE",plain
 *=$106
 
     !source "src/prelaunch/common.a"
@@ -15,6 +15,12 @@
          sta   $BD7C
          lda   #>callback
          sta   $BD7D
+         lda   #$4C
+         sta   $B6D8
+         ldx   #0
+         stx   $B6D9
+         inx
+         stx   $B6DA      ; reset vector
          +DISABLE_ACCEL
          jmp   $6000
 
