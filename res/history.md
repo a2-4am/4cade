@@ -6,49 +6,76 @@
  - Alien Lander
  - Apple Invader
  - Arena
+ - Artesians
+ - Bats in the Belfry
+ - Beach Landing
  - Bezare
  - Boulder Dash II
  - Bug Battle
  - C'est La Vie
+ - Captain Power
  - Chivalry
  - Cosmic Combat
+ - Crickateer
  - Defender (Joe Holt)
+ - Demonic Decks
  - Depth Charge
  - Dive Bomber
  - Early Bird
+ - Escape
  - Firebug
  - Fly Wars
+ - Galactic Attack
  - Handy Dandy
  - Infiltrator
  - It's The Pits
  - Jellyfish
  - Jump Jet
  - Lamb Chops!
+ - Lemmings
  - Lunar Leepers
+ - MIRV
  - Marauder
  - Mazeblox
  - Mouskattack
+ - Neon
  - Neut Tower
+ - Neutrons
  - On The Run
  - Peeping Tom
  - Pegasus ][
  - Pengo
  - Pig Pen
  - Rear Guard
+ - Retro Fever
+ - Retro-Ball
+ - Roach Hotel
  - Robot Battle
  - Shuttle Intercept
  - Space Kadet
+ - Spellwielder
+ - Spy vs Spy
+ - Spy vs Spy II
+ - Spy vs Spy III
  - Star Dance
  - Starball
+ - Super Huey
  - Super Puckman
  - Super Taxman 2
+ - Talon
+ - Teleport
  - Teritory
  - The Caverns of Freitag
  - The Movie Monster Game
  - The Snapper
+ - Time Pilot
  - Titan Cronus
+ - Track Attack
  - Video Vegas
  - Vortex
+ - Whomper Stomper
+ - Willy Byte in the Digital Dimension
+ - Zoo Master
 
 ## Removed games (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
@@ -82,6 +109,8 @@
 
 ## Enhancements & bug fixes
 
+ - Upgrade Bejeweled to v2.7 (thanks Jeremy R.)
+ - Upgrade Manic Miner to v1.1
  - Even more super hi-res artwork for IIgs users (thanks Brian Wiser)
 
 # Revision 4.01 / serial number 20210218
