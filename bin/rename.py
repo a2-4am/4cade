@@ -152,6 +152,19 @@ def driver():
     rename("ROGER.RABBIT", "RR")
     rename("WINGS.OF.FURY", "WF")
 
+def driver_phase_2():
+    rename("CEST.LA.VIE", "CV")
+    rename("DEFEND.JH", "DJ")
+    rename("ESCAPE", "ES")
+    rename("ITS.THE.PITS", "IP")
+    rename("LAMB.CHOPS", "LA")
+    rename("MIRV", "M.I.R.V")
+    rename("NEUT.TOWER", "NT")
+    rename("SHUTTLE.INTRCPT", "SI")
+    rename("CAVERNS.FREITAG", "CF")
+    rename("MOVIE.MONSTER", "MM")
+
 if __name__ == '__main__':
     #rename("MR.DO", "MD")
-    driver()
+    #driver()
+    driver_phase_2()
