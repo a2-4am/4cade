@@ -1,7 +1,7 @@
-$5F46: end of demo cycle
-$086F: 30 -> 54 to disable sound (context is A9C08DFF47ADFD47C954F005A930)
+$5F46: 4C1308 end of demo cycle
+$086F: 30 -> 54 to disable sound (context is ADFD47C954F005A930)
 $1105: 8D10C0 -> 4C0001 to exit on keypress (context is 8DF2104C3C148D10C0)
-$151A: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010E68D10C04C0010)
+$151A: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010E68D10C0C98DD0DF)
 $5EA5: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010068D10C04C465F)
 $5F3B: 8D10C0 -> 4C0001 to exit on keypress (context is AD00C010068D10C04C465F)
 no joystick support on title screen or demo
