@@ -37,9 +37,6 @@ Boulder Dash II
 Bug Battle
 Fly Wars
 
-# uncompressed but unpatched
-Spider Raid
-
 # needs work
 Formula 1 Racer
 
@@ -87,6 +84,7 @@ Serpentine
 Snake Byte
 Sneakers
 Spare Change
+Spider Raid
 Spy Hunter
 Spy's Demise
 Stargate
