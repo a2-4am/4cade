@@ -30,13 +30,19 @@
 # Notes on completed and in-progress demos are in res/notes/demos/
 #
 
+# 2021 additions
+Apple Invader
+Arena
+Boulder Dash II
+Bug Battle
+Fly Wars
+
 # uncompressed but unpatched
 Spider Raid
 
 # needs work
 Dung Beetles [can escape to game by pressing RETURN at title screen]
 Formula 1 Racer
-Stellar 7 [not all keys escape properly once spinny demo starts]
 
 # done
 Agent USA
