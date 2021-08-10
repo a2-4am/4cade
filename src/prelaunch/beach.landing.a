@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/BEACH.LANDING",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   skip
+
+callback
+         jsr   $BD00
+         lda   $7F
+         cmp   #$1D
+         bne   +
+         ldx   #$1B
+         ldy   $80
+         cpy   #8
+         beq   reset
+         cpy   #$0B
+         bne   +
+         ldx   #8
+         ldy   #$80
+reset
+         sty   vector1+2
+         sty   vector2+2
+         sty   vector3+2
+         lda   #0
+vector1  sta   $D100,x    ; SMC
+         rol
+vector2  sta   $D105,x    ; SMC
+         lda   #$A4
+vector3  sta   $D10A,x    ; SMC
++        clc
+         rts
+
+skip
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9E3
+         jsr   $800       ; load "DOS"
+         lda   #<callback
+         sta   $B7B8
+         lda   #>callback
+         sta   $B7B9
+         +DISABLE_ACCEL
+         jmp   $B700
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
