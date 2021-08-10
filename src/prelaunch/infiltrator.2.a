@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/INFILTRATOR.2",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         ldx   #20
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+         jmp   $800
+
+newpath
+         !byte 20
+         !text "X/INFILTRATOR.2/GAME"
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
