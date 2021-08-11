@@ -107,7 +107,6 @@ goto :EOF
 
 :md
 2>nul md build
-2>nul md build\po
 2>nul md build\X
 2>nul md build\FX
 2>nul md build\PRELAUNCH
