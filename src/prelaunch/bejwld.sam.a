@@ -1,0 +1,88 @@
+;license:MIT
+;(c) 2021 by roughana
+
+!cpu 6502
+!to "build/PRELAUNCH/BEJWLD.SAM",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+slot = $106                          ; temp storage in known location for use by bejwld.patch
+
+;        +READ_RAM2_WRITE_RAM2       ; already set in prelaunch
+
+;        +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS    ; we don't want ROM switched back in
+         lda   MockingboardStuff     ; Use mockingboard speech if it is available
+         asl
+         bcs   +
+         lda   MachineStatus         ; must have 128k
+         asl
+         asl
+         bcs   load_sam
++        jmp   out
+		 
+load_sam
+         lda   iCurBlockLo
+         pha
+         lda   iCurBlockHi
+         pha
+
+         lda   KBD        ; does user want Hardware version?
+         bpl   +
+         cmp   #$80 XOR "1"
+         bmi   +
+         cmp   #$80 XOR "7"
+         bpl   +
+         and   #$0f       ; convert to slot 
+         sta   slot
+         sta   CLEARKBD
+         lda   #"H"
+         sta   fn_patch		 
+
++        lda   #1
+         sta   iAuxReq    ; read to aux memory
+         lda   #$6f       ; Both SAM versions load to $6F00
+         sta   ldrhi
+         +LDADDR fn_sam
+         jsr   LoadFileDirect
+
+         lda   #1
+         sta   iAuxReq    ; read to aux memory
+         lda   #$20       ; Phonemes routines Aux $2000
+         sta   ldrhi
+         +LDADDR fn_phonemes
+         jsr   LoadFileDirect
+
+         lda   #0
+         sta   iAuxReq    ; read to main memory
+         lda   #$8f       ; Bejeweled patch location Main $8F00
+         sta   ldrhi
+         +LDADDR fn_bejwld_patch
+         jsr   LoadFileDirect
+
+         pla
+         sta   iCurBlockHi
+         pla
+         sta   iCurBlockLo
+; *=$0250
+         jsr   $8f00      ; apply patches
+out
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         rts              ; return to game
+
+fn_sam
+         !byte 6
+         !text "SAM.SW"
+fn_patch = *-2		
+		
+fn_phonemes
+         !byte 12
+         !text "SAM.PHONEMES"
+		 
+fn_bejwld_patch
+         !byte 22
+         !text "PRELAUNCH/BEJWLD.PATCH"
+
+; *=$284

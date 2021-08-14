@@ -62,6 +62,9 @@ cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\SAM.SW" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\SAM.HW" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\SAM.PHONEMES" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log

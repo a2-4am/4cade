@@ -1,0 +1,223 @@
+;license:MIT
+;(c) 2021 by roughana
+;
+; Bejeweled v2.7 patches to use SAM speech
+
+!cpu 6502
+!to "build/PRELAUNCH/BEJWLD.PATCH",plain
+*=$8F00
+
+         !source "src/constants.a"
+ 
+; Opcode values used in patches
+OP_LDY =       $A0
+OP_LDX =       $A2
+OP_LDA =       $A9
+OP_JMP =       $4C
+slot =         $106                    ; temp location set by bejwld.sam
+
+; Firmware entry point
+XFER =         $C314                   ; A,X,Y are preserved
+; Locations used by XFER
+STRTL =        $3ED
+STRTH =        $3EE
+
+; Aux memory locations (Future: derive from Phonemes.a build?)
+SAYPHONEMES =  $2000                   ; Address of speaking routine in Aux
+AUXMAINREENTRYL = $2008                ; Patch location for returning to Main
+AUXMAINREENTRYH = AUXMAINREENTRYL+5
+BJ_GETREADY =  $2016                   ; Address of phonemes in Aux
+BJ_GO =        $2024 
+BJ_GOOD =      $2029 
+BJ_EXCELLENT = $2030
+BJ_INCREDIBLE = $203E
+BJ_LEVELCOMPLETE = $204D 
+BJ_NOMOREMOVES = $2061
+auxslot =      $94fc
+
+; Main memory locations for Bejeweled v2.7 patch points
+; These locations will be different in each version of Bejeweled
+P_GO =         $497E
+P_LEVELCOMPLETE = $499E 
+P_GETREADY =   $49BE
+P_NOMOREMOVES = $49DE
+P_GOOD =       $49FE
+P_EXCELLENT =  $4A20
+P_INCREDIBLE = $4A42
+
+SPEAK =        $200                    ; Main memory location to call into Aux and return
+
+; Apply patches to Bejeweled program code
+; 
+; for each phrase:
+;  ldy high address phoneme (in aux)
+;  lda low address phoneme
+;  jmp to our speak routine 		
+                           
+         lda   #OP_LDY
+         sta   P_GO
+         lda   #>BJ_GO
+         sta   P_GO+1
+         lda   #OP_LDA
+         sta   P_GO+2
+         lda   #<BJ_GO
+         sta   P_GO+3
+         lda   #OP_JMP
+         sta   P_GO+4
+         lda   #<SPEAK
+         sta   P_GO+5 
+         lda   #>SPEAK
+         sta   P_GO+6
+
+         lda   #OP_LDY
+         sta   P_GOOD
+         lda   #>BJ_GOOD
+         sta   P_GOOD+1
+         lda   #OP_LDA
+         sta   P_GOOD+2
+         lda   #<BJ_GOOD
+         sta   P_GOOD+3
+         lda   #OP_JMP
+         sta   P_GOOD+4
+         lda   #<SPEAK
+         sta   P_GOOD+5
+         lda   #>SPEAK
+         sta   P_GOOD+6
+
+         lda   #OP_LDY
+         sta   P_EXCELLENT
+         lda   #>BJ_EXCELLENT
+         sta   P_EXCELLENT+1
+         lda   #OP_LDA
+         sta   P_EXCELLENT+2
+         lda   #<BJ_EXCELLENT
+         sta   P_EXCELLENT+3
+         lda   #OP_JMP
+         sta   P_EXCELLENT+4
+         lda   #<SPEAK
+         sta   P_EXCELLENT+5 
+         lda   #>SPEAK
+         sta   P_EXCELLENT+6
+
+         lda   #OP_LDY
+         sta   P_INCREDIBLE
+         lda   #>BJ_INCREDIBLE
+         sta   P_INCREDIBLE+1
+         lda   #OP_LDA
+         sta   P_INCREDIBLE+2
+         lda   #<BJ_INCREDIBLE
+         sta   P_INCREDIBLE+3
+         lda   #OP_JMP
+         sta   P_INCREDIBLE+4
+         lda   #<SPEAK
+         sta   P_INCREDIBLE+5 
+         lda   #>SPEAK
+         sta   P_INCREDIBLE+6
+
+         lda   #OP_LDY
+         sta   P_LEVELCOMPLETE
+         lda   #>BJ_LEVELCOMPLETE
+         sta   P_LEVELCOMPLETE+1
+         lda   #OP_LDA
+         sta   P_LEVELCOMPLETE+2
+         lda   #<BJ_LEVELCOMPLETE
+         sta   P_LEVELCOMPLETE+3
+         lda   #OP_JMP
+         sta   P_LEVELCOMPLETE+4
+         lda   #<SPEAK
+         sta   P_LEVELCOMPLETE+5 
+         lda   #>SPEAK
+         sta   P_LEVELCOMPLETE+6
+
+         lda   #OP_LDY
+         sta   P_NOMOREMOVES
+         lda   #>BJ_NOMOREMOVES
+         sta   P_NOMOREMOVES+1
+         lda   #OP_LDA
+         sta   P_NOMOREMOVES+2
+         lda   #<BJ_NOMOREMOVES
+         sta   P_NOMOREMOVES+3
+         lda   #OP_JMP
+         sta   P_NOMOREMOVES+4
+         lda   #<SPEAK
+         sta   P_NOMOREMOVES+5 
+         lda   #>SPEAK
+         sta   P_NOMOREMOVES+6
+
+         lda   #OP_LDY
+         sta   P_GETREADY
+         lda   #>BJ_GETREADY
+         sta   P_GETREADY+1
+         lda   #OP_LDA
+         sta   P_GETREADY+2
+         lda   #<BJ_GETREADY
+         sta   P_GETREADY+3
+         lda   #OP_JMP
+         sta   P_GETREADY+4
+         lda   #<SPEAK
+         sta   P_GETREADY+5 
+         lda   #>SPEAK
+         sta   P_GETREADY+6
+         
+		 ldx   #(END-RELOCATE)
+-        lda   RELOCATE-1,x            ; relocate Shims to safety
+         sta   SPEAK-1,x
+         dex
+         bne   -
+		 
+; Apply patch to SAM in AUX for MAINREENTRY for Bejeweled
+
+         sta   WRITEAUXMEM
+         lda   #<(SPEAK+MAINREENTRY-RELOCATE)
+         sta   AUXMAINREENTRYL
+         lda   #>(SPEAK+MAINREENTRY-RELOCATE)
+         sta   AUXMAINREENTRYH
+		 lda   slot
+		 sta   auxslot                 ; ignored by SAM for Software version
+         sta   WRITEMAINMEM
+
+         rts                           ; to Prelaunch
+         
+; This routine will be called from Bejeweled at which point ROM will be banked in
+; This code needs to be in lower 48k of main memory 
+; pass in $YYAA with address in AUXILARY memory of the phrase to be spoken
+; Total Replay uses $100-$105
+
+;SPEAK
+RELOCATE
+         ldx   STRTL                   ; Backup STRTL/STRTH
+         stx   $106
+         ldx   STRTH
+         stx   $107
+         tsx
+         stx   $108                    ; Store SP
+         tax
+         lda   #<SAYPHONEMES           ; Start address in aux, for XFER
+         sta   STRTL
+         lda   #>SAYPHONEMES
+         sta   STRTH
+         sec                           ; Main -> Aux
+         bit   $FF58                   ; Set V; Use page zero and stack in aux
+         jmp   XFER
+
+; After speaking the desired phrase, control is passed
+; back to Main memory through this entry point.
+; This code needs to be in lower 48k of main memory 
+
+MAINREENTRY
+         ldx   $108                    ; Recover SP
+         txs
+         lda   $106                    ; Restore STRTL/STRTH
+         sta   STRTL
+         lda   $107
+         sta   STRTH
+         ldx   #$00
+         lda   #$01                    ; Return TRUE
+         rts                           ; Return to Bejeweled caller
+
+END = *
+
+; Ensure we don't overwrite bejwld.sam return point
+!if (*-RELOCATE+SPEAK) > $250 {
+  !error "code is too large, ends at ", *
+}
