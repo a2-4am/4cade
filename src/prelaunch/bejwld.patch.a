@@ -158,13 +158,13 @@ SPEAK =        $200                    ; Main memory location to call into Aux a
          sta   P_GETREADY+5 
          lda   #>SPEAK
          sta   P_GETREADY+6
-         
-		 ldx   #(END-RELOCATE)
+ 
+         ldx   #(END-RELOCATE)
 -        lda   RELOCATE-1,x            ; relocate Shims to safety
          sta   SPEAK-1,x
          dex
          bne   -
-		 
+
 ; Apply patch to SAM in AUX for MAINREENTRY for Bejeweled
 
          sta   WRITEAUXMEM
@@ -172,8 +172,8 @@ SPEAK =        $200                    ; Main memory location to call into Aux a
          sta   AUXMAINREENTRYL
          lda   #>(SPEAK+MAINREENTRY-RELOCATE)
          sta   AUXMAINREENTRYH
-		 lda   slot
-		 sta   auxslot                 ; ignored by SAM for Software version
+         lda   slot
+         sta   auxslot                 ; ignored by SAM for Software version
          sta   WRITEMAINMEM
 
          rts                           ; to Prelaunch

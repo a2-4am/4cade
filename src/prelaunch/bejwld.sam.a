@@ -65,7 +65,6 @@ load_sam
          sta   iCurBlockHi
          pla
          sta   iCurBlockLo
-; *=$0250
          jsr   $8f00      ; apply patches
 out
          jsr   DisableAccelerator
@@ -84,5 +83,3 @@ fn_phonemes
 fn_bejwld_patch
          !byte 22
          !text "PRELAUNCH/BEJWLD.PATCH"
-
-; *=$284
