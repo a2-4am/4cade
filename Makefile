@@ -54,9 +54,9 @@ dsk: asm
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing res/GAMEHELP/STANDARD build/GAMEHELP/$$(basename $$f); done
 	bin/buildfileinfo.sh build/GAMEHELP "04" "8000" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/GAMEHELP" "build/GAMEHELP" >>build/log
-	bin/changebootloader.sh build/"$(DISK)" res/proboothd
+	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
-asm: asmlauncher asmfx asmprelaunch
+asm: asmlauncher asmfx asmprelaunch asmproboot
 
 asmlauncher: md
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>build/relbase.log
@@ -70,8 +70,8 @@ asmprelaunch: md
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
 	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
-chd:	dsk
-	chdman createhd -c none -i build/"$(DISK)" -o build/"$(DISK)".chd >>build/log
+asmproboot: md
+	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a >> build/log
 
 compress: md
 	for f in res/ACTION.HGR.UNCOMPRESSED/*; do  o=res/ACTION.HGR/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
