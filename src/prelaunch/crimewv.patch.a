@@ -187,8 +187,6 @@ MAINREENTRY
          sta   STRTL
          lda   $107
          sta   STRTH
-         ldx   #$00
-         lda   #$01                    ; Return TRUE
          rts                           ; Return to caller
 
 END = *
