@@ -11,7 +11,7 @@
          lda   #$60
          sta   $244B
          jsr   $2400      ; decompress
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -24,16 +24,29 @@
          lda   MockingboardStuff
          asl
          bpl   skipmb
+         php
          lsr
          and   #7
          sta   $A0C9
          lda   #2
          sta   $A0C4
-
+         plp              ; Skip SAM if speech already available
 skipmb
+         bcs   skipsam
+         lda   MachineStatus ; must have 128k
+         asl
+         asl
+         bcc   skipsam
+         +LOAD_FILE_AT crimewave_sam, $200
+         jsr $200
+skipsam
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $0800
+
+crimewave_sam
+         !byte 21
+         !text "PRELAUNCH/CRIMEWV.SAM"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

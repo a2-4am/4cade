@@ -1,0 +1,194 @@
+;license:MIT
+;(c) 2021 by roughana
+;
+; Crimewave patches to use SAM speech
+
+!cpu 6502
+!to "build/PRELAUNCH/CRIMEWV.PATCH",plain
+*=$bd00
+
+         !source "src/constants.a"
+ 
+slot =         $106                    ; temp location set by crimewv.sam
+
+; Firmware entry point
+XFER =         $C314                   ; A,X,Y are preserved
+; Locations used by XFER
+STRTL =        $3ED
+STRTH =        $3EE
+
+; Aux memory locations (Future: derive from Phonemes.a build?)
+SAYPHONEMES =  $2000                   ; Address of speaking routine in Aux
+AUXMAINREENTRYL = $2008                ; Patch location for returning to Main
+AUXMAINREENTRYH = AUXMAINREENTRYL+5
+; Address of phonemes in Aux
+CW_GAMEOVER	= $2072
+CW_NOKILLS	= $207f
+CW_TEN	= $208a
+CW_TWENTY	= $2090
+CW_THIRTY	= $209a
+CW_FORTY	= $20a3
+CW_FIFTY	= $20ac
+CW_SIXTY	= $20b5
+CW_SEVENTY	= $20bf
+CW_EIGHTY	= $20cb
+CW_NINETY	= $20d3
+CW_SUPPLYTRUCK	= $20de
+CW_GETHIM	= $20ef
+CW_YOUMISSED	= $20fc
+CW_DANGER	= $2107
+CW_BONUS	= $210f
+CW_CW1	= $2118
+CW_CW2	= $212a
+CW_CW3	= $213b
+CW_CW4	= $214f
+CW_CW5	= $2161
+CW_CW6	= $2174
+CW_CW7	= $2187
+CW_CW8	= $219c
+CW_CW9	= $21ae
+CW_GREATSCORE	= $21c1
+auxslot =      $94fc
+
+; Main memory locations for patch points
+GAME =         $a209
+
+; Apply patches to program code
+; 
+
+         ldx   #(CW_PATCH_END-CW_PATCH)
+-        lda   CW_PATCH-1,x            ; patch game to use SAM
+         sta   GAME-1,x
+         dex
+         bne   -
+         lda   #<GAME+CW_PHONEME_LOW-CW_PATCH ; These can be optimised at build
+         sta   GAME+CWP_LOW
+         lda   #>GAME+CW_PHONEME_LOW-CW_PATCH
+         sta   GAME+CWP_LOW+1
+         lda   #<GAME+CW_PHONEME_HIGH-CW_PATCH
+         sta   GAME+CWP_HIGH
+         lda   #>GAME+CW_PHONEME_HIGH-CW_PATCH
+         sta   GAME+CWP_HIGH+1
+
+; Apply patch to SAM in AUX for MAINREENTRY for Crime Wave
+
+         sta   WRITEAUXMEM
+         lda   #<MAINREENTRY
+         sta   AUXMAINREENTRYL
+         lda   #>MAINREENTRY
+         sta   AUXMAINREENTRYH
+         lda   slot
+         sta   auxslot                 ; ignored by SAM for Software version
+         sta   WRITEMAINMEM
+         rts                           ; to Prelaunch
+
+; for each phrase:
+;  ldy high address phoneme (in aux)
+;  lda low address phoneme
+;  jmp to our speak routine 		
+
+CW_PATCH
+		 lda CW_PHONEME_HIGH,X         ; patched during move
+CWP_HIGH = *-CW_PATCH-2
+         tay
+		 lda CW_PHONEME_LOW,X          ; patched during move
+CWP_LOW = *-CW_PATCH-2
+         jmp SPEAK
+
+CW_PHONEME_LOW                         ; Phonemes are in Aux mem
+         !byte   <CW_GAMEOVER
+         !byte   <CW_NOKILLS
+         !byte   <CW_TEN
+         !byte   <CW_TWENTY
+         !byte   <CW_FORTY
+         !byte   <CW_THIRTY
+         !byte   <CW_FIFTY
+         !byte   <CW_SIXTY
+         !byte   <CW_SEVENTY
+         !byte   <CW_EIGHTY
+         !byte   <CW_NINETY
+         !byte   <CW_SUPPLYTRUCK
+         !byte   <CW_GETHIM
+         !byte   <CW_YOUMISSED
+         !byte   <CW_DANGER
+         !byte   <CW_BONUS
+         !byte   <CW_CW1
+         !byte   <CW_CW2
+         !byte   <CW_CW3
+         !byte   <CW_CW4
+         !byte   <CW_CW5
+         !byte   <CW_CW6
+         !byte   <CW_CW7
+         !byte   <CW_CW8
+         !byte   <CW_CW9
+         !byte   <CW_GREATSCORE
+CW_PHONEME_HIGH
+         !byte   >CW_GAMEOVER
+         !byte   >CW_NOKILLS
+         !byte   >CW_TEN
+         !byte   >CW_TWENTY
+         !byte   >CW_FORTY
+         !byte   >CW_THIRTY
+         !byte   >CW_FIFTY
+         !byte   >CW_SIXTY
+         !byte   >CW_SEVENTY
+         !byte   >CW_EIGHTY
+         !byte   >CW_NINETY
+         !byte   >CW_SUPPLYTRUCK
+         !byte   >CW_GETHIM
+         !byte   >CW_YOUMISSED
+         !byte   >CW_DANGER
+         !byte   >CW_BONUS
+         !byte   >CW_CW1
+         !byte   >CW_CW2
+         !byte   >CW_CW3
+         !byte   >CW_CW4
+         !byte   >CW_CW5
+         !byte   >CW_CW6
+         !byte   >CW_CW7
+         !byte   >CW_CW8
+         !byte   >CW_CW9
+         !byte   >CW_GREATSCORE
+CW_PATCH_END
+
+!if (*-CW_PATCH) > $a275-$a209 {
+  !error "patch length exceeds destination",(*-CW_PATCH)
+}
+         
+; This routine will be called from game at which point ROM will be banked in
+; This code needs to be in lower 48k of main memory 
+; pass in $YYAA with address in AUXILARY memory of the phrase to be spoken
+; Total Replay uses $100-$105
+
+SPEAK
+         ldx   STRTL                   ; Backup STRTL/STRTH
+         stx   $106
+         ldx   STRTH
+         stx   $107
+         tsx
+         stx   $108                    ; Store SP
+         tax
+         lda   #<SAYPHONEMES           ; Start address in aux, for XFER
+         sta   STRTL
+         lda   #>SAYPHONEMES
+         sta   STRTH
+         sec                           ; Main -> Aux
+         bit   $FF58                   ; Set V; Use page zero and stack in aux
+         jmp   XFER
+
+; After speaking the desired phrase, control is passed
+; back to Main memory through this entry point.
+; This code needs to be in lower 48k of main memory 
+
+MAINREENTRY
+         ldx   $108                    ; Recover SP
+         txs
+         lda   $106                    ; Restore STRTL/STRTH
+         sta   STRTL
+         lda   $107
+         sta   STRTH
+         ldx   #$00
+         lda   #$01                    ; Return TRUE
+         rts                           ; Return to caller
+
+END = *
