@@ -12,7 +12,7 @@
          sta   $1FB9+1
          lda   #>hook
          sta   $1FB9+2
-         jmp   $1F74      ; decompress
+         jmp   $1F71      ; decompress
 
 hook     lda   #0
          sta   $7007
