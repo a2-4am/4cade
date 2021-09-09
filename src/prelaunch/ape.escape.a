@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/APE.ESCAPE",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $94C7
+         sta   $94E1
+         sta   $94F2
+         jsr   $4000      ; decompress title
+
+         +DISABLE_ACCEL
+
+         lda   $C050
+         jsr   $94CA      ; title animation
+
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         bit   $C010
+         jsr   $94E4      ; decompress game
+
+         lda   MockingboardStuff
+         cmp   #1
+         ora   #$C0
+         bcc   no_speech
+         ldx   MockingboardStuff
+         bpl   no_speech
+
+         ldy   #0
+-        ldx   $1300,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $1300,Y    ;Replace #$C4 with detected slot
++        ldx   $6D00,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $6D00,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+
+         sta   $7941
+         sta   $7944
+
+no_speech
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $6200
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
