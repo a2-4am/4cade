@@ -65,6 +65,13 @@ cat res/DEMO/_FileInformation.txt |
         grep "$f=0" res/ATTRACT.CONF >/dev/null || echo "unused demo: $f";
     done
 
+# warn about unused slideshows
+cd res/SS
+for f in *.CONF; do
+    grep "$f" ../ATTRACT.CONF >/dev/null || echo "unused slideshow: $f";
+done
+cd ../..
+
 cat res/ATTRACT.CONF |
     grep "=" |
     grep -v "^#" |
