@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH/DEMONIC.DECKS",plain
@@ -11,6 +11,7 @@
          lda   #$60
          sta   $206A
          jsr   $2000      ; decompress
+         +NEW_RESET_VECTOR $BFF0
          +DISABLE_ACCEL
          jmp   $200
 

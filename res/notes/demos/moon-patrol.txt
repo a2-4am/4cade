@@ -1,0 +1,6 @@
+$2A95: 2C10C0 -> 4C0001 to exit on keypress (context is 2C10C0C9CBD008)
+$2A7E: 859E38 -> 4C0001 to exit on button press (context is A5001004859E3860)
+$2726: A6D0BD88D020B80A2C10C0A241A9FF20A8FCAD00C03003CAD0F3 -> 20 B8 0A 2C 10 C0 A2 41 A9 FF 20 A8 FC AD 00 C0 10 05 4C 00 01 EA EA CA D0 EE to exit on keypress during title screen
+$0C31: C9A0D0 -> 4C0001 to exit on keypress (context is AD00C01016C9A0D012A5EF)
+$0996: A2009A -> A2FF9A to prevent stack pointer from overwriting $100 (context is A2009A20270CA549)
+$2E80: 4C7327 -> 4C0001 to exit at end of demo cycle (context is A5F18D17024C732720E234)

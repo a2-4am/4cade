@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PLANETOIDS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2013
+         jsr   $2000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $111D
+         lda   #$A9
+         sta   $1570
++
+         +DISABLE_ACCEL
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

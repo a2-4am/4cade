@@ -28,6 +28,7 @@ call :md
 call :asmlauncher
 call :asmfx
 call :asmprelaunch
+call :asmproboot
 goto :EOF
 )
 
@@ -92,13 +93,7 @@ for %%q in (res\title.dhgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy b
 cscript /nologo bin\dumpcr.js "build\GAMEHELP\*"
 cscript /nologo bin\buildfileinfo.js build\GAMEHELP "06" "6000" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/GAMEHELP" "build\GAMEHELP" >>build\log
-cscript /nologo bin\changebootloader.js "build\%DISK%" res\proboothd
-goto :EOF
-)
-
-if "%1" equ "chd" (
-call :dsk
-chdman createhd -c none -i "build\%DISK%" -o "build\%DISK%.chd" >>build\log
+cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
 )
 
@@ -107,7 +102,6 @@ goto :EOF
 
 :md
 2>nul md build
-2>nul md build\po
 2>nul md build\X
 2>nul md build\FX
 2>nul md build\PRELAUNCH
@@ -141,6 +135,9 @@ for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy b
 for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
+
+:asmproboot
+%ACME% -r build\proboothd.lst src\proboothd\proboothd.a >> build\log
 
 :compress
 for %%q in (res\action.dhgr.uncompressed\*) do if not exist res\action.dhgr\%%~nxq %EXOMIZER% res\action.dhgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
