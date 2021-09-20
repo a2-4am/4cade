@@ -164,7 +164,10 @@ def driver_phase_2():
     rename("CAVERNS.FREITAG", "CF")
     rename("MOVIE.MONSTER", "MM")
 
+def driver_phase_3():
+    rename("CP", "CAPTAIN.POWER")
+
 if __name__ == '__main__':
     #rename("MR.DO", "MD")
     #driver()
-    driver_phase_2()
+    driver_phase_3()
