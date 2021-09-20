@@ -97,7 +97,7 @@ cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
 )
 
-echo usage: %0 clean / asm / dsk / chd
+echo usage: %0 clean / asm / dsk
 goto :EOF
 
 :md
