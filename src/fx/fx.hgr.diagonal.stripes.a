@@ -40,23 +40,16 @@ RowLoop
          sta   src+1
 
          ldx   mask1
-         lda   copymasks_even, x
-         sta   @even1
-         lda   copymasks_odd, x
-         sta   @odd1
-
          ldy   #39
 -        lda   (src), y
          eor   (dst), y              ; merge source and destination bits
-@odd1=*+1
-         and   #$FD                  ; [SMC] isolate the bits to replace, zero the rest
+         and   copymasks_odd, x      ; isolate the bits to replace, zero the rest
          eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (dst), y              ; write the result
          dey
          lda   (src), y
          eor   (dst), y              ; merge source and destination bits
-@even1=*+1
-         and   #$FD                  ; [SMC] isolate the bits to replace, zero the rest
+         and   copymasks_even, x     ; isolate the bits to replace, zero the rest
          eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (dst), y              ; write the result
          dey
@@ -72,23 +65,16 @@ RowLoop
          sta   src+1
 
          ldx   mask2
-         lda   copymasks_even, x
-         sta   @even2
-         lda   copymasks_odd, x
-         sta   @odd2
-
          ldy   #39
 -        lda   (src), y
          eor   (dst), y              ; merge source and destination bits
-@odd2=*+1
-         and   #$FD                  ; [SMC] isolate the bits to replace, zero the rest
+         and   copymasks_odd, x      ; isolate the bits to replace, zero the rest
          eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (dst), y              ; write the result
          dey
          lda   (src), y
          eor   (dst), y              ; merge source and destination bits
-@even2=*+1
-         and   #$FD                  ; [SMC] isolate the bits to replace, zero the rest
+         and   copymasks_even, x     ; isolate the bits to replace, zero the rest
          eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (dst), y              ; write the result
          dey
