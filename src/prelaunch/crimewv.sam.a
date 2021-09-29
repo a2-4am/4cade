@@ -1,0 +1,70 @@
+;license:MIT
+;(c) 2021 by roughana
+
+!cpu 6502
+!to "build/PRELAUNCH/CRIMEWV.SAM",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+slot = $106                          ; temp storage in known location for use by bejwld.patch
+
+;        +READ_RAM2_WRITE_RAM2       ; already set in prelaunch
+
+         lda   iCurBlockLo
+         pha
+         lda   iCurBlockHi
+         pha
+
+         lda   KBD        ; does user want Hardware version?
+         bpl   +
+         cmp   #$80 XOR "1"
+         bmi   +
+         cmp   #$80 XOR "7"
+         bpl   +
+         and   #$0f       ; convert to slot 
+         sta   slot
+         sta   CLEARKBD
+         lda   #"H"
+         sta   fn_patch		 
+
++        lda   #1
+         sta   iAuxReq    ; read to aux memory
+         lda   #$6f       ; Both SAM versions load to $6F00
+         sta   ldrhi
+         +LDADDR fn_sam
+         jsr   LoadFileDirect
+
+         lda   #1
+         sta   iAuxReq    ; read to aux memory
+         lda   #$20       ; Phonemes routines Aux $2000
+         sta   ldrhi
+         +LDADDR fn_phonemes
+         jsr   LoadFileDirect
+
+         lda   #0
+         sta   iAuxReq    ; read to main memory
+         lda   #$bd       ; Crimewave patch location Main
+         sta   ldrhi
+         +LDADDR fn_crimewave_patch
+         jsr   LoadFileDirect
+
+         pla
+         sta   iCurBlockHi
+         pla
+         sta   iCurBlockLo
+         jmp   $bd00      ; apply patches
+
+fn_sam
+         !byte 6
+         !text "SAM.SW"
+fn_patch = *-2		
+		
+fn_phonemes
+         !byte 12
+         !text "SAM.PHONEMES"
+		 
+fn_crimewave_patch
+         !byte 23
+         !text "PRELAUNCH/CRIMEWV.PATCH"

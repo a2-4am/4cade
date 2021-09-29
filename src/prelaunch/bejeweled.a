@@ -43,8 +43,13 @@ callback
          sta   $BF0B
          lda   #>helper
          sta   $BF0C
-         +DISABLE_ACCEL
-         rts
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT bejeweled_sam, $200
+         jmp   $200
+   
+bejeweled_sam
+         !byte 20
+         !text "PRELAUNCH/BEJWLD.SAM"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
