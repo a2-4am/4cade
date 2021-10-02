@@ -379,7 +379,10 @@ CopyDevs
          !word gGlobalPrefsStore
          !word -
          !byte 16
-         +LD16 SRC                   ; (SRC) points to free space after the OKVS data structure we just created
+         +LD16 SAVE
+         +ST16 PTR
+         jsr   stepptr
+         +LD16 PTR                   ; (PTR) points to free space after the OKVS data structure we just created
          +ST16 gGamesListStore       ; save pointer to free space for next store
 
          jsr   LoadFile              ; load games list file into $8200
@@ -391,6 +394,9 @@ CopyDevs
          !word -
 
 !ifndef RELEASE {
+         +LD16 SAVE
+         +ST16 PTR
+         jsr   stepptr
          +READ_ROM_NO_WRITE
          lda   #40
          sta   $21
@@ -398,9 +404,9 @@ CopyDevs
          sta   $24
          dec   $25
          jsr   $FC22
-         lda   SRC+1
+         lda   PTR+1
          jsr   $FDDA
-         lda   SRC
+         lda   PTR
          jsr   $FDDA
          +READ_RAM1_WRITE_RAM1
 }

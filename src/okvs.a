@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2020 by 4am/qkumba
 ;
 ; Ordered key/value store (6502 compatible)(256+ records compatible)
 ;
@@ -34,10 +34,10 @@
 ; There is no range checking because this is assembly.
 
 ; All functions take the starting address of the store's data buffer in
-; memory, so there can be multiple independent stores at one time. The next-
-; record pointers are actual memory addresses, so stores are not easily
-; relocatable. append() will happily extend the store's data buffer without
-; limit. There is no overflow protection because this is assembly.
+; memory, so there can be multiple independent stores at one time. Only the
+; size of a record is stored, so stores are easily relocatable. append() will
+; happily extend the store's data buffer without limit. There is no overflow
+; protection because this is assembly.
 ;
 ; There is no sort() function.
 ;
@@ -56,9 +56,9 @@
 ;   ...Record...
 ;
 ; Record
-;   +0 next-record pointer (word)
-;   +2 key length
-;   +3 key
+;   +0 record length (including this field)
+;   +1 key length
+;   +2 key
 ; +K+2 value length (actual length, not max length)
 ; +K+3 value
 ;  ... filler bytes up to value max length (set at append() time)
@@ -160,7 +160,7 @@ okvs_append
          stx   SAVE
                                      ; PTR -> new record
                                      ; SAVE -> new record
-         jsr   incptr2
+         jsr   incptr
                                      ; PTR -> space for new key
          +LDPARAMPTR 3, SRC          ; SRC -> new key to copy
          ldy   #0
@@ -188,8 +188,8 @@ okvs_append
          tay
          lda   (SRC),y               ; no max, use actual length instead
          tax
-         inx
-+        tay
++        inx
+         tay
 -        lda   (SRC),y
          sta   (PTR),y
          dey
@@ -199,27 +199,22 @@ okvs_append
          txa
          clc
          adc   PTR
-         sta   SRC
-         bcc   +
-         inc   PTR+1
-+        lda   PTR+1
-         sta   SRC+1                 ; SRC -> byte after this record
-         +LD16 SAVE
-         +ST16 PTR                   ; PTR -> this record again
-         ldy   #0
-         lda   SRC                   ; update next-record pointer
-         sta   (PTR),y
-         iny
-         lda   SRC+1
-         sta   (PTR),y
-         jsr   GetStoreAddress
+         tax
+         lda   PTR+1
+         adc   #0
+         pha
++        jsr   GetStoreAddress
                                      ; PTR -> store
-         ldy   #2
-         lda   SRC-2,y
+         pla
+         ldy   #3
          sta   (PTR),y               ; update next-free-space pointer in head
-         iny
-         lda   SRC-2,y
+         dey
+         txa
          sta   (PTR),y
+         sec
+         sbc   SAVE
+         ldy   #0
+         sta   (SAVE),y              ; set record length
          rts
 
 ;------------------------------------------------------------------------------
@@ -269,11 +264,12 @@ okvs_get
          sty   KEYLEN
 @matchRecordLoop
          +LD16 PTR
-         clc
-         adc   #2
-         bcc   +
-         iny                         ; DEST -> key of this record
-+        +ST16 DEST
+         tax
+         inx
+         bne   +
+         iny
++        stx   DEST                  ; DEST -> key of this record
+         sty   DEST+1
          ldy   #0
 @matchKeyLoop
          lda   (SRC),y
@@ -291,7 +287,7 @@ KEYLEN = *+1
          +LD16 PTR
          clc
          rts
-@next    jsr   derefptr              ; PTR -> next record
+@next    jsr   stepptr               ; PTR -> next record
          inc   WINDEX
          bne   +
          inc   WINDEX+1
@@ -304,17 +300,6 @@ KEYLEN = *+1
          bne   @matchRecordLoop
 @fail    sec
          rts
-
-okvs_get_current
-         +ST16 PTR
-         ldy   #0
-         lda   (PTR),y
-         clc
-         adc   PTR
-         sta   PTR
-         bcc   +
-         inc   PTR+1
-+        jmp   incptr
 
 ;------------------------------------------------------------------------------
 ; okvs_next
@@ -362,7 +347,7 @@ okvs_nth
          +LD16 WINDEX
          +ST16 SAVE
          jmp   @next
--        jsr   derefptr
+-        jsr   stepptr
 @next
          lda   SAVE
          dec   SAVE
@@ -372,7 +357,7 @@ okvs_nth
          dec   SAVE+1
          tay
          bne   -
-         jsr   incptr2
+         jsr   incptr
          +LD16 PTR
          ldx   #0
          rts
@@ -467,13 +452,13 @@ okvs_iter_values
          sta   WINDEX
          sta   WINDEX+1
 @loop
-         lda   #2                    ; for iter, skip length = 2
+         lda   #1                    ; for iter, skip length = 1
 @branch  bne   +                     ; SMC (iter_values puts a BIT here, so no branch)
-                                     ; for iter_values, skip length = length(key) + 2 + 1
-         tay ;;ldy   #2
+                                     ; for iter_values, skip length = length(key) + 1 + 1
+         tay ;;ldy   #1
          lda   (PTR),y               ; A = length of key
          clc
-         adc   #3                    ; skip over pointer to next record (2 bytes) + key length (1 byte)
+         adc   #2                    ; skip over record length (1 byte) + key length (1 byte)
 +        sta   @skiplen
          lda   WCOUNT+1              ; save WCOUNT on stack
          pha
@@ -508,7 +493,7 @@ okvs_iter_values
          sta   WCOUNT
          pla
          sta   WCOUNT+1
-         jsr   derefptr              ; PTR -> next record
+         jsr   stepptr               ; PTR -> next record
          inc   WINDEX
          bne   +
          inc   WINDEX+1
@@ -523,6 +508,11 @@ okvs_iter_values
 
 ;------------------------------------------------------------------------------
 ; internal functions
+
+okvs_get_current
+         +ST16 PTR
+         jsr   stepptr
+         bne   incptr
 
 incptr4  jsr   incptr2
 incptr2  jsr   incptr
@@ -560,3 +550,15 @@ derefptr
          pla
          sta   PTR+1
          rts
+
+stepptr
+; out:   Y = 0
+;        preserves X
+         ldy   #0
+         lda   (PTR),y
+         clc
+         adc   PTR
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++        rts

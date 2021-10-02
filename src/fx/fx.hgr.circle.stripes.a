@@ -1,0 +1,144 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+!cpu 6502
+!to "build/FX/CIRCLE.STRIPES",plain
+*=$6000
+
+hgrhi    = $BE01                     ; [$C0 bytes] HGR base addresses
+hgrlo    = $BD01                     ; [$C0 bytes] HGR base addresses
+
+src      = $F0
+dst      = $F2
+row1     = $F4
+row2     = $F5
+mask1    = $F6
+mask2    = $F7
+
+         !source "src/fx/macros.a"
+         !source "src/constants.a"
+
+         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgrhi
+
+         lda   #$00
+         sta   row1
+         lda   #$C0
+         sta   row2
+         lda   #4
+         sta   mask1
+         ldy   #13
+         sty   mask2
+-        lda   copymasks_even2, y
+         eor   #$7F
+         sta   copymasks_even1, y
+         lda   copymasks_odd2, y
+         eor   #$7F
+         sta   copymasks_odd1, y
+         dey
+         bpl   -
+
+RowLoop
+         ldx   row1
+         lda   hgrlo, x
+         sta   src
+         sta   dst
+         lda   hgrhi, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+
+         ldx   mask1
+         ldy   #39
+-        lda   (src), y
+         eor   (dst), y              ; merge source and destination bits
+         and   copymasks_odd1, x     ; isolate the bits to replace, zero the rest
+         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst), y              ; write the result
+         dey
+         lda   (src), y
+         eor   (dst), y              ; merge source and destination bits
+         and   copymasks_even1, x    ; isolate the bits to replace, zero the rest
+         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst), y              ; write the result
+         dey
+         bpl   -
+
+         ldx   row2
+         lda   hgrlo-1, x            ; row2 is off-by-1 so we can use a BEQ to terminate
+         sta   src
+         sta   dst
+         lda   hgrhi-1, x
+         sta   dst+1
+         eor   #$60
+         sta   src+1
+
+         ldx   mask2
+         ldy   #39
+-        lda   (src), y
+         eor   (dst), y              ; merge source and destination bits
+         and   copymasks_odd2, x     ; isolate the bits to replace, zero the rest
+         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst), y              ; write the result
+         dey
+         lda   (src), y
+         eor   (dst), y              ; merge source and destination bits
+         and   copymasks_even2, x    ; isolate the bits to replace, zero the rest
+         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst), y              ; write the result
+         dey
+         bpl   -
+
+         inc   mask1
+         lda   mask1
+         cmp   #14
+         bne   +
+         lda   #0
+         sta   mask1
++
+         dec   mask2
+         bpl   +
+         lda   #13
+         sta   mask2
++
+         bit   $C000
+         bmi   Exit
+         inc   row1
+         dec   row2
+         +LBNE RowLoop
+
+Exit     rts
+
+copymasks_even2
+         !byte %10000000
+         !byte %11100000
+         !byte %11111000
+         !byte %11111100
+         !byte %11111100
+         !byte %11111110
+         !byte %11111110
+         !byte %11111110
+         !byte %11111110
+         !byte %11111100
+         !byte %11111100
+         !byte %11111000
+         !byte %11100000
+         !byte %10000000
+
+copymasks_odd2
+         !byte %10000000
+         !byte %10000011
+         !byte %10001111
+         !byte %10011111
+         !byte %10011111
+         !byte %10111111
+         !byte %10111111
+         !byte %10111111
+         !byte %10111111
+         !byte %10011111
+         !byte %10011111
+         !byte %10001111
+         !byte %10000011
+         !byte %10000000
+
+copymasks_even1=*
+copymasks_odd1=*+14

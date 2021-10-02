@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "res/DEMO/TB",plain
+*=$300
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT tubeway, $00
+         lda   #$4C
+         sta   $6BA8
+         sta   $6C2D
+         jsr   $4EC6      ; decompress
+         jsr   $B2EC
+         lda   #$4C
+         sta   $4F46
+         sta   $AD44
+         sta   $AD2A
+         sta   $AB86
+         sta   $AC64
+         ldx   #0
+         stx   $4F47
+         stx   $AD45
+         stx   $AD2B
+         stx   $AB87
+         stx   $AC65
+         inx
+         stx   $4F48
+         stx   $AD46
+         stx   $AD2C
+         stx   $AB88
+         stx   $AC66
+         lda   #$10
+         sta   $AD28
+         sta   $AB84
+         lda   #$15
+         sta   $AD29
+         lda   #$D0
+         sta   $9580
+         lda   #8
+         sta   $AB85
+         lda   #$2C
+         sta   $4F3E
+         +DISABLE_ACCEL
+         jmp   $9000
+
+tubeway
+         !byte 7
+         !text "X/TB/TB"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -6,8 +6,12 @@
 *=$A000
 
 addrs=$80                            ; [128 bytes]
-src=addrs-$20                        ; [word]
 
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        lda   start-1, x
+         sta   $FF, x
+         dex
+         bne   -
          lda   #$A0                  ; create address lookup table
          tax
          tay
@@ -24,13 +28,18 @@ src=addrs-$20                        ; [word]
          sta   $9F00, y
          iny
          bne   -
+         jmp   loop
+
+start
+!pseudopc 0 {
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax
 loop2    lda   addrs, x
-         sta   src+1
-         lda   (src), y
-         sta   (src), y
+         sta   <src+1
+src=*+1
+         lda   $FD00, y              ; SMC high byte
+         sta   (<src), y
          txa
          lsr
          tax
@@ -47,3 +56,5 @@ exit     lda   $2000                 ; last lousy byte (because LFSR never hits 
          sta   $2000
          sta   $C004
          rts
+}
+end

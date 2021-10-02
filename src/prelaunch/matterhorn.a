@@ -2,7 +2,7 @@
 ;(c) 2020 by Tom Greene
 
 !cpu 6502
-!to "build/PRELAUNCH/MATTERHORN",plain
+!to "build/PRELAUNCH/MS",plain
 *=$106
 
     !source "src/prelaunch/common.a"
