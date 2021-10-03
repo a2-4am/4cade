@@ -28,6 +28,7 @@ callback
          +ENABLE_ACCEL
          jsr   $BD80      ; decompress
          +DISABLE_ACCEL
+         lda   #0         ; set Z
          rts
 
 !if * > $1C0 {
