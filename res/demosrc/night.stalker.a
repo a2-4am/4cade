@@ -1,0 +1,94 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "res/DEMO/NIGHT.STALKER",plain
+*=$a000
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT night_stalker, $00
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $6017
+         sta   $603F
+         jsr   $800
+         +RESET_VECTOR $106
+         lda   #$92
+         sta   $0D
+         lda   #$72
+         sta   $0C
+         lda   #$40
+         sta   $0F
+         stx   $0E
+         jsr   $2A8
+         lda   $c057
+         lda   $c052
+         lda   $c050
+         ldx   #$C0
+         txs
+         ldx   #x_e - x_b
+-        lda   x_b - 1, x
+         sta   $1C0,x
+         dex
+         bne   -
+         jmp   $1C1
+x_b !pseudopc $1C1 {
+         jsr   $28D
+         lda   #$D0
+         sta   $0DEF
+         sta   $1DC5
+         sta   $ABC9
+         sta   $AC6E
+         lda   #$4C
+         sta   $BF00
+         sta   $BB6B
+         ldx   #0
+         stx   $196E
+         stx   $BF01
+         stx   $BB6C
+         inx
+         stx   $196F
+         stx   $BF02
+         stx   $BB6D
+         lda   #$60
+         sta   $1D67
+         lda   #$A9
+         sta   $AB30
+         ldx   #4
+         stx   $AB31
+         dex
+         stx   $18EE
+         stx   $0CB8
+         stx   $0CD2
+         lda   #$20
+         sta   $18EC
+         sta   $0CB6
+         sta   $0CD0
+         lda   #$70
+         sta   $18ED
+         lda   #$7C
+         sta   $0CB7
+         lda   #$85
+         sta   $0CD1
+         ldx   #24
+-        lda   patch, x
+         sta   $370, x
+         dex
+         bpl   -
+         +DISABLE_ACCEL
+         jmp   $6000
+
+patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03,$4C,$00,$01,$60,$AD,$6F,$03,$05,$EA,$60,$8D,$6F,$03,$A2,$FF,$60
+
+  !if * > $282 {
+    !error "code is too large, ends at ", *
+  }
+}
+x_e
+
+night_stalker
+         !byte 29
+         !text "X/NIGHT.STALKER/NIGHT.STALKER"
