@@ -25,6 +25,7 @@
          sta   $0DA9
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         ldy   #0
          jmp   $400
 
 choplifter

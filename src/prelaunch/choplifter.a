@@ -12,4 +12,5 @@
          sta   $403F
          jsr   $4000      ; decompress
          +DISABLE_ACCEL
+         ldy   #0
          jmp   $400
