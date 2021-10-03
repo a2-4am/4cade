@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "res/DEMO/CHOPLIFTER",plain
+*=$300
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT choplifter, $00
+         lda   #$60
+         sta   $403F
+         jsr   $4000      ; decompress
+         lda   #$4C
+         sta   $0DAB
+         ldx   #0
+         stx   $0DAC
+         stx   $08F0
+         inx
+         stx   $0DAD
+         stx   $08F1
+         lda   #$18
+         sta   $0DA9
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $400
+
+choplifter
+         !byte 23
+         !text "X/CHOPLIFTER/CHOPLIFTER"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
