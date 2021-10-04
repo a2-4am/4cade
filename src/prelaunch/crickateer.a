@@ -16,7 +16,18 @@
          +DISABLE_ACCEL
          jsr   $839
          +ENABLE_ACCEL
+         lda   #$20
+         sta   $810
          jsr   $868       ; decompress
+         lda   #$A2
+         sta   $1D36
+         sta   $1D3D
+         lda   #$FE
+         sta   $1D37
+         sta   $1D3E
+         lda   #$9A
+         sta   $1D38
+         sta   $1D3F
          +DISABLE_ACCEL
          jmp   $813
 
