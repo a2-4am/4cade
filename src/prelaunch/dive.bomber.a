@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/DIVE.BOMBER",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A0D
+         jsr   $800       ; load "DOS"
+         dec   $F816
+         dec   $F819
+         lda   #<reset
+         sta   $FFFC
+         sta   $3F2
+         lda   #>reset
+         sta   $FFFD      ; reset vector patch
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         jmp   $F800
+
+reset
+         +READ_ROM_NO_WRITE
+         jmp   $FAA6
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

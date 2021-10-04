@@ -1,0 +1,16 @@
+Parser in one file
+All game-help in one separate file
+
+Game-help file starts with array[26] of offset/size pairs.
+Offset points to array[] of all games that start with that letter, and size of that array[].
+array[] is collection of short-name/offset of each game-help.
+short-name is Pascal string for easy iteration.
+size is omitted since upper bound is known, and with nearly 400 games, we save two blocks.
+
+Parser accepts short-name as parameter.
+Parser reads fixed size game-help header.
+Parser uses starting letter to index into array[26] to find offset/size for short-names array starting with that letter.
+Parser reads [size bytes] of short-names array.
+Parse iterates through short-names array to find a complete match.
+Parser reads 40x25 bytes of game-help from corresponding offset, returns it to display code to draw it.
+Game-help is 0-terminated so dislpay code knows when to stop.

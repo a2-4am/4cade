@@ -1,0 +1,55 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/PEGASUS.II",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9E0
+         jsr   $800       ; load "DOS"
+         lda   #>callback
+         sta   $BD08
+         lda   #<callback
+         sta   $BD07
+         +DISABLE_ACCEL
+         jmp   $B700
+
+callback
+         pla
+         pla
+         jsr   $BD3C
+         jsr   $BD09
+         ldx   #0
+         ldy   $B7ED
+         lda   $B7EC
+         beq   checksec
+         cmp   #$13
+         bne   nottrack
+         cpy   #$0B
+         bne   nottrack
+         stx   $9949
+         inx
+         stx   $994A
+         lda   #$A4
+         sta   $994B
+         clc
+         rts
+
+checksec
+         cpy   #$0C
+         bne   nottrack
+         stx   $9E52
+         inx
+         stx   $9E53
+nottrack
+
+         clc
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
