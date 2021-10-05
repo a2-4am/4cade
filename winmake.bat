@@ -59,6 +59,10 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
+cscript /nologo bin\buildhelpful.js "build\HELPFUL" "build\helper.inc" >>build\log
+%ACME% -r build\helper.lst src\helper\helper.a >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -86,13 +90,6 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
-cscript /nologo bin\rsync.js "res\GAMEHELP\*" "build\GAMEHELP" >>build\log
-for %%q in (res\title.hgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
-for %%q in (res\title.dhgr\*) do if not exist build\GAMEHELP\%%~nxq 1>nul copy build\GAMEHELP\STANDARD build\GAMEHELP\%%~nxq
-1>nul 2>nul del /s build\GAMEHELP\STANDARD
-cscript /nologo bin\dumpcr.js "build\GAMEHELP\*"
-cscript /nologo bin\buildfileinfo.js build\GAMEHELP "06" "6000" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/GAMEHELP" "build\GAMEHELP" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
 )
@@ -105,7 +102,6 @@ goto :EOF
 2>nul md build\X
 2>nul md build\FX
 2>nul md build\PRELAUNCH
-2>nul md build\GAMEHELP
 goto :EOF
 
 :asmlauncher

@@ -1,0 +1,89 @@
+;license:MIT
+;(c) 2021 by qkumba
+;
+!cpu 6502
+!to "build/HELPER",plain
+*=$6000
+
+         !source "src/constants.a"   ; no code in these
+         sizelo    = $52
+         sizehi    = $53
+         reqcmd    = $54
+         ldrlo     = $55
+         ldrhi     = $56
+         bleftlo   = $60
+         blefthi   = $61
+         cmdseek   = 0
+         cmdread   = 1
+
+         ldy   #1
+         lda   (SRC), y
+         tax
+         lda   header_high - $41, x
+         sta   DEST + 1
+         lda   header_low - $41, x
+         sta   DEST
+         dey
+         lda   (SRC), y
+         sta   SAVE
+--       ldy   SAVE
+-        lda   (SRC), y
+         cmp   (DEST), y
+         beq   +
+         ldy   #0
+         lda   (DEST), y
+         clc
+         adc   #4
+         adc   DEST
+         sta   DEST
+         bcc   --
+         inc   DEST + 1
+         bcs   --                    ; always taken
++        dey
+         bpl   -
+         ldx   #2
+         ldy   SAVE
+-        iny
+         lda   (DEST), y
+         sta   offset, x
+         dex
+         bpl   -
+         jsr   $bf00                 ; yes, ProDOS abstraction
+         !byte $c8
+         !word c8_parms
+         jsr   $bf00
+         !byte $ce
+         !word ce_parms
+         jsr   $bf00
+         !byte $ca
+         !word ca_parms
+         jsr   $bf00
+         !byte $cc
+         !word cc_parms
+         lda   $c08b
+         lda   $c08b
+         rts
+
+c8_parms
+	!byte	3
+	!word	filename
+	!word	$d000
+
+ce_parms
+        !byte   2
+        !byte   1
+offset  !byte   0, 0, 0
+
+ca_parms
+	!byte	4
+cc_parms
+	!byte	1
+	!word	$8000
+	!word	$400
+
+filename
+	!byte	(filename_e-filename)-1
+        !text "HELPFUL"
+filename_e
+
+        !source "build/helper.inc"

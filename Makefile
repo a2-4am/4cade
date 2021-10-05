@@ -31,7 +31,9 @@ dsk: asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	rsync -aP res/PREFS.CONF build/PREFS.CONF >> build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF res/ATTRACT.CONF res/FX.CONF res/DFX.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildhelpful.sh "build/HELPFUL" "build/helper.inc" >>build/log
+	$(ACME) -r build/helper.lst src/helper/helper.a >>build/log
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF res/ATTRACT.CONF res/FX.CONF res/DFX.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPFER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
@@ -50,10 +52,6 @@ dsk: asm
 	for f in build/X/*; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f"; done >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
 	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
-	rsync -aP --exclude=STANDARD res/GAMEHELP build/ >>build/log
-	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing res/GAMEHELP/STANDARD build/GAMEHELP/$$(basename $$f); done
-	bin/buildfileinfo.sh build/GAMEHELP "04" "8000" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/GAMEHELP" "build/GAMEHELP" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
 asm: asmlauncher asmfx asmprelaunch asmproboot
@@ -86,7 +84,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX build/PRELAUNCH build/GAMEHELP
+	mkdir -p build/X build/FX build/PRELAUNCH
 	touch build/log
 
 clean:
