@@ -106,10 +106,6 @@ kPrelaunchDirectory
          !byte 10
          !raw  "PRELAUNCH/"
 
-kGameHelpDirectory
-         !byte 9
-         !raw  "GAMEHELP/"
-
 kStandardPrelaunch
          !byte 8
          !raw  "STANDARD"
@@ -141,6 +137,10 @@ kHelpBackgroundFile
 kHelpTextFile
          !byte 8
          !raw  "HELPTEXT"
+
+kGameHelpFile
+         !byte 6
+         !raw  "HELPER"
 
 kTitleFile
          !byte 5

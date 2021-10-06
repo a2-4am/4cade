@@ -12,11 +12,24 @@
          sta   $BFD0,x
          dex
          bpl   -
+         ldx   #5
+-        lda   reset, x
+         sta   $230, x
+         dex
+         bpl   -
+         +READ_ROM_WRITE_RAM2
+         lda   #2
+         sta   $FFFD
+         lda   #$30
+         sta   $FFFC      ; LC reset vector fix
          jmp   $800
 
 newpath
          !byte 20
          !text "X/INFILTRATOR.2/GAME"
+
+reset    +READ_ROM_NO_WRITE
+         jmp   $FAA6
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

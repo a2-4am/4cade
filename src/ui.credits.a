@@ -52,11 +52,12 @@ Credits
 Help
          jsr   GetGameToLaunch
          bcs   @global
-         +ST16 @fname
+         +ST16 SRC
          jsr   LoadFile
-         !word kGameHelpDirectory
-@fname   !word $FDFD                 ; SMC
-         !word $8000
+         !word kRootDirectory
+         !word kGameHelpFile
+         !word $6000
+         jsr   $6000
          clc
          bcc   --                    ; always branches
 @global  jsr   LoadFile              ; load help text into $8000
