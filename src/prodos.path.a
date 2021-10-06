@@ -122,9 +122,9 @@ kFXDataFile
          !byte 7
          !raw  "FX.DATA"
 
-kDFXConfFile
+kDFXDataFile
          !byte 8
-         !raw  "DFX.CONF"
+         !raw  "DFX.DATA"
 
 kCreditsFile
          !byte 7
