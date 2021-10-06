@@ -59,7 +59,7 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-cscript /nologo bin\buildhelpful.js "build\HELPFUL" "build\helper.inc" >>build\log
+cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
 %ACME% -r build\helper.lst src\helper\helper.a >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log

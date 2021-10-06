@@ -41,9 +41,7 @@ f.write(entry = a.opentextfile(s).readall().replace(/\r\n/g, "\n"))
 help_off = entry.length
 
 letter = "@" //"A" - 1
-header_low = "header_low !byte "
-header_high = "header_high !byte "
-groups = "\n; format: Pascal string, big-endian 24-bit file offset in helptext file\n"
+groups = ""
 first = true
 i = 0
 
@@ -53,8 +51,6 @@ while (i < entries.length)
   {
     letter = String.fromCharCode(letter.charCodeAt(0) + 1)
     group = "group" + letter
-    header_low += "<" + group + ", "
-    header_high += ">" + group + ", "
 
     groups += group + "\n"
     first = false
@@ -81,8 +77,6 @@ while (i < entries.length)
 }
 
 f = a.createtextfile(WScript.Arguments(1))
-f.writeline(header_low.substr(0, header_low.length - 2))
-f.writeline(header_high.substr(0, header_high.length - 2))
 f.write(groups)
 
 function format8(str)

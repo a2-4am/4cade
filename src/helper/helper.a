@@ -86,4 +86,8 @@ filename
         !text "HELPFUL"
 filename_e
 
+header_low !byte <groupA, <groupB, <groupC, <groupD, <groupE, <groupF, <groupG, <groupH, <groupI, <groupJ, <groupK, <groupL, <groupM, <groupN, <groupO, <groupP, <groupQ, <groupR, <groupS, <groupT, <groupU, <groupV, <groupW, <groupX, <groupY, <groupZ
+header_high !byte >groupA, >groupB, >groupC, >groupD, >groupE, >groupF, >groupG, >groupH, >groupI, >groupJ, >groupK, >groupL, >groupM, >groupN, >groupO, >groupP, >groupQ, >groupR, >groupS, >groupT, >groupU, >groupV, >groupW, >groupX, >groupY, >groupZ
+
+; format: Pascal string of game directory + big-endian 24-bit file offset in merged helptext file
         !source "build/helper.inc"
