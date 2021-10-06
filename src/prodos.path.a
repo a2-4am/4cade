@@ -118,9 +118,9 @@ kAttractModeDataFile
          !byte 12
          !raw  "ATTRACT.DATA"
 
-kFXConfFile
+kFXDataFile
          !byte 7
-         !raw  "FX.CONF"
+         !raw  "FX.DATA"
 
 kDFXConfFile
          !byte 8
