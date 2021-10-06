@@ -33,7 +33,8 @@ dsk: asm
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
 	bin/buildhelp.sh "build/HELPFUL" "build/helper.inc" >>build/log
 	$(ACME) -r build/helper.lst src/helper/helper.a >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF res/ATTRACT.CONF res/FX.CONF res/DFX.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.DATA" >>build/log
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/ATTRACT.DATA res/FX.CONF res/DFX.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log

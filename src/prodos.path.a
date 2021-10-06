@@ -114,9 +114,9 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kAttractModeConfFile
+kAttractModeDataFile
          !byte 12
-         !raw  "ATTRACT.CONF"
+         !raw  "ATTRACT.DATA"
 
 kFXConfFile
          !byte 7
