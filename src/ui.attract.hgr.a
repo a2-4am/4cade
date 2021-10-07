@@ -67,14 +67,10 @@ HGRSingle
 ;        $6000..$BFFF contains transition effect code
 ;------------------------------------------------------------------------------
 LoadHGRTransition
-         jsr   LoadFile              ; load HGR transition effects list into $8000
+         jsr   LoadFile              ; load HGR transition effects list into $6000
          !word kRootDirectory
-         !word kFXConfFile
--        !word $8000
-         jsr   ParseKeyValueList     ; parse HGR transition effects list into $6000
-         !word gFXStore
-         !word -
-         !byte 0
+         !word kFXDataFile
+         !word $6000
 
          jsr   pref_get              ; get HGR transition effect from prefs
          !word kNextFX

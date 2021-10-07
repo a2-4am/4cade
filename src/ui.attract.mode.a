@@ -24,14 +24,10 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         jsr   LoadFile              ; load attract-mode configuration file into $8000
+         jsr   LoadFile              ; load pre-parsed attract mode configuration data into $6000
          !word kRootDirectory
-         !word kAttractModeConfFile
--        !word $8000
-         jsr   ParseKeyValueList     ; parse attract-mode configuration into OKVS data structure at $6000
-         !word gAttractModeStore
-         !word -
-         !byte 0
+         !word kAttractModeDataFile
+         !word $6000
 
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract

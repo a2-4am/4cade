@@ -136,14 +136,10 @@ gMachineInDHGRMode=*+1
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadDHGRTransition
-         jsr   LoadFile              ; load DHGR transition effects list into $8000
+         jsr   LoadFile              ; load DHGR transition effects list into $6000
          !word kRootDirectory
-         !word kDFXConfFile
--        !word $8000
-         jsr   ParseKeyValueList     ; parse DHGR transition effects list into $6000
-         !word gDFXStore
-         !word -
-         !byte 0
+         !word kDFXDataFile
+         !word $6000
 
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
