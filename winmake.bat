@@ -46,12 +46,17 @@ call :compress
 1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
-1>nul copy /y res\PREFS.CONF build\ >>build\log
+cscript /nologo bin\rsync.js "res\PREFS.CONF" "build\" >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
+cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
+%ACME% -r build\helper.lst src\helper\helper.a >>build\log
+cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
+cscript /nologo bin\buildokvs.js "res\FX.CONF" "build\FX.DATA" >>build\log
+cscript /nologo bin\buildokvs.js "res\DFX.CONF" "build\DFX.DATA" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
-for %%q in (res\*.CONF) do if "%%q" neq "res\PREFS.CONF" %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 cscript /nologo bin\rsync.js "res\CREDITS" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\CREDITS"
@@ -59,14 +64,22 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
-%ACME% -r build\helper.lst src\helper\helper.a >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log
+for %%q in (build\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
+cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ACTION.HGR "06" "3FF8" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ARTWORK.SHR "06" "1FF8" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ATTRACT "04" "8000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\SS "04" "4000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log
@@ -75,9 +88,9 @@ cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "res\ATTRACT" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "res\SS" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
@@ -85,10 +98,11 @@ cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
-%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
+%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
+cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
@@ -129,7 +143,6 @@ for %%q in (src\prelaunch\*.a) do (
 )
 for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
-cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
 goto :EOF
 
 :asmproboot
@@ -139,11 +152,3 @@ goto :EOF
 for %%q in (res\action.dhgr.uncompressed\*) do if not exist res\action.dhgr\%%~nxq %EXOMIZER% res\action.dhgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
 for %%q in (res\action.hgr.uncompressed\*) do if not exist res\action.hgr\%%~nxq %EXOMIZER% res\action.hgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
 for %%q in (res\artwork.shr.uncompressed\*) do if not exist res\artwork.shr\%%~nxq %EXOMIZER% res\artwork.shr.uncompressed\%%~nxq@0x2000 -o res\artwork.shr\%%~nxq
-cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000"
-cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000"
-cscript /nologo bin\buildfileinfo.js res\ACTION.HGR "06" "3FF8"
-cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8"
-cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000"
-cscript /nologo bin\buildfileinfo.js res\ARTWORK.SHR "06" "1FF8"
-cscript /nologo bin\buildfileinfo.js res\ATTRACT "04" "8000"
-cscript /nologo bin\buildfileinfo.js res\SS "04" "4000"

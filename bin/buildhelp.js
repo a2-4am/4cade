@@ -25,7 +25,7 @@ while (!b.atendofstream)
     break
   }
 
-  c = c.substr(5)
+  c = c.substr(c.indexOf(",") + 1)
 
   if (c.length > 0)
   {
