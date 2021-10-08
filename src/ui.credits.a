@@ -75,7 +75,6 @@ LoadFX
          ldy   #0                    ; SMC
          lda   (zpword), y
          tay
-         iny
 -        iny
          lda   (zpword), y
          sta   @offset, x
