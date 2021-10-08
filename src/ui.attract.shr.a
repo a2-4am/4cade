@@ -22,9 +22,8 @@
 SHRSlideshow
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
-         bne   +
-SHRRTS   rts
-+        jsr   LoadSHRTransition
+         beq   SHRRTS
+         jsr   LoadSHRTransition
          jsr   okvs_iter
          !word gSlideshowStore
          !word SHRArtworkCallback
@@ -69,7 +68,7 @@ LoadSHRTransition
          !word kFXDirectory
          !word kSFXFizzleFile
          !word $A000
-         rts
+SHRRTS   rts
 
 ;------------------------------------------------------------------------------
 ; SHRArtworkCallback [private]
