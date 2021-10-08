@@ -2,6 +2,7 @@
 
 # run from project root directory
 
+:>| "$1"
 games=$(grep "," res/GAMES.CONF | grep -v "^#" | cut -d"," -f2 | cut -d"=" -f1 | sort)
 cp res/GAMEHELP/STANDARD "$1"
 for c in {A..Z}; do
