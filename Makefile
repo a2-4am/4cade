@@ -48,7 +48,8 @@ dsk: asm
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
 	for f in res/TITLE.HGR res/TITLE.DHGR res/ACTION.HGR res/ACTION.DHGR res/ACTION.GR res/ARTWORK.SHR res/ATTRACT res/SS res/DEMO res/TITLE.ANIMATED res/ICONS; do rm -f "$$f"/.DS_Store; $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/FX/" >>build/log
+	for f in build/FX/COVERFADE build/FX/GR.FIZZLE build/FX/SHR.FIZZLE build/FX/*.DATA; do $(CADIUS) ADDFILE "build/$(DISK)" "/$(VOLUME)/FX/" "$$f"; done >>build/log
 	for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
