@@ -51,8 +51,10 @@ cscript /nologo bin\padto.js 512 build\PREFS.CONF
 cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
 %ACME% -r build\helper.lst src\helper\helper.a >>build\log
 cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
-cscript /nologo bin\buildokvs.js "res\FX.CONF" "build\FX.DATA" >>build\log
-cscript /nologo bin\buildokvs.js "res\DFX.CONF" "build\DFX.DATA" >>build\log
+call bin\buildfxful.bat res\FX.CONF "build\FXFUL" >>build\log
+call bin\buildfxful.bat res\DFX.CONF "build\DFXFUL" >>build\log
+cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.DATA" >>build\log
+cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.DATA" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
@@ -67,6 +69,8 @@ cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log
 for %%q in (build\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FXFUL" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFXFUL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -97,7 +101,10 @@ cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX" "build\FX" >>build\log
+for %%q in (build\FX\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/FX" "%%q" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/FX/" "build\FX\COVERFADE" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/FX/" "build\FX\GR.FIZZLE" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/FX/" "build\FX\SHR.FIZZLE" >>build\log
 for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log

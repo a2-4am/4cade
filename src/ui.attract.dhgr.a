@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2020 by 4am & qkumba
 ;
 ; Double hi-res slideshows
 ;
@@ -123,7 +123,7 @@ ForceHGRMode
 gMachineInDHGRMode=*+1
          lda   #$00                  ; SMC
          bne   BlankHGR
-         beq   DHGRRTS
+         rts
 
 ;------------------------------------------------------------------------------
 ; LoadDHGRTransition [private]
@@ -144,7 +144,7 @@ LoadDHGRTransition
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
          !word gDFXStore
-         +ST16 ++                    ; A/Y = filename (don't load file yet)
+         +ST16 zpword                ; A/Y = filename (don't load file yet)
                                      ; $WINDEX = index of the transition in DFX store
          +LDADDR gDFXStore
          jsr   okvs_next             ; get transition after this one
@@ -154,11 +154,8 @@ LoadDHGRTransition
          !word kNextDFX
 +        !word $FDFD                 ; SMC
 
-         jsr   LoadFile              ; now load transition effect code into $6000
-         !word kFXDirectory
-++       !word $FDFD                ; SMC
-         !word $6000
-         rts
+         +LDADDR kDFXFile
+         jmp   LoadFX
 
 ;------------------------------------------------------------------------------
 ; DHGRTitleCallback [private]

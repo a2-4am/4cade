@@ -1,6 +1,7 @@
 ;license:BSD-3-Clause
 ;extended open/read/write binary file in ProDOS filesystem, with random access
-;copyright (c) Peter Ferrie 2013-2020
+;copyright (c) Peter Ferrie 2013-2021
+;assemble using ACME
 
 ver_02 = 1
 
@@ -21,6 +22,8 @@ ver_02 = 1
                 aligned_read = 0        ;set to 1 if all reads can be a multiple of block size
                 enable_readseq=0        ;set to 1 to enable reading multiple sequential times from the same file without seek
                                         ;(exposes a fixed address that can be called for either floppy or hard disk support)
+                                        ;requires fast_subindex
+                                        ;can also be used for sequential writes, but size must be 512-aligned
                 enable_write = 1        ;set to 1 to enable write support
                                         ;file must exist already and its size cannot be altered
                                         ;writes occur in multiples of block size
@@ -34,6 +37,7 @@ ver_02 = 1
                 might_exist  = 0        ;set to 1 if file is not known to always exist already
                                         ;makes use of status to indicate success or failure
                 many_files   = 0        ;set to 1 to support more than 256 files in a directory
+                detect_wp    = 0        ;detect write-protected floppy during writes
                 allow_aux    = 1        ;set to 1 to allow read/write directly to/from aux memory
                                         ;requires load_high to be set for arbitrary memory access
                                         ;else driver must be running from same memory target
@@ -49,7 +53,8 @@ ver_02 = 1
                 fast_subindex= 0        ;keep subindex block in memory, requires an additional 512 bytes of RAM
                                         ;halves the disk access for double the speed (ideal for RWTS mode)
                 allow_sparse = 1        ;enable support for reading sparse files
-                                        ;recommended if enable_write is enabled, to prevent writing to sparse blocks
+                write_sparse = 0        ;enable support for writing to sparse files (blocks are allocated even if empty)
+                                        ;used only by RWTS mode, writing to sparse files in non-RWTS mode will corrupt the file!
                 bounds_check = 1        ;set to 1 to prevent access beyond the end of the file
                                         ;but limits file size to 64k-2 bytes.
                 return_size  = 0        ;set to 1 to receive file size on open in read-only mode
@@ -59,22 +64,26 @@ ver_02 = 1
                 swap_zp      = 0        ;set to 1 to include code to preserve zpage
                                         ;used only by RWTS mode
                 swap_scrn    = 1        ;set to 1 to preserve screen hole contents across SmartPort calls
-                                        ;reading directly into screen memory that includes holes (either main or aux) is not recommended
-                                        ;because SCSI firmware writes there (i.e. whichever bank is active) on exit, which will damage read content
                                         ;recommended if allow_aux is used, to avoid device reset
                                         ;requires 64 bytes to save all holes
+                read_scrn    = 0        ;set to 1 to support reading into screen memory
+                                        ;requires swap_scrn
                 rwts_mode    = 0        ;set to 1 to enable emulation of DOS RWTS when running from hard disk
                                         ;uses a one-time open of a tree file, no other file access allowed
                                         ;use unique volume numbers to distinguish between images in the same file
                                         ;requires override_adr, allow_trees, always_trees
+                                        ;or fast_subindex if file is smaller than a tree
                                         ;not compatible with enable_floppy, allow_subdir, might_exist, bounds_check
                 mem_swap     = 0        ;set to 1 if zpage can be swapped between main and aux, and swap_zp is unsuitable
                                         ;(caches index registers in code instead of zpage)
+                write_ffff   = 0        ;set to 1 if there might be reads to $FFxx and allow_sparse=1
                 load_high    = 0        ;set to 1 to load to top of RAM (either main or banked, enables a himem check)
                 load_aux     = 0        ;load to aux memory
                 load_banked  = 1        ;set to 1 to load into banked RAM instead of main RAM (can be combined with load_aux for aux banked)
                 lc_bank      = 2        ;load into specified bank (1 or 2) if load_banked=1
                 one_page     = 0        ;set to 1 if verbose mode says that you should (smaller code)
+                two_pages    = 0        ;default size
+                three_pages  = 1        ;set to 1 if verbose mode says that you should (code is larger than two pages)
 
                 ;user-defined driver load address
 !if load_banked = 1 {
@@ -171,13 +180,13 @@ ver_02 = 1
                 lastblk   = $5f         ;(internal) previous index into sapling block list
                 !set last_zp = $5f      ;highest address to save if swap_zp enabled (max 127 entries later)
   } ;rwts_mode = 1
-  !if (bounds_check + return_size + one_shot) > 0 {
+  !if ((bounds_check or return_size) > 0) and ((rwts_mode or one_shot) = 0) {
                 bleftlo   = $60         ;(internal) bytes left in file
-  } ;bounds_check = 1 or return_size = 1 or one_shot = 1
-  !if (bounds_check + return_size + aligned_read + one_shot) > 0 {
+  } ;(bounds_check = 1 or return_size = 1) and (rwts_mode = 0 and one_shot = 0)
+  !if ((bounds_check or return_size or aligned_read) > 0) and ((rwts_mode or one_shot) = 0) {
                 blefthi   = $61         ;(internal) bytes left in file
                 !set last_zp = $61      ;highest address to save if swap_zp enabled (max 127 entries later)
-  } ;bounds_check = 1 or return_size = 1 or aligned_read = 1 or one_shot = 1
+  } ;(bounds_check = 1 or return_size = 1 or aligned_read = 1) and (rwts_mode and one_shot = 0)
   !if aligned_read = 0 {
                 blkofflo  = $62         ;(internal) offset within cache block
                 blkoffhi  = $63         ;(internal) offset within cache block
@@ -200,6 +209,7 @@ ver_02 = 1
                 SETVID    = $fe93
                 DEVNUM    = $bf30
                 PHASEOFF  = $c080
+                PHASEON   = $c081
                 MOTOROFF  = $c088
                 MOTORON   = $c089
                 DRV0EN    = $c08a
@@ -249,40 +259,33 @@ init            lda     DEVNUM
                 ora     #<PHASEOFF
                 sta     unrseek + 1
                 ora     #<MOTOROFF
-  !if allow_multi = 1 {
                 sta     unrdrvoff1 + 1
-  } ;allow_multi = 1
-  !if (might_exist + poll_drive) > 0 {
+  !if no_interrupts = 1 {
                 sta     unrdrvoff2 + 1
-  } ;might_exist = 1 or poll_drive = 1
-  !if (aligned_read + allow_aux) = 0 {
-                sta     unrdrvoff3 + 1
-  } ;aligned_read = 0 and allow_aux = 0
+  } else { ;no_interrupts = 0
                 sta     unrdrvoff4 + 1
+    !if ((aligned_read xor 1) and one_shot) = 1 {
+                sta     unrdrvoff5 + 1
+    } ;aligned_read = 0 and one_shot = 1
+  } ;no_interrupts = 1
+  !if (might_exist + poll_drive) > 0 {
+                sta     unrdrvoff3 + 1
+  } ;might_exist = 1 or poll_drive = 1
                 tax
                 inx ;MOTORON
-  !if allow_multi = 1 {
                 stx     unrdrvon1 + 1
-  } ;allow_multi = 1
                 stx     unrdrvon2 + 1
-  !if aligned_read = 0 {
-                stx     unrdrvon3 + 1
-  } ;aligned_read = 0
-                stx     unrdrvon4 + 1
                 inx ;DRV0EN
   !if allow_multi = 1 {
+                stx     unrdrvsel1 + 1
                 stx     unrdrvsel2 + 1
+                stx     unrdrvsel3 + 1
   } ;allow_multi = 1
                 inx
-  !if allow_multi = 1 {
-                stx     unrdrvsel1 + 1
-  } ;allow_multi = 1
                 inx ;Q6L
                 stx     unrread1 + 1
-  !if (poll_drive + allow_multi) > 0 {
                 stx     unrread2 + 1
                 stx     unrread3 + 1
-  } ;poll_drive = 1 or allow_multi = 1
                 stx     unrread4 + 1
                 stx     unrread5 + 1
   !if check_chksum = 1 {
@@ -402,25 +405,24 @@ adjpath         tya
                 pla
 
                 ;unit to slot for ProDOS interface
+                ;accept if slot code matches unit number
 
 +++             pla
                 lsr
                 lsr
                 lsr
                 tay
-                ldx     DEVADR01HI, y
-                cpx     #$c8
-                bcc     set_slot1
-!if use_smartport = 1 {
-                php
-} ;use_smartport = 1
+                lsr
+                ora     #$c0
+                tax
+                cmp     DEVADR01HI, y
+                clc
+                beq     set_slot
+
 !if enable_floppy = 1 {
 
                 ;check if current device is floppy
 
-                lsr
-                ora     #$c0
-                tax
                 stx     scratchhi
                 ldy     #0
                 sty     scratchlo
@@ -443,10 +445,13 @@ adjpath         tya
 
 not_floppy
 } ;enable_floppy = 1
-
-                ;find SmartPort device for basic MicroDrive support
-
                 ldx     #$c8
+
+                ;find SmartPort device for basic MicroDrive, BOOTi support
+                ;the BOOTi can load floppy .po images via the SmartPort interface
+                ;but the virtual slot behaviour differs slightly from regular ProDOS
+                ;so we scan for the SmartPort interface in all cases
+
 -               dex
                 stx     scratchhi
                 ldy     #0
@@ -468,10 +473,7 @@ not_floppy
                 lda     (scratchlo), y
                 beq     -
 
-!if use_smartport = 1 {
-set_slot        plp
-} ;use_smartport = 1
-set_slot1       stx     slot + 2
+set_slot        stx     slot + 2
                 stx     unrentry + 2
 slot            ldx     $cfff
                 stx     unrentry + 1
@@ -481,15 +483,20 @@ slot            ldx     $cfff
 !if use_smartport = 1 {
   !if enable_floppy = 1 {
                 beq     +
-  } ;enable_floppy = 1
                 bcs     ++
 +               jmp     bankram
+++
+  } else { ;enable_floppy = 0
+                bcs     +
+                jmp     bankram
++
+  } ;enable_floppy = 1
 
-++              lda     #$8c ;STY
+                ldy     #$8c ;STY
   !if (rwts_mode + enable_write) > 1 {
-                sta     unrcommand1
+                sty     unrcommand1
   } ;rwts_mode = 1 and enable_write = 1
-                sta     unrcommand3
+                sty     unrcommand3
                 lda     #<pcommand
   !if (rwts_mode + enable_write) > 1 {
                 sta     unrcommand1 + 1
@@ -506,31 +513,54 @@ slot            ldx     $cfff
                 sta     unrcommand2 + 2
   } ;rwts_mode = 0 and aligned_read = 0 and enable_write = 1
                 sta     unrcommand3 + 2
-                lda     #$8e ;STX
+                iny      ;STA
+                sty     unrblokhi1
+                sty     unrunit1 + 2
+                iny     ;STX
   !if (rwts_mode + aligned_read + (enable_write xor 1)) = 0 {
-                sta     unrcommand2
+                sty     unrcommand2
   } ;rwts_mode = 0 and aligned_read = 0 and enable_write = 1
-                sta     unrbloklo
-                lda     #<pblock
-                sta     unrbloklo + 1
+                sty     unrbloklo1
                 lda     #>pblock
-                sta     unrbloklo + 2
-                lda     #$8d ;STA
-                sta     unrblokhi
-                lda     #<(pblock + 1)
-                sta     unrblokhi + 1
-                lda     #>(pblock + 1)
-                sta     unrblokhi + 2
+                pblock_enabled=1
+                sta     unrbloklo1 + 2
+  !if (rwts_mode + write_sparse) > 1 {
+                sta     unrbloklo2 + 2
+  } ;rwts_mode = 1 and write_sparse = 1
+                ;;lda     #>(pblock + 1)
+                ;;pblock1_enabled=1
+                sta     unrblokhi1 + 2
+  !if (rwts_mode + write_sparse) > 1 {
+                sta     unrblokhi2 + 2
+                sta     unrblokhi3 + 2
+  } ;rwts_mode = 1 and write_sparse = 1
+                ;;lda     #>paddr
+                sta     unrunit1 + 4
+                ldy     #<pblock
+                sty     unrbloklo1 + 1
+  !if (rwts_mode + write_sparse) > 1 {
+                sty     unrbloklo2 + 1
+  } ;rwts_mode = 1 and write_sparse = 1
+                iny
+                sty     unrblokhi1 + 1
+  !if (rwts_mode + write_sparse) > 1 {
+                sty     unrblokhi2 + 1
+                sty     unrblokhi3 + 1
+  } ;rwts_mode = 1 and write_sparse = 1
                 lda     #$a5 ;LDA
                 sta     unrunit1
+  !if (rwts_mode + write_sparse) > 1 {
+                lda     #$ee ;INC
+                sta     unrblokhi2
+                ldy     #$ad ;LDA
+                sty     unrblokhi3
+                iny ;LDX
+                sty     unrbloklo2
+  } ;rwts_mode = 1 and write_sparse = 1
                 lda     #adrlo
                 sta     unrunit1 + 1
-                lda     #$8d ;STA
-                sta     unrunit1 + 2
                 lda     #<paddr
                 sta     unrunit1 + 3
-                lda     #>paddr
-                sta     unrunit1 + 4
 
                 ;use SmartPort entrypoint instead
 
@@ -570,12 +600,9 @@ iterunit        inc     unrunit2
 
 bankram
 !if load_banked = 1 {
-                lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
-                lda     LCBANK2 + 2 - ((lc_bank - 1) * 8)
+                lda     LCBANK2 - ((lc_bank - 1) * 8)
+                lda     LCBANK2 - ((lc_bank - 1) * 8)
 } ;load_banked = 1
-!if load_aux = 1 {
-                sta     SETAUXWR + (load_banked * 4) ;SETAUXWR or SETAUXZP
-} ;load_aux = 1
 !if enable_floppy = 1 {
                 ldx     #>unrelocdsk
                 ldy     #<unrelocdsk
@@ -589,16 +616,41 @@ copydrv         stx     scratchhi
                 sty     scratchlo
                 ldx     #>((codeend - rdwrpart) + $ff)
                 ldy     #0
+  !if (load_aux and (load_banked xor 1)) = 1 {
+                sta     SETAUXWR
+  } ;load_aux = 1 and load_banked = 0
 -               lda     (scratchlo), y
+  !if (load_aux + load_banked) > 1 {
+                sta     SETAUXZP
+  } ;load_aux = 1 and load_banked = 1
 reladr          sta     reloc, y
+  !if (load_aux + load_banked) > 1 {
+                sta     CLRAUXZP
+  } ;load_aux = 1 and load_banked = 1
                 iny
                 bne     -
                 inc     scratchhi
+  !if (load_aux and (load_banked xor 1)) = 1 {
+                sta     CLRAUXWR
+  } ;load_aux = 1 and load_banked = 0
                 inc     reladr + 2
+  !if (load_aux and (load_banked xor 1)) = 1 {
+                sta     SETAUXWR
+  } ;load_aux = 1 and load_banked = 0
                 dex
                 bne     -
                 plp
+  !if (load_aux + load_banked) > 1 {
+                sta     SETAUXZP
+  } ;load_aux = 1 and load_banked = 1
+  !if swap_scrn = 1 {
+                beq     +
+                jsr     saveslot
+                lda     #$91
+                sta     initpatch
+  } ;swap_scrn = 1
                 bne     ++
++
 
                 ;build 6-and-2 denibbilisation table
 
@@ -633,46 +685,83 @@ unrdrvon1       lda     MOTORON
                 sta     trackd1
 
   !if allow_multi = 1 {
-unrdrvsel1      lda     DRV0EN + 1
+                lda     unrunit1 + 1
+                asl
+                lda     #0
+                rol
+                sta     driveind + 1
+                pha
+                eor     #1
+                tay
+unrdrvsel1      lda     DRV0EN, y
                 jsr     spinup
                 jsr     poll
-                bcs     +
-                lda     #$c8 ;iny
-                sta     twodrives
-                inc     driveind + 1
-                jsr     readadr
-                lda     curtrk
-                sta     trackd2
-+
+                beq     +
+                inc     twodrives + 1
+                lda     #0
+                sta     phase
+                ldx     #$22
+                jsr     seek
++               pla
+                tay
+unrdrvsel2      lda     DRV0EN, y
   } ;allow_multi = 1
 unrdrvoff1      lda     MOTOROFF
 ++
 } else { ;enable_floppy = 0
+  !ifdef PASS2 {
+    !if >(hddcodeend - reloc) > 0 {
+      !if one_page = 1 {
+        !error "one_page must be 0"
+      } ;one_page = 0
+      !if >(hddcodeend - reloc) > 1 {
+        !if three_pages = 0 {
+          !error "three_pages must be 1"
+        } ;three_pages = 0
+      } ;hddcodeend
+    } ;hddcodeend
+  } ;PASS2
+  !if three_pages = 1 {
+                ldx     #>(hddcodeend + $ff - reloc)
+  } ;three_pages = 1
                 ldy     #0
+  !if load_aux = 1 {
+                sta     SETAUXWR + (load_banked * 4) ;SETAUXWR or SETAUXZP
+  } ;load_aux = 1
+multicopy
 -               lda     unrelochdd, y
                 sta     reloc, y
 
-  !if one_page = 0 {
-                ;hack to avoid address overflow when load_high and load_banked
-                ;and code is less than two pages long (e.g. aligned_read, no write)
-                ;can't insert code during pass two because it breaks existing offsets
-
+  !if three_pages = 0 {
+    !if two_pages = 1 {
                 lda     unrelochdd + $100, y
                 sta     reloc + $100, y
-                lda     unrelochdd + $200, y
-                sta     reloc + $200, y
-  } ;one_page = 0
+    } ;two_pages = 1
+  } ;three_pages = 0
                 iny
                 bne     -
-} ;enable_floppy = 1
-!if swap_scrn = 1 {
+  !if three_pages = 1 {
+    !if (load_aux and (load_banked xor 1)) = 1 {
+                sta     CLRAUXWR
+    } ;load_aux = 1 and load_banked = 0
+                inc     multicopy + 2
+                inc     multicopy + 5
+    !if (load_aux and (load_banked xor 1)) = 1 {
+                sta     SETAUXWR
+    } ;load_aux = 1 and load_banked = 0
+                dex
+                bne     multicopy
+  } ;three_pages = 1
+  !if (fast_subindex + swap_zp) > 1 {
+                sty     zp_array + adrlo - first_zp
+  } ;fast_subindex = 1 and swap_zp = 1
+
+  !if swap_scrn = 1 {
                 jsr     saveslot
                 lda     #$91
                 sta     initpatch
-} ;swap_scrn = 1
-!if load_aux = 1 {
-                sta     CLRAUXWR + (load_banked * 4) ;CLRAUXWR or CLRAUXZP
-} ;load_aux = 1
+  } ;swap_scrn = 1
+} ;enable_floppy = 1
 
 !if rwts_mode = 1 {
                 ;read volume directory key block
@@ -741,12 +830,12 @@ hddfoundname    iny
                 sty     zp_array + lastblk - first_zp ;guarantee no match
   } ;swap_zp = 0 or mem_swap = 1
 
-  !if allow_trees = 1 {
+  !if (allow_trees + fast_subindex) > 0 {
                 ;fetch KEY_POINTER
 
                 ldy     #KEY_POINTER
                 lda     (scratchlo), y
-    !if fast_trees = 0 {
+    !if (fast_trees + fast_subindex) = 0 {
       !if ((swap_zp xor 1) + mem_swap) > 0 {
                 sta     treeblklo
       } else { ;swap_zp = 1 and mem_swap = 0
@@ -754,20 +843,22 @@ hddfoundname    iny
       } ;swap_zp = 0 or mem_swap = 1
     } else { ;fast_trees = 1
                 tax
-    } ;fast_trees = 0
+    } ;fast_trees = 0 and fast_subindex = 0
                 iny
                 lda     (scratchlo), y
-    !if fast_trees = 0 {
+    !if (fast_trees + fast_subindex) = 0 {
       !if ((swap_zp xor 1) + mem_swap) > 0 {
                 sta     treeblkhi
       } else { ;swap_zp = 1 and mem_swap = 0
                 sta     zp_array + treeblkhi - first_zp
       } ;swap_zp = 0 or mem_swap = 1
     } else { ;fast_trees = 1
+      !if fast_trees = 1 {
                 ldy     #>hddtreebuf
+      } ;fast_trees = 1;
                 jsr     hddreaddirsect
-    } ;fast_trees = 0
-  } ;allow_trees = 1
+    } ;fast_trees = 0 and fast_subindex = 0
+  } ;allow_trees = 1 or fast_subindex = 1
 
                 lda     #>iob
                 ldy     #<iob
@@ -789,6 +880,12 @@ sect            !byte   0
 addr            !byte   0, $b6
                 !byte   0, 0, 1, 0, 0
 } else { ;rwts_mode = 0
+  !if load_aux = 1 {
+                sta     CLRAUXWR + (load_banked * 4) ;CLRAUXWR or CLRAUXZP
+  } ;load_aux = 1
+  !if load_banked = 1 {
+                lda     ROMIN
+  } ;load_banked = 1
                 rts
 } ;rwts_mode = 1
 
@@ -819,9 +916,13 @@ opendir
                 pha
     } ;detect_err = 1
                 plp
+unrdrvoff2 = unrelocdsk + (* - reloc)
+                lda     MOTOROFF
                 rts
 +
   } ;no_interrupts = 1
+
+                jsr     prepdrive
 
                 ;read volume directory key block
                 ;self-modified by init code
@@ -832,12 +933,10 @@ unrblockhi = unrelocdsk + (* - reloc)
                 lda     #0
                 jsr     readdirsel
 
-readdir         ;note that calling this location directly limits subdirectories to 14 entries!
-                lda     #NAME_LENGTH + ENTRY_SIZE
-firstent        sta     scratchlo
-                lda     #>(dirbuf - 1)
-                sta     scratchhi
-
+readdir
+  !if allow_subdir = 1 {
+                jsr     prepdrive
+  } ;allow_subdir = 1
   !if might_exist = 1 {
                 lda     dirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
                 sta     entries
@@ -847,14 +946,18 @@ firstent        sta     scratchlo
     } ;many_files = 1
   } ;might_exist = 1
 
+                lda     #NAME_LENGTH + ENTRY_SIZE
+firstent        sta     scratchlo
+                lda     #>(dirbuf - 1)
+                sta     scratchhi
+
                 ;there can be only one page crossed, so we can increment here
 
 nextent1        inc     scratchhi
 nextent         ldy     #0
-  !if (might_exist + allow_subdir + allow_saplings + (always_trees xor 1)) > 0 {
+  !if (might_exist + allow_subdir + allow_saplings + (allow_trees xor always_trees)) > 0 {
                 lda     (scratchlo), y
     !if might_exist = 1 {
-                sty     status
 
                 ;skip deleted entries without counting
 
@@ -862,7 +965,7 @@ nextent         ldy     #0
                 beq     +
     } ;might_exist = 1
 
-    !if (allow_subdir + allow_saplings + (always_trees xor 1)) > 0 {
+    !if (allow_subdir + allow_saplings + (allow_trees xor always_trees)) > 0 {
                 ;remember type
                 ;now bits 5-4 are represented by carry (subdirectory), sign (sapling)
 
@@ -877,8 +980,8 @@ nextent         ldy     #0
                 bit     treeidx
       } ;allow_trees = 1
                 php
-    } ;allow_subdir = 1 or allow_saplings = 1 or always_trees = 0
-  } ;might_exist = 1 or allow_subdir = 1 or allow_saplings = 1 or always_trees = 0
+    } ;allow_subdir = 1 or allow_saplings = 1 or (allow_trees = 1 and always_trees = 0)
+  } ;might_exist = 1 or allow_subdir = 1 or allow_saplings = 1 or (allows_trees = 1 and always_trees = 0)
 
                 ;match name lengths before attempting to match names
 
@@ -891,9 +994,9 @@ nextent         ldy     #0
 
                 ;match failed, check if any directory entries remain
 
-  !if (allow_subdir + allow_saplings + (always_trees xor 1)) > 0 {
+  !if (allow_subdir + allow_saplings + (allow_trees xor always_trees)) > 0 {
                 plp
-  } ;allow_subdir = 1 or allow_saplings = 1 or always_trees = 0
+  } ;allow_subdir = 1 or allow_saplings = 1 or (allow_trees = 1 and always_trees = 0)
   !if might_exist = 1 {
                 dec     entries
                 bne     +
@@ -903,10 +1006,14 @@ nextent         ldy     #0
     } ;many_files = 1
   } ;might_exist = 1
   !if (might_exist + poll_drive) > 0 {
-nodisk
-unrdrvoff2 = unrelocdsk + (* - reloc)
+nodisk          inc     status
+    !if detect_err = 1 {
+                sec
+    } ;detect_err = 1
+    !if no_interrupts = 0 {
+unrdrvoff3 = unrelocdsk + (* - reloc)
                 lda     MOTOROFF
-                inc     status
+    } ;no_interrupts = 0
                 rts
   } ;might_exist = 1 or poll_drive = 1
 
@@ -954,7 +1061,9 @@ foundname       iny
     !if aligned_read = 0 {
                 ldy     reqcmd
                 cpy     #cmdwrite ;control carry instead of zero
+      !if one_shot = 0 {
                 bne     +
+      } ;one_shot = 0
     } ;aligned_read = 0
     !if one_shot = 0 {
 
@@ -1032,24 +1141,37 @@ foundname       iny
       } ;one_shot = 0
     } ;enable_write = 1 or aligned_read = 1
   } ;bounds_check = 1 or return_size = 1 or one_shot = 1
+
                 ;cache AUX_TYPE (load offset for binary files)
 
   !if override_adr = 0 {
                 ldy     #AUX_TYPE
-                jsr     fetchscratch
-                stx     ldrlo
+                lda     (scratchlo), y
+    !if (allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
+                sta     ldrlo
+                iny
+                lda     (scratchlo), y
                 sta     ldrhi
+    } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
+                pha
+                iny
+                lda     (scratchlo), y
+                pha
+    } ;allow_subdir = 1 or allow_saplings = 1 or allow_trees = 1 or aligned_read = 0
   } ;override_adr = 0
 
                 ;cache KEY_POINTER
 
                 ldy     #KEY_POINTER
-                jsr     fetchscratch
+                lda     (scratchlo), y
+                tax
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
-                stx     dirbuf
+                sta     dirbuf
     !if (allow_trees + (fast_trees xor 1)) > 1 {
-                stx     treeblklo
+                sta     treeblklo
     } ;allow_trees = 1 and fast_trees = 0
+                iny
+                lda     (scratchlo), y
                 sta     dirbuf + 256
     !if (allow_trees + (fast_trees xor 1)) > 1 {
                 sta     treeblkhi
@@ -1093,8 +1215,6 @@ foundname       iny
                 jmp     rdwrfilei
 
 rdwrfile
-unrdrvon2 = unrelocdsk + (* - reloc)
-                lda     MOTORON
   !if allow_subdir = 1 {
                 clc
   } ;allow_subdir = 1
@@ -1113,9 +1233,13 @@ unrdrvon2 = unrelocdsk + (* - reloc)
                 pha
     } ;detect_err = 1
                 plp
+unrdrvoff3 = unrelocdsk + (* - reloc)
+                lda     MOTOROFF
                 rts
 +
   } ;no_interrupts = 1
+
+                jsr     prepdrive
 
 rdwrfilei
   !if (override_adr + allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
@@ -1214,8 +1338,6 @@ copyblock
                 ldy     sizehi
       } ;enable_seek = 1
                 jsr     copycache
-unrdrvon3 = unrelocdsk + (* - reloc)
-                lda     MOTORON ;copycache turns it off
 
                 ;align to next block and resume read
 
@@ -1244,11 +1366,9 @@ unrdrvon3 = unrelocdsk + (* - reloc)
                 bne     rdwrfilei
       } ;allow_subdir = 1
       !if allow_aux = 0 {
-unrdrvoff3 = unrelocdsk + (* - reloc)
-                lda     MOTOROFF
                 rts
       } else { ;allow_aux = 1
-                beq     rdwrdonedrv
+                beq     rdwrdone
       } ;allow_aux = 0
     } ;one_shot = 0
   } else { ;aligned_read = 1
@@ -1450,14 +1570,15 @@ resparse
                 dec     sizehi
                 bne     rdwrloop
 
-rdwrdonedrv
-unrdrvoff4 = unrelocdsk + (* - reloc)
-                lda     MOTOROFF
   !if aligned_read = 0 {
                 lda     sizelo
                 bne     rdwrloop
   } ;aligned_read = 0
 rdwrdone
+  !if no_interrupts = 0 {
+unrdrvoff4 = unrelocdsk + (* - reloc)
+                lda     MOTOROFF
+  } ;no_interrupts = 0
   !if allow_aux = 1 {
                 ldx     #0
 setaux          sta     CLRAUXRD, x
@@ -1474,8 +1595,12 @@ issparse
 -               sta     (adrlo), y
                 iny
                 bne     -
-                dec     adrhi
+                inc     adrhi
+    !if write_ffff = 0 {
                 bne     resparse
+    } else {
+                jmp     resparse
+    } ;write_ffff
   } ;allow_sparse = 1
 
   !if aligned_read = 0 {
@@ -1541,9 +1666,106 @@ copycache
                 sta     blkoffhi
                 bcc     rdwrdone ;always
     } else { ;one_shot = 1
+      !if no_interrupts = 0 {
+unrdrvoff5 = unrelocdsk + (* - reloc)
+                lda     MOTOROFF
+      } ;no_interrupts = 0
                 rts
     } ;one_shot = 0
   } ;aligned_read = 0
+
+                ;no tricks here, just the regular stuff
+
+seek            ldy     #0
+                sty     step
+                asl     phase
+                txa
+                asl
+                sta     tmptrk
+
+copy_cur        lda     tmptrk
+                sta     tmpsec
+                sec
+                sbc     phase
+                beq     +++
+                bcs     +
+                eor     #$ff
+                inc     tmptrk
+                bcc     ++
++               sbc     #1
+                dec     tmptrk
+++              cmp     step
+                bcc     +
+                lda     step
++               cmp     #8
+                bcs     +
+                tay
+                sec
++               jsr     ++++
+                lda     step1, y
+                jsr     delay
+                lda     tmpsec
+                clc
+                jsr     +++++
+                lda     step2, y
+                jsr     delay
+                inc     step
+                bne     copy_cur
++++             jsr     delay
+                clc
+++++            lda     tmptrk
++++++           and     #3
+                rol
+                tax
+
+unrseek = unrelocdsk + (* - reloc)
+                lda     PHASEOFF, x
+                rts
+
+prepdrive
+  !if poll_drive = 1 {
+                tsx
+                stx     callstack + 1
+  } ;poll_drive = 1
+  !if allow_multi = 1 {
+                ldy     driveind + 1
+  } ;allow_multi = 1
+  !if (might_exist + poll_drive + detect_wp) > 0 {
+    !if ver_02 = 1 {
+                lda     #0
+                sta     status
+    } else { ;ver_02 = 0
+                stz     status
+    } ;ver_02 = 1
+  } ;might_exist = 1 or poll_drive = 1 or detect_wp = 1
+  !if allow_multi = 1 {
+                asl     reqcmd
+                bcc     seldrive
+                tya
+twodrives       eor     #0              ;replaced with 1 if drive exists
+                tay
+seldrive        lsr     reqcmd
+driveind        cpy     #0
+                sty     driveind + 1
+                clc
+                bne     newdrive
+  } ;allow_multi = 1
+                jsr     poll
+  !if allow_multi = 1 {
+                cpx     #1
+  } ;allow_multi = 1
+
+newdrive
+unrdrvon2 = unrelocdsk + (* - reloc)
+                sta     MOTORON
+
+  !if allow_multi = 1 {
+unrdrvsel3 = unrelocdsk + (* - reloc)
+                sta     DRV0EN, y
+                bcs     seekret
+  } else { ;allow_multi = 0
+                bne     seekret
+  } ;allow_multi = 1
 
 spinup          ldy     #6
 -               jsr     delay
@@ -1554,76 +1776,13 @@ delay
 --              ldx     #$11
 -               dex
                 bne     -
-                sec
+                inc     scratchlo
+                bne     +
+                inc     scratchhi
++               sec
                 sbc     #1
                 bne     --
                 rts
-
-                ;no tricks here, just the regular stuff
-
-seek            ldy     #0
-                sty     step
-                asl     phase
-                txa
-                asl
-copy_cur        tax
-                sta     tmptrk
-                sec
-                sbc     phase
-                beq     +++
-                bcs     +
-  !if ver_02 = 1 {
-                eor     #$ff
-  } else { ;ver_02 = 0
-                inc
-  } ;ver_02 = 1
-                inx
-                bcc     ++
-+
-  !if ver_02 = 1 {
-                sbc     #1
-  } else { ;ver_02 = 0
-                dec
-  } ;ver_02 = 1
-                dex
-++              cmp     step
-                bcc     +
-                lda     step
-+               cmp     #8
-                bcs     +
-                tay
-                sec
-+
-  !if ver_02 = 1 {
-                txa
-                pha
-  } else { ;ver_02 = 0
-                phx
-  } ;ver_02 = 1
-                ldx     step1, y
-+++             php
-                bne     +
----             clc
-                lda     tmptrk
-                ldx     step2, y
-+               stx     tmpsec
-                and     #3
-                rol
-                tax
-                lsr
-unrseek = unrelocdsk + (* - reloc)
-                lda     PHASEOFF, x
---              ldx     #$12
--               dex
-                bpl     -
-                dec     tmpsec
-                bne     --
-                bcs     ---
-                plp
-                beq     seekret
-                pla
-                inc     step
-                bne     copy_cur
 
 step1           !byte   1, $30, $28, $24, $20, $1e, $1d, $1c
 step2           !byte   $70, $2c, $26, $22, $1f, $1e, $1d, $1c
@@ -1644,13 +1803,21 @@ readadr
 seekret         rts
 
 readd5aa
+  !if poll_drive = 1 {
+                ldx     #0
+                ldy     #0
+  } ;poll_drive = 1
+--
+  !if poll_drive = 1 {
+                inx
+                beq     +
+  } ;poll_drive = 1
 --              jsr     readnib
 -               cmp     #$d5
                 bne     --
                 jsr     readnib
                 cmp     #$aa
                 bne     -
-                tay ;we need Y=#$AA later
 
 readnib
 unrread1 = unrelocdsk + (* - reloc)
@@ -1658,79 +1825,37 @@ unrread1 = unrelocdsk + (* - reloc)
                 bpl     -
                 rts
 
-  !if (poll_drive + allow_multi) > 0 {
-poll            ldy     #0
+  !if poll_drive = 1 {
++               iny
+                bne     ---
+
+callstack       ldx     #0
+                inx
+                inx
+                txs
+                jmp     nodisk
+  } ;poll_drive = 1
+
+poll            ldx     #$ff
 unrread2 = unrelocdsk + (* - reloc)
 -               lda     Q6L
                 jsr     seekret
                 pha
                 pla
 unrread3 = unrelocdsk + (* - reloc)
-                cmp     Q6L
-                clc
+                eor     Q6L
                 bne     +
-                dey
+                dex
                 bne     -
-                sec
 +               rts
-  } ;poll_drive = 1 or allow_multi = 1
 
 readdirsel
-  !if ver_02 = 1 {
-                pha
-                txa
-                pha
-  } else { ;ver_02
-                pha
-                phx
-  } ;ver_02 = 1
-
-unrdrvon4 = unrelocdsk + (* - reloc)
-                lda     MOTORON
   !if (ver_02 + allow_multi) > 0 {
                 ldy     #0
                 sty     adrlo
-    !if poll_drive = 1 {
-                sty     status
-    } ;poll_drive = 1
   } else { ;ver_02 = 0 and allow_multi = 0
                 stz     adrlo
-    !if poll_drive = 1 {
-                stz     status
-    } ;poll_drive = 1
   } ;ver_02 = 1 or allow_multi = 1
-  !if allow_multi = 1 {
-                asl     reqcmd
-                bcc     seldrive
-twodrives       nop                     ;replace with INY if drive exists
-seldrive        lsr     reqcmd
-unrdrvsel2 = unrelocdsk + (* - reloc)
-                lda     DRV0EN, y
-                cpy     driveind + 1
-                sty     driveind + 1
-                beq     nodelay
-                jsr     spinup
-
-nodelay
-  } ;allow_multi = 1
-  !if poll_drive = 1 {
-                jsr     poll
-                bcc     +
-                pla
-                pla
-                pla
-                pla
-                jmp     nodisk
-+
-  } ;poll_drive = 1
-  !if ver_02 = 1 {
-                pla
-                tax
-                pla
-  } else { ;ver_02
-                plx
-                pla
-  } ;ver_02 = 1
 
 readdirsec
   !if allow_trees = 0 {
@@ -1764,15 +1889,24 @@ seekrdwr
                 rol
                 sta     reqsec
 
-driveind        ldy     #0
+  !if allow_multi = 1 {
+                ldy     driveind + 1
                 ldx     trackd1, y
+  } else { ;allow_multi = 0
+trackd1 = * + 1
+                ldx     #$d1
+  } ;allow_multi = 1
 
                 ;if track does not match, then seek
 
                 cpx     phase
                 beq     checksec
                 lda     phase
+  !if allow_multi = 1 {
                 sta     trackd1, y
+  } else { ;allow_multi = 0
+                sta     trackd1
+  } ;allow_multi = 1
                 jsr     seek
 
                 ;match or read/write sector
@@ -1796,6 +1930,7 @@ cmpsecrd        jsr     readadr
                 jsr     readd5aa
                 eor     #$ad ;zero A if match
                 bne     cmpsecrd
+                ldy     #$aa
 unrread4 = unrelocdsk + (* - reloc)
 -               ldx     Q6L
                 bpl     -
@@ -1855,9 +1990,8 @@ cmpsecwr        jsr     readadr
 
                 ;skip tail #$DE #$AA #$EB some #$FFs ...
 
-                ldy     #6
--               jsr     readnib
-                dey
+                ldy     #$24
+-               dey
                 bpl     -
 
                 ;write sector data
@@ -1866,12 +2000,13 @@ unrslot1 = unrelocdsk + (* - reloc)
                 ldx     #$d1
                 lda     Q6H, x ;prime drive
                 lda     Q7L, x ;required by Unidisk
+  !if detect_wp = 1 {
+                asl
+                ror     status
+  } ;detect_wp = 1
                 tya
                 sta     Q7H, x
                 ora     Q6L, x
-                pha                    ;3 cycles
-                pla                    ;4 cycles
-                nop                    ;2 cycles
 
                 ;40 cycles
 
@@ -1989,7 +2124,7 @@ loopchk7
 
 writenib1       jsr     writeret       ;6 cycles
 writenib2
-unrslot4=unrelocdsk+(*-reloc)
+unrslot4 = unrelocdsk + (* - reloc)
                 ldx     #$d1           ;2 cycles
                 sta     Q6H, x         ;5 cycles
                 ora     Q6L, x         ;4 cycles
@@ -1997,19 +2132,20 @@ writeret        rts                    ;6 cycles
 
 prolog          !byte   $ad, $aa, $d5
 prolog_e
-    !if >(prolog - 1) != >prolog_e {
+    !if >(prolog - 1) != >(prolog_e - 1) {
       !serious "prologue crosses a page"
     }
 epilog          !byte   $ff, $eb, $aa, $de
 epilog_e
-    !if >(epilog - 1) != >epilog_e {
+    !if >(epilog - 1) != >(epilog_e - 1) {
       !serious "epilogue crosses a page"
     }
   } ;enable_write = 1
 codeend
+  !if allow_multi = 1 {
 trackd1         !byte   0
 trackd2         !byte   0
-
+  } ;allow_multi = 1
 bit2tbl         = (* + 255) & -256
 nibtbl          = bit2tbl + 86
   !if enable_write = 1 {
@@ -2024,19 +2160,16 @@ dataend         = nibtbl + 106
 unrelochdd
 !pseudopc reloc {
 !if rwts_mode = 1 {
-  !if no_interrupts = 1 {
-                php
-                sei
-                jsr     +
-                plp
-                rts
-+
-  } ;no_interrupts = 1
   !if swap_zp = 1 {
+                sta     zp_array + namhi - first_zp
+                sty     zp_array + namlo - first_zp
                 jsr     swap_zpg
-  } ;swap_zp = 1
+  } else { ;swap_zp = 0
                 sta     namhi
                 sty     namlo
+  } ;swap_zp = 1
+
+loopsect
   !if ver_02 = 1 {
                 lda     #0
                 sta     sizehi
@@ -2051,11 +2184,11 @@ unrelochdd
                 bcc     skipinit ;read
                 beq     skipinit ;write
                 ldy     #5 ;sector
-      !if ver_02 = 1 {
+    !if ver_02 = 1 {
                 txa
-      } else { ;ver_02
+    } else { ;ver_02
                 lda     #0
-      } ;ver_02 = 1
+    } ;ver_02 = 1
                 sta     (namlo),y
                 dey ;track
                 sta     (namlo),y
@@ -2141,6 +2274,13 @@ lastvol = * + 1
     !if enable_write = 1 {
                 ldy     #$0c ;command
                 lda     (namlo),y
+      !if enable_seek = 1 {
+        !if swap_zp = 0 {
+                beq     +
+        } else { ;swap_zp = 1
+                beq     swap_zpg
+        } ;swap_zp = 0
+      } ;enable_seek
                 ldy     #0
                 lsr
                 bne     runinit
@@ -2167,28 +2307,32 @@ runinit
     !if enable_format = 1 {
                 bne     format
     } ;enable_format = 1
+    !if write_sparse = 1 {
+                lda     sparseblk
+                beq     writesparse
+    } ;write_sparse = 1
 -               lda     (scratchlo),y
                 sta     (adrlo),y
                 iny
                 bne     -
-                lda     adrhi
-                and     #$fe
+    !if write_sparse = 0 {
+                lda     #>hddencbuf
                 sta     adrhi
                 ldy     #cmdwrite
 unrcommand1 = unrelochdd + (* - reloc)
                 sty     command
-    !if use_smartport = 1 {
+      !if use_smartport = 1 {
                 nop ;allow replacing "sty command" with "sty pcommand" in extended SmartPort mode
-    } ;use_smartport = 1
-    !if swap_zp = 1 {
+      } ;use_smartport = 1
+      !if swap_zp = 1 {
                 jsr     hddwriteimm
-      !if enable_format = 1 {
+        !if enable_format = 1 {
                 bcc     swap_zpg ;always
-      } ;enable_format = 1
-    } else { ;swap_zp = 0
+        } ;enable_format = 1
+      } else { ;swap_zp = 0
                 jmp     hddwriteimm
-    } ;swap_zp = 1
-    !if enable_format = 1 {
+      } ;swap_zp = 1
+      !if enable_format = 1 {
 clrcarry        clc
                 inc     adrhi
 format          lda     blanksec,x
@@ -2206,8 +2350,7 @@ format          lda     blanksec,x
                 lda     #$18 ;blocks
                 sta     namlo
                 sty     namhi
-                lda     adrhi
-                and     #$fe
+                lda     #>hddencbuf
                 sta     adrhi
                 lda     #cmdwrite
                 sta     reqcmd
@@ -2220,29 +2363,28 @@ format          lda     blanksec,x
                 bne     -
                 dec     namhi
                 bpl     -
-    } ;enable_format = 1
+      } ;enable_format = 1
+    } else { ;write_sparse = 1
+      !if swap_zp = 1 {
+                jsr     hddwriteenc
+      } else { ;swap_zp = 0
+                jmp     hddwriteenc
+      } ;swap_zp = 1
+    } ;write_sparse = 0
   } ;enable_write = 1
 
   !if swap_zp = 1 {
-swap_zpg        pha
-                tya
-                pha
-                ldx     #(last_zp - first_zp)
+swap_zpg        ldx     #(last_zp - first_zp)
 -               lda     first_zp,x
                 ldy     zp_array,x
                 sta     zp_array,x
                 sty     first_zp,x
                 dex
                 bpl     -
-                pla
-                tay
-                pla
   } ;swap_zp = 1
 
   !if (enable_write + swap_zp) > 0 {
-    !if no_interrupts = 0 {
                 clc
-    } ;no_interrupts = 0
                 rts
   } ;enable_write = 1 or swap_zp = 1
 
@@ -2250,53 +2392,143 @@ swap_zpg        pha
 blanksec        !text   "SAN INC."
   } ;enable_format = 1
 
+  !if write_sparse = 1 {
+writesparse     ldx     #2
+                tya
+    !if fast_subindex = 0 {
+                jsr     hddreaddirsec
+    } else { ;fast_subindex = 1
+                ldy     #>hddencbuf
+                jsr     hddreaddirsect
+    } ;fast_subindex = 0
+    !if ver_02 = 1 {
+                lda     #0
+                sta     sizelo
+                sta     sizehi
+    } else { ;ver_02 = 0
+                stz     sizelo
+                stz     sizehi
+    } ;ver_02 = 1
+
+                ;round up to block count
+
+                lda     hddencbuf + $29
+                adc     #$ff
+                lda     hddencbuf + $2A
+                adc     #1
+                lsr
+                sta     ldrhi
+                ldx     hddencbuf + $27
+                lda     hddencbuf + $28
+---             ldy     #>hddencbuf
+                sty     adrhi
+                jsr     hddseekrd
+                ldy     #0
+
+                ;scan for a free block
+
+--              lda     #$80
+                sta     ldrlo
+-               lda     (adrlo), y
+                and     ldrlo
+                bne     foundbit
+                inc     sizelo
+                lsr     ldrlo
+                bcc     -
+                lda     sizelo
+                bne     +
+                inc     sizehi
++               iny
+                bne     --
+                inc     adrhi
+                lda     adrhi
+                cmp     #(>hddencbuf) + 2
+                bne     --
+unrbloklo2 = unrelochdd + (* - reloc)
+                ldx     bloklo
+    !if use_smartport = 1 {
+                nop ;allow replacing "ldx bloklo" with "ldx pblock" in extended SmartPort mode
+    } ;use_smartport = 1
+
+                inx
+                bne     +
+unrblokhi2 = unrelochdd + (* - reloc)
+                inc     blokhi
+    !if use_smartport = 1 {
+                nop ;allow replacing "inc blokhi" with "inc pblock + 1" in extended SmartPort mode
+    } ;use_smartport = 1
++
+unrblokhi3 = unrelochdd + (* - reloc)
+                lda     blokhi
+    !if use_smartport = 1 {
+                nop ;allow replacing "lda blokhi" with "lda pblock + 1" in extended SmartPort mode
+    } ;use_smartport = 1
+                dec     ldrhi
+                bne     ---
+
+                ;disk full
+
+    !if swap_zp = 0 {
+                clc
+                rts
+    } else { ;swap_zp = 1
+                beq     swap_zpg
+    } ;swap_zp = 0
+
+                ;allocate block and update bitmap
+
+foundbit        lda     (adrlo), y
+                eor     ldrlo
+                sta     (adrlo), y
+                jsr     hddwriteenc
+                inc     lasttree
+                lda     #$60 ;RTS
+                sta     hddskiptree + 2
+                jsr     hddrdfile
+                lda     #$be ;LDX ,Y
+                sta     hddskiptree + 2
+                lda     sizelo
+                sta     hdddirbuf, y
+                lda     sizehi
+                sta     hdddirbuf + 256, y
+                jsr     hddwritedir
+                lda     #0
+                jsr     savebyte
+                ldx     sizelo
+                lda     sizehi
+                ldy     #cmdwrite
+                jsr     hddseekrdwr
+                jmp     loopsect
+
+hddwriteenc     lda     #>hddencbuf
+                sta     adrhi
+hddwritedir     ldy     #cmdwrite
+
+unrcommand1 = unrelochdd + (* - reloc)
+                sty     command
+    !if use_smartport = 1 {
+                nop ;allow replacing "sty command" with "sty pcommand" in extended SmartPort mode
+    } ;use_smartport = 1
+                bne     hddwriteimm
+  } ;write_sparse = 1
+
 seek1           sta     blkidx
   !if enable_write = 1 {
                 lda     #cmdread
                 sta     reqcmd
   } ;enable_write = 1
 } else { ;rwts_mode = 0
-hddopendir
-  !if no_interrupts = 1 {
-    !if detect_err = 1 {
-                clc
-    } ;detect_err = 1
-                php
-                sei
-                jsr     +
-    !if detect_err = 1 {
-                pla
-                adc     #0
-                pha
-    } ;detect_err = 1
-                plp
-                rts
-+
-  } ;no_interrupts = 1
-
                 ;read volume directory key block
                 ;self-modified by init code
 
+hddopendir
 unrhddblocklo = unrelochdd + (* - reloc)
                 ldx     #2
 unrhddblockhi = unrelochdd + (* - reloc)
                 lda     #0
                 jsr     hddreaddirsel
 
-  !if enable_floppy = 1 {
-    !if (* - hddopendir) < (readdir - opendir) {
-                ;essential padding to match offset with floppy version
-      !fill (readdir - opendir) - (* - hddopendir), $ea
-    }
-  } ;enable_floppy = 1
-
-hddreaddir      ;note that calling this location directly limits subdirectories to 14 entries!
-                lda     #NAME_LENGTH + ENTRY_SIZE
-hddfirstent     sta     scratchlo
-dirbufpatch1
-                lda     #>(hdddirbuf - 1)
-                sta     scratchhi
-
+hddreaddir
   !if might_exist = 1 {
                 lda     hdddirbuf + FILE_COUNT ;assuming only 256 files per subdirectory
                 sta     entries
@@ -2305,6 +2537,12 @@ dirbufpatch1
                 sta     entrieshi
     } ;many_files = 1
   } ;might_exist = 1
+
+                lda     #NAME_LENGTH + ENTRY_SIZE
+hddfirstent     sta     scratchlo
+dirbufpatch1
+                lda     #>(hdddirbuf - 1)
+                sta     scratchhi
 
                 ;there can be only one page crossed, so we can increment here
 
@@ -2411,7 +2649,9 @@ hddfoundname    iny
     !if aligned_read = 0 {
                 ldy     reqcmd
                 cpy     #cmdwrite ;control carry instead of zero
+      !if one_shot = 0 {
                 bne     +
+      } ;one_shot = 0
     } ;aligned_read = 0
     !if one_shot = 0 {
 
@@ -2449,9 +2689,9 @@ hddfoundname    iny
       !if aligned_read = 0 {
                 bcc     +
       } else { ;aligned_read = 1
-        !if enable_write = 1 {
+        !if (enable_write + (one_shot xor 1)) > 1 {
                 sec
-        } ;enable_write = 1
+        } ;enable_write = 1 and one_shot = 0
       } ;aligned_read = 0
                 adc     #$fe
                 txa
@@ -2493,46 +2733,33 @@ hddfoundname    iny
 
   !if override_adr = 0 {
                 ldy     #AUX_TYPE
-                lda     (scratchlo), y
-    !if (allow_subdir + allow_saplings + allow_trees + (aligned_read xor 1)) > 0 {
-                sta     ldrlo
-                iny
-                lda     (scratchlo), y
+                jsr     fetchscratch
+                stx     ldrlo
                 sta     ldrhi
-    } else { ;allow_subdir = 0 and allow_saplings = 0 and allow_trees = 0 and aligned_read = 1
-                pha
-                iny
-                lda     (scratchlo), y
-                pha
-    } ;allow_subdir = 1 or allow_saplings = 1 or allow_trees = 1 or aligned_read = 0
   } ;override_adr = 0
 
 ;;allow query even in override mode
                 ldy     #AUX_TYPE
-                lda     (scratchlo), y
-                sta     ldrlo2
-                iny
-                lda     (scratchlo), y
+                jsr     fetchscratch
+                stx     ldrlo2
                 sta     ldrhi2
 
                 ;cache KEY_POINTER
 
                 ldy     #KEY_POINTER
-                lda     (scratchlo), y
-                tax
+                jsr     fetchscratch
   !if (allow_subdir + allow_saplings + allow_trees) > 0 {
 dirbufpatch4
-                sta     hdddirbuf
+                stx     hdddirbuf
     !if (allow_trees + (fast_trees xor 1)) > 1 {
-                sta     treeblklo
+                stx     treeblklo
     } ;allow_trees = 1 and fast_trees = 0
-                iny
-                lda     (scratchlo), y
 dirbufpatch5
                 sta     hdddirbuf + 256
     !if (allow_trees + (fast_trees xor 1)) > 1 {
                 sta     treeblkhi
     } ;allow_trees = 1 and fast_trees = 0
+
     !if always_trees = 0 {
                 plp
 attribpatch
@@ -2564,8 +2791,9 @@ attribpatch
   !if allow_subdir = 1 {
                 plp
                 bcs     hddrdwrfilei
-  } ;allow_subdir = 1
+  } else { ;allow_subdir = 0
 ++
+  } ;allow_subdir = 1
 } ;rwts_mode = 1
 
 hddrdwrpart
@@ -2576,25 +2804,8 @@ hddrdwrfile
 hddrdwrfilex
 !if allow_subdir = 1 {
                 clc
+++
 } ;allow_subdir = 1
-!if (no_interrupts + (rwts_mode xor 1)) > 1 {
-  !if detect_err = 1 {
-    !if allow_subdir = 0 {
-                clc
-    } ;allow_subdir = 0
-  } ;detect_err = 1
-                php
-                sei
-                jsr     +
-  !if detect_err = 1 {
-                pla
-                adc     #0
-                pha
-  } ;detect_err = 1
-                plp
-                rts
-+
-} ;no_interrupts = 1 and rwts_mode = 0
 
 hddrdwrfilei
 !if rwts_mode = 0 {
@@ -2700,6 +2911,9 @@ encbufpatch1
 +
       !if enable_seek = 1 {
                 lda     sizehi
+        !if read_scrn = 1 {
+                clv
+        } ;read_scrn = 1
       } else { ;enable_seek = 0
                 ldy     sizehi
       } ;enable_seek = 1
@@ -2729,8 +2943,6 @@ encbufpatch1
                 beq     hddrdwrdone
                 jmp     hddrdwrfilex
         } ;no_interrupts = 1
-      } else { ;allow_subdir = 0
-                bne     hddrdwrfilei
       } ;allow_subdir = 1
       !if allow_aux = 0 {
                 rts
@@ -2761,7 +2973,29 @@ hddrdwrloop
 
                 lda     sizehi
                 cmp     #2
+  !if read_scrn = 1 {
+                clv
+                bcc     redirect
+    !if (enable_write + enable_seek) > 0 {
+                txa
+                beq     +
+    } ;enable_write = 1 or enable_seek = 1
+                ldy     ldrhi
+                cpy     #8
                 bcs     +
+                bit     knownrts ;set O flag
+                lda     sizehi
+                pha
+                lda     sizelo
+                pha
+                lda     #0
+                sta     sizelo
+                lda     #1
+
+redirect
+  } else { ;read_scrn = 0
+                bcs     +
+  } ;read_scrn = 1
                 pha
 
                 ;redirect read to private buffer for partial copy
@@ -2829,8 +3063,8 @@ blkidx = * + 1
                 ldy     #$d1
 lastblk = * + 1
                 cpy     #$d1
-      } ;mem_swap = 0
                 sty     lastblk
+      } ;mem_swap = 0
                 php
                 pla
       !if mem_swap = 0 {
@@ -2849,6 +3083,11 @@ lasttree = * + 1
                 bne     readtree
                 pha
                 plp
+      !if enable_write = 1 {
+                bne     readtree
+                lda     reqcmd
+                lsr
+      } ;enable_write = 1
                 beq     skipblk
 
 readtree
@@ -2973,7 +3212,15 @@ unrcommand2 = unrelochdd + (* - reloc)
 lastblk = * + 1
                 cpy     #$d1
     } ;mem_swap = 0
+    !if enable_write = 0 {
                 beq     skipblk
+    } else { ;enable_write = 1
+                bne     +
+                lda     reqcmd
+                lsr
+                beq     skipblk
++
+    } ;enable_write = 0
                 sty     lastblk
   } ;fast_subindex = 1
 } ;rwts_mode = 0
@@ -2998,23 +3245,34 @@ hddnoteof2
                 jmp     hddseekrd
     } else { ;enable_write = 1
                 ldy     reqcmd
+      !if enable_seek = 1 {
                 jmp     hddseekrdwr
+      } else { ;enable_seek = 0
+                bne     hddseekrdwr
+      } ;enable_seek = 1
     } ;enable_write = 0
   } ;rwts_mode = 1
 } else { ;allow_sparse = 1
                 pha
 dirbufpatch9
                 ora     hdddirbuf, y
+  !if write_sparse = 1 {
+                sta     sparseblk
+  } ;write_sparse = 1
+  !if (rwts_mode + enable_write) > 1 {
+                cmp     #1
+  } else { ;rwts_mode = 0 or enable_write = 0
                 tay
+  } ;rwts_mode = 1 and enable_write = 1
                 pla
   !if rwts_mode = 0 {
                 dey
                 iny ;don't affect carry
   } else { ;rwts_mode = 1
     !if enable_write = 1 {
-                cpy     #1
                 ldy     reqcmd
                 bcs     hddseekrdwr
+savebyte
                 tay
     } else { ;enable_write = 0
                 dey
@@ -3046,13 +3304,16 @@ hddresparse
   !if aligned_read = 0 {
                 plp
 +               bcc     +
+  } ;aligned_read = 0
+                inc     adrhi
+                inc     adrhi
+  !if aligned_read = 0 {
+resumescrn
     !if bounds_check = 1 {
                 dec     blefthi
                 dec     blefthi
     } ;bounds_check = 1
   } ;aligned_read = 0
-                inc     adrhi
-                inc     adrhi
                 dec     sizehi
                 dec     sizehi
                 bne     hddrdwrloop
@@ -3114,12 +3375,29 @@ hddcopycache
                 bne     -
                 inc     scratchhi
                 inc     adrhi
+    !if read_scrn = 1 {
+                bvs     copyhalf
+    } ;read_scrn = 1
                 bne     +
+copyhalf
 -               lda     (adrlo), y
                 sta     (scratchlo), y
                 iny
 +               cpy     sizelo
                 bne     -
+    !if read_scrn = 1 {
+                bvc     ++
+                pla
+                sta     sizelo
+                pla
+                sta     sizehi
+                ldx     scratchhi
+                inx
+                stx     adrhi
+                lda     scratchlo
+                sta     adrlo
+                bvs     resumescrn
+    } ;read_scrn = 1
 ++
     !if one_shot = 0 {
       !if bounds_check = 1 {
@@ -3152,24 +3430,14 @@ hddcopycache
       } ;allow_aux = 1
     } ;one_shot = 0
   } ;aligned_read = 0
-} else { ;rwts_mode = 1
-  !if allow_sparse = 0 {
-skipblk         rts
-  } ;allow_sparse = 0
 } ;rwts_mode = 0
 
 hddreaddirsel
 !if ver_02 = 1 {
                 ldy     #0
                 sty     adrlo
-  !if might_exist = 1 {
-                sty     status
-  } ;might_exist = 1
 } else { ;ver_02 = 0
                 stz     adrlo
-  !if might_exist = 1 {
-                stz     status
-  } ;might_exist = 1
 } ;ver_02 = 1
 
 !if (enable_floppy + allow_multi) > 1 {
@@ -3199,12 +3467,12 @@ unrcommand3 = unrelochdd + (* - reloc)
 hddseekrdwr
 } ;aligned_read = 0 or enable_write = 0
 
-unrbloklo = unrelochdd + (* - reloc)
+unrbloklo1 = unrelochdd + (* - reloc)
                 stx     bloklo
 !if use_smartport = 1 {
                 nop ;allow replacing "stx bloklo" with "stx pblock" in extended SmartPort mode
 } ;use_smartport = 1
-unrblokhi = unrelochdd + (* - reloc)
+unrblokhi1 = unrelochdd + (* - reloc)
                 sta     blokhi
 !if use_smartport = 1 {
                 nop ;allow replacing "sta blokhi" with "sta pblock + 1" in extended SmartPort mode
@@ -3225,8 +3493,10 @@ hddwriteimm     lda     adrhi ;for Trackstar support
 } ;swap_scrn = 1
 
 unrentrysei = unrelochdd + (* - reloc)
+!if no_interrupts = 1 {
                 php
                 sei
+} ;no_interrupts = 1
 unrentry = unrelochdd + (* - reloc)
                 jsr     $d1d1
 !if use_smartport = 1 {
@@ -3235,7 +3505,9 @@ pcommand        !byte   $2c ;hide packet in non-SmartPort mode
 unrppacket = unrelochdd + (* - reloc)
                 !word   unrelochdd + (packet - reloc)
 } ;use_smartport = 1
+!if no_interrupts = 1 {
                 plp
+} ;no_interrupts = 1
 hackstar = unrelochdd + (* - reloc)
                 pla
                 sta     adrhi ;Trackstar does not preserve adrhi
@@ -3272,6 +3544,9 @@ initpatch       lda     ($48), y
                 dec     $4a
                 bne     --
 } ;swap_scrn = 1
+!if (rwts_mode + (allow_sparse xor 1)) > 1 {
+skipblk
+} ;rwts_mode = 1 and allow_sparse = 0
                 rts
 
 fetchscratch
@@ -3288,6 +3563,27 @@ unrunit2 = unrelochdd + (* - reloc)
                 !byte   0
 paddr           !word   readbuff + $200
 pblock          !byte   2, 0, 0
+  !if >pcommand != >(pblock + 1) {
+    !if >pcommand != >pblock {
+      !ifdef pblock_enabled {
+      } else {
+        !ifdef PASS2 {
+          !warn "uncomment ';;lda     #>pblock'"
+          !warn "uncomment ';;pblock_enabled=1'"
+          !warn "uncomment ';;lda     #>paddr'"
+        }
+      }
+    } else {
+      !ifdef pblock1_enabled {
+      } else {
+        !ifdef PASS2 {
+          !warn "uncomment ';;lda     #>(pblock + 1)'"
+          !warn "uncomment ';;pblock1_enabled=1'"
+          !warn "uncomment ';;lda     #>paddr'"
+        }
+      }
+    }
+  }
 } ;use_smartport = 1
 
 !if (rwts_mode + allow_multi) > 1 {
@@ -3369,6 +3665,9 @@ hdddataend
         } ;aligned_read = 0 or enable_write = 1
         !if allow_trees = 1 {
           !if fast_trees = 1 {
+            !if enable_write = 0 {
+              encbuf = dirbuf ;there is no encbuf
+            } ;enable_write = 0
             !if ((aligned_read xor 1) + rwts_mode) > 0 {
               !if encbuf < reloc {
                 treebuf = encbuf - $200
@@ -3564,9 +3863,13 @@ hdddataend
       !pseudopc ((hdddataend + $ff) & -256) {
         hdddirbuf = $d200
       }
-      !if aligned_read = 0 {
-        hddencbuf = hdddirbuf - $200
-      } ;aligned_read
+      !if ((aligned_read xor 1) + rwts_mode) > 0 {
+        !if fast_subindex = 0 {
+          hddencbuf = hdddirbuf - $200
+        } else { ;fast_subindex = 1
+          hddencbuf = hdddirbuf + $200
+        } ;fast_subindex
+      } ;aligned_read = 0 or rwts_mode = 1
       !if allow_trees = 1 {
         !if fast_trees = 1 {
           !if ((aligned_read xor 1) + enable_write) > 0 {

@@ -126,6 +126,14 @@ kDFXDataFile
          !byte 8
          !raw  "DFX.DATA"
 
+kFXFile
+         !byte 5
+         !raw  "FXFUL"
+
+kDFXFile
+         !byte 6
+         !raw  "DFXFUL"
+
 kCreditsFile
          !byte 7
          !raw  "CREDITS"
