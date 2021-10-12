@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am
 ;
 ; ProDOS - functions for constructing and passing around ProDOS pathnames
 ;
@@ -81,13 +81,17 @@ kSHRArtworkDirectory
          !byte 12
          !raw  "ARTWORK.SHR/"
 
-kMiniAttractDirectory
-         !byte 8
-         !raw  "ATTRACT/"
+kMiniAttractDataFile
+         !byte 10
+         !raw  "ATTRACTIVE"
 
-kAttractModeSlideshowDirectory
-         !byte 3
-         !raw  "SS/"
+kAttractModeSlideshowDataFile
+         !byte 7
+         !raw  "SS.DATA"
+
+kAttractModeSlideshowFulFile
+         !byte 5
+         !raw  "SSFUL"
 
 kDemoDirectory
          !byte 5
@@ -118,6 +122,10 @@ kAttractModeDataFile
          !byte 12
          !raw  "ATTRACT.DATA"
 
+kAttractModeFulFile
+         !byte 10
+         !raw  "ATTRACTFUL"
+
 kFXDataFile
          !byte 7
          !raw  "FX.DATA"
@@ -142,13 +150,17 @@ kHelpBackgroundFile
          !byte 4
          !raw  "HELP"
 
+kGameHelpDataFile
+         !byte 9
+         !raw  "HELP.DATA"
+
+kGameHelpFile
+         !byte 7
+         !raw  "HELPFUL"
+
 kHelpTextFile
          !byte 8
          !raw  "HELPTEXT"
-
-kGameHelpFile
-         !byte 6
-         !raw  "HELPER"
 
 kTitleFile
          !byte 5

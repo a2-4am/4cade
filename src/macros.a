@@ -69,6 +69,12 @@
          ldy   .ptr+1
 }
 
+; load a 16-bit immediate value into A (low) and Y (high)
+!macro   LDI16 .ptr {
+         lda   #<.ptr
+         ldy   #>.ptr+1
+}
+
 ; store a 16-bit value from A (low) and Y (high)
 !macro   ST16 .ptr {
          sta   .ptr

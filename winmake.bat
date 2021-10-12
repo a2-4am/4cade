@@ -26,9 +26,16 @@ if "%1" equ "asm" (
 :asm
 call :md
 call :asmlauncher
+call :asmhelp
 call :asmfx
+call :asmss
 call :asmprelaunch
 call :asmproboot
+goto :EOF
+)
+
+if "%1" equ "ss" (
+call :asmss
 goto :EOF
 )
 
@@ -48,13 +55,6 @@ call :compress
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 cscript /nologo bin\rsync.js "res\PREFS.CONF" "build\" >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
-cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
-%ACME% -r build\helper.lst src\helper\helper.a >>build\log
-cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
-call bin\buildfxful.bat res\FX.CONF "build\FXFUL" >>build\log
-call bin\buildfxful.bat res\DFX.CONF "build\DFXFUL" >>build\log
-cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.DATA" >>build\log
-cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.DATA" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
@@ -66,11 +66,9 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log
 for %%q in (build\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FXFUL" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFXFUL" >>build\log
+for %%q in (build\*FUL) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACTIVE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -81,8 +79,6 @@ cscript /nologo bin\buildfileinfo.js res\ACTION.HGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ARTWORK.SHR "06" "1FF8" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ATTRACT "04" "8000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\SS "04" "4000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
@@ -90,8 +86,6 @@ cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "res\ACTION.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "res\ATTRACT" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "res\SS" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
@@ -122,6 +116,8 @@ goto :EOF
 2>nul md build
 2>nul md build\X
 2>nul md build\FX
+2>nul md build\SS
+2>nul md build\ATTRACT
 2>nul md build\PRELAUNCH
 goto :EOF
 
@@ -133,6 +129,10 @@ for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 %ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 goto :EOF
 
+:asmhelp
+cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\help.inc" "build\HELP.DATA" >>build\log
+goto :EOF
+
 :asmfx
 for %%q in (src\fx\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
@@ -140,6 +140,20 @@ for %%q in (src\fx\*.a) do (
   if !_to!==t %ACME% %%q
 )
 cscript /nologo bin\buildfileinfo.js build\FX "06" "6000"
+call bin\buildfxful.bat res\FX.CONF "build\FXFUL" >>build\log
+call bin\buildfxful.bat res\DFX.CONF "build\DFXFUL" >>build\log
+cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.DATA" >>build\log
+cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.DATA" >>build\log
+goto :EOF
+
+:asmss
+for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
+call bin\buildssful.bat build\SS build\SSFUL >>build\log
+cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SS.DATA" >>build\log
+for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
+call bin\buildssful.bat build\ATTRACT build\ATTRACTFUL>>build\log
+cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
+cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\ATTRACTIVE" >>build\log
 goto :EOF
 
 :asmprelaunch

@@ -122,10 +122,6 @@ ResetVector                          ; 6 bytes, copied to $100
          ; add new files above here
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
-gAttractModeStore
-gFXStore
-gDFXStore
-         !word $6000
 gSearchStore
          !word $8200
 gSlideshowStore

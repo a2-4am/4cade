@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; Attract Mode - cycle through slideshows and self-running demos
 ;
@@ -27,14 +27,14 @@ MegaAttractMode
          jsr   LoadFile              ; load pre-parsed attract mode configuration data into $6000
          !word kRootDirectory
          !word kAttractModeDataFile
-         !word $6000
+-        !word $6000
 
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
-         !word gAttractModeStore
+         !word -
          +ST16 @mname                ; A/Y = module name
                                      ; $WINDEX = index of module in attract store
-         +LDADDR gAttractModeStore
+         +LDADDR -
          jsr   okvs_next             ; get module after this one
          +ST16 +
 
@@ -42,10 +42,9 @@ MegaAttractMode
          !word kNextAttract
 +        !word $FDFD                 ; SMC
 
-         jsr   okvs_get
-         !word gAttractModeStore
+         jsr   okvs_get              ; sets PTR
+         !word -
 @mname   !word $FDFD                 ; SMC
-         +ST16 PTR
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
@@ -72,31 +71,33 @@ MiniAttractMode
 
          jsr   BlankHGR
                                      ; X = 0
-         stx   MiniAttractIndex
-         stx   MiniAttractIndex+1
+         stx   @MiniAttractIndex+1
+         stx   @MiniAttractIndex+3
 @loop
-         jsr   LoadFile              ; load mini attract mode configuration file into $8000
-         !word kMiniAttractDirectory
-+        !word $FDFD                 ; SMC
--        !word $8000
-
-         jsr   ParseKeyValueList     ; parse configuration into OKVS data structure at $6000
-         !word gAttractModeStore
+         jsr   LoadFile              ; load mini attract mode configuration file into $6000
+         !word kRootDirectory
+         !word kMiniAttractDataFile
+-        !word $6000
+         jsr   okvs_find
          !word -
-         !byte 0
-
-         +LDADDR gAttractModeStore
++        !word $FDFD                 ; SMC
+         +ST16 zpword
+         jsr   LoadFulFile
+         !word kAttractModeFulFile
+-        !word $6000
+         +LDADDR -
          jsr   okvs_len
          lda   WCOUNT
-         cmp   MiniAttractIndex
+         cmp   @MiniAttractIndex+1
          bne   +
          lda   WCOUNT+1
-         cmp   MiniAttractIndex+1
+         cmp   @MiniAttractIndex+3
          beq   ATTRTS                ; we've run through all modules, so exit to caller
 +
-         +LD16 MiniAttractIndex
+@MiniAttractIndex
+         +LDI16 0                    ; SMC
          +ST16 WINDEX
-         +LDADDR gAttractModeStore
+         +LDADDR -
          jsr   okvs_nth              ; get the next module on the list
          +ST16 SAVE
          jsr   okvs_get_current      ; get module type
@@ -106,15 +107,13 @@ MiniAttractMode
          +LD16 SAVE                  ; A/Y = address of module name
          jsr   RunAttractModule      ; execute the module
 
-         inc   MiniAttractIndex
+         inc   @MiniAttractIndex+1
          bne   +
-         inc   MiniAttractIndex+1
+         inc   @MiniAttractIndex+3
 +
          lda   KBD
          bpl   @loop
 ATTRTS   rts
-MiniAttractIndex
-         !word 0                     ; SMC
 
 ;------------------------------------------------------------------------------
 ; RunAttractModule
@@ -172,16 +171,19 @@ RunAttractModule
          cmp   #$41                  ; numbers are slideshow modules,
          bcs   @dispatchSingle       ; letters are single files
 
-; it's a slideshow, so load and parse slideshow configuration file
+; it's a slideshow, so load slideshow configuration file
          pha                         ; save module type
          jsr   LoadFile              ; load slideshow configuration file into $4000
-         !word kAttractModeSlideshowDirectory
-@key2    !word $FDFD                 ; SMC
+         !word kAttractModeSlideshowDataFile
+         !word kRootDirectory
 -        !word $4000
-         jsr   ParseKeyValueList     ; parse into an OKVS data structure at $0800
-         !word gSlideshowStore
+         jsr   okvs_find
          !word -
-         !byte 0
+@key2    !word $FDFD                 ; SMC
+         +ST16 zpword
+         jsr   LoadFulFile
+         !word kAttractModeSlideshowFulFile
+         !word $800
          pla                         ; restore module type
 
 -        and   #$0F                  ; convert ASCII digit to int

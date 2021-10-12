@@ -35,58 +35,29 @@ while (!b.atendofstream)
 
 entries.sort()
 y = "res\\GAMEHELP\\"
-s = y + "STANDARD"
 f = a.createtextfile(WScript.Arguments(0))
-f.write(entry = a.opentextfile(s).readall().replace(/\r\n/g, "\n"))
+f.write(entry = a.opentextfile(y + "STANDARD").readall().replace(/\r\n/g, "\n"))
 help_off = entry.length
 
-letter = "@" //"A" - 1
-groups = ""
-first = true
+groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 i = 0
 
 while (i < entries.length)
 {
-  if (first)
-  {
-    letter = String.fromCharCode(letter.charCodeAt(0) + 1)
-    group = "group" + letter
+  c = 0
 
-    groups += group + "\n"
-    first = false
+  if (a.fileexists(y + entries[i]))
+  {
+    c = help_off
+    f.write(entry = a.opentextfile(y + entries[i]).readall().replace(/\r\n/g, "\n"))
+    help_off += entry.length
   }
 
-  if (entries[i].charAt(0) == letter)
-  {
-    c = 0
-
-    if (a.fileexists(y + entries[i]))
-    {
-      c = help_off
-      f.write(entry = a.opentextfile(y + entries[i]).readall().replace(/\r\n/g, "\n"))
-      help_off += entry.length
-    }
-
-    groups += "!byte " + format8(entries[i].length) + "\n" + "!text \"" + entries[i] + "\"\n" + "!byte " + format24(c) + "\n\n"
-    ++i
-  }
-  else
-  {
-    first = true
-  }
+  groups += "!byte " + (1 + 1 + entries[i].length + 3).toString() + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n\n"
+  ++i
 }
 
 f = a.createtextfile(WScript.Arguments(1))
 f.write(groups)
-
-function format8(str)
-{
-  val8 = parseInt(str)
-  return "$" + ((val8 < 16) ? "0" : "") + val8.toString(16)
-}
-
-function format24(str)
-{
-  val24 = parseInt(str)
-  return format8(Math.floor(val24 / (256*256))) + ", " + format8(Math.floor(val24 / 256) % 256) + ", " + format8(val24 % 256)
-}
+f.close()
+new ActiveXObject("wscript.shell").run('cmd /c %acme% -o ' + WScript.Arguments(2) + " " + WScript.Arguments(1))

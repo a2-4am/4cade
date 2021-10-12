@@ -116,14 +116,13 @@ pref_get
          +LDPARAMPTR 1, +
          +LDPARAMPTR 3, .store1
 
-         jsr   okvs_get              ; look up pref key in prefs store
+         jsr   okvs_get              ; look up pref key in prefs store, sets PTR to value
          !word gGlobalPrefsStore
 +        !word $FDFD                 ; SMC
          bcs   .useDefaultValue      ; if pref key is not found, use default value
          ldx   .store1+1
          beq   PREFRTS               ; if no OKVS to validate against, we're done
          +ST16 +
-         +ST16 PTR
          ldy   #0
          lda   (PTR),y
          beq   .useDefaultValue      ; if pref value is empty, use default value

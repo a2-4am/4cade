@@ -6,6 +6,7 @@
 ; Public functions
 ; - Credits
 ; - Help
+; - LoadFulFile
 ;
 
 ;------------------------------------------------------------------------------
@@ -52,12 +53,18 @@ Credits
 Help
          jsr   GetGameToLaunch
          bcs   @global
-         +ST16 SRC
+         +ST16 ++
          jsr   LoadFile
          !word kRootDirectory
+         !word kGameHelpDataFile
+-        !word $6000
+         jsr   okvs_find
+         !word -
+++       !word $DFDF                ; SMC
+         +ST16 zpword
+         jsr   LoadFulFile
          !word kGameHelpFile
-         !word $6000
-         jsr   $6000
+         !word $8000
          clc
          bcc   --                    ; always branches
 @global  jsr   LoadFile              ; load help text into $8000
@@ -68,11 +75,26 @@ Help
          ldx   #7
          bne   -                     ; always branches
 
-LoadFX
+;------------------------------------------------------------------------------
+; LoadFulFile
+; Load a *ful file (compiled okvs with offset value) into memory all at once
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] pointer to filename to open
+;          +3 [word] address of load destination
+;        zpword: pointer to okvs key field
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+LoadFulFile
+         +PARAMS_ON_STACK 4
+         +LDPARAM 1
          +ST16 @filename
+         +LDPARAM 3
+         +ST16 @address
          inc   $BF0E                 ; disable ROM mapping on return
          ldx   #2
-         ldy   #0                    ; SMC
+         ldy   #0
          lda   (zpword), y
          tay
 -        iny
@@ -96,18 +118,18 @@ LoadFX
          jmp   SwitchToBank1
 
 @c8_parms
-         !byte  3
+         !byte 3
 @filename
-        !word   $DFDF                ; SMC
-        !byte   0
+         !word $DFDF                 ; SMC
+         !byte 0
 @ce_parms
-        !byte   $d0
-        !byte   1
-@offset !byte   0, 0, 0              ; SMC
-        !byte   $ff
+         !byte $d0
+         !byte 1
+@offset  !byte 0, 0, 0               ; SMC
+         !byte $ff
 @ca_parms
-        !byte   $ff
+         !byte $ff
 @cc_parms
-        !byte   1
-        !word   $6000
-        !word   $600
+         !byte 1
+@address !word $DFDF                 ; SMC
+         !word $600

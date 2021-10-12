@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am & qkumba
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; Double hi-res slideshows
 ;
@@ -139,14 +139,14 @@ LoadDHGRTransition
          jsr   LoadFile              ; load DHGR transition effects list into $6000
          !word kRootDirectory
          !word kDFXDataFile
-         !word $6000
+-        !word $6000
 
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
-         !word gDFXStore
+         !word -
          +ST16 zpword                ; A/Y = filename (don't load file yet)
                                      ; $WINDEX = index of the transition in DFX store
-         +LDADDR gDFXStore
+         +LDADDR -
          jsr   okvs_next             ; get transition after this one
          +ST16 +
 
@@ -154,8 +154,10 @@ LoadDHGRTransition
          !word kNextDFX
 +        !word $FDFD                 ; SMC
 
-         +LDADDR kDFXFile
-         jmp   LoadFX
+         jsr   LoadFulFile
+         !word kDFXFile
+         !word $6000
+         rts
 
 ;------------------------------------------------------------------------------
 ; DHGRTitleCallback [private]
