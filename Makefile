@@ -34,9 +34,9 @@ dsk: asm
 	bin/buildhelp.sh "build/HELPFUL" "build/helper.inc" >>build/log
 	$(ACME) -r build/helper.lst src/helper/helper.a >>build/log
 	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.DATA" >>build/log
-	bin/buildokvs.sh "res/FX.CONF" "build/FX.DATA" >>build/log
-	bin/buildokvs.sh "res/DFX.CONF" "build/DFX.DATA" >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/ATTRACT.DATA build/FX.DATA build/DFX.DATA build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildfx.sh "res/FX.CONF" "build/FX.DATA" "build/FXFUL" >>build/log
+	bin/buildfx.sh "res/DFX.CONF" "build/DFX.DATA" "build/DFXFUL" >>build/log
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/ATTRACT.DATA build/FX.DATA build/FXFUL build/DFX.DATA build/DFXFUL build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
@@ -48,7 +48,8 @@ dsk: asm
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
 	for f in res/TITLE.HGR res/TITLE.DHGR res/ACTION.HGR res/ACTION.DHGR res/ACTION.GR res/ARTWORK.SHR res/ATTRACT res/SS res/DEMO res/TITLE.ANIMATED res/ICONS; do rm -f "$$f"/.DS_Store; $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/FX" "build/FX" >>build/log
+	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/FX/" >>build/log
+	for f in build/FX/COVERFADE build/FX/GR.FIZZLE build/FX/SHR.FIZZLE build/FX/*.DATA; do $(CADIUS) ADDFILE "build/$(DISK)" "/$(VOLUME)/FX/" "$$f"; done >>build/log
 	for f in res/dsk/*.po; do $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >> build/log; done
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log

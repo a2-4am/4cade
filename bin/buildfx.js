@@ -38,7 +38,7 @@ groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 
 for (i = 0; i < entries.length; i++)
 {
-  groups += "!byte " + (1 + 1 + entries[i].length + 1 + 3).toString() + "\n" + "!byte " + entries[i].length.toString() + "\n" + "!text \"" + entries[i] + "\"\n" + "!byte 3"+ "\n" + "!be24 " + fx_off.toString() + "\n"
+  groups += "!byte " + (1 + 1 + entries[i].length + 3).toString() + "\n" + "!byte " + entries[i].length.toString() + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + fx_off.toString() + "\n"
   fx_off += a.getfile(y + entries[i]).size
 }
 
