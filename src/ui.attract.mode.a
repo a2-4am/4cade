@@ -158,10 +158,7 @@ RunAttractModule
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
 
-         jsr   LoadFile              ; load standard prelaunch code (|Launch| will call it)
-         !word kPrelaunchDirectory
-         !word kStandardPrelaunch
-         !word $0106
+         jsr   LoadStandardPrelaunch ; load standard prelaunch code (|Launch| will call it)
 
          jsr   LoadFile              ; load self-running demo into its default address (varies)
          !word kDemoDirectory

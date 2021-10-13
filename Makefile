@@ -41,7 +41,8 @@ dsk: asm
 	rm -f build/ATTRACTDIR.CONF && touch build/ATTRACTDIR.CONF >>build/log
 	for f in res/ATTRACT/*; do bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)" && echo "$$(basename $$f)" >> build/ATTRACTDIR.CONF; done >>build/log
 	bin/buildfx.sh "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/ATTRACT.IDX build/FX.IDX build/FX.ALL build/DFX.IDX build/DFX.ALL build/GAMEHELP.IDX build/GAMEHELP.ALL build/SLIDESHOW.IDX build/SLIDESHOW.ALL build/MINIATTRACT.IDX build/MINIATTRACT.ALL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildhelp.sh "res/GAMES.CONF" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH" >>build/log
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/ATTRACT.IDX build/FX.IDX build/FX.ALL build/DFX.IDX build/DFX.ALL build/GAMEHELP.IDX build/GAMEHELP.ALL build/SLIDESHOW.IDX build/SLIDESHOW.ALL build/MINIATTRACT.IDX build/MINIATTRACT.ALL build/PRELAUNCH.IDX build/PRELAUNCH.ALL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
@@ -57,8 +58,6 @@ dsk: asm
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	for f in build/X/*; do $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f"; done >>build/log
-	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/PRELAUNCH" "build/PRELAUNCH" >>build/log
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
 asm: asmlauncher asmfx asmprelaunch asmproboot
@@ -73,7 +72,6 @@ asmfx: md
 
 asmprelaunch: md
 	for f in src/prelaunch/*.a; do grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; done
-	for f in res/TITLE.HGR/* res/TITLE.DHGR/*; do rsync --ignore-existing build/PRELAUNCH/STANDARD build/PRELAUNCH/$$(basename $$f); done
 
 asmproboot: md
 	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a >> build/log

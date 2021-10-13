@@ -94,9 +94,13 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
-kPrelaunchDirectory
-         !byte 10
-         !raw  "PRELAUNCH/"
+kPrelaunchIndexFile
+         !byte 13
+         !raw  "PRELAUNCH.IDX"
+
+kPrelaunchFulFile
+         !byte 13
+         !raw  "PRELAUNCH.ALL"
 
 kStandardPrelaunch
          !byte 8
