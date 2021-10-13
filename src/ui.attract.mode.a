@@ -26,7 +26,7 @@ MegaAttractMode
 
          jsr   LoadFile              ; load pre-parsed attract mode configuration data into $6000
          !word kRootDirectory
-         !word kAttractModeDataFile
+         !word kAttractModeIndexFile
 -        !word $6000
 
          jsr   pref_get              ; get attract mode module from prefs
@@ -76,7 +76,7 @@ MiniAttractMode
 @loop
          jsr   LoadFile              ; load mini attract mode configuration file into $6000
          !word kRootDirectory
-         !word kMiniAttractDataFile
+         !word kMiniAttractIndexFile
 -        !word $6000
          jsr   okvs_find
          !word -
@@ -174,7 +174,7 @@ RunAttractModule
 ; it's a slideshow, so load slideshow configuration file
          pha                         ; save module type
          jsr   LoadFile              ; load slideshow configuration file into $4000
-         !word kAttractModeSlideshowDataFile
+         !word kAttractModeSlideshowIndexFile
          !word kRootDirectory
 -        !word $4000
          jsr   okvs_find

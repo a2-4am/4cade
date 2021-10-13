@@ -56,7 +56,7 @@ Help
          +ST16 ++
          jsr   LoadFile
          !word kRootDirectory
-         !word kGameHelpDataFile
+         !word kGameHelpIndexFile
 -        !word $6000
          jsr   okvs_find
          !word -

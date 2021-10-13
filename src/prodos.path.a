@@ -81,18 +81,6 @@ kSHRArtworkDirectory
          !byte 12
          !raw  "ARTWORK.SHR/"
 
-kMiniAttractDataFile
-         !byte 10
-         !raw  "ATTRACTIVE"
-
-kAttractModeSlideshowDataFile
-         !byte 7
-         !raw  "SS.DATA"
-
-kAttractModeSlideshowFulFile
-         !byte 5
-         !raw  "SSFUL"
-
 kDemoDirectory
          !byte 5
          !raw  "DEMO/"
@@ -118,29 +106,49 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kAttractModeDataFile
-         !byte 12
-         !raw  "ATTRACT.DATA"
+kAttractModeIndexFile
+         !byte 11
+         !raw  "ATTRACT.IDX"
+
+kMiniAttractIndexFile
+         !byte 15
+         !raw  "MINIATTRACT.IDX"
 
 kAttractModeFulFile
-         !byte 10
-         !raw  "ATTRACTFUL"
+         !byte 15
+         !raw  "MINIATTRACT.ALL"
 
-kFXDataFile
-         !byte 7
-         !raw  "FX.DATA"
+kAttractModeSlideshowIndexFile
+         !byte 13
+         !raw  "SLIDESHOW.IDX"
 
-kDFXDataFile
-         !byte 8
-         !raw  "DFX.DATA"
+kAttractModeSlideshowFulFile
+         !byte 13
+         !raw  "SLIDESHOW.ALL"
+
+kFXIndexFile
+         !byte 6
+         !raw  "FX.IDX"
 
 kFXFile
-         !byte 5
-         !raw  "FXFUL"
+         !byte 6
+         !raw  "FX.ALL"
+
+kDFXIndexFile
+         !byte 7
+         !raw  "DFX.IDX"
 
 kDFXFile
-         !byte 6
-         !raw  "DFXFUL"
+         !byte 7
+         !raw  "DFX.ALL"
+
+kGameHelpIndexFile
+         !byte 12
+         !raw  "GAMEHELP.IDX"
+
+kGameHelpFile
+         !byte 12
+         !raw  "GAMEHELP.ALL"
 
 kCreditsFile
          !byte 7
@@ -149,14 +157,6 @@ kCreditsFile
 kHelpBackgroundFile
          !byte 4
          !raw  "HELP"
-
-kGameHelpDataFile
-         !byte 9
-         !raw  "HELP.DATA"
-
-kGameHelpFile
-         !byte 7
-         !raw  "HELPFUL"
 
 kHelpTextFile
          !byte 8

@@ -138,7 +138,7 @@ gMachineInDHGRMode=*+1
 LoadDHGRTransition
          jsr   LoadFile              ; load DHGR transition effects list into $6000
          !word kRootDirectory
-         !word kDFXDataFile
+         !word kDFXIndexFile
 -        !word $6000
 
          jsr   pref_get              ; get DHGR transition effect from prefs

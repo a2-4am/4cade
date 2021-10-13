@@ -69,7 +69,7 @@ HGRSingle
 LoadHGRTransition
          jsr   LoadFile              ; load HGR transition effects list into $6000
          !word kRootDirectory
-         !word kFXDataFile
+         !word kFXIndexFile
 -        !word $6000
 
          jsr   pref_get              ; get HGR transition effect from prefs
