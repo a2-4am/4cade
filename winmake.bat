@@ -26,16 +26,9 @@ if "%1" equ "asm" (
 :asm
 call :md
 call :asmlauncher
-call :asmhelp
 call :asmfx
-call :asmss
 call :asmprelaunch
 call :asmproboot
-goto :EOF
-)
-
-if "%1" equ "ss" (
-call :asmss
 goto :EOF
 )
 
@@ -55,6 +48,18 @@ call :compress
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 cscript /nologo bin\rsync.js "res\PREFS.CONF" "build\" >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
+cscript /nologo bin\buildhelp.js "build\GAMEHELP.ALL" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
+cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.IDX" >>build\log
+call bin\buildfxful.bat res\FX.CONF "build\FX.ALL" >>build\log
+call bin\buildfxful.bat res\DFX.CONF "build\DFX.ALL" >>build\log
+cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.IDX" >>build\log
+cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.IDX" >>build\log
+for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
+call bin\buildssall.bat build\SS build\SLIDESHOW.ALL >>build\log
+cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SLIDESHOW.IDX" >>build\log
+for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
+call bin\buildssall.bat build\ATTRACT build\MINIATTRACT.ALL>>build\log
+cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\MINIATTRACT.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
@@ -66,9 +71,8 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-for %%q in (build\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
-for %%q in (build\*FUL) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACTIVE" >>build\log
+for %%q in (build\*.IDX) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
+for %%q in (build\*.ALL) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -129,10 +133,6 @@ for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 %ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
 goto :EOF
 
-:asmhelp
-cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\help.inc" "build\HELP.DATA" >>build\log
-goto :EOF
-
 :asmfx
 for %%q in (src\fx\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
@@ -140,20 +140,6 @@ for %%q in (src\fx\*.a) do (
   if !_to!==t %ACME% %%q
 )
 cscript /nologo bin\buildfileinfo.js build\FX "06" "6000"
-call bin\buildfxful.bat res\FX.CONF "build\FXFUL" >>build\log
-call bin\buildfxful.bat res\DFX.CONF "build\DFXFUL" >>build\log
-cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.DATA" >>build\log
-cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.DATA" >>build\log
-goto :EOF
-
-:asmss
-for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
-call bin\buildssful.bat build\SS build\SSFUL >>build\log
-cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SS.DATA" >>build\log
-for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
-call bin\buildssful.bat build\ATTRACT build\ATTRACTFUL>>build\log
-cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
-cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\ATTRACTIVE" >>build\log
 goto :EOF
 
 :asmprelaunch

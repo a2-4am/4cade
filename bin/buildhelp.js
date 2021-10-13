@@ -38,6 +38,7 @@ y = "res\\GAMEHELP\\"
 f = a.createtextfile(WScript.Arguments(0))
 f.write(entry = a.opentextfile(y + "STANDARD").readall().replace(/\r\n/g, "\n"))
 help_off = entry.length
+osize = help_off
 
 groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 i = 0
@@ -45,15 +46,20 @@ i = 0
 while (i < entries.length)
 {
   c = 0
+  size = osize
 
   if (a.fileexists(y + entries[i]))
   {
     c = help_off
     f.write(entry = a.opentextfile(y + entries[i]).readall().replace(/\r\n/g, "\n"))
     help_off += entry.length
+    size = entry.length
   }
 
-  groups += "!byte " + (1 + 1 + entries[i].length + 3).toString() + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n\n"
+  groups += "!byte " + (1 + 1 + entries[i].length + 5).toString() + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n"
+  // if offset+size does not cross a block boundary, use the size
+  // otherwise adjust size until it ends at the next block boundary to avoid a partial copy on the last block
+  groups += "!le16 " + ((Math.floor(c / 512) == Math.floor((c + size) / 512)) ? size : (((c + size + 511) & -512) - c)).toString()  + "\n"
   ++i
 }
 

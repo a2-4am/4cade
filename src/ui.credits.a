@@ -73,7 +73,7 @@ Help
          !word $8000
          jsr   LoadHelpOffscreen     ; load fancy backdrop
          ldx   #7
-         bne   -                     ; always branches
+         bne   --                    ; always branches
 
 ;------------------------------------------------------------------------------
 ; LoadFulFile
@@ -102,6 +102,12 @@ LoadFulFile
          sta   @offset, x
          dex
          bpl   -
+         dex
+-        iny
+         lda   (zpword), y
+         sta   @size - $fe, x
+         inx
+         bmi   -
          jsr   $bf00                 ; yes, ProDOS abstraction
          !byte $c8
          !word @c8_parms
@@ -132,4 +138,5 @@ LoadFulFile
 @cc_parms
          !byte 1
 @address !word $DFDF                 ; SMC
-         !word $600
+@size    !word $DFDF                 ; SMC
+         !word $ffff
