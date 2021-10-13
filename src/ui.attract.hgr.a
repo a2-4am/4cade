@@ -37,7 +37,7 @@ HGRActionSlideshow
          jsr   okvs_iter             ; cycle through all listed HGR files
          !word gSlideshowStore
          !word HGRActionCallback     ; address of callback (called on each file)
-HGRRTS   rts                         ; exit with last picture still visible
+         rts                         ; exit with last picture still visible
 
 ;------------------------------------------------------------------------------
 ; HGRSingle
@@ -75,7 +75,7 @@ LoadHGRTransition
          jsr   pref_get              ; get HGR transition effect from prefs
          !word kNextFX
          !word -
-         +ST16 zpword                ; A/Y = filename (don't load file yet)
+         +ST16 @indexRecordPtr       ; A/Y = filename (don't load file yet)
                                      ; $WINDEX = index of the transition in FX store
          +LDADDR -
          jsr   okvs_next             ; get transition after this one
@@ -85,10 +85,12 @@ LoadHGRTransition
          !word kNextFX
 +        !word $FDFD                 ; SMC
 
-         jsr   LoadFulFile
+         jsr   LoadIndexedFile
          !word kFXFile
          !word $6000
-         rts
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+HGRRTS   rts
 
 ;------------------------------------------------------------------------------
 ; HGRTitleCallback [private]

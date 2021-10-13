@@ -144,7 +144,7 @@ LoadDHGRTransition
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
          !word -
-         +ST16 zpword                ; A/Y = filename (don't load file yet)
+         +ST16 @indexRecordPtr       ; A/Y = filename (don't load file yet)
                                      ; $WINDEX = index of the transition in DFX store
          +LDADDR -
          jsr   okvs_next             ; get transition after this one
@@ -154,9 +154,11 @@ LoadDHGRTransition
          !word kNextDFX
 +        !word $FDFD                 ; SMC
 
-         jsr   LoadFulFile
+         jsr   LoadIndexedFile
          !word kDFXFile
          !word $6000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
          rts
 
 ;------------------------------------------------------------------------------

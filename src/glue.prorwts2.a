@@ -1,22 +1,24 @@
 ;license:MIT
-;(c) 2018-2020 by 4am & qkumba
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; ProRWTS2 glue functions
 ;
 ; Public functions
 ; - LoadFile
+; - LoadAuxFile
 ; - LoadDHRFile
+; - LoadIndexedFile
 ;
 ; Public variables
 ; - gRootDirectory
 ;
 ; A general note about paths:
 ;
-; LoadFile, LoadDHRFile, and SaveSmallFile support subdirectories.
-; Directories are delimited by '/' like ProDOS. At program startup, we get the
-; current directory and save it; that is the PROGRAM ROOT DIRECTORY. All
-; pathnames are relative to the PROGRAM ROOT DIRECTORY. There is no concept of
-; setting or changing the 'current' directory.
+; Load[*]File routines support subdirectories. Directories are delimited by '/'
+; like ProDOS. At program startup, we get the current directory and save it;
+; that is the PROGRAM ROOT DIRECTORY. All pathnames are relative to the PROGRAM
+; ROOT DIRECTORY. There is no concept of setting or changing the 'current'
+; directory.
 ;
 ; The PROGRAM ROOT DIRECTORY is not guaranteed to be the root directory of the
 ; underlying ProDOS disk (although it can be). But it doesn't matter, because
@@ -108,6 +110,82 @@ LoadDHRFile
          jsr   SwitchToBank2
          jsr   LoadDHRFileInternal
          jmp   SwitchToBank1
+
+;------------------------------------------------------------------------------
+; LoadIndexedFile
+; Load a file from inside an indexed file, all at once
+;
+; To save disk space, some collections of small, related files (e.g. per-game
+; help files) are merged into a single data file with an associated index file.
+; The index stores the original filename along with an offset (into the merged
+; data file) and a length.
+;
+; Callers are responsible for loading the index file and finding the relevant
+; record within the index. Most callers use okvs_find() for this.
+;
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] pointer to filename of merged data file
+;          +3 [word] address of load destination
+;          +5 [word] pointer to index record (see note)
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+LoadIndexedFile
+         +PARAMS_ON_STACK 6
+         +LDPARAM 1
+         +ST16 @filename
+         +LDPARAM 3
+         +ST16 @address
+         +LDPARAM 5
+         +ST16 zpword
+         inc   $BF0E                 ; disable ROM mapping on return
+         ldx   #2
+         ldy   #0
+         lda   (zpword), y
+         tay
+-        iny
+         lda   (zpword), y
+         sta   @offset, x
+         dex
+         bpl   -
+         dex
+-        iny
+         lda   (zpword), y
+         sta   @size - $fe, x
+         inx
+         bmi   -
+         jsr   $bf00                 ; yes, ProDOS abstraction
+         !byte $c8
+         !word @c8_parms
+         jsr   $bf00
+         !byte $ce
+         !word @ce_parms
+         jsr   $bf00
+         !byte $ca
+         !word @ca_parms
+         jsr   $bf00
+         !byte $cc
+         !word @cc_parms
+         dec   $BF0E                 ; re-enable ROM mapping on return
+         jmp   SwitchToBank1
+
+@c8_parms
+         !byte 3
+@filename
+         !word $DFDF                 ; SMC
+         !byte 0
+@ce_parms
+         !byte $d0
+         !byte 1
+@offset  !byte 0, 0, 0               ; SMC
+         !byte $ff
+@ca_parms
+         !byte $ff
+@cc_parms
+         !byte 1
+@address !word $DFDF                 ; SMC
+@size    !word $DFDF                 ; SMC
+         !word $ffff
 
 gRootDirectory
          !word $FDFD

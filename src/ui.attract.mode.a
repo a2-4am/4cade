@@ -78,13 +78,18 @@ MiniAttractMode
          !word kRootDirectory
          !word kMiniAttractIndexFile
 -        !word $6000
+
          jsr   okvs_find
          !word -
 +        !word $FDFD                 ; SMC
-         +ST16 zpword
-         jsr   LoadFulFile
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile
          !word kAttractModeFulFile
 -        !word $6000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+
          +LDADDR -
          jsr   okvs_len
          lda   WCOUNT
@@ -180,10 +185,11 @@ RunAttractModule
          jsr   okvs_find
          !word -
 @key2    !word $FDFD                 ; SMC
-         +ST16 zpword
-         jsr   LoadFulFile
+         +ST16 +
+         jsr   LoadIndexedFile
          !word kAttractModeSlideshowFulFile
          !word $800
++        !word $FDFD                 ; SMC
          pla                         ; restore module type
 
 -        and   #$0F                  ; convert ASCII digit to int
