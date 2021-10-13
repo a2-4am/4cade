@@ -31,10 +31,10 @@ dsk: asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	rsync -aP res/PREFS.CONF build/PREFS.CONF >> build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" >>build/log
 	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.IDX" >>build/log
 	bin/buildfx.sh "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX" >>build/log
 	bin/buildfx.sh "res/DFX.CONF" "build/DFX.IDX" "build/DFX.ALL" "build/FX" >>build/log
+	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "res/GAMEHELP" >>build/log
 	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF >>build/log
 	for f in res/SS/*; do bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)" && echo "$$(basename $$f)" >> build/SSDIR.CONF; done >>build/log
 	bin/buildfx.sh "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log

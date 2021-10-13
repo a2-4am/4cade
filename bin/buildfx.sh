@@ -24,13 +24,13 @@ source=$(mktemp)
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key (effect name)
      offset=$(wc -c < "$3")
-     size=$(wc -c < "$4/$key")
      echo "!be24 $offset"              # offset into merged-effects file
      echo -n "!le16 "
      # If offset+size does not cross a block boundary, use the size.
      # Otherwise, round up size to the next block boundary.
      # This padding does not get added to the file; it is just an
      # optimization to avoid a partial copy on the last block read.
+     size=$(wc -c < "$4/$key")
      if [ $(($offset / 512)) -eq $((($offset + $size) / 512)) ]; then
          echo "$size"
      else
