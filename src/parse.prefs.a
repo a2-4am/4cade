@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; Parser for global preferences file
 ;
@@ -113,12 +113,11 @@ PREFRTS  rts
 ;------------------------------------------------------------------------------
 pref_get
          +PARAMS_ON_STACK 4
-         +LDPARAMPTR 1, +
-         +LDPARAMPTR 3, .store1
+         jsr   .set_store01
 
          jsr   okvs_get              ; look up pref key in prefs store, sets PTR to value
          !word gGlobalPrefsStore
-+        !word $FDFD                 ; SMC
+.store0  !word $FDFD                 ; SMC
          bcs   .useDefaultValue      ; if pref key is not found, use default value
          ldx   .store1+1
          beq   PREFRTS               ; if no OKVS to validate against, we're done
@@ -137,6 +136,24 @@ pref_get
          +LD16 .store1
          jmp   okvs_nth
 
+.set_store01
+         ldx   #0
+         lda   #.store1 - .store0
+
+.set_store23
+         pha
+         ldy   #1
+         jsr   +
+         iny
+         pla
+         tax
++        lda   (PARAM), y
+         sta   .store0, x
+         iny
+         lda   (PARAM), y
+         sta   .store0 + 1, x
+         rts
+
 ;------------------------------------------------------------------------------
 ; pref_set
 ; set pref value by pref key, serialize prefs, and write them to disk
@@ -152,13 +169,14 @@ pref_get
 ;------------------------------------------------------------------------------
 pref_set
          +PARAMS_ON_STACK 4
-         +LDPARAMPTR 1, +
-         +LDPARAMPTR 3, ++
+         ldx   #.store2 - .store0
+         lda   #.store3 - .store0
+         jsr   .set_store23
 
          jsr   okvs_update           ; save that in prefs store
          !word gGlobalPrefsStore
-+        !word $FDFD                 ; SMC
-++       !word $FDFD                 ; SMC
+.store2  !word $FDFD                 ; SMC
+.store3  !word $FDFD                 ; SMC
 
          +LDADDR kGlobalPrefsBuffer  ; clear prefs buffer
          +ST16   $FE

@@ -113,6 +113,11 @@ cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
 )
 
+if "%1" equ "demo" (
+for %%q in (src\demo\*) do %acme% %1
+goto :EOF
+)
+
 echo usage: %0 clean / asm / dsk
 goto :EOF
 

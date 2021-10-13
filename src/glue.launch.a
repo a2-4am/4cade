@@ -30,8 +30,7 @@ gGameToLaunch
 ;------------------------------------------------------------------------------
 AnyGameSelected
          +LD16 gGameToLaunch
-         +CMP16 $FFFF
-         bne   ForceGoodResult
+         +CMP16_NE $FFFF, ForceGoodResult
          rts                         ; CMP sets carry when equal
 
 ;------------------------------------------------------------------------------
@@ -136,9 +135,9 @@ GetGameDisplayName
          +ST16 SAVE
          jsr   okvs_get_current      ; get value for this key
                                      ; (PTR) -> truncated game display name + info bitfield
-         ldy   #0
+                                     ; Y = 0
          lda   (PTR), y              ; A = length of truncated game display name + info bitfield
-         cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
+         lsr   ;;cmp   #1            ; 1 means there's no title, just info bitfield (1 byte)
          beq   +
          +LD16 PTR
          clc

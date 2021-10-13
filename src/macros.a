@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; common assembler macros (6502 compatible)
 ;
@@ -123,37 +123,51 @@
 }
 
 ; compare a 16-bit value in A (low) and Y (high) to an absolute address
+; branch to target if no match
 ; zeroes A!
-!macro   CMP16ADDR .addr {
+!macro   CMP16ADDR_NE .addr, .target {
          eor   .addr
-         bne   +
+         bne   .target
          cpy   .addr+1
-+
+         bne   .target
 }
 
 ; compare a 16-bit value in X (low) and Y (high) to an absolute address
-!macro   CPX16ADDR .addr {
+; branch to target if no match
+!macro   CPX16ADDR_NE .addr, .target {
          cpx   .addr
-         bne   +
+         bne   .target
          cpy   .addr+1
+         bne   .target
+}
+
+; compare a 16-bit value in A (low) and Y (high) to an immediate value
+; branch to target if match
+!macro   CMP16_E .val, .target {
+         cmp   #<.val
+         bne   +
+         cpy   #>.val
+         beq   .target
 +
 }
 
 ; compare a 16-bit value in A (low) and Y (high) to an immediate value
-!macro   CMP16 .val {
+; branch to target if no match
+!macro   CMP16_NE .val, .target {
          cmp   #<.val
-         bne   +
+         bne   .target
          cpy   #>.val
-+
+         bne   .target
 }
 
 ; compare a 16-bit value in X (low) and Y (high) against zero
+; branch to target if not zero
 ; requires LDX16 immediately prior, since Y comparison is implicit!
 ; destroys A!
-!macro   CPX16_0 {
-         bne   +
+!macro   CPX16_0_NE .target {
+         bne   .target
          txa
-+
+         bne   .target
 }
 
 !macro   LBPL .target {
@@ -377,15 +391,17 @@
 ; load an external file by pathname
 ; LC RAM 2 MUST BE BANKED IN
 ; LOW BYTE OF .addr MUST BE $00
+; set .addr to $0000 to load anywhere in main
 !macro   LOAD_FILE_AT .filepath, .addr {
-         lda   #0
-         sta   iAuxReq    ; read to main memory
+  !if .addr > 0 {
          lda   #>.addr
          sta   ldrhi
+  }
          lda   iCurBlockLo
          pha
          lda   iCurBlockHi
          pha
+         ldx   #0         ; read to main memory
          +LDADDR .filepath
          jsr   LoadFileDirect
          pla
