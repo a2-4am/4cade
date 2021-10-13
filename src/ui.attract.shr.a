@@ -27,7 +27,7 @@ SHRSlideshow
          jsr   okvs_iter
          !word gSlideshowStore
          !word SHRArtworkCallback
-         jmp   BlankHGR
+         beq   jmpblank              ; always taken
 
 ;------------------------------------------------------------------------------
 ; SHRSlideshow
@@ -53,6 +53,7 @@ SHRSingle
          jsr   DecompressSHR
          jsr   LoadSHRTransition
          jsr   ExecuteTransitionAtA000AndWait
+jmpblank
          jmp   BlankHGR
 
 ;------------------------------------------------------------------------------

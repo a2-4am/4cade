@@ -106,7 +106,8 @@ MiniAttractMode
          jsr   okvs_nth              ; get the next module on the list
          +ST16 SAVE
          jsr   okvs_get_current      ; get module type
-         ldy   #1
+                                     ; Y = 0
+         iny
          lda   (PTR),y
          tax                         ; X = module type
          +LD16 SAVE                  ; A/Y = address of module name
@@ -150,11 +151,10 @@ RunAttractModule
          jsr   FindGame
          bcs   ATTRTS                ; if game doesn't exist, skip the demo
          +LD16 WINDEX
-         +CMP16 $FFFF
-         beq   +
+         +CMP16_E $FFFF, @nogame
          +ST16 gGameToLaunch         ; if this demo corresponds to a game, save its index
                                      ; in case user presses RETURN during the demo (we will launch the game)
-+
+@nogame
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
 
@@ -188,6 +188,9 @@ RunAttractModule
          !word $800
 +        !word $FDFD                 ; SMC
          pla                         ; restore module type
+         +HIDE_NEXT_2_BYTES
+@dispatchSingle
+         adc   #(@singleslo-@slideshowslo)-1
 
 -        and   #$0F                  ; convert ASCII digit to int
          tax
@@ -197,10 +200,6 @@ RunAttractModule
          sta   @jmp+2
          +LD16 @key                  ; pass in module name
 @jmp     jmp   $FDFD                 ; SMC
-
-@dispatchSingle
-         adc   #(@singleslo-@slideshowslo)-1
-         bne   -                     ; always branches
 
 @slideshowslo
          !byte <HGRTitleSlideshow

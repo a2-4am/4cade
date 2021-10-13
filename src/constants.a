@@ -16,8 +16,8 @@
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
-; D670..DB95 - HGR font code & ProRWTS glue code
-; DB96..DBA5 - backup of stack (during gameplay and self-running demos)
+; D670..DB93 - HGR font code & ProRWTS glue code
+; DB94..DBA3 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -148,8 +148,7 @@ CHEATS_ENABLED = %00001000
 iCurBlockLo    = $D401
 iCurBlockHi    = $D403
 iProDOS_enter  = $D670
-LoadFileDirect = $DAF9
-iAuxReq        = $DB1F
+LoadFileDirect = $DAF6
 launchpatch    = $D60E
 iAddToPath     = $FE67
 itraverse      = $D8D8

@@ -8,25 +8,26 @@
 ; and parse.prefs which handle bank switching for you.
 
 LoadFileInternal
-         lda   #0                    ; 0 = read into main memory
+         ldx   #0                    ; 0 = read into main memory
 LoadFileAuxInternal
-         sta   @auxreq+1             ; call with A=1 to load directly into aux memory
          +LDADDR gPathname
 !if RELBASE != $2000 {
   !ifdef PASS2 {
   } else { ;PASS2
     !if * != LoadFileDirect {
-      !error "LoadFileDirect=",*, ", fix constants.a"
+      !error "LoadFileDirect=",*, ", fix constants.a, rebuild all src/demo and src/prelaunch"
     }
   }
 }
          +ST16 namlo                 ; set filename
+         txa
+         pha
          jsr   traverse              ; go to subdirectory, set up filename for read
          lda   #cmdread              ; read (instead of write)
          sta   reqcmd
          lsr
          sta   auxreq
-         lda   ldrlo+1
+         lda   ldrhi
          bne   +                     ; if caller provided a load address, use it
          sta   sizelo                ; otherwise query the load address from file metadata
          sta   sizehi                ; 0 = query load address
@@ -35,16 +36,7 @@ LoadFileAuxInternal
          +ST16 ldrlo
 +        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
          sta   sizehi
-!if RELBASE != $2000 {
-  !ifdef PASS2 {
-  } else { ;PASS2
-    !if *+1 != iAuxReq {
-      !error "iAuxReq=",*+1, ", fix constants.a"
-    }
-  }
-}
-@auxreq
-         lda   #0
+         pla
          sta   auxreq
 JumpOpen
          jmp   hddopendir            ; exit via ProRWTS2

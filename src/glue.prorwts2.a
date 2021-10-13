@@ -49,15 +49,8 @@
 ;        gPathname clobbered
 ;------------------------------------------------------------------------------
 LoadFile
-         +PARAMS_ON_STACK 6
-         +LDPARAM 1
-         jsr   SetPath
-         +LDPARAM 3
-         jsr   AddToPath
-         +LDPARAMPTR 5, ldrlo        ; set load address
-         jsr   SwitchToBank2
-         jsr   LoadFileInternal
-         jmp   SwitchToBank1
+         ldx   #7
+         bne   .loadcommon
 
 ;------------------------------------------------------------------------------
 ; LoadAuxFile
@@ -74,16 +67,8 @@ LoadFile
 ;        gPathname clobbered
 ;------------------------------------------------------------------------------
 LoadAuxFile
-         +PARAMS_ON_STACK 6
-         +LDPARAM 1
-         jsr   SetPath
-         +LDPARAM 3
-         jsr   AddToPath
-         +LDPARAMPTR 5, ldrlo        ; set load address
-         jsr   SwitchToBank2
-         lda   #1                    ; request aux memory
-         jsr   LoadFileAuxInternal
-         jmp   SwitchToBank1
+         ldx   #6
+         bne   .loadcommon
 
 ;------------------------------------------------------------------------------
 ; LoadDHRFile
@@ -102,13 +87,44 @@ LoadAuxFile
 ;        stack set to next instruction after parameters
 ;------------------------------------------------------------------------------
 LoadDHRFile
-         +PARAMS_ON_STACK 4
+         ldx   #$84
+.loadcommon
+         pla
+         sta   PARAM
+         txa
+         pha
+         and   #6
+         clc
+         adc   PARAM
+         tay
+         pla
+         tax
+         pla
+         sta   PARAM+1
+         adc   #0
+         pha
+         tya
+         pha
+         txa
+         pha
          +LDPARAM 1
          jsr   SetPath
          +LDPARAM 3
          jsr   AddToPath
-         jsr   SwitchToBank2
-         jsr   LoadDHRFileInternal
+         plp
+         php
+         bmi   +
+         +LDPARAMPTR 5, ldrlo        ; set load address
++        jsr   SwitchToBank2
+         plp
+         bmi   ++
+         bcc   +
+         jsr   LoadFileInternal
+         jmp   SwitchToBank1
++        ldx   #1                    ; request aux memory
+         jsr   LoadFileAuxInternal
+         jmp   SwitchToBank1
+++       jsr   LoadDHRFileInternal
          jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
@@ -132,12 +148,8 @@ LoadDHRFile
 ;------------------------------------------------------------------------------
 LoadIndexedFile
          +PARAMS_ON_STACK 6
-         +LDPARAM 1
-         +ST16 @filename
-         +LDPARAM 3
-         +ST16 @address
-         +LDPARAM 5
-         +ST16 zpword
+         jsr   @set_nameaddr
+         +LDPARAMPTR 5, zpword
          inc   $BF0E                 ; disable ROM mapping on return
          ldx   #2
          ldy   #0
@@ -168,6 +180,19 @@ LoadIndexedFile
          !word @cc_parms
          dec   $BF0E                 ; re-enable ROM mapping on return
          jmp   SwitchToBank1
+
+@set_nameaddr
+         ldx   #0
+         ldy   #1
+         jsr   +
+         iny
+         ldx   #@address - @filename
++        lda   (PARAM), y
+         sta   @filename, x
+         iny
+         lda   (PARAM), y
+         sta   @filename + 1, x
+         rts
 
 @c8_parms
          !byte 3

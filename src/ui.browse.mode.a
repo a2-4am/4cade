@@ -47,8 +47,10 @@ kBrowseQuit     = 11
 
 @noKeyMatch
          jsr   IsSearchKey
+!if kBrowseSearch > 0 {
          bne   @BrowseDispatch
          ldx   #kBrowseSearch
+}
 
          ; execution falls through here
 @BrowseDispatch
@@ -67,8 +69,7 @@ OnBrowseSearch
 
 OnBrowsePrevious
          +LDX16 gGameToLaunch
-         +CPX16_0
-         bne   @notFirstGame
+         +CPX16_0_NE @notFirstGame
          +LDX16 GameCount
 @notFirstGame
          +DEX16
@@ -77,8 +78,7 @@ OnBrowsePrevious
 OnBrowseNext
          +LDX16 gGameToLaunch
          +INX16
-         +CPX16ADDR GameCount
-         bne   notLastGame
+         +CPX16ADDR_NE GameCount, notLastGame
          ldx   #0
          ldy   #0
 notLastGame
