@@ -341,6 +341,7 @@ PrintAsDecimal
 
          !source "src/hw.accel.a"
          !source "src/hw.vbl.init.a"
+         !source "src/parse.common.a"
          !source "src/parse.games.a"
 
 OneTimeSetup
