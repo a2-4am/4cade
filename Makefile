@@ -31,22 +31,25 @@ dsk: asm
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
 	rsync -aP res/PREFS.CONF build/PREFS.CONF >> build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-	bin/buildhelp.sh "build/HELPFUL" "build/helper.inc" >>build/log
-	$(ACME) -r build/helper.lst src/helper/helper.a >>build/log
+	bin/buildhelp.sh "res/GAMES.CONF" "build/HELP.DATA" "build/HELPFUL" >>build/log
 	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.DATA" >>build/log
-	bin/buildfx.sh "res/FX.CONF" "build/FX.DATA" "build/FXFUL" >>build/log
-	bin/buildfx.sh "res/DFX.CONF" "build/DFX.DATA" "build/DFXFUL" >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/ATTRACT.DATA build/FX.DATA build/FXFUL build/DFX.DATA build/DFXFUL build/PREFS.CONF res/CREDITS res/HELPTEXT build/HELPER build/HELPFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	bin/buildfx.sh "res/FX.CONF" "build/FX.DATA" "build/FXFUL" "build/FX" >>build/log
+	bin/buildfx.sh "res/DFX.CONF" "build/DFX.DATA" "build/DFXFUL" "build/FX" >>build/log
+	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF
+	for f in res/SS/*; do bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)" && echo "$$(basename $$f)" >> build/SSDIR.CONF; done >>build/log
+	bin/buildfx.sh "build/SSDIR.CONF" "build/SS.DATA" "build/SSFUL" "build/SS" >>build/log
+	rm -f build/ATTRACTDIR.CONF && touch build/ATTRACTDIR.CONF
+	for f in res/ATTRACT/*; do bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)" && echo "$$(basename $$f)" >> build/ATTRACTDIR.CONF; done >>build/log
+	bin/buildfx.sh "build/ATTRACTDIR.CONF" "build/ATTRACTIVE" "build/ATTRACTFUL" "build/ATTRACT" >>build/log
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/ATTRACT.DATA build/FX.DATA build/FXFUL build/DFX.DATA build/DFXFUL build/HELP.DATA build/HELPFUL build/SS.DATA build/SSFUL build/ATTRACTIVE build/ATTRACTFUL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
 	bin/buildfileinfo.sh res/ARTWORK.SHR "06" "1FF8" >>build/log
-	bin/buildfileinfo.sh res/ATTRACT "04" "8000" >>build/log
-	bin/buildfileinfo.sh res/SS "04" "4000" >>build/log
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
-	for f in res/TITLE.HGR res/TITLE.DHGR res/ACTION.HGR res/ACTION.DHGR res/ACTION.GR res/ARTWORK.SHR res/ATTRACT res/SS res/DEMO res/TITLE.ANIMATED res/ICONS; do rm -f "$$f"/.DS_Store; $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
+	for f in res/TITLE.HGR res/TITLE.DHGR res/ACTION.HGR res/ACTION.DHGR res/ACTION.GR res/ARTWORK.SHR res/DEMO res/TITLE.ANIMATED res/ICONS; do rm -f "$$f"/.DS_Store; $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; done
 	for i in 1 2 3 4 5 6; do $(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; done
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/FX/" >>build/log
 	for f in build/FX/COVERFADE build/FX/GR.FIZZLE build/FX/SHR.FIZZLE build/FX/*.DATA; do $(CADIUS) ADDFILE "build/$(DISK)" "/$(VOLUME)/FX/" "$$f"; done >>build/log
@@ -88,7 +91,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX build/PRELAUNCH
+	mkdir -p build/X build/FX build/PRELAUNCH build/ATTRACT build/SS
 	touch build/log
 
 clean:
