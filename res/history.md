@@ -73,6 +73,7 @@
  - The Caverns of Freitag
  - The Movie Monster Game
  - The Snapper
+ - The Space Ark
  - Time Pilot
  - Titan Cronus
  - Track Attack
