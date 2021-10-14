@@ -48,18 +48,20 @@ call :compress
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 cscript /nologo bin\rsync.js "res\PREFS.CONF" "build\" >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
-cscript /nologo bin\buildhelp.js "build\GAMEHELP.ALL" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
 cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.IDX" >>build\log
 call bin\buildfxful.bat res\FX.CONF "build\FX.ALL" >>build\log
 call bin\buildfxful.bat res\DFX.CONF "build\DFX.ALL" >>build\log
 cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.IDX" >>build\log
 cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.IDX" >>build\log
+cscript /nologo bin\buildhelp.js "build\GAMEHELP.ALL" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
 for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
 call bin\buildssall.bat build\SS build\SLIDESHOW.ALL >>build\log
 cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SLIDESHOW.IDX" >>build\log
 for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
 call bin\buildssall.bat build\ATTRACT build\MINIATTRACT.ALL>>build\log
 cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\MINIATTRACT.IDX" >>build\log
+call bin\buildpreall.bat build\PRELAUNCH build\PRELAUNCH.ALL>>build\log
+cscript /nologo bin\buildpre.js "build\PRELAUNCH" "build\prelaunch.inc" "build\PRELAUNCH.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
@@ -107,8 +109,6 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
-cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 goto :EOF
 )
@@ -153,8 +153,6 @@ for %%q in (src\prelaunch\*.a) do (
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
 )
-for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
-for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 goto :EOF
 
 :asmproboot
