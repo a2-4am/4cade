@@ -7,7 +7,7 @@
 ;
 ; LC RAM BANK 1
 ; D000..E789 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
-; E962..FFF1 - main program code
+; E976..FFF1 - main program code
 ; FFF2..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
