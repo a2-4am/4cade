@@ -35,58 +35,33 @@ while (!b.atendofstream)
 
 entries.sort()
 y = "res\\GAMEHELP\\"
-s = y + "STANDARD"
 f = a.createtextfile(WScript.Arguments(0))
-f.write(entry = a.opentextfile(s).readall().replace(/\r\n/g, "\n"))
+f.write(entry = a.opentextfile(y + "STANDARD").readall().replace(/\r\n/g, "\n"))
 help_off = entry.length
+osize = help_off
 
-letter = "@" //"A" - 1
-groups = ""
-first = true
-i = 0
+groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 
-while (i < entries.length)
+for (i = 0; i < entries.length; i++)
 {
-  if (first)
-  {
-    letter = String.fromCharCode(letter.charCodeAt(0) + 1)
-    group = "group" + letter
+  c = 0
+  size = osize
 
-    groups += group + "\n"
-    first = false
+  if (a.fileexists(y + entries[i]))
+  {
+    c = help_off
+    f.write(entry = a.opentextfile(y + entries[i]).readall().replace(/\r\n/g, "\n"))
+    size = entry.length
+    help_off += size
   }
 
-  if (entries[i].charAt(0) == letter)
-  {
-    c = 0
-
-    if (a.fileexists(y + entries[i]))
-    {
-      c = help_off
-      f.write(entry = a.opentextfile(y + entries[i]).readall().replace(/\r\n/g, "\n"))
-      help_off += entry.length
-    }
-
-    groups += "!byte " + format8(entries[i].length) + "\n" + "!text \"" + entries[i] + "\"\n" + "!byte " + format24(c) + "\n\n"
-    ++i
-  }
-  else
-  {
-    first = true
-  }
+  groups += "!byte " + (1 + 1 + entries[i].length + 5).toString() + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n"
+  // if offset+size does not cross a block boundary, use the size
+  // otherwise adjust size until it ends at the next block boundary to avoid a partial copy on the last block
+  groups += "!le16 " + ((Math.floor(c / 512) == Math.floor((c + size) / 512)) ? size : (((c + size + 511) & -512) - c)).toString()  + "\n"
 }
 
 f = a.createtextfile(WScript.Arguments(1))
 f.write(groups)
-
-function format8(str)
-{
-  val8 = parseInt(str)
-  return "$" + ((val8 < 16) ? "0" : "") + val8.toString(16)
-}
-
-function format24(str)
-{
-  val24 = parseInt(str)
-  return format8(Math.floor(val24 / (256*256))) + ", " + format8(Math.floor(val24 / 256) % 256) + ", " + format8(val24 % 256)
-}
+f.close()
+new ActiveXObject("wscript.shell").run('cmd /c %acme% -o ' + WScript.Arguments(2) + " " + WScript.Arguments(1))

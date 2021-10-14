@@ -341,6 +341,7 @@ PrintAsDecimal
 
          !source "src/hw.accel.a"
          !source "src/hw.vbl.init.a"
+         !source "src/parse.common.a"
          !source "src/parse.games.a"
 
 OneTimeSetup
@@ -368,8 +369,9 @@ CopyDevs
 
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
+         sta   gRootDirectory+1
+         sty   gRootDirectory+3
          jsr   SwitchToBank1
-         +ST16 gRootDirectory
 
          jsr   LoadFile              ; load preferences file into $8000
          !word kRootDirectory
@@ -418,9 +420,9 @@ CopyDevs
          +ST16 SAVE
 
          jsr   pref_get              ; see if cheats are enabled by default
+                                     ; sets PTR -> cheat pref value as length-prefixed string '1' or '0'
          !word kCheat
          !word 0
-         +ST16 PTR                   ; (PTR) -> cheat pref value as length-prefixed string '1' or '0'
          ldy   #1
          lda   (PTR),y               ; A = #$B1 or #$B0
          and   #1                    ; A = #$01 or #$00

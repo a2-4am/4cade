@@ -30,8 +30,7 @@ gGameToLaunch
 ;------------------------------------------------------------------------------
 AnyGameSelected
          +LD16 gGameToLaunch
-         +CMP16 $FFFF
-         bne   ForceGoodResult
+         +CMP16_NE $FFFF, ForceGoodResult
          rts                         ; CMP sets carry when equal
 
 ;------------------------------------------------------------------------------
@@ -136,9 +135,9 @@ GetGameDisplayName
          +ST16 SAVE
          jsr   okvs_get_current      ; get value for this key
                                      ; (PTR) -> truncated game display name + info bitfield
-         ldy   #0
+                                     ; Y = 0
          lda   (PTR), y              ; A = length of truncated game display name + info bitfield
-         cmp   #1                    ; 1 means there's no title, just info bitfield (1 byte)
+         lsr   ;;cmp   #1            ; 1 means there's no title, just info bitfield (1 byte)
          beq   +
          +LD16 PTR
          clc
@@ -200,10 +199,21 @@ PlayGame
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
 
-         jsr   LoadFile              ; load this game's prelaunch file at $106
-         !word kPrelaunchDirectory
-@pfile   !word $FDFD
+         jsr   LoadFile              ; load prelaunch index file into $6000
+         !word kRootDirectory
+         !word kPrelaunchIndexFile
+-        !word $6000
+
+         jsr   okvs_find
+         !word -
+@pfile   !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile
+         !word kPrelaunchFulFile
          !word $0106
+@indexRecordPtr
+         !word $FDFD                 ; SMC
 
          ; we start by placing the subdirectory name at gPathname+kGameDirectoryLen
          ; to leave room for the GameDirectory name as the parent
@@ -264,10 +274,7 @@ Launch
          jmp   LaunchInternal
 
 Joystick
-         jsr   LoadFile
-         !word kPrelaunchDirectory
-         !word kStandardPrelaunch
-         !word $0106
+         jsr   LoadStandardPrelaunch
 
          jsr   LoadFile
          !word kRootDirectory
@@ -275,3 +282,13 @@ Joystick
          !word 0
 
          jmp   Launch
+
+LoadStandardPrelaunch
+         jsr   LoadIndexedFile       ; load standard prelaunch code at $0106
+         !word kPrelaunchFulFile
+         !word $0106
+         !word +
+         rts
++        !byte 0
+         !be24 0
+         !le16 71

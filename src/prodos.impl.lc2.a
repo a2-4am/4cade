@@ -405,7 +405,8 @@ resetval=$f0
   }
 }
 traverse
-         +LD16 gRootDirectory
+gRootDirectory
+         +LDADDR 0                   ; SMC
          sta   (reloc + unrhddblocklo - unrelochdd) + 1
          sty   (reloc + unrhddblockhi - unrelochdd) + 1
          sta   @myreadblock+1

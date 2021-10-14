@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am
 ;
 ; ProDOS - functions for constructing and passing around ProDOS pathnames
 ;
@@ -81,14 +81,6 @@ kSHRArtworkDirectory
          !byte 12
          !raw  "ARTWORK.SHR/"
 
-kMiniAttractDirectory
-         !byte 8
-         !raw  "ATTRACT/"
-
-kAttractModeSlideshowDirectory
-         !byte 3
-         !raw  "SS/"
-
 kDemoDirectory
          !byte 5
          !raw  "DEMO/"
@@ -102,9 +94,13 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
-kPrelaunchDirectory
-         !byte 10
-         !raw  "PRELAUNCH/"
+kPrelaunchIndexFile
+         !byte 13
+         !raw  "PRELAUNCH.IDX"
+
+kPrelaunchFulFile
+         !byte 13
+         !raw  "PRELAUNCH.ALL"
 
 kStandardPrelaunch
          !byte 8
@@ -114,25 +110,49 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kAttractModeDataFile
-         !byte 12
-         !raw  "ATTRACT.DATA"
+kAttractModeIndexFile
+         !byte 11
+         !raw  "ATTRACT.IDX"
 
-kFXDataFile
-         !byte 7
-         !raw  "FX.DATA"
+kMiniAttractIndexFile
+         !byte 15
+         !raw  "MINIATTRACT.IDX"
 
-kDFXDataFile
-         !byte 8
-         !raw  "DFX.DATA"
+kAttractModeFulFile
+         !byte 15
+         !raw  "MINIATTRACT.ALL"
+
+kAttractModeSlideshowIndexFile
+         !byte 13
+         !raw  "SLIDESHOW.IDX"
+
+kAttractModeSlideshowFulFile
+         !byte 13
+         !raw  "SLIDESHOW.ALL"
+
+kFXIndexFile
+         !byte 6
+         !raw  "FX.IDX"
 
 kFXFile
-         !byte 5
-         !raw  "FXFUL"
+         !byte 6
+         !raw  "FX.ALL"
+
+kDFXIndexFile
+         !byte 7
+         !raw  "DFX.IDX"
 
 kDFXFile
-         !byte 6
-         !raw  "DFXFUL"
+         !byte 7
+         !raw  "DFX.ALL"
+
+kGameHelpIndexFile
+         !byte 12
+         !raw  "GAMEHELP.IDX"
+
+kGameHelpFile
+         !byte 12
+         !raw  "GAMEHELP.ALL"
 
 kCreditsFile
          !byte 7
@@ -145,10 +165,6 @@ kHelpBackgroundFile
 kHelpTextFile
          !byte 8
          !raw  "HELPTEXT"
-
-kGameHelpFile
-         !byte 6
-         !raw  "HELPER"
 
 kTitleFile
          !byte 5

@@ -111,7 +111,6 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.font.a"
          !source "src/ui.overlay.a"
          !source "src/parse.prefs.a"
-         !source "src/parse.common.a"
          !source "src/glue.launch.a"
          !source "src/glue.prorwts2.a"
          !source "src/glue.decompress.a"
@@ -122,10 +121,6 @@ ResetVector                          ; 6 bytes, copied to $100
          ; add new files above here
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
-gAttractModeStore
-gFXStore
-gDFXStore
-         !word $6000
 gSearchStore
          !word $8200
 gSlideshowStore

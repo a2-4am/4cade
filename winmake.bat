@@ -48,13 +48,20 @@ call :compress
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
 cscript /nologo bin\rsync.js "res\PREFS.CONF" "build\" >>build\log
 cscript /nologo bin\padto.js 512 build\PREFS.CONF
-cscript /nologo bin\buildhelp.js "build\HELPFUL" "build\helper.inc" >>build\log
-%ACME% -r build\helper.lst src\helper\helper.a >>build\log
-cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.DATA" >>build\log
-call bin\buildfxful.bat res\FX.CONF "build\FXFUL" >>build\log
-call bin\buildfxful.bat res\DFX.CONF "build\DFXFUL" >>build\log
-cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.DATA" >>build\log
-cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.DATA" >>build\log
+cscript /nologo bin\buildokvs.js "res\ATTRACT.CONF" "build\ATTRACT.IDX" >>build\log
+call bin\buildfxful.bat res\FX.CONF build\FX.ALL >>build\log
+call bin\buildfxful.bat res\DFX.CONF build\DFX.ALL >>build\log
+cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.IDX" >>build\log
+cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.IDX" >>build\log
+cscript /nologo bin\buildhelp.js "build\GAMEHELP.ALL" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
+for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
+call bin\buildssall.bat build\SS build\SLIDESHOW.ALL >>build\log
+cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SLIDESHOW.IDX" >>build\log
+for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
+call bin\buildssall.bat build\ATTRACT build\MINIATTRACT.ALL>>build\log
+cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\MINIATTRACT.IDX" >>build\log
+cscript /nologo bin\buildpre.js "build\PRELAUNCH" "build\prelaunch.inc" "build\PRELAUNCH.IDX" >>build\log
+call bin\buildpreall.bat build\PRELAUNCH.ALL>>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
@@ -66,11 +73,8 @@ cscript /nologo bin\dumpcr.js "build\CREDITS"
 cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
 cscript /nologo bin\dumpcr.js "build\HELPTEXT"
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPER" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPFUL" >>build\log
-for %%q in (build\*.DATA) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FXFUL" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFXFUL" >>build\log
+for %%q in (build\*.IDX) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
+for %%q in (build\*.ALL) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -81,8 +85,6 @@ cscript /nologo bin\buildfileinfo.js res\ACTION.HGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ARTWORK.SHR "06" "1FF8" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ATTRACT "04" "8000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\SS "04" "4000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
@@ -90,8 +92,6 @@ cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "res\ACTION.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ATTRACT" "res\ATTRACT" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/SS" "res\SS" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
@@ -109,9 +109,14 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
-cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH" "build\PRELAUNCH" >>build\log
+%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH/" >>build\log
+for %%q in (build\PRELAUNCH\*.MB) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/PRELAUNCH" "%%q" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
+goto :EOF
+)
+
+if "%1" equ "demo" (
+for %%q in (src\demo\*) do %acme% %%q
 goto :EOF
 )
 
@@ -122,6 +127,8 @@ goto :EOF
 2>nul md build
 2>nul md build\X
 2>nul md build\FX
+2>nul md build\SS
+2>nul md build\ATTRACT
 2>nul md build\PRELAUNCH
 goto :EOF
 
@@ -148,8 +155,6 @@ for %%q in (src\prelaunch\*.a) do (
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
 )
-for %%q in (res\title.hgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
-for %%q in (res\title.dhgr\*) do if not exist build\PRELAUNCH\%%~nxq 1>nul copy build\PRELAUNCH\STANDARD build\PRELAUNCH\%%~nxq
 goto :EOF
 
 :asmproboot

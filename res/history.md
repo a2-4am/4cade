@@ -4,6 +4,7 @@
 
  - A City Dies Whenever Night Falls
  - Alien Lander
+ - Ape Escape
  - Apple Invader
  - Arena
  - Artesians
@@ -15,8 +16,10 @@
  - C'est La Vie
  - Captain Power
  - Chivalry
+ - Conquering Worlds
  - Cosmic Combat
  - Crickateer
+ - Deep Space
  - Defender (Joe Holt)
  - Demonic Decks
  - Depth Charge
@@ -28,6 +31,7 @@
  - Galactic Attack
  - Handy Dandy
  - Infiltrator
+ - Infiltrator 2
  - It's The Pits
  - Jellyfish
  - Jump Jet
@@ -46,6 +50,7 @@
  - Pegasus ][
  - Pengo
  - Pig Pen
+ - Planetoids
  - Rear Guard
  - Retro Fever
  - Retro-Ball
@@ -68,9 +73,11 @@
  - The Caverns of Freitag
  - The Movie Monster Game
  - The Snapper
+ - The Space Ark
  - Time Pilot
  - Titan Cronus
  - Track Attack
+ - Trompers
  - Video Vegas
  - Vortex
  - Whomper Stomper

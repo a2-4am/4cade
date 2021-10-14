@@ -31,7 +31,7 @@
 ParseKeyValueList
          +PARAMS_ON_STACK 5
 
-         +LDPARAM 1
+         +LDPARAM 1                  ; not LDPARAMPTR, SetKeyPtr requires A/Y!
          +ST16 @store2
          jsr   SetKeyPtr
          ldy   #5

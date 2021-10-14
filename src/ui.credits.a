@@ -21,10 +21,12 @@ Credits
          !word kRootDirectory
          !word kCreditsFile
          !word $8000
---       jsr   ForceHGRMode
+.clearAndDisplayHelp
+         jsr   ForceHGRMode
          jsr   ClearOffscreen
          ldx   #0
--        lda   OffscreenPage
+.displayHelp
+         lda   OffscreenPage
          ror                         ; draw on offscreen page
          +LDADDR $8000
          jsr   DrawPage              ; draw credits
@@ -52,62 +54,32 @@ Credits
 Help
          jsr   GetGameToLaunch
          bcs   @global
-         +ST16 SRC
+         +ST16 @game
+
          jsr   LoadFile
          !word kRootDirectory
+         !word kGameHelpIndexFile
+@okvsPtr !word $6000
+
+         jsr   okvs_find
+         !word @okvsPtr
+@game    !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile
          !word kGameHelpFile
-         !word $6000
-         jsr   $6000
+         !word $8000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+
          clc
-         bcc   --                    ; always branches
+         bcc   .clearAndDisplayHelp  ; always branches
+
 @global  jsr   LoadFile              ; load help text into $8000
          !word kRootDirectory
          !word kHelpTextFile
          !word $8000
+
          jsr   LoadHelpOffscreen     ; load fancy backdrop
          ldx   #7
-         bne   -                     ; always branches
-
-LoadFX
-         +ST16 @filename
-         inc   $BF0E                 ; disable ROM mapping on return
-         ldx   #2
-         ldy   #0                    ; SMC
-         lda   (zpword), y
-         tay
--        iny
-         lda   (zpword), y
-         sta   @offset, x
-         dex
-         bpl   -
-         jsr   $bf00                 ; yes, ProDOS abstraction
-         !byte $c8
-         !word @c8_parms
-         jsr   $bf00
-         !byte $ce
-         !word @ce_parms
-         jsr   $bf00
-         !byte $ca
-         !word @ca_parms
-         jsr   $bf00
-         !byte $cc
-         !word @cc_parms
-         dec   $BF0E                 ; re-enable ROM mapping on return
-         jmp   SwitchToBank1
-
-@c8_parms
-         !byte  3
-@filename
-        !word   $DFDF                ; SMC
-        !byte   0
-@ce_parms
-        !byte   $d0
-        !byte   1
-@offset !byte   0, 0, 0              ; SMC
-        !byte   $ff
-@ca_parms
-        !byte   $ff
-@cc_parms
-        !byte   1
-        !word   $6000
-        !word   $600
+         bne   .displayHelp          ; always branches
