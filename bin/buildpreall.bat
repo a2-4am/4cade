@@ -1,4 +1,4 @@
 @echo off
-1>nul copy /y %1\STANDARD %2
-rem requires sorted file-system
-for %%a in (%1\*) do if %%a neq STANDARD 1>nul copy /b /y %2+%%a %2
+setlocal enabledelayedexpansion
+1>nul copy /y build\PRELAUNCH\STANDARD %1
+for /f "tokens=*" %%a in (build\games.lst) do 1>nul copy /b /y %1+build\PRELAUNCH\%%a %1

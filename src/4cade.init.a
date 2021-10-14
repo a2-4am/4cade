@@ -370,7 +370,8 @@ CopyDevs
          lda   hddopendir+1          ; save current directory as 'root'
          ldy   hddopendir+3
          jsr   SwitchToBank1
-         +ST16 gRootDirectory
+         sta   gRootDirectory+1
+         sty   gRootDirectory+3
 
          jsr   LoadFile              ; load preferences file into $8000
          !word kRootDirectory

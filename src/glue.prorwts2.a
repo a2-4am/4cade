@@ -211,6 +211,3 @@ LoadIndexedFile
 @address !word $DFDF                 ; SMC
 @size    !word $DFDF                 ; SMC
          !word $ffff
-
-gRootDirectory
-         !word $FDFD

@@ -100,7 +100,7 @@ MiniAttractMode
          beq   ATTRTS                ; we've run through all modules, so exit to caller
 +
 @MiniAttractIndex
-         +LDI16 0                    ; SMC
+         +LDADDR 0                   ; SMC
          +ST16 WINDEX
          +LDADDR -
          jsr   okvs_nth              ; get the next module on the list

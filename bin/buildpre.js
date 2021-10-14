@@ -34,6 +34,7 @@ while (!b.atendofstream)
 }
 
 entries.sort()
+a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
 y = "build\\PRELAUNCH\\"
 pre_off = a.getfile(y + "STANDARD").size
 osize = pre_off

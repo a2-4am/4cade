@@ -217,7 +217,7 @@ pref_set
 
          +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
          jsr   SetPath
-         +LD16 kGlobalPrefsBuffer
+;;         +LDADDR kGlobalPrefsBuffer
          ; /!\ execution falls through here to glue.prorwts/SaveSmallFile
 ;------------------------------------------------------------------------------
 ; SaveSmallFile
@@ -233,7 +233,7 @@ pref_set
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 SaveSmallFile
-         +ST16 ldrlo                 ; set data buffer address for ProRWTS2
+;;         +ST16 ldrlo                 ; set data buffer address for ProRWTS2
          jsr   SwitchToBank2
          jsr   SaveSmallFileInternal
          jmp   SwitchToBank1
