@@ -34,7 +34,8 @@ dsk: asm
 	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.IDX" >>build/log
 	bin/buildfx.sh "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX" >>build/log
 	bin/buildfx.sh "res/DFX.CONF" "build/DFX.IDX" "build/DFX.ALL" "build/FX" >>build/log
-	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "res/GAMEHELP" >>build/log
+	for f in res/GAMEHELP/*; do tr "\*\~\<\>\$$\%\[" "\020\021\010\025\016\017\000" < "$$f" > build/GAMEHELP/"$$(basename $$f)"; done >>build/log
+	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
 	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF >>build/log
 	for f in res/SS/*; do bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)" && echo "$$(basename $$f)" >> build/SSDIR.CONF; done >>build/log
 	bin/buildfx.sh "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
@@ -89,7 +90,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX build/PRELAUNCH build/ATTRACT build/SS
+	mkdir -p build/X build/FX build/PRELAUNCH build/ATTRACT build/SS build/GAMEHELP
 	touch build/log
 
 clean:

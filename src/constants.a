@@ -17,7 +17,7 @@
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
 ; D670..DB91 - HGR font code & ProRWTS glue code
-; DB92..DBA1 - backup of stack (during gameplay and self-running demos)
+; DB72..DB81 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -148,7 +148,7 @@ CHEATS_ENABLED = %00001000
 iCurBlockLo    = $D401
 iCurBlockHi    = $D403
 iProDOS_enter  = $D670
-LoadFileDirect = $DAF4
+LoadFileDirect = $DAD4
 launchpatch    = $D60E
 iAddToPath     = $FE67
 itraverse      = $D8D8
