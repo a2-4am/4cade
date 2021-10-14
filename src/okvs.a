@@ -95,11 +95,13 @@ okvs_init
 
 ;------------------------------------------------------------------------------
 ; okvs_len
+; okvs_len_imm
 ;
 ; in:    A/Y = handle to storage space
 ; out:   $WCOUNT contains number of keys in this store
 ;        X preserved
 ;        A, Y clobbered
+;        Z set if no keys
 ;        $00/$01 clobbered
 ;        $02/$03 clobbered
 ;------------------------------------------------------------------------------
@@ -107,11 +109,13 @@ okvs_len
          jsr   GetStoreAddressFromAY
                                      ; PTR -> store
                                      ; Y = 0
+okvs_len_imm
          lda   (PTR), y              ; get number of keys in store (word)
          sta   WCOUNT
          iny
          lda   (PTR), y
          sta   WCOUNT+1
+         ora   WCOUNT
          rts
 
 ;------------------------------------------------------------------------------
@@ -242,16 +246,8 @@ okvs_get
          jsr   GetStoreAddress
                                      ; PTR -> store
                                      ; Y = 0
-         lda   (PTR),y               ; A = number of keys in store
-         sta   WCOUNT
-         iny
-         lda   (PTR),y
-         sta   WCOUNT+1
-         bne   +
-         dey
-         lda   (PTR),y
+         jsr   okvs_len_imm
          beq   @fail                 ; no keys, fail immediately
-+
          jsr   incptr4
                                      ; PTR -> first record
          +LDPARAMPTR 3, SRC          ; SRC -> key we want to find
@@ -433,16 +429,8 @@ okvs_iter_values
          jsr   GetStoreAddress
                                      ; PTR -> store
                                      ; Y = 0
-         lda   (PTR),y               ; get number of keys in store (word)
-         sta   WCOUNT
-         iny
-         lda   (PTR),y
-         sta   WCOUNT+1
-         bne   +
-         dey
-         lda   (PTR),y
+         jsr   okvs_len_imm
          beq   @exit                 ; no keys, exit immediately
-+
          +LDPARAMPTR 3, @callback
          jsr   incptr4
                                      ; PTR -> first record
