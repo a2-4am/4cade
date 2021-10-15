@@ -35,8 +35,7 @@ while (!b.atendofstream)
 
 entries.sort()
 a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
-y = "build\\PRELAUNCH\\"
-pre_off = a.getfile(y + "STANDARD").size
+pre_off = a.getfile(WScript.Arguments(0) + "\\STANDARD").size
 osize = pre_off
 
 groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
@@ -46,10 +45,10 @@ for (i = 0; i < entries.length; i++)
   c = 0
   size = osize
 
-  if (a.fileexists(y + entries[i]))
+  if (a.fileexists(WScript.Arguments(0) + "\\" + entries[i]))
   {
     c = pre_off
-    size = a.getfile(y + entries[i]).size
+    size = a.getfile(WScript.Arguments(0) + "\\" + entries[i]).size
     pre_off += size
   }
 
