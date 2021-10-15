@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020-2021 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BEJEWELED",plain
@@ -28,7 +28,7 @@ helper
          dec   $8DB5      ; write address (low)
 
 nohelp
-         jmp   iProDOS_enter
+         jmp   $FDFD      ; SMC
 
 nocall
          plp
@@ -39,6 +39,10 @@ nocall
 
 callback
          jsr   $BE00
+         lda   $BF0B
+         sta   nohelp + 1
+         lda   $BF0C
+         sta   nohelp + 2
          lda   #<helper
          sta   $BF0B
          lda   #>helper

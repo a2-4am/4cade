@@ -115,6 +115,7 @@ gValLen      = $1F80
 gVal         = $1F81
 
 ; LC RAM 1
+iLoadFileDirect    = $FFEF
 WaitForVBL         = $FFF2
 UnwaitForVBL       = $FFF5
 
@@ -145,16 +146,14 @@ SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
-iCurBlockLo    = $D401
-iCurBlockHi    = $D403
-iProDOS_enter  = $D670
-LoadFileDirect = $DAD4
-launchpatch    = $D60E
-iAddToPath     = $FE67
-itraverse      = $D8D8
-ldrhi          = $56
-namlo          = $57
-namhi          = $58
+iCurBlockLo    = $D401               ; constant
+iCurBlockHi    = $D403               ; constant
+launchpatch    = $D60E               ; glue.launch.a
+iAddToPath     = $FE64               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $D8D8               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+ldrhi          = $56                 ; constant
+namlo          = $57                 ; constant
+namhi          = $58                 ; constant
 
 _CONSTANTS_=*
 }

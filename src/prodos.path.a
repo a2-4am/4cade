@@ -28,7 +28,7 @@ kRootDirectory=*+1
   !ifdef PASS2 {
   } else { ;PASS2
     !if * != iAddToPath {
-      !error "iAddToPath=",*, ", fix constants.a"
+      !error "iAddToPath=",*, ", fix constants.a, rebuild prelaunch"
     }
   }
 }

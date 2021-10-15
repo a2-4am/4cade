@@ -137,6 +137,9 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
+; iLoadFileDirect (label is in constants.a)
+         jmp   LoadFileDirect        ; no direct calling - target can move
+
 ; WaitForVBL (label is in constants.a)
          jmp   WaitForVBL_iie        ; SMC to RTS on a II+
 
