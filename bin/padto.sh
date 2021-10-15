@@ -8,4 +8,4 @@ outfile=$2
     || filesize=$(stat -f "%z" "$outfile")
 
 padsize=$((512-$filesize))
-dd if=/dev/zero bs=1 count=$padsize >> "$outfile"
+dd if=/dev/zero bs=1 count=$padsize 2>/dev/null >> "$outfile"
