@@ -8,6 +8,7 @@ for (b = new Enumerator(a.GetFolder(WScript.Arguments(0)).files); !b.atEnd(); b.
 }
 
 entries.sort()
+a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
 ss_off = 0
 groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 

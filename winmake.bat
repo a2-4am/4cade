@@ -55,15 +55,15 @@ cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.IDX" >>bui
 cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.IDX" >>build\log
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\subst.js %%q "build\GAMEHELP\%%~nxq" >>build\log
 cscript /nologo bin\buildpre.js "build\GAMEHELP" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
-call bin\buildpreall.bat build\GAMEHELP build\GAMEHELP.ALL >>build\log
+call bin\buildpreall.bat build\GAMEHELP build\GAMEHELP.ALL build\GAMEHELP\STANDARD >>build\log
 for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
-call bin\buildssall.bat build\SS build\SLIDESHOW.ALL >>build\log
 cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SLIDESHOW.IDX" >>build\log
+call bin\buildpreall.bat build\SS build\SLIDESHOW.ALL nul >>build\log
 for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
-call bin\buildssall.bat build\ATTRACT build\MINIATTRACT.ALL>>build\log
 cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\MINIATTRACT.IDX" >>build\log
+call bin\buildpreall.bat build\ATTRACT build\MINIATTRACT.ALL nul >>build\log
 cscript /nologo bin\buildpre.js "build\PRELAUNCH" "build\prelaunch.inc" "build\PRELAUNCH.IDX" >>build\log
-call bin\buildpreall.bat build\PRELAUNCH build\PRELAUNCH.ALL >>build\log
+call bin\buildpreall.bat build\PRELAUNCH build\PRELAUNCH.ALL build\PRELAUNCH\STANDARD >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
