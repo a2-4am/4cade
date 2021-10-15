@@ -16,13 +16,15 @@ VOLUME=TOTAL.REPLAY
 # third-party tools required to build
 
 # https://sourceforge.net/projects/acme-crossass/
+# version 0.96.3 or later
 ACME=acme
 
-# https://github.com/sicklittlemonkey/cadius
+# https://github.com/mach-kernel/cadius
 # version 1.4.0 or later
 CADIUS=cadius
 
 # https://bitbucket.org/magli143/exomizer/wiki/Home
+# version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
 dsk: asm
@@ -34,7 +36,10 @@ dsk: asm
 	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.IDX" >>build/log
 	bin/buildfx.sh "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX" >>build/log
 	bin/buildfx.sh "res/DFX.CONF" "build/DFX.IDX" "build/DFX.ALL" "build/FX" >>build/log
-	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "res/GAMEHELP" >>build/log
+	bin/converthelp.sh res/HELPTEXT build/HELPTEXT >>build/log
+	bin/converthelp.sh res/CREDITS build/CREDITS >>build/log
+	for f in res/GAMEHELP/*; do bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"; done >>build/log
+	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
 	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF >>build/log
 	for f in res/SS/*; do bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)" && echo "$$(basename $$f)" >> build/SSDIR.CONF; done >>build/log
 	bin/buildfx.sh "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
@@ -42,7 +47,7 @@ dsk: asm
 	for f in res/ATTRACT/*; do bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)" && echo "$$(basename $$f)" >> build/ATTRACTDIR.CONF; done >>build/log
 	bin/buildfx.sh "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
 	bin/buildhelp.sh "res/GAMES.CONF" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH" >>build/log
-	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/PREFS.CONF res/CREDITS res/HELPTEXT build/ATTRACT.IDX build/FX.IDX build/FX.ALL build/DFX.IDX build/DFX.ALL build/GAMEHELP.IDX build/GAMEHELP.ALL build/SLIDESHOW.IDX build/SLIDESHOW.ALL build/MINIATTRACT.IDX build/MINIATTRACT.ALL build/PRELAUNCH.IDX build/PRELAUNCH.ALL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
+	for f in res/TITLE res/COVER res/HELP res/GAMES.CONF build/PREFS.CONF build/CREDITS build/HELPTEXT build/ATTRACT.IDX build/FX.IDX build/FX.ALL build/DFX.IDX build/DFX.ALL build/GAMEHELP.IDX build/GAMEHELP.ALL build/SLIDESHOW.IDX build/SLIDESHOW.ALL build/MINIATTRACT.IDX build/MINIATTRACT.ALL build/PRELAUNCH.IDX build/PRELAUNCH.ALL res/DECRUNCH res/JOYSTICK res/Finder.Data res/Finder.Root; do $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; done
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
@@ -89,7 +94,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX build/PRELAUNCH build/ATTRACT build/SS
+	mkdir -p build/X build/FX build/PRELAUNCH build/ATTRACT build/SS build/GAMEHELP
 	touch build/log
 
 clean:

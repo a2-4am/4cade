@@ -10,7 +10,8 @@
 ; for functions that take parameters on the stack
 ; set (PARAM) to point to the parameters and
 ; move the stack pointer to the first byte after the parameters
-; clobbers A,X,Y
+; clobbers A,Y
+; preserves X
 !macro   PARAMS_ON_STACK .bytes {
          pla
          sta   PARAM

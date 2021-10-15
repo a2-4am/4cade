@@ -53,7 +53,9 @@ call bin\buildfxful.bat res\FX.CONF build\FX.ALL >>build\log
 call bin\buildfxful.bat res\DFX.CONF build\DFX.ALL >>build\log
 cscript /nologo bin\buildfx.js "res\FX.CONF" "build\fx.inc" "build\FX.IDX" >>build\log
 cscript /nologo bin\buildfx.js "res\DFX.CONF" "build\dfx.inc" "build\DFX.IDX" >>build\log
-cscript /nologo bin\buildhelp.js "build\GAMEHELP.ALL" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
+for %%q in (res\GAMEHELP\*) do cscript /nologo bin\subst.js %%q "build\GAMEHELP\%%~nxq" >>build\log
+cscript /nologo bin\buildpre.js "build\GAMEHELP" "build\help.inc" "build\GAMEHELP.IDX" >>build\log
+call bin\buildpreall.bat build\GAMEHELP build\GAMEHELP.ALL >>build\log
 for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
 call bin\buildssall.bat build\SS build\SLIDESHOW.ALL >>build\log
 cscript /nologo bin\buildss.js "build\SS" "build\ss.inc" "build\SLIDESHOW.IDX" >>build\log
@@ -61,17 +63,15 @@ for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTR
 call bin\buildssall.bat build\ATTRACT build\MINIATTRACT.ALL>>build\log
 cscript /nologo bin\buildss.js "build\ATTRACT" "build\attract.inc" "build\MINIATTRACT.IDX" >>build\log
 cscript /nologo bin\buildpre.js "build\PRELAUNCH" "build\prelaunch.inc" "build\PRELAUNCH.IDX" >>build\log
-call bin\buildpreall.bat build\PRELAUNCH.ALL>>build\log
+call bin\buildpreall.bat build\PRELAUNCH build\PRELAUNCH.ALL >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-cscript /nologo bin\rsync.js "res\CREDITS" "build\" >>build\log
-cscript /nologo bin\dumpcr.js "build\CREDITS"
+cscript /nologo bin\subst.js "res\CREDITS" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
-cscript /nologo bin\rsync.js "res\HELPTEXT" "build\" >>build\log
-cscript /nologo bin\dumpcr.js "build\HELPTEXT"
+cscript /nologo bin\subst.js "res\HELPTEXT" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 for %%q in (build\*.IDX) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
 for %%q in (build\*.ALL) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" >>build\log
@@ -128,6 +128,7 @@ goto :EOF
 2>nul md build\X
 2>nul md build\FX
 2>nul md build\SS
+2>nul md build\GAMEHELP
 2>nul md build\ATTRACT
 2>nul md build\PRELAUNCH
 goto :EOF

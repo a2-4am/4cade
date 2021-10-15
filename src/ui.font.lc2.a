@@ -29,21 +29,10 @@ DrawPageInternal
          sta   HTAB
          ldy   #0
 @parseLine
-         lda   (PTR),y
-         cmp   #$5B                  ; '[' at beginning on line
-         bne   +                     ; ends the parsing
-         tya
+         lda   (PTR), y
          beq   @donePage
-+        cmp   #$0A
+         cmp   #$0A
          beq   @doneParsingLine
-         ldx   #5
--        cmp   @subs_a,x
-         bne   @nosub
-         lda   @subs_b,x
-         sta   (PTR),y
-@nosub
-         dex
-         bpl   -
          iny
          bne   @parseLine
 @doneParsingLine
@@ -67,10 +56,6 @@ DrawPageInternal
 @donePage
          plp
          rts
-@subs_a
-         !byte $2A,$7E,$3C,$3E,$24,$25
-@subs_b
-         !byte $10,$11,$08,$15,$0E,$0F
 
 Draw40CharsInternal
 ; A/Y contains address of character buffer
