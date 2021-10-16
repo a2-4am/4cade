@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/SNAKE.BYTE",plain
+!to "build/PRELAUNCH.INDEXED/SNAKE.BYTE",plain
 *=$106
 
     !source "src/prelaunch/common.a"

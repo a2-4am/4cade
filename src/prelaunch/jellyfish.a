@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/JELLYFISH",plain
+!to "build/PRELAUNCH.INDEXED/JELLYFISH",plain
 *=$106
 
     !source "src/prelaunch/common.a"

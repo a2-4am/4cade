@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/CANYON.CLIMBER",plain
+!to "build/PRELAUNCH.INDEXED/CANYON.CLIMBER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

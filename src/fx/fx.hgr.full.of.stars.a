@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/FULL.OF.STARS",plain
+!to "build/FX.INDEXED/FULL.OF.STARS",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"

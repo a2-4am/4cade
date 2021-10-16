@@ -2,7 +2,7 @@
 ;(c) 2020 by 4am
 
 !cpu 6502
-!to "build/FX/CHECKERB.FIZZLE",plain
+!to "build/FX.INDEXED/CHECKERB.FIZZLE",plain
 *=$6000
 
 addrs     = $6100                    ; [256 bytes, page-aligned]

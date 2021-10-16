@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/PHANTOMS.FIVE",plain
+!to "build/PRELAUNCH.INDEXED/PHANTOMS.FIVE",plain
 *=$106
 
     !source "src/prelaunch/common.a"

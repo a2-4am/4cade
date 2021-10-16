@@ -2,7 +2,7 @@
 ;(c) 2017-2020 by qkumba/4am/John Brooks
 
 !cpu 6502
-!to "build/FX/DHGR.FIZZLE2BIT",plain
+!to "build/FX.INDEXED/DHGR.FIZZLE2BIT",plain
 *=$6000
 
 addrs     = $6100                    ; [256 bytes, page-aligned, duplicated in auxmem]

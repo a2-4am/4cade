@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/MICROWAVE",plain
+!to "build/PRELAUNCH.INDEXED/MICROWAVE",plain
 *=$106
 
          jmp   ++

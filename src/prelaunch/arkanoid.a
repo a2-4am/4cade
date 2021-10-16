@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/ARKANOID",plain
+!to "build/PRELAUNCH.INDEXED/ARKANOID",plain
 *=$106
 
     !source "src/prelaunch/common.a"

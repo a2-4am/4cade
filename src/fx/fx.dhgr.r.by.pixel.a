@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/DHGR.R.BY.PIXEL",plain
+!to "build/FX.INDEXED/DHGR.R.BY.PIXEL",plain
 *=$6000
 
 hgrlo    =     $0201                 ; [$C0 bytes, main memory only, offset by 1 because lookups will be based on $0200,x]

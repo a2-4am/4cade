@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FX/STAGGER.UD",plain
+!to "build/FX.INDEXED/STAGGER.UD",plain
 *=$6000
 
 row1 = $fe

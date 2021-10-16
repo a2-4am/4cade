@@ -2,7 +2,7 @@
 ;(c) 2020-2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/MANIC.MINER",plain
+!to "build/PRELAUNCH.INDEXED/MANIC.MINER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

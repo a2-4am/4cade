@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/GOLD.RUSH",plain
+!to "build/PRELAUNCH.INDEXED/GOLD.RUSH",plain
 *=$106
 
          !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/BLOCK.MOSAIC",plain
+!to "build/FX.INDEXED/BLOCK.MOSAIC",plain
 *=$6000
 
          !source "src/fx/fx.hgr.block.fizzle.common.a"

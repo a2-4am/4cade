@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/SERPENTINE",plain
+!to "build/PRELAUNCH.INDEXED/SERPENTINE",plain
 *=$106
 
          !source "src/prelaunch/common.a"

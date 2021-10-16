@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/FROGGER",plain
+!to "build/PRELAUNCH.INDEXED/FROGGER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

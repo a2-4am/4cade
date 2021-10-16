@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/W.RIPPLE.BLOOM",plain
+!to "build/FX.INDEXED/W.RIPPLE.BLOOM",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"

@@ -2,7 +2,7 @@
 ;(c) 2017-2018 by qkumba
 
 !cpu 6502
-!to "build/FX/FIZZLE",plain
+!to "build/FX.INDEXED/FIZZLE",plain
 *=$6000
 
          ;init RNG

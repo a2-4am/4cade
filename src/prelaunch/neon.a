@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/NEON",plain
+!to "build/PRELAUNCH.INDEXED/NEON",plain
 *=$106
 
     !source "src/prelaunch/common.a"

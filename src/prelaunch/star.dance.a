@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/STAR.DANCE",plain
+!to "build/PRELAUNCH.INDEXED/STAR.DANCE",plain
 *=$106
 
     !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/DIAMOND",plain
+!to "build/FX.INDEXED/DIAMOND",plain
 *=$6000
 
 y = $fc

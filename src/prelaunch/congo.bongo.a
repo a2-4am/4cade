@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/CONGO.BONGO",plain
+!to "build/PRELAUNCH.INDEXED/CONGO.BONGO",plain
 *=$106
 
     !source "src/prelaunch/common.a"

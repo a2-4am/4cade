@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/STAGGERWHITE.UD",plain
+!to "build/FX.INDEXED/STAGGERWHITE.UD",plain
 *=$6000
 
 row1 = $fe

@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/LEMMINGS",plain
+!to "build/PRELAUNCH.INDEXED/LEMMINGS",plain
 *=$106
 
     !source "src/prelaunch/common.a"

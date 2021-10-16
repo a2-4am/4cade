@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/FX/CASCADE",plain
+!to "build/FX.INDEXED/CASCADE",plain
 *=$6000
 
          !source "src/constants.a"

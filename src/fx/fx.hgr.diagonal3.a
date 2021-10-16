@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/DIAGONAL3",plain
+!to "build/FX.INDEXED/DIAGONAL3",plain
 *=$6000
 
 row = $fd

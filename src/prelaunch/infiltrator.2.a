@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/INFILTRATOR.2",plain
+!to "build/PRELAUNCH.INDEXED/INFILTRATOR.2",plain
 *=$106
 
     !source "src/prelaunch/common.a"

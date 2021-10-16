@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/LR.BY.PIXEL",plain
+!to "build/FX.INDEXED/LR.BY.PIXEL",plain
 *=$6000
 
 maskindex = $fd

@@ -5,7 +5,7 @@
 ; Lightning Bolt by Arthur Shlain from the Noun Project
 ; CC-BY
 !cpu 6502
-!to "build/FX/BOLT.RIPPLE",plain
+!to "build/FX.INDEXED/BOLT.RIPPLE",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.3bit.a"

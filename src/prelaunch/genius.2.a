@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/GENIUS.2",plain
+!to "build/PRELAUNCH.INDEXED/GENIUS.2",plain
 *=$106
 
     !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/ONESQUARE",plain
+!to "build/FX.INDEXED/ONESQUARE",plain
 *=$6000
 
          ldy   #0

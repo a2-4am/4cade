@@ -2,7 +2,7 @@
 ;(c) 2020-2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/BEJEWELED",plain
+!to "build/PRELAUNCH.INDEXED/BEJEWELED",plain
 *=$106
 
     !source "src/prelaunch/common.a"

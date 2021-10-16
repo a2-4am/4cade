@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/A.CITY.DIES",plain
+!to "build/PRELAUNCH.INDEXED/A.CITY.DIES",plain
 *=$106
 
     !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2020 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/RAMPAGE",plain
+!to "build/PRELAUNCH.INDEXED/RAMPAGE",plain
 *=$106
 
     !source "src/prelaunch/common.a"

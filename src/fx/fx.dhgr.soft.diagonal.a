@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am
 ;
 !cpu 6502
-!to "build/FX/DHGR.SOFT.DIAG",plain
+!to "build/FX.INDEXED/DHGR.SOFT.DIAG",plain
 *=$6000
 
 src = $F0

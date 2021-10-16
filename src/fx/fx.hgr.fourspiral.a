@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/FOURSPIRAL",plain
+!to "build/FX.INDEXED/FOURSPIRAL",plain
 *=$6000
 
          lda   #$13
