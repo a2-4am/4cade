@@ -55,7 +55,9 @@ for (i = 0; i < entries.length; i++)
   groups += "!byte " + (1 + 1 + entries[i].length + 5).toString() + "\n" + "!byte " + entries[i].length.toString() + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size + "\n"
 }
 
-f = a.createtextfile(WScript.Arguments(1))
+f = a.createtextfile("build\\pre.tmp")
 f.write(groups)
 f.close()
-new ActiveXObject("wscript.shell").run('cmd /c %acme% -o ' + WScript.Arguments(2) + " " + WScript.Arguments(1), 0, 1)
+x = new ActiveXObject("wscript.shell")
+x.run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\pre.tmp', 0, 1)
+x.run('cmd /c bin\\buildpreall.bat ' + WScript.Arguments(0) + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(3), 0, 1)
