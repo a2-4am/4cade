@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/CUBIT",plain
+!to "build/PRELAUNCH.INDEXED/CUBIT",plain
 *=$106
 
          !source "src/prelaunch/common.a"

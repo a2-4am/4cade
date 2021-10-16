@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/HARD.HAT.MACK",plain
+!to "build/PRELAUNCH.INDEXED/HARD.HAT.MACK",plain
 *=$106
 
          !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/KUNG.FU.MASTER",plain
+!to "build/PRELAUNCH.INDEXED/KUNG.FU.MASTER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

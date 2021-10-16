@@ -2,7 +2,7 @@
 ;(c) 2020 by 4am
 ;
 !cpu 6502
-!to "build/FX/DHGR.FLICK",plain
+!to "build/FX.INDEXED/DHGR.FLICK",plain
 *=$6000
 
 hgrlo = $200                         ; [$C0 bytes, main memory only]

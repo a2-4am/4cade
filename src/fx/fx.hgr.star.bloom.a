@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/STAR.BLOOM",plain
+!to "build/FX.INDEXED/STAR.BLOOM",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"

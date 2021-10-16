@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/PIPE.DREAM",plain
+!to "build/PRELAUNCH.INDEXED/PIPE.DREAM",plain
 *=$106
 
 my_vbl   

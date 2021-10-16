@@ -2,7 +2,7 @@
 ;(c) 2020 by 4am & qkumba
 ;
 !cpu 6502
-!to "build/FX/DHGR.48.DOWN",plain
+!to "build/FX.INDEXED/DHGR.48.DOWN",plain
 *=$6000
 
 USES_CLEAR = 0

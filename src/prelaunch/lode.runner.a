@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/LODE.RUNNER",plain
+!to "build/PRELAUNCH.INDEXED/LODE.RUNNER",plain
 *=$106
 
          !source "src/prelaunch/common.a"

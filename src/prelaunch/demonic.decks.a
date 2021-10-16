@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/DEMONIC.DECKS",plain
+!to "build/PRELAUNCH.INDEXED/DEMONIC.DECKS",plain
 *=$106
 
          !source "src/prelaunch/common.a"

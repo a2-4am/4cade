@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/EI",plain
+!to "build/PRELAUNCH.INDEXED/EI",plain
 *=$106
 
          !source "src/prelaunch/common.a"

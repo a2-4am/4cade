@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/TROMPERS",plain
+!to "build/PRELAUNCH.INDEXED/TROMPERS",plain
 *=$106
 
     !source "src/prelaunch/common.a"

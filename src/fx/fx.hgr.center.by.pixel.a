@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/CENTER.BY.PIXEL",plain
+!to "build/FX.INDEXED/CENTER.BY.PIXEL",plain
 *=$6000
 
 copymask1 = $f2

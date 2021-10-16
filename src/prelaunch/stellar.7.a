@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/STELLAR.7",plain
+!to "build/PRELAUNCH.INDEXED/STELLAR.7",plain
 *=$106
 
     !source "src/prelaunch/common.a"

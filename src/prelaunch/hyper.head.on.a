@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/HYPER.HEAD.ON",plain
+!to "build/PRELAUNCH.INDEXED/HYPER.HEAD.ON",plain
 *=$106
 
     !source "src/prelaunch/common.a"

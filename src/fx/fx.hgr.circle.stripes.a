@@ -2,7 +2,7 @@
 ;(c) 2021 by 4am
 ;
 !cpu 6502
-!to "build/FX/CIRCLE.STRIPES",plain
+!to "build/FX.INDEXED/CIRCLE.STRIPES",plain
 *=$6000
 
 hgrhi    = $BE01                     ; [$C0 bytes] HGR base addresses

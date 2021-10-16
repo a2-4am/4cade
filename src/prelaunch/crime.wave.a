@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am/Frank M./qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/CRIME.WAVE",plain
+!to "build/PRELAUNCH.INDEXED/CRIME.WAVE",plain
 *=$106
 
          !source "src/prelaunch/common.a"

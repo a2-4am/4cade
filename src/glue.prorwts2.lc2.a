@@ -11,14 +11,7 @@ LoadFileInternal
          ldx   #0                    ; 0 = read into main memory
 LoadFileAuxInternal
          +LDADDR gPathname
-!if RELBASE != $2000 {
-  !ifdef PASS2 {
-  } else { ;PASS2
-    !if * != LoadFileDirect {
-      !error "LoadFileDirect=",*, ", fix constants.a, rebuild all src/demo and src/prelaunch"
-    }
-  }
-}
+LoadFileDirect
          +ST16 namlo                 ; set filename
          txa
          pha

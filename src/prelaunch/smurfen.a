@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba/Frank M./Tom Greene
 
 !cpu 6502
-!to "build/PRELAUNCH/CS",plain
+!to "build/PRELAUNCH.INDEXED/CS",plain
 *=$106
 
     !source "src/prelaunch/common.a"

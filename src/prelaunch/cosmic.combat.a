@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/COSMIC.COMBAT",plain
+!to "build/PRELAUNCH.INDEXED/COSMIC.COMBAT",plain
 *=$106
 
     !source "src/prelaunch/common.a"

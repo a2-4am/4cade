@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Tom Greene/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/BLACK.MAGIC",plain
+!to "build/PRELAUNCH.INDEXED/BLACK.MAGIC",plain
 *=$106
 
     !source "src/prelaunch/common.a"

@@ -41,6 +41,5 @@ if (!a.fileexists(WScript.Arguments(1)) || a.getfile(WScript.Arguments(1)).datel
     source.writeline("!text \"" + ((val >= 0) ? (entries[i].substr(val + 1)) : "") + "\"")
   }
 
-  x = new ActiveXObject("wscript.shell")
-  x.run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\okvs.tmp')
+  new ActiveXObject("wscript.shell").run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\okvs.tmp', 0, 1)
 }

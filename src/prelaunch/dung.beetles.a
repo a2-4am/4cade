@@ -2,7 +2,7 @@
 ;(c) 2019 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/DUNG.BEETLES",plain
+!to "build/PRELAUNCH.INDEXED/DUNG.BEETLES",plain
 *=$106
 
     !source "src/prelaunch/common.a"

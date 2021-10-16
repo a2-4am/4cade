@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/SS3",plain
+!to "build/PRELAUNCH.INDEXED/SS3",plain
 *=$106
 
     !source "src/prelaunch/common.a"

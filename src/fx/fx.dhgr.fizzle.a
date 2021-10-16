@@ -2,7 +2,7 @@
 ;(c) 2017-2020 by qkumba/4am/John Brooks
 ;
 !cpu 6502
-!to "build/FX/DHGR.FIZZLE",plain
+!to "build/FX.INDEXED/DHGR.FIZZLE",plain
 *=$6000
 
 addrs=$C0                            ; [$40 bytes]

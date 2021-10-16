@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/SPLIT.UD.INTRO",plain
+!to "build/FX.INDEXED/SPLIT.UD.INTRO",plain
 *=$6000
 
          !source "src/fx/macros.a"

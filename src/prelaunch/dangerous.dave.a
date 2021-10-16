@@ -2,7 +2,7 @@
 ;(c) 2020 by Tom Greene
 
 !cpu 6502
-!to "build/PRELAUNCH/DANGEROUS.DAVE",plain
+!to "build/PRELAUNCH.INDEXED/DANGEROUS.DAVE",plain
 *=$106
 
     !source "src/prelaunch/common.a"

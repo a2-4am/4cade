@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/DHGR.SLOW.STARI",plain
+!to "build/FX.INDEXED/DHGR.SLOW.STARI",plain
 *=$6000
 
          !source "src/fx/fx.dhgr.precomputed.1bit.a"

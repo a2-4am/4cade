@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/WAVY.NAVY",plain
+!to "build/PRELAUNCH.INDEXED/WAVY.NAVY",plain
 *=$106
 
     !source "src/prelaunch/common.a"

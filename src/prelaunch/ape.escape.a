@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/APE.ESCAPE",plain
+!to "build/PRELAUNCH.INDEXED/APE.ESCAPE",plain
 *=$106
 
          !source "src/prelaunch/common.a"

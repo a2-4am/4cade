@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/DRELBS",plain
+!to "build/PRELAUNCH.INDEXED/DRELBS",plain
 *=$106
 
     !source "src/prelaunch/common.a"

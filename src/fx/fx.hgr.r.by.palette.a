@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/R.BY.PALETTE",plain
+!to "build/FX.INDEXED/R.BY.PALETTE",plain
 *=$6000
 
 maskindex = $fd

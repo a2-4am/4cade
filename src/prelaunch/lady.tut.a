@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am and qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/LADY.TUT",plain
+!to "build/PRELAUNCH.INDEXED/LADY.TUT",plain
 *=$106
 
          !source "src/prelaunch/common.a"

@@ -2,7 +2,7 @@
 ;(c) 2020 by 4am & qkumba
 ;
 !cpu 6502
-!to "build/FX/BOXES48.SPIRALC",plain
+!to "build/FX.INDEXED/BOXES48.SPIRALC",plain
 *=$6000
 
          !source "src/fx/fx.hgr.48boxes.common.a"

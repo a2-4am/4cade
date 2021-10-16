@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/INTERLOCK.LR",plain
+!to "build/FX.INDEXED/INTERLOCK.LR",plain
 *=$6000
 
 row = $FF

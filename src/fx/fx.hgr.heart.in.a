@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/HEART.IN",plain
+!to "build/FX.INDEXED/HEART.IN",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"

@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 
 !cpu 6502
-!to "build/PRELAUNCH/GENETIC.DRIFT",plain
+!to "build/PRELAUNCH.INDEXED/GENETIC.DRIFT",plain
 *=$106
 
          !source "src/prelaunch/common.a"

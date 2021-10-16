@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by Frank M./qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/VINDICATOR",plain
+!to "build/PRELAUNCH.INDEXED/VINDICATOR",plain
 *=$106
 
     !source "src/prelaunch/common.a"

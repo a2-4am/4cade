@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/MONSTER.MASH",plain
+!to "build/PRELAUNCH.INDEXED/MONSTER.MASH",plain
 *=$106
 
     !source "src/prelaunch/common.a"

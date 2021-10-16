@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/BAD.DUDES",plain
+!to "build/PRELAUNCH.INDEXED/BAD.DUDES",plain
 *=$106
 
          jmp   ++

@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/CAPTAIN.POWER",plain
+!to "build/PRELAUNCH.INDEXED/CAPTAIN.POWER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

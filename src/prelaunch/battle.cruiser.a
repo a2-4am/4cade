@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/BATTLE.CRUISER",plain
+!to "build/PRELAUNCH.INDEXED/BATTLE.CRUISER",plain
 *=$106
 
     !source "src/prelaunch/common.a"

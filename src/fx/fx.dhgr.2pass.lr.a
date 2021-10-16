@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/DHGR.TWOPASS.LR",plain
+!to "build/FX.INDEXED/DHGR.TWOPASS.LR",plain
 *=$6000
 
 hgrlo    =     $0200                 ; [$C0 bytes, main memory only]

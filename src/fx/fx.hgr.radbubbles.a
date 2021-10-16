@@ -2,7 +2,7 @@
 ;(c) 2019 by 4am
 ;
 !cpu 6502
-!to "build/FX/RADBUBBLES",plain
+!to "build/FX.INDEXED/RADBUBBLES",plain
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"

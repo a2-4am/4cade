@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 ;
 !cpu 6502
-!to "build/FX/VERTICAL.BLINDS",plain
+!to "build/FX.INDEXED/VERTICAL.BLINDS",plain
 *=$6000
 
         ldx    #0

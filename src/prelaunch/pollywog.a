@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/POLLYWOG",plain
+!to "build/PRELAUNCH.INDEXED/POLLYWOG",plain
 *=$106
 
     !source "src/prelaunch/common.a"

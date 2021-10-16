@@ -2,7 +2,7 @@
 ;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/ZAXXON",plain
+!to "build/PRELAUNCH.INDEXED/ZAXXON",plain
 *=$106
 
     !source "src/prelaunch/common.a"

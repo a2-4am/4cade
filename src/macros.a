@@ -398,7 +398,7 @@
          pha
          ldx   #0         ; read to main memory
          +LDADDR .filepath
-         jsr   LoadFileDirect
+         jsr   iLoadFileDirect
          pla
          sta   iCurBlockHi
          pla

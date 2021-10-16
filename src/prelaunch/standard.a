@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/STANDARD",plain
+!to "build/PRELAUNCH.INDEXED/STANDARD",plain
 *=$106
 
          ldy   $5A                   ; set up game entry point in stack page

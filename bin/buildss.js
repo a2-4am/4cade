@@ -8,6 +8,7 @@ for (b = new Enumerator(a.GetFolder(WScript.Arguments(0)).files); !b.atEnd(); b.
 }
 
 entries.sort()
+a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
 ss_off = 0
 groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 
@@ -21,7 +22,9 @@ for (i = 0; i < entries.length; i++)
   ss_off += size
 }
 
-f = a.createtextfile(WScript.Arguments(1))
+f = a.createtextfile("build\\ss.tmp")
 f.write(groups)
 f.close()
-new ActiveXObject("wscript.shell").run('cmd /c %acme% -o ' + WScript.Arguments(2) + " " + WScript.Arguments(1))
+x = new ActiveXObject("wscript.shell")
+x.run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\ss.tmp', 0, 1)
+x.run('cmd /c bin\\buildpreall.bat ' + WScript.Arguments(0) + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(3), 0, 1)

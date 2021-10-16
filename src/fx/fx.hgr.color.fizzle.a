@@ -2,7 +2,7 @@
 ;(c) 2018 by 4am
 ;
 !cpu 6502
-!to "build/FX/LITTLE.BOXES",plain
+!to "build/FX.INDEXED/LITTLE.BOXES",plain
 *=$6000
 
 phase = $FC               ; byte, $80 or $00

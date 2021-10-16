@@ -2,7 +2,7 @@
 ;(c) 2021 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/ES",plain
+!to "build/PRELAUNCH.INDEXED/ES",plain
 *=$106
 
     !source "src/prelaunch/common.a"

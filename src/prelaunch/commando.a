@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/COMMANDO",plain
+!to "build/PRELAUNCH.INDEXED/COMMANDO",plain
 *=$106
 
          jmp   ++

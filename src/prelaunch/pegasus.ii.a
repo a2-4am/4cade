@@ -2,7 +2,7 @@
 ;(c) 2021 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH/PEGASUS.II",plain
+!to "build/PRELAUNCH.INDEXED/PEGASUS.II",plain
 *=$106
 
          !source "src/prelaunch/common.a"

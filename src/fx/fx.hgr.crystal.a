@@ -4,7 +4,7 @@
 ; reverse engineered from Sapphire's crack screen of 'Crystal Castles'
 ;
 !cpu 6502
-!to "build/FX/CRYSTAL",plain
+!to "build/FX.INDEXED/CRYSTAL",plain
 *=$6000
 
          !source "src/fx/macros.a"

@@ -2,7 +2,7 @@
 ;(c) 2020 by Frank M.
 
 !cpu 6502
-!to "build/PRELAUNCH/SPACE.EGGS",plain
+!to "build/PRELAUNCH.INDEXED/SPACE.EGGS",plain
 *=$106
 
     !source "src/prelaunch/common.a"

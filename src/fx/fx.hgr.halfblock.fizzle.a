@@ -2,7 +2,7 @@
 ;(c) 2018-2020 by 4am/qkumba
 ;
 !cpu 6502
-!to "build/FX/HALF.FIZZLE",plain
+!to "build/FX.INDEXED/HALF.FIZZLE",plain
 *=$6000
 
          !source "src/fx/fx.hgr.halfblock.fizzle.common.a"
