@@ -253,7 +253,6 @@ gDrawingOnscreen=*+1
          jsr   AddToPath
          +LDADDR sCheatDescriptionSuffix
          jsr   AddToPath
-         inc   VTAB
          plp
          +LDADDR gPathname
          jsr   DrawCenteredString    ; draw cheat UI line 2
