@@ -42,46 +42,46 @@ sNoCheats
          !text "no cheat"
 sInfiniteLives
          !byte 18         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "infinite lives"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sInfiniteWeapons
          !byte 20         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "infinite weapons"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sInfiniteLivesAndWeapons
          !byte 28         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "infinite lives & weapons"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sInvincibility
          !byte 14         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "invincible"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sInGame
          !byte 18         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "in-game cheats"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sCheatsEnabled
          !byte 18         ; length
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
          !text " "
          !text "cheats enabled"
          !text " "
-         !byte $16        ; bolt character
+         !byte $16        ; padlock character
 sCheatDescriptionPrefix
          !byte 2          ; length
          !byte $03        ; vertical line character
