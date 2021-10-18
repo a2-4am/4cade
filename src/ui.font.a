@@ -13,7 +13,7 @@
 ;
 
 DrawString
-         jsr   SwitchToBank2
+         jsr   StoreAYAndSwitchToBank2
          jsr   DrawStringInternal
          ; /!\ execution falls through here to JmpSwitch
 
