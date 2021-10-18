@@ -86,10 +86,11 @@ Credits
          ldx   #0
          stx   VTAB
          php                         ; save C, but Z=1 because of ldx #0
+         jsr   SwitchToBank2
 @drawLine
          lda   $FF
          sta   HTAB
-         jsr   DrawString
+         jsr   DrawStringInternal
          bmi   @donePage
          clc
          adc   PTR
@@ -100,6 +101,7 @@ Credits
          php
          beq   @drawLine             ; always branches
 @donePage
+         jsr   SwitchToBank1
          plp
 ;end inline
          jsr   ShowOtherPage         ; show credits

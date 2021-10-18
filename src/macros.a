@@ -209,35 +209,35 @@
 
 ; various language card configurations
 !macro   READ_RAM1_NO_WRITE {
-         sta   $C088
+         bit   $C088
 }
 
 !macro   READ_RAM1_WRITE_RAM1 {
-         sta   $C08B
-         sta   $C08B
+         bit   $C08B
+         bit   $C08B
 }
 
 !macro   READ_RAM2_NO_WRITE {
-         sta   $C080
+         bit   $C080
 }
 
 !macro   READ_RAM2_WRITE_RAM2 {
-         sta   $C083
-         sta   $C083
+         bit   $C083
+         bit   $C083
 }
 
 !macro   READ_ROM_WRITE_RAM1 {
-         sta   $C089
-         sta   $C089
+         bit   $C089
+         bit   $C089
 }
 
 !macro   READ_ROM_WRITE_RAM2 {
-         sta   $C081
-         sta   $C081
+         bit   $C081
+         bit   $C081
 }
 
 !macro   READ_ROM_NO_WRITE {
-         sta   $C082
+         bit   $C082
 }
 
 ; requires setting zpCharMask in zero page to #$FF or #$DF before use
