@@ -17,7 +17,7 @@
 ; D000..D3FF - ProRWTS data
 ; D400..D66F - ProRWTS code
 ; D670..DB91 - HGR font code & ProRWTS glue code
-; DB72..DB81 - backup of stack (during gameplay and self-running demos)
+; DB61..DB70 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data

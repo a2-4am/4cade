@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am
 ;
 ; hi-res font drawing routines
 ;
@@ -9,7 +9,8 @@
 ;
 
 DrawPageInternal
-; A/Y contains address of character buffer
+; A/Y contains address of array of length-prefixed strings
+; length #$FF terminates
 ; X contains 0-indexed left margin (HTAB)
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
@@ -18,7 +19,7 @@ DrawPageInternal
 ; clobbers PTR
 ; clobbers $FF
 ; clobbers A/X/Y
-; preserves all flags, by a quirk of implementation
+; preserves all flags
          php
          stx   $FF
          ldx   #0
@@ -28,32 +29,22 @@ DrawPageInternal
          lda   $FF
          sta   HTAB
          ldy   #0
-@parseLine
-         lda   (PTR), y
-         beq   @donePage
-         cmp   #$0A
-         beq   @doneParsingLine
-         iny
-         bne   @parseLine
-@doneParsingLine
-         sty   SAVE
-         tya
-         beq   @skip
-         ldx   SAVE
-         +LD16 PTR
+         lda   (PTR), y              ; A = length of line, or #$FF
+         bmi   PLP_AND_RTS           ; if #$FF then we're done
+         tax                         ; X = length of line
          plp
-         php
-         jsr   DrawBufferInternal
-@skip    inc   SAVE                  ; skip carriage return
-         lda   SAVE                  ; advance PTR to start of next line
-         clc
+         php                         ; C = whatever was passed in
+         pha                         ; save length
+         jsr   DrawStringSuperInternal
+         pla                         ; A = length of line
+         clc                         ; advance PTR to start of next line
          adc   PTR
          sta   PTR
          bcc   +
          inc   PTR+1
-+        inc   VTAB                  ; this will print 255 lines if you give it
-         bne   @drawLine             ; 255 lines, so don't do that
-@donePage
++        inc   VTAB                  ; this will print 255 lines if you give
+         bne   @drawLine             ; it 255 lines, because this is assembly
+PLP_AND_RTS
          plp
          rts
 
@@ -82,7 +73,6 @@ DrawCenteredStringInternal
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
          +ST16 PTR
-
          ldy   #0
          php
          lda   #40
@@ -102,10 +92,10 @@ DrawStringInternal
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
          +ST16 PTR
-
          ldy   #0
 +        lda   (PTR),y
          tax
+DrawStringSuperInternal
          inc   PTR
          bne   +
          inc   PTR+1
@@ -115,7 +105,7 @@ DrawStringInternal
 
 DrawBufferInternal
 ; A/Y contains address of character buffer
-; X contains buffer length (1..40)
+; X contains buffer length (0..40)
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; characters MUST have high bit off (0x00..0x7F)
@@ -129,6 +119,7 @@ DrawBufferInternal
          +ST16 DBISrc+1
          php
          dex
+         bmi   PLP_AND_RTS           ; empty string
          lda   VTAB
          asl
          asl
