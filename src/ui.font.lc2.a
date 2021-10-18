@@ -44,7 +44,7 @@ DrawPageInternal
 Draw40CharsInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1
-;v carry bit set   -> draw on page 2
+; carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; drawing starts at HTAB 0
 ; increments VTAB on exit
