@@ -14,12 +14,12 @@
 ;
 
 DrawString
-         jsr   SwitchToBank2
+         jsr   StoreAYAndSwitchToBank2
          jsr   DrawStringInternal
-         bmi   JmpSwitch             ; always
+         bne   JmpSwitch             ; always
 
 DrawPage
-         jsr   SwitchToBank2
+         jsr   StoreAYAndSwitchToBank2
          jsr   DrawPageInternal
 
 JmpSwitch
@@ -31,6 +31,6 @@ Draw40Chars
          beq   JmpSwitch             ; always
 
 DrawCenteredString
-         jsr   SwitchToBank2
+         jsr   StoreAYAndSwitchToBank2
          jsr   DrawCenteredStringInternal
-         bmi   JmpSwitch             ; always
+         bne   JmpSwitch             ; always

@@ -9,7 +9,7 @@
 ;
 
 DrawPageInternal
-; A/Y contains address of array of length-prefixed strings
+; PTR contains address of array of length-prefixed strings
 ; length #$FF terminates
 ; X contains 0-indexed left margin (HTAB)
 ; carry bit clear -> draw on page 1
@@ -17,18 +17,17 @@ DrawPageInternal
 ; drawing starts at VTAB 0
 ; each line starts at column X which was passed in (0-indexed)
 ; clobbers PTR
-; clobbers $FE/$FF
+; clobbers $FF
 ; clobbers A/X/Y
 ; preserves C, other flags clobbered
          stx   $FF
          ldx   #0
          stx   VTAB
-         +ST16 PTR
          php                         ; save C, but Z=1 because of ldx #0
 @drawLine
          lda   $FF
          sta   HTAB
-         jsr   DrawStringInternal_PTR_is_already_set
+         jsr   DrawStringInternal
          bmi   @donePage
          clc
          adc   PTR
@@ -50,6 +49,7 @@ Draw40CharsInternal
 ; drawing starts at HTAB 0
 ; increments VTAB on exit
 ; sets HTAB to 0 on exit
+; Z=1 on exit
 ; clobbers A/X/Y
          jsr   +
          ldx   #40
@@ -59,36 +59,30 @@ Draw40CharsInternal
          rts
 
 DrawCenteredStringInternal
-; A/Y contains address of length-prefixed string
+; PTR contains address of length-prefixed string
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
-; clobbers PTR/PTR+1
-         +ST16 PTR
-         ldy   #0
          php
+         ldy   #0
          lda   #40
          sec
          sbc   (PTR),y
          lsr
          sta   HTAB
          plp
-         beq   DrawStringInternal_PTR_and_Y_are_already_set
+         ; /!\ execution falls through here to DrawStringInternal
 
 DrawStringInternal
-; A/Y contains address of length-prefixed string
+; PTR contains address of length-prefixed string
 ; length can be 0
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; $24 contains starting column (0..39) (this is the standard HTAB address)
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
-; clobbers PTR/PTR+1
-         +ST16 PTR
-DrawStringInternal_PTR_is_already_set
          ldy   #0
-DrawStringInternal_PTR_and_Y_are_already_set
          lda   (PTR),y
          inc   PTR
          bne   +
@@ -114,7 +108,7 @@ DrawBufferInternal
 ; clobbers X,Y
 ; increments VTAB on exit
 ; A=buffer length on exit
-; N=0 on exit
+; N=0,Z=0 on exit
          +ST16 DBISrc+1
          php
          lda   VTAB
