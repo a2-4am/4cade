@@ -8,39 +8,6 @@
 ; which handle bank switching for you.
 ;
 
-DrawPageInternal
-; PTR contains address of array of length-prefixed strings
-; length #$FF terminates
-; X contains 0-indexed left margin (HTAB)
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; drawing starts at VTAB 0
-; each line starts at column X which was passed in (0-indexed)
-; clobbers PTR
-; clobbers $FF
-; clobbers A/X/Y
-; preserves C, other flags clobbered
-         stx   $FF
-         ldx   #0
-         stx   VTAB
-         php                         ; save C, but Z=1 because of ldx #0
-@drawLine
-         lda   $FF
-         sta   HTAB
-         jsr   DrawStringInternal
-         bmi   @donePage
-         clc
-         adc   PTR
-         sta   PTR
-         bcc   +
-         inc   PTR+1
-+        plp                         ; restore C to whatever it was on entry
-         php
-         beq   @drawLine             ; always branches
-@donePage
-         plp
-         rts
-
 Draw40CharsInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1

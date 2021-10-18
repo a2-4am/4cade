@@ -283,6 +283,7 @@ DrawGameTitleInActionSlideshow
          ldy   gPathname
          sta   gPathname,y
          +LDADDR gPathname
+         +ST16 PTR
          sec
          jsr   DrawString
 @fallthroughForDHGR

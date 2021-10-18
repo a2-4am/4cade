@@ -7,20 +7,15 @@
 ; that live in LC RAM 2 now.
 ;
 ; Public functions
-; - DrawPage
 ; - Draw40Chars
 ; - DrawCenteredString
 ; - DrawString
 ;
 
 DrawString
-         jsr   StoreAYAndSwitchToBank2
+         jsr   SwitchToBank2
          jsr   DrawStringInternal
-         bne   JmpSwitch             ; always
-
-DrawPage
-         jsr   StoreAYAndSwitchToBank2
-         jsr   DrawPageInternal
+         ; /!\ execution falls through here to JmpSwitch
 
 JmpSwitch
          jmp   SwitchToBank1
