@@ -10,8 +10,8 @@
 
 EnableAcceleratorAndSwitchToBank1
          jsr   EnableAccelerator
-         jmp   SwitchToBank1
+         bne   +                     ; always taken
 
 DisableAcceleratorAndSwitchToBank1
          jsr   DisableAccelerator
-         jmp   SwitchToBank1
++        jmp   SwitchToBank1
