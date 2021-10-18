@@ -43,7 +43,7 @@ ver_02 = 1
                                         ;else driver must be running from same memory target
                                         ;i.e. running from main if accessing main, running from aux if accessing aux
                 allow_saplings=1        ;enable support for saplings
-                allow_trees  = 0        ;enable support for tree files, as opposed to only seedlings and saplings
+                allow_trees  = 1        ;enable support for tree files, as opposed to only seedlings and saplings
                                         ;required in RWTS mode if file > 128kb
                 fast_trees   = 0        ;keep tree block in memory, requires an additional 512 bytes of RAM
                 always_trees = 0        ;set to 1 if the only file access involves tree files
@@ -132,11 +132,11 @@ ver_02 = 1
                 ldrhi     = $56         ;set to load address if override_adr=1
                 namlo     = $57         ;name of file to access
                 namhi     = $58         ;name of file to access
-                ldrlo2    = $59         ;original load address read from filesystem
-                ldrhi2    = $5a         ;original load address read from filesystem
-                sizelo2   = $5b         ;original file size read from filesystem
-                sizehi2   = $5c         ;original file size read from filesystem
-                !set last_zp = $5c      ;highest address to save if swap_zp enabled (max 127 entries later)
+                !set last_zp = $58      ;highest address to save if swap_zp enabled (max 127 entries later)
+!if write_sparse = 1 {
+                sparseblk  = $59        ;(internal) last-read block was sparse if zero
+                !set last_zp = $59      ;highest address to save if swap_zp enabled (max 127 entries later)
+} ;write_sparse = 1
 
 !if enable_floppy = 1 {
                 tmpsec    = $3c         ;(internal) sector number read from disk
@@ -194,6 +194,12 @@ ver_02 = 1
   } ;aligned_read = 0
 } ;mem_swap = 0
 
+                ldrlo2    = $64         ;original load address read from filesystem
+                ldrhi2    = $65         ;original load address read from filesystem
+                sizelo2   = $66         ;original file size read from filesystem
+                sizehi2   = $67         ;original file size read from filesystem
+                !set last_zp = $67      ;highest address to save if swap_zp enabled (max 127 entries later)
+
 !if enable_floppy = 1 {
                 step      = $64         ;(internal) state for stepper motor
                 tmptrk    = $65         ;(internal) temporary copy of current track
@@ -232,7 +238,7 @@ ver_02 = 1
                 FILE_COUNT = $25        ;ProDOS constant
                 DEVADR01HI = $bf11      ;ProDOS constant
                 ROMIN     = $c081
-                LCBANK2   = $c089
+                LCBANK2   = $c08b
                 CLRAUXRD  = $c002
                 CLRAUXWR  = $c004
                 SETAUXWR  = $c005
@@ -521,8 +527,8 @@ slot            ldx     $cfff
                 sty     unrcommand2
   } ;rwts_mode = 0 and aligned_read = 0 and enable_write = 1
                 sty     unrbloklo1
-                lda     #>pblock
-                pblock_enabled=1
+                ;;lda     #>pblock
+                ;;pblock_enabled=1
                 sta     unrbloklo1 + 2
   !if (rwts_mode + write_sparse) > 1 {
                 sta     unrbloklo2 + 2
@@ -600,8 +606,8 @@ iterunit        inc     unrunit2
 
 bankram
 !if load_banked = 1 {
-                lda     LCBANK2 - ((lc_bank - 1) * 8)
-                lda     LCBANK2 - ((lc_bank - 1) * 8)
+                lda     LCBANK2 - ((lc_bank - 1) * 8) - (rwts_mode * 2)
+                lda     LCBANK2 - ((lc_bank - 1) * 8) - (rwts_mode * 2)
 } ;load_banked = 1
 !if enable_floppy = 1 {
                 ldx     #>unrelocdsk
@@ -1534,16 +1540,8 @@ noteof2
   !if allow_sparse = 1 {
                 pha
                 ora     dirbuf, y
-                tay
-                pla
-                dey
-                iny ;don't affect carry
-  } ;allow_sparse = 1
-  !if aligned_read = 0 {
-                php
-  } ;aligned_read = 0
-  !if allow_sparse = 1 {
                 beq     issparse
+                pla
   } ;allow_sparse = 1
   !if (aligned_read and (enable_write or enable_seek)) = 1 {
                 ldy     reqcmd
@@ -1551,15 +1549,20 @@ noteof2
                 beq     +
     } ;enable_seek = 1
   } ;aligned_read = 1 and (enable_write = 1 or enable_seek = 1)
+  !if aligned_read = 0 {
+                php
+  } ;aligned_read = 0
   !if enable_write = 1 {
                 jsr     seekrdwr
   } else { ;enable_write = 0
                 jsr     seekrd
   } ;enable_write = 1
+  !if aligned_read = 0 {
+                plp
+  } ;aligned_read = 0
 
 resparse
   !if aligned_read = 0 {
-                plp
 +               bcc     +
     !if bounds_check = 1 {
                 dec     blefthi
@@ -1587,7 +1590,7 @@ setaux          sta     CLRAUXRD, x
                 rts
 
   !if allow_sparse = 1 {
-issparse
+issparse        pla
 -               sta     (adrlo), y
                 iny
                 bne     -
@@ -2729,6 +2732,7 @@ hddfoundname    iny
       } ;one_shot = 0
     } ;enable_write = 1 or aligned_read = 1
   } ;bounds_check = 1 or return_size = 1 or one_shot = 1
+
                 ;cache AUX_TYPE (load offset for binary files)
 
   !if override_adr = 0 {
@@ -2768,6 +2772,7 @@ attribpatch
                 php
       } ;allow_subdir = 1
       !if allow_trees = 1 {
+dirbufpatch11
                 ldy     #>hdddirbuf
                 bvc     +
         !if fast_trees = 1 {
@@ -2938,8 +2943,9 @@ encbufpatch1
                 clc
                 bne     hddrdwrfilei
         } else { ;no_interrupts = 0
-                beq     hddrdwrdone
+                beq     +
                 jmp     hddrdwrfilex
++               jmp     hddrdwrdone
         } ;no_interrupts = 1
       } ;allow_subdir = 1
       !if allow_aux = 0 {
@@ -3046,6 +3052,7 @@ encbufpatch2
     !if aligned_read = 0 {
                 php
     } ;aligned_read = 0
+dirbufpatch12
                 lda     #>hdddirbuf
                 sta     adrhi
                 sty     adrlo
@@ -3123,7 +3130,9 @@ blkidx = * + 1
     !if rwts_mode = 0 {
                 inc     treeidx
     } ;rwts_mode = 0
+dirbufpatch13
                 ldx     hdddirbuf, y
+dirbufpatch14
                 lda     hdddirbuf + 256, y
   } else { ;fast_trees = 1
                 ldy     treeidx
@@ -3257,34 +3266,27 @@ dirbufpatch9
   !if write_sparse = 1 {
                 sta     sparseblk
   } ;write_sparse = 1
-  !if (rwts_mode + enable_write) > 1 {
-                cmp     #1
-  } else { ;rwts_mode = 0 or enable_write = 0
-                tay
-  } ;rwts_mode = 1 and enable_write = 1
-                pla
-  !if rwts_mode = 0 {
-                dey
-                iny ;don't affect carry
-  } else { ;rwts_mode = 1
+  !if rwts_mode = 1 {
     !if enable_write = 1 {
+                cmp     #1
+                pla
                 ldy     reqcmd
                 bcs     hddseekrdwr
 savebyte
                 tay
     } else { ;enable_write = 0
+                tay
+                pla
                 dey
                 iny ;don't affect carry
                 bne     hddseekrd
     } ;enable_write = 1
-  } ;rwts_mode = 0
+  } ;rwts_mode = 1
 } ;allow_sparse = 0
 !if rwts_mode = 0 {
-  !if aligned_read = 0 {
-                php
-  } ;aligned_read = 0
   !if allow_sparse = 1 {
                 beq     hddissparse
+                pla
   } ;allow_sparse = 1
   !if (aligned_read and (enable_write or enable_seek)) = 1 {
                 ldy     reqcmd
@@ -3292,15 +3294,20 @@ savebyte
                 beq     +
     } ;enable_seek = 1
   } ;aligned_read = 1 and (enable_write = 1 or enable_seek = 1)
+  !if aligned_read = 0 {
+                php
+  } ;aligned_read = 0
   !if enable_write = 1 {
                 jsr     hddseekrdwr
   } else { ;enable_write = 0
                 jsr     hddseekrd
   } ;enable_write = 1
+  !if aligned_read = 0 {
+                plp
+  } ;aligned_read = 0
 
 hddresparse
   !if aligned_read = 0 {
-                plp
 +               bcc     +
   } ;aligned_read = 0
                 inc     adrhi
@@ -3330,6 +3337,9 @@ hddsetaux       sta     CLRAUXRD, x
 
 !if allow_sparse = 1 {
 hddissparse
+  !if rwts_mode = 0 {
+                pla
+  } ;rwts_mode = 0
 -               sta     (adrlo), y
                 inc     adrhi
                 sta     (adrlo), y
@@ -3445,9 +3455,9 @@ hddreaddirsel
 
 hddreaddirsec
 !if allow_trees = 0 {
-dirbufpatch10
 hddreaddirsect  ldy     #>hdddirbuf
 } else { ;allow_trees = 1
+dirbufpatch10
                 ldy     #>hdddirbuf
 hddreaddirsect
 } ;allow_trees = 0

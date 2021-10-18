@@ -315,9 +315,13 @@ resetval=$f0
          stx   dirbufpatch7+2
          stx   dirbufpatch9+2
          stx   dirbufpatch10+1
+         stx   dirbufpatch11+1
+         stx   dirbufpatch12+1
+         stx   dirbufpatch13+1
          inx
          stx   dirbufpatch5+2
          stx   dirbufpatch8+2
+         stx   dirbufpatch14+1
 @close_ret
          rts
 

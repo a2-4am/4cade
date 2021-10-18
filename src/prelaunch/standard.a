@@ -5,11 +5,10 @@
 !to "build/PRELAUNCH.INDEXED/STANDARD",plain
 *=$106
 
-         ldy   $5A                   ; set up game entry point in stack page
-         ldx   $59                   ; (last ProRWTS load address - 1)
-         bne   +
-         dey
-+        dex
+         !source "src/constants.a"
+
+         ldy   ldrhi2                ; set up game entry point in stack page
+         ldx   ldrlo2                ; (last ProRWTS load address - 1)
          stx   $1FE
          sty   $1FF
 
@@ -17,7 +16,8 @@
 
          ldx   #$FD                  ; Jump to game entry point via stack pop.
          txs
-         rts
+         php
+         rti
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
