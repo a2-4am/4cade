@@ -31,7 +31,6 @@ DrawPageInternal
          ldy   #0
          lda   (PTR), y              ; A = length of line, or #$FF
          bmi   PLP_AND_RTS           ; if #$FF then we're done
-         tax                         ; X = length of line
          plp
          php                         ; C = whatever was passed in
          pha                         ; save length
@@ -94,8 +93,8 @@ DrawStringInternal
          +ST16 PTR
          ldy   #0
 +        lda   (PTR),y
-         tax
 DrawStringSuperInternal
+         tax
          inc   PTR
          bne   +
          inc   PTR+1
