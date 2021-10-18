@@ -17,32 +17,29 @@ DrawPageInternal
 ; drawing starts at VTAB 0
 ; each line starts at column X which was passed in (0-indexed)
 ; clobbers PTR
-; clobbers $FF
+; clobbers $FE/$FF
 ; clobbers A/X/Y
 ; preserves C, other flags clobbered
          stx   $FF
          ldx   #0
          stx   VTAB
          +ST16 PTR
+         php                         ; save C, but Z=1 because of ldx #0
 @drawLine
          lda   $FF
          sta   HTAB
-         ldy   #0
-         lda   (PTR), y              ; A = length of line, or #$FF
-         bmi   drawLineDone          ; if #$FF then we're done
-         php                         ; C = whatever was passed in
-         pha                         ; save length
-         jsr   DrawStringSuperInternal
-         pla                         ; A = length of line
-         clc                         ; advance PTR to start of next line
+         jsr   DrawStringInternal_PTR_is_already_set
+         bmi   @donePage
+         clc
          adc   PTR
          sta   PTR
          bcc   +
          inc   PTR+1
-+        plp
-         inc   VTAB                  ; this will print 255 lines if you give
-         bne   @drawLine             ; it 255 lines, because this is assembly
-drawLineDone
++        plp                         ; restore C to whatever it was on entry
+         php
+         beq   @drawLine             ; always branches
+@donePage
+         plp
          rts
 
 Draw40CharsInternal
@@ -51,13 +48,12 @@ Draw40CharsInternal
 ;v carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; drawing starts at HTAB 0
-; increments VTAB
+; increments VTAB on exit
 ; sets HTAB to 0 on exit
 ; clobbers A/X/Y
          jsr   +
          ldx   #40
          jsr   DrawBufferInternal
-         inc   VTAB
 +        ldx   #0
          stx   HTAB
          rts
@@ -78,10 +74,11 @@ DrawCenteredStringInternal
          lsr
          sta   HTAB
          plp
-         beq   +
+         beq   DrawStringInternal_PTR_and_Y_are_already_set
 
 DrawStringInternal
 ; A/Y contains address of length-prefixed string
+; length can be 0
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; $24 contains starting column (0..39) (this is the standard HTAB address)
@@ -89,13 +86,16 @@ DrawStringInternal
 ; clobbers A/X/Y
 ; clobbers PTR/PTR+1
          +ST16 PTR
+DrawStringInternal_PTR_is_already_set
          ldy   #0
-+        lda   (PTR),y
-DrawStringSuperInternal
-         tax
+DrawStringInternal_PTR_and_Y_are_already_set
+         lda   (PTR),y
          inc   PTR
          bne   +
          inc   PTR+1
++        tax
+         bpl   +
+         rts
 +
          +LD16 PTR
          ; /!\ execution falls through here to DrawBufferInternal
@@ -111,11 +111,11 @@ DrawBufferInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; all characters are drawn on the same line
 ; HTAB is incremented for each character
-; VTAB is NOT incremented
-; clobbers A/X/Y
+; clobbers X,Y
+; increments VTAB on exit
+; A=buffer length on exit
+; N=0 on exit
          +ST16 DBISrc+1
-         dex
-         bmi   drawLineDone          ; empty string
          php
          lda   VTAB
          asl
@@ -169,6 +169,9 @@ DrawBufferInternal
          sta   DBIRow5+1
          sta   DBIRow6+1
          sta   DBIRow7+1
+         txa
+         pha
+         bpl   +                     ; always branches because X is 0..40
 DBILoop
 DBISrc   ldy   $FDFD,x
          lda   FontDataRow0,y
@@ -188,6 +191,8 @@ DBIRow6  sta   $FDFD,x
          lda   FontDataRow7,y
 DBIRow7  sta   $FDFD,x
          inc   HTAB
-         dex
++        dex
          bpl   DBILoop
+         pla                         ; A = buffer length (passed in in X)
+         inc   VTAB
          rts

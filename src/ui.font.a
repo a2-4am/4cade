@@ -11,7 +11,6 @@
 ; - Draw40Chars
 ; - DrawCenteredString
 ; - DrawString
-; - DrawBuffer
 ;
 
 DrawString
@@ -34,9 +33,4 @@ Draw40Chars
 DrawCenteredString
          jsr   SwitchToBank2
          jsr   DrawCenteredStringInternal
-         bmi   JmpSwitch             ; always
-
-DrawBuffer
-         jsr   SwitchToBank2
-         jsr   DrawBufferInternal
          bmi   JmpSwitch             ; always
