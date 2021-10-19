@@ -223,6 +223,8 @@ resetval=$f0
          stx   blkofflo
          stx   blkoffhi
          stx   reqcmd
+         ldy   sizelo
+         beq   @testzero
 @seekloop
          jsr   @reset
          ldy   sizelo
@@ -265,6 +267,7 @@ resetval=$f0
          pla
          sbc   ldrhi
          sta   ldrhi
+@testzero
          tya
          sbc   #0
          sta   sizelo
