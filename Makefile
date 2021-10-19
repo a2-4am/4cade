@@ -41,9 +41,8 @@ dsk: asm
 # precompute FX and DFX indexes and merged data files containing multiple
 # graphic effects in a single file (loaded at runtime by LoadIndexedFile())
 #
-	rm -f "build/FX.ALL"
-	bin/buildfx.sh -p "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
-	bin/buildfx.sh -p "res/DFX.CONF" "build/DFX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
+	bin/buildindexedfile.sh -p "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
+	bin/buildindexedfile.sh -a -p "res/DFX.CONF" "build/DFX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
 #
 # substitute special characters in help text and other pages that will be
 # drawn with DrawPage()
@@ -57,18 +56,19 @@ dsk: asm
 # precompute indexed files for game help, slideshow configuration,
 # mini-attract mode configuration, and prelaunch files
 #
-	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
+	awk -F "," '!/^#/ { print $$2 }' < res/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
+	bin/buildindexedfile.sh -p "build/GAMES.SORTED" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
 	(for f in res/SS/*; do \
 	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
-	done) > build/SSDIR.CONF
-	bin/buildfx.sh -p "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
+	done) > build/SSDIR
+	bin/buildindexedfile.sh -p "build/SSDIR" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
 	(for f in res/ATTRACT/*; do \
 	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
-	done) > build/ATTRACTDIR.CONF
-	bin/buildfx.sh -p "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
-	bin/buildhelp.sh "res/GAMES.CONF" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
+	done) > build/ATTRACTDIR
+	bin/buildindexedfile.sh -p "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
+	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
 #
 # create _FileInformation.txt files for subdirectories
 #
