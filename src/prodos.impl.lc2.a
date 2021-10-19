@@ -238,9 +238,7 @@ resetval=$f0
 @seek32
          lda   ldrhi
          ldx   ldrlo
-         +HIDE_NEXT_BYTE
 @seek64
-         tax
          sta   sizehi
          stx   sizelo
          lda   ldrhi
@@ -282,7 +280,7 @@ resetval=$f0
 @reset
          lda   #resetval
          sta   blefthi
-         sta   bleftlo
+         stx   bleftlo
          rts
 
 @imp_read
