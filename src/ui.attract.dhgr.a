@@ -155,7 +155,7 @@ LoadDHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kDFXFile
+         !word kFXFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC

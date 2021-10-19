@@ -1,6 +1,5 @@
 @echo off
 setlocal enabledelayedexpansion
-1>nul copy /y nul %2
 for /f "tokens=*" %%a in (%1) do (
 set f=0
 call :x %%a

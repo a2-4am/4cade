@@ -218,6 +218,7 @@ resetval=$f0
          jsr   @set_rdwrbuff
          ldx   #0
          stx   blkidx
+         stx   treeidx
          stx   blkofflo
          stx   blkoffhi
          stx   reqcmd
@@ -248,6 +249,7 @@ resetval=$f0
          ora   ldrlo
          bne   @jmp_zp
          dec   blkidx
+         sta   treeidx
 @link_jmpzp
          beq   @jmp_zp ;always
 
@@ -317,11 +319,11 @@ resetval=$f0
          stx   dirbufpatch10+1
          stx   dirbufpatch11+1
          stx   dirbufpatch12+1
-         stx   dirbufpatch13+1
+         stx   dirbufpatch13+2
          inx
          stx   dirbufpatch5+2
          stx   dirbufpatch8+2
-         stx   dirbufpatch14+1
+         stx   dirbufpatch14+2
 @close_ret
          rts
 

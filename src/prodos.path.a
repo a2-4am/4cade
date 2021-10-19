@@ -142,10 +142,6 @@ kDFXIndexFile
          !byte 7
          !raw  "DFX.IDX"
 
-kDFXFile
-         !byte 7
-         !raw  "DFX.ALL"
-
 kGameHelpIndexFile
          !byte 12
          !raw  "GAMEHELP.IDX"

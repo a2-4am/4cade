@@ -56,8 +56,9 @@ rem
 rem precompute FX and DFX indexes and merged data files containing multiple
 rem graphic effects in a single file (loaded at runtime by LoadIndexedFile())
 rem
+1>nul copy /y nul build\FX.ALL
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\FX.ALL build\FX.INDEXED >>build\log
-cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\DFX.ALL build\FX.INDEXED >>build\log
+cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\FX.ALL build\FX.INDEXED >>build\log
 rem
 rem substitute special characters in help text and other pages that will be
 rem drawn with DrawPage()
@@ -101,7 +102,6 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SLIDESHOW.IDX" >>build\log
