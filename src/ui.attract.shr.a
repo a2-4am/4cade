@@ -30,7 +30,7 @@ SHRSlideshow
          beq   jmpblank              ; always taken
 
 ;------------------------------------------------------------------------------
-; SHRSlideshow
+; SHRSingle
 ; display a single super hi-res artwork
 ;
 ; safe to call if machine can not display super hi-res graphics (does nothing
@@ -41,15 +41,28 @@ SHRSlideshow
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 SHRSingle
-         +ST16 +
+         +ST16 @sfname
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          beq   SHRRTS
          jsr   BlankSHR
-         jsr   LoadFile
+
+         jsr   LoadFile              ; load index file into $2000
          !word kRootDirectory
-+        !word $FDFD                 ; SMC
+         !word kSHRArtworkIndexFile
+-        !word $2000
+
+         jsr   okvs_find
+         !word -
+@sfname  !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
+         !word kSHRArtworkDataFile
          !word $1FF8
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+
          jsr   DecompressSHR
          jsr   LoadSHRTransition
          jsr   ExecuteTransitionAtA000AndWait
@@ -100,11 +113,22 @@ SHRArtworkCallback
 
          jsr   BlankSHR
 
-         ; load compressed SHR artwork at $1FF0/main (not aux)
-         jsr   LoadFile
-         !word kSHRArtworkDirectory
-@sfname  !word $FDFD
+         jsr   LoadFile              ; load index file into $2000
+         !word kRootDirectory
+         !word kSHRArtworkIndexFile
+-        !word $2000
+
+         jsr   okvs_find
+         !word -
+@sfname  !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
+         !word kSHRArtworkDataFile
          !word $1FF8
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+
          jsr   DecompressSHR
          jmp   ExecuteTransitionAtA000AndWait
 

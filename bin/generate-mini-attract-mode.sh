@@ -13,7 +13,7 @@ cat res/GAMES.CONF |
 
         # add box art, if any
         [ -f res/ARTWORK.SHR/"$game" ] &&
-            echo "ARTWORK.SHR/$game=C" >> /tmp/g
+            echo "$game=C" >> /tmp/g
 
         # add DHGR action screenshots, if any
         cat res/SS/ACTDHGR*.CONF |

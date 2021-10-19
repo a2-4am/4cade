@@ -70,6 +70,13 @@ dsk: asm
 	bin/buildindexedfile.sh -p "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
 	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
 #
+# precompute indexed files for SHR artwork
+#
+	(for f in res/ARTWORK.SHR/*; do \
+	    echo "$$(basename $$f)"; \
+	done) > build/ARTWORKDIR
+	bin/buildindexedfile.sh "build/ARTWORKDIR" "build/ARTWORK.IDX" "build/ARTWORK.ALL" "res/ARTWORK.SHR" >>build/log
+#
 # create _FileInformation.txt files for subdirectories
 #
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
@@ -77,7 +84,6 @@ dsk: asm
 	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
-	bin/buildfileinfo.sh res/ARTWORK.SHR "06" "1FF8" >>build/log
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
 	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
@@ -104,6 +110,8 @@ dsk: asm
 		build/MINIATTRACT.ALL \
 		build/PRELAUNCH.IDX \
 		build/PRELAUNCH.ALL \
+		build/ARTWORK.IDX \
+		build/ARTWORK.ALL \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -116,7 +124,6 @@ dsk: asm
 		res/ACTION.HGR \
 		res/ACTION.DHGR \
 		res/ACTION.GR \
-		res/ARTWORK.SHR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
                 res/ICONS \

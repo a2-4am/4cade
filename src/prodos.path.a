@@ -77,10 +77,6 @@ kGRActionDirectory
          !byte 10
          !raw  "ACTION.GR/"
 
-kSHRArtworkDirectory
-         !byte 12
-         !raw  "ARTWORK.SHR/"
-
 kDemoDirectory
          !byte 5
          !raw  "DEMO/"
@@ -149,6 +145,14 @@ kGameHelpIndexFile
 kGameHelpFile
          !byte 12
          !raw  "GAMEHELP.ALL"
+
+kSHRArtworkIndexFile
+         !byte 11
+         !raw  "ARTWORK.IDX"
+
+kSHRArtworkDataFile
+         !byte 11
+         !raw  "ARTWORK.ALL"
 
 kCreditsFile
          !byte 7
