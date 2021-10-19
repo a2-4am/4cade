@@ -132,6 +132,8 @@ gGlobalPrefsStore
                                      ; which is apparently one of the acceptable values)
 gGamesListStore
          !word $FDFD                 ; SMC
+StoreAYAndSwitchToBank2
+         +ST16 PTR
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts

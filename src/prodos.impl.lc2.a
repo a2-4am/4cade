@@ -218,45 +218,67 @@ resetval=$f0
          jsr   @set_rdwrbuff
          ldx   #0
          stx   blkidx
+         stx   treeidx
          stx   blkofflo
          stx   blkoffhi
          stx   reqcmd
+@seekloop
          jsr   @reset
-         ldx   sizelo
+         ldy   sizelo
          bne   @seek64
          cmp   ldrhi
          bcc   @seek64
          bne   @seek32
-         ldx   ldrlo
-         beq   @seek32
-
-@seek64
-         sta   sizehi
-         sta   sizelo
-         jsr   @seekreset
-         lda   ldrhi
-         sbc   #resetval
-         sta   ldrhi
+         cmp   ldrlo
+         bcc   @seek64
 
 @seek32
          lda   ldrhi
+         ldx   ldrlo
+         +HIDE_NEXT_BYTE
+@seek64
+         tax
          sta   sizehi
-         lda   ldrlo
-         sta   sizelo
-         jsr   @seekreset
+         stx   sizelo
          lda   ldrhi
+         pha
+         lda   sizehi
+         pha
+         lda   ldrlo
+         pha
+         txa
+         pha
+         tya
+         pha
+         jsr   @seekreset
+         pla
+         tay
+         sec
+         pla
+         sta   ldrlo
+         pla
+         sbc   ldrlo
+         sta   ldrlo
+         pla
+         sta   ldrhi
+         pla
+         sbc   ldrhi
+         sta   ldrhi
+         tya
+         sbc   #0
+         sta   sizelo
          ora   ldrlo
-         bne   @jmp_zp
-         dec   blkidx
+         ora   ldrhi
+         bne   @seekloop
 @link_jmpzp
-         beq   @jmp_zp ;always
+         jmp   @jmp_zp
 
 @seekreset
          jsr   hddrdwrpart
 @reset
          lda   #resetval
          sta   blefthi
-         stx   bleftlo
+         sta   bleftlo
          rts
 
 @imp_read
@@ -315,9 +337,13 @@ resetval=$f0
          stx   dirbufpatch7+2
          stx   dirbufpatch9+2
          stx   dirbufpatch10+1
+         stx   dirbufpatch11+1
+         stx   dirbufpatch12+1
+         stx   dirbufpatch13+2
          inx
          stx   dirbufpatch5+2
          stx   dirbufpatch8+2
+         stx   dirbufpatch14+2
 @close_ret
          rts
 

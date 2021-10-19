@@ -4,45 +4,9 @@
 ; credits page
 ;
 ; Public functions
-; - Credits
 ; - Help
+; - Credits
 ;
-
-;------------------------------------------------------------------------------
-; Credits
-; display credits page and wait
-;
-; in:    none
-; out:   C clear
-;        all other flags and registers clobbered
-;------------------------------------------------------------------------------
-Credits
-         jsr   LoadFile              ; load credits text into $8000
-         !word kRootDirectory
-         !word kCreditsFile
-         !word $8000
-.clearAndDisplayHelp
-         jsr   ForceHGRMode
-         jsr   ClearOffscreen
-         ldx   #0
-.displayHelp
-         lda   OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR $8000
-         jsr   DrawPage              ; draw credits
-         jsr   ShowOtherPage         ; show credits
-         jsr   WaitForKeyFor30Seconds; wait
-         bit   CLEARKBD              ; don't care about key
-         cmp   #$81                  ; Ctrl-A = about
-         beq   Credits
-         cmp   #$90                  ; Ctrl-P = launch joystick calibration program
-         bne   +
-         jmp   Joystick
-+        cmp   #$83                  ; Ctrl-C = toggle cheat mode
-         bne   +
-         jsr   ToggleCheat
-+        sec                         ; if called from search mode, tell caller to refresh
-         rts
 
 ;------------------------------------------------------------------------------
 ; Help
@@ -83,3 +47,73 @@ Help
          jsr   LoadHelpOffscreen     ; load fancy backdrop
          ldx   #7
          bne   .displayHelp          ; always branches
+
+;------------------------------------------------------------------------------
+; Credits
+; display credits page and wait
+;
+; in:    none
+; out:   C clear
+;        all other flags and registers clobbered
+;------------------------------------------------------------------------------
+Credits
+         jsr   LoadFile              ; load credits text into $8000
+         !word kRootDirectory
+         !word kCreditsFile
+         !word $8000
+.clearAndDisplayHelp
+         jsr   ForceHGRMode
+         jsr   ClearOffscreen
+         ldx   #0                    ; left margin (0 for credits, different for global help)
+.displayHelp
+         lda   OffscreenPage
+         ror                         ; draw on offscreen page
+         +LDADDR $8000
+         +ST16 PTR
+;DrawPageInternal inlined here
+;
+; PTR contains address of array of length-prefixed strings
+; length #$FF terminates
+; X contains 0-indexed left margin (HTAB)
+; carry bit clear -> draw on page 1
+; carry bit set   -> draw on page 2
+; drawing starts at VTAB 0
+; each line starts at column X which was passed in (0-indexed)
+; clobbers $FF
+; clobbers A/X/Y
+; preserves C, other flags clobbered
+         stx   $FF
+         ldx   #0
+         stx   VTAB
+         php                         ; save C, but Z=1 because of ldx #0
+         jsr   SwitchToBank2
+@drawLine
+         lda   $FF
+         sta   HTAB
+         jsr   DrawStringInternal
+         bmi   @donePage
+         clc
+         adc   PTR
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++        plp                         ; restore C to whatever it was on entry
+         php
+         beq   @drawLine             ; always branches
+@donePage
+         jsr   SwitchToBank1
+         plp
+;end inline
+         jsr   ShowOtherPage         ; show credits
+         jsr   WaitForKeyFor30Seconds; wait
+         bit   CLEARKBD              ; don't care about key
+         cmp   #$81                  ; Ctrl-A = about
+         beq   Credits
+         cmp   #$90                  ; Ctrl-P = launch joystick calibration program
+         bne   +
+         jmp   Joystick
++        cmp   #$83                  ; Ctrl-C = toggle cheat mode
+         bne   +
+         jsr   ToggleCheat
++        sec                         ; if called from search mode, tell caller to refresh
+         rts

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2021 by 4am
 ;
 ; hi-res font drawing routines
 ;
@@ -8,114 +8,62 @@
 ; which handle bank switching for you.
 ;
 
-DrawPageInternal
-; A/Y contains address of character buffer
-; X contains 0-indexed left margin (HTAB)
-; carry bit clear -> draw on page 1
-; carry bit set   -> draw on page 2
-; drawing starts at VTAB 0
-; each line starts at column X which was passed in (0-indexed)
-; clobbers PTR
-; clobbers $FF
-; clobbers A/X/Y
-; preserves all flags, by a quirk of implementation
-         php
-         stx   $FF
-         ldx   #0
-         stx   VTAB
-         +ST16 PTR
-@drawLine
-         lda   $FF
-         sta   HTAB
-         ldy   #0
-@parseLine
-         lda   (PTR), y
-         beq   @donePage
-         cmp   #$0A
-         beq   @doneParsingLine
-         iny
-         bne   @parseLine
-@doneParsingLine
-         sty   SAVE
-         tya
-         beq   @skip
-         ldx   SAVE
-         +LD16 PTR
-         plp
-         php
-         jsr   DrawBufferInternal
-@skip    inc   SAVE                  ; skip carriage return
-         lda   SAVE                  ; advance PTR to start of next line
-         clc
-         adc   PTR
-         sta   PTR
-         bcc   +
-         inc   PTR+1
-+        inc   VTAB                  ; this will print 255 lines if you give it
-         bne   @drawLine             ; 255 lines, so don't do that
-@donePage
-         plp
-         rts
-
 Draw40CharsInternal
 ; A/Y contains address of character buffer
 ; carry bit clear -> draw on page 1
-;v carry bit set   -> draw on page 2
+; carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; drawing starts at HTAB 0
-; increments VTAB
+; increments VTAB on exit
 ; sets HTAB to 0 on exit
+; Z=1 on exit
 ; clobbers A/X/Y
          jsr   +
          ldx   #40
          jsr   DrawBufferInternal
-         inc   VTAB
 +        ldx   #0
          stx   HTAB
          rts
 
 DrawCenteredStringInternal
-; A/Y contains address of length-prefixed string
+; PTR contains address of length-prefixed string
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
-; clobbers PTR/PTR+1
-         +ST16 PTR
-
-         ldy   #0
          php
+         ldy   #0
          lda   #40
          sec
          sbc   (PTR),y
          lsr
          sta   HTAB
          plp
-         beq   +
+         ; /!\ execution falls through here to DrawStringInternal
 
 DrawStringInternal
-; A/Y contains address of length-prefixed string
+; PTR contains address of length-prefixed string
+; length can be 0
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; $24 contains starting column (0..39) (this is the standard HTAB address)
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; clobbers A/X/Y
-; clobbers PTR/PTR+1
-         +ST16 PTR
-
          ldy   #0
-+        lda   (PTR),y
-         tax
+         lda   (PTR),y
          inc   PTR
          bne   +
          inc   PTR+1
++        tax
+         bpl   +
+         rts
 +
          +LD16 PTR
          ; /!\ execution falls through here to DrawBufferInternal
 
 DrawBufferInternal
 ; A/Y contains address of character buffer
-; X contains buffer length (1..40)
+; X contains buffer length (0..40)
 ; carry bit clear -> draw on page 1
 ; carry bit set   -> draw on page 2
 ; characters MUST have high bit off (0x00..0x7F)
@@ -124,11 +72,12 @@ DrawBufferInternal
 ; $25 contains textpage line (0..23) (this is the standard VTAB address)
 ; all characters are drawn on the same line
 ; HTAB is incremented for each character
-; VTAB is NOT incremented
-; clobbers A/X/Y
+; clobbers X,Y
+; increments VTAB on exit
+; A=buffer length on exit
+; N=0,Z=0 on exit
          +ST16 DBISrc+1
          php
-         dex
          lda   VTAB
          asl
          asl
@@ -172,7 +121,6 @@ DrawBufferInternal
          adc   #$04
          sta   DBIRow7+2
 @hgrlo   lda   #$FD
-         clc
          adc   HTAB
          sta   DBIRow0+1
          sta   DBIRow1+1
@@ -182,6 +130,9 @@ DrawBufferInternal
          sta   DBIRow5+1
          sta   DBIRow6+1
          sta   DBIRow7+1
+         txa
+         pha
+         bpl   +                     ; always branches because X is 0..40
 DBILoop
 DBISrc   ldy   $FDFD,x
          lda   FontDataRow0,y
@@ -201,6 +152,8 @@ DBIRow6  sta   $FDFD,x
          lda   FontDataRow7,y
 DBIRow7  sta   $FDFD,x
          inc   HTAB
-         dex
++        dex
          bpl   DBILoop
+         pla                         ; A = buffer length (passed in in X)
+         inc   VTAB
          rts

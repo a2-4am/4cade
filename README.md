@@ -13,12 +13,18 @@ You will need
 
 Then open a terminal window and type
 
-```
+``` shell
 $ cd 4cade/
 $ make
 ```
 
 If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
+
+If all does not go well, try doing a clean build (`make clean dsk`)
+
+If that fails, perhaps you have out-of-date versions of one of the required tools? The [Makefile](https://github.com/a2-4am/4cade/blob/master/Makefile) lists, but does not enforce, the minimum version requirements of each third-party tool.
+
+If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 ## Windows
 
@@ -72,23 +78,51 @@ Each game's filename is used as a "foreign key" (in database terms) to build dir
 
 - A game's main executable is always `X/FILENAME/FILENAME`
 - A game's HGR title screenshot is always `TITLE.HGR/FILENAME`
-- A game's super hi-res box art is always `ARTWORk.SHR/FILENAME`
+- A game's super hi-res box art is always `ARTWORK.SHR/FILENAME`
 - A game's mini-attract mode configuration file is always `ATTRACT/FILENAME`
 - Games are included in other attract mode configuration files by `FILENAME`
 - The source disk image of a game (in [`res/dsk`](https://github.com/a2-4am/4cade/tree/master/res/dsk)) must have a volume name of `FILENAME`, and there must be a file in the disk image's root directory also named `FILENAME` which is the game's main executable
 
 ## `ATTRACT.CONF`
 
-TODO
+[`ATTRACT.CONF`](https://github.com/a2-4am/4cade/blob/master/res/ATTRACT.CONF) is the master configuration file for Mega-Attract mode. There is up-to-date format information at the bottom of the file itself, which I will not duplicate here. In general, each record is the name of an attract module, which can be a slideshow, self-running demo, or even a single screenshot. Each attract module corresponds to a file in a separate directory; see format information for details. So the record `FAVORITES2.CONF=1` corresponds to [`a real file`](https://github.com/a2-4am/4cade/blob/master/res/SS/FAVORITES2.CONF) that contains details about that particular hi-res slideshow.
+
+Attract modules are loosely divided into sets that have a loosely similar mix of hi-res, double hi-res, super hi-res, and self-running demos. The `ATTRACT.CONF` file is maintained by hand and changes frequently as we add games, split up slideshows, or reorder things on a whim.
+
+Since everything is so loosely associated by filename, it is easy to end up with attract modules that aren't listed in `ATTRACT.CONF` (will use disk space but never run), duplicate modules (will loop incorrectly), or modules that refer to non-existent files (will crash and burn). If you make any changes to `ATTRACT.CONF` or any of the files that it references, or any of the files that those files reference, or even sneeze in their general direction, you should run the attract mode consistency check:
+
+``` shell
+$ cd 4cade/
+$ make attract
+```
 
 ## `FX.CONF`, `DFX.CONF`
 
-[`FX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/FX.CONF) and its sister [`DFX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/DFX.CONF) list the HGR and DHGR transition effects used in hi-res and double hi-res slideshows. Each record is a filename of a transition effect file, which is an executable file [assembled at build time](https://github.com/a2-4am/4cade/tree/master/src/fx) and stored in the `FX/` subdirectory. At the beginning of each slideshow, we query the global preferences to find the filename of the FX or DFX file, then update the global preferences with the next filename (wrapping around to the beginning of the list). If you watch the Mega-Attract mode long enough, you will eventually see all the transition effects, and since the cycle of transition effects is separate from the cycle of slideshows, you will eventually see the same slideshow with different transition effects.
+[`FX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/FX.CONF) and its sister [`DFX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/DFX.CONF) list the HGR and DHGR transition effects used in hi-res and double hi-res slideshows. Each record is a filename of a transition effect file, which is an executable file [assembled at build time](https://github.com/a2-4am/4cade/tree/master/src/fx) and stored on disk in a custom format. At the beginning of each slideshow, we query the global preferences to find the filename of the FX or DFX file, then update the global preferences with the next filename (wrapping around to the beginning of the list). If you watch the Mega-Attract mode long enough, you will eventually see all the transition effects, and since the cycle of transition effects is separate from the cycle of slideshows, you will eventually see the same slideshow with different transition effects.
 
-These files are read from disk and parsed every time they are needed. Due to memory restrictions, the parsed data is not persisted.
+These files are parsed at build time and stored on disk in a binary format, then read from disk every time they are needed. Due to memory restrictions, the parsed data is not persisted.
 
 ## `PREFS.CONF`
 
 [`PREFS.CONF`](https://github.com/a2-4am/4cade/blob/master/res/PREFS.CONF) contains persistent global state, including Mega-Attract mode state and whether cheats are enabled. There is up-to-date format information in the file itself.
 
 This file is read and parsed once at program startup, and the parsed data is stored persistently in the language card. It is written to disk every time global state changes, which is often during Mega-Attract mode, or if the user toggles cheat mode.
+
+# Compression
+
+Many files in Total Replay are stored in a compressed format, then decompressed at run-time. The compression and decompression is handled by [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home), which targets 8-bit platforms. Compressed files include
+
+- [hi-res action screenshots](https://github.com/a2-4am/4cade/tree/master/res/ACTION.HGR)
+- [double hi-res action screenshots](https://github.com/a2-4am/4cade/tree/master/res/ACTION.DHGR)
+- [super hi-res box art](https://github.com/a2-4am/4cade/tree/master/res/ARTWORK.SHR)
+
+Both the compressed and uncompressed files are stored in the repository, so you do not need Exomizer installed to build Total Replay. You only need it if you add new graphics.
+
+To add a new compressed graphic file, add the uncompressed original file to the appropriate directory ([`ACTION.HGR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/master/res/ACTION.HGR.UNCOMPRESSED), [`ACTION.DHGR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/master/res/ACTION.DHGR.UNCOMPRESSED), or [`ARTWORK.SHR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/master/res/ARTWORK.SHR.UNCOMPRESSED) respectively), then run
+
+``` shell
+$ cd 4cade/
+$ make compress
+```
+
+Then add and commit the compressed files to the repository.

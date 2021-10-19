@@ -232,6 +232,7 @@ build_addon
 ; setspeed must be self-modified before use (setspeed_x and
 ; setspeed_y).
 ;
+; all return with Z=0
 ;-----------------------------------------------------------
 
 ; Function #1: Apple IIc+
@@ -250,17 +251,17 @@ iicplus !pseudopc DisableAccelerator {
 
         ; cgga calls save X and Y regs but sets $0 to 0
         ; (this will get a laugh from C programmers)
+         php
          lda   $0
          pha
-         php
          sei             ; timing sensitive
          jsr   @jiggerypokery
          lda   gMachineInDHGRMode
          bne   +         ; DHGR mode doesn't need fix
          sta   $C05B     ; fix HGR-mode colouring
-+        plp             ; restore interrupt state
-         pla
++        pla
          sta   $0
+         plp             ; restore interrupt state
          rts
 
 @jiggerypokery

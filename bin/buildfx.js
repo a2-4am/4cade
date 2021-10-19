@@ -1,5 +1,6 @@
 a = new ActiveXObject("scripting.filesystemobject")
 x = new ActiveXObject("wscript.shell")
+fx_off = a.fileexists(WScript.Arguments(2)) ? a.getFile(WScript.Arguments(2)).size : 0
 x.run('cmd /c bin\\buildfxful.bat ' + WScript.Arguments(0) + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(3), 0, 1)
 
 b = a.opentextfile(WScript.Arguments(0))
@@ -34,7 +35,6 @@ while (!b.atendofstream)
   }
 }
 
-fx_off = 0
 groups = "*=0\n" + "!le16 " + entries.length.toString() + ", 0\n"
 
 for (i = 0; i < entries.length; i++)

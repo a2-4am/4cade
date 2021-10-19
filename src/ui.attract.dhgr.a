@@ -155,7 +155,7 @@ LoadDHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kDFXFile
+         !word kFXFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -258,7 +258,6 @@ DrawGameTitleInActionSlideshow
          lda   #7                    ; top-right rounded corner character
          jsr   @drawline
 
-         inc   VTAB
          lda   #" "
          jsr   @resetline
          lda   (SAVE),y              ; A = display length + 1
@@ -295,7 +294,7 @@ DrawGameTitleInActionSlideshow
 ; to display properly on the DHGR screen.
 ;
 ; /!\ must be called immediately after calling one of the font drawing routines
-;     (Draw40Chars, DrawCenteredString, DrawString, DrawBuffer)
+;     (Draw40Chars, DrawCenteredString, DrawString)
 ;
 ; in:    gPathname contains number of bytes to transform
 ;        DBIRow0/LC2 contains address of first byte of first row to transform
