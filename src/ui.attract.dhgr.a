@@ -258,7 +258,6 @@ DrawGameTitleInActionSlideshow
          lda   #7                    ; top-right rounded corner character
          jsr   @drawline
 
-         inc   VTAB
          lda   #" "
          jsr   @resetline
          lda   (SAVE),y              ; A = display length + 1
