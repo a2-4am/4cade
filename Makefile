@@ -41,8 +41,9 @@ dsk: asm
 # precompute FX and DFX indexes and merged data files containing multiple
 # graphic effects in a single file (loaded at runtime by LoadIndexedFile())
 #
-	bin/buildfx.sh "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
-	bin/buildfx.sh "res/DFX.CONF" "build/DFX.IDX" "build/DFX.ALL" "build/FX.INDEXED" >>build/log
+	rm -f "build/FX.ALL"
+	bin/buildfx.sh -p "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
+	bin/buildfx.sh -p "res/DFX.CONF" "build/DFX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
 #
 # substitute special characters in help text and other pages that will be
 # drawn with DrawPage()
@@ -57,18 +58,16 @@ dsk: asm
 # mini-attract mode configuration, and prelaunch files
 #
 	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
-	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF >>build/log
-	for f in res/SS/*; do \
+	(for f in res/SS/*; do \
 	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
-	    echo "$$(basename $$f)" >> build/SSDIR.CONF; \
-	done
-	bin/buildfx.sh "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
-	rm -f build/ATTRACTDIR.CONF && touch build/ATTRACTDIR.CONF >>build/log
-	for f in res/ATTRACT/*; do \
+	    echo "$$(basename $$f)"; \
+	done) > build/SSDIR.CONF
+	bin/buildfx.sh -p "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
+	(for f in res/ATTRACT/*; do \
 	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
-	    echo "$$(basename $$f)" >> build/ATTRACTDIR.CONF; \
-        done
-	bin/buildfx.sh "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
+	    echo "$$(basename $$f)"; \
+	done) > build/ATTRACTDIR.CONF
+	bin/buildfx.sh -p "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
 	bin/buildhelp.sh "res/GAMES.CONF" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
 #
 # create _FileInformation.txt files for subdirectories
@@ -95,9 +94,8 @@ dsk: asm
 		build/HELPTEXT \
 		build/ATTRACT.IDX \
 		build/FX.IDX \
-		build/FX.ALL \
 		build/DFX.IDX \
-		build/DFX.ALL \
+		build/FX.ALL \
 		build/GAMEHELP.IDX \
 		build/GAMEHELP.ALL \
 		build/SLIDESHOW.IDX \
