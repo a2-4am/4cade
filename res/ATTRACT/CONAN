@@ -4,7 +4,7 @@
 #
 
 CONAN=C
-ACTION.HGR/CONAN=A
+CONAN=A
 CONAN=0
 
 [eof]

@@ -4,7 +4,7 @@
 #
 
 BB=C
-ACTION.HGR/BB=A
+BB=A
 BB=0
 
 [eof]

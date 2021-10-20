@@ -4,7 +4,7 @@
 #
 
 NI=C
-ACTION.HGR/NI=A
+NI=A
 NI=0
 
 [eof]

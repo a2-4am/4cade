@@ -4,6 +4,6 @@
 #
 
 DRELBS=C
-ACTION.HGR/DRELBS=A
+DRELBS=A
 
 [eof]

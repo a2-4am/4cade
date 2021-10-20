@@ -28,7 +28,6 @@ cat res/GAMES.CONF |
         cat res/SS/ACTION*.CONF |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
-            sed -e "s/^/ACTION.HGR\//g" |
             sed -e "s/$/=A/g" |
             sort |
             uniq >> /tmp/g

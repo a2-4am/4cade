@@ -4,8 +4,8 @@
 #
 
 N.O.R.A.D=C
-ACTION.HGR/N.O.R.A.D2=A
-ACTION.HGR/N.O.R.A.D=A
+N.O.R.A.D2=A
+N.O.R.A.D=A
 N.O.R.A.D=0
 
 [eof]

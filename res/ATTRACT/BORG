@@ -4,6 +4,6 @@
 #
 
 BORG=C
-ACTION.HGR/BORG=A
+BORG=A
 
 [eof]

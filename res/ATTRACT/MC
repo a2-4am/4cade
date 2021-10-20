@@ -4,7 +4,7 @@
 #
 
 MC=C
-ACTION.HGR/MC=A
+MC=A
 MC=0
 
 [eof]

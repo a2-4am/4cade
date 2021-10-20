@@ -4,6 +4,6 @@
 #
 
 ZARGS=C
-ACTION.HGR/ZARGS=A
+ZARGS=A
 
 [eof]

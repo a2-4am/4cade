@@ -70,6 +70,23 @@ dsk: asm
 	bin/buildindexedfile.sh -p "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
 	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
 #
+# precompute indexed files for HGR action screenshots
+#
+	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR0
+	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR1
+	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR2
+	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR3
+	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR4
+	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR5
+	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) > build/ACTIONHGR6
+	bin/buildindexedfile.sh    "build/ACTIONHGR0" "build/HGR0.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR1" "build/HGR1.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR2" "build/HGR2.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR3" "build/HGR3.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR4" "build/HGR4.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR5" "build/HGR5.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR6" "build/HGR6.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+#
 # precompute indexed files for SHR artwork
 #
 	(for f in res/ARTWORK.SHR/*; do \
@@ -81,7 +98,6 @@ dsk: asm
 #
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
@@ -112,6 +128,14 @@ dsk: asm
 		build/PRELAUNCH.ALL \
 		build/ARTWORK.IDX \
 		build/ARTWORK.ALL \
+		build/HGR0.IDX \
+		build/HGR1.IDX \
+		build/HGR2.IDX \
+		build/HGR3.IDX \
+		build/HGR4.IDX \
+		build/HGR5.IDX \
+		build/HGR6.IDX \
+		build/HGR.ALL \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -121,7 +145,6 @@ dsk: asm
 	for f in \
 		res/TITLE.HGR \
 		res/TITLE.DHGR \
-		res/ACTION.HGR \
 		res/ACTION.DHGR \
 		res/ACTION.GR \
                 res/DEMO \

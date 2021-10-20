@@ -4,7 +4,7 @@
 #
 
 MT=C
-ACTION.HGR/MT2=A
-ACTION.HGR/MT=A
+MT2=A
+MT=A
 
 [eof]

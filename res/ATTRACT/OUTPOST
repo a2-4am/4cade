@@ -4,6 +4,6 @@
 #
 
 OUTPOST=C
-ACTION.HGR/OUTPOST=A
+OUTPOST=A
 
 [eof]

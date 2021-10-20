@@ -4,7 +4,7 @@
 #
 
 CW=C
-ACTION.HGR/CW2=A
-ACTION.HGR/CW=A
+CW2=A
+CW=A
 
 [eof]

@@ -4,6 +4,6 @@
 #
 
 CC=C
-ACTION.HGR/CC=A
+CC=A
 
 [eof]

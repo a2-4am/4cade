@@ -4,6 +4,6 @@
 #
 
 EPOCH=C
-ACTION.HGR/EPOCH=A
+EPOCH=A
 
 [eof]

@@ -4,6 +4,6 @@
 #
 
 RED.ALERT=C
-ACTION.HGR/RED.ALERT=A
+RED.ALERT=A
 
 [eof]

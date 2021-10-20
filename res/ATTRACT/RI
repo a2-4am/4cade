@@ -4,7 +4,7 @@
 #
 
 RI=C
-ACTION.HGR/RI2=A
-ACTION.HGR/RI=A
+RI2=A
+RI=A
 
 [eof]

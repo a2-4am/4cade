@@ -4,7 +4,7 @@
 #
 
 OM=C
-ACTION.HGR/OM=A
+OM=A
 OM=0
 
 [eof]

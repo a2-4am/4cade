@@ -4,7 +4,7 @@
 #
 
 SS=C
-ACTION.HGR/SS=A
-ACTION.HGR/SSB=A
+SS=A
+SSB=A
 
 [eof]

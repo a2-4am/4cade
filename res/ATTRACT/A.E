@@ -4,6 +4,6 @@
 #
 
 A.E=C
-ACTION.HGR/A.E=A
+A.E=A
 
 [eof]

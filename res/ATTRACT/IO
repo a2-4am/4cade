@@ -4,6 +4,6 @@
 #
 
 IO=C
-ACTION.HGR/IO=A
+IO=A
 
 [eof]

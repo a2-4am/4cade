@@ -65,9 +65,16 @@ kAnimatedTitleDirectory
          !byte 15
          !raw  "TITLE.ANIMATED/"
 
-kHGRActionDirectory
-         !byte 11
-         !raw  "ACTION.HGR/"
+kHGRActionIndexFile
+         !byte 8
+         !raw  "HGR"
+gHGRActionIndexNumber
+         !raw  "_"
+         !raw  ".IDX"
+
+kHGRActionDataFile
+         !byte 7
+         !raw  "HGR.ALL"
 
 kDHGRActionDirectory
          !byte 12

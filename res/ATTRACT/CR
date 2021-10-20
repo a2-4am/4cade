@@ -4,7 +4,7 @@
 #
 
 CR=C
-ACTION.HGR/CR2=A
-ACTION.HGR/CR=A
+CR2=A
+CR=A
 
 [eof]
