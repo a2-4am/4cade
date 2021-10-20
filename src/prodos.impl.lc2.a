@@ -232,8 +232,8 @@ resetval=$f0
          cmp   ldrhi
          bcc   @seek64
          bne   @seek32
-         cmp   ldrlo
-         bcc   @seek64
+         cpx   ldrlo
+         bne   @seek64
 
 @seek32
          lda   ldrhi
@@ -429,8 +429,6 @@ gRootDirectory
          +LDADDR 0                   ; SMC
          sta   (reloc + unrhddblocklo - unrelochdd) + 1
          sty   (reloc + unrhddblockhi - unrelochdd) + 1
-         sta   @myreadblock+1
-         sty   @myreadblock+3        ; reset 'root' directory (saved at program start)
 
          ;search for '/' character in filename
 
@@ -447,64 +445,26 @@ gRootDirectory
          sty   sizelo
          txa
          pha
+         lda   #$B1                  ; LDA (), y
+         sta   pathpatch1
+         lda   #$68                  ; PLA
+         sta   pathpatch2
+         lda   #$60                  ; RTS
+         sta   pathpatch2 + 1
 
 @myreadblock
-@myx80_parms
-         ldx   #2
-         lda   #0
-         jsr   hddreaddirsel
-         lda   #NAME_LENGTH
-         sta   bloklo
-         lda   #>(hdddirbuf - 1)
-         sta   blokhi
-
-         ;there can be only one page crossed, so we can increment here
-
-@mynextent1
-         inc   blokhi
-@mynextent
-         ldy   #0
-         lda   (bloklo), y
-         pha
-         and   #$0f
-         tax
---       iny
-         lda   (bloklo), y
-         cmp   (namlo), y
-         beq   @myfoundname
-
-         ;match failed, move to next directory in this block, if possible
-
--        pla
-
-@myskiphdr
-         clc
-         lda   bloklo
-         adc   #ENTRY_SIZE
-         sta   bloklo
-         bcs   @mynextent1
-         cmp   #$ff ;4 + ($27 * $0d)
-         bne   @mynextent
-
-         ;read next directory block when we reach the end of this block
-
-         lda   hdddirbuf + NEXT_BLOCK_LO
-         ldx   hdddirbuf + NEXT_BLOCK_HI
-         bcs   +
-
-@myfoundname
-         dex
-         bne   --
+         jsr   hddopendir
+-        tax
 
          ;parse path until last directory is seen
 
-         iny
          lda   (namlo), y
          cmp   #'/'
-         bne   -
-         pla
-         and   #$20 ;Volume Directory Header XOR subdirectory
-         bne   @myskiphdr
+         beq   +
+--       jsr   pathresume
+         bne   -                     ; always taken
++        txa
+         bmi   --
          tya
          eor   #$ff
          adc   sizelo
@@ -513,22 +473,30 @@ gRootDirectory
          tya
          adc   namlo
          sta   namlo
+         bcc   +
+         inc   namhi
++
 
          ;cache block number of current directory
          ;as starting position for subsequent searches
 
          ldy   #(KEY_POINTER + 1)
-         lda   (bloklo), y
+         lda   (scratchlo), y
          tax
          dey
-         lda   (bloklo), y
+         lda   (scratchlo), y
          sta   (reloc + unrhddblocklo - unrelochdd) + 1
          stx   (reloc + unrhddblockhi - unrelochdd) + 1
-+        sta   @myx80_parms + 1
-         stx   @myx80_parms + 3
-++       lda   sizelo
+         lda   sizelo
          bne   @myreadblock
          tay
+
+         lda   #$D1                  ; CMP (), y
+         sta   pathpatch1
+         lda   #$86                  ; STX
+         sta   pathpatch2
+         lda   #$5A
+         sta   pathpatch2 + 1
 
          pla
          sta   (namlo), y

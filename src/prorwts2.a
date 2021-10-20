@@ -2586,6 +2586,12 @@ hddnextent      ldy     #0
                 and     #$0f
                 tax
                 inx
+
+                ;placeholder instructions for path patching
+
+pathpatch1
+                cmp     (namlo), y
+
 -               eor     (namlo), y
                 asl
                 beq     hddfoundname
@@ -2612,6 +2618,7 @@ hddnextent      ldy     #0
 
                 ;move to next entry in this block, if possible
 
+pathresume
 +               clc
                 lda     scratchlo
                 adc     #ENTRY_SIZE
@@ -2635,6 +2642,7 @@ hddfoundname    iny
                 dex
                 bne     -
 
+pathpatch2
                 ;initialise essential variables
 
   !if allow_trees = 1 {
