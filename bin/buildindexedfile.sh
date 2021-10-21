@@ -12,6 +12,7 @@
 
 pad=false
 append=false
+standardoffset=0
 standardsize=0
 while getopts ":ap" opt; do
     case $opt in
@@ -23,13 +24,18 @@ while getopts ":ap" opt; do
 done
 shift $((OPTIND-1))
 
-if [ -f "$4"/STANDARD ]; then
-    cp "$4"/STANDARD "$3"
-    standardsize=$(wc -c < "$3")
-elif [ "$append" = false ]; then
+if [ "$append" = false ]; then
     rm -f "$3"
 fi
 touch "$3"
+
+# if there is a file called "STANDARD" in the input directory, add it now
+# because we will reuse it for any files that don't exist
+if [ -f "$4"/STANDARD ]; then
+    standardoffset=$(wc -c < "$3")
+    standardsize=$(wc -c < "$4/STANDARD")
+    cat "$4"/STANDARD >> "$3"
+fi
 
 # make temp file with list of lines that contain keys
 records=$(mktemp)
@@ -63,8 +69,8 @@ source=$(mktemp)
              echo "$size"
          fi
          cat "$4/$key" >> "$3"         # append this file to the end of the merged data file
-     else                              # if file does not exist, reuse placeholder at offset 0
-         echo "!be24 0"
+     else                              # if file does not exist, reuse STANDARD file
+         echo "!be24 $standardoffset"
          echo "!le16 $standardsize"
      fi
  done < "$records") > "$source"

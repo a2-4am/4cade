@@ -72,9 +72,11 @@ gHGRActionIndexNumber
          !raw  "_"
          !raw  ".IDX"
 
-kHGRActionDataFile
-         !byte 7
-         !raw  "HGR.ALL"
+kTotalDataFile
+         !byte 10
+         !raw  "TOTAL.DATA"
+
+kHGRActionDataFile=kTotalDataFile
 
 kDHGRActionDirectory
          !byte 12
@@ -101,9 +103,7 @@ kPrelaunchIndexFile
          !byte 13
          !raw  "PRELAUNCH.IDX"
 
-kPrelaunchFulFile
-         !byte 13
-         !raw  "PRELAUNCH.ALL"
+kPrelaunchFulFile=kTotalDataFile
 
 kStandardPrelaunch
          !byte 8
@@ -121,25 +121,19 @@ kMiniAttractIndexFile
          !byte 15
          !raw  "MINIATTRACT.IDX"
 
-kAttractModeFulFile
-         !byte 15
-         !raw  "MINIATTRACT.ALL"
+kAttractModeFulFile=kTotalDataFile
 
 kAttractModeSlideshowIndexFile
          !byte 13
          !raw  "SLIDESHOW.IDX"
 
-kAttractModeSlideshowFulFile
-         !byte 13
-         !raw  "SLIDESHOW.ALL"
+kAttractModeSlideshowFulFile=kTotalDataFile
 
 kFXIndexFile
          !byte 6
          !raw  "FX.IDX"
 
-kFXFile
-         !byte 6
-         !raw  "FX.ALL"
+kFXFile=kTotalDataFile
 
 kDFXIndexFile
          !byte 7
@@ -149,17 +143,13 @@ kGameHelpIndexFile
          !byte 12
          !raw  "GAMEHELP.IDX"
 
-kGameHelpFile
-         !byte 12
-         !raw  "GAMEHELP.ALL"
+kGameHelpFile=kTotalDataFile
 
 kSHRArtworkIndexFile
          !byte 11
          !raw  "ARTWORK.IDX"
 
-kSHRArtworkDataFile
-         !byte 11
-         !raw  "ARTWORK.ALL"
+kSHRArtworkDataFile=kTotalDataFile
 
 kCreditsFile
          !byte 7
