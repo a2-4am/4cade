@@ -70,21 +70,47 @@ rem
 rem precompute indexed files for game help, slideshow configuration,
 rem mini-attract mode configuration, and prelaunch files
 rem
-cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\GAMEHELP.ALL build\GAMEHELP\STANDARD >>build\log
-for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js "%%q" "build\SS\%%~nxq" >>build\log
-cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\SLIDESHOW.ALL nul >>build\log
-for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js "%%q" "build\ATTRACT\%%~nxq" >>build\log
-cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX build\MINIATTRACT.ALL nul >>build\log
+cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\GAMEHELP.ALL build\GAMEHELP\STANDARD pad >>build\log
+for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js %%q build\SS\%%~nxq >>build\log
+cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\SLIDESHOW.ALL nul pad >>build\log
+for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT\%%~nxq >>build\log
+cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX build\MINIATTRACT.ALL nul pad >>build\log
 cscript /nologo bin\buildpre.js build\PRELAUNCH.INDEXED build\PRELAUNCH.IDX build\PRELAUNCH.ALL build\PRELAUNCH.INDEXED\STANDARD >>build\log
+rem
+rem precompute indexed files for HGR action screenshots
+rem
+1>nul copy /y nul build\ACTIONHGR0
+1>nul copy /y nul build\ACTIONHGR1
+1>nul copy /y nul build\ACTIONHGR2
+1>nul copy /y nul build\ACTIONHGR3
+1>nul copy /y nul build\ACTIONHGR4
+1>nul copy /y nul build\ACTIONHGR5
+1>nul copy /y nul build\ACTIONHGR6
+for %%q in (res\ACTION.HGR\A* res\ACTION.HGR\B* res\ACTION.HGR\C* res\ACTION.HGR\D*) do 1>nul >>build\ACTIONHGR0 echo %%q
+for %%q in (res\ACTION.HGR\E* res\ACTION.HGR\F* res\ACTION.HGR\G* res\ACTION.HGR\H*) do 1>nul >>build\ACTIONHGR1 echo %%q
+for %%q in (res\ACTION.HGR\I* res\ACTION.HGR\J* res\ACTION.HGR\K* res\ACTION.HGR\L*) do 1>nul >>build\ACTIONHGR2 echo %%q
+for %%q in (res\ACTION.HGR\M* res\ACTION.HGR\N* res\ACTION.HGR\O* res\ACTION.HGR\P*) do 1>nul >>build\ACTIONHGR3 echo %%q
+for %%q in (res\ACTION.HGR\Q* res\ACTION.HGR\R* res\ACTION.HGR\S* res\ACTION.HGR\T*) do 1>nul >>build\ACTIONHGR4 echo %%q
+for %%q in (res\ACTION.HGR\U* res\ACTION.HGR\V* res\ACTION.HGR\W* res\ACTION.HGR\X*) do 1>nul >>build\ACTIONHGR5 echo %%q
+for %%q in (res\ACTION.HGR\Y* res\ACTION.HGR\Z*) do 1>nul >>build\ACTIONHGR6 echo %%q
+cscript /nologo bin\buildss.js build\ACTIONHGR0* build\HGR0.IDX build\HGR.ALL nul >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR1* build\HGR1.IDX build\HGR.ALL build\HGR.ALL >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR2* build\HGR2.IDX build\HGR.ALL build\HGR.ALL >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR3* build\HGR3.IDX build\HGR.ALL build\HGR.ALL >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX build\HGR.ALL build\HGR.ALL >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX build\HGR.ALL build\HGR.ALL >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX build\HGR.ALL build\HGR.ALL >>build\log
+rem
+rem precompute indexed files for SHR artwork
+rem
+cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX build\ARTWORK.ALL nul >>build\log
 rem
 rem create _FileInformation.txt files for subdirectories
 rem
 cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ACTION.HGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ARTWORK.SHR "06" "1FF8" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build/log
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build/log
@@ -100,8 +126,8 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACT.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SLIDESHOW.IDX" >>build\log
@@ -110,16 +136,24 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\MINIATTRACT.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PRELAUNCH.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PRELAUNCH.ALL" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/ARTWORK.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/ARTWORK.ALL" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR0.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR1.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR2.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR3.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR4.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR5.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR6.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR.ALL" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.HGR" "res\ACTION.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "res\ACTION.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ARTWORK.SHR" "res\ARTWORK.SHR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log

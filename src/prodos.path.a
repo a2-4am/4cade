@@ -65,9 +65,16 @@ kAnimatedTitleDirectory
          !byte 15
          !raw  "TITLE.ANIMATED/"
 
-kHGRActionDirectory
-         !byte 11
-         !raw  "ACTION.HGR/"
+kHGRActionIndexFile
+         !byte 8
+         !raw  "HGR"
+gHGRActionIndexNumber
+         !raw  "_"
+         !raw  ".IDX"
+
+kHGRActionDataFile
+         !byte 7
+         !raw  "HGR.ALL"
 
 kDHGRActionDirectory
          !byte 12
@@ -76,10 +83,6 @@ kDHGRActionDirectory
 kGRActionDirectory
          !byte 10
          !raw  "ACTION.GR/"
-
-kSHRArtworkDirectory
-         !byte 12
-         !raw  "ARTWORK.SHR/"
 
 kDemoDirectory
          !byte 5
@@ -149,6 +152,14 @@ kGameHelpIndexFile
 kGameHelpFile
          !byte 12
          !raw  "GAMEHELP.ALL"
+
+kSHRArtworkIndexFile
+         !byte 11
+         !raw  "ARTWORK.IDX"
+
+kSHRArtworkDataFile
+         !byte 11
+         !raw  "ARTWORK.ALL"
 
 kCreditsFile
          !byte 7

@@ -5,7 +5,8 @@
 !to "res/DEMO/SPACE.QUARKS",plain
 *=$B000
 
-    !source "src/prelaunch/common.a"
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
@@ -43,4 +44,4 @@ space_quarks
          !byte 27
          !text "X/SPACE.QUARKS/SPACE.QUARKS"
 
-patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D,$4C,$00,$01,$CE,$05,$03,$F0,$F8,$68,$68
+patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D,$4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68

@@ -230,6 +230,7 @@ ver_02 = 1
                 KEY_POINTER = $11       ;ProDOS constant
                 EOF_LO    = $15         ;ProDOS constant
                 EOF_HI    = $16         ;ProDOS constant
+                EOF_HI2   = $17         ;ProDOS constant
                 AUX_TYPE  = $1f         ;ProDOS constant
                 ENTRY_SIZE = $27        ;ProDOS constant
                 NEXT_BLOCK_LO = $2      ;ProDOS constant
@@ -2586,6 +2587,12 @@ hddnextent      ldy     #0
                 and     #$0f
                 tax
                 inx
+
+                ;placeholder instructions for path patching
+
+pathpatch1
+                cmp     (namlo), y
+
 -               eor     (namlo), y
                 asl
                 beq     hddfoundname
@@ -2612,6 +2619,7 @@ hddnextent      ldy     #0
 
                 ;move to next entry in this block, if possible
 
+pathresume
 +               clc
                 lda     scratchlo
                 adc     #ENTRY_SIZE
@@ -2635,6 +2643,7 @@ hddfoundname    iny
                 dex
                 bne     -
 
+pathpatch2
                 ;initialise essential variables
 
   !if allow_trees = 1 {
@@ -2679,7 +2688,15 @@ hddfoundname    iny
   !if (bounds_check + return_size + one_shot) > 0 {
                 ;cache EOF (file size, loaded backwards)
 
-                ldy     #EOF_HI
+                ldy     #EOF_HI2
+                lda     (scratchlo), y
+                beq     not48
+                lda     #$ff
+                tax
+                bne     +
+                
+not48
+                dey
                 lda     (scratchlo), y
     !if (enable_write + aligned_read) > 0 {
                 tax

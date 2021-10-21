@@ -41,8 +41,8 @@ dsk: asm
 # precompute FX and DFX indexes and merged data files containing multiple
 # graphic effects in a single file (loaded at runtime by LoadIndexedFile())
 #
-	bin/buildfx.sh "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
-	bin/buildfx.sh "res/DFX.CONF" "build/DFX.IDX" "build/DFX.ALL" "build/FX.INDEXED" >>build/log
+	bin/buildindexedfile.sh -p "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
+	bin/buildindexedfile.sh -a -p "res/DFX.CONF" "build/DFX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
 #
 # substitute special characters in help text and other pages that will be
 # drawn with DrawPage()
@@ -56,29 +56,50 @@ dsk: asm
 # precompute indexed files for game help, slideshow configuration,
 # mini-attract mode configuration, and prelaunch files
 #
-	bin/buildhelp.sh "res/GAMES.CONF" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
-	rm -f build/SSDIR.CONF && touch build/SSDIR.CONF >>build/log
-	for f in res/SS/*; do \
+	awk -F "," '!/^#/ { print $$2 }' < res/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
+	bin/buildindexedfile.sh -p "build/GAMES.SORTED" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
+	(for f in res/SS/*; do \
 	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
-	    echo "$$(basename $$f)" >> build/SSDIR.CONF; \
-	done
-	bin/buildfx.sh "build/SSDIR.CONF" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
-	rm -f build/ATTRACTDIR.CONF && touch build/ATTRACTDIR.CONF >>build/log
-	for f in res/ATTRACT/*; do \
+	    echo "$$(basename $$f)"; \
+	done) > build/SSDIR
+	bin/buildindexedfile.sh -p "build/SSDIR" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
+	(for f in res/ATTRACT/*; do \
 	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
-	    echo "$$(basename $$f)" >> build/ATTRACTDIR.CONF; \
-        done
-	bin/buildfx.sh "build/ATTRACTDIR.CONF" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
-	bin/buildhelp.sh "res/GAMES.CONF" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
+	    echo "$$(basename $$f)"; \
+	done) > build/ATTRACTDIR
+	bin/buildindexedfile.sh -p "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
+	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
+#
+# precompute indexed files for HGR action screenshots
+#
+	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR0
+	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR1
+	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR2
+	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR3
+	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR4
+	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR5
+	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) > build/ACTIONHGR6
+	bin/buildindexedfile.sh    "build/ACTIONHGR0" "build/HGR0.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR1" "build/HGR1.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR2" "build/HGR2.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR3" "build/HGR3.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR4" "build/HGR4.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR5" "build/HGR5.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a "build/ACTIONHGR6" "build/HGR6.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
+#
+# precompute indexed files for SHR artwork
+#
+	(for f in res/ARTWORK.SHR/*; do \
+	    echo "$$(basename $$f)"; \
+	done) > build/ARTWORKDIR
+	bin/buildindexedfile.sh "build/ARTWORKDIR" "build/ARTWORK.IDX" "build/ARTWORK.ALL" "res/ARTWORK.SHR" >>build/log
 #
 # create _FileInformation.txt files for subdirectories
 #
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh res/ACTION.HGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
 	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
-	bin/buildfileinfo.sh res/ARTWORK.SHR "06" "1FF8" >>build/log
 	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
 	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
@@ -95,9 +116,8 @@ dsk: asm
 		build/HELPTEXT \
 		build/ATTRACT.IDX \
 		build/FX.IDX \
-		build/FX.ALL \
 		build/DFX.IDX \
-		build/DFX.ALL \
+		build/FX.ALL \
 		build/GAMEHELP.IDX \
 		build/GAMEHELP.ALL \
 		build/SLIDESHOW.IDX \
@@ -106,6 +126,16 @@ dsk: asm
 		build/MINIATTRACT.ALL \
 		build/PRELAUNCH.IDX \
 		build/PRELAUNCH.ALL \
+		build/ARTWORK.IDX \
+		build/ARTWORK.ALL \
+		build/HGR0.IDX \
+		build/HGR1.IDX \
+		build/HGR2.IDX \
+		build/HGR3.IDX \
+		build/HGR4.IDX \
+		build/HGR5.IDX \
+		build/HGR6.IDX \
+		build/HGR.ALL \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -115,10 +145,8 @@ dsk: asm
 	for f in \
 		res/TITLE.HGR \
 		res/TITLE.DHGR \
-		res/ACTION.HGR \
 		res/ACTION.DHGR \
 		res/ACTION.GR \
-		res/ARTWORK.SHR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
                 res/ICONS \

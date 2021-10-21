@@ -178,6 +178,7 @@ LoadIndexedFile
          jsr   $bf00
          !byte $cc
          !word @cc_parms
+         jsr   swap_zpg              ; restore sizelo2/hi2
          dec   $BF0E                 ; re-enable ROM mapping on return
          jmp   SwitchToBank1
 

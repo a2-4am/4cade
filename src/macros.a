@@ -397,6 +397,7 @@
          lda   iCurBlockHi
          pha
          ldx   #0         ; read to main memory
+         stx   ldrlo
          +LDADDR .filepath
          jsr   iLoadFileDirect
          pla

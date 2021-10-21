@@ -5,7 +5,8 @@
 !to "res/DEMO/NIGHT.STALKER",plain
 *=$a000
 
-    !source "src/prelaunch/common.a"
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
@@ -42,6 +43,7 @@ x_b !pseudopc $1C1 {
          sta   $1DC5
          sta   $ABC9
          sta   $AC6E
+         sta   $B765
          lda   #$4C
          sta   $BF00
          sta   $BB6B

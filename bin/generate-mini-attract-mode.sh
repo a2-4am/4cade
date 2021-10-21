@@ -13,7 +13,7 @@ cat res/GAMES.CONF |
 
         # add box art, if any
         [ -f res/ARTWORK.SHR/"$game" ] &&
-            echo "ARTWORK.SHR/$game=C" >> /tmp/g
+            echo "$game=C" >> /tmp/g
 
         # add DHGR action screenshots, if any
         cat res/SS/ACTDHGR*.CONF |
@@ -28,7 +28,6 @@ cat res/GAMES.CONF |
         cat res/SS/ACTION*.CONF |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
-            sed -e "s/^/ACTION.HGR\//g" |
             sed -e "s/$/=A/g" |
             sort |
             uniq >> /tmp/g

@@ -119,7 +119,8 @@
  - Upgrade Bejeweled to v2.7 (thanks Jeremy R.)
  - Upgrade Manic Miner to v1.1
  - Fix Mockingboard issues in Apple Cider Spider, Bouncing Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
- - Add even more super hi-res artwork for IIgs users (thanks Alex L, Brian Wiser, mr_breaddoughrising, Antoine V, Andrew R)
+ - Add more game help (thanks Andrew R)
+ - Add even more super hi-res artwork for IIgs users (thanks Alex L, Brian Wiser, mr_breaddoughrising, Antoine V, Andrew R, Tony D)
 
 # Revision 4.01 / serial number 20210218
 
