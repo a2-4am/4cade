@@ -148,9 +148,9 @@ CHEATS_ENABLED = %00001000
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
-launchpatch    = $D657               ; glue.launch.a
+launchpatch    = $D661               ; glue.launch.a
 iAddToPath     = $FE5C               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D94E               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $D958               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant
