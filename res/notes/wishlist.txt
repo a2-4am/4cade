@@ -9,7 +9,6 @@ Voyage of the Valkyrie (Sams)
 
 //flux but no woz
 Grapple (In-Soft)
-Star Maze (Sir-Tech)
 
 //no flux
 Star Avenger (Western MicroData)
