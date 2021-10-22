@@ -29,11 +29,11 @@ while (!b.atendofstream)
 
   if (d.length > 0)
   {
-    q.writeline(d)
+    q.write(d + "\n")
     f = d.indexOf(",") + 1
     c.push(d.substr(f, e - f))
   }
 }
 
-q.writeline(d)
+q.write(d + "\n")
 a.createtextfile("build\\GAMES.SORTED").write(c.sort().toString().replace(/,/g, "\n"))
