@@ -1,5 +1,5 @@
 a = new ActiveXObject("scripting.filesystemobject")
 b = a.opentextfile(WScript.Arguments(1))
-c = b.readall()
+c = b.readall().replace(/\r\n/g, "\n")
 b.close()
 a.createtextfile(WScript.Arguments(1)).write(String(c + Array(512).join(String.fromCharCode(0))).substr(0, 512))

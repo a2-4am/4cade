@@ -1,6 +1,7 @@
 a = new ActiveXObject("scripting.filesystemobject")
 b = a.opentextfile("res\\GAMES.CONF")
 c = []
+q = a.createtextfile("build\\GAMES.CONF")
 
 while (!b.atendofstream)
 {
@@ -28,10 +29,11 @@ while (!b.atendofstream)
 
   if (d.length > 0)
   {
+    q.writeline(d)
     f = d.indexOf(",") + 1
     c.push(d.substr(f, e - f))
   }
 }
 
-a.createtextfile("build\\GAMES.CONF").write(c.toString().replace(/,/g, "\n"))
+q.writeline(d)
 a.createtextfile("build\\GAMES.SORTED").write(c.sort().toString().replace(/,/g, "\n"))
