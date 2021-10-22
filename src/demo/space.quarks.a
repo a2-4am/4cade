@@ -14,7 +14,7 @@
          lda   #$4C
          sta   $3EC9
          jsr   $3E65      ; decompress/set reset vector
-         +RESET_VECTOR $100
+         +RESET_AND_IRQ_VECTOR $100
          lda   #$EA
          sta   $1C38
          sta   $1C39

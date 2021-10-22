@@ -16,7 +16,7 @@
          sta   $6017
          sta   $603F
          jsr   $800
-         +RESET_VECTOR $106
+         +RESET_AND_IRQ_VECTOR $100
          lda   #$92
          sta   $0D
          lda   #$72
