@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba/Frank M.
 
 !cpu 6502
 !to "res/DEMO/NIGHT.STALKER",plain
@@ -8,6 +8,16 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+
+         lda   #0
+         sta   $618C                 ; fix reset
+         sta   $6198                 ; fix IRQ
+         lda   #1
+         sta   $618D                 ; fix reset
+         sta   $6199                 ; fix IRQ
+         eor   #$A5
+         sta   $618E                 ; fix reset checksum
+                                     ; (game picks up vectors from un-initialized memory)
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_AT night_stalker, $00
@@ -16,7 +26,6 @@
          sta   $6017
          sta   $603F
          jsr   $800
-         +RESET_AND_IRQ_VECTOR $100
          lda   #$92
          sta   $0D
          lda   #$72
