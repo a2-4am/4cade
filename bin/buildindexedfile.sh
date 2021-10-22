@@ -39,7 +39,7 @@ fi
 
 # make temp file with list of lines that contain keys
 records=$(mktemp)
-awk '!/^$|^#|^\[/ { print }' < "$1" > "$records"
+awk '!/^$|^#|^\[/' < "$1" > "$records"
 
 # make temp assembly source file that represents the binary OKVS data structure
 source=$(mktemp)

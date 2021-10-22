@@ -49,11 +49,11 @@ dsk: asm
 #
 # create distribution version of GAMES.CONF without comments or blank lines
 #
-	awk '!/^$$|^#/ { print }' < res/GAMES.CONF > build/GAMES.CONF
+	awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF
 #
 # create a sorted list of game filenames, without metadata or display names
 #
-	awk -F "," '{ print $$2 }' < build/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
+	awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
