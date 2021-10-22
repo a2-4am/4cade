@@ -60,6 +60,7 @@ cscript /nologo bin\subst.js res\HELPTEXT build\HELPTEXT >>build\log
 cscript /nologo bin\subst.js res\CREDITS build\CREDITS >>build\log
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\subst.js %%q build\GAMEHELP\%%~nxq >>build\log
 rem
+rem create distribution version of GAMES.CONF without comments or blank lines
 rem create a sorted list of game filenames, without metadata or display names
 rem
 cscript /nologo bin\makesorted.js
@@ -133,7 +134,7 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\GAMES.CONF" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log

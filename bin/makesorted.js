@@ -33,4 +33,5 @@ while (!b.atendofstream)
   }
 }
 
+a.createtextfile("build\\GAMES.CONF").write(c.toString().replace(/,/g, "\n"))
 a.createtextfile("build\\GAMES.SORTED").write(c.sort().toString().replace(/,/g, "\n"))

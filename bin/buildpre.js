@@ -8,14 +8,14 @@ while (!b.atendofstream)
   entries.push(b.readline())
 }
 
-pre_off = a.getfile(WScript.Arguments(2)).size + a.getfile(WScript.Arguments(0) + "\\STANDARD").size
-osize = pre_off
+osize = a.getfile(WScript.Arguments(0) + "\\STANDARD").size
+pre_off = a.getfile(WScript.Arguments(2)).size + osize
 
 groups = "*=0\n" + "!le16 " + entries.length + ", 0\n"
 
 for (i = 0; i < entries.length; i++)
 {
-  c = 0
+  c = a.getfile(WScript.Arguments(2)).size
   size = osize
 
   if (a.fileexists(WScript.Arguments(0) + "\\" + entries[i]))
