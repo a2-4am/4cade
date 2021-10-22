@@ -30,13 +30,13 @@ EXOMIZER=exomizer mem -q -P23 -lnone
 dsk: asm
 	cp res/blank.hdv build/"$(DISK)" >>build/log
 	cp res/_FileInformation.txt build/ >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
 	cp res/PREFS.CONF build/PREFS.CONF >>build/log
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
-	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.IDX" >>build/log
+	bin/buildokvs.sh res/ATTRACT.CONF build/ATTRACT.IDX >>build/log
 #
 # precompute binary data structure and substitute special characters
 # in game help and other all-text pages
@@ -47,19 +47,23 @@ dsk: asm
 	    bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)" >>build/log; \
 	done
 #
+# create distribution version of GAMES.CONF without comments or blank lines
+#
+	awk '!/^$$|^#/ { print }' < res/GAMES.CONF > build/GAMES.CONF
+#
 # create a sorted list of game filenames, without metadata or display names
 #
-	awk -F "," '!/^#/ { print $$2 }' < res/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
+	awk -F "," '{ print $$2 }' < build/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 # note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
 #
-	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/TOTAL.DATA" "build/PRELAUNCH.INDEXED" >>build/log
+	bin/buildindexedfile.sh build/GAMES.SORTED build/PRELAUNCH.IDX build/TOTAL.DATA build/PRELAUNCH.INDEXED >>build/log
 #
 # precompute indexed files for game help
 #
-	bin/buildindexedfile.sh -p -a "build/GAMES.SORTED" "build/GAMEHELP.IDX" "build/TOTAL.DATA" "build/GAMEHELP" >>build/log
+	bin/buildindexedfile.sh -p -a build/GAMES.SORTED build/GAMEHELP.IDX build/TOTAL.DATA build/GAMEHELP >>build/log
 #
 # precompute indexed files for slideshows
 #
@@ -67,17 +71,17 @@ dsk: asm
 	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
 	done) > build/SSDIR
-	bin/buildindexedfile.sh -p -a "build/SSDIR" "build/SLIDESHOW.IDX" "build/TOTAL.DATA" "build/SS" >>build/log
+	bin/buildindexedfile.sh -p -a build/SSDIR build/SLIDESHOW.IDX build/TOTAL.DATA build/SS >>build/log
 	(for f in res/ATTRACT/*; do \
 	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
 	done) > build/ATTRACTDIR
-	bin/buildindexedfile.sh -p -a "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/TOTAL.DATA" "build/ATTRACT" >>build/log
+	bin/buildindexedfile.sh -p -a build/ATTRACTDIR build/MINIATTRACT.IDX build/TOTAL.DATA build/ATTRACT >>build/log
 #
 # precompute indexed files for graphic effects
 #
-	bin/buildindexedfile.sh -p -a "res/FX.CONF" "build/FX.IDX" "build/TOTAL.DATA" "build/FX.INDEXED" >>build/log
-	bin/buildindexedfile.sh -p -a "res/DFX.CONF" "build/DFX.IDX" "build/TOTAL.DATA" "build/FX.INDEXED" >>build/log
+	bin/buildindexedfile.sh -p -a res/FX.CONF build/FX.IDX build/TOTAL.DATA build/FX.INDEXED >>build/log
+	bin/buildindexedfile.sh -p -a res/DFX.CONF build/DFX.IDX build/TOTAL.DATA build/FX.INDEXED >>build/log
 #
 # precompute indexed files for HGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -89,13 +93,13 @@ dsk: asm
 	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR4
 	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR5
 	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) > build/ACTIONHGR6
-	bin/buildindexedfile.sh -a "build/ACTIONHGR0" "build/HGR0.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR1" "build/HGR1.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR2" "build/HGR2.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR3" "build/HGR3.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR4" "build/HGR4.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR5" "build/HGR5.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR6" "build/HGR6.IDX" "build/TOTAL.DATA" "res/ACTION.HGR" >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR0 build/HGR0.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR1 build/HGR1.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR2 build/HGR2.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR3 build/HGR3.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR4 build/HGR4.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR5 build/HGR5.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
+	bin/buildindexedfile.sh -a build/ACTIONHGR6 build/HGR6.IDX build/TOTAL.DATA res/ACTION.HGR >>build/log
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -103,7 +107,7 @@ dsk: asm
 	(for f in res/ARTWORK.SHR/*; do \
 	    echo "$$(basename $$f)"; \
 	done) > build/ARTWORKDIR
-	bin/buildindexedfile.sh -a "build/ARTWORKDIR" "build/ARTWORK.IDX" "build/TOTAL.DATA" "res/ARTWORK.SHR" >>build/log
+	bin/buildindexedfile.sh -a build/ARTWORKDIR build/ARTWORK.IDX build/TOTAL.DATA res/ARTWORK.SHR >>build/log
 #
 # create _FileInformation.txt files for subdirectories
 #
@@ -122,7 +126,7 @@ dsk: asm
 		res/TITLE \
 		res/COVER \
 		res/HELP \
-		res/GAMES.CONF \
+		build/GAMES.CONF \
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
