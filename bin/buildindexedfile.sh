@@ -6,9 +6,9 @@
 
 # parameters
 # stdin - input containing list of effects (probably FX.CONF or DFX.CONF)
-# 1 - output filename for index file
-# 2 - output filename for data file
-# 3 - input directory of files to merge into data file
+# stdout - binary OKVS data structure
+# 1 - output filename for data file
+# 2 - input directory of files to merge into data file
 
 pad=false
 append=false
@@ -25,16 +25,16 @@ done
 shift $((OPTIND-1))
 
 if [ "$append" = false ]; then
-    rm -f "$2"
+    rm -f "$1"
 fi
-touch "$2"
+touch "$1"
 
 # if there is a file called "STANDARD" in the input directory, add it now
 # because we will reuse it for any files that don't exist
-if [ -f "$3"/STANDARD ]; then
-    standardoffset=$(wc -c < "$2")
-    standardsize=$(wc -c < "$3/STANDARD")
-    cat "$3"/STANDARD >> "$2"
+if [ -f "$2"/STANDARD ]; then
+    standardoffset=$(wc -c < "$1")
+    standardsize=$(wc -c < "$2/STANDARD")
+    cat "$2"/STANDARD >> "$1"
 fi
 
 # make temp file with list of lines that contain keys
@@ -49,11 +49,11 @@ source=$(mktemp)
      echo "!byte ${#key}+7"            # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key
-     if [ -f "$3/$key" ]; then         # if file exists, determine offset and size
-         offset=$(wc -c < "$2")
+     if [ -f "$2/$key" ]; then         # if file exists, determine offset and size
+         offset=$(wc -c < "$1")
          echo "!be24 $offset"          # offset into merged data file
          echo -n "!le16 "
-         size=$(wc -c < "$3/$key")
+         size=$(wc -c < "$2/$key")
          if [ "$pad" = true ]; then
              # If offset+size does not cross a block boundary, use file's true size.
              # Otherwise, round up size to the next block boundary.
@@ -68,16 +68,19 @@ source=$(mktemp)
              # Caller said never pad, so always use file's true size.
              echo "$size"
          fi
-         cat "$3/$key" >> "$2"         # append this file to the end of the merged data file
+         cat "$2/$key" >> "$1"         # append this file to the end of the merged data file
      else                              # if file does not exist, reuse STANDARD file
          echo "!be24 $standardoffset"
          echo "!le16 $standardsize"
      fi
  done < "$records") > "$source"
 
-# assemble temp source file to create binary OKVS data structure
-acme -o "$1" "$source"
+# assemble temp source file into binary OKVS data structure, then output that
+out=$(mktemp)
+acme -o "$out" "$source"
+cat "$out"
 
 # clean up
+rm "$out"
 rm "$source"
 rm "$records"
