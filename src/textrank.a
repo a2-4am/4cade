@@ -36,32 +36,10 @@ InputBuffer
 ; out:   gSearchStore populated
 ;------------------------------------------------------------------------------
 BuildSearchStore
-         jsr   SwitchToBank2
-         jsr   EnableAcceleratorAndSwitchToBank1
-         +LDADDR gSearchStore
-         jsr   okvs_init
-
-         jsr   okvs_iter
-         !word gGamesListStore
-         !word @callback
-
-         jsr   SwitchToBank2
-         jmp   DisableAcceleratorAndSwitchToBank1
-@callback
-; callback called by okvs_iter on gGamesListStore
-
-; in:    A/Y contains address of filename
-;        $WINDEX contains 0-based index of the current record in gGamesListStore (word)
-; out:   all registers and flags clobbered
-         +ST16 @key
-         jsr   GetGameDisplayName
-         +ST16 @value
-@append
-         jsr   okvs_append
-         !word gSearchStore
-@key     !word $FDFD                 ; SMC
-@value   !word $FDFD                 ; SMC
-         !byte 0
+         jsr   LoadFile              ; load appropriate search index into $8200
+         !word kRootDirectory
+         !word kSearchIndexFile
+         !word $8200
          rts
 
 ;------------------------------------------------------------------------------

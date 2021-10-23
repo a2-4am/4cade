@@ -190,3 +190,12 @@ kDecrunchFile
 kJoystickFile
          !byte 8
          !raw  "JOYSTICK"
+
+kSearchIndexFile
+         !byte 12
+         !raw  "SEARCH"
+gSearchHasJoystick
+         !raw  "_"
+gSearchHas128K
+         !raw  "_"
+         !raw  ".IDX"

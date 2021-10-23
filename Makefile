@@ -36,7 +36,7 @@ dsk: asm
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
-	bin/buildokvs.sh res/ATTRACT.CONF build/ATTRACT.IDX >>build/log
+	bin/buildokvs.sh build/ATTRACT.IDX < res/ATTRACT.CONF >>build/log
 #
 # precompute binary data structure and substitute special characters
 # in game help and other all-text pages
@@ -55,6 +55,14 @@ dsk: asm
 #
 	awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED
 #
+# create search indexes
+#
+	bin/builddisplaynames.py < res/GAMES.CONF > build/DISPLAY.CONF
+	grep "^00" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh build/SEARCH00.IDX
+	grep "^0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh build/SEARCH01.IDX
+	grep "^.0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh build/SEARCH10.IDX
+	cat build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh build/SEARCH11.IDX
+#
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 # note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
@@ -68,12 +76,12 @@ dsk: asm
 # precompute indexed files for slideshows
 #
 	(for f in res/SS/*; do \
-	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
+	    bin/buildokvs.sh "build/SS/$$(basename $$f)" < "$$f"; \
 	    echo "$$(basename $$f)"; \
 	done) > build/SSDIR
 	bin/buildindexedfile.sh -p -a build/SSDIR build/SLIDESHOW.IDX build/TOTAL.DATA build/SS >>build/log
 	(for f in res/ATTRACT/*; do \
-	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
+	    bin/buildokvs.sh "build/ATTRACT/$$(basename $$f)" < "$$f"; \
 	    echo "$$(basename $$f)"; \
 	done) > build/ATTRACTDIR
 	bin/buildindexedfile.sh -p -a build/ATTRACTDIR build/MINIATTRACT.IDX build/TOTAL.DATA build/ATTRACT >>build/log
@@ -131,6 +139,10 @@ dsk: asm
 		build/CREDITS \
 		build/HELPTEXT \
 		build/ATTRACT.IDX \
+		build/SEARCH00.IDX \
+		build/SEARCH01.IDX \
+		build/SEARCH10.IDX \
+		build/SEARCH11.IDX \
 		build/FX.IDX \
 		build/DFX.IDX \
 		build/GAMEHELP.IDX \
