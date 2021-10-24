@@ -27,84 +27,12 @@ CADIUS=cadius
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: asm
+dsk: asm index
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
 	cp res/PREFS.CONF build/PREFS.CONF
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-#
-# precompute binary data structure for mega-attract mode configuration file
-#
-	bin/buildokvs.sh < res/ATTRACT.CONF > build/ATTRACT.IDX
-#
-# precompute binary data structure and substitute special characters
-# in game help and other all-text pages
-#
-	bin/converthelp.sh res/HELPTEXT build/HELPTEXT
-	bin/converthelp.sh res/CREDITS build/CREDITS
-	for f in res/GAMEHELP/*; do \
-	    bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"; \
-	done
-#
-# create distribution version of GAMES.CONF without comments or blank lines
-#
-	awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF
-#
-# create search indexes
-#
-	bin/builddisplaynames.py < build/GAMES.CONF > build/DISPLAY.CONF
-	grep "^00" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH00.IDX
-	grep "^0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH01.IDX
-	grep "^.0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH10.IDX
-	cat build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH11.IDX
-#
-# create a sorted list of game filenames, without metadata or display names
-#
-	awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED
-#
-# precompute indexed files for prelaunch
-# note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
-# note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
-#
-	bin/buildindexedfile.sh build/TOTAL.DATA build/PRELAUNCH.INDEXED < build/GAMES.SORTED > build/PRELAUNCH.IDX
-#
-# precompute indexed files for game help
-#
-	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/GAMEHELP < build/GAMES.SORTED > build/GAMEHELP.IDX
-#
-# precompute indexed files for slideshows
-#
-	(for f in res/SS/*; do \
-	    bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX
-	(for f in res/ATTRACT/*; do \
-	    bin/buildokvs.sh < "$$f" > "build/ATTRACT/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX
-#
-# precompute indexed files for graphic effects
-#
-	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX
-	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX
-#
-# precompute indexed files for HGR action screenshots
-# note: these can not be padded because they are compressed and the decompressor needs the exact size
-#
-	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR0.IDX
-	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR1.IDX
-	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR2.IDX
-	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR3.IDX
-	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR4.IDX
-	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX
-	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX
-# precompute indexed files for SHR artwork
-# note: these can not be padded because they are compressed and the decompressor needs the exact size
-#
-	(for f in res/ARTWORK.SHR/*; do \
-	    echo "$$(basename $$f)"; \
-	done) |	bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX
 #
 # create _FileInformation.txt files for subdirectories
 #
@@ -177,6 +105,87 @@ dsk: asm
 	    $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f" >>build/log; \
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
+
+index: md
+#
+# precompute binary data structure for mega-attract mode configuration file
+#
+	bin/buildokvs.sh < res/ATTRACT.CONF > build/ATTRACT.IDX
+#
+# precompute binary data structure and substitute special characters
+# in game help and other all-text pages
+#
+	bin/converthelp.sh res/HELPTEXT build/HELPTEXT
+	bin/converthelp.sh res/CREDITS build/CREDITS
+	for f in res/GAMEHELP/*; do \
+	    bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"; \
+	done
+#
+# create distribution version of GAMES.CONF without comments or blank lines
+#
+	awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF
+#
+# create gGamesListStore indexes
+#
+#	grep "^00" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES00.IDX
+#	grep "^0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES01.IDX
+#	grep "^.0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES10.IDX
+#	cat build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES11.IDX
+#
+# create gSearchStore indexes
+#
+	bin/builddisplaynames.py < build/GAMES.CONF > build/DISPLAY.CONF
+	grep "^00" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH00.IDX
+	grep "^0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH01.IDX
+	grep "^.0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH10.IDX
+	cat build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH11.IDX
+#
+# create a sorted list of game filenames, without metadata or display names
+#
+	awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED
+#
+# precompute indexed files for prelaunch
+# note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
+# note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
+#
+	bin/buildindexedfile.sh build/TOTAL.DATA build/PRELAUNCH.INDEXED < build/GAMES.SORTED > build/PRELAUNCH.IDX
+#
+# precompute indexed files for game help
+#
+	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/GAMEHELP < build/GAMES.SORTED > build/GAMEHELP.IDX
+#
+# precompute indexed files for slideshows
+#
+	(for f in res/SS/*; do \
+	    bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
+	    echo "$$(basename $$f)"; \
+	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX
+	(for f in res/ATTRACT/*; do \
+	    bin/buildokvs.sh < "$$f" > "build/ATTRACT/$$(basename $$f)"; \
+	    echo "$$(basename $$f)"; \
+	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX
+#
+# precompute indexed files for graphic effects
+#
+	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX
+	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX
+#
+# precompute indexed files for HGR action screenshots
+# note: these can not be padded because they are compressed and the decompressor needs the exact size
+#
+	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR0.IDX
+	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR1.IDX
+	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR2.IDX
+	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR3.IDX
+	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR4.IDX
+	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX
+	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX
+# precompute indexed files for SHR artwork
+# note: these can not be padded because they are compressed and the decompressor needs the exact size
+#
+	(for f in res/ARTWORK.SHR/*; do \
+	    echo "$$(basename $$f)"; \
+	done) |	bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX
 
 asm: asmlauncher asmfx asmprelaunch asmproboot
 
