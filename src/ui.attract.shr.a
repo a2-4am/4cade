@@ -41,28 +41,12 @@ SHRSlideshow
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 SHRSingle
-         +ST16 @sfname
+         +ST16 IndexedSHRFilename
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
          beq   SHRRTS
          jsr   BlankSHR
-
-         jsr   LoadFile              ; load index file into $2000
-         !word kRootDirectory
-         !word kSHRArtworkIndexFile
--        !word $2000
-
-         jsr   okvs_find
-         !word -
-@sfname  !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
-         jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
-         !word kSHRArtworkDataFile
-         !word $1FF8
-@indexRecordPtr
-         !word $FDFD                 ; SMC
-
+         jsr   LoadIndexedSHRFile
          jsr   DecompressSHR
          jsr   LoadSHRTransition
          jsr   ExecuteTransitionAtA000AndWait
@@ -100,7 +84,7 @@ SHRArtworkCallback
          bit   KBD
          bmi   SHRRTS
 
-         +ST16 @sfname
+         +ST16 IndexedSHRFilename
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
@@ -112,7 +96,13 @@ SHRArtworkCallback
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   BlankSHR
+         jsr   LoadIndexedSHRFile
+         jsr   DecompressSHR
+         jmp   ExecuteTransitionAtA000AndWait
 
+LoadIndexedSHRFile
+; in:    caller has populated IndexedSHRFilename
+; out:   all flags & registers clobbered
          jsr   LoadFile              ; load index file into $2000
          !word kRootDirectory
          !word kSHRArtworkIndexFile
@@ -120,7 +110,8 @@ SHRArtworkCallback
 
          jsr   okvs_find
          !word -
-@sfname  !word $FDFD                 ; SMC
+IndexedSHRFilename
+         !word $FDFD                 ; SMC
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
@@ -128,9 +119,7 @@ SHRArtworkCallback
          !word $1FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC
-
-         jsr   DecompressSHR
-         jmp   ExecuteTransitionAtA000AndWait
+         rts
 
 ;------------------------------------------------------------------------------
 ; BlankSHR [private]
