@@ -3358,6 +3358,7 @@ hddissparse
   !if rwts_mode = 0 {
                 pla
   } ;rwts_mode = 0
+                tay
 -               sta     (adrlo), y
                 inc     adrhi
                 sta     (adrlo), y
