@@ -65,6 +65,14 @@ rem create a sorted list of game filenames, without metadata or display names
 rem
 cscript /nologo bin\makesorted.js
 rem
+rem create search indexes
+rem
+cscript /nologo bin\builddisplaynames.js
+cscript /nologo bin\buildsearch.js "00" build\SEARCH00.IDX
+cscript /nologo bin\buildsearch.js "0" build\SEARCH01.IDX
+cscript /nologo bin\buildsearch.js ".0" build\SEARCH10.IDX
+cscript /nologo bin\buildsearch.js "." build\SEARCH11.IDX
+rem
 rem precompute indexed files for prelaunch
 rem note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 rem note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
@@ -139,6 +147,10 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACT.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH00.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH01.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH10.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH11.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
