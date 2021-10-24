@@ -38,7 +38,6 @@ dsk: asm index
 #
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000"
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000"
-	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8"
 	bin/buildfileinfo.sh res/ACTION.GR "06" "6000"
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
@@ -74,6 +73,7 @@ dsk: asm index
 		build/HGR4.IDX \
 		build/HGR5.IDX \
 		build/HGR6.IDX \
+		build/DHGR.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -83,7 +83,6 @@ dsk: asm index
 	for f in \
 		res/TITLE.HGR \
 		res/TITLE.DHGR \
-		res/ACTION.DHGR \
 		res/ACTION.GR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
@@ -170,7 +169,7 @@ index: md
 	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX
 	bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX
 #
-# precompute indexed files for HGR action screenshots
+# precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
 	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR0.IDX
@@ -180,6 +179,7 @@ index: md
 	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR4.IDX
 	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX
 	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX
+	(for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.DHGR > build/DHGR.IDX
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #

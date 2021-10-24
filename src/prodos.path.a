@@ -53,6 +53,10 @@ AddToPath
 @done
          rts
 
+kTotalDataFile
+         !byte 10
+         !raw  "TOTAL.DATA"
+
 kHGRTitleDirectory
          !byte 10
          !raw  "TITLE.HGR/"
@@ -72,11 +76,13 @@ gHGRActionIndexNumber
          !raw  "_"
          !raw  ".IDX"
 
-kTotalDataFile
-         !byte 10
-         !raw  "TOTAL.DATA"
-
 kHGRActionDataFile=kTotalDataFile
+
+kDHGRActionIndexFile
+         !byte 8
+         !raw  "DHGR.IDX"
+
+kDHGRActionDataFile=kTotalDataFile
 
 kDHGRActionDirectory
          !byte 12
