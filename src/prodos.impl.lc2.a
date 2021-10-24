@@ -21,6 +21,7 @@ buffer = first_zp+2 ;word
 ProDOS_enter
 !set CloseHandles = @imp_close
 !set swap_zpg = @swap_zp
+!set SavedZP = @saved_zp
          stx   ProDOS_savedX+1
          sty   ProDOS_savedY+1
          jsr   @swap_zp
