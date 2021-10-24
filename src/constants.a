@@ -15,9 +15,9 @@
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D6C2 - ProRWTS code
-; D6C3..DB90 - HGR font code & ProRWTS glue code
-; DB91..DBA0 - backup of stack (during gameplay and self-running demos)
+; D400..D6C3 - ProRWTS code
+; D6C4..DB91 - HGR font code & ProRWTS glue code
+; DB92..DBA1 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -148,9 +148,9 @@ CHEATS_ENABLED = %00001000
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
-launchpatch    = $D661               ; glue.launch.a
+launchpatch    = $D662               ; glue.launch.a
 iAddToPath     = $FE98               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D958               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $D959               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant
