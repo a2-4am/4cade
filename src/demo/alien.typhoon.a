@@ -12,12 +12,15 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT alien_typhoon, $00 ; $4710
 
+         lda   #$61
+         sta   $471C
+         lda   #$7E
+         sta   $4720
+         lda   #$12
+         sta   $4724
          lda   #$60
-         sta   $472f
-         sta   $4739
+         sta   $472F
          jsr   $4710      ; decompress
-         ;jsr   $6000      ; run intro screen
-         jsr   $806       ; decompress
 
          lda   #0
          sta   $2067
