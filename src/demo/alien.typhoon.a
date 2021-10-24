@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/ALIEN.TYPHOON",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT alien_typhoon, $00 ; $4710
+
+         lda   #$60
+         sta   $472f
+         sta   $4739
+         jsr   $4710      ; decompress
+         ;jsr   $6000      ; run intro screen
+         jsr   $806       ; decompress
+
+         lda   #0
+         sta   $2067
+         lda   #1
+         sta   $206C      ; reset vector patch
+
+         lda   #$60
+         sta   $2075
+         jsr   $2001      ; unpack
+
+         lda   #$4C
+         sta   $9D58
+         sta   $8FD6
+         sta   $8FEF
+         sta   $92B1
+         lda   #0
+         sta   $9D58+1
+         sta   $8FD6+1
+         sta   $8FEF+1
+         sta   $92B1+1
+         lda   #1
+         sta   $9D58+2
+         sta   $8FD6+2
+         sta   $8FEF+2
+         sta   $92B1+2    ; set exits
+
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $8F98
+
+alien_typhoon
+         !byte 29
+         !text "X/ALIEN.TYPHOON/ALIEN.TYPHOON"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
