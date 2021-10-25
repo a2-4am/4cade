@@ -413,6 +413,19 @@ CopyDevs
          +READ_RAM1_WRITE_RAM1
 }
 
+         ldx   #$30
+         lda   MachineStatus
+         and   #HAS_JOYSTICK
+         beq   +
+         inx
++        stx   gSearchHasJoystick
+         ldx   #$30
+         lda   MachineStatus
+         and   #HAS_128K
+         beq   +
+         inx
++        stx   gSearchHas128K
+
          +LDADDR gGamesListStore
          jsr   okvs_len
          +LD16 WCOUNT

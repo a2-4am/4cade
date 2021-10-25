@@ -6,8 +6,8 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E789 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
-; E8E4..FFEE - main program code
+; D000..E7D2 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; E9EE..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -15,9 +15,9 @@
 ;
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
-; D400..D6B8 - ProRWTS code
-; D6B9..DB86 - HGR font code & ProRWTS glue code
-; DB87..DB96 - backup of stack (during gameplay and self-running demos)
+; D400..D6C3 - ProRWTS code
+; D6C4..DB91 - HGR font code & ProRWTS glue code
+; DB92..DBA1 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -148,9 +148,9 @@ CHEATS_ENABLED = %00001000
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
-launchpatch    = $D661               ; glue.launch.a
-iAddToPath     = $FE5C               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D958               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+launchpatch    = $D662               ; glue.launch.a
+iAddToPath     = $FE8F               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $D959               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant

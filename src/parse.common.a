@@ -135,3 +135,106 @@ IncAndGetChar
          beq   IncAndGetChar
 .parseKeyValueDone
          rts
+
+;------------------------------------------------------------------------------
+; okvs_append
+;
+; in:    stack contains 7 bytes of parameters:
+;          +1 [word] handle to storage space
+;          +3 [word] address of key
+;          +5 [word] address of value
+;          +7 [byte] maximum length of value (or 0 to fit)
+; out:   (new record count is not returned because no one cares)
+;        all registers clobbered
+;        $00/$01 clobbered
+;        $02/$03 clobbered
+;        $04/$05 has the address of the next available byte after the new record
+;        $08/$09 clobbered
+;------------------------------------------------------------------------------
+okvs_append
+         +PARAMS_ON_STACK 7
+         jsr   GetStoreAddress
+                                     ; PTR -> store
+                                     ; Y = 0
+         lda   (PTR),y               ; A = number of keys in store
+         sta   WINDEX
+         iny
+         lda   (PTR), y
+         sta   WINDEX+1
+         inc   WINDEX
+         bne   +
+         inc   WINDEX+1
++
+         dey
+         lda   WINDEX
+         sta   (PTR),y               ; increment number of keys
+         lda   WINDEX+1
+         iny
+         sta   (PTR),y
+         iny
+         lda   (PTR),y               ; get address of next free space
+         tax
+         iny
+         lda   (PTR),y
+         sta   PTR+1
+         sta   SAVE+1
+         stx   PTR
+         stx   SAVE
+                                     ; PTR -> new record
+                                     ; SAVE -> new record
+         jsr   incptr
+                                     ; PTR -> space for new key
+         +LDPARAMPTR 3, SRC          ; SRC -> new key to copy
+         ldy   #0
+         lda   (SRC),y
+         tay
+         tax
+-        lda   (SRC),y               ; copy new key
+         sta   (PTR),y
+         dey
+         cpy   #$FF
+         bne   -
+
+         ;;sec
+         txa
+         adc   PTR                   ; update PTR to byte after copied key
+         sta   PTR
+         bcc   +
+         inc   PTR+1
++                                    ; PTR -> space for new value
+         +LDPARAMPTR 5, SRC          ; SRC -> new value to copy
+         iny ;;ldy   #7
+         lda   (PARAM),y             ; get max length of value
+         tax
+         bne   +
+         tay
+         lda   (SRC),y               ; no max, use actual length instead
+         tax
++        inx
+         tay
+-        lda   (SRC),y
+         sta   (PTR),y
+         dey
+         cpy   #$FF
+         bne   -
+
+         txa
+         clc
+         adc   PTR
+         tax
+         lda   PTR+1
+         adc   #0
+         pha
++        jsr   GetStoreAddress
+                                     ; PTR -> store
+         pla
+         ldy   #3
+         sta   (PTR),y               ; update next-free-space pointer in head
+         dey
+         txa
+         sta   (PTR),y
+         sec
+         sbc   SAVE
+         ldy   #0
+         sta   (SAVE),y              ; set record length
+         rts

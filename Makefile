@@ -27,107 +27,45 @@ CADIUS=cadius
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: asm
-	cp res/blank.hdv build/"$(DISK)" >>build/log
-	cp res/_FileInformation.txt build/ >>build/log
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "build/LAUNCHER.SYSTEM" >>build/log
-	cp res/PREFS.CONF build/PREFS.CONF >>build/log
+dsk: asm index
+	cp res/blank.hdv build/"$(DISK)"
+	cp res/_FileInformation.txt build/
+	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
+	cp res/PREFS.CONF build/PREFS.CONF
 	bin/padto.sh 512 build/PREFS.CONF >>build/log
-#
-# precompute OKVS data structure for mega-attract mode configuration file
-#
-	bin/buildokvs.sh "res/ATTRACT.CONF" "build/ATTRACT.IDX" >>build/log
-#
-# precompute FX and DFX indexes and merged data files containing multiple
-# graphic effects in a single file (loaded at runtime by LoadIndexedFile())
-#
-	bin/buildindexedfile.sh -p "res/FX.CONF" "build/FX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
-	bin/buildindexedfile.sh -a -p "res/DFX.CONF" "build/DFX.IDX" "build/FX.ALL" "build/FX.INDEXED" >>build/log
-#
-# substitute special characters in help text and other pages that will be
-# drawn with DrawPage()
-#
-	bin/converthelp.sh res/HELPTEXT build/HELPTEXT >>build/log
-	bin/converthelp.sh res/CREDITS build/CREDITS >>build/log
-	for f in res/GAMEHELP/*; do \
-            bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)" >>build/log; \
-	done
-#
-# precompute indexed files for game help, slideshow configuration,
-# mini-attract mode configuration, and prelaunch files
-#
-	awk -F "," '!/^#/ { print $$2 }' < res/GAMES.CONF | awk -F "=" '{ print $$1 }' | sort > build/GAMES.SORTED
-	bin/buildindexedfile.sh -p "build/GAMES.SORTED" "build/GAMEHELP.IDX" "build/GAMEHELP.ALL" "build/GAMEHELP" >>build/log
-	(for f in res/SS/*; do \
-	    bin/buildokvs.sh "$$f" "build/SS/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) > build/SSDIR
-	bin/buildindexedfile.sh -p "build/SSDIR" "build/SLIDESHOW.IDX" "build/SLIDESHOW.ALL" "build/SS" >>build/log
-	(for f in res/ATTRACT/*; do \
-	    bin/buildokvs.sh "$$f" "build/ATTRACT/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) > build/ATTRACTDIR
-	bin/buildindexedfile.sh -p "build/ATTRACTDIR" "build/MINIATTRACT.IDX" "build/MINIATTRACT.ALL" "build/ATTRACT" >>build/log
-	bin/buildindexedfile.sh "build/GAMES.SORTED" "build/PRELAUNCH.IDX" "build/PRELAUNCH.ALL" "build/PRELAUNCH.INDEXED" >>build/log
-#
-# precompute indexed files for HGR action screenshots
-#
-	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR0
-	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR1
-	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR2
-	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR3
-	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR4
-	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) > build/ACTIONHGR5
-	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) > build/ACTIONHGR6
-	bin/buildindexedfile.sh    "build/ACTIONHGR0" "build/HGR0.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR1" "build/HGR1.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR2" "build/HGR2.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR3" "build/HGR3.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR4" "build/HGR4.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR5" "build/HGR5.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-	bin/buildindexedfile.sh -a "build/ACTIONHGR6" "build/HGR6.IDX" "build/HGR.ALL" "res/ACTION.HGR" >>build/log
-#
-# precompute indexed files for SHR artwork
-#
-	(for f in res/ARTWORK.SHR/*; do \
-	    echo "$$(basename $$f)"; \
-	done) > build/ARTWORKDIR
-	bin/buildindexedfile.sh "build/ARTWORKDIR" "build/ARTWORK.IDX" "build/ARTWORK.ALL" "res/ARTWORK.SHR" >>build/log
 #
 # create _FileInformation.txt files for subdirectories
 #
-	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000" >>build/log
-	bin/buildfileinfo.sh res/ACTION.DHGR "06" "3FF8" >>build/log
-	bin/buildfileinfo.sh res/ACTION.GR "06" "6000" >>build/log
-	bin/buildfileinfo.sh res/ICONS "CA" "0000" >>build/log
-	bin/buildfileinfo.sh build/FX "06" "6000" >>build/log
-	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106" >>build/log
+	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000"
+	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000"
+	bin/buildfileinfo.sh res/ACTION.GR "06" "6000"
+	bin/buildfileinfo.sh res/ICONS "CA" "0000"
+	bin/buildfileinfo.sh build/FX "06" "6000"
+	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106"
 #
 # add everything to the disk
 #
 	for f in \
+		build/TOTAL.DATA \
 		res/TITLE \
 		res/COVER \
 		res/HELP \
-		res/GAMES.CONF \
+		build/GAMES.CONF \
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
 		build/ATTRACT.IDX \
+		build/SEARCH00.IDX \
+		build/SEARCH01.IDX \
+		build/SEARCH10.IDX \
+		build/SEARCH11.IDX \
 		build/FX.IDX \
 		build/DFX.IDX \
-		build/FX.ALL \
 		build/GAMEHELP.IDX \
-		build/GAMEHELP.ALL \
 		build/SLIDESHOW.IDX \
-		build/SLIDESHOW.ALL \
 		build/MINIATTRACT.IDX \
-		build/MINIATTRACT.ALL \
 		build/PRELAUNCH.IDX \
-		build/PRELAUNCH.ALL \
 		build/ARTWORK.IDX \
-		build/ARTWORK.ALL \
 		build/HGR0.IDX \
 		build/HGR1.IDX \
 		build/HGR2.IDX \
@@ -135,7 +73,7 @@ dsk: asm
 		build/HGR4.IDX \
 		build/HGR5.IDX \
 		build/HGR6.IDX \
-		build/HGR.ALL \
+		build/DHGR.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -145,7 +83,6 @@ dsk: asm
 	for f in \
 		res/TITLE.HGR \
 		res/TITLE.DHGR \
-		res/ACTION.DHGR \
 		res/ACTION.GR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
@@ -168,6 +105,92 @@ dsk: asm
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
+index: md
+# note: even though individual lines check individual files, you really want
+# to re-run this with a clean build/ directory if anything changes, because
+# everything is interconnected within TOTAL.DATA
+#
+# precompute binary data structure for mega-attract mode configuration file
+#
+	[ -f build/ATTRACT.IDX ] || (bin/buildokvs.sh < res/ATTRACT.CONF > build/ATTRACT.IDX)
+#
+# precompute binary data structure and substitute special characters
+# in game help and other all-text pages
+#
+	[ -f build/HELPTEXT ] || (bin/converthelp.sh res/HELPTEXT build/HELPTEXT)
+	[ -f build/CREDITS ] || (bin/converthelp.sh res/CREDITS build/CREDITS)
+	for f in res/GAMEHELP/*; do \
+	    [ -f build/GAMEHELP/"$$(basename $$f)" ] || (bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"); \
+	done
+#
+# create distribution version of GAMES.CONF without comments or blank lines
+#
+	[ -f build/GAMES.CONF ] || (awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF)
+#
+# create gGamesListStore indexes
+#
+#	grep "^00" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES00.IDX
+#	grep "^0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES01.IDX
+#	grep "^.0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES10.IDX
+#	cat build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES11.IDX
+#
+# create gSearchStore indexes
+#
+	[ -f build/DISPLAY.CONF ] || (bin/builddisplaynames.py < build/GAMES.CONF > build/DISPLAY.CONF)
+	[ -f build/SEARCH00.IDX ] || (grep "^00" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH00.IDX)
+	[ -f build/SEARCH01.IDX ] || (grep "^0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH01.IDX)
+	[ -f build/SEARCH10.IDX ] || (grep "^.0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH10.IDX)
+	[ -f build/SEARCH11.IDX ] || (cat build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH11.IDX)
+#
+# create a sorted list of game filenames, without metadata or display names
+#
+	[ -f build/GAMES.SORTED ] || (awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED)
+#
+# precompute indexed files for prelaunch
+# note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
+# note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
+#
+	[ -f build/PRELAUNCH.IDX ] || (bin/buildindexedfile.sh build/TOTAL.DATA build/PRELAUNCH.INDEXED < build/GAMES.SORTED > build/PRELAUNCH.IDX)
+#
+# precompute indexed files for game help
+#
+	[ -f build/GAMEHELP.IDX ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/GAMEHELP < build/GAMES.SORTED > build/GAMEHELP.IDX)
+#
+# precompute indexed files for slideshows
+#
+	[ -f build/SLIDESHOW.IDX ] || ((for f in res/SS/*; do \
+	    bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
+	    echo "$$(basename $$f)"; \
+	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
+	[ -f build/MINIATTRACT.IDX ] || ((for f in res/ATTRACT/*; do \
+	    bin/buildokvs.sh < "$$f" > "build/ATTRACT/$$(basename $$f)"; \
+	    echo "$$(basename $$f)"; \
+	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX)
+#
+# precompute indexed files for graphic effects
+#
+	[ -f build/FX.IDX ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
+	[ -f build/DFX.IDX ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
+#
+# precompute indexed files for HGR & DHGR action screenshots
+# note: these can not be padded because they are compressed and the decompressor needs the exact size
+#
+	[ -f build/HGR0.IDX ] || ((for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR0.IDX)
+	[ -f build/HGR1.IDX ] || ((for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR1.IDX)
+	[ -f build/HGR2.IDX ] || ((for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR2.IDX)
+	[ -f build/HGR3.IDX ] || ((for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR3.IDX)
+	[ -f build/HGR4.IDX ] || ((for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR4.IDX)
+	[ -f build/HGR5.IDX ] || ((for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX)
+	[ -f build/HGR6.IDX ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX)
+	[ -f build/DHGR.IDX ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.DHGR > build/DHGR.IDX)
+#
+# precompute indexed files for SHR artwork
+# note: these can not be padded because they are compressed and the decompressor needs the exact size
+#
+	[ -f build/ARTWORK.IDX ] || ((for f in res/ARTWORK.SHR/*; do \
+	    echo "$$(basename $$f)"; \
+	done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
+
 asm: asmlauncher asmfx asmprelaunch asmproboot
 
 asmlauncher: md
@@ -176,16 +199,16 @@ asmlauncher: md
 
 asmfx: md
 	for f in src/fx/*.a; do \
-	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log || true; \
+	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f} || true; \
 	done
 
 asmprelaunch: md
 	for f in src/prelaunch/*.a; do \
-	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f} >> build/log; \
+	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f}; \
 	done
 
 asmproboot: md
-	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a >> build/log
+	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a
 
 #
 # |compress| and |attract| must be called separately because they are slow.

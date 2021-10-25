@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/VV",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $A52
+         lda   #>callback
+         sta   $A53
+         jmp   $800       ; load "DOS"
+
+callback
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# run from project root directory
-
 # make temp file with just the key/value pairs (strip blank lines, comments, eof marker)
 records=$(mktemp)
-grep -v "^$" < "$1" | grep -v "^#" | grep -v "^\[" > "$records"
+awk '!/^$|^#|^\[/' > "$records"
 
 # make temp assembly source file that represents the binary OKVS data structure
 source=$(mktemp)
@@ -18,9 +16,12 @@ source=$(mktemp)
      echo "!text \"$value\""           # OKVS value
  done < "$records") > "$source"
 
-# assemble temp source file to create binary OKVS data structure
-acme -o "$2" "$source"
+# assemble temp source file into binary OKVS data structure, then output that
+out=$(mktemp)
+acme -o "$out" "$source"
+cat "$out"
 
 # clean up
+rm "$out"
 rm "$source"
 rm "$records"

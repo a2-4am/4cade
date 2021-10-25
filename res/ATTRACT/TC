@@ -4,7 +4,7 @@
 #
 
 TC=C
-ACTION.DHGR/TC=B
+TC=B
 TC2=A
 TC3=A
 TC=A

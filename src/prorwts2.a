@@ -1592,6 +1592,7 @@ setaux          sta     CLRAUXRD, x
 
   !if allow_sparse = 1 {
 issparse        pla
+                tay
 -               sta     (adrlo), y
                 iny
                 bne     -
@@ -3357,6 +3358,7 @@ hddissparse
   !if rwts_mode = 0 {
                 pla
   } ;rwts_mode = 0
+                tay
 -               sta     (adrlo), y
                 inc     adrhi
                 sta     (adrlo), y
