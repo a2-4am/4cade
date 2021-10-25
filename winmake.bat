@@ -22,10 +22,82 @@ rem https://github.com/
 set GIT=git
 
 
+if "%1" equ "dsk" (
+call :asm
+call :index
+1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
+1>nul copy /y res\_FileInformation.txt build\ >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
+1>nul copy /y "res\PREFS.CONF" "build" >>build\log
+cscript /nologo bin\padto.js 512 build\PREFS.CONF
+rem
+rem create _FileInformation.txt files for subdirectories
+rem
+cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
+cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
+cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build/log
+cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build/log
+rem
+rem add everything to the disk
+rem
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMES.CONF" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACT.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH00.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH01.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH10.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH11.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SLIDESHOW.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\MINIATTRACT.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PRELAUNCH.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/ARTWORK.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR0.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR1.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR2.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR3.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR4.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR5.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR6.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/DHGR.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX/" "build\FX" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH/" "build\PRELAUNCH" >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
+%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
+for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
+1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
+%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
+%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
+cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
+goto :EOF
+)
+
 if "%1" equ "asm" (
 :asm
-call :md
-1>nul copy nul build\log
 call :asmlauncher
 call :asmfx
 call :asmprelaunch
@@ -34,20 +106,20 @@ goto :EOF
 )
 
 if "%1" equ "clean" (
-:clean
 echo y|1>nul 2>nul rd build /s
 goto :EOF
 )
 
-if "%1" equ "dsk" (
-:dsk
-call :asm
+if "%1" equ "compress" (
 call :compress
-1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
-1>nul copy /y res\_FileInformation.txt build\ >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
-1>nul copy /y "res\PREFS.CONF" "build" >>build\log
-cscript /nologo bin\padto.js 512 build\PREFS.CONF
+goto :EOF
+)
+
+echo usage: %0 clean / asm / dsk
+goto :EOF
+
+:index
+call :md
 rem
 rem precompute binary data structure for mega-attract mode configuration file
 rem
@@ -96,7 +168,7 @@ rem
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 rem
-rem precompute indexed files for HGR action screenshots
+rem precompute indexed files for HGR & DHGR action screenshots
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
 1>nul copy /y nul build\ACTIONHGR0
@@ -113,6 +185,7 @@ for %%q in (res\ACTION.HGR\M* res\ACTION.HGR\N* res\ACTION.HGR\O* res\ACTION.HGR
 for %%q in (res\ACTION.HGR\Q* res\ACTION.HGR\R* res\ACTION.HGR\S* res\ACTION.HGR\T*) do 1>nul >>build\ACTIONHGR4 echo %%q
 for %%q in (res\ACTION.HGR\U* res\ACTION.HGR\V* res\ACTION.HGR\W* res\ACTION.HGR\X*) do 1>nul >>build\ACTIONHGR5 echo %%q
 for %%q in (res\ACTION.HGR\Y* res\ACTION.HGR\Z*) do 1>nul >>build\ACTIONHGR6 echo %%q
+for %%q in (res\ACTION.DHGR\*) do 1>nul >>build\ACTIONDHGR echo %%q
 cscript /nologo bin\buildss.js build\ACTIONHGR0* build\HGR0.IDX build\TOTAL.DATA nul >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR1* build\HGR1.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR2* build\HGR2.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
@@ -120,79 +193,12 @@ cscript /nologo bin\buildss.js build\ACTIONHGR3* build\HGR3.IDX build\TOTAL.DATA
 cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 rem
 rem precompute indexed files for SHR artwork
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
 cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX build\TOTAL.DATA nul >>build\log
-rem
-rem create _FileInformation.txt files for subdirectories
-rem
-cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ACTION.DHGR "06" "3FF8" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
-cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build/log
-cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build/log
-rem
-rem add everything to the disk
-rem
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMES.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACT.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH00.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH01.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH10.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH11.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SLIDESHOW.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\MINIATTRACT.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PRELAUNCH.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/ARTWORK.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR0.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR1.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR2.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR3.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR4.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR5.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR6.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.DHGR" "res\ACTION.DHGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX/" "build\FX" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH/" "build\PRELAUNCH" >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
-%CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
-for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
-1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
-%CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
-cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
-goto :EOF
-)
-
-echo usage: %0 clean / asm / dsk
 goto :EOF
 
 :md
@@ -205,9 +211,11 @@ goto :EOF
 2>nul md build\ATTRACT
 2>nul md build\SS
 2>nul md build\GAMEHELP
+1>nul copy nul build\log
 goto :EOF
 
 :asmlauncher
+call :md
 1>build\buildnum.log git rev-list --count HEAD
 for /f "tokens=*" %%q in (build\buildnum.log) do set _build=%%q
 2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src\4cade.a
@@ -216,6 +224,7 @@ for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 goto :EOF
 
 :asmfx
+call :md
 for %%q in (src\fx\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
@@ -224,6 +233,7 @@ for %%q in (src\fx\*.a) do (
 goto :EOF
 
 :asmprelaunch
+call :md
 for %%q in (src\prelaunch\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
@@ -232,7 +242,9 @@ for %%q in (src\prelaunch\*.a) do (
 goto :EOF
 
 :asmproboot
+call :md
 %ACME% -r build\proboothd.lst src\proboothd\proboothd.a >> build\log
+goto :EOF
 
 :compress
 for %%q in (res\action.dhgr.uncompressed\*) do if not exist res\action.dhgr\%%~nxq %EXOMIZER% res\action.dhgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq

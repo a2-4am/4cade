@@ -24,7 +24,7 @@ while (!b.atendofstream)
     c = c.substr(0, d)
   }
 
-  if (c.indexOf("[") >= 0)
+  if (c.indexOf("[eof]") >= 0)
   {
     break
   }

@@ -6,21 +6,23 @@ while (!b.atendofstream)
 {
   d = b.readline()
 
-  if (d.indexOf("[") == -1)
+  if (d.indexOf("[eof]") >= 0)
   {
-    if (d.indexOf("=") == -1)
+    break
+  }
+
+  if (d.indexOf("=") == -1)
+  {
+    e = d.indexOf(",") + 1
+    f = d.substr(e).split(".")
+
+    for (g = 0; g < f.length; g++)
     {
-      e = d.indexOf(",") + 1
-      f = d.substr(e).split(".")
-
-      for (g = 0; g < f.length; g++)
-      {
-        f[g] = f[g].charAt(0) + f[g].substr(1).toLowerCase()
-      }
-
-      d += "=" + f.join(" ").replace(" Ii", " II")
+      f[g] = f[g].charAt(0) + f[g].substr(1).toLowerCase()
     }
 
-    c.writeline(d)
+    d += "=" + f.join(" ").replace(" Ii", " II")
   }
+
+  c.writeline(d)
 }

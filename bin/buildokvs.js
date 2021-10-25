@@ -16,7 +16,7 @@ if (!a.fileexists(WScript.Arguments(1)) || a.getfile(WScript.Arguments(1)).datel
       c = c.substr(0, d)
     }
 
-    if (c.indexOf("[") >= 0)
+    if (c.indexOf("[eof]") >= 0)
     {
       break
     }

@@ -147,7 +147,7 @@ LoadDHRFile
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 LoadAuxIndexedFile
-         lda   #$E8                  ; INX
+         lda   #$EE                  ; INC
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadIndexedFile
@@ -169,7 +169,7 @@ LoadAuxIndexedFile
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 LoadIndexedFile
-         lda   #$EA                  ; NOP
+         lda   #$8D                  ; STA
          sta   @iauxreq
          +PARAMS_ON_STACK 6
          jsr   @set_nameaddr
@@ -197,8 +197,8 @@ LoadIndexedFile
          !byte $ce
          !word @ce_parms
 @iauxreq
-         nop                         ; SMC
-         stx SavedZP + auxreq - first_zp
+         sta   SavedZP + auxreq - first_zp
+                                     ; SMC
 
          jsr   $bf00
          !byte $ca
