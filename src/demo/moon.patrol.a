@@ -1,0 +1,63 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/MOON.PATROL",plain
+*=$106
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT moon_patrol, $800
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $49DD
+         jsr   $800
+
+         lda   #$4C
+         sta   $2A95
+         sta   $2A7E
+         sta   $0C31
+         sta   $2E80
+         lda   #0
+         sta   $2A95+1
+         sta   $2A7E+1
+         sta   $0C31+1
+         sta   $2E80+1
+         lda   #1
+         sta   $2A95+2
+         sta   $2A7E+2
+         sta   $0C31+2
+         sta   $2E80+2   ; exit on keypress/end of demo
+
+         lda   #$A2
+         sta   $0996
+         lda   #$FF
+         sta   $0996+1
+         lda   #$9A
+         sta   $0996+2   ; prevent stack pointer from overwriting $100
+
+         ldx   #26-1
+-        lda   patch, x
+         sta   $2726, x
+         dex
+         bpl   -         ; exit on keypress during title screen
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $919
+
+moon_patrol
+         !byte 25
+         !text "X/MOON.PATROL/MOON.PATROL"
+
+patch    !byte $20,$B8,$0A,$2C,$10,$C0,$A2,$41,$A9,$FF,$20,$A8,$FC,$AD,$00,$C0,$10,$05,$4C,$00,$01,$EA,$EA,$CA,$D0,$EE
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
