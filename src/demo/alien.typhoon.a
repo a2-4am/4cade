@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021 by Frank M./qkumba
 
 !cpu 6502
 !to "res/DEMO/ALIEN.TYPHOON",plain
@@ -10,7 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT alien_typhoon, $00 ; $4710
+         +LOAD_FILE_AT title, $00
 
          lda   #$61
          sta   $471C
@@ -47,13 +47,13 @@
          sta   $8FEF+2
          sta   $92B1+2    ; set exits
 
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
+
          jmp   $8F98
 
-alien_typhoon
-         !byte 29
-         !text "X/ALIEN.TYPHOON/ALIEN.TYPHOON"
+title    !byte x_e-x_b
+x_b      !text "X/ALIEN.TYPHOON/ALIEN.TYPHOON"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *
