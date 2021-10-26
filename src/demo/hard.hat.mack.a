@@ -1,0 +1,72 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/HARD.HAT.MACK",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #<patcher
+         sta   $9431
+         lda   #>patcher
+         sta   $942E
+         jsr   $4856      ; decompress
+
+patcher  rts
+         lda   #1
+         sta   $2218      ; reset vector patch
+
+         lda   #$60
+         sta   $BF7
+         sta   $72B9
+
+         lda   #$4C
+         sta   $0BD0
+         sta   $0C82
+         lda   #0
+         sta   $0BD0+1
+         sta   $0C82+1
+         lda   #1
+         sta   $0BD0+2
+         sta   $0C82+2    ; exit on keypress
+
+         lda   #$D0
+         sta   $5E4E      ; disable sound
+
+         lda   #$20
+         sta   $7249
+         lda   #6
+         sta   $7249+1
+         lda   #1
+         sta   $7249+2    ; exit at end of demo cycle
+
+         ldx   #13-1
+-        lda   patch, x
+         sta   $106, x
+         dex
+         bpl   -          ; new code for exit at end patch
+
+         +DISABLE_ACCEL
+
+         lda   #$07
+         pha
+         lda   #$FF
+         pha
+         rts
+
+title    !byte x_e-x_b
+x_b      !text "X/HARD.HAT.MACK/HARD.HAT.MACK"
+x_e
+
+patch    !byte $8D,$10,$72,$8D,$13,$72,$8D,$14,$72,$EE,$14,$72,$60
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
