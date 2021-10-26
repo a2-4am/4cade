@@ -1,0 +1,59 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/OI",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   main
+
+callback2
+         jsr   $BD5F
+         jsr   $BD09
+         lda   $B7EC
+         cmp   #$10
+         bne   +
+         lda   $B7ED
+         cmp   #9
+         bne   +
+         lda   #$AD
+         sta   $159F
+         sta   $15C3
++        pla
+         pla
+         clc
+         rts
+
+main
+         +ENABLE_ACCEL
+         +USES_TEXT_PAGE_2
+         lda   #$60
+         sta   $9EF
+         jsr   $800        ; find and load "DOS"
+         lda   #<callback1
+         sta   $B748
+         lda   #>callback1
+         sta   $B749
+         jmp   $B700
+
+callback1
+         ldx   #$00
+         stx   $9E52
+         inx
+         stx   $9E53
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback2
+         sta   $BD07
+         lda   #>callback2
+         sta   $BD08
++
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
