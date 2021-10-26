@@ -6,6 +6,7 @@
  - Alien Lander
  - Ape Escape
  - Apple Invader
+ - Apple-Oids
  - Arena
  - Artesians
  - Bats in the Belfry
@@ -15,6 +16,7 @@
  - Bug Battle
  - C'est La Vie
  - Captain Power
+ - Chip Out
  - Chivalry
  - Conquering Worlds
  - Cosmic Combat
@@ -46,6 +48,7 @@
  - Neut Tower
  - Neutrons
  - On The Run
+ - Oil's Well
  - Peeping Tom
  - Pegasus ][
  - Pengo
@@ -59,10 +62,12 @@
  - Shuttle Intercept
  - Space Kadet
  - Spellwielder
+ - Sputnik Attack
  - Spy vs Spy
  - Spy vs Spy II
  - Spy vs Spy III
  - Star Dance
+ - Star Maze
  - Starball
  - Super Huey
  - Super Puckman
@@ -74,6 +79,7 @@
  - The Movie Monster Game
  - The Snapper
  - The Space Ark
+ - The Voyage of the Valkyrie
  - Time Pilot
  - Titan Cronus
  - Track Attack
@@ -120,7 +126,7 @@
  - Upgrade Manic Miner to v1.1
  - Fix Mockingboard issues in Apple Cider Spider, Bouncing Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
  - Add more game help (thanks Andrew R)
- - Add even more super hi-res artwork for IIgs users (thanks Alex L, Brian Wiser, mr_breaddoughrising, Antoine V, Andrew R, Tony D)
+ - Add even more super hi-res artwork for IIgs users (thanks Alex L, Brian Wiser, mr_breaddoughrising, Antoine V, Andrew R, Tony D, cosmoza)
 
 # Revision 4.01 / serial number 20210218
 
