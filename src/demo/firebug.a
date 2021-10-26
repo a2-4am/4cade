@@ -1,0 +1,59 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/FIREBUG",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$2C
+         sta   $2070      ; don't load "RECORD" (demo doesn't show high scores)
+
+         lda   #$60
+         sta   $2076
+         jsr   $2000      ; decompress
+
+         lda   #0
+         sta   $83E
+         lda   #1
+         sta   $849       ; reset vector fix
+
+         lda   #$4C
+         sta   $1105
+         sta   $151A
+         sta   $5EA5
+         sta   $5F3B
+         sta   $5F46
+         lda   #0
+         sta   $1105+1
+         sta   $151A+1
+         sta   $5EA5+1
+         sta   $5F3B+1
+         sta   $5F46+1
+         lda   #1
+         sta   $1105+2
+         sta   $151A+2
+         sta   $5EA5+2
+         sta   $5F3B+2    ; exit on keypress
+         sta   $5F46+2    ; exit at end of demo cycle
+
+         lda   #$54
+         sta   $086F      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $810
+
+title    !byte x_e-x_b
+x_b      !text "X/FIREBUG/FIREBUG"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/STAR.BLAZER",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $722A
+         sta   $725D
+         jsr   $4A58      ; decompress
+         +DISABLE_ACCEL
+         jsr   $4400
+         +ENABLE_ACCEL
+         jsr   $B4C6      ; decompress
+
+         lda   #$4C
+         sta   $17DB
+         sta   $1760
+         sta   $17AD
+         sta   $1705
+         lda   #0
+         sta   $17DB+1
+         sta   $1760+1
+         sta   $17AD+1
+         lda   #1
+         sta   $17DB+2
+         sta   $1760+2
+         sta   $17AD+2    ; set exits
+         lda   #<(count + 1)
+         sta   $1705+1
+         lda   #>(count + 1)
+         sta   $1705+2    ; decrement custom counter after demo cycle and eventually exit
+
+         +DISABLE_ACCEL
+         jmp   ($20)
+
+count    !byte $03
+         dec   count
+         bpl   +
+         jmp   $100
++        jmp   $1750
+
+title    !byte x_e-x_b
+x_b      !text "X/STAR.BLAZER/STAR.BLAZER"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
