@@ -25,7 +25,9 @@ else
 
 entries.sort()
 
-a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
+f = a.createtextfile("build\\GAMES.SORTED")
+f.write(entries.toString().replace(/,/g, "\n"))
+f.close()
 ss_off = a.fileexists(WScript.Arguments(2)) ? a.getFile(WScript.Arguments(2)).size : 0
 groups = "*=0\n" + "!le16 " + entries.length + ", 0\n"
 

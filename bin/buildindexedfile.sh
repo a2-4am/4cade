@@ -5,13 +5,14 @@
 # -p  pad sizes within data file to next block size (default off)
 
 # parameters
-# 1 - input filename of text file containing list of effects (probably FX.CONF or DFX.CONF)
-# 2 - output filename for index file
-# 3 - output filename for data file
-# 4 - input directory of files to merge into data file
+# stdin - input containing list of effects (probably FX.CONF or DFX.CONF)
+# stdout - binary OKVS data structure
+# 1 - output filename for data file
+# 2 - input directory of files to merge into data file
 
 pad=false
 append=false
+standardoffset=0
 standardsize=0
 while getopts ":ap" opt; do
     case $opt in
@@ -23,17 +24,22 @@ while getopts ":ap" opt; do
 done
 shift $((OPTIND-1))
 
-if [ -f "$4"/STANDARD ]; then
-    cp "$4"/STANDARD "$3"
-    standardsize=$(wc -c < "$3")
-elif [ "$append" = false ]; then
-    rm -f "$3"
+if [ "$append" = false ]; then
+    rm -f "$1"
 fi
-touch "$3"
+touch "$1"
+
+# if there is a file called "STANDARD" in the input directory, add it now
+# because we will reuse it for any files that don't exist
+if [ -f "$2"/STANDARD ]; then
+    standardoffset=$(wc -c < "$1")
+    standardsize=$(wc -c < "$2/STANDARD")
+    cat "$2"/STANDARD >> "$1"
+fi
 
 # make temp file with list of lines that contain keys
 records=$(mktemp)
-awk '!/^$|^#|^\[/ { print }' < "$1" > "$records"
+awk '!/^$|^#|^\[/' > "$records"
 
 # make temp assembly source file that represents the binary OKVS data structure
 source=$(mktemp)
@@ -43,11 +49,11 @@ source=$(mktemp)
      echo "!byte ${#key}+7"            # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key
-     if [ -f "$4/$key" ]; then         # if file exists, determine offset and size
-         offset=$(wc -c < "$3")
+     if [ -f "$2/$key" ]; then         # if file exists, determine offset and size
+         offset=$(wc -c < "$1")
          echo "!be24 $offset"          # offset into merged data file
          echo -n "!le16 "
-         size=$(wc -c < "$4/$key")
+         size=$(wc -c < "$2/$key")
          if [ "$pad" = true ]; then
              # If offset+size does not cross a block boundary, use file's true size.
              # Otherwise, round up size to the next block boundary.
@@ -62,16 +68,19 @@ source=$(mktemp)
              # Caller said never pad, so always use file's true size.
              echo "$size"
          fi
-         cat "$4/$key" >> "$3"         # append this file to the end of the merged data file
-     else                              # if file does not exist, reuse placeholder at offset 0
-         echo "!be24 0"
+         cat "$2/$key" >> "$1"         # append this file to the end of the merged data file
+     else                              # if file does not exist, reuse STANDARD file
+         echo "!be24 $standardoffset"
          echo "!le16 $standardsize"
      fi
  done < "$records") > "$source"
 
-# assemble temp source file to create binary OKVS data structure
-acme -o "$2" "$source"
+# assemble temp source file into binary OKVS data structure, then output that
+out=$(mktemp)
+acme -o "$out" "$source"
+cat "$out"
 
 # clean up
+rm "$out"
 rm "$source"
 rm "$records"

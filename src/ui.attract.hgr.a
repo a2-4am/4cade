@@ -48,21 +48,8 @@ HGRActionSlideshow
 ;        graphics mode still displaying hi-res screen with last picture visible
 ;------------------------------------------------------------------------------
 HGRSingle
-         +ST16 @fname
-
-         jsr   LoadHGRActionIndex
-
-         jsr   okvs_find
-         !word HGRActionIndexPtr
-@fname   !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
-         jsr   LoadIndexedFile       ; load compressed HGR screenshot at $3FF8
-         !word kHGRActionDataFile
-         !word $3FF8
-@indexRecordPtr
-         !word $FDFD                 ; SMC
-
+         +ST16 IndexedHGRFilename
+         jsr   LoadIndexedHGRFile
          jsr   DecompressHGR
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jmp   ExecuteTransitionAt6000AndWait
@@ -151,7 +138,7 @@ HGRActionCallback
          bit   KBD
          bmi   HGRRTS
 
-         +ST16 @fname
+         +ST16 IndexedHGRFilename
 
          jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
@@ -165,24 +152,14 @@ HGRActionCallback
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
-         +LD16 @fname
-         jsr   LoadHGRActionIndex
-
-         jsr   okvs_find
-         !word HGRActionIndexPtr
-@fname   !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
-         jsr   LoadIndexedFile       ; load compressed HGR screenshot at $3FF8
-         !word kHGRActionDataFile
-         !word $3FF8
-@indexRecordPtr
-         !word $FDFD                 ; SMC
-
+         jsr   LoadIndexedHGRFile
          jsr   DecompressHGR
          jmp   DrawGameTitleInActionSlideshow
 
-LoadHGRActionIndex
+LoadIndexedHGRFile
+; in:    caller has set IndexedHGRFilename
+; out:   all flags & registers clobbered
+         +LD16 IndexedHGRFilename
          +ST16 PTR
          ldy   #1
          lda   (PTR), y
@@ -193,9 +170,22 @@ LoadHGRActionIndex
          clc
          adc   #$30                  ; A = "0".."6" (ASCII)
          sta   gHGRActionIndexNumber ; part of kHGRActionIndexFile
+
          jsr   LoadFile              ; load index file into $4000
          !word kRootDirectory
          !word kHGRActionIndexFile
 HGRActionIndexPtr
          !word $4000
+
+         jsr   okvs_find
+         !word HGRActionIndexPtr
+IndexedHGRFilename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load compressed HGR screenshot at $3FF8
+         !word kHGRActionDataFile
+         !word $3FF8
+@indexRecordPtr
+         !word $FDFD                 ; SMC
          rts

@@ -1,48 +1,21 @@
 a = new ActiveXObject("scripting.filesystemobject")
-b = a.opentextfile("res\\GAMES.CONF")
+b = a.opentextfile("build\\GAMES.SORTED")
 
 entries = []
 
 while (!b.atendofstream)
 {
-  c = b.readline()
-  d = c.indexOf("#")
-
-  if (d >= 0)
-  {
-    c = c.substr(0, d)
-  }
-
-  d = c.indexOf("=")
-
-  if (d >= 0)
-  {
-    c = c.substr(0, d)
-  }
-
-  if (c.indexOf("[") >= 0)
-  {
-    break
-  }
-
-  c = c.substr(c.indexOf(",") + 1)
-
-  if (c.length > 0)
-  {
-    entries.push(c)
-  }
+  entries.push(b.readline())
 }
 
-entries.sort()
-a.createtextfile("build\\games.lst").write(entries.toString().replace(/,/g, "\n"))
-pre_off = a.getfile(WScript.Arguments(0) + "\\STANDARD").size
-osize = pre_off
+osize = a.getfile(WScript.Arguments(0) + "\\STANDARD").size
+pre_off = a.getfile(WScript.Arguments(2)).size + osize
 
 groups = "*=0\n" + "!le16 " + entries.length + ", 0\n"
 
 for (i = 0; i < entries.length; i++)
 {
-  c = 0
+  c = a.getfile(WScript.Arguments(2)).size
   size = osize
 
   if (a.fileexists(WScript.Arguments(0) + "\\" + entries[i]))
@@ -67,4 +40,4 @@ f.write(groups)
 f.close()
 x = new ActiveXObject("wscript.shell")
 x.run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\pre.tmp', 0, 1)
-x.run('cmd /c bin\\buildpreall.bat ' + WScript.Arguments(0) + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(3), 0, 1)
+x.run('cmd /c bin\\buildpreall.bat ' + WScript.Arguments(0) + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(0) + '\\STANDARD', 0, 1)

@@ -70,12 +70,9 @@ DHGRActionSlideshow
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
          bvc   DHGRRTS
-         +ST16 @fname
+         +ST16 IndexedDHGRFilename
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
-         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
-         !word kRootDirectory
-@fname   !word $FDFD                 ; SMC
-         !word $3FF8
+         jsr   LoadIndexedDHGRFile   ; load compressed DHGR screenshot at aux $3FF8
          jsr   DecompressDHGR
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   ExecuteTransitionAt6000AndWait
@@ -211,7 +208,7 @@ DHGRActionCallback
          bit   KBD
          bmi   DHGRRTS
 
-         +ST16 +
+         +ST16 IndexedDHGRFilename
 
          jsr   FindGameInActionSlideshow
          ; if game name is not found (C will be set here), it means the game
@@ -223,10 +220,7 @@ DHGRActionCallback
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
-         jsr   LoadAuxFile           ; load compressed DHGR screenshot at aux $3FF8
-         !word kDHGRActionDirectory
-+        !word $FDFD
-         !word $3FF8
+         jsr   LoadIndexedDHGRFile
          jsr   DecompressDHGR
 
          lda   #$EA                  ; NOP
@@ -326,3 +320,24 @@ RedrawForDHGR
          dec   i
          bne   --
          jmp   SwitchToBank1
+
+LoadIndexedDHGRFile
+; in:    caller has set IndexedDHGRFilename
+; out:   all flags & registers clobbered
+         jsr   LoadFile              ; load index file into $4000
+         !word kRootDirectory
+         !word kDHGRActionIndexFile
+-        !word $4000
+
+         jsr   okvs_find
+         !word -
+IndexedDHGRFilename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadAuxIndexedFile    ; load compressed DHGR screenshot at aux $3FF8
+         !word kDHGRActionDataFile
+         !word $3FF8
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+         rts

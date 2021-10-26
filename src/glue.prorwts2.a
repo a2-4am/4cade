@@ -128,6 +128,28 @@ LoadDHRFile
          jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
+; LoadAuxIndexedFile
+; Load a file from inside an indexed file, all at once into auxiliary memory
+;
+; To save disk space, some collections of small, related files (e.g. per-game
+; help files) are merged into a single data file with an associated index file.
+; The index stores the original filename along with an offset (into the merged
+; data file) and a length.
+;
+; Callers are responsible for loading the index file and finding the relevant
+; record within the index. Most callers use okvs_find() for this.
+;
+; in:    stack contains 6 bytes of parameters:
+;          +1 [word] pointer to filename of merged data file
+;          +3 [word] address of load destination
+;          +5 [word] pointer to index record (see note)
+; out:   all flags clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+LoadAuxIndexedFile
+         lda   #$EE                  ; INC
+         +HIDE_NEXT_2_BYTES
+;------------------------------------------------------------------------------
 ; LoadIndexedFile
 ; Load a file from inside an indexed file, all at once
 ;
@@ -147,6 +169,8 @@ LoadDHRFile
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 LoadIndexedFile
+         lda   #$8D                  ; STA
+         sta   @iauxreq
          +PARAMS_ON_STACK 6
          jsr   @set_nameaddr
          +LDPARAMPTR 5, zpword
@@ -172,6 +196,10 @@ LoadIndexedFile
          jsr   $bf00
          !byte $ce
          !word @ce_parms
+@iauxreq
+         sta   SavedZP + auxreq - first_zp
+                                     ; SMC
+
          jsr   $bf00
          !byte $ca
          !word @ca_parms
