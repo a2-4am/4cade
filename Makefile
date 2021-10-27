@@ -32,7 +32,7 @@ dsk: asm index
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
 	cp res/PREFS.CONF build/PREFS.CONF
-	bin/padto.sh 512 build/PREFS.CONF >>build/log
+	bin/padto.sh build/PREFS.CONF
 #
 # create _FileInformation.txt files for subdirectories
 #
@@ -105,7 +105,7 @@ dsk: asm index
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
-index: md
+index: md asmfx asmprelaunch
 # note: even though individual lines check individual files, you really want
 # to re-run this with a clean build/ directory if anything changes, because
 # everything is interconnected within TOTAL.DATA

@@ -1,11 +1,5 @@
 #!/bin/bash
 
-totalsize=$1
-outfile=$2
+# zero-pads $1 to a multiple of 512 bytes, in place
 
-[[ "$OSTYPE" == "linux-gnu" ]] \
-    && filesize=$(stat -c "%s" "$outfile") \
-    || filesize=$(stat -f "%z" "$outfile")
-
-padsize=$((512-$filesize))
-dd if=/dev/zero bs=1 count=$padsize 2>/dev/null >> "$outfile"
+dd if=/dev/null of="$1" bs=1 count=1 seek="$((($(wc -c < "$1") + 511) & -512))" 2>/dev/null
