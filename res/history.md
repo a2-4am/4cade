@@ -86,6 +86,7 @@
  - Trompers
  - Video Vegas
  - Vortex
+ - Wargle
  - Whomper Stomper
  - Willy Byte in the Digital Dimension
  - Zoo Master
