@@ -10,7 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT aquatron, $00 ; $59C2
+         +LOAD_FILE_AT title, $00
          +READ_ROM_NO_WRITE
 
          lda   #>(callback - 1)
@@ -36,14 +36,13 @@ callback
          sta   $7E43
          sta   $7EA0       ; disable sound
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
+
          jmp   $400
 
-aquatron
-         !byte 19
-         !text "X/AQUATRON/AQUATRON"
+title    !byte x_e-x_b
+x_b      !text "X/AQUATRON/AQUATRON"
+x_e
 
 !if * > $1F0 {
   !error "code is too large, ends at ", *

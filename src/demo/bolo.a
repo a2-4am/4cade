@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/BOLO",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $8034
+         jsr   $4ab0      ; decompress and show title
+
+         lda   #$4C
+         sta   $129A
+         sta   $15F8
+         sta   $5D8A      ; (later moved to $7D8A)
+         lda   #0
+         sta   $129A+1
+         sta   $15F8+1
+         sta   $5D8A+1
+         lda   #1
+         sta   $129A+2
+         sta   $15F8+2
+         sta   $5D8A+2    ; set exits
+
+         lda   #$D0
+         sta   $4E7A      ; (later moved to $6E7A)
+         sta   $4F96      ; (later moved to $6F96)
+         sta   $6735      ; (later moved to $8735) disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $1100
+
+title    !byte x_e-x_b
+x_b      !text "X/BOLO/BOLO"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

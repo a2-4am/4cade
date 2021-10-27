@@ -1,0 +1,65 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/PACMAN",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         +NEW_RESET_VECTOR $280
+
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+
+         lda   #$80
+         sta   $103F
+         lda   #2
+         sta   $104A      ; reset vector patch
+
+         lda   #$4C
+         sta   $18A6      ; (later moved to $48A6)
+         sta   $027C
+         sta   $22F9      ; (later moved to $52F9)
+         sta   $3F7C      ; (later moved to $6F7C)
+         sta   $5C0B      ; (later moved to $8C0B)
+         lda   #0
+         sta   $027C+1
+         sta   $22F9+1
+         sta   $3F7C+1
+         sta   $5C0B+1
+         lda   #1
+         sta   $027C+2
+         sta   $22F9+2
+         sta   $3F7C+2
+         sta   $5C0B+2
+         lda   #$CD
+         sta   $18A6+1
+         lda   #$48
+         sta   $18A6+2
+         lda   #$30
+         sta   $22F1      ; (later moved to $52F1)
+         lda   #6
+         sta   $22F1+1
+         lda   #$EA
+         sta   $22F1+2
+         sta   $22F1+3    ; set exits
+
+         +DISABLE_ACCEL
+
+         jmp   $1000
+
+title    !byte x_e-x_b
+x_b      !text "X/PACMAN/PACMAN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
