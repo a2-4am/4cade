@@ -1,0 +1,59 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/AGENT.U.S.A",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $36D3
+         jsr   $366D      ; decompress
+
+         ldx   #5
+-        lda   $100,x
+         sta   reset,x
+         dex
+         bpl   -
+         sec
+         rol   $3F3       ; point to $300 instead
+         jsr   $FB6F      ; reset vector checksum (bank ROM in)
+
+         lda   #$EA
+         sta   $15DD
+         sta   $15DD+1
+         sta   $15DD+2    ; disable button press on main menu
+
+         lda   #$4C
+         sta   $0A06
+         sta   $1605
+         lda   #0
+         sta   $0A06+1
+         sta   $1605+1
+         lda   #1
+         sta   $0A06+2
+         sta   $1605+2    ; set exits
+
+         lda   #$D0
+         sta   $AC64      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $837
+
+reset    !byte $00,$00,$00,$00,$00,$00
+
+title    !byte x_e-x_b
+x_b      !text "X/AGENT.U.S.A/AGENT.U.S.A"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

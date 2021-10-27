@@ -1,0 +1,67 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/STARGATE",plain
+*=$106
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $800
+
+         lda   #$60
+         sta   $4697
+         jsr   $800       ; decompress
+
+         lda   #$60
+         sta   $9A03
+         jsr   $9A00      ; decompress2
+
+         lda   #$10
+         sta   $0933
+         lda   #$1E
+         sta   $0933+1
+         lda   #$4C
+         sta   $0933+2
+         sta   $0905
+         sta   $51C7
+         sta   $51D2
+         lda   #0
+         sta   $0933+3
+         sta   $0905+1
+         sta   $51C7+1
+         sta   $51D2+1
+         sta   $47F2
+         lda   #1
+         sta   $0933+4
+         sta   $0905+2
+         sta   $51C7+2
+         sta   $51D2+2    ; set exits
+         sta   $47F2+1
+         lda   #$A4
+         sta   $47F4+2    ; reset vector (moved to $3F2)
+
+         lda   #$D0
+         sta   $153B
+         sta   $5F0E
+         sta   $50B8
+         sta   $1DF7
+         sta   $1151
+         sta   $16E0
+         sta   $166B
+         sta   $167A      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $5000
+
+title    !byte x_e-x_b
+x_b      !text "X/STARGATE/STARGATE"
+x_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
