@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/FALCONS",plain
+*=$B000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $3f0b
+         jsr   $3eba      ; decompress
+
+         lda   #$2C
+         sta   $602A      ; skip input selection
+
+         lda   #$4C
+         sta   $9FF7
+         sta   $9FDC
+         lda   #0
+         sta   $9FF7+1
+         sta   $9FDC+1
+         lda   #1
+         sta   $9FF7+2
+         sta   $9FDC+2    ; set exits
+
+         +DISABLE_ACCEL
+
+         jmp   $6000
+
+title    !byte x_e-x_b
+x_b      !text "X/FALCONS/FALCONS"
+x_e
+
+!if * > $BFFF {
+  !error "code is too large, ends at ", *
+}
