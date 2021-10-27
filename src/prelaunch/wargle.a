@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/WARGLE",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         jmp   main
+
+callback2
+         jsr   $BD58
+         jsr   $BD09
+         lda   $B7EC
+         cmp   #7
+         bne   +
+         ldy   #$A5
+         lda   $B7ED
+         cmp   #7
+         beq   ++
+         cmp   #9
+         bne   +
+         sty   $96D6      ; don't increase lives
+         beq   +
+++       sty   $962E      ; don't decrease lives
++        pla
+         pla
+         clc
+         rts
+
+main
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9EA
+         jsr   $800       ; load "DOS"
+         lda   #<callback1
+         sta   $B748
+         lda   #>callback1
+         sta   $B749
+         jmp   $B700
+
+callback1
+         ldx   #$00
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback2
+         sta   $BD07
+         lda   #>callback2
+         sta   $BD08
++
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

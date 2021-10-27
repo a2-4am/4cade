@@ -15,6 +15,11 @@
          jmp   $800       ; load "DOS"
 
 callback
+         ldx   #$00
+         stx   $9E52
+         inx
+         stx   $9E53
+
          +DISABLE_ACCEL
          jmp   $9D84
 
