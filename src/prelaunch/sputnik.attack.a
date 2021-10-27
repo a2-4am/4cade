@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba/xot
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPUTNIK.ATTACK",plain
@@ -17,7 +17,8 @@
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5
-         sta   $6B37
+         sta   $6B37      ; inf. lives
+         sta   $6724      ; inf. shields
 +
          +DISABLE_ACCEL
 
