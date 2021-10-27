@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/STARGATE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $4697
+         jsr   $800       ; decompress
+
+         lda   #$60
+         sta   $9A03
+         jsr   $9A00      ; decompress2
+
+         lda   #0
+         sta   $47F2
+         lda   #1
+         sta   $47F3
+         lda   #$A4
+         sta   $47F4      ; reset vector (moved to $3F2/3/4)
+
+         +DISABLE_ACCEL
+
+         jmp   $5000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
