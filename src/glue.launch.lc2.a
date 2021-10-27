@@ -8,9 +8,10 @@
 ; which handle bank switching for you.
 
 LaunchInternal
-         ldy   #$F1
+         ldy   #-gStackSize
 -        lda   $100,y
-         sta   STACKBASE - $EF,y               ; back up stack
+         sta   STACKBASE - $FE + gStackSize,y
+                                     ; back up stack
          iny
          bne   -
          tsx                         ; back up stack pointer

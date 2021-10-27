@@ -78,8 +78,9 @@ RestoreStackNextTime
                                      ; reset to branch so we don't try to
          sta   RestoreStackNextTime + 1
                                      ; restore the same stack twice
-         ldx   #$F1
--        lda   STACKBASE - $EF,x     ; restore stack
+         ldx   #-gStackSize
+-        lda   STACKBASE - $FE + gStackSize,x
+                                     ; restore stack
          sta   $100,x
          inx
          bne   -
@@ -179,7 +180,7 @@ COPYSRC = *
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
   STACKBASE = *
-  LCRAM2_END = STACKBASE + 15
+  LCRAM2_END = STACKBASE + gStackSize
   !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }

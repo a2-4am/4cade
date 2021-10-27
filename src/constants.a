@@ -17,7 +17,7 @@
 ; D000..D3FF - ProRWTS data
 ; D400..D6C3 - ProRWTS code
 ; D6C4..DB91 - HGR font code & ProRWTS glue code
-; DB92..DBA1 - backup of stack (during gameplay and self-running demos)
+; DB92..DB98 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - HGR font data
@@ -104,6 +104,7 @@ BestMatchScore = $FC      ; byte
 ;              $FF        ; used by ParseGamesList
 
 ; main memory
+gStackSize   = 6          ; seems like only six are needed
 gPathname    = $BFD0      ; used by SetPath/AddToPath
 gKeyLen      = $1F00      ; used by ParseGamesList
 gKey         = $1F01
