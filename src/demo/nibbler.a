@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/NIBBLER",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $8A19
+         jsr   $6550      ; decompress and show title
+
+         lda   #$A9
+         sta   $165C
+         lda   #$EA
+         sta   $165C+2    ; disable button detection
+
+         lda   #$0A
+         sta   $1984
+         lda   #$4C
+         sta   $1984+1
+         sta   $166D
+         sta   $0981
+         sta   $11BC
+         lda   #0
+         sta   $1984+2
+         sta   $166D+1
+         sta   $0981+1
+         sta   $11BC+1
+         lda   #1
+         sta   $165C+1
+         sta   $1984+3
+         sta   $166D+2
+         sta   $0981+2
+         sta   $11BC+2    ; set exits
+
+         lda   #$FF
+         sta   $0914      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $900
+
+title    !byte x_e-x_b
+x_b      !text "X/NIBBLER/NIBBLER"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
