@@ -124,16 +124,19 @@ DrawUI
 
          jsr   GetGameToLaunch       ; get current game, if any
          bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
-         jsr   GetGameDisplayName
-                                     ; A/Y -> game display name + bitfield of game info
+         +ST16 @fname
+         jsr   okvs_get_current
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
+         sta   gGameToLaunchInfo
+         jsr   okvs_get
+         !word gSearchStore
+@fname   !word $FDFD                 ; SMC
          +ST16 PTR
          ldy   #0
-         lda   (PTR),y               ; A = game display name length + 1
+         lda   (PTR), y
          sta   SAVE
-         tay
-         lda   (PTR),y               ; A = game info bitfield
-         sta   gGameToLaunchInfo
-         ldy   #0
+         inc   SAVE
 -        iny
 @printCursor
          lda   #$FD                  ; SMC

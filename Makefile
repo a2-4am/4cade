@@ -159,7 +159,9 @@ index: md asmfx asmprelaunch
 # precompute indexed files for slideshows
 #
 	[ -f build/SLIDESHOW.IDX ] || ((for f in res/SS/*; do \
-	    bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
+	    [ $$(echo "$$(basename $$f)" | cut -c-3) = "ACT" ] && \
+	        bin/buildaction.sh build/DISPLAY.CONF < "$$f" > "build/SS/$$(basename $$f)" || \
+	        bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
 	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
 	[ -f build/MINIATTRACT.IDX ] || ((for f in res/ATTRACT/*; do \

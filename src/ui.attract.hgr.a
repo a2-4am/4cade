@@ -147,7 +147,7 @@ HGRActionCallback
          bcs   HGRRTS
 
          ; found the game
-         +ST16 SAVE                  ; (SAVE) -> game display name + game info bitfield
+         +ST16 SAVE                  ; (SAVE) -> game display name
 
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)

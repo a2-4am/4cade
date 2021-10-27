@@ -94,91 +94,32 @@ GlueLaunchRTS
 ; check if an arbitrary game exists, for some definition of 'exists', while
 ; in the middle of a slideshow
 ;
-; /!\ This function assumes that gSlideshowStore exists and is populated,
-;     which is generally only true during the callback function of a slideshow
-;
-; in:    A/Y points to game filename
+; in:    A/Y points to a key in gSlideshowStore
 ; out:   C clear if game exists, and
 ;          $WINDEX = game index, and
-;          A/Y points to game display name + game info bitfield
+;          A/Y points to game display name
 ;        C set if game can't be found by any means
 ;------------------------------------------------------------------------------
 FindGameInActionSlideshow
-         +ST16 @sskey
+         +ST16 @slideshowKey
          jsr   FindGame
-         bcc   GetGameDisplayName
+         bcc   @GetGameDisplayName
 ; if the game was not found, try getting the value of the current record from
 ; gSlideshowStore (some games have multiple action screenshots, in which case
 ; the key is only the screenshot filename, and the value is the actual game
 ; filename)
          jsr   okvs_get
          !word gSlideshowStore
-@sskey   !word $FDFD                 ; SMC
+@slideshowKey
+         !word $FDFD                 ; SMC
          jsr   FindGame
          bcs   GlueLaunchRTS
-         ; /!\ execution falls through here to GetGameDisplayName
 
-;------------------------------------------------------------------------------
-; GetGameDisplayName
-; lookup or construct the display name for a specific game
-;
-; in:    A/Y contains address of a key in gGamesListStore
-; out:   A/Y contains address of game display name + game info bitfield
-;        (this might be just the corresponding value in gGamesListStore,
-;        or it might be a temporary buffer in main memory that we constructed
-;        out of thin air)
-;        gValLen possibly clobbered (up to gValLen+MaxInputLength)
-;        X preserved
-;        C clear
-;------------------------------------------------------------------------------
-GetGameDisplayName
-         +ST16 SAVE
-         jsr   okvs_get_current      ; get value for this key
-                                     ; (PTR) -> truncated game display name + info bitfield
-                                     ; Y = 0
-         lda   (PTR), y              ; A = length of truncated game display name + info bitfield
-         lsr   ;;cmp   #1            ; 1 means there's no title, just info bitfield (1 byte)
-         beq   +
+@GetGameDisplayName
+         +LD16 @slideshowKey
+         jsr   okvs_get_current
+         jsr   okvs_get_current_PTR_is_already_set
          +LD16 PTR
-         clc
-         rts
-+                                    ; game display name is truncated, we must expand it
-         iny                         ; Y = 1
-         lda   (PTR), y              ; A = game info bitfield
-         pha                         ; save on stack
-         dey
-         lda   (SAVE), y             ; A = length of key
-         tay
-         iny
-         sty   @len
-         sty   gValLen
-         lda   #$24                  ; BIT opcode
-         sta   @or                   ; first character remains capitalized
-         ldy   #1
--        lda   (SAVE), y
-         cmp   #$49                  ; 'I'
-         bne   +
-         cmp   gValLen-1,y
-         beq   ++                    ; preserve 'II' casing
-+        cmp   #$2E
-         bne   @or
-         lda   #$20                  ; convert '.' to ' '
-@or      ora   #$20                  ; SMC (opcode)
-++       sta   gValLen, y
-         cmp   #$20
-         bne   +
-         lda   #$24                  ; first character after ' ' remains capitalized
-         +HIDE_NEXT_2_BYTES
-+        lda   #$09                  ; OR opcode
-         sta   @or
-@next    iny
-@len=*+1
-         cpy   #$FD                  ; SMC
-         bne   -
-         pla
-         sta   gValLen, y
-         +LDADDR gValLen
-         clc
          rts
 
 ;------------------------------------------------------------------------------

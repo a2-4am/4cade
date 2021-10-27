@@ -85,10 +85,11 @@ ParseGamesList
 @gatherValue
          jsr   IncAndGetChar
          cmp   #$0A                  ; CR ends the value
-         beq   @endValue
-         sta   gVal,x
-         inx
-         bpl   @gatherValue
+         bne   @gatherValue
+;         beq   @endValue
+;         sta   gVal,x
+;         inx
+;         bpl   @gatherValue
 @endValue
          pla                         ; pop cheat category
          sta   gVal,x                ; store after game display name

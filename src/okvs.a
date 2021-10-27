@@ -395,6 +395,7 @@ okvs_iter_values
 okvs_get_current
 ; out:   Y = 0
          +ST16 PTR
+okvs_get_current_PTR_is_already_set
          jsr   stepptr
          bne   incptr
 
