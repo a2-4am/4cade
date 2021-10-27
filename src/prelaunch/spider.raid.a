@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPIDER.RAID",plain
@@ -8,13 +8,17 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+
          lda   #$60
          sta   $3F0E
          jsr   $3EB9      ; decompress
+
+         lda   #1
+         sta   $40D3      ; reset vector
+
          lda   #$60
          sta   $40F1
          jsr   $4000
-         +RESET_VECTOR $100
 
          +DISABLE_ACCEL
          jmp   $4246
