@@ -4,10 +4,10 @@
 ; Functions to launch games and self-running demos
 ;
 ; Public functions
+; - AnyGameSelected
 ; - GetGameToLaunch
 ; - FindGame
 ; - FindGameInActionSlideshow
-; - GetGameDisplayName
 ; - PlayGame
 ; - Launch
 ;
@@ -37,7 +37,8 @@ AnyGameSelected
 ; GetGameToLaunch
 ; get filename of game that is currently selected in the UI (if any)
 ;
-; in:    gGameToLaunch = index into gGamesListStore (word) or #$FFFF if no game selected
+; in:    gGameToLaunch = index into gSearchStore (word) or #$FFFF if no game selected
+;        gSearchStore populated
 ; out:   C clear if a game is selected, and
 ;          A/Y points to game filename
 ;        C set if no game is selected
@@ -46,7 +47,7 @@ GetGameToLaunch
          jsr   AnyGameSelected
          bcs   _gameToLaunchExit
          +ST16 WINDEX
-         +LDADDR gGamesListStore
+         +LDADDR gSearchStore
          jsr   okvs_nth
 ForceGoodResult
          clc

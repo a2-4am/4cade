@@ -54,6 +54,7 @@ MegaAttractMode
          bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   +                     ; Any other key switches to Search Mode.
+         jsr   ReloadSearchIndex
          jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
 +        jmp   SearchMode
 
@@ -61,7 +62,8 @@ MegaAttractMode
 ; MiniAttractMode
 ; run attract modules related to one game
 ;
-; in:    gGameToLaunch = index in gGamesListStore (word)
+; in:    gGameToLaunch = index in gSearchStore (word)
+;        gSearchStore populated
 ; out:   all flags and registers clobbered
 ;        assume all of main memory has been clobbered
 ;------------------------------------------------------------------------------

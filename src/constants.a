@@ -10,7 +10,7 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E962..FFEE - main program code
+; E978..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)

@@ -122,11 +122,9 @@ DrawUI
          sta   gPathname             ; hack, used by first RedrawForDHGR which follows
                                      ; Draw40Chars which doesn't set gPathname
 
-         jsr   AnyGameSelected       ; get index number of current game, if any
+         jsr   GetGameToLaunch       ; get current game, if any
          bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
-         +ST16 WINDEX
-         +LDADDR gSearchStore
-         jsr   okvs_nth              ; A/Y -> key of current game (in gSearchStore)
+                                     ; A/Y -> key of current game (in gSearchStore)
          jsr   okvs_get_current      ; (PTR) -> display name of current game
                                      ; Y = 0
          lda   (PTR), y

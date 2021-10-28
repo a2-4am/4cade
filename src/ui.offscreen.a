@@ -84,10 +84,7 @@ LoadOffscreenFromAY
 
 LoadGameTitleOffscreen
 ; in:    gGameToLaunch = index into gSearchStore (word)
-         +LD16 gGameToLaunch
-         +ST16 WINDEX
-         +LDADDR gSearchStore
-         jsr   okvs_nth              ; A/Y -> key (game filename) in gSearchStore
+         jsr   GetGameToLaunch
          +ST16 @fname
          bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
          bvc   @hgr

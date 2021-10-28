@@ -112,7 +112,7 @@ SearchMode
          txs
          stx   gGameToLaunch         ; $FFFF = no game selected
          stx   gGameToLaunch+1
-         jsr   BuildSearchStore
+         jsr   ReloadSearchIndex
          jsr   Home                  ; clear screen (switches to text mode)
          stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   OnInputChanged        ; draw UI offscreen
