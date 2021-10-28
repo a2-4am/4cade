@@ -6,7 +6,6 @@
 ; Public functions
 ; - okvs_init(address)                          reset (required)
 ; - okvs_len(address)                           get number of keys
-; - okvs_append(address, key, value, max_len)   add new key/value pair
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
 ; - okvs_find(address, key)                     get key by key lookup
@@ -18,7 +17,7 @@
 ; Call init() once. Call it again to reset the store to 0 records.
 ;
 ; Records are maintained in a singly linked list, so most functions are O(n).
-; len() and append() are O(1) though.
+; len() is O(1) though.
 ;
 ; Record count is stored as a word, so a store can hold 65535 records.
 ;
@@ -27,24 +26,17 @@
 ;
 ; Keys are case-sensitive. Lookups are an exact byte-for-byte comparison.
 ;
-; append() has a max_len argument to reserve more space for the value, in case
-; you want to update it later. max_len is the total space to reserve, not the
-; additional space. One exception: max_len can be 0, and it will be treated as
-; length(value) at append time. update() always modifies the value in place.
-; There is no range checking because this is assembly.
-
 ; All functions take the starting address of the store's data buffer in
 ; memory, so there can be multiple independent stores at one time. Only the
-; size of a record is stored, so stores are easily relocatable. append() will
-; happily extend the store's data buffer without limit. There is no overflow
-; protection because this is assembly.
+; size of a record is stored, so stores are easily relocatable. There is no
+; overflow protection because this is assembly.
 ;
 ; There is no sort() function.
 ;
 ; There is no delete() function.
 ;
-; Keys can be duplicated, but get() and find() will always return the one that
-; was append()ed first.
+; Keys can be duplicated, but get() and find() will always return the first
+; match.
 ;
 ; Structures:
 ;
