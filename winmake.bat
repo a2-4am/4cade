@@ -120,6 +120,8 @@ goto :EOF
 
 :index
 call :md
+call :asmfx
+call :asmprelaunch
 rem
 rem precompute binary data structure for mega-attract mode configuration file
 rem
@@ -128,9 +130,9 @@ rem
 rem precompute binary data structure and substitute special characters
 rem in game help and other all-text pages
 rem
-cscript /nologo bin\subst.js res\HELPTEXT build\HELPTEXT >>build\log
-cscript /nologo bin\subst.js res\CREDITS build\CREDITS >>build\log
-for %%q in (res\GAMEHELP\*) do cscript /nologo bin\subst.js %%q build\GAMEHELP\%%~nxq >>build\log
+cscript /nologo bin\converthelp.js res\HELPTEXT build\HELPTEXT >>build\log
+cscript /nologo bin\converthelp.js res\CREDITS build\CREDITS >>build\log
+for %%q in (res\GAMEHELP\*) do cscript /nologo bin\converthelp.js %%q build\GAMEHELP\%%~nxq >>build\log
 rem
 rem create distribution version of GAMES.CONF without comments or blank lines
 rem create a sorted list of game filenames, without metadata or display names
@@ -158,7 +160,15 @@ cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\TOTAL.DA
 rem
 rem precompute indexed files for slideshows
 rem
-for %%q in (res\SS\*) do cscript /nologo bin\buildokvs.js %%q build\SS\%%~nxq >>build\log
+for %%q in (res\SS\*) do (
+  set _ss=%%~nxq
+  set _ss=!_ss:~0,3!
+  if !_ss!==ACT (
+    cscript /nologo bin\buildaction.js %%q build\SS\%%~nxq >>build\log
+  ) else (
+    cscript /nologo bin\buildokvs.js %%q build\SS\%%~nxq >>build\log
+  )
+)
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\TOTAL.DATA nul pad >>build\log
 for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT\%%~nxq >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX build\TOTAL.DATA nul pad >>build\log
