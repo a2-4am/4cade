@@ -133,8 +133,6 @@ gGlobalPrefsStore
                                      ; which is apparently one of the acceptable values)
 gGamesListStore
          !word $FDFD                 ; SMC
-StoreAYAndSwitchToBank2
-         +ST16 PTR
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
@@ -175,7 +173,6 @@ COPYSRC = *
 !pseudopc hdddataend {
   COPYDST = *
          !source "src/prodos.impl.lc2.a"
-         !source "src/ui.font.lc2.a"
          !source "src/glue.prorwts2.lc2.a"
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
@@ -189,7 +186,7 @@ COPYSRC = *
 EvenLasterMover
   FONTSRC = *
 !pseudopc FONTDST {
-         !source "src/ui.font.data.lc2.a"
+         !source "src/ui.font.data.a"
 }
 !if RELBASE = $2000 {
   !ifdef PASS2 {
