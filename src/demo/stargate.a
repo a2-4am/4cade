@@ -42,7 +42,7 @@
          sta   $51D2+2    ; set exits
          sta   $47F2+1
          lda   #$A4
-         sta   $47F4+2    ; reset vector checksum (moved to $3F2)
+         sta   $47F4+2    ; reset vector fix (moved to $3F2/$3F4)
 
          lda   #$D0
          sta   $153B
