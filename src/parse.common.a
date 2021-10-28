@@ -210,6 +210,7 @@ okvs_append
          tay
          lda   (SRC),y               ; no max, use actual length instead
          tax
+AddValueDuringAppend
 +        inx
          tay
 -        lda   (SRC),y

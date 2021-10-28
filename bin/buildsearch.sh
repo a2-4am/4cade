@@ -12,11 +12,12 @@ source=$(mktemp)
      dhgr=$(echo "$key" | cut -c3)     # 'has DHGR title screen' flag (0 or 1)
      cheat=$(echo "$key" | cut -c4)    # 'cheat category' (0..5)
      key=$(echo "$key" | cut -d"," -f2)
-     echo "!byte ${#key}+${#value}+4"  # OKVS record length
+     echo "!byte ${#key}+${#value}+5"  # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key
-     echo "!byte ${#value}+1"          # OKVS value length
+     echo "!byte ${#value}"            # OKVS value length
      echo "!text \"$value\""           # OKVS value
+     echo "!byte 1"
      echo "!byte $((dhgr*128))+$cheat"
  done < "$records") > "$source"
 

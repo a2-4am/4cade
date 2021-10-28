@@ -386,11 +386,12 @@ CopyDevs
          jsr   stepptr
          +LD16 PTR                   ; (PTR) points to free space after the OKVS data structure we just created
          +ST16 gGamesListStore       ; save pointer to free space for next store
-
          jsr   LoadFile              ; load games list file into $8200
          !word kRootDirectory
          !word @kGameListConfFile
 -        !word $8200
+         lda   #$EA
+         sta   AddValueDuringAppend
          jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
          !word gGamesListStore
          !word -

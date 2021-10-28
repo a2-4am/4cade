@@ -61,12 +61,8 @@ ParseGamesList
          bvc   @skipLine             ; game requires 128K but we only have 64K, so ignore entire line
 @parseDHGRTitle
          jsr   IncAndGetChar         ; get third character ('1' if game has DHGR title)
-         and   #$01
-         pha
 @parseCheatsAvailable
          jsr   IncAndGetChar         ; get fourth character (cheat category, int)
-         and   #CHEAT_CATEGORY
-         pha
 @swallowComma
          jsr   IncAndGetChar
 @gatherKey
@@ -86,19 +82,7 @@ ParseGamesList
          jsr   IncAndGetChar
          cmp   #$0A                  ; CR ends the value
          bne   @gatherValue
-;         beq   @endValue
-;         sta   gVal,x
-;         inx
-;         bpl   @gatherValue
 @endValue
-         pla                         ; pop cheat category
-         sta   gVal,x                ; store after game display name
-         pla                         ; pop has-DHGR-title flag
-         lsr
-         ror
-         ora   gVal,x
-         sta   gVal,x                ; store in bit 7 of same byte as cheat category
-         inx
          stx   gValLen
          tya
          pha                         ; okvs functions clobber everything but we need Y

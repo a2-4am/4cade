@@ -122,21 +122,22 @@ DrawUI
          sta   gPathname             ; hack, used by first RedrawForDHGR which follows
                                      ; Draw40Chars which doesn't set gPathname
 
-         jsr   GetGameToLaunch       ; get current game, if any
+         jsr   AnyGameSelected       ; get index number of current game, if any
          bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
-         +ST16 @fname
-         jsr   okvs_get_current
-         iny                         ; Y = 1
+         +ST16 WINDEX
+         +LDADDR gSearchStore
+         jsr   okvs_nth              ; A/Y -> key of current game (in gSearchStore)
+         jsr   okvs_get_current      ; (PTR) -> display name of current game
+                                     ; Y = 0
+         lda   (PTR), y
+         tay
+         iny
+         sty   SAVE
+         iny
          lda   (PTR), y              ; A = game info bitfield
          sta   gGameToLaunchInfo
-         jsr   okvs_get
-         !word gSearchStore
-@fname   !word $FDFD                 ; SMC
-         +ST16 PTR
          ldy   #0
-         lda   (PTR), y
-         sta   SAVE
-         inc   SAVE
+
 -        iny
 @printCursor
          lda   #$FD                  ; SMC
@@ -197,7 +198,7 @@ DrawUI
          ldy   #0
 @dotloop
          iny
-         lda   (PTR),y               ; (PTR) still points to game display name + game info bitfield
+         lda   (PTR),y               ; (PTR) still points to game display name
          ora   #$20                  ; force lower-case always
          cmp   InputBuffer,x
          bne   +

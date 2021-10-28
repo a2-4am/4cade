@@ -137,10 +137,10 @@ index: md asmfx asmprelaunch
 # create gSearchStore indexes
 #
 	[ -f build/DISPLAY.CONF ] || (bin/builddisplaynames.py < build/GAMES.CONF > build/DISPLAY.CONF)
-	[ -f build/SEARCH00.IDX ] || (grep "^00" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH00.IDX)
-	[ -f build/SEARCH01.IDX ] || (grep "^0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH01.IDX)
-	[ -f build/SEARCH10.IDX ] || (grep "^.0" < build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH10.IDX)
-	[ -f build/SEARCH11.IDX ] || (cat build/DISPLAY.CONF | cut -d"," -f2 | bin/buildokvs.sh > build/SEARCH11.IDX)
+	[ -f build/SEARCH00.IDX ] || (grep "^00" < build/DISPLAY.CONF | bin/buildsearch.sh > build/SEARCH00.IDX)
+	[ -f build/SEARCH01.IDX ] || (grep "^0" < build/DISPLAY.CONF | bin/buildsearch.sh > build/SEARCH01.IDX)
+	[ -f build/SEARCH10.IDX ] || (grep "^.0" < build/DISPLAY.CONF | bin/buildsearch.sh > build/SEARCH10.IDX)
+	[ -f build/SEARCH11.IDX ] || (bin/buildsearch.sh < build/DISPLAY.CONF > build/SEARCH11.IDX)
 #
 # create a sorted list of game filenames, without metadata or display names
 #

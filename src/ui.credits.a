@@ -32,17 +32,17 @@ Help
 
          jsr   LoadIndexedFile
          !word kGameHelpFile
-         !word $8000
+         !word $800
 @indexRecordPtr
          !word $FDFD                 ; SMC
 
          clc
          bcc   .clearAndDisplayHelp  ; always branches
 
-@global  jsr   LoadFile              ; load help text into $8000
+@global  jsr   LoadFile              ; load help text into $800
          !word kRootDirectory
          !word kHelpTextFile
-         !word $8000
+         !word $800
 
          jsr   LoadHelpOffscreen     ; load fancy backdrop
          ldx   #7
@@ -57,10 +57,10 @@ Help
 ;        all other flags and registers clobbered
 ;------------------------------------------------------------------------------
 Credits
-         jsr   LoadFile              ; load credits text into $8000
+         jsr   LoadFile              ; load credits text into $800
          !word kRootDirectory
          !word kCreditsFile
-         !word $8000
+         !word $800
 .clearAndDisplayHelp
          jsr   ForceHGRMode
          jsr   ClearOffscreen
@@ -68,7 +68,7 @@ Credits
 .displayHelp
          lda   OffscreenPage
          ror                         ; draw on offscreen page
-         +LDADDR $8000
+         +LDADDR $800
          +ST16 PTR
 ;DrawPageInternal inlined here
 ;

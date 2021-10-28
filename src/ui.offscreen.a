@@ -83,18 +83,20 @@ LoadOffscreenFromAY
          rts
 
 LoadGameTitleOffscreen
-; in:    gGameToLaunch = index into gGamesListStore (word)
-         jsr   GetGameToLaunch
+; in:    gGameToLaunch = index into gSearchStore (word)
+         +LD16 gGameToLaunch
+         +ST16 WINDEX
+         +LDADDR gSearchStore
+         jsr   okvs_nth              ; A/Y -> key (game filename) in gSearchStore
          +ST16 @fname
          bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
          bvc   @hgr
          jsr   okvs_get_current
-                                     ; (PTR) -> game display name + bitfield of game info
+         jsr   okvs_get_current_PTR_is_already_set
+                                     ; (PTR) -> length-prefixed game info bitfield
                                      ; Y = 0
-         lda   (PTR),y               ; A = game display name length + 1
-         sta   SAVE
-         tay
-         lda   (PTR),y               ; A = game info bitfield
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
          ;;and   #HAS_DHGR_TITLE
          bmi   @dhgr
 @hgr
