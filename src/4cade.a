@@ -184,15 +184,12 @@ COPYSRC = *
   !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }
-  FONTDST = (LCRAM2_END + 255) and -256
+  FONTDST = $E000
 }
 EvenLasterMover
   FONTSRC = *
 !pseudopc FONTDST {
          !source "src/ui.font.data.lc2.a"
-  !if * > $E000 {
-      !error "code is too large: ends at ", *
-  }
 }
 !if RELBASE = $2000 {
   !ifdef PASS2 {

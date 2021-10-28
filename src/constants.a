@@ -8,6 +8,8 @@
 ; LC RAM BANK 1
 ; D000..DFDE - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
+; E000..E3FF - HGR font data
+; ...unused...
 ; EA23..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
@@ -21,7 +23,7 @@
 ; DB92..DB98 - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
-; DC00..DFFF - HGR font data
+; DC00..DFFF - unused
 ;------------------------------------------------------------------------------
 
 !ifndef _CONSTANTS_ {

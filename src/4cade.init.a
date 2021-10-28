@@ -181,7 +181,7 @@
 
          ldy   #4
 @ELM     lda   FONTSRC,x
-                                     ; relocate font data to RAM bank 2
+                                     ; relocate font data to $E000
          sta   FONTDST,x
          inx
          bne   @ELM
