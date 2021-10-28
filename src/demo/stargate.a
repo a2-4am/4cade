@@ -3,14 +3,14 @@
 
 !cpu 6502
 !to "res/DEMO/STARGATE",plain
-*=$106
+*=$200
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $800
+         +LOAD_FILE_AT title, $00
 
          lda   #$60
          sta   $4697
@@ -42,7 +42,7 @@
          sta   $51D2+2    ; set exits
          sta   $47F2+1
          lda   #$A4
-         sta   $47F4+2    ; reset vector (moved to $3F2)
+         sta   $47F4+2    ; reset vector checksum (moved to $3F2)
 
          lda   #$D0
          sta   $153B
@@ -62,6 +62,6 @@ title    !byte x_e-x_b
 x_b      !text "X/STARGATE/STARGATE"
 x_e
 
-!if * > $1C0 {
+!if * > $3F0 {
   !error "code is too large, ends at ", *
 }
