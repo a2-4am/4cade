@@ -4,7 +4,7 @@
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
 ; Public functions
-; - BuildSearchStore
+; - ReloadSearchIndex
 ; - ResetTextRank
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
@@ -25,17 +25,14 @@ InputBuffer
          !text "                         "
 
 ;------------------------------------------------------------------------------
-; BuildSearchStore
-; Build a temporary data structure in main memory to support search UI.
-; Now that gGamesListStore no longer contains full game display names, we call
-; this to build a store that does. It's built in main memory and will be
-; clobbered as soon as we enter attract mode (mega- or mini-), run a game,
-; run a demo, or sneeze.
+; ReloadSearchIndex
+;
+; Load index to support search UI
 ;
 ; in:    none
 ; out:   gSearchStore populated
 ;------------------------------------------------------------------------------
-BuildSearchStore
+ReloadSearchIndex
          jsr   LoadFile              ; load appropriate search index into $8200
          !word kRootDirectory
          !word kSearchIndexFile
