@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2021 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/STANDARD",plain
@@ -7,17 +7,15 @@
 
          !source "src/constants.a"
 
-         ldy   ldrhi2                ; set up game entry point in stack page
-         ldx   ldrlo2                ; (last ProRWTS load address - 1)
-         stx   $1FE
-         sty   $1FF
+         lda   ldrhi2                ; set up game entry point in stack page
+         pha
+         lda   ldrlo2                ; last ProRWTS load address
+         pha
 
          !source "src/prelaunch/common.a"
 
-         ldx   #$FD                  ; Jump to game entry point via stack pop.
-         txs
          php
-         rti
+         rti                         ; Jump to game entry point via stack pop.
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

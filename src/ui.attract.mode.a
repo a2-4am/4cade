@@ -90,6 +90,7 @@ MiniAttractMode
          stx   @MiniAttractIndex+1
          stx   @MiniAttractIndex+3
 @loop
+         jsr   SwitchToBank2
          jsr   resetRoot
          jsr   LoadIndexedFile
          !word kAttractModeFulFile
