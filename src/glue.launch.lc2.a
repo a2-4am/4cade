@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-9 by 4am & qkumba
+;(c) 2018-2021 by 4am & qkumba
 ;
 ; Functions to launch games and self-running demos
 ;
@@ -8,18 +8,18 @@
 ; which handle bank switching for you.
 
 LaunchInternal
-         ldy   #-gStackSize
--        lda   $100,y
-         sta   STACKBASE - $FE + gStackSize,y
-                                     ; back up stack
-         iny
-         bne   -
          tsx                         ; back up stack pointer
          stx   STACKPTR + 1
-         sty   RestoreStackNextTime + 1
+         inx
+-        pla
+         sta   STACKBASE - $100 + gStackSize,x
+                                     ; back up stack
+         inx
+         bne   -
+         stx   RestoreStackNextTime + 1
                                      ; tell |Reenter| to restore the stack and stack pointer
 
-         tya
+         txa
          ldy   #$18
 -        sta   $bf57,y
          dey
