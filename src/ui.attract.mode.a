@@ -70,27 +70,30 @@ MegaAttractMode
 MiniAttractMode
          jsr   GetGameToLaunch
          +ST16 +
+         jsr   LoadFile
+         !word kRootDirectory
+         !word kMiniAttractIndexFile
+-        !word $6000
+         jsr   okvs_find
+         !word -
++        !word $FDFD                 ; SMC
+         jsr   okvs_get_current
+         sty   $1FFB
+         ldy   #4
+-        lda   (PTR), y
+         sta   $1FFC, y
+         dey
+         bpl   -
 
          jsr   BlankHGR
                                      ; X = 0
          stx   @MiniAttractIndex+1
          stx   @MiniAttractIndex+3
 @loop
-         jsr   LoadFile              ; load mini attract mode configuration file into $6000
-         !word kRootDirectory
-         !word kMiniAttractIndexFile
--        !word $6000
-
-         jsr   okvs_find
-         !word -
-+        !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
          jsr   LoadIndexedFile
          !word kAttractModeFulFile
 -        !word $6000
-@indexRecordPtr
-         !word $FDFD                 ; SMC
+         !word $1FFB
 
          +LDADDR -
          jsr   okvs_len
