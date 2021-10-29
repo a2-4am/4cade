@@ -10,7 +10,7 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E978..FFEE - main program code
+; E96C..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -19,8 +19,8 @@
 ; LC RAM BANK 2
 ; D000..D3FF - ProRWTS data
 ; D400..D6C3 - ProRWTS code
-; D6C4..DAB8 - ProRWTS glue code
-; DAB9..DABF - backup of stack (during gameplay and self-running demos)
+; D6C4..DAB9 - ProRWTS glue code
+; DABA..DABF - backup of stack (during gameplay and self-running demos)
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - unused
@@ -154,7 +154,7 @@ iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
 launchpatch    = $D662               ; glue.launch.a
 iAddToPath     = $FE8F               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D959               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $D964               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant

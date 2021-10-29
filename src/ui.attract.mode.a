@@ -90,6 +90,7 @@ MiniAttractMode
          stx   @MiniAttractIndex+1
          stx   @MiniAttractIndex+3
 @loop
+         jsr   resetRoot
          jsr   LoadIndexedFile
          !word kAttractModeFulFile
 -        !word $6000

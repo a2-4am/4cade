@@ -412,6 +412,13 @@ resetval=$f0
 @saved_zp
          !fill (last_zp - first_zp) + 1
 
+resetRoot
+gRootDirectory
+         +LDADDR 0                   ; SMC
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         sty   (reloc + unrhddblockhi - unrelochdd) + 1
+         rts
+
 ;------------------------------------------------------------------------------
 ; traverse [private]
 ;
@@ -426,10 +433,7 @@ resetval=$f0
   }
 }
 traverse
-gRootDirectory
-         +LDADDR 0                   ; SMC
-         sta   (reloc + unrhddblocklo - unrelochdd) + 1
-         sty   (reloc + unrhddblockhi - unrelochdd) + 1
+         jsr   resetRoot
 
          ;search for '/' character in filename
 
