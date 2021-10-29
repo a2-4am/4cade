@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/POOYAN",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $203A
+         jsr   $2000      ; decompress
+
+         lda   #$4C
+         sta   $6069
+         sta   $60C8
+         sta   $60EA
+         sta   $7DB5
+         lda   #0
+         sta   $6069+1
+         sta   $60C8+1
+         sta   $60EA+1
+         sta   $7DB5+1
+         lda   #1
+         sta   $6069+2
+         sta   $60C8+2
+         sta   $60EA+2
+         sta   $7DB5+2    ; set exits
+
+         lda   #$D0
+         sta   $A008
+         sta   $A025      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $6000
+
+title    !byte x_e-x_b
+x_b      !text "X/POOYAN/POOYAN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
