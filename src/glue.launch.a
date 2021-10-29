@@ -233,4 +233,4 @@ LoadStandardPrelaunch
          rts
 +        !byte 0
          !be24 0
-         !le16 68
+         !le16 PRELAUNCH_STANDARD_SIZE

@@ -78,10 +78,11 @@ MiniAttractMode
          !word -
 +        !word $FDFD                 ; SMC
          jsr   okvs_get_current
-         sty   $1FFA
+         jsr   SwitchToBank2
+         sty   OKVS_CACHE
          ldy   #4
 -        lda   (PTR), y
-         sta   $1FFB, y
+         sta   OKVS_CACHE + 1, y
          dey
          bpl   -
 
@@ -95,7 +96,7 @@ MiniAttractMode
          jsr   LoadIndexedFile
          !word kAttractModeFulFile
 -        !word $6000
-         !word $1FFA
+         !word OKVS_CACHE
 
          +LDADDR -
          jsr   okvs_len

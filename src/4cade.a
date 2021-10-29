@@ -177,7 +177,8 @@ COPYSRC = *
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
   STACKBASE = *
-  LCRAM2_END = STACKBASE + gStackSize - 1
+  OKVS_CACHE = STACKBASE + gStackSize
+  LCRAM2_END = OKVS_CACHE + 5
   !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }
@@ -194,6 +195,7 @@ EvenLasterMover
     !set PASS2=1
     !warn "ProRWTS ends at ", hdddataend - 1
     !warn "STACK at ", STACKBASE
+    !warn "OKVS CACHE at ", OKVS_CACHE
     !warn "LCRAM2 ends at ", LCRAM2_END
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }
