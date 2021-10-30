@@ -1,0 +1,76 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/PITFALL.II",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $3D34
+         jsr   $0800      ; decompress
+
+         +RESET_VECTOR reset
+         lda   #$4C
+         sta   $2DF5
+         sta   $2E06
+         lda   #<callback1
+         sta   $2DF6
+         lda   #>callback1
+         sta   $2DF7
+         lda   #<callback2
+         sta   $2E07
+         lda   #>callback2
+         sta   $2E08
+
+         +DISABLE_ACCEL
+
+         jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
+
+reset
+         +READ_RAM2_NO_WRITE
+         jmp   ($FFFC)
+
+callback1
+         sec
+         sbc   #8
+         cmp   #2
+         bcc   +
+-        jmp   $AE0A
++        jmp   $ADF9
+
+callback2
+         ldx   #6-1
+p1       lda   patch, x
+         sta   $6055, x
+         sta   $AB43, x
+         dex
+         bpl   p1         ; set demo exits
+
+         lda   #$BF
+         sta   $6021      ; reduce time before demo starts
+
+         lda   #$D0
+         sta   $6299      ; don't lose keypress on return
+
+         sec
+         sbc   #8
+         cmp   #2
+         bcs   -
+         jmp   $AE21
+
+patch    !byte $AD,$88,$C0,$6C,$FC,$FF
+
+title    !byte x_e-x_b
+x_b      !text "X/PITFALL.II/PITFALL.II"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

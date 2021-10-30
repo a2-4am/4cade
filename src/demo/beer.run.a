@@ -1,0 +1,77 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/BEER.RUN",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #11-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $2065
+         jsr   $2000      ; decompress1
+
+         lda   #$60
+         sta   $BB2C
+         jsr   $BB00      ; decompress2
+
+         lda   #$4C
+         sta   $419C
+         sta   $6C62
+         sta   $4085
+         sta   $4088
+         lda   #0
+         sta   $419C+1
+         sta   $6C62+1
+         sta   $4085+1
+         lda   #1
+         sta   $419C+2
+         sta   $6C62+2
+         sta   $4085+2    ; set exits
+
+         lda   #<(count+1)
+         sta   $4088+1
+         lda   #>(count+1)
+         sta   $4088+2    ; decrement custom counter after demo cycle and eventually exit
+
+         lda   #$D0
+         sta   $67D1      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4000
+
+count    !byte $03
+         dec   count
+         bpl   +
+         jmp   $100
++        jmp   $40C8
+
+newpath
+         !byte 10
+         !text "X/BEER.RUN"
+
+title    !byte x_e-x_b
+x_b      !text "X/BEER.RUN/BEER.RUN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,78 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/TUNNEL.TERROR",plain
+*=$BD00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #1         ; reset vector fix
+         sta   $6E13      ; to $3F3
+         lda   #$A4
+         sta   $6E15      ; to $3F4 (doesn't change $3F2)
+
+         lda   #$60
+         sta   $4026
+         jsr   $4000      ; decompress and show title
+
+         lda   #$4C
+         sta   $0EFE
+         sta   $06A4
+         sta   $AD10
+         sta   $0E66
+         sta   $1315+2
+         lda   #0
+         sta   $0EFE+1
+         sta   $06A4+1
+         sta   $AD10+1
+         sta   $0E66+1
+         sta   $1315+3
+         sta   $0F5D+1
+         sta   $0F72+1
+         lda   #1
+         sta   $0EFE+2
+         sta   $06A4+2
+         sta   $AD10+2
+         sta   $0E66+2
+         sta   $1315+4     ; set exits
+
+         lda   #$10
+         sta   $1315
+         lda   #$1B
+         sta   $1315+1
+
+         lda   #$A9
+         sta   $0F5D
+         sta   $0F72
+         lda   #$EA
+         sta   $0F5D+2
+         sta   $0F72+2
+
+         lda   #$AD
+         sta   $8434
+         sta   $8441
+         lda   #$30
+         sta   $8434+1
+         sta   $8441+1
+         lda   #$D0
+         sta   $8434+2
+         sta   $8441+2    ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $E00
+
+title    !byte x_e-x_b
+x_b      !text "X/TUNNEL.TERROR/TUNNEL.TERROR"
+x_e
+
+!if * > $BFD0 {
+  !error "code is too large, ends at ", *
+}
