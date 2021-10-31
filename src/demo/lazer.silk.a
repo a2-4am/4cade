@@ -1,0 +1,63 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/LAZER.SILK",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $404B
+         jsr   $4000      ; decompress
+
+         lda   #$4C
+         sta   $14D5
+         sta   $14E5
+         sta   $1125
+         sta   $16E8
+         sta   $0C3D
+         sta   $0C5B
+         sta   $0D04
+         lda   #0
+         sta   $14D5+1
+         sta   $14E5+1
+         sta   $1125+1
+         sta   $16E8+1
+         sta   $0C3D+1
+         sta   $0C5B+1
+         sta   $0D04+1
+         lda   #1
+         sta   $14D5+2
+         sta   $14E5+2
+         sta   $1125+2
+         sta   $16E8+2
+         sta   $0C3D+2
+         sta   $0C5B+2
+         sta   $0D04+2    ; set exits
+
+         lda   #$1F
+         sta   $0D01      ; reduce time spent on final screen
+
+         lda   #$D0
+         sta   $7EE8
+         sta   $1077
+         sta   $1159
+         sta   $1549      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   ($0020)
+
+title    !byte x_e-x_b
+x_b      !text "X/LAZER.SILK/LAZER.SILK"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
