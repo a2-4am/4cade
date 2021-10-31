@@ -19,8 +19,10 @@
 
          lda   #0
          sta   $47F2
+         sta   $47FE
          lda   #1
          sta   $47F3
+         sta   $47FF      ; IRQ vector (moved to $3FE/F)
          lda   #$A4
          sta   $47F4      ; reset vector (moved to $3F2/3/4)
 
