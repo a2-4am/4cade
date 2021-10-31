@@ -3,7 +3,7 @@
 
 !cpu 6502
 !to "res/DEMO/AQUATRON",plain
-*=$120
+*=$BD00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -44,6 +44,6 @@ title    !byte x_e-x_b
 x_b      !text "X/AQUATRON/AQUATRON"
 x_e
 
-!if * > $1F0 {
+!if * > $BEFF {
   !error "code is too large, ends at ", *
 }
