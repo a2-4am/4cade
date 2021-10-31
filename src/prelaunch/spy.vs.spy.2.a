@@ -8,7 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +LC_REBOOT
+         +NEW_RESET_VECTOR $70
          lda   #$60
          sta   $DBE
          sta   $DE2
