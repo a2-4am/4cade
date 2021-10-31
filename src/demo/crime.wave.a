@@ -1,0 +1,53 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/CRIME.WAVE",plain
+*=$BE00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #13-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $244B
+         jsr   $2400      ; decompress
+
+         ldx   #15-1
+-        lda   patch, x
+         sta   $9B7E, x
+         dex
+         bpl   -          ; exit on keypress or after 3 demo cycles
+
+         +DISABLE_ACCEL
+
+         jmp   $0800
+
+patch    !byte $4C,$84,$9B,$4C,$00,$01,$CE,$8C,$9B,$F0,$F8,$4C,$48,$9B,$03
+
+newpath
+         !byte 12
+         !text "X/CRIME.WAVE"
+
+title    !byte x_e-x_b
+x_b      !text "X/CRIME.WAVE/CRIME.WAVE"
+x_e
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/ROBOTRON.2084",plain
+*=$BF70
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #<callback
+         sta   $141D+1
+         lda   #>callback
+         sta   $141D+2
+         jmp   $1400      ; decompress
+
+callback +RESET_VECTOR $100
+
+         ldx   #6-1
+-        lda   patch, x
+         sta   $4542, x
+         dex
+         bpl   -          ; exit on keypress
+
+         lda   #$4C
+         sta   $453A
+         lda   #$42
+         sta   $453A+1
+         lda   #$45
+         sta   $453A+2    ; exit at end of demo cycle
+
+         lda   #$D0
+         sta   $053B      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4015
+
+patch    !byte $AD,$88,$C0,$6C,$FC,$FF
+
+title    !byte x_e-x_b
+x_b      !text "X/ROBOTRON.2084/ROBOTRON.2084"
+x_e
+
+!if * > $BFFF {
+  !error "code is too large, ends at ", *
+}
