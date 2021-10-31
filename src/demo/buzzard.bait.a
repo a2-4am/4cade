@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/BUZZARD.BAIT",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $0827
+         jsr   $0800      ; decompress
+
+         lda   #$4C
+         sta   $1067
+         sta   $1B31
+         sta   $7A6B
+         sta   $80DD
+         sta   $81FE
+         lda   #0
+         sta   $1067+1
+         sta   $1B31+1
+         sta   $7A6B+1
+         sta   $80DD+1
+         sta   $81FE+1
+         lda   #1
+         sta   $1067+2
+         sta   $1B31+2
+         sta   $7A6B+2
+         sta   $80DD+2
+         sta   $81FE+2    ; set exits
+
+         +DISABLE_ACCEL
+
+         jmp   $8000
+
+title    !byte x_e-x_b
+x_b      !text "X/BUZZARD.BAIT/BUZZARD.BAIT"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

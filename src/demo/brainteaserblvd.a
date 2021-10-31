@@ -1,0 +1,69 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/BB",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $0813
+         jsr   $0800      ; decompress
+         lda   #$60
+         sta   $363F
+         jsr   $3600      ; memory move
+
+         lda   #0
+         sta   $0A01
+         lda   #$2C
+         sta   $0A05
+         lda   #$A4
+         sta   $0A09      ; reset vector patch
+
+         lda   #$2C
+         sta   $0C3E
+         sta   $0C45
+         sta   $0C48      ; skip inputs
+
+         lda   #$4C
+         sta   $15CC
+         sta   $0ED2
+         sta   $159A
+         lda   #0
+         sta   $15CC+1
+         sta   $0ED2+1
+         sta   $159A+1
+         lda   #1
+         sta   $15CC+2
+         sta   $0ED2+2
+         sta   $159A+2    ; set exits
+
+         lda   #$D0
+         sta   $170F
+         sta   $0B61
+         sta   $0B80
+         sta   $0B9C
+         sta   $0BBB
+         sta   $1604
+         sta   $1628
+         sta   $1647
+         sta   $0A95
+         sta   $0AD4      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $0A00
+
+title    !byte x_e-x_b
+x_b      !text "X/BB/BB"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

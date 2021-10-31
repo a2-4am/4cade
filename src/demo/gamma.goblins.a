@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/GAMMA.GOBLINS",plain
+*=$B000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $2034
+         jsr   $2000      ; decompress
+
+         +RESET_VECTOR $100
+
+         lda   #$4C
+         sta   $5B9A
+         sta   $7ECC
+         sta   $50CB
+         sta   $50B5
+         lda   #0
+         sta   $5B9A+1
+         sta   $7ECC+1
+         sta   $50CB+1
+         sta   $50B5+1
+         lda   #1
+         sta   $5B9A+2
+         sta   $7ECC+2
+         sta   $50CB+2
+         sta   $50B5+2    ; set exits
+
+         +DISABLE_ACCEL
+         lda   #$00
+         tay
+         jmp   $2035
+
+title    !byte x_e-x_b
+x_b      !text "X/GAMMA.GOBLINS/GAMMA.GOBLINS"
+x_e
+
+!if * > $BFFF {
+  !error "code is too large, ends at ", *
+}
