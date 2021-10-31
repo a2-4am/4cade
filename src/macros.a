@@ -379,6 +379,29 @@
          +RESET_VECTOR .addr
 }
 
+!macro   NEW_RESET_VECTOR_64K .addr {
+         lda   #$2C
+         sta   .addr
+         lda   #$89
+         sta   .addr+1
+         lda   #$C0
+         sta   .addr+2
+         lda   #$4C       ; JMP $FAA6 to reboot
+         sta   .addr+3
+         lda   #$A6
+         sta   .addr+4
+         lda   #$FA
+         sta   .addr+5
+         lda   #<.addr
+         sta   $3F2
+         sta   $FFFC
+         lda   #>.addr
+         sta   $3F3
+         sta   $FFFD
+         eor   #$A5
+         sta   $3F4
+}
+
 ; for 64k games on ][+ which either hang or restart
 ; updates reset hook to reboot on ctrl-reset
 !macro   LC_REBOOT {

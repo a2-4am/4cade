@@ -8,7 +8,8 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +NEW_RESET_VECTOR $70
+         +NEW_RESET_VECTOR_64K $70
+
          lda   #$60
          sta   $DBE
          sta   $DE2
@@ -19,8 +20,7 @@
          +ENABLE_ACCEL
          jsr   $BCFC      ; decompress
          +DISABLE_ACCEL
-         jsr   $DE5
-         jmp   $4000
+         jmp   $DE5
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
