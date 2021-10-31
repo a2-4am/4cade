@@ -37,6 +37,7 @@
          sta   $0F5D+1
          sta   $0F72+1
          lda   #1
+         sta   $03FF       ; fix IRQ
          sta   $0EFE+2
          sta   $06A4+2
          sta   $AD10+2
