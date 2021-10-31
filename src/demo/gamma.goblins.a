@@ -16,7 +16,7 @@
          sta   $2034
          jsr   $2000      ; decompress
 
-         +RESET_VECTOR $100
+         +RESET_AND_IRQ_VECTOR $100
 
          lda   #$4C
          sta   $5B9A

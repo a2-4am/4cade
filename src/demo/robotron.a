@@ -10,7 +10,13 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
 
          lda   #<callback
          sta   $141D+1
@@ -18,29 +24,31 @@
          sta   $141D+2
          jmp   $1400      ; decompress
 
-callback +RESET_VECTOR $100
+callback +RESET_AND_IRQ_VECTOR $100
 
          ldx   #6-1
--        lda   patch, x
+-        lda   patch1, x
          sta   $4542, x
          dex
          bpl   -          ; exit on keypress
 
-         lda   #$4C
-         sta   $453A
-         lda   #$42
-         sta   $453A+1
-         lda   #$45
-         sta   $453A+2    ; exit at end of demo cycle
+         ldx   #3-1
+-        lda   patch2, x
+         sta   $453A, x
+         dex
+         bpl   -          ; exit at end of demo cycle
 
          lda   #$D0
          sta   $053B      ; disable sound
 
-         +DISABLE_ACCEL
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          jmp   $4015
 
-patch    !byte $AD,$88,$C0,$6C,$FC,$FF
+patch1   !byte $AD,$88,$C0,$6C,$FC,$FF
+
+patch2   !byte $4C,$42,$45
 
 title    !byte x_e-x_b
 x_b      !text "X/ROBOTRON.2084/ROBOTRON.2084"
