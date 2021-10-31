@@ -34,15 +34,17 @@
          sta   $0905+1
          sta   $51C7+1
          sta   $51D2+1
-         sta   $47F2
+         sta   $47F2      ; fix reset (moved to $3F2/$3F3/$3F4)
+         sta   $47FE      ; fix IRQ (moved to $3FE/$3FF)
          lda   #1
          sta   $0933+4
          sta   $0905+2
          sta   $51C7+2
          sta   $51D2+2    ; set exits
          sta   $47F2+1
+         sta   $47FE+1
          lda   #$A4
-         sta   $47F4+2    ; reset vector fix (moved to $3F2/$3F4)
+         sta   $47F2+2    ; fix reset checksum
 
          lda   #$D0
          sta   $153B

@@ -1,0 +1,70 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/VINDICATOR",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #13-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $1867
+         jsr   $180F      ; decompress
+
+         +NEW_RESET_VECTOR $BFF0
+         lda   #$F0
+         sta   $4001
+         lda   #$BF
+         sta   $400F      ; reset vector fix
+
+         lda   #$60       ; annunciator fix - kills Gizmo/joyport support
+         sta   $5B77      ; but fixes ][+ 80-col softswitch
+         sta   $5B43      ; and //c+ coloring
+
+         lda   #$4C
+         sta   $56D9
+         sta   $4902
+         lda   #0
+         sta   $56D9+1
+         sta   $4902+1
+         lda   #1
+         sta   $56D9+2
+         sta   $4902+2    ; set exits
+
+         lda   #$D0
+         sta   $441F
+         sta   $5E25
+         sta   $5DDC      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4000
+
+newpath
+         !byte 12
+         !text "X/VINDICATOR"
+
+title    !byte x_e-x_b
+x_b      !text "X/VINDICATOR/VINDICATOR"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
