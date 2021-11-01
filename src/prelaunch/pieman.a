@@ -21,6 +21,8 @@
          sta   $948
          jsr   $940
 
+         +RESET_AND_IRQ_VECTOR $100
+
          ldx   #0
          stx   $10AD
          inx
