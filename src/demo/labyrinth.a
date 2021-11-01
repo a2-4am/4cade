@@ -1,0 +1,73 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/LABYRINTH",plain
+*=$310
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+         +READ_ROM_NO_WRITE
+
+         ldx   #12-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $3874
+         jsr   $37F6      ; decompress
+
+         lda   #$D0
+         sta   $1072
+         sta   $107A      ; disable sound
+
+         lda   #$60
+         sta   $BC41
+         +DISABLE_ACCEL
+         jsr   $BC00      ; show title animation
+
+         lda   #$EA
+         sta   $1F00
+         lda   #$A9
+         sta   $1F00+1
+         lda   #$00
+         sta   $1F00+2    ; disable joystick button detection
+
+         lda   #$4C
+         sta   $1E66
+         sta   $1EE9
+         sta   $8CAA
+         lda   #0
+         sta   $1E66+1
+         sta   $1EE9+1
+         sta   $8CAA+1
+         lda   #1
+         sta   $1E66+2
+         sta   $1EE9+2
+         sta   $8CAA+2    ; set exits
+
+         jmp   $1E3E
+
+newpath
+         !byte 11
+         !text "X/LABYRINTH"
+
+title    !byte x_e-x_b
+x_b      !text "X/LABYRINTH/LABYRINTH"
+x_e
+
+!if * > $BFD0 {
+  !error "code is too large, ends at ", *
+}

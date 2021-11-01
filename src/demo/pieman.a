@@ -1,0 +1,71 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/PM",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #5-1       ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $3EA9
+         jsr   $3E88      ; decompress
+         +DISABLE_ACCEL
+
+         lda   #$60
+         sta   $A050
+         jsr   $A000      ; title
+
+         lda   #$60
+         sta   $0948
+         jsr   $0940
+
+         +RESET_AND_IRQ_VECTOR $100
+
+         lda   #$4C
+         sta   $0EA6
+         sta   $13B7
+         sta   $09A1
+         lda   #0
+         sta   $0EA6+1
+         sta   $13B7+1
+         lda   #1
+         sta   $0EA6+2
+         sta   $13B7+2    ; set exits
+
+         lda   #$97
+         sta   $09A1+1
+         lda   #$0A
+         sta   $09A1+2    ; start quiet demo immediately
+
+         jmp   $0950
+
+newpath
+         !byte 4
+         !text "X/PM"
+
+title    !byte x_e-x_b
+x_b      !text "X/PM/PM"
+x_e
+
+!if * > $2FF {
+  !error "code is too large, ends at ", *
+}
