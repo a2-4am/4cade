@@ -8,6 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +GAME_REQUIRES_JOYSTICK
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_AT tubeway, $00

@@ -330,6 +330,7 @@
          lda   MachineStatus
          +READ_ROM_NO_WRITE
 }
+
 !macro   USES_TEXT_PAGE_2 {
          lda   ROM_MACHINEID
          cmp   #$06
@@ -437,6 +438,16 @@
          sta   iCurBlockHi
          pla
          sta   iCurBlockLo
+}
+
+; Macros for demo launchers that need to check whether they should run
+; on the current machine. These will RTS if the requirements are not met.
+!macro   GAME_REQUIRES_JOYSTICK {
+         +GET_MACHINE_STATUS
+         and   #HAS_JOYSTICK
+         bne   +
+         rts
++
 }
 
 _MACROS_=*
