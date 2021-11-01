@@ -446,7 +446,7 @@
          +GET_MACHINE_STATUS
          and   #HAS_JOYSTICK
          bne   +
-         rts
+         jmp   $100
 +
 }
 
