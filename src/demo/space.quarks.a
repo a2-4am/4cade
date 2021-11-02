@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba/Frank M.
+;(c) 2021 by qkumba
 
 !cpu 6502
 !to "res/DEMO/SPACE.QUARKS",plain
@@ -11,20 +11,10 @@
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_AT space_quarks, $00
-
-         lda   #0
-         sta   $40B4      ; (moved to $3F2) reset fix
-         sta   $40C0      ; (moved to $3FE) IRQ fix
-         lda   #1
-         sta   $40B4+1
-         sta   $40C0+1
-         lda   #$A4
-         sta   $40B4+2
-
          lda   #$4C
          sta   $3EC9
-         jsr   $3E65      ; decompress
-
+         jsr   $3E65      ; decompress/set reset vector
+         +RESET_AND_IRQ_VECTOR $100
          lda   #$EA
          sta   $1C38
          sta   $1C39
