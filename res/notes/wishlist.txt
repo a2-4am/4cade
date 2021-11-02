@@ -1,9 +1,6 @@
 //4am crack
 Cavern Creatures
 
-//flux but no woz
-Grapple (In-Soft)
-
 //no flux
 Star Avenger (Western MicroData)
 Torax (Creative Computing)

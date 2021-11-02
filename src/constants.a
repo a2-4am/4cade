@@ -6,7 +6,7 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..DFDE - persistent data structures (gGlobalPrefsStore, gGamesListStore)
+; D000..DFE7 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
