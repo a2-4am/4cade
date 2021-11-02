@@ -10,8 +10,8 @@
          +ENABLE_ACCEL
 
          lda   #$60
-         sta   $3F07
-         jsr   $3EBB      ; decompress
+         sta   $3F06
+         jsr   $3EBA      ; decompress
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
