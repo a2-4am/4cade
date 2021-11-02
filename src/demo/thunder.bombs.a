@@ -1,0 +1,89 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/THUNDER.BOMBS",plain
+*=$B000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+         +READ_ROM_NO_WRITE
+
+         ldx   #16-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $887F
+         lda   #$4C
+         sta   $8819
+         lda   #<callback
+         sta   $8819+1
+         lda   #>callback
+         sta   $8819+2
+         jsr   $87F9      ; load/title
+
+         lda   #$60
+         sta   $7818
+         jsr   $7800      ; unpack/setup
+
+         lda   #0
+         sta   $3F2       ; reset vector
+
+         lda   #$4C
+         sta   $789B
+         sta   $78CB
+         sta   $7A8C
+         sta   $7837
+         lda   #0
+         sta   $789B+1
+         sta   $78CB+1
+         sta   $7A8C+1
+         sta   $7837+1
+         lda   #1
+         sta   $789B+2
+         sta   $78CB+2
+         sta   $7A8C+2
+         sta   $7837+2    ; set exits
+
+         lda   $323
+         jmp   $781B
+
+callback bit   $C000
+         ldx   #$30
+-        bit   $C055
+         lda   #$0B
+         jsr   $FCA8
+         bit   $C054
+         lda   #$0B
+         jsr   $FCA8
+         bit   $C000
+         bmi   exit
+         dey
+         bne   -
+         dex
+         bne   -
+         jmp   $8839
+exit     jmp   $100
+
+newpath
+         !byte 15
+         !text "X/THUNDER.BOMBS"
+
+title    !byte x_e-x_b
+x_b      !text "X/THUNDER.BOMBS/THUNDER.BOMBS"
+x_e
+
+!if * > $B100 {
+  !error "code is too large, ends at ", *
+}
