@@ -46,7 +46,6 @@ rem
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMES.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
@@ -134,12 +133,11 @@ cscript /nologo bin\converthelp.js res\HELPTEXT build\HELPTEXT >>build\log
 cscript /nologo bin\converthelp.js res\CREDITS build\CREDITS >>build\log
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\converthelp.js %%q build\GAMEHELP\%%~nxq >>build\log
 rem
-rem create distribution version of GAMES.CONF without comments or blank lines
 rem create a sorted list of game filenames, without metadata or display names
 rem
 cscript /nologo bin\makesorted.js
 rem
-rem create search indexes
+rem create search indexes: (game-requires-joystick) X (game-requires-128K)
 rem
 cscript /nologo bin\builddisplaynames.js
 cscript /nologo bin\buildsearch.js "00" build\SEARCH00.IDX
@@ -166,7 +164,7 @@ for %%q in (res\SS\*) do (
   if !_ss!==ACT (
     cscript /nologo bin\buildaction.js %%q build\SS\%%~nxq >>build\log
   ) else (
-    cscript /nologo bin\buildokvs.js %%q build\SS\%%~nxq >>build\log
+    cscript /nologo bin\buildtitle.js %%q build\SS\%%~nxq >>build\log
   )
 )
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\TOTAL.DATA nul pad >>build\log
