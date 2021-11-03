@@ -31,6 +31,7 @@
  - Firebug
  - Fly Wars
  - Galactic Attack
+ - Grapple
  - Handy Dandy
  - Infiltrator
  - Infiltrator 2
