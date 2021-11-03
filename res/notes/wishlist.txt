@@ -1,7 +1,32 @@
+//unprotected
+Alf (Box Office)
+Bongo's Bash
+California Raisins
+Dangerous Dave Returns
+Flobynoid
+Lethal Labyrinth (Uptime)
+The Chase on Tom Sawyer's Island
+Treasure Dive (Nibble)
+Wall Defence (2010)
+
 //4am crack
 Cavern Creatures
+Sheila
 
-//no flux
+//classic crack (clean or salvageable)
+Bezoff
+Federation
+Raiders of the Lost Ring
+Star Clones
+Starmines
+Trolls and Tribulations
+
+//woz (needs crack)
+Dragonfire
+J-Bird (Orion)
+Zero Gravity Pinball (Avant-Garde)
+
+//unacquired
 Star Avenger (Western MicroData)
 Torax (Creative Computing)
 Torpedo Terror (Continental)
