@@ -54,8 +54,8 @@ MegaAttractMode
          bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   +                     ; Any other key switches to Search Mode.
-         jsr   ReloadSearchIndex
-         jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
+         +LD16 gLastMegaAttractGame
+         jsr   PlayGameInAY          ; (might return if user hits Ctrl-Reset)
 +        jmp   SearchMode
 
 ;------------------------------------------------------------------------------
@@ -150,29 +150,31 @@ RunAttractModule
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
-; Each binary has been patched to quit on any key and jump back
-; to the |Reenter| entry point.
+; Each demo has been patched to check joystick and memory requirements,
+; so a demo won't run if the actual game wouldn't be playable.
+; Demos are also patched to jump back to the |Reenter| entry point
+; on any key, or at the natural end of the demo cycle.
 ; All demos are strictly 48K / main memory. No demo uses the
 ; language card or auxiliary memory.
 
-         +LD16 @key
-         jsr   FindGame
-         bcs   ATTRTS                ; if game doesn't exist, skip the demo
-         +LD16 WINDEX
-         +CMP16_E $FFFF, @nogame
-         +ST16 gGameToLaunch         ; if this demo corresponds to a game, save its index
-                                     ; in case user presses RETURN during the demo (we will launch the game)
-@nogame
+         +ST16 PTR
+         ldy   #0
+         lda   (PTR), y
+         tay
+-        lda   (PTR), y
+         sta   DemoFilename, y
+         dey
+         bpl   -
+         +LDADDR DemoFilename
+         +ST16 gLastMegaAttractGame  ; save game filename in LC in case user hits Return to launch
+
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
-
          jsr   LoadStandardPrelaunch ; load standard prelaunch code (|Launch| will call it)
-
          jsr   LoadFile              ; load self-running demo into its default address (varies)
          !word kDemoDirectory
 @key     !word $FDFD
          !word 0
-
          jmp   Launch                ; will return to caller via |Reenter|
 
 ; not a demo, so maybe a slideshow or single screenshot
@@ -233,3 +235,6 @@ RunAttractModule
          !byte >DHGRSingle
          !byte >SHRSingle
          !byte >GRSingle
+
+DemoFilename
+         !byte 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15

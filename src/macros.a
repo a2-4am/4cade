@@ -441,7 +441,7 @@
 }
 
 ; Macros for demo launchers that need to check whether they should run
-; on the current machine. These will RTS if the requirements are not met.
+; on the current machine. Exit demo if the requirements are not met.
 !macro   GAME_REQUIRES_JOYSTICK {
          +GET_MACHINE_STATUS
          and   #HAS_JOYSTICK

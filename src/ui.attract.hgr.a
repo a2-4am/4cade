@@ -105,6 +105,7 @@ HGRTitleCallback
          bmi   HGRRTS
 
          +ST16 +
+         +ST16 gLastMegaAttractGame
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
@@ -129,7 +130,6 @@ HGRTitleCallback
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.HGR/)
 ;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
-;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -145,12 +145,6 @@ HGRActionCallback
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   HGRRTS
-
-         ; found the game
-         +ST16 SAVE                  ; (SAVE) -> game display name
-
-         +LD16 WINDEX                ; save game index in case user hits RETURN
-         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadIndexedHGRFile
          jsr   DecompressHGR

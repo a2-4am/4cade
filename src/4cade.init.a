@@ -342,7 +342,6 @@ PrintAsDecimal
          !source "src/hw.accel.a"
          !source "src/hw.vbl.init.a"
          !source "src/parse.common.a"
-         !source "src/parse.games.a"
 
 OneTimeSetup
          lda   zpMachineStatus
@@ -381,20 +380,6 @@ CopyDevs
          !word gGlobalPrefsStore
          !word -
          !byte 16
-         +LD16 SAVE
-         +ST16 PTR
-         jsr   stepptr
-         +LD16 PTR                   ; (PTR) points to free space after the OKVS data structure we just created
-         +ST16 gGamesListStore       ; save pointer to free space for next store
-         jsr   LoadFile              ; load games list file into $8200
-         !word kRootDirectory
-         !word @kGameListConfFile
--        !word $8200
-         lda   #$EA
-         sta   AddValueDuringAppend
-         jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
-         !word gGamesListStore
-         !word -
 
 !ifndef RELEASE {
          +LD16 SAVE
@@ -427,7 +412,8 @@ CopyDevs
          inx
 +        stx   gSearchHas128K
 
-         +LDADDR gGamesListStore
+         jsr   ReloadSearchIndex
+         +LDADDR gSearchStore
          jsr   okvs_len
          +LD16 WCOUNT
          +ST16 GameCount
@@ -477,10 +463,6 @@ CopyDevs
 
          bit   CLEARKBD
          jmp   Reenter
-
-@kGameListConfFile
-         !byte 10
-         !text "GAMES.CONF"
 
 @kPowersOfTen
          !byte 100

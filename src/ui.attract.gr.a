@@ -84,7 +84,6 @@ GRRTS    rts
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.GR/)
 ;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
-;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -100,9 +99,6 @@ GRActionCallback
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   GRRTS
-
-         +LD16 WINDEX                ; save game index in case user hits RETURN
-         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadFile              ; load GR screenshot into $6000
          !word kGRActionDirectory

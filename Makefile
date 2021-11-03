@@ -50,7 +50,6 @@ dsk: asm index
 		res/TITLE \
 		res/COVER \
 		res/HELP \
-		build/GAMES.CONF \
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
@@ -127,13 +126,6 @@ index: md asmfx asmprelaunch
 #
 	[ -f build/GAMES.CONF ] || (awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF)
 #
-# create gGamesListStore indexes
-#
-#	grep "^00" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES00.IDX
-#	grep "^0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES01.IDX
-#	grep "^.0" < build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES10.IDX
-#	cat build/GAMES.CONF | bin/buildgamesstore.sh > build/GAMES11.IDX
-#
 # create gSearchStore indexes
 #
 	[ -f build/DISPLAY.CONF ] || (bin/builddisplaynames.py < build/GAMES.CONF > build/DISPLAY.CONF)
@@ -161,7 +153,7 @@ index: md asmfx asmprelaunch
 	[ -f build/SLIDESHOW.IDX ] || ((for f in res/SS/*; do \
 	    [ $$(echo "$$(basename $$f)" | cut -c-3) = "ACT" ] && \
 	        bin/buildaction.sh build/DISPLAY.CONF < "$$f" > "build/SS/$$(basename $$f)" || \
-	        bin/buildokvs.sh < "$$f" > "build/SS/$$(basename $$f)"; \
+	        bin/buildtitle.sh build/DISPLAY.CONF < "$$f" > "build/SS/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
 	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
 	[ -f build/MINIATTRACT.IDX ] || ((for f in res/ATTRACT/*; do \
