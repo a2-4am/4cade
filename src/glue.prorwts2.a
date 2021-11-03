@@ -203,6 +203,7 @@ LoadIndexedFile
          jsr   $bf00
          !byte $ca
          !word @ca_parms
+         sta   auxreq
          jsr   $bf00
          !byte $cc
          !word @cc_parms
