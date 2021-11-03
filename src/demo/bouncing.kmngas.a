@@ -1,0 +1,82 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/BK",plain
+*=$A800
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #5-1       ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $52DB
+         jsr   $527C      ; decompress 1
+
+         lda   #$4C
+         sta   $1B50
+         lda   #0
+         sta   $1B50+1
+         lda   #1
+         sta   $1B50+2    ; set exit
+
+         lda   #$D0
+         sta   $1D00
+         sta   $1D09
+         sta   $1BB6      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jsr   $8d4       ; show title
+
+         lda   #$60
+         sta   $BD40
+         jsr   $BD20      ; decompress 2
+
+         lda   #$4C
+         sta   $7215
+         jsr   $7200      ; setup for second title
+
+         +RESET_AND_IRQ_VECTOR $100
+
+         lda   #$4C
+         sta   $7513
+         sta   $73BA
+         sta   $7242
+         lda   #0
+         sta   $7513+1
+         sta   $73BA+1
+         sta   $7242+1
+         lda   #1
+         sta   $7513+2
+         sta   $73BA+2
+         sta   $7242+2    ; set exits
+
+         jmp   $7218      ; show second title
+
+newpath
+         !byte 4
+         !text "X/BK"
+
+title    !byte x_e-x_b
+x_b      !text "X/BK/BK"
+x_e
+
+!if * > $A900 {
+  !error "code is too large, ends at ", *
+}
