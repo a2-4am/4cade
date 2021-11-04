@@ -48,7 +48,7 @@ If all goes well, the `BUILD\` subdirectory will contain a `4CADE.HDV` image whi
 
 [`4cade.a`](https://github.com/a2-4am/4cade/blob/master/src/4cade.a) is the main assembler target. It builds the launcher itself. Launcher code is split into code that can be run once from main memory then discarded, and code which is relocated to the language card and persists throughout the lifetime of the launcher. As the language card is only 16KB and will also need to store some persistent data structures, memory is precious and tightly managed.
 
-[`4cade.init.a`](https://github.com/a2-4am/4cade/blob/master/src/4cade.init.a) contains the code that is run once at program startup. First, we do some hardware detection, like how much memory you have, whether you have a joystick, and whether you have a IIgs. Then we relocate selected code to the language card. [`constants.a`](https://github.com/a2-4am/4cade/blob/master/src/constants.a) has a rough map of what ends up where, within the language card and its overlapping memory regions. Then we load and parse the global preferences file ([`PREFS.CONF`](https://github.com/a2-4am/4cade/blob/master/res/prefs.conf)) and master game list ([`GAMES.CONF`](https://github.com/a2-4am/4cade/blob/master/res/games.conf)) and store the results in the language card. Finally, we jump to the main entry point (`Reenter`). The launcher is initialized; anything left in main memory is discarded.
+[`4cade.init.a`](https://github.com/a2-4am/4cade/blob/master/src/4cade.init.a) contains the code that is run once at program startup. First, we do some hardware detection, like how much memory you have, whether you have a joystick, and whether you have a IIgs. Then we relocate selected code to the language card and load the appropriate search index. (For example, if you do not have a joystick, games that require a joystick will not appear in search results.) [`constants.a`](https://github.com/a2-4am/4cade/blob/master/src/constants.a) has a rough map of what ends up where, within the language card and its overlapping memory regions. Then we load and parse the global preferences file ([`PREFS.CONF`](https://github.com/a2-4am/4cade/blob/master/res/prefs.conf)) and store the results in the language card. Finally, we jump to the main entry point (`Reenter`). The launcher is initialized; anything left in main memory is discarded.
 
 ## Search mode
 
@@ -70,22 +70,21 @@ If the user presses `Esc` from any other mode, or does not type anything for 30 
 
 [`GAMES.CONF`](https://github.com/a2-4am/4cade/blob/master/res/GAMES.CONF) is the master games list. It contains 1 record for every game in Total Replay. However, not every game is playable on every device, so each record also contains metadata, e.g. "this game requires a joystick," or "this game requires 128K," or "this game has a double hi-res title screen" (which is not identical to "this game requires 128K").
 
-The format of the `GAMES.CONF` file has changed as new requirements have appeared, and it may change again in the future. There is up-to-date format information at the bottom of the file itself, which I will not duplicate here. However, in general, each record is 1 line and contains the name and flags for 1 game. The file is parsed once at program startup, and the (possibly filtered) list of available games is stored persistently in the language card.
-
-Many records in `GAMES.CONF` do not list the game's display name, i.e. the mixed-case, human-readable name displayed in search mode, browse mode, and slideshows. Wherever possible, display names are calculated from a game's filename, so `WAVY.NAVY` is displayed as `Wavy Navy`, while `ARCHON.II` is displayed as `Archon II`, and so on.
+The format of the `GAMES.CONF` file has changed as new requirements have appeared, and it may change again in the future. There is up-to-date format information in comments in the file itself, which I will not duplicate here. However, in general, each record is 1 line and contains the name and flags for 1 game. The file is parsed during build and used to create the search indexes and other files which are stored on the final disk image.
 
 Each game's filename is used as a "foreign key" (in database terms) to build directory paths, to locate files in subdirectories, and to reference the game in other configuration files.
 
 - A game's main executable is always `X/FILENAME/FILENAME`
 - A game's HGR title screenshot is always `TITLE.HGR/FILENAME`
-- A game's super hi-res box art is always `ARTWORK.SHR/FILENAME`
+- A game's super hi-res box art is always `ARTWORK.SHR/FILENAME` (not all games have artwork)
+- A games's help page is always `GAMEHELP/FILENAME` (not all games have help)
 - A game's mini-attract mode configuration file is always `ATTRACT/FILENAME`
 - Games are included in other attract mode configuration files by `FILENAME`
 - The source disk image of a game (in [`res/dsk`](https://github.com/a2-4am/4cade/tree/master/res/dsk)) must have a volume name of `FILENAME`, and there must be a file in the disk image's root directory also named `FILENAME` which is the game's main executable
 
 ## `ATTRACT.CONF`
 
-[`ATTRACT.CONF`](https://github.com/a2-4am/4cade/blob/master/res/ATTRACT.CONF) is the master configuration file for Mega-Attract mode. There is up-to-date format information at the bottom of the file itself, which I will not duplicate here. In general, each record is the name of an attract module, which can be a slideshow, self-running demo, or even a single screenshot. Each attract module corresponds to a file in a separate directory; see format information for details. So the record `FAVORITES2.CONF=1` corresponds to [`a real file`](https://github.com/a2-4am/4cade/blob/master/res/SS/FAVORITES2.CONF) that contains details about that particular hi-res slideshow.
+[`ATTRACT.CONF`](https://github.com/a2-4am/4cade/blob/master/res/ATTRACT.CONF) is the master configuration file for Mega-Attract mode. There is up-to-date format information in comments in the file itself, which I will not duplicate here. In general, each record is the name of an attract module, which can be a slideshow, self-running demo, or even a single screenshot. Each attract module corresponds to a file in a separate directory; see format information for details. So the record `FAVORITES2.CONF=1` corresponds to [`a real file`](https://github.com/a2-4am/4cade/blob/master/res/SS/FAVORITES2.CONF) that contains details about that particular hi-res slideshow. `ATTRACT.CONF` and the linked slideshow configuration files are parsed at build time and stored in a custom format on the final disk image.
 
 Attract modules are loosely divided into sets that have a loosely similar mix of hi-res, double hi-res, super hi-res, and self-running demos. The `ATTRACT.CONF` file is maintained by hand and changes frequently as we add games, split up slideshows, or reorder things on a whim.
 
@@ -98,13 +97,13 @@ $ make attract
 
 ## `FX.CONF`, `DFX.CONF`
 
-[`FX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/FX.CONF) and its sister [`DFX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/DFX.CONF) list the HGR and DHGR transition effects used in hi-res and double hi-res slideshows. Each record is a filename of a transition effect file, which is an executable file [assembled at build time](https://github.com/a2-4am/4cade/tree/master/src/fx) and stored on disk in a custom format. At the beginning of each slideshow, we query the global preferences to find the filename of the FX or DFX file, then update the global preferences with the next filename (wrapping around to the beginning of the list). If you watch the Mega-Attract mode long enough, you will eventually see all the transition effects, and since the cycle of transition effects is separate from the cycle of slideshows, you will eventually see the same slideshow with different transition effects.
+[`FX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/FX.CONF) and its sister [`DFX.CONF`](https://github.com/a2-4am/4cade/blob/master/res/DFX.CONF) list the HGR and DHGR transition effects used in hi-res and double hi-res slideshows. Each record is a filename of a transition effect file, which is an executable file [assembled at build time](https://github.com/a2-4am/4cade/tree/master/src/fx) and stored on final disk image in a custom format. At the beginning of each slideshow, we query the global preferences to find the filename of the FX or DFX file, then update the global preferences with the next filename (wrapping around to the beginning of the list). If you watch the Mega-Attract mode long enough, you will eventually see all the transition effects, and since the cycle of transition effects is separate from the cycle of slideshows, you will eventually see the same slideshow with different transition effects.
 
-These files are parsed at build time and stored on disk in a binary format, then read from disk every time they are needed. Due to memory restrictions, the parsed data is not persisted.
+These files are parsed at build time and stored on the final disk image in a binary format, then read from disk every time they are needed. Due to memory restrictions, the parsed data is not persisted.
 
 ## `PREFS.CONF`
 
-[`PREFS.CONF`](https://github.com/a2-4am/4cade/blob/master/res/PREFS.CONF) contains persistent global state, including Mega-Attract mode state and whether cheats are enabled. There is up-to-date format information in the file itself.
+[`PREFS.CONF`](https://github.com/a2-4am/4cade/blob/master/res/PREFS.CONF) contains persistent global state, including Mega-Attract mode state and whether cheats are enabled. There is up-to-date format information in comments in the file itself.
 
 This file is read and parsed once at program startup, and the parsed data is stored persistently in the language card. It is written to disk every time global state changes, which is often during Mega-Attract mode, or if the user toggles cheat mode.
 
