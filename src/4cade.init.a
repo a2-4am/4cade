@@ -381,44 +381,6 @@ CopyDevs
          !word -
          !byte 16
 
-!ifndef RELEASE {
-         +LD16 SAVE
-         +ST16 PTR
-         jsr   stepptr
-         +READ_ROM_NO_WRITE
-         lda   #40
-         sta   $21
-         lda   #36
-         sta   $24
-         dec   $25
-         jsr   $FC22
-         lda   PTR+1
-         jsr   $FDDA
-         lda   PTR
-         jsr   $FDDA
-         +READ_RAM1_WRITE_RAM1
-}
-
-         ldx   #$30
-         lda   MachineStatus
-         and   #HAS_JOYSTICK
-         beq   +
-         inx
-+        stx   gSearchHasJoystick
-         ldx   #$30
-         lda   MachineStatus
-         and   #HAS_128K
-         beq   +
-         inx
-+        stx   gSearchHas128K
-
-         jsr   ReloadSearchIndex
-         +LDADDR gSearchStore
-         jsr   okvs_len
-         +LD16 WCOUNT
-         +ST16 GameCount
-         +ST16 SAVE
-
          jsr   pref_get              ; see if cheats are enabled by default
                                      ; sets PTR -> cheat pref value as length-prefixed string '1' or '0'
          !word kCheat
@@ -431,6 +393,38 @@ CopyDevs
          asl                         ; A = #$08 or #$00
          ora   MachineStatus
          sta   MachineStatus         ; set bit 3 of MachineStatus
+
+         ldx   #$30                  ; Look at other bits of MachineStatus to build
+         lda   MachineStatus         ; the filename of the search index to use.
+         and   #HAS_JOYSTICK         ; There are 4 files on disk, named
+         beq   +                     ; SEARCH00.IDX, SEARCH01.IDX, SEARCH10.IDX, SEARCH11.IDX,
+         inx                         ; which correspond to <games-requiring-a-joystick> X
++        stx   gSearchHasJoystick    ; <games-requiring-128K>.
+         ldx   #$30                  ; Once we construct the filename, we'll forever after
+         lda   MachineStatus         ; load and reload the correct list of games that
+         and   #HAS_128K             ; this machine can play.
+         beq   +
+         inx
++        stx   gSearchHas128K
+
+         lda   #0                    ; Read just the first 2 bytes of the search index
+         sta   sizelo                ; to get the size, which is the number of games.
+         lda   #2                    ; (we will load the entire search index later.)
+         sta   sizehi
+         jsr   SwitchToBank2
+         lda   #$24                  ; patch out code that calculates file size during load
+         sta   LoadFileInternal_SizePatch
+         jsr   SwitchToBank1
+         jsr   ReloadSearchIndex     ; this will really only load the first 2 bytes
+         jsr   SwitchToBank2
+         lda   #$85                  ; restore code that calculates file size during load
+         sta   LoadFileInternal_SizePatch
+         jsr   SwitchToBank1
+         +LDADDR gSearchStore
+         jsr   okvs_len              ; this works because it only looks at the first two bytes
+         +LD16 WCOUNT
+         +ST16 GameCount
+         +ST16 SAVE
 
          ; calculate and update visible game count (3-digit decimal number as ASCII string)
          dey                         ; Y = 0
