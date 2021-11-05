@@ -24,9 +24,7 @@
          sta   $141D+2
          jmp   $1400      ; decompress
 
-callback +RESET_AND_IRQ_VECTOR $100
-
-         ldx   #6-1
+callback ldx   #6-1
 -        lda   patch1, x
          sta   $4542, x
          dex
@@ -54,6 +52,6 @@ title    !byte x_e-x_b
 x_b      !text "X/ROBOTRON.2084/ROBOTRON.2084"
 x_e
 
-!if * > $BFFF {
+!if * > $C000 {
   !error "code is too large, ends at ", *
 }
