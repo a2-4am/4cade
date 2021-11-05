@@ -1,0 +1,58 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/DINO.EGGS",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+         +READ_ROM_NO_WRITE
+
+         ldx   #12-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $2186
+         jsr   $2100      ; decompress
+
+         lda   #$4C
+         sta   $AD7A
+         sta   $B29D
+         lda   #1
+         sta   $AD7A+2
+         sta   $B29D+2
+         lda   #0
+         sta   $AD7A+1
+         sta   $B29D+1    ; set exits
+
+         sta   $0863      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $A892
+
+newpath
+         !byte 11
+         !text "X/DINO.EGGS"
+
+title    !byte x_e-x_b
+x_b      !text "X/DINO.EGGS/DINO.EGGS"
+x_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}
