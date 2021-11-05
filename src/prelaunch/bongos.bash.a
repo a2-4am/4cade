@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/BH",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2061
+         jsr   $2000      ; decompress
+         +DISABLE_ACCEL
+         jmp   $D566
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
