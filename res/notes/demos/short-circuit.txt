@@ -1,0 +1,14 @@
+A654: C0 -> D0 to disable sound
+A665: C0 -> D0 to disable sound
+9494: C0 -> D0 to disable sound
+ABD9: C0 -> D0 to disable sound
+1F36: C0 -> D0 to disable sound
+1F3E: C0 -> D0 to disable sound
+9998: C0 -> D0 to disable sound
+
+
+A7B4 jmp a686 - end of demo cycle
+
+
+a253 jmp 100 to exit on keypress
+
