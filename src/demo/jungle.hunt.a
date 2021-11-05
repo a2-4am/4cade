@@ -1,0 +1,78 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/JUNGLE.HUNT",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #14-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $81E
+         jsr   $800
+
+         lda   #$60
+         sta   $BD44
+         jsr   $BD00
+
+         lda   #1
+         sta   $0A6C
+         lda   #0
+         sta   $0A67      ; reset vector patch
+
+         lda   #$60
+         sta   $1501      ; reduce wait times while not playing sounds
+
+         lda   #$4C
+         sta   $676C
+         sta   $0BD6
+         sta   $6553
+         sta   $0C28
+         lda   #0
+         sta   $676C+1
+         sta   $0BD6+1
+         sta   $6553+1
+         sta   $0C28+1
+         lda   #1
+         sta   $676C+2
+         sta   $0BD6+2
+         sta   $6553+2
+         sta   $0C28+2    ; set exits
+
+         lda   #$D0
+         sta   $14A0
+         sta   $14BA
+         sta   $1425      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $A00
+
+newpath
+         !byte 13
+         !text "X/JUNGLE.HUNT"
+
+title    !byte x_e-x_b
+x_b      !text "X/JUNGLE.HUNT/JUNGLE.HUNT"
+x_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}
