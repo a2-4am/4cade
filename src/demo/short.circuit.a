@@ -28,11 +28,13 @@
          sta   $207C
          jsr   $2000      ; decompress
 
+         lda   #$4C
+         sta   $A248
          lda   #0
-         sta   $A253+1
+         sta   $A248+1
          sta   $A7B4+1
          lda   #1
-         sta   $A253+2    ; set exit on keypress
+         sta   $A248+2    ; set exit on keypress
          sta   $A7B4+2    ; set exit at end of demo cycle
 
          lda   #$D0
