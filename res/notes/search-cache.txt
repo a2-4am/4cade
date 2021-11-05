@@ -1,0 +1,71 @@
+; Search cache
+;
+; each record is 3 bytes
+; byte 0:
+;        character or 0 (EOF)
+; bytes 1-2:
+;        byte 2 bit 7=1 -> absolute address of subindex
+;        byte 2 bit 7=0 -> numerical index into gSearchStore
+;
+Root
+         !text "a"
+         !word a
+
+         ;...b-z...
+
+         !byte 0          ; EOF -> no cache hit
+a
+         !text " "        ; 'a' matches game index 1
+         !word 1
+         !text "a"
+         !word aa
+         !text "b"
+         !word ab
+         !text "c"
+         !word ac
+         !text "d"
+         !word ad
+         !text "f"
+         !word af
+         !text "g"
+         !word ag
+         !text "i"
+         !word ai
+         !text "l"
+         !word al
+         !text "m"
+         !word am
+         !text "n"
+         !word an
+         !text "p"
+         !word ap
+         !text "q"
+         !word aq
+         !text "r"
+         !word ar
+         !text "s"
+         !word as
+         !text "t"
+         !word at
+         !text "u"
+         !word au
+         !text "x"
+         !word ax
+         !text "z"
+         !word az
+         !byte 0          ; EOF -> no cache hit
+
+;
+;... b-z indexes ...
+;
+
+aa
+         !text " "        ; 'aa' -> game index 3
+         !word 3
+         !text "a"        ; 'aaa' -> 23
+         !word 23
+         !text "m"        ; 'aam' -> 6
+         !word 6
+         !text "s"        ; 'aas' -> 29
+         !word 29
+         !byte 0          ; EOF -> no cache hit

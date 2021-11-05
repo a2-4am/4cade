@@ -213,6 +213,16 @@ attract: compress
 	bin/check-attract-mode.sh
 	bin/generate-mini-attract-mode.sh
 
+cache: md
+	awk -F= '/^00/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache00.a
+	awk -F= '/^0/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache01.a
+	awk -F= '/^.0/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache10.a
+	awk -F= '!/^$$|^#|^\[/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache11.a
+	$(ACME) -o res/CACHE00.IDX build/cache00.a
+	$(ACME) -o res/CACHE01.IDX build/cache01.a
+	$(ACME) -o res/CACHE10.IDX build/cache10.a
+	$(ACME) -o res/CACHE11.IDX build/cache11.a
+
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
