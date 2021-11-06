@@ -42,6 +42,7 @@ cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build/log
 rem
 rem add everything to the disk
 rem
+echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
@@ -92,11 +93,13 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
+echo done
 goto :EOF
 )
 
 if "%1" equ "asm" (
 :asm
+call :md
 call :asmlauncher
 call :asmfx
 call :asmprelaunch
@@ -118,9 +121,6 @@ echo usage: %0 clean / asm / dsk
 goto :EOF
 
 :index
-call :md
-call :asmfx
-call :asmprelaunch
 rem
 rem precompute binary data structure for mega-attract mode configuration file
 rem
@@ -131,7 +131,9 @@ rem in game help and other all-text pages
 rem
 cscript /nologo bin\converthelp.js res\HELPTEXT build\HELPTEXT >>build\log
 cscript /nologo bin\converthelp.js res\CREDITS build\CREDITS >>build\log
+echo|set/p="converting gamehelp..."
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\converthelp.js %%q build\GAMEHELP\%%~nxq >>build\log
+echo done
 rem
 rem create a sorted list of game filenames, without metadata or display names
 rem
@@ -139,25 +141,32 @@ cscript /nologo bin\makesorted.js
 rem
 rem create search indexes: (game-requires-joystick) X (game-requires-128K)
 rem
+echo|set/p="indexing search..."
 cscript /nologo bin\builddisplaynames.js
 cscript /nologo bin\buildsearch.js "00" build\SEARCH00.IDX
 cscript /nologo bin\buildsearch.js "0" build\SEARCH01.IDX
 cscript /nologo bin\buildsearch.js ".0" build\SEARCH10.IDX
 cscript /nologo bin\buildsearch.js "." build\SEARCH11.IDX
+echo done
 rem
 rem precompute indexed files for prelaunch
 rem note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 rem note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
 rem
+echo|set/p="indexing prelaunch..."
 1>nul copy /y nul build\TOTAL.DATA
 cscript /nologo bin\buildpre.js build\PRELAUNCH.INDEXED build\PRELAUNCH.IDX build\TOTAL.DATA >>build\log
+echo done
 rem
 rem precompute indexed files for game help
 rem
+echo|set/p="indexing gamehelp..."
 cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\TOTAL.DATA pad >>build\log
+echo done
 rem
 rem precompute indexed files for slideshows
 rem
+echo|set/p="indexing slideshows..."
 for %%q in (res\SS\*) do (
   set _ss=%%~nxq
   set _ss=!_ss:~0,3!
@@ -170,15 +179,19 @@ for %%q in (res\SS\*) do (
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\TOTAL.DATA nul pad >>build\log
 for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT\%%~nxq >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX build\TOTAL.DATA nul pad >>build\log
+echo done
 rem
 rem precompute indexed files for graphic effects
 rem
+echo|set/p="indexing fx..."
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
+echo done
 rem
 rem precompute indexed files for HGR & DHGR action screenshots
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
+echo|set/p="indexing action..."
 1>nul copy /y nul build\ACTIONHGR0
 1>nul copy /y nul build\ACTIONHGR1
 1>nul copy /y nul build\ACTIONHGR2
@@ -202,11 +215,14 @@ cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX build\TOTAL.DATA
 cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
+echo done
 rem
 rem precompute indexed files for SHR artwork
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
+echo|set/p="indexing shr..."
 cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX build\TOTAL.DATA nul >>build\log
+echo done
 goto :EOF
 
 :md
@@ -223,7 +239,6 @@ goto :EOF
 goto :EOF
 
 :asmlauncher
-call :md
 1>build\buildnum.log git rev-list --count HEAD
 for /f "tokens=*" %%q in (build\buildnum.log) do set _build=%%q
 2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src\4cade.a
@@ -232,25 +247,26 @@ for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 goto :EOF
 
 :asmfx
-call :md
+echo|set/p="building fx..."
 for %%q in (src\fx\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
 )
+echo done
 goto :EOF
 
 :asmprelaunch
-call :md
+echo|set/p="building prelaunch..."
 for %%q in (src\prelaunch\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
 )
+echo done
 goto :EOF
 
 :asmproboot
-call :md
 %ACME% -r build\proboothd.lst src\proboothd\proboothd.a >> build\log
 goto :EOF
 
