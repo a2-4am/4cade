@@ -58,6 +58,10 @@ dsk: asm index
 		build/SEARCH01.IDX \
 		build/SEARCH10.IDX \
 		build/SEARCH11.IDX \
+		res/CACHE00.IDX \
+		res/CACHE01.IDX \
+		res/CACHE10.IDX \
+		res/CACHE11.IDX \
 		build/FX.IDX \
 		build/DFX.IDX \
 		build/GAMEHELP.IDX \

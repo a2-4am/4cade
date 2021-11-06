@@ -205,3 +205,12 @@ gSearchHasJoystick
 gSearchHas128K
          !raw  "_"
          !raw  ".IDX"
+
+kSearchCacheFile
+         !byte 11
+         !raw  "CACHE"
+gCacheHasJoystick
+         !raw  "_"
+gCacheHas128K
+         !raw  "_"
+         !raw  ".IDX"

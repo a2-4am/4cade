@@ -400,12 +400,14 @@ CopyDevs
          beq   +                     ; SEARCH00.IDX, SEARCH01.IDX, SEARCH10.IDX, SEARCH11.IDX,
          inx                         ; which correspond to <games-requiring-a-joystick> X
 +        stx   gSearchHasJoystick    ; <games-requiring-128K>.
+         stx   gCacheHasJoystick
          ldx   #$30                  ; Once we construct the filename, we'll forever after
          lda   MachineStatus         ; load and reload the correct list of games that
          and   #HAS_128K             ; this machine can play.
          beq   +
          inx
 +        stx   gSearchHas128K
+         stx   gCacheHas128K
 
          lda   #0                    ; Read just the first 2 bytes of the search index
          sta   sizelo                ; to get the size, which is the number of games.

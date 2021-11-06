@@ -199,8 +199,10 @@ FindMatchingTitle
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
 
-         jsr   ResetTextRank
+         jsr   FindTitleInCache
+         bcc   +                     ; sets BestMatchIndex on success
 
+         jsr   ResetTextRank
          jsr   okvs_iter_values      ; iterate through all game display names
          !word gSearchStore          ; and rank them for the best match
          !word TextRankCallback      ; to the current input buffer

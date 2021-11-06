@@ -6,6 +6,7 @@
 ; Public functions
 ; - ReloadSearchIndex
 ; - ResetTextRank
+; - FindTitleInCache
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
 ; Public variables
@@ -36,7 +37,52 @@ ReloadSearchIndex
          jsr   LoadFile              ; load appropriate search index into $8200
          !word kRootDirectory
          !word kSearchIndexFile
-         !word $8200
+         !word gSearchIndex
+         jsr   LoadFile              ; load appropriate search cache into $B000
+         !word kRootDirectory
+         !word kSearchCacheFile
+         !word gSearchCache
+         rts
+
+FindTitleInCache
+         ldx   InputLength
+         cpx   #5
+         bcs   @nomatch
+         lda   #$20
+         sta   InputBuffer, x
+         +LDADDR gSearchCache
+         +ST16 PTR
+         ldx   #$FF
+--       inx
+         ldy   #0
+-        lda   (PTR), y
+         beq   @nomatch
+         cmp   InputBuffer, x
+         beq   @matchchar
+         iny
+         iny
+         iny
+         bne   -                     ; always branches
+@matchchar
+         iny
+         lda   (PTR), y
+         pha
+         iny
+         lda   (PTR), y
+         bpl   @foundindex
+         sta   PTR+1
+         pla
+         sta   PTR
+         cpx   InputLength
+         bcc   --
+@nomatch
+         sec
+         rts
+@foundindex
+         sta   BestMatchIndex+1
+         pla
+         sta   BestMatchIndex
+         clc
          rts
 
 ;------------------------------------------------------------------------------

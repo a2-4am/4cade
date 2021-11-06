@@ -116,6 +116,9 @@ UI_ToPlay    = $1FF7
 gValLen      = $1F80
 gVal         = $1F81
 
+gSearchIndex = $8200
+gSearchCache = $B000
+
 ; LC RAM 1
 iLoadFileDirect    = $FFEF
 WaitForVBL         = $FFF2
@@ -153,7 +156,7 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
 launchpatch    = $D662               ; glue.launch.a
-iAddToPath     = $FE8F               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iAddToPath     = $FE83               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 itraverse      = $D964               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
