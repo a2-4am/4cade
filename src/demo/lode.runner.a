@@ -1,0 +1,68 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/LODE.RUNNER",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #14-1      ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $1F4E
+         jsr   $1F00      ; decompress
+
+         lda   #$24
+         sta   $61FB      ; ignore <Ctrl-E> (would otherwise enter editor)
+         sta   $61FD      ; ignore <RETURN> (would otherwise show high scores)
+
+         lda   #$4C
+         sta   $69CD
+         lda   #$62
+         sta   $69CD+2
+         lda   #$01
+         sta   $69CD+1    ; exit after user presses button
+
+         sta   $61F4
+         lda   #$62
+         sta   $61F4+1    ; exit after demo player dies
+
+         ldx   #6-1
+-        lda   patch, x
+         sta   $6201, x
+         dex
+         bpl   -          ; exit after user presses any key
+
+         +DISABLE_ACCEL
+
+         jmp   $9050
+
+patch    !byte $AD,$88,$C0,$6C,$FC,$FF
+
+newpath
+         !byte 13
+         !text "X/LODE.RUNNER"
+
+title    !byte x_e-x_b
+x_b      !text "X/LODE.RUNNER/LODE.RUNNER"
+x_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}
