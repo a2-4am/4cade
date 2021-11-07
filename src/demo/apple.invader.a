@@ -1,0 +1,60 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/APPLE.INVADER",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $6020
+         jsr   $6002      ; decompress
+
+         lda   #$D8       ; move location from $3F2 to $3D8
+         sta   $1113      ; (program uses reset vector for storage)
+         sta   $1245
+         sta   $4A2C
+         sta   $4A34
+         sta   $4A41
+         sta   $5A9C
+         sta   $5AA4
+         sta   $5AB1
+         sta   $5A9C
+         lda   #$D9       ; move location from $3F3 to $3D9
+         sta   $1FA0
+         sta   $4A31
+         sta   $4F4D
+         sta   $5AA1
+         lda   #$DA       ; move location from $3F4 to $3DA
+         sta   $11AF
+         sta   $1824
+         sta   $19DF
+         sta   $1DE8
+         sta   $1E5A      ; reset vector fix
+
+         lda   #$4C
+         sta   $46C0
+         lda   #0
+         sta   $46C0+1
+         sta   $4A96      ; (moved to $1E37+1)
+         lda   #1
+         sta   $46C0+2    ; exit on keypress
+         sta   $4A9B      ; exit at end of demo loop (moved to $1E37+2)
+
+         +DISABLE_ACCEL
+
+         jmp   $5F00
+
+title    !byte x_e-x_b
+x_b      !text "X/APPLE.INVADER/APPLE.INVADER"
+x_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}
