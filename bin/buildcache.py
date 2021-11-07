@@ -24,7 +24,7 @@ def score(inputbuffer, displayname):
             likely = False
         score += x
         startat += y + 1
-    score = int((score/len(displayname)) + (score/len(inputbuffer))+0.99)
+    score = int(score/len(displayname) + (score/len(inputbuffer)) + 0.99)/2
     if (inputbuffer[0] == displayname[0]) and (score < 85):
         score += 15
     return score, likely
@@ -128,4 +128,5 @@ def main():
                     print(f'         !word {cache[a][b][c][d]}')
                 print('         !byte 0')
 
-main()
+if __name__ == '__main__':
+    main()
