@@ -4,16 +4,13 @@ California Raisins
 Dangerous Dave Returns
 Flobynoid
 Treasure Dive (Nibble)
-Wall Defence (2010)
 
 //4am crack
 Cavern Creatures
 Sheila
 
 //classic crack (clean or salvageable)
-Raiders of the Lost Ring
 Star Clones
-Starmines
 Trolls and Tribulations
 
 //woz (needs crack)
@@ -21,6 +18,4 @@ J-Bird (Orion)
 Zero Gravity Pinball (Avant-Garde)
 
 //unacquired
-Star Avenger (Western MicroData)
 Torpedo Terror (Continental)
-Tsunami (Creative Computing)

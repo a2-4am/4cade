@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TSUNAMI",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $7703
+         jsr   $6BEC      ; decompress
+         +DISABLE_ACCEL
+         jmp   $A0ED
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
