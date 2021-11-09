@@ -94,7 +94,7 @@ MiniAttractMode
          jsr   SwitchToBank2
          jsr   resetRoot
          jsr   LoadIndexedFile
-         !word kAttractModeFulFile
+         !word kTotalDataFile
 -        !word $6000
          !word OKVS_CACHE
 
@@ -194,7 +194,7 @@ RunAttractModule
 @key2    !word $FDFD                 ; SMC
          +ST16 +
          jsr   LoadIndexedFile
-         !word kAttractModeSlideshowFulFile
+         !word kTotalDataFile
          !word $800
 +        !word $FDFD                 ; SMC
          pla                         ; restore module type

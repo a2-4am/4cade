@@ -113,7 +113,7 @@ IndexedSHRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
-         !word kSHRArtworkDataFile
+         !word kTotalDataFile
          !word $1FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

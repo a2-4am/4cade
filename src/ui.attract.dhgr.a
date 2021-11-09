@@ -152,7 +152,7 @@ LoadDHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kFXFile
+         !word kTotalDataFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -332,7 +332,7 @@ IndexedDHGRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadAuxIndexedFile    ; load compressed DHGR screenshot at aux $3FF8
-         !word kDHGRActionDataFile
+         !word kTotalDataFile
          !word $3FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

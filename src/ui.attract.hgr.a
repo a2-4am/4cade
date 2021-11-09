@@ -83,7 +83,7 @@ LoadHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kFXFile
+         !word kTotalDataFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -178,7 +178,7 @@ IndexedHGRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load compressed HGR screenshot at $3FF8
-         !word kHGRActionDataFile
+         !word kTotalDataFile
          !word $3FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

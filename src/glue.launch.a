@@ -138,7 +138,7 @@ PlayGameInAY
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile
-         !word kPrelaunchFulFile
+         !word kTotalDataFile
          !word $0106
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -213,7 +213,7 @@ Joystick
 
 LoadStandardPrelaunch
          jsr   LoadIndexedFile       ; load standard prelaunch code at $0106
-         !word kPrelaunchFulFile
+         !word kTotalDataFile
          !word $0106
          !word +
          rts

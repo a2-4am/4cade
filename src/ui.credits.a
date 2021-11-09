@@ -31,7 +31,7 @@ Help
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile
-         !word kGameHelpFile
+         !word kTotalDataFile
          !word $800
 @indexRecordPtr
          !word $FDFD                 ; SMC
