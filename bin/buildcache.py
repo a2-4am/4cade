@@ -70,20 +70,14 @@ def main():
                     if not index4: continue
                     if index4 != index3:
                         cache[a][b][c][d] = index4
-                if (len(cache[a][b][c]) == 1) and (" " in cache[a][b][c]):
-                    cache[a][b][c] = cache[a][b][c][" "]
-                elif not cache[a][b][c]:
+                if not cache[a][b][c]:
                     del cache[a][b][c]
-            if (len(cache[a][b]) == 1) and (" " in cache[a][b]):
-                cache[a][b] = cache[a][b][" "]
-            elif not cache[a][b]:
+            if not cache[a][b]:
                 del cache[a][b]
-        if (len(cache[a]) == 1) and (" " in cache[a]):
-            cache[a] = cache[a][" "]
-        elif not cache[a]:
+        if not cache[a]:
             del cache[a]
 
-    print('*=$B000')
+    print('*=$A000')
     for a in cache:
         print(f'         !text "{a}"')
         if type(cache[a]) == int:

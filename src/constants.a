@@ -116,8 +116,8 @@ UI_ToPlay    = $1FF7
 gValLen      = $1F80
 gVal         = $1F81
 
-gSearchIndex = $8200
-gSearchCache = $B000
+gSearchIndex = $6000
+gSearchCache = $A000
 
 ; LC RAM 1
 iLoadFileDirect    = $FFEF
