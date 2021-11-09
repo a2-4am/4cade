@@ -3,7 +3,7 @@
 
 !cpu 6502
 !to "build/FX/GR.FIZZLE",plain
-*=$6400
+*=$6000
 
          ;init RNG
 
@@ -47,7 +47,7 @@
 
          ora   #4
          sta   $3d
-         eor   #$64
+         eor   #$44
          sta   $27
 
          ;set mask according to offset

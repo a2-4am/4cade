@@ -80,9 +80,9 @@ kDHGRActionIndexFile
          !byte 8
          !raw  "DHGR.IDX"
 
-kGRActionDirectory
-         !byte 10
-         !raw  "ACTION.GR/"
+kGRActionIndexFile
+         !byte 6
+         !raw  "GR.IDX"
 
 kDemoDirectory
          !byte 5

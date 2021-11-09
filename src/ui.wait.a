@@ -4,7 +4,6 @@
 ; UI functions for doing things then waiting, or waiting then doing things
 ;
 ; - ExecuteTransitionAt6000AndWait
-; - ExecuteTransitionAt6400AndWait
 ; - ExecuteTransitionAtA000AndWait
 ; - ExecuteTransitionAndWait
 ; - WaitForKeyFor30Seconds
@@ -12,9 +11,6 @@
 
 ExecuteTransitionAt6000AndWait
          ldy   #$60
-         +HIDE_NEXT_2_BYTES
-ExecuteTransitionAt6400AndWait
-         ldy   #$64
          +HIDE_NEXT_2_BYTES
 ExecuteTransitionAtA000AndWait
          ldy   #$A0

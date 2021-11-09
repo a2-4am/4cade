@@ -77,6 +77,7 @@ dsk: asm index
 		build/HGR5.IDX \
 		build/HGR6.IDX \
 		build/DHGR.IDX \
+		build/GR.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -177,6 +178,11 @@ index: md asmfx asmprelaunch
 	[ -f build/HGR5.IDX ] || ((for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX)
 	[ -f build/HGR6.IDX ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX)
 	[ -f build/DHGR.IDX ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.DHGR > build/DHGR.IDX)
+#
+# precompute indexed files for GR action screenshots
+# note: these can be padded because they are not compressed
+#
+	[ -f build/GR.IDX ] || ((for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA res/ACTION.GR > build/GR.IDX)
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
