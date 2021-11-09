@@ -74,6 +74,7 @@ echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR5.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR6.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/DHGR.IDX" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/GR.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
@@ -195,7 +196,7 @@ rem
 rem precompute indexed files for HGR & DHGR action screenshots
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
-echo|set/p="indexing action..."
+echo|set/p="indexing (D)HGR action..."
 1>nul copy /y nul build\ACTIONHGR0
 1>nul copy /y nul build\ACTIONHGR1
 1>nul copy /y nul build\ACTIONHGR2
@@ -203,6 +204,7 @@ echo|set/p="indexing action..."
 1>nul copy /y nul build\ACTIONHGR4
 1>nul copy /y nul build\ACTIONHGR5
 1>nul copy /y nul build\ACTIONHGR6
+1>nul copy /y nul build\ACTIONDHGR
 for %%q in (res\ACTION.HGR\A* res\ACTION.HGR\B* res\ACTION.HGR\C* res\ACTION.HGR\D*) do 1>nul >>build\ACTIONHGR0 echo %%q
 for %%q in (res\ACTION.HGR\E* res\ACTION.HGR\F* res\ACTION.HGR\G* res\ACTION.HGR\H*) do 1>nul >>build\ACTIONHGR1 echo %%q
 for %%q in (res\ACTION.HGR\I* res\ACTION.HGR\J* res\ACTION.HGR\K* res\ACTION.HGR\L*) do 1>nul >>build\ACTIONHGR2 echo %%q
@@ -219,6 +221,14 @@ cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX build\TOTAL.DATA
 cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
+echo done
+rem precompute indexed files for GR action screenshots
+rem note: these can be padded because they are not compressed
+rem
+echo|set/p="indexing GR action..."
+1>nul copy /y nul build\ACTIONGR
+for %%q in (res\ACTION.GR\*) do 1>nul >>build\ACTIONGR echo %%q
+cscript /nologo bin\buildss.js build\ACTIONGR* build\GR.IDX build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
 echo done
 rem
 rem precompute indexed files for SHR artwork
