@@ -123,7 +123,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
 gSearchStore
-         !word $6000
+         !word $8200
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore

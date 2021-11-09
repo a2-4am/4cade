@@ -15,7 +15,7 @@
 ; - kCheat
 ;
 
-kGlobalPrefsBuffer = $BD00
+kGlobalPrefsBuffer = $8000
 
 ; valid pref keys
 kNextAttract
