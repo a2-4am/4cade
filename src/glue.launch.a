@@ -71,17 +71,17 @@ _gameToLaunchExit
 ;------------------------------------------------------------------------------
 FindGameInActionSlideshow
          +ST16 gLastMegaAttractGame
-         jsr   okvs_get_current      ; (PTR) -> OKVS value (filename or empty string)
+         jsr   okvs_next_field       ; (PTR) -> OKVS value (filename or empty string)
                                      ; Y=0
          lda   (PTR), y
          beq   +
          +LD16 PTR
          +ST16 gLastMegaAttractGame
-+        jsr   okvs_get_current_PTR_is_already_set ; (PTR) -> game display name
++        jsr   okvs_next_field_PTR_is_already_set ; (PTR) -> game display name
          +LD16 PTR                   ; A/Y -> game display name
          +ST16 SAVE                  ; (SAVE) -> game display name
 FindGame
-         jsr   okvs_get_current      ; (PTR) -> game requirements bitfield
+         jsr   okvs_next_field       ; (PTR) -> game requirements bitfield
                                      ; Y=0
 
          ; check if game requires joystick

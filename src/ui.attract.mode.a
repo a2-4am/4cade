@@ -77,7 +77,7 @@ MiniAttractMode
          jsr   okvs_find
          !word -
 +        !word $FDFD                 ; SMC
-         jsr   okvs_get_current
+         jsr   okvs_next_field
          jsr   SwitchToBank2
          sty   OKVS_CACHE
          ldy   #4
@@ -113,7 +113,7 @@ MiniAttractMode
          +LDADDR -
          jsr   okvs_nth              ; get the next module on the list
          +ST16 SAVE
-         jsr   okvs_get_current      ; get module type
+         jsr   okvs_next_field       ; get module type
                                      ; Y = 0
          iny
          lda   (PTR),y

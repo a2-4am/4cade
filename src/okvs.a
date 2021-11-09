@@ -168,7 +168,7 @@ KEYLEN = *+1
          clc
 @maybeGetValue
          brk                         ; SMC
-         jsr   okvs_get_current
+         jsr   okvs_next_field
          +LD16 PTR
          clc
          rts
@@ -384,10 +384,10 @@ okvs_iter_values
 ;------------------------------------------------------------------------------
 ; internal functions
 
-okvs_get_current
+okvs_next_field
 ; out:   Y = 0
          +ST16 PTR
-okvs_get_current_PTR_is_already_set
+okvs_next_field_PTR_is_already_set
          jsr   stepptr
          bne   incptr
 

@@ -88,8 +88,8 @@ LoadGameTitleOffscreen
          +ST16 @fname
          bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
          bvc   @hgr
-         jsr   okvs_get_current
-         jsr   okvs_get_current_PTR_is_already_set
+         jsr   okvs_next_field
+         jsr   okvs_next_field_PTR_is_already_set
                                      ; (PTR) -> length-prefixed game info bitfield
                                      ; Y = 0
          iny                         ; Y = 1

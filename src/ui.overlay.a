@@ -125,7 +125,7 @@ DrawUI
          jsr   GetGameToLaunch       ; get current game, if any
          bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
                                      ; A/Y -> key of current game (in gSearchStore)
-         jsr   okvs_get_current      ; (PTR) -> display name of current game
+         jsr   okvs_next_field       ; (PTR) -> display name of current game
                                      ; Y = 0
          lda   (PTR), y
          tay
