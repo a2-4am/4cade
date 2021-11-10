@@ -73,7 +73,7 @@ MiniAttractMode
          jsr   LoadFile
          !word kRootDirectory
          !word kMiniAttractIndexFile
--        !word $6000
+-        !word $0800
          jsr   okvs_find
          !word -
 +        !word $FDFD                 ; SMC
