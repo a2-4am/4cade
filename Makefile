@@ -38,7 +38,6 @@ dsk: asm index
 #
 	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000"
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000"
-	bin/buildfileinfo.sh res/ACTION.GR "06" "6000"
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
 	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106"
@@ -87,7 +86,6 @@ dsk: asm index
 	for f in \
 		res/TITLE.HGR \
 		res/TITLE.DHGR \
-		res/ACTION.GR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
                 res/ICONS \
