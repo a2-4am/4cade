@@ -69,7 +69,7 @@ SaveSmallFileInternal
          ;jsr   hddopendir            ; call ProRWTS2         
          ;lda   ldrlo2
          sta   ldrlo
-         lda   #$80 ;lda   ldrhi2
+         lda   #>kGlobalPrefsBuffer ;lda   ldrhi2
          sta   ldrhi
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd

@@ -15,7 +15,7 @@
 ; - kCheat
 ;
 
-kGlobalPrefsBuffer = $BD00
+kGlobalPrefsBuffer = $BD00           ; [512 bytes] must be page-aligned
 
 ; valid pref keys
 kNextAttract
@@ -217,13 +217,13 @@ pref_set
 
          +LDADDR kGlobalPrefsFilename ; write prefs buffer to file on disk
          jsr   SetPath
-;;         +LDADDR kGlobalPrefsBuffer
          ; /!\ execution falls through here to glue.prorwts/SaveSmallFile
 ;------------------------------------------------------------------------------
 ; SaveSmallFile
 ; Save a file into memory all at once, using ProRWTS2.
 ; /!\ Only first block (512 bytes) is written. Keep those files small. /!\
 ; /!\ All 512 bytes are written to disk. Clear buffer before calling. /!\
+; /!\ Address is hardcoded to kGlobalPrefsBuffer /!\
 ;
 ; supports paths, see note
 ;
@@ -233,7 +233,6 @@ pref_set
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 SaveSmallFile
-;;         +ST16 ldrlo                 ; set data buffer address for ProRWTS2
          jsr   SwitchToBank2
          jsr   SaveSmallFileInternal
          jmp   SwitchToBank1
