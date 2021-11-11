@@ -6,7 +6,8 @@
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D001..D06E - persistent data structures (gGlobalPrefsStore)
+; D000       - reserved
+; D001..D06E - gGlobalPrefsStore
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
@@ -25,6 +26,50 @@
 ; ...unused...
 ; DBB4..DBFF - (de)acceleration function
 ; DC00..DFFF - unused
+;
+; MAIN MEMORY DURING SEARCH/BROWSE MODE
+; 6000..9FFF - search index
+; A000..BCFF - search cache
+; BD00..BEFF - prefs buffer (clobbered if cheat mode changes)
+; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
+;
+; MAIN MEMORY DURING MEGA-ATTRACT MODE
+; 0100..0105 - re-entry code for demos (reloaded before demo)
+; 0106..01BF - prelaunch code (reloaded before demo)
+; 0400..07FF - text screen (cleared before each module, screen holes preserved)
+; 0800..1EFF - slideshow configuration file (persistent during slideshow module)
+; 2000..5FFF - hi-res screens (cleared before each module)
+; 4000..5FFF - slideshow index file (loaded before slideshow module)
+; 6000..     - mega-attract configuration file (reloaded before each module)
+; BD00..BEFF - prefs buffer (clobbered if cheat mode changes)
+; BF00..BFFF - ProRWTS glue (reset after demo)
+;
+; MAIN MEMORY DURING MINI-ATTRACT MODE
+; 0100..0105 - re-entry code for demos (reloaded before demo)
+; 0106..01BF - prelaunch code (reloaded before demo)
+; 0400..07FF - text screen (cleared before each module, screen holes preserved)
+; 0800..1FFF - mini-attract index file (loaded once)
+; 2000..5FFF - hi-res screens
+; 6000..     - mini-attract configuration file (reloaded before each module)
+; 6000..     - transition effect code (reloaded before each screenshot module)
+;
+; MAIN MEMORY DURING GAME LAUNCH
+; 0100..0105 - re-entry code
+; 0106..01BF - prelaunch code
+; 0400..7FFF - text screen cleared (screen holes preserved)
+; 2000..5FFF - hi-res screens cleared
+; A000..     - prelaunch index file
+;
+; MAIN MEMORY DURING CREDITS
+; 0800..     - credits text
+;
+; MAIN MEMORY DURING GLOBAL HELP
+; 0800..     - help text
+;
+; MAIN MEMORY DURING PER-GAME HELP
+; 0800..     - help text
+; 6000..     - game help index file
+;
 ;------------------------------------------------------------------------------
 
 !ifndef _CONSTANTS_ {
