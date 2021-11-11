@@ -1,0 +1,60 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/AC",plain
+*=$9B00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #5-1       ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $2076
+         jsr   $1FFD      ; decompress
+
+         lda   #0
+         sta   $10AC
+         lda   #1
+         sta   $10B1      ; reset vector patch
+
+         lda   #$4C
+         sta   $0C00
+         sta   $1D27
+         lda   #0
+         sta   $0C00+1
+         sta   $1D27+1
+         lda   #1
+         sta   $0C00+2
+         sta   $1D27+2    ; set exits
+
+         +DISABLE_ACCEL
+
+         jmp   $1000
+
+newpath
+         !byte 4
+         !text "X/AC"
+
+title    !byte x_e-x_b
+x_b      !text "X/AC/AC"
+x_e
+
+!if * > $9BA0 {
+  !error "code is too large, ends at ", *
+}
