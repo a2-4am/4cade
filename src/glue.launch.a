@@ -127,10 +127,10 @@ PlayGameInAY
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
 
-         jsr   LoadFile              ; load prelaunch index file into $6000
+         jsr   LoadFile              ; load prelaunch index file
          !word kRootDirectory
          !word kPrelaunchIndexFile
--        !word $6000
+-        !word gSearchCache
 
          jsr   okvs_find
          !word -
