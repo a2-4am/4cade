@@ -1,0 +1,60 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/ALIEN.MUNCHIES",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $1638
+         jsr   $1610      ; decompress
+
+         ldx   #10-1
+-        lda   patch1, x
+         sta   $0F67, x
+         dex
+         bpl   -          ; exit on button or keypress during demo
+
+         ldx   #5-1
+-        lda   patch2, x
+         sta   $092D, x
+         sta   $139D, x
+         dex
+         bpl   -          ; exit on keypress at title screen & during demo
+
+         ldx   #3-1
+-        lda   patch3, x
+         sta   $1392, x
+         sta   $0B50, x
+         sta   $0B4B, x
+         sta   $1153, x
+         dex
+         bpl   -          ; set exits
+
+         lda   #$D0
+         sta   $1161      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $833
+
+patch1   !byte $30,$05,$AD,$00,$C0,$10,$29,$4C,$00,$01
+
+patch2   !byte $10,$0A,$4C,$00,$01
+
+patch3   !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "X/ALIEN.MUNCHIES/ALIEN.MUNCHIES"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
