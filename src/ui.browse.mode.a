@@ -96,6 +96,9 @@ OnBrowseCheat
 
 OnBrowseTab
          jsr   MiniAttractMode
+         pha                         ; must reload search index before calling either
+         jsr   ReloadSearchIndex     ; PlayGame or LoadGameTitleOffscreen, because
+         pla                         ; mini attract mode may have clobbered all of main memory
          cmp   #$8D
          beq   OnBrowseLaunch
          ; execution falls through here
@@ -104,6 +107,7 @@ ForceBrowseChanged
          ; execution falls through here
 OnBrowseChanged
 ; in:    gGameToLaunch = game index (word)
+;        gSearchStore populated
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
          jsr   LoadGameTitleOffscreen

@@ -162,7 +162,8 @@ OnTab
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
          bne   .req_redraw           ; by pressing Enter, launch the game
-
+         jsr   ReloadSearchIndex     ; must reload search index before calling PlayGame
+         ; /!\ execution falls through here
 OnLaunch
          ldx   gGameToLaunch+1
          inx
@@ -170,7 +171,7 @@ OnLaunch
          jsr   PlayGame
 
 .req_redraw
-         sec                         ; tell caller to redraw UI
+         sec                         ; tell caller to reload search index and redraw UI from scratch
          rts
 
 OnCheat

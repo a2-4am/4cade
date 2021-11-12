@@ -65,7 +65,7 @@ MegaAttractMode
 ; in:    gGameToLaunch = index in gSearchStore (word)
 ;        gSearchStore populated
 ; out:   all flags and registers clobbered
-;        assume all of main memory has been clobbered
+;        assume all of main memory has been clobbered (including gSearchStore)
 ;------------------------------------------------------------------------------
 MiniAttractMode
          jsr   GetGameToLaunch
