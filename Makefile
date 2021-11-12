@@ -27,7 +27,7 @@ CADIUS=cadius
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: asm index packedfiles
+dsk: asm index
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
@@ -107,7 +107,7 @@ dsk: asm index packedfiles
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
-index: md asmfx asmprelaunch
+index: md asmfx asmprelaunch compress
 # note: even though individual lines check individual files, you really want
 # to re-run this with a clean build/ directory if anything changes, because
 # everything is interconnected within TOTAL.DATA
@@ -208,19 +208,17 @@ asmprelaunch: md
 asmproboot: md
 	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a
 
-#
-# |compress| and |attract| must be called separately because they are slow.
-# They create files in the repository which can then be checked in.
-#
 compress: md
 	for f in res/ACTION.HGR.UNCOMPRESSED/*; do  o=res/ACTION.HGR/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ACTION.DHGR.UNCOMPRESSED/*; do o=res/ACTION.DHGR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ARTWORK.SHR.UNCOMPRESSED/*; do o=res/ARTWORK.SHR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
-
-
-packedfiles: md
 	for f in res/TITLE.HGR.UNPACKED/*; do  o=res/TITLE.HGR/$$(basename $$f);  [ -f "$$o" ] || bin/packhgrfile.py $$f $$o >>build/log; done
 
+#
+# |attract| must be called separately because it is slow and
+# only needs to be run when a new game or demo is added.
+# It create files in the repository which can then be checked in.
+#
 attract: compress
 	bin/check-attract-mode.sh
 	bin/generate-mini-attract-mode.sh
