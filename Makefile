@@ -27,7 +27,7 @@ CADIUS=cadius
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: asm index
+dsk: asm index packedhgr
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
@@ -36,7 +36,7 @@ dsk: asm index
 #
 # create _FileInformation.txt files for subdirectories
 #
-	bin/buildfileinfo.sh res/TITLE.HGR "06" "4000"
+	bin/buildfileinfo.sh build/TITLE.HGR "06" "4000"
 	bin/buildfileinfo.sh res/TITLE.DHGR "06" "4000"
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
@@ -84,7 +84,7 @@ dsk: asm index
 	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; \
 	done
 	for f in \
-		res/TITLE.HGR \
+		build/TITLE.HGR \
 		res/TITLE.DHGR \
                 res/DEMO \
                 res/TITLE.ANIMATED \
@@ -217,6 +217,10 @@ compress: md
 	for f in res/ACTION.DHGR.UNCOMPRESSED/*; do o=res/ACTION.DHGR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
 	for f in res/ARTWORK.SHR.UNCOMPRESSED/*; do o=res/ARTWORK.SHR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
 
+
+packedhgr: md
+	for f in res/TITLE.HGR/*; do  o=build/TITLE.HGR/$$(basename $$f);  [ -f "$$o" ] || bin/packhgrtitle.py $$f $$o >>build/log; done
+
 attract: compress
 	bin/check-attract-mode.sh
 	bin/generate-mini-attract-mode.sh
@@ -235,7 +239,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX.INDEXED build/FX build/PRELAUNCH.INDEXED build/PRELAUNCH build/ATTRACT build/SS build/GAMEHELP
+	mkdir -p build/X build/FX.INDEXED build/FX build/PRELAUNCH.INDEXED build/PRELAUNCH build/ATTRACT build/SS build/GAMEHELP build/TITLE.HGR
 	touch build/log
 
 clean:

@@ -121,6 +121,7 @@ HGRTitleCallback
 +        !word $FDFD                 ; SMC
          !word $4000
 
+         jsr   UnpackHGRTitle
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
