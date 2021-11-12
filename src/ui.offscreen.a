@@ -105,6 +105,8 @@ LoadGameTitleOffscreen
 @fname   !word $FDFD                 ; SMC
          !byte $00
 @addrhi  !byte $FD                   ; SMC
+	 
+         jsr   UnpackHGRTitle
          rts
 @dhgr
          jsr   BlankDHGR
@@ -211,3 +213,52 @@ ToggleOffscreenPage
          eor   #$01
          sta   OffscreenPage
          rts
+
+;------------------------------------------------------------------------------
+; UnpackHGRTitle
+; unpack data from screen holes of the off screen HGR page
+;
+;------------------------------------------------------------------------------
+UnpackHGRTitle
+         jsr   GetOffscreenAddress
+	 sta   src+2
+         ora   #$1E
+	 sta   dest+2
+	 lda   #$00
+	 sta   src+1
+	 sta   dest+1
+
+	 lda   #3
+	 sta   $E0
+
+loop
+	 ldx   #0
+--	 ldy   #$78
+src
+-	 lda   $0000,y  ;smc
+dest
+	 sta   $0000,x  ;smc
+         inx
+         iny
+         bpl   -
+         tya            ; y = #$80
+         eor   src+1
+         sta   src+1
+         bne   +
+         inc   src+2
+
++        cpx   #$78
+         bne   --
+
+         lda   dest+1
+         eor   #$80
+         sta   dest+1
+         bne   +
+         inc   dest+2
+
++        dec   $E0
+         bpl   loop
+
+	 rts
+
+
