@@ -11,7 +11,7 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E984..FFEE - main program code
+; E8FF..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -60,15 +60,14 @@
 ; 2000..5FFF - hi-res screens cleared
 ; A000..     - prelaunch index file
 ;
-; MAIN MEMORY DURING CREDITS
+; MAIN MEMORY DURING CREDITS (preserves search index and cache)
 ; 0800..     - credits text
 ;
-; MAIN MEMORY DURING GLOBAL HELP
+; MAIN MEMORY DURING GLOBAL HELP (preserves search index and cache)
 ; 0800..     - help text
 ;
-; MAIN MEMORY DURING PER-GAME HELP
+; MAIN MEMORY DURING PER-GAME HELP (clobbers search cache)
 ; 0800..     - help text
-; 6000..9FFF - search index
 ; A000..     - game help index file
 ;
 ;------------------------------------------------------------------------------
@@ -202,7 +201,7 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
 launchpatch    = $D662               ; glue.launch.a
-iAddToPath     = $FEC7               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iAddToPath     = $FED4               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 itraverse      = $D964               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant

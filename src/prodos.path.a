@@ -53,6 +53,46 @@ AddToPath
 @done
          rts
 
+kSearchIndexRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
+
+kSearchCacheRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
+
+kPrelaunchIndexRecord
+         !source "src/index/prelaunch.idx.a"
+
+kAttractModeIndexRecord
+         !source "src/index/attract.idx.a"
+
+kMiniAttractIndexRecord
+         !source "src/index/miniattract.idx.a"
+
+kAttractModeSlideshowIndexRecord
+         !source "src/index/slideshow.idx.a"
+
+kFXIndexRecord
+         !source "src/index/fx.idx.a"
+
+kDFXIndexRecord
+         !source "src/index/dfx.idx.a"
+
+kGameHelpIndexRecord
+         !source "src/index/gamehelp.idx.a"
+
+kSHRArtworkIndexRecord
+         !source "src/index/artwork.idx.a"
+
+kDHGRActionIndexRecord
+         !source "src/index/dhgr.idx.a"
+
+kGRActionIndexRecord
+         !source "src/index/gr.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
@@ -80,12 +120,6 @@ gHGRActionIndexNumber
          !raw  "_"
          !raw  ".IDX"
 
-kDHGRActionIndexRecord
-         !source "src/index/dhgr.idx.a"
-
-kGRActionIndexRecord
-         !source "src/index/gr.idx.a"
-
 kDemoDirectory
          !byte 5
          !raw  "DEMO/"
@@ -99,33 +133,9 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
-kPrelaunchIndexRecord
-         !source "src/index/prelaunch.idx.a"
-
 kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
-
-kAttractModeIndexRecord
-         !source "src/index/attract.idx.a"
-
-kMiniAttractIndexRecord
-         !source "src/index/miniattract.idx.a"
-
-kAttractModeSlideshowIndexRecord
-         !source "src/index/slideshow.idx.a"
-
-kFXIndexRecord
-         !source "src/index/fx.idx.a"
-
-kDFXIndexRecord
-         !source "src/index/dfx.idx.a"
-
-kGameHelpIndexRecord
-         !source "src/index/gamehelp.idx.a"
-
-kSHRArtworkIndexRecord
-         !source "src/index/artwork.idx.a"
 
 kCreditsFile
          !byte 7
@@ -166,21 +176,3 @@ kDecrunchFile
 kJoystickFile
          !byte 8
          !raw  "JOYSTICK"
-
-kSearchIndexFile
-         !byte 12
-         !raw  "SEARCH"
-gSearchHasJoystick
-         !raw  "_"
-gSearchHas128K
-         !raw  "_"
-         !raw  ".IDX"
-
-kSearchCacheFile
-         !byte 11
-         !raw  "CACHE"
-gCacheHasJoystick
-         !raw  "_"
-gCacheHas128K
-         !raw  "_"
-         !raw  ".IDX"
