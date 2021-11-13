@@ -44,13 +44,13 @@ rem add everything to the disk
 rem
 echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
+%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\ATTRACT.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH00.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH01.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH10.IDX" >>build\log
@@ -59,13 +59,6 @@ echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE01.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE10.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE11.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\FX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\DFX.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\GAMEHELP.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SLIDESHOW.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\MINIATTRACT.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PRELAUNCH.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/ARTWORK.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR0.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR1.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR2.IDX" >>build\log
@@ -196,7 +189,7 @@ rem
 rem precompute indexed files for HGR & DHGR action screenshots
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
-echo|set/p="indexing (D)HGR action..."
+echo|set/p="indexing (d)hgr action..."
 1>nul copy /y nul build\ACTIONHGR0
 1>nul copy /y nul build\ACTIONHGR1
 1>nul copy /y nul build\ACTIONHGR2
@@ -225,7 +218,7 @@ echo done
 rem precompute indexed files for GR action screenshots
 rem note: these can be padded because they are not compressed
 rem
-echo|set/p="indexing GR action..."
+echo|set/p="indexing gr action..."
 1>nul copy /y nul build\ACTIONGR
 for %%q in (res\ACTION.GR\*) do 1>nul >>build\ACTIONGR echo %%q
 cscript /nologo bin\buildss.js build\ACTIONGR* build\GR.IDX build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
@@ -236,6 +229,23 @@ rem note: these can not be padded because they are compressed and the decompress
 rem
 echo|set/p="indexing shr..."
 cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX build\TOTAL.DATA nul >>build\log
+echo done
+rem
+rem add IDX files to the combined index file and generate
+rem the index records that callers use to reference them
+rem
+echo|set/p="preparing index file..."
+1>nul copy /y nul build\TOTAL.IDX 
+cscript /nologo bin\addfile.js build\PRELAUNCH.IDX src\index\prelaunch.idx.a
+cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
+cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
+cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
+cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
+cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
+cscript /nologo bin\addfile.js build\MINIATTRACT.IDX src\index\miniattract.idx.a
+cscript /nologo bin\addfile.js build\DHGR.IDX src\index\dhgr.idx.a
+cscript /nologo bin\addfile.js build\GR.IDX src\index\gr.idx.a
+cscript /nologo bin\addfile.js build\ARTWORK.IDX src\index\artwork.idx.a
 echo done
 goto :EOF
 
