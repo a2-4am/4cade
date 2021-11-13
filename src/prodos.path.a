@@ -57,6 +57,10 @@ kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
 
+kTotalIndexFile
+         !byte 9
+         !raw  "TOTAL.IDX"
+
 kHGRTitleDirectory
          !byte 10
          !raw  "TITLE.HGR/"
@@ -76,13 +80,11 @@ gHGRActionIndexNumber
          !raw  "_"
          !raw  ".IDX"
 
-kDHGRActionIndexFile
-         !byte 8
-         !raw  "DHGR.IDX"
+kDHGRActionIndexRecord
+         !source "src/index/dhgr.idx.a"
 
-kGRActionIndexFile
-         !byte 6
-         !raw  "GR.IDX"
+kGRActionIndexRecord
+         !source "src/index/gr.idx.a"
 
 kDemoDirectory
          !byte 5
@@ -97,7 +99,7 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
-kPrelaunchIndexFile
+kPrelaunchIndexRecord
          !byte 13
          !raw  "PRELAUNCH.IDX"
 
@@ -109,33 +111,26 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kAttractModeIndexFile
-         !byte 11
-         !raw  "ATTRACT.IDX"
+kAttractModeIndexRecord
+         !source "src/index/attract.idx.a"
 
-kMiniAttractIndexFile
-         !byte 15
-         !raw  "MINIATTRACT.IDX"
+kMiniAttractIndexRecord
+         !source "src/index/miniattract.idx.a"
 
-kAttractModeSlideshowIndexFile
-         !byte 13
-         !raw  "SLIDESHOW.IDX"
+kAttractModeSlideshowIndexRecord
+         !source "src/index/slideshow.idx.a"
 
-kFXIndexFile
-         !byte 6
-         !raw  "FX.IDX"
+kFXIndexRecord
+         !source "src/index/fx.idx.a"
 
-kDFXIndexFile
-         !byte 7
-         !raw  "DFX.IDX"
+kDFXIndexRecord
+         !source "src/index/dfx.idx.a"
 
-kGameHelpIndexFile
-         !byte 12
-         !raw  "GAMEHELP.IDX"
+kGameHelpIndexRecord
+         !source "src/index/gamehelp.idx.a"
 
-kSHRArtworkIndexFile
-         !byte 11
-         !raw  "ARTWORK.IDX"
+kSHRArtworkIndexRecord
+         !source "src/index/artwork.idx.a"
 
 kCreditsFile
          !byte 7

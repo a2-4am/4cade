@@ -20,10 +20,10 @@ Help
          bcs   @global
          +ST16 @game
 
-         jsr   LoadFile
-         !word kRootDirectory
-         !word kGameHelpIndexFile
-@okvsPtr !word $6000
+         jsr   LoadIndexedFile
+         !word kTotalIndexFile
+@okvsPtr !word gSearchCache
+         !word kGameHelpIndexRecord
 
          jsr   okvs_find
          !word @okvsPtr

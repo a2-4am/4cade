@@ -2,6 +2,7 @@
 
 LAUNCHER.SYSTEM=Type(FF),AuxType(2000),Access(C3)
 TOTAL.DATA=Type(06),AuxType(0000),Access(C3)
+TOTAL.IDX=Type(06),AuxType(0000),Access(C3)
 PREFS.CONF=Type(04),AuxType(BD00),Access(C3)
 ATTRACT.IDX=Type(06),AuxType(6000),Access(C3)
 MINIATTRACT.IDX=Type(06),AuxType(6000),Access(C3)

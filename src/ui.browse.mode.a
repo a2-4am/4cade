@@ -85,6 +85,8 @@ notLastGame
          +STX16 gGameToLaunch
          jmp   OnBrowseChanged
 
+ReloadIndexAndLaunch
+         jsr   ReloadSearchIndex
 OnBrowseLaunch
          jsr   PlayGame
          jsr   BlankHGR
@@ -96,13 +98,11 @@ OnBrowseCheat
 
 OnBrowseTab
          jsr   MiniAttractMode
-         pha                         ; must reload search index before calling either
-         jsr   ReloadSearchIndex     ; PlayGame or LoadGameTitleOffscreen, because
-         pla                         ; mini attract mode may have clobbered all of main memory
          cmp   #$8D
-         beq   OnBrowseLaunch
+         beq   ReloadIndexAndLaunch
          ; execution falls through here
 ForceBrowseChanged
+         jsr   ReloadSearchIndex
          bit   CLEARKBD
          ; execution falls through here
 OnBrowseChanged

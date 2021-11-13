@@ -133,10 +133,10 @@ gMachineInDHGRMode=*+1
 ;        $6000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadDHGRTransition
-         jsr   LoadFile              ; load DHGR transition effects list into $6000
-         !word kRootDirectory
-         !word kDFXIndexFile
+         jsr   LoadIndexedFile       ; load DHGR transition effects list into $6000
+         !word kTotalIndexFile
 -        !word $6000
+         !word kDFXIndexRecord
 
          jsr   pref_get              ; get DHGR transition effect from prefs
          !word kNextDFX
@@ -320,10 +320,10 @@ RedrawForDHGR
 LoadIndexedDHGRFile
 ; in:    caller has set IndexedDHGRFilename
 ; out:   all flags & registers clobbered
-         jsr   LoadFile              ; load index file into $4000
-         !word kRootDirectory
-         !word kDHGRActionIndexFile
+         jsr   LoadIndexedFile       ; load index file into $4000
+         !word kTotalIndexFile
 -        !word $4000
+         !word kDHGRActionIndexRecord
 
          jsr   okvs_find
          !word -

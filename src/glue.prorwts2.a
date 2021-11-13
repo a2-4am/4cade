@@ -175,6 +175,8 @@ LoadIndexedFile
          jsr   @set_nameaddr
          +LDPARAMPTR 5, zpword
          inc   $BF0E                 ; disable ROM mapping on return
+         jsr   SwitchToBank2
+         jsr   resetRoot
          ldx   #2
          ldy   #0
          lda   (zpword), y

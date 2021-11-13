@@ -101,10 +101,10 @@ SHRArtworkCallback
 LoadIndexedSHRFile
 ; in:    caller has populated IndexedSHRFilename
 ; out:   all flags & registers clobbered
-         jsr   LoadFile              ; load index file into $2000
-         !word kRootDirectory
-         !word kSHRArtworkIndexFile
+         jsr   LoadIndexedFile       ; load index file into $2000
+         !word kTotalIndexFile
 -        !word $2000
+         !word kSHRArtworkIndexRecord
 
          jsr   okvs_find
          !word -

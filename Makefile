@@ -27,7 +27,7 @@ CADIUS=cadius
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: asm index
+dsk: index asmproboot asmlauncher
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
@@ -46,13 +46,13 @@ dsk: asm index
 #
 	for f in \
 		build/TOTAL.DATA \
+	        build/TOTAL.IDX \
 		res/TITLE \
 		res/COVER \
 		res/HELP \
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
-		build/ATTRACT.IDX \
 		build/SEARCH00.IDX \
 		build/SEARCH01.IDX \
 		build/SEARCH10.IDX \
@@ -61,13 +61,6 @@ dsk: asm index
 		res/CACHE01.IDX \
 		res/CACHE10.IDX \
 		res/CACHE11.IDX \
-		build/FX.IDX \
-		build/DFX.IDX \
-		build/GAMEHELP.IDX \
-		build/SLIDESHOW.IDX \
-		build/MINIATTRACT.IDX \
-		build/PRELAUNCH.IDX \
-		build/ARTWORK.IDX \
 		build/HGR0.IDX \
 		build/HGR1.IDX \
 		build/HGR2.IDX \
@@ -75,8 +68,6 @@ dsk: asm index
 		build/HGR4.IDX \
 		build/HGR5.IDX \
 		build/HGR6.IDX \
-		build/DHGR.IDX \
-		build/GR.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -188,8 +179,20 @@ index: md asmfx asmprelaunch compress
 	[ -f build/ARTWORK.IDX ] || ((for f in res/ARTWORK.SHR/*; do \
 	    echo "$$(basename $$f)"; \
 	done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
-
-asm: asmlauncher asmfx asmprelaunch asmproboot
+#
+# add IDX files to the combined index file and generate
+# the index records that callers use to reference them
+#
+	bin/addfile.sh build/PRELAUNCH.IDX build/TOTAL.IDX > src/index/prelaunch.idx.a
+	bin/addfile.sh build/ATTRACT.IDX build/TOTAL.IDX > src/index/attract.idx.a
+	bin/addfile.sh build/FX.IDX build/TOTAL.IDX > src/index/fx.idx.a
+	bin/addfile.sh build/DFX.IDX build/TOTAL.IDX > src/index/dfx.idx.a
+	bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.IDX > src/index/gamehelp.idx.a
+	bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.IDX > src/index/slideshow.idx.a
+	bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.IDX > src/index/miniattract.idx.a
+	bin/addfile.sh build/DHGR.IDX build/TOTAL.IDX > src/index/dhgr.idx.a
+	bin/addfile.sh build/GR.IDX build/TOTAL.IDX > src/index/gr.idx.a
+	bin/addfile.sh build/ARTWORK.IDX build/TOTAL.IDX > src/index/artwork.idx.a
 
 asmlauncher: md
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>build/relbase.log

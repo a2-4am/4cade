@@ -68,7 +68,8 @@
 ;
 ; MAIN MEMORY DURING PER-GAME HELP
 ; 0800..     - help text
-; 6000..     - game help index file
+; 6000..9FFF - search index
+; A000..     - game help index file
 ;
 ;------------------------------------------------------------------------------
 
@@ -201,7 +202,7 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D401               ; constant
 iCurBlockHi    = $D403               ; constant
 launchpatch    = $D662               ; glue.launch.a
-iAddToPath     = $FE94               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iAddToPath     = $FEB6               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 itraverse      = $D964               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant

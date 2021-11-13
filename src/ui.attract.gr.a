@@ -103,10 +103,10 @@ GRActionCallback
 LoadIndexedGRFile
 ; in:    caller has set IndexedGRFilename
 ; out:   all flags & registers clobbered
-         jsr   LoadFile              ; load index file into $4600
-         !word kRootDirectory
-         !word kGRActionIndexFile
+         jsr   LoadIndexedFile       ; load index file into $4600
+         !word kTotalIndexFile
 -        !word $4600
+         !word kGRActionIndexRecord
 
          jsr   okvs_find
          !word -
