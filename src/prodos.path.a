@@ -93,6 +93,37 @@ kDHGRActionIndexRecord
 kGRActionIndexRecord
          !source "src/index/gr.idx.a"
 
+kHGRActionIndexLo
+         !byte <kHGRActionIndexRecord0
+         !byte <kHGRActionIndexRecord1
+         !byte <kHGRActionIndexRecord2
+         !byte <kHGRActionIndexRecord3
+         !byte <kHGRActionIndexRecord4
+         !byte <kHGRActionIndexRecord5
+         !byte <kHGRActionIndexRecord6
+kHGRActionIndexHi
+         !byte >kHGRActionIndexRecord0
+         !byte >kHGRActionIndexRecord1
+         !byte >kHGRActionIndexRecord2
+         !byte >kHGRActionIndexRecord3
+         !byte >kHGRActionIndexRecord4
+         !byte >kHGRActionIndexRecord5
+         !byte >kHGRActionIndexRecord6
+kHGRActionIndexRecord0
+         !source "src/index/hgr0.idx.a"
+kHGRActionIndexRecord1
+         !source "src/index/hgr1.idx.a"
+kHGRActionIndexRecord2
+         !source "src/index/hgr2.idx.a"
+kHGRActionIndexRecord3
+         !source "src/index/hgr3.idx.a"
+kHGRActionIndexRecord4
+         !source "src/index/hgr4.idx.a"
+kHGRActionIndexRecord5
+         !source "src/index/hgr5.idx.a"
+kHGRActionIndexRecord6
+         !source "src/index/hgr6.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
@@ -112,13 +143,6 @@ kDHGRTitleDirectory
 kAnimatedTitleDirectory
          !byte 15
          !raw  "TITLE.ANIMATED/"
-
-kHGRActionIndexFile
-         !byte 8
-         !raw  "HGR"
-gHGRActionIndexNumber
-         !raw  "_"
-         !raw  ".IDX"
 
 kDemoDirectory
          !byte 5

@@ -53,13 +53,6 @@ dsk: index asmproboot asmlauncher
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
-		build/HGR0.IDX \
-		build/HGR1.IDX \
-		build/HGR2.IDX \
-		build/HGR3.IDX \
-		build/HGR4.IDX \
-		build/HGR5.IDX \
-		build/HGR6.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -191,6 +184,13 @@ index: md asmfx asmprelaunch compress
 	bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.IDX > src/index/gamehelp.idx.a
 	bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.IDX > src/index/slideshow.idx.a
 	bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.IDX > src/index/miniattract.idx.a
+	bin/addfile.sh build/HGR0.IDX build/TOTAL.IDX > src/index/hgr0.idx.a
+	bin/addfile.sh build/HGR1.IDX build/TOTAL.IDX > src/index/hgr1.idx.a
+	bin/addfile.sh build/HGR2.IDX build/TOTAL.IDX > src/index/hgr2.idx.a
+	bin/addfile.sh build/HGR3.IDX build/TOTAL.IDX > src/index/hgr3.idx.a
+	bin/addfile.sh build/HGR4.IDX build/TOTAL.IDX > src/index/hgr4.idx.a
+	bin/addfile.sh build/HGR5.IDX build/TOTAL.IDX > src/index/hgr5.idx.a
+	bin/addfile.sh build/HGR6.IDX build/TOTAL.IDX > src/index/hgr6.idx.a
 	bin/addfile.sh build/DHGR.IDX build/TOTAL.IDX > src/index/dhgr.idx.a
 	bin/addfile.sh build/GR.IDX build/TOTAL.IDX > src/index/gr.idx.a
 	bin/addfile.sh build/ARTWORK.IDX build/TOTAL.IDX > src/index/artwork.idx.a
