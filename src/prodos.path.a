@@ -103,10 +103,6 @@ kPrelaunchIndexRecord
          !byte 13
          !raw  "PRELAUNCH.IDX"
 
-kStandardPrelaunch
-         !byte 8
-         !raw  "STANDARD"
-
 kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
