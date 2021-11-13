@@ -43,8 +43,8 @@
  - Jellyfish
  - Jump Jet
  - Lamb Chops!
- - Lethal Labyrinth
  - Lemmings
+ - Lethal Labyrinth
  - Lunar Leepers
  - MIRV
  - Marauder
@@ -53,8 +53,8 @@
  - Neon
  - Neut Tower
  - Neutrons
- - On The Run
  - Oil's Well
+ - On The Run
  - Peeping Tom
  - Pegasus ][
  - Pengo
@@ -85,8 +85,8 @@
  - Talon
  - Teleport
  - Teritory
- - The Chase on Tom Sawyer's Island
  - The Caverns of Freitag
+ - The Chase on Tom Sawyer's Island
  - The Movie Monster Game
  - The Snapper
  - The Space Ark
