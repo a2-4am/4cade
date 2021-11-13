@@ -100,8 +100,7 @@ kFXDirectory
          !raw  "FX/"
 
 kPrelaunchIndexRecord
-         !byte 13
-         !raw  "PRELAUNCH.IDX"
+         !source "src/index/prelaunch.idx.a"
 
 kGlobalPrefsFilename
          !byte 10
