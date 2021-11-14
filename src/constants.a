@@ -11,21 +11,20 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E8FF..FFEE - main program code
+; E8F2..FFEE - main program code
 ; FFEF..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
-; D000..D3FF - ProRWTS data
-; D400..D6C3 - ProRWTS code
-; D6C4..DAB9 - ProRWTS glue code
-; DABA..DABF - backup of stack (during gameplay and self-running demos)
-; DAC0..DAC5 - okvs cache (attract state saved across self-running demo)
+; D000..D5FF - ProRWTS data
+; D600..D8B4 - ProRWTS code
+; D8C5..DC86 - ProRWTS glue code
+; DC87..DC8C - backup of stack (during gameplay and self-running demos)
+; DC8D..DC92 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
-; DBB4..DBFF - (de)acceleration function
-; DC00..DFFF - unused
+; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
 ; 6000..9FFF - search index
@@ -176,7 +175,7 @@ MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C"
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBB4
+DisableAccelerator = $DFB4
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MockingboardStuff
@@ -198,11 +197,11 @@ CHEATS_ENABLED = %00001000
 PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be determined at build-time
 
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
-iCurBlockLo    = $D401               ; constant
-iCurBlockHi    = $D403               ; constant
-launchpatch    = $D662               ; glue.launch.a
-iAddToPath     = $FEA5               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D964               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iCurBlockLo    = $D601               ; constant
+iCurBlockHi    = $D603               ; constant
+launchpatch    = $D853               ; glue.launch.a
+iAddToPath     = $FEC7               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $DB31               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant
