@@ -45,12 +45,12 @@ ver_02 = 1
                 allow_saplings=1        ;enable support for saplings
                 allow_trees  = 1        ;enable support for tree files, as opposed to only seedlings and saplings
                                         ;required in RWTS mode if file > 128kb
-                fast_trees   = 0        ;keep tree block in memory, requires an additional 512 bytes of RAM
+                fast_trees   = 1        ;keep tree block in memory, requires an additional 512 bytes of RAM
                 always_trees = 0        ;set to 1 if the only file access involves tree files
                                         ;not compatible with allow_subdir, allow_saplings
                                         ;required in RWTS mode if allow_trees is enabled
                 detect_treof = 0        ;detect EOF during read of tree files
-                fast_subindex= 0        ;keep subindex block in memory, requires an additional 512 bytes of RAM
+                fast_subindex= 1        ;keep subindex block in memory, requires an additional 512 bytes of RAM
                                         ;halves the disk access for double the speed (ideal for RWTS mode)
                 allow_sparse = 1        ;enable support for reading sparse files
                 write_sparse = 0        ;enable support for writing to sparse files (blocks are allocated even if empty)
@@ -93,7 +93,7 @@ ver_02 = 1
                 reloc     = $fe00       ;page-aligned, as high as possible, the ideal value will be shown on mismatch
     } ;PASS2
   } else { ;load_high = 0
-                reloc     = $d400       ;page-aligned, but otherwise wherever you want
+                reloc     = $d600       ;page-aligned, but otherwise wherever you want
   } ;load_high = 1
 } else { ;load_banked = 0
   !if load_high = 1 {
@@ -1453,9 +1453,6 @@ rdwrloop
     !if aligned_read = 0 {
                 php
     } ;aligned_read = 0
-                lda     #>dirbuf
-                sta     adrhi
-                sty     adrlo
 
                 ;fetch tree data block and read it
 
@@ -1490,6 +1487,8 @@ noteof1
     } ;detect_treof = 1
 
     !if fast_trees = 0 {
+                lda     #>dirbuf
+                sta     adrhi
                 jsr     seekrd
     } else { ;fast_trees = 1
                 jsr     readdirsel
@@ -2528,8 +2527,20 @@ seek1           sta     blkidx
 
 hddopendir
 unrhddblocklo = unrelochdd + (* - reloc)
+!ifdef PASS2 {
+} else { ;PASS2
+  !if (* + 1) != iCurBlockLo {
+    !error "iCurBlockLo=",* + 1, ", fix constants.a, rebuild prelaunch"
+  }
+}
                 ldx     #2
 unrhddblockhi = unrelochdd + (* - reloc)
+!ifdef PASS2 {
+} else { ;PASS2
+  !if (* + 1) != iCurBlockHi {
+    !error "iCurBlockHi=",* + 1, ", fix constants.a, rebuild prelaunch"
+  }
+}
                 lda     #0
                 jsr     hddreaddirsel
 
@@ -2794,6 +2805,7 @@ dirbufpatch11
                 ldy     #>hdddirbuf
                 bvc     +
         !if fast_trees = 1 {
+treebufpatch1
                 ldy     #>hddtreebuf
         } ;fast_trees = 1
                 sty     istree
@@ -3070,10 +3082,6 @@ encbufpatch2
     !if aligned_read = 0 {
                 php
     } ;aligned_read = 0
-dirbufpatch12
-                lda     #>hdddirbuf
-                sta     adrhi
-                sty     adrlo
   } else { ;rwts_mode = 1
     !if fast_subindex = 0 {
                 ;read whenever block index changes
@@ -3148,16 +3156,16 @@ blkidx = * + 1
     !if rwts_mode = 0 {
                 inc     treeidx
     } ;rwts_mode = 0
-dirbufpatch13
                 ldx     hdddirbuf, y
-dirbufpatch14
                 lda     hdddirbuf + 256, y
   } else { ;fast_trees = 1
                 ldy     treeidx
     !if rwts_mode = 0 {
                 inc     treeidx
     } ;rwts_mode = 0
+treebufpatch2
                 ldx     hddtreebuf, y
+treebufpatch3
                 lda     hddtreebuf + 256, y
   } ;fast_trees = 0
   !if detect_treof = 1 {
@@ -3182,6 +3190,9 @@ hddnoteof1
   } ;detect_treof = 1
 
   !if fast_trees = 0 {
+dirbufpatch12
+                lda     #>hdddirbuf
+                sta     adrhi
                 jsr     hddseekrd
   } else { ;fast_trees = 1
                 jsr     hddreaddirsel
@@ -3752,7 +3763,7 @@ hdddataend
         !pseudopc ((dataend + $ff) & -256) {
           dirbuf = *
         }
-        !if aligned_read = 0 {
+        !if ((aligned_read xor 1) + enable_write) > 0 {
           encbuf = dirbuf + $200
         } ;aligned_read
         !if allow_trees = 1 {
@@ -3892,15 +3903,15 @@ hdddataend
       }
       !if ((aligned_read xor 1) + rwts_mode) > 0 {
         !if fast_subindex = 0 {
-          hddencbuf = hdddirbuf - $200
+          hddencbuf = hdddirbuf ;writes come from cache
         } else { ;fast_subindex = 1
-          hddencbuf = hdddirbuf + $200
+          hddencbuf = hdddirbuf - $200
         } ;fast_subindex
       } ;aligned_read = 0 or rwts_mode = 1
       !if allow_trees = 1 {
         !if fast_trees = 1 {
           !if ((aligned_read xor 1) + enable_write) > 0 {
-            hddtreebuf = hddencbuf + $200
+            hddtreebuf = hddencbuf + $400
           } else { ;aligned_read = 1 and enable_write = 0
             hddtreebuf = hdddirbuf + $200
           } ;aligned_read = 0 or enable_write = 1
