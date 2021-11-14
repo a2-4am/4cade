@@ -12,6 +12,8 @@
  - Bats in the Belfry
  - Beach Landing
  - Bezare
+ - Bezoff
+ - Bongo's Bash
  - Boulder Dash II
  - Bug Battle
  - C'est La Vie
@@ -26,8 +28,10 @@
  - Demonic Decks
  - Depth Charge
  - Dive Bomber
+ - Dragonfire
  - Early Bird
  - Escape
+ - Federation
  - Firebug
  - Fly Wars
  - Galactic Attack
@@ -40,6 +44,7 @@
  - Jump Jet
  - Lamb Chops!
  - Lemmings
+ - Lethal Labyrinth
  - Lunar Leepers
  - MIRV
  - Marauder
@@ -48,13 +53,14 @@
  - Neon
  - Neut Tower
  - Neutrons
- - On The Run
  - Oil's Well
+ - On The Run
  - Peeping Tom
  - Pegasus ][
  - Pengo
  - Pig Pen
  - Planetoids
+ - Raiders of the Lost Ring
  - Rear Guard
  - Retro Fever
  - Retro-Ball
@@ -67,9 +73,12 @@
  - Spy vs Spy
  - Spy vs Spy II
  - Spy vs Spy III
+ - Star Avenger
+ - Star Clones
  - Star Dance
  - Star Maze
  - Starball
+ - Starmines
  - Super Huey
  - Super Puckman
  - Super Taxman 2
@@ -77,16 +86,20 @@
  - Teleport
  - Teritory
  - The Caverns of Freitag
+ - The Chase on Tom Sawyer's Island
  - The Movie Monster Game
  - The Snapper
  - The Space Ark
  - The Voyage of the Valkyrie
  - Time Pilot
  - Titan Cronus
+ - Torax
  - Track Attack
  - Trompers
+ - Tsunami
  - Video Vegas
  - Vortex
+ - Wall Defence
  - Wargle
  - Whomper Stomper
  - Willy Byte in the Digital Dimension
@@ -125,10 +138,11 @@
 ## Enhancements & bug fixes
 
  - Upgrade Bejeweled to v2.7 (thanks Jeremy R.)
+ - Upgrade Columns (thanks Tom G.)
  - Upgrade Manic Miner to v1.1
  - Fix Mockingboard issues in Apple Cider Spider, Bouncing Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
- - Add more game help (thanks Andrew R)
- - Add even more super hi-res artwork for IIgs users (thanks Alex L, Brian Wiser, mr_breaddoughrising, Antoine V, Andrew R, Tony D, cosmoza)
+ - Add more game help (thanks Andrew R.)
+ - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M., Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza)
 
 # Revision 4.01 / serial number 20210218
 

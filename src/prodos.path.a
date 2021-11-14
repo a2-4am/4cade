@@ -53,58 +53,18 @@ AddToPath
 @done
          rts
 
-kTotalDataFile
-         !byte 10
-         !raw  "TOTAL.DATA"
+kSearchIndexRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
 
-kTotalIndexFile
-         !byte 9
-         !raw  "TOTAL.IDX"
-
-kHGRTitleDirectory
-         !byte 10
-         !raw  "TITLE.HGR/"
-
-kDHGRTitleDirectory
-         !byte 11
-         !raw  "TITLE.DHGR/"
-
-kAnimatedTitleDirectory
-         !byte 15
-         !raw  "TITLE.ANIMATED/"
-
-kHGRActionIndexFile
-         !byte 8
-         !raw  "HGR"
-gHGRActionIndexNumber
-         !raw  "_"
-         !raw  ".IDX"
-
-kDHGRActionIndexRecord
-         !source "src/index/dhgr.idx.a"
-
-kGRActionIndexRecord
-         !source "src/index/gr.idx.a"
-
-kDemoDirectory
-         !byte 5
-         !raw  "DEMO/"
-
-kGameDirectory
-         !byte 2
-         !raw  "X/"
-kGameDirectoryLen = 3 ; we need this elsewhere
-
-kFXDirectory
-         !byte 3
-         !raw  "FX/"
+kSearchCacheRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
 
 kPrelaunchIndexRecord
          !source "src/index/prelaunch.idx.a"
-
-kGlobalPrefsFilename
-         !byte 10
-         !raw  "PREFS.CONF"
 
 kAttractModeIndexRecord
          !source "src/index/attract.idx.a"
@@ -126,6 +86,80 @@ kGameHelpIndexRecord
 
 kSHRArtworkIndexRecord
          !source "src/index/artwork.idx.a"
+
+kDHGRActionIndexRecord
+         !source "src/index/dhgr.idx.a"
+
+kGRActionIndexRecord
+         !source "src/index/gr.idx.a"
+
+kHGRActionIndexLo
+         !byte <kHGRActionIndexRecord0
+         !byte <kHGRActionIndexRecord1
+         !byte <kHGRActionIndexRecord2
+         !byte <kHGRActionIndexRecord3
+         !byte <kHGRActionIndexRecord4
+         !byte <kHGRActionIndexRecord5
+         !byte <kHGRActionIndexRecord6
+kHGRActionIndexHi
+         !byte >kHGRActionIndexRecord0
+         !byte >kHGRActionIndexRecord1
+         !byte >kHGRActionIndexRecord2
+         !byte >kHGRActionIndexRecord3
+         !byte >kHGRActionIndexRecord4
+         !byte >kHGRActionIndexRecord5
+         !byte >kHGRActionIndexRecord6
+kHGRActionIndexRecord0
+         !source "src/index/hgr0.idx.a"
+kHGRActionIndexRecord1
+         !source "src/index/hgr1.idx.a"
+kHGRActionIndexRecord2
+         !source "src/index/hgr2.idx.a"
+kHGRActionIndexRecord3
+         !source "src/index/hgr3.idx.a"
+kHGRActionIndexRecord4
+         !source "src/index/hgr4.idx.a"
+kHGRActionIndexRecord5
+         !source "src/index/hgr5.idx.a"
+kHGRActionIndexRecord6
+         !source "src/index/hgr6.idx.a"
+
+kTotalDataFile
+         !byte 10
+         !raw  "TOTAL.DATA"
+
+kTotalIndexFile
+         !byte 9
+         !raw  "TOTAL.IDX"
+
+kHGRTitleDirectory
+         !byte 10
+         !raw  "TITLE.HGR/"
+
+kDHGRTitleDirectory
+         !byte 11
+         !raw  "TITLE.DHGR/"
+
+kAnimatedTitleDirectory
+         !byte 15
+         !raw  "TITLE.ANIMATED/"
+
+kDemoDirectory
+         !byte 5
+         !raw  "DEMO/"
+
+kGameDirectory
+         !byte 2
+         !raw  "X/"
+kGameDirectoryLen = 3 ; we need this elsewhere
+
+kFXDirectory
+         !byte 3
+         !raw  "FX/"
+
+kGlobalPrefsFilename
+         !byte 10
+         !raw  "PREFS.CONF"
 
 kCreditsFile
          !byte 7
@@ -166,21 +200,3 @@ kDecrunchFile
 kJoystickFile
          !byte 8
          !raw  "JOYSTICK"
-
-kSearchIndexFile
-         !byte 12
-         !raw  "SEARCH"
-gSearchHasJoystick
-         !raw  "_"
-gSearchHas128K
-         !raw  "_"
-         !raw  ".IDX"
-
-kSearchCacheFile
-         !byte 11
-         !raw  "CACHE"
-gCacheHasJoystick
-         !raw  "_"
-gCacheHas128K
-         !raw  "_"
-         !raw  ".IDX"

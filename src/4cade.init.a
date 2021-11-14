@@ -394,42 +394,40 @@ CopyDevs
          ora   MachineStatus
          sta   MachineStatus         ; set bit 3 of MachineStatus
 
-         ldx   #$30                  ; Look at other bits of MachineStatus to build
-         lda   MachineStatus         ; the filename of the search index to use.
-         and   #HAS_JOYSTICK         ; There are 4 files on disk, named
-         beq   +                     ; SEARCH00.IDX, SEARCH01.IDX, SEARCH10.IDX, SEARCH11.IDX,
-         inx                         ; which correspond to <games-requiring-a-joystick> X
-+        stx   gSearchHasJoystick    ; <games-requiring-128K>.
-         stx   gCacheHasJoystick
-         ldx   #$30                  ; Once we construct the filename, we'll forever after
-         lda   MachineStatus         ; load and reload the correct list of games that
-         and   #HAS_128K             ; this machine can play.
-         beq   +
-         inx
-+        stx   gSearchHas128K
-         stx   gCacheHas128K
+         rol
+         rol
+         rol
+         rol
+         and   #%00000110
+         tax                         ; X in (0,2,4,6)
+         ldy   kGameCounts, x
+         sty   GameCount             ; store total game count based on based on (has-joystick) X (has-128K)
+         sty   SAVE
+         ldy   kGameCounts+1, x
+         sty   GameCount+1
+         sty   SAVE+1
+         lsr
+         tax                         ; X in (0,1,2,3)
+         lda   kSearchIndexLo, x
+         sta   @searchIndexSrc+1     ; set up search index record based on (has-joystick) X (has-128K)
+         lda   kSearchIndexHi, x
+         sta   @searchIndexSrc+2
+         lda   kSearchCacheLo, x
+         sta   @searchCacheSrc+1     ; set up search cache record based on (has-joystick) X (has-128K)
+         lda   kSearchCacheHi, x
+         sta   @searchCacheSrc+2
+         ldy   #5
+@searchIndexSrc
+         lda   $FDFD, y              ; SMC
+         sta   kSearchIndexRecord, y
+@searchCacheSrc
+         lda   $FDFD, y
+         sta   kSearchCacheRecord, y
+         dey
+         bpl   @searchIndexSrc
 
-         lda   #0                    ; Read just the first 2 bytes of the search index
-         sta   sizelo                ; to get the size, which is the number of games.
-         lda   #2                    ; (we will load the entire search index later.)
-         sta   sizehi
-         jsr   SwitchToBank2
-         lda   #$24                  ; patch out code that calculates file size during load
-         sta   LoadFileInternal_SizePatch
-         jsr   SwitchToBank1
-         jsr   ReloadSearchIndex     ; this will really only load the first 2 bytes
-         jsr   SwitchToBank2
-         lda   #$85                  ; restore code that calculates file size during load
-         sta   LoadFileInternal_SizePatch
-         jsr   SwitchToBank1
-         +LDADDR gSearchStore
-         jsr   okvs_len              ; this works because it only looks at the first two bytes
-         +LD16 WCOUNT
-         +ST16 GameCount
-         +ST16 SAVE
-
-         ; calculate and update visible game count (3-digit decimal number as ASCII string)
-         dey                         ; Y = 0
+         ; convert GameCount (word) to VisibleGameCount (3-digit decimal number as ASCII string)
+         iny                         ; Y = 0
 @outer
          lda   #0
          pha
@@ -464,3 +462,45 @@ CopyDevs
          !byte 100
          !byte 10
          !byte 1
+
+kSearchIndexLo
+         !byte <kSearchIndexRecord00
+         !byte <kSearchIndexRecord01
+         !byte <kSearchIndexRecord10
+         !byte <kSearchIndexRecord11
+kSearchIndexHi
+         !byte >kSearchIndexRecord00
+         !byte >kSearchIndexRecord01
+         !byte >kSearchIndexRecord10
+         !byte >kSearchIndexRecord11
+kSearchCacheLo
+         !byte <kSearchCacheRecord00
+         !byte <kSearchCacheRecord01
+         !byte <kSearchCacheRecord10
+         !byte <kSearchCacheRecord11
+kSearchCacheHi
+         !byte >kSearchCacheRecord00
+         !byte >kSearchCacheRecord01
+         !byte >kSearchCacheRecord10
+         !byte >kSearchCacheRecord11
+kSearchIndexRecord00
+         !source "src/index/search00.idx.a"
+kSearchIndexRecord01
+         !source "src/index/search01.idx.a"
+kSearchIndexRecord10
+         !source "src/index/search10.idx.a"
+kSearchIndexRecord11
+         !source "src/index/search11.idx.a"
+kSearchCacheRecord00
+         !source "src/index/cache00.idx.a"
+kSearchCacheRecord01
+         !source "src/index/cache01.idx.a"
+kSearchCacheRecord10
+         !source "src/index/cache10.idx.a"
+kSearchCacheRecord11
+         !source "src/index/cache11.idx.a"
+kGameCounts
+         !source "src/index/count00.a"
+         !source "src/index/count01.a"
+         !source "src/index/count10.a"
+         !source "src/index/count11.a"

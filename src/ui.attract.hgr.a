@@ -159,18 +159,21 @@ LoadIndexedHGRFile
          ldy   #1
          lda   (PTR), y
          sec
-         sbc   #$41
-         lsr
-         lsr
-         clc
-         adc   #$30                  ; A = "0".."6" (ASCII)
-         sta   gHGRActionIndexNumber ; part of kHGRActionIndexFile
+         sbc   #$41                  ; A in [0..25]
+         lsr                         ; A in [0..15]
+         lsr                         ; A in [0..7]
+         tax
+         lda   kHGRActionIndexLo, x
+         sta   HGRActionIndexRecord
+         lda   kHGRActionIndexHi, x
+         sta   HGRActionIndexRecord+1
 
-         jsr   LoadFile              ; load index file into $4000
-         !word kRootDirectory
-         !word kHGRActionIndexFile
+         jsr   LoadIndexedFile       ; load index file into $4000
+         !word kTotalIndexFile
 HGRActionIndexPtr
          !word $4000
+HGRActionIndexRecord
+         !word $FDFD                 ; SMC
 
          jsr   okvs_find
          !word HGRActionIndexPtr

@@ -59,15 +59,14 @@
 ; 2000..5FFF - hi-res screens cleared
 ; A000..     - prelaunch index file
 ;
-; MAIN MEMORY DURING CREDITS
+; MAIN MEMORY DURING CREDITS (preserves search index and cache)
 ; 0800..     - credits text
 ;
-; MAIN MEMORY DURING GLOBAL HELP
+; MAIN MEMORY DURING GLOBAL HELP (preserves search index and cache)
 ; 0800..     - help text
 ;
-; MAIN MEMORY DURING PER-GAME HELP
+; MAIN MEMORY DURING PER-GAME HELP (clobbers search cache)
 ; 0800..     - help text
-; 6000..9FFF - search index
 ; A000..     - game help index file
 ;
 ;------------------------------------------------------------------------------

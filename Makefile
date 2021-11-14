@@ -53,21 +53,6 @@ dsk: index asmproboot asmlauncher
 		build/PREFS.CONF \
 		build/CREDITS \
 		build/HELPTEXT \
-		build/SEARCH00.IDX \
-		build/SEARCH01.IDX \
-		build/SEARCH10.IDX \
-		build/SEARCH11.IDX \
-		res/CACHE00.IDX \
-		res/CACHE01.IDX \
-		res/CACHE10.IDX \
-		res/CACHE11.IDX \
-		build/HGR0.IDX \
-		build/HGR1.IDX \
-		build/HGR2.IDX \
-		build/HGR3.IDX \
-		build/HGR4.IDX \
-		build/HGR5.IDX \
-		build/HGR6.IDX \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -116,13 +101,14 @@ index: md asmfx asmprelaunch compress
 	    [ -f build/GAMEHELP/"$$(basename $$f)" ] || (bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"); \
 	done
 #
-# create search indexes: (game-requires-joystick) X (game-requires-128K)
+# create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
+# in the form of OKVS data structures, plus game counts in the form of source files
 #
 	[ -f build/GAMES.CONF ] || (awk '!/^$$|^#/' < res/GAMES.CONF > build/GAMES.CONF)
-	[ -f build/SEARCH00.IDX ] || (grep "^00" < build/GAMES.CONF | bin/buildsearch.sh > build/SEARCH00.IDX)
-	[ -f build/SEARCH01.IDX ] || (grep "^0" < build/GAMES.CONF | bin/buildsearch.sh > build/SEARCH01.IDX)
-	[ -f build/SEARCH10.IDX ] || (grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh > build/SEARCH10.IDX)
-	[ -f build/SEARCH11.IDX ] || (bin/buildsearch.sh < build/GAMES.CONF > build/SEARCH11.IDX)
+	[ -f build/SEARCH00.IDX ] || (grep "^00" < build/GAMES.CONF | bin/buildsearch.sh src/index/count00.a > build/SEARCH00.IDX)
+	[ -f build/SEARCH01.IDX ] || (grep "^0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count01.a > build/SEARCH01.IDX)
+	[ -f build/SEARCH10.IDX ] || (grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count10.a > build/SEARCH10.IDX)
+	[ -f build/SEARCH11.IDX ] || (bin/buildsearch.sh src/index/count11.a < build/GAMES.CONF > build/SEARCH11.IDX)
 #
 # create a sorted list of game filenames, without metadata or display names
 #
@@ -183,6 +169,14 @@ index: md asmfx asmprelaunch compress
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
 #
+	bin/addfile.sh build/SEARCH00.IDX build/TOTAL.IDX > src/index/search00.idx.a
+	bin/addfile.sh res/CACHE00.IDX build/TOTAL.IDX > src/index/cache00.idx.a
+	bin/addfile.sh build/SEARCH01.IDX build/TOTAL.IDX > src/index/search01.idx.a
+	bin/addfile.sh res/CACHE01.IDX build/TOTAL.IDX > src/index/cache01.idx.a
+	bin/addfile.sh build/SEARCH10.IDX build/TOTAL.IDX > src/index/search10.idx.a
+	bin/addfile.sh res/CACHE10.IDX build/TOTAL.IDX > src/index/cache10.idx.a
+	bin/addfile.sh build/SEARCH11.IDX build/TOTAL.IDX > src/index/search11.idx.a
+	bin/addfile.sh res/CACHE11.IDX build/TOTAL.IDX > src/index/cache11.idx.a
 	bin/addfile.sh build/PRELAUNCH.IDX build/TOTAL.IDX > src/index/prelaunch.idx.a
 	bin/addfile.sh build/ATTRACT.IDX build/TOTAL.IDX > src/index/attract.idx.a
 	bin/addfile.sh build/FX.IDX build/TOTAL.IDX > src/index/fx.idx.a
@@ -190,6 +184,13 @@ index: md asmfx asmprelaunch compress
 	bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.IDX > src/index/gamehelp.idx.a
 	bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.IDX > src/index/slideshow.idx.a
 	bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.IDX > src/index/miniattract.idx.a
+	bin/addfile.sh build/HGR0.IDX build/TOTAL.IDX > src/index/hgr0.idx.a
+	bin/addfile.sh build/HGR1.IDX build/TOTAL.IDX > src/index/hgr1.idx.a
+	bin/addfile.sh build/HGR2.IDX build/TOTAL.IDX > src/index/hgr2.idx.a
+	bin/addfile.sh build/HGR3.IDX build/TOTAL.IDX > src/index/hgr3.idx.a
+	bin/addfile.sh build/HGR4.IDX build/TOTAL.IDX > src/index/hgr4.idx.a
+	bin/addfile.sh build/HGR5.IDX build/TOTAL.IDX > src/index/hgr5.idx.a
+	bin/addfile.sh build/HGR6.IDX build/TOTAL.IDX > src/index/hgr6.idx.a
 	bin/addfile.sh build/DHGR.IDX build/TOTAL.IDX > src/index/dhgr.idx.a
 	bin/addfile.sh build/GR.IDX build/TOTAL.IDX > src/index/gr.idx.a
 	bin/addfile.sh build/ARTWORK.IDX build/TOTAL.IDX > src/index/artwork.idx.a

@@ -1,0 +1,65 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/REPTON",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+;+LOAD_FILE_KEEP_DIR
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR title
+         jsr   iLoadFileDirect
+
+         ldx   #9-1       ; we also need to copy the length byte
+-        lda   newpath,x
+         sta   $BFD0,x
+         dex
+         bpl   -
+
+         lda   #$60
+         sta   $086D
+         jsr   $0800      ; decompress1
+
+         lda   #$60
+         sta   $BA18
+         jsr   $BA03      ; decompress2
+
+         ldx   #5-1
+-        lda   patch1, x
+         sta   $06A3, x   ; ($06A6 in notes, second byte of patch also changes to $13)
+         dex
+         bpl   -          ; exit when user presses any key
+
+         ldx   #3-1
+-        lda   patch2, x
+         sta   $07A4, x
+         dex
+         bpl   -          ; exit at end of demo cycle
+
+         +DISABLE_ACCEL
+
+         jmp   $0767
+
+patch1   !byte $10,$13,$4C,$00,$01
+
+patch2   !byte $4C,$00,$01
+
+newpath
+         !byte 8
+         !text "X/REPTON"
+
+title    !byte x_e-x_b
+x_b      !text "X/REPTON/REPTON"
+x_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

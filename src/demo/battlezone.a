@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         ;jsr   EnableAccelerator
          +LOAD_FILE_AT title, $00
          +READ_ROM_NO_WRITE
 
@@ -73,7 +73,7 @@
          sta   $5576
          sta   $0B8E      ; disable sound
 
-         +DISABLE_ACCEL
+         ;+DISABLE_ACCEL
 
          jmp   $810
 

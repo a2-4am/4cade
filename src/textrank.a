@@ -34,14 +34,14 @@ InputBuffer
 ; out:   gSearchStore populated
 ;------------------------------------------------------------------------------
 ReloadSearchIndex
-         jsr   LoadFile              ; load appropriate search index into $8200
-         !word kRootDirectory
-         !word kSearchIndexFile
+         jsr   LoadIndexedFile       ; load appropriate search index into $8200
+         !word kTotalIndexFile
          !word gSearchIndex
-         jsr   LoadFile              ; load appropriate search cache into $B000
-         !word kRootDirectory
-         !word kSearchCacheFile
+         !word kSearchIndexRecord
+         jsr   LoadIndexedFile       ; load appropriate search cache into $B000
+         !word kTotalIndexFile
          !word gSearchCache
+         !word kSearchCacheRecord
          rts
 
 FindTitleInCache
