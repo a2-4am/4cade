@@ -29,7 +29,7 @@
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
 ; 6000..9FFF - search index
 ; A000..BCFF - search cache
-; BD00..BEFF - prefs buffer (clobbered if cheat mode changes)
+; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;
 ; MAIN MEMORY DURING MEGA-ATTRACT MODE
@@ -51,6 +51,7 @@
 ; 2000..5FFF - hi-res screens
 ; 6000..     - mini-attract configuration file (reloaded before each module)
 ; 6000..     - transition effect code (reloaded before each screenshot module)
+; BF00..BFFF - ProRWTS glue (reset after demo)
 ;
 ; MAIN MEMORY DURING GAME LAUNCH
 ; 0100..0105 - re-entry code
