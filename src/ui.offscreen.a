@@ -103,7 +103,7 @@ LoadGameTitleOffscreen
 
          eor   #$1F
          sta   @poke+2
-         sta   @peek+2               
+         sta   @peek+2
 @poke    sta   $3FFD                 ; SMC - clear screen hole before load
 
          jsr   LoadFile
@@ -111,12 +111,11 @@ LoadGameTitleOffscreen
 @fname   !word $FDFD                 ; SMC
          !byte $00
 @addrhi  !byte $FD                   ; SMC
-	 
+
 @peek    lda   $3FFD                 ; SMC
          cmp   #$4C                  ; Check if screen hole now contains a JMP
-         beq   +                     ; if so, file was not packed, so skip unpack
-         jsr   UnpackHGRTitle
-+        rts
+         beq   OFFSCREENRTS          ; if so, file was not packed, so skip unpack
+         jmp   UnpackHGRTitle
 
 @dhgr
          jsr   BlankDHGR
@@ -125,6 +124,7 @@ LoadGameTitleOffscreen
          jsr   LoadDHRFile
          !word kDHGRTitleDirectory
 +        !word $FDFD
+OFFSCREENRTS
          rts
 
 ;------------------------------------------------------------------------------
