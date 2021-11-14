@@ -22,9 +22,9 @@ source=$(mktemp)
      key=$(echo "$key" | cut -d"," -f2)
      echo "!byte ${#key}+${#value}+5"  # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
-     echo "!text \"$key\""             # OKVS key
+     echo "!text \"$key\""             # OKVS key (filename)
      echo "!byte ${#value}"            # OKVS value length
-     echo "!text \"$value\""           # OKVS value
+     echo "!text \"$value\""           # OKVS value (display name)
      echo "!byte 1"
      echo "!byte $((dhgr*128))+$cheat"
  done < "$records") > "$source"
