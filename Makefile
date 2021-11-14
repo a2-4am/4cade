@@ -169,6 +169,7 @@ index: md asmfx asmprelaunch compress
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
 #
+	rm -f build/TOTAL.IDX
 	bin/addfile.sh build/SEARCH00.IDX build/TOTAL.IDX > src/index/search00.idx.a
 	bin/addfile.sh res/CACHE00.IDX build/TOTAL.IDX > src/index/cache00.idx.a
 	bin/addfile.sh build/SEARCH01.IDX build/TOTAL.IDX > src/index/search01.idx.a
