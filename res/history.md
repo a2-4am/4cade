@@ -142,7 +142,7 @@
  - Upgrade Manic Miner to v1.1
  - Fix Mockingboard issues in Apple Cider Spider, Bouncing Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
  - Add more game help (thanks Andrew R.)
- - Add even more super hi-res artwork for IIgs users (thanks Alex L., Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza)
+ - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M., Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza)
 
 # Revision 4.01 / serial number 20210218
 
