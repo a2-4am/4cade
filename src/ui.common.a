@@ -68,6 +68,8 @@ BlankDHGR
          sta   WRITEAUXMEM
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
+         lda   #1
+         sta   OffscreenPage
 
          ; /!\ execution falls through here to DHGRMode
 ;------------------------------------------------------------------------------
@@ -92,9 +94,9 @@ DHGRMode
          sta   DHIRESOFF
 
          sta   DHIRESON              ; then turn DHGR on
-         bit   PAGE1
+         jsr   ToggleOffscreenPage
+         jsr   ShowOtherPage
          lda   #1
-         sta   OffscreenPage
          sta   gMachineInDHGRMode
          jsr   UnwaitForVBL
          jmp   HGRMode

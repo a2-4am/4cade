@@ -261,8 +261,12 @@ gDrawingOnscreen=*+1
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
 @uidone  lda   #0
          sta   gDrawingOnscreen
-         clc
-         jmp   ShowOtherPage
+         bit   MachineStatus
+         bvc   +
+         bit   gGameToLaunchInfo
+         bpl   +
+         jmp   ShowOtherDHGRPage
++        jmp   ShowOtherPage
 
 CheckCheats
          ldx   #kCheatsEnabled
@@ -277,11 +281,12 @@ gGameToLaunchInfo=*+1
          sta   SAVE
          lda   kCheatDescriptionHi,x
          sta   SAVE+1
--        rts
+OVERLAYRTS
+         rts
 
 MaybeRedrawUIForDHGR
          bit   MachineStatus
-         bvc   -
+         bvc   OVERLAYRTS
          bit   gGameToLaunchInfo
-         bpl   -
+         bpl   OVERLAYRTS
          jmp   RedrawForDHGR
