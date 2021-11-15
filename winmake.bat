@@ -51,30 +51,12 @@ echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH00.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH01.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH10.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\SEARCH11.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE00.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE01.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE10.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\CACHE11.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR0.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR1.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR2.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR3.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR4.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR5.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/HGR6.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/DHGR.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build/GR.IDX" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ACTION.GR" "res\ACTION.GR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
@@ -141,10 +123,10 @@ rem create search indexes: (game-requires-joystick) X (game-requires-128K)
 rem
 echo|set/p="indexing search..."
 cscript /nologo bin\builddisplaynames.js
-cscript /nologo bin\buildsearch.js "00" build\SEARCH00.IDX
-cscript /nologo bin\buildsearch.js "0" build\SEARCH01.IDX
-cscript /nologo bin\buildsearch.js ".0" build\SEARCH10.IDX
-cscript /nologo bin\buildsearch.js "." build\SEARCH11.IDX
+cscript /nologo bin\buildsearch.js "00" src\index\count00.a build\SEARCH00.IDX
+cscript /nologo bin\buildsearch.js "0" src\index\count01.a build\SEARCH01.IDX
+cscript /nologo bin\buildsearch.js ".0" src\index\count10.a build\SEARCH10.IDX
+cscript /nologo bin\buildsearch.js "." src\index\count11.a build\SEARCH11.IDX
 echo done
 rem
 rem precompute indexed files for prelaunch
@@ -236,6 +218,14 @@ rem the index records that callers use to reference them
 rem
 echo|set/p="preparing index file..."
 1>nul copy /y nul build\TOTAL.IDX 
+cscript /nologo bin\addfile.js build\SEARCH00.IDX src\index\search00.idx.a
+cscript /nologo bin\addfile.js res\CACHE00.IDX src\index\cache00.idx.a
+cscript /nologo bin\addfile.js build\SEARCH01.IDX src\index\search01.idx.a
+cscript /nologo bin\addfile.js res\CACHE01.IDX src\index\cache01.idx.a
+cscript /nologo bin\addfile.js build\SEARCH10.IDX src\index\search10.idx.a
+cscript /nologo bin\addfile.js res\CACHE10.IDX src\index\cache10.idx.a
+cscript /nologo bin\addfile.js build\SEARCH11.IDX src\index\search11.idx.a
+cscript /nologo bin\addfile.js res\CACHE11.IDX src\index\cache11.idx.a
 cscript /nologo bin\addfile.js build\PRELAUNCH.IDX src\index\prelaunch.idx.a
 cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
 cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
@@ -243,6 +233,13 @@ cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
 cscript /nologo bin\addfile.js build\MINIATTRACT.IDX src\index\miniattract.idx.a
+cscript /nologo bin\addfile.js build\HGR0.IDX src\index\hgr0.idx.a
+cscript /nologo bin\addfile.js build\HGR1.IDX src\index\hgr1.idx.a
+cscript /nologo bin\addfile.js build\HGR2.IDX src\index\hgr2.idx.a
+cscript /nologo bin\addfile.js build\HGR3.IDX src\index\hgr3.idx.a
+cscript /nologo bin\addfile.js build\HGR4.IDX src\index\hgr4.idx.a
+cscript /nologo bin\addfile.js build\HGR5.IDX src\index\hgr5.idx.a
+cscript /nologo bin\addfile.js build\HGR6.IDX src\index\hgr6.idx.a
 cscript /nologo bin\addfile.js build\DHGR.IDX src\index\dhgr.idx.a
 cscript /nologo bin\addfile.js build\GR.IDX src\index\gr.idx.a
 cscript /nologo bin\addfile.js build\ARTWORK.IDX src\index\artwork.idx.a
