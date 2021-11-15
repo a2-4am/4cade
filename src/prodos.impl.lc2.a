@@ -219,31 +219,23 @@ resetval=$f0
 @imp_seek
          jsr   @set_rdwrbuff
          lda   sizelo
-         ora   ldrlo
-         ora   ldrhi
-         bne   @not_zero
-         sta   treeidx
-         sta   blkidx
-         beq   @link_jmpzp
-
-@not_zero
-         lda   sizelo
          lsr
-         pha
+         tay
          lda   ldrhi
          ror
          sta   blkidx
-         pla
-         tay
+         ldx   istree
+         beq   @sametree
          tax
-         lda   istree
+         beq   @skiptree
+         iny
+         cpy   treeidx
+
+@skiptree
+         sty   treeidx
          beq   @sametree
-         inx
-         cpx   treeidx
-         beq   @sametree
-         stx   treeidx
-         ldx   hddtreebuf, y
-         lda   hddtreebuf + 256, y
+         ldx   hddtreebuf - 1, y
+         lda   hddtreebuf + 255, y
          jsr   hddreaddirsel
 
 @sametree
