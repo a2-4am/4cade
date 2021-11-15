@@ -219,6 +219,15 @@ resetval=$f0
 @imp_seek
          jsr   @set_rdwrbuff
          lda   sizelo
+         ora   ldrlo
+         ora   ldrhi
+         bne   @not_zero
+         sta   treeidx
+         sta   blkidx
+         beq   @link_jmpzp
+
+@not_zero
+         lda   sizelo
          lsr
          pha
          lda   ldrhi
