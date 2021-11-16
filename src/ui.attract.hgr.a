@@ -104,7 +104,7 @@ HGRTitleCallback
          bit   KBD
          bmi   HGRRTS
 
-         +ST16 +
+         +ST16 @fname
          +ST16 gLastMegaAttractGame
 
          jsr   FindGame
@@ -116,10 +116,21 @@ HGRTitleCallback
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
-         jsr   LoadFile              ; load HGR screenshot at $4000
-         !word kHGRTitleDirectory
-+        !word $FDFD                 ; SMC
+         jsr   LoadIndexedFile       ; load index file into $4000
+         !word kTotalIndexFile
+-        !word $4000
+         !word kHGRTitleIndexRecord
+
+         jsr   okvs_find
+         !word -
+@fname   !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load HGR graphic at $4000
+         !word kTotalDataFile
          !word $4000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
 
          jsr   UnpackHGRTitle
          jmp   ExecuteTransitionAt6000AndWait

@@ -27,7 +27,7 @@
 ;------------------------------------------------------------------------------
 DHGRTitleSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvc   DHGRRTS
+         bvc   DHGRRTS0
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
@@ -48,7 +48,7 @@ DHGRTitleSlideshow
 ;------------------------------------------------------------------------------
 DHGRActionSlideshow
          bit   MachineStatus         ; only run DHGR slideshow if we have 128K
-         bvc   DHGRRTS
+         bvc   DHGRRTS0
          jsr   LoadDHGRTransition    ; load transition effect code at $6000
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DHGR files
@@ -69,7 +69,7 @@ DHGRActionSlideshow
 ;------------------------------------------------------------------------------
 DHGRSingle
          bit   MachineStatus         ; only show DHGR screenshots if we have 128K
-         bvc   DHGRRTS
+         bvc   DHGRRTS0
          +ST16 IndexedDHGRFilename
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadIndexedDHGRFile   ; load compressed DHGR screenshot at aux $3FF8
@@ -106,7 +106,7 @@ HGRMode
 GRMode
          bit   $C052
          bit   $C050
-DHGRRTS  rts
+DHGRRTS0 rts
 
 ;------------------------------------------------------------------------------
 ; ForceHGRMode
@@ -156,7 +156,7 @@ LoadDHGRTransition
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
-         rts
+DHGRRTS1 rts
 
 ;------------------------------------------------------------------------------
 ; DHGRTitleCallback [private]
@@ -172,7 +172,7 @@ LoadDHGRTransition
 ;------------------------------------------------------------------------------
 DHGRTitleCallback
          bit   KBD
-         bmi   DHGRRTS
+         bmi   DHGRRTS1
 
          +ST16 +
          +ST16 gLastMegaAttractGame
@@ -181,16 +181,27 @@ DHGRTitleCallback
          ; if game is not found (C will be set here), it means it can't be played on
          ; this machine due to memory or joystick requirements, so we don't display
          ; it in slideshows
-         bcs   DHGRRTS
+         bcs   DHGRRTS1
 
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
-         ; load DHGR screenshot at $4000/main and $4000/aux
-         jsr   LoadDHRFile
-         !word kDHGRTitleDirectory
-+        !word $FDFD
+         jsr   LoadIndexedFile       ; load index file into $4000
+         !word kTotalIndexFile
+-        !word $4000
+         !word kDHGRTitleIndexRecord
 
+         jsr   okvs_get
+         !word -
++        !word $FDFD                 ; SMC
+
+         jsr   SwitchToBank2
+         ldy   #4
+-        lda   (PTR), y
+         sta   OKVS_CACHE + 1, y
+         dey
+         bpl   -
+         jsr   LoadIndexedDHRFile
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
@@ -207,7 +218,7 @@ DHGRTitleCallback
 ;------------------------------------------------------------------------------
 DHGRActionCallback
          bit   KBD
-         bmi   DHGRRTS
+         bmi   DHGRRTS1
 
          +ST16 IndexedDHGRFilename
 
@@ -215,7 +226,7 @@ DHGRActionCallback
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
-         bcs   DHGRRTS
+         bcs   DHGRRTS1
 
          jsr   LoadIndexedDHGRFile
          jsr   DecompressDHGR

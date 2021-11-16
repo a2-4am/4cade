@@ -84,6 +84,12 @@ kDFXIndexRecord
 kGameHelpIndexRecord
          !source "src/index/gamehelp.idx.a"
 
+kHGRTitleIndexRecord
+         !source "src/index/title.idx.a"
+
+kDHGRTitleIndexRecord
+         !source "src/index/dtitle.idx.a"
+
 kSHRArtworkIndexRecord
          !source "src/index/artwork.idx.a"
 
@@ -131,14 +137,6 @@ kTotalDataFile
 kTotalIndexFile
          !byte 9
          !raw  "TOTAL.IDX"
-
-kHGRTitleDirectory
-         !byte 10
-         !raw  "TITLE.HGR/"
-
-kDHGRTitleDirectory
-         !byte 11
-         !raw  "TITLE.DHGR/"
 
 kAnimatedTitleDirectory
          !byte 15

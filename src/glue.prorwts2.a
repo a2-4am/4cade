@@ -6,11 +6,8 @@
 ; Public functions
 ; - LoadFile
 ; - LoadAuxFile
-; - LoadDHRFile
 ; - LoadIndexedFile
-;
-; Public variables
-; - gRootDirectory
+; - LoadAuxIndexedFile
 ;
 ; A general note about paths:
 ;
@@ -35,8 +32,8 @@
 ; PROGRAM ROOT DIRECTORY.
 
 ;------------------------------------------------------------------------------
-; LoadFile
-; Load a file into memory all at once, using ProRWTS2
+; LoadFile/LoadAuxFile
+; Load a file into main or auxiliary memory, all at once, using ProRWTS2
 ;
 ; supports paths, see note
 ;
@@ -51,43 +48,8 @@
 LoadFile
          ldx   #7
          bne   .loadcommon
-
-;------------------------------------------------------------------------------
-; LoadAuxFile
-; Load a file into aux memory all at once, using ProRWTS2
-;
-; supports paths, see note
-;
-; in:    stack contains 6 bytes of parameters:
-;          +1 [word] address of length-prefixed pathname
-;          +3 [word] address of length-prefixed filename
-;          +5 [word] address to load file, or 0 to use file's default address
-; out:   all flags clobbered
-;        all registers clobbered
-;        gPathname clobbered
-;------------------------------------------------------------------------------
 LoadAuxFile
          ldx   #6
-         bne   .loadcommon
-
-;------------------------------------------------------------------------------
-; LoadDHRFile
-; load .A2FC file (uncompressed double hi-res graphics) into memory
-; all at once, using ProRWTS2
-; first $2000 bytes of file are loaded into auxiliary memory $4000..$5FFF
-; second $2000 bytes of file are loaded into main memory $4000..$4FFF
-;
-; supports paths, see note
-;
-; in:    stack contains 4 bytes of parameters:
-;          +1 [word] address of length-prefixed pathname
-;          +3 [word] address of length-prefixed filename
-; out:   all flags clobbered
-;        all registers clobbered
-;        stack set to next instruction after parameters
-;------------------------------------------------------------------------------
-LoadDHRFile
-         ldx   #$84
 .loadcommon
          pla
          sta   PARAM
@@ -117,19 +79,17 @@ LoadDHRFile
          +LDPARAMPTR 5, ldrlo        ; set load address
 +        jsr   SwitchToBank2
          plp
-         bmi   ++
          bcc   +
          jsr   LoadFileInternal
          jmp   SwitchToBank1
 +        ldx   #1                    ; request aux memory
          jsr   LoadFileAuxInternal
          jmp   SwitchToBank1
-++       jsr   LoadDHRFileInternal
-         jmp   SwitchToBank1
 
 ;------------------------------------------------------------------------------
-; LoadAuxIndexedFile
-; Load a file from inside an indexed file, all at once into auxiliary memory
+; LoadIndexedFile/LoadAuxIndexedFile
+; Load a file from inside an indexed file, all at once, into main or auxiliary
+; memory
 ;
 ; To save disk space, some collections of small, related files (e.g. per-game
 ; help files) are merged into a single data file with an associated index file.
@@ -137,37 +97,19 @@ LoadDHRFile
 ; data file) and a length.
 ;
 ; Callers are responsible for loading the index file and finding the relevant
-; record within the index. Most callers use okvs_find() for this.
+; record within the index. Most callers use okvs_find() for this, although some
+; have hard-coded records generated at build time.
 ;
 ; in:    stack contains 6 bytes of parameters:
 ;          +1 [word] pointer to filename of merged data file
 ;          +3 [word] address of load destination
-;          +5 [word] pointer to index record (see note)
+;          +5 [word] pointer to index record
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 LoadAuxIndexedFile
          lda   #$EE                  ; INC
          +HIDE_NEXT_2_BYTES
-;------------------------------------------------------------------------------
-; LoadIndexedFile
-; Load a file from inside an indexed file, all at once
-;
-; To save disk space, some collections of small, related files (e.g. per-game
-; help files) are merged into a single data file with an associated index file.
-; The index stores the original filename along with an offset (into the merged
-; data file) and a length.
-;
-; Callers are responsible for loading the index file and finding the relevant
-; record within the index. Most callers use okvs_find() for this.
-;
-; in:    stack contains 6 bytes of parameters:
-;          +1 [word] pointer to filename of merged data file
-;          +3 [word] address of load destination
-;          +5 [word] pointer to index record (see note)
-; out:   all flags clobbered
-;        all registers clobbered
-;------------------------------------------------------------------------------
 LoadIndexedFile
          lda   #$8D                  ; STA
          sta   @iauxreq
