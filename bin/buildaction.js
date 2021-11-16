@@ -36,7 +36,7 @@ if (!a.fileexists(WScript.Arguments(1)) || a.getfile(WScript.Arguments(1)).datel
   {
     val = entries[i].indexOf("=")
     name = ((val >= 0) ? entries[i].substr(val + 1) : entries[i])
-    bits = q.indexOf("," + name) + 1
+    bits = q.indexOf("," + name + "=") + 1
     name = q.substr(bits + name.length + 1)
     name = name.substr(0, name.indexOf("\n"))
     needsjoystick = q.substr(bits - 5, 1)
