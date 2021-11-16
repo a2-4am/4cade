@@ -25,10 +25,14 @@ dhgrlog=$(< "$3")
  echo "!word $(wc -l < "$records")") > "$1"
 
 # make temp assembly source file that represents the binary OKVS data structure
-source=$(mktemp)
-(echo "*=0"                            # dummy program counter for assembler
- echo "!le16 $(wc -l <"$records"), 0"  # OKVS header
+#source=$(mktemp)
+source=build/search.a
+(echo '*=$6000'
+ echo "!le16 $(wc -l <"$records")"     # OKVS header
+ echo "!word KeyLookup"
+ count=0
  while IFS="=" read -r key value; do
+     count=$((count+1))
      dhgr=$(echo "$key" | cut -c3)     # 'has DHGR title screen' flag (0 or 1)
      cheat=$(echo "$key" | cut -c4)    # 'cheat category' (0..5)
      key=$(echo "$key" | cut -d"," -f2)
@@ -42,6 +46,7 @@ source=$(mktemp)
      offset=$(echo "$offset" | awk -F, '/^'"$key"',/ { print $2 }')
      size=$(echo "$size" | awk -F, '/^'"$key"',/ { print $3 }')
      echo "!byte ${#key}+${#value}+10" # OKVS record length
+     echo "Key${count}"
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key (filename)
      echo "!byte ${#value}"            # OKVS value length
@@ -50,7 +55,12 @@ source=$(mktemp)
      echo "!byte $((dhgr*128))+$cheat"
      echo "!be24 $offset"
      echo "!le16 $size"
- done < "$records") > "$source"
+ done < "$records"
+ echo "KeyLookup"
+ for i in $(seq $count); do
+     echo "!word Key$i"
+ done
+) > "$source"
 
 # assemble temp source file into binary OKVS data structure, then output that
 out=$(mktemp)
@@ -59,5 +69,5 @@ cat "$out"
 
 # clean up
 rm "$out"
-rm "$source"
+#rm "$source"
 rm "$records"

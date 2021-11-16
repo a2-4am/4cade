@@ -104,8 +104,6 @@ PREFRTS  rts
 ;        gGlobalPrefsStore must be initialized (this is done in 4cade.init)
 ; out:   A/Y = address of pref value
 ;        $WINDEX = index of pref value in passed store
-;        (if OKVS parameter is 0, no validation occurs and X=0 and Z=1 on exit,
-;         some callers rely on this behavior, so don't change it!)
 ;        PARAM clobbered
 ;        PTR clobbered
 ;        SRC clobbered
