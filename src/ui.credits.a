@@ -21,7 +21,6 @@ Help
          +ST16 @game
 
          jsr   LoadIndexedFile
-         !word kTotalIndexFile
 @okvsPtr !word gSearchCache
          !word kGameHelpIndexRecord
 
@@ -31,7 +30,6 @@ Help
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile
-         !word kTotalDataFile
          !word $800
 @indexRecordPtr
          !word $FDFD                 ; SMC

@@ -28,18 +28,16 @@ InputBuffer
 ;------------------------------------------------------------------------------
 ; ReloadSearchIndex
 ;
-; Load index to support search UI
+; Load indexes to support search UI
 ;
 ; in:    none
 ; out:   gSearchStore populated
 ;------------------------------------------------------------------------------
 ReloadSearchIndex
          jsr   LoadIndexedFile       ; load appropriate search index into $8200
-         !word kTotalIndexFile
          !word gSearchIndex
          !word kSearchIndexRecord
          jsr   LoadIndexedFile       ; load appropriate search cache into $B000
-         !word kTotalIndexFile
          !word gSearchCache
          !word kSearchCacheRecord
          rts

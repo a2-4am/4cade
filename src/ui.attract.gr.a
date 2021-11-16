@@ -104,7 +104,6 @@ LoadIndexedGRFile
 ; in:    caller has set IndexedGRFilename
 ; out:   all flags & registers clobbered
          jsr   LoadIndexedFile       ; load index file into $4600
-         !word kTotalIndexFile
 -        !word $4600
          !word kGRActionIndexRecord
 
@@ -115,8 +114,7 @@ IndexedGRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load GR screenshot at $4000
-         !word kTotalDataFile        ; because that's where the transition code expects to find it
-         !word $4000
+         !word $4000                 ; because that's where the transition code expects to find it
 @indexRecordPtr
          !word $FDFD                 ; SMC
          rts

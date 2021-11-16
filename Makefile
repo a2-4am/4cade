@@ -44,7 +44,6 @@ dsk: index asmproboot asmlauncher
 #
 	for f in \
 		build/TOTAL.DATA \
-	        build/TOTAL.IDX \
 		res/TITLE \
 		res/COVER \
 		res/HELP \
@@ -175,34 +174,33 @@ index: md asmfx asmprelaunch compress
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
 #
-	rm -f build/TOTAL.IDX
-	bin/addfile.sh build/SEARCH00.IDX build/TOTAL.IDX > src/index/search00.idx.a
-	bin/addfile.sh res/CACHE00.IDX build/TOTAL.IDX > src/index/cache00.idx.a
-	bin/addfile.sh build/SEARCH01.IDX build/TOTAL.IDX > src/index/search01.idx.a
-	bin/addfile.sh res/CACHE01.IDX build/TOTAL.IDX > src/index/cache01.idx.a
-	bin/addfile.sh build/SEARCH10.IDX build/TOTAL.IDX > src/index/search10.idx.a
-	bin/addfile.sh res/CACHE10.IDX build/TOTAL.IDX > src/index/cache10.idx.a
-	bin/addfile.sh build/SEARCH11.IDX build/TOTAL.IDX > src/index/search11.idx.a
-	bin/addfile.sh res/CACHE11.IDX build/TOTAL.IDX > src/index/cache11.idx.a
-	bin/addfile.sh build/PRELAUNCH.IDX build/TOTAL.IDX > src/index/prelaunch.idx.a
-	bin/addfile.sh build/ATTRACT.IDX build/TOTAL.IDX > src/index/attract.idx.a
-	bin/addfile.sh build/FX.IDX build/TOTAL.IDX > src/index/fx.idx.a
-	bin/addfile.sh build/DFX.IDX build/TOTAL.IDX > src/index/dfx.idx.a
-	bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.IDX > src/index/gamehelp.idx.a
-	bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.IDX > src/index/slideshow.idx.a
-	bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.IDX > src/index/miniattract.idx.a
-	bin/addfile.sh build/TITLE.IDX build/TOTAL.IDX > src/index/title.idx.a
-	bin/addfile.sh build/DTITLE.IDX build/TOTAL.IDX > src/index/dtitle.idx.a
-	bin/addfile.sh build/HGR0.IDX build/TOTAL.IDX > src/index/hgr0.idx.a
-	bin/addfile.sh build/HGR1.IDX build/TOTAL.IDX > src/index/hgr1.idx.a
-	bin/addfile.sh build/HGR2.IDX build/TOTAL.IDX > src/index/hgr2.idx.a
-	bin/addfile.sh build/HGR3.IDX build/TOTAL.IDX > src/index/hgr3.idx.a
-	bin/addfile.sh build/HGR4.IDX build/TOTAL.IDX > src/index/hgr4.idx.a
-	bin/addfile.sh build/HGR5.IDX build/TOTAL.IDX > src/index/hgr5.idx.a
-	bin/addfile.sh build/HGR6.IDX build/TOTAL.IDX > src/index/hgr6.idx.a
-	bin/addfile.sh build/DHGR.IDX build/TOTAL.IDX > src/index/dhgr.idx.a
-	bin/addfile.sh build/GR.IDX build/TOTAL.IDX > src/index/gr.idx.a
-	bin/addfile.sh build/ARTWORK.IDX build/TOTAL.IDX > src/index/artwork.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SEARCH00.IDX build/TOTAL.DATA > src/index/search00.idx.a
+	[ -f build/index ] || bin/addfile.sh res/CACHE00.IDX build/TOTAL.DATA > src/index/cache00.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SEARCH01.IDX build/TOTAL.DATA > src/index/search01.idx.a
+	[ -f build/index ] || bin/addfile.sh res/CACHE01.IDX build/TOTAL.DATA > src/index/cache01.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SEARCH10.IDX build/TOTAL.DATA > src/index/search10.idx.a
+	[ -f build/index ] || bin/addfile.sh res/CACHE10.IDX build/TOTAL.DATA > src/index/cache10.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SEARCH11.IDX build/TOTAL.DATA > src/index/search11.idx.a
+	[ -f build/index ] || bin/addfile.sh res/CACHE11.IDX build/TOTAL.DATA > src/index/cache11.idx.a
+	[ -f build/index ] || bin/addfile.sh build/PRELAUNCH.IDX build/TOTAL.DATA > src/index/prelaunch.idx.a
+	[ -f build/index ] || bin/addfile.sh build/ATTRACT.IDX build/TOTAL.DATA > src/index/attract.idx.a
+	[ -f build/index ] || bin/addfile.sh build/FX.IDX build/TOTAL.DATA > src/index/fx.idx.a
+	[ -f build/index ] || bin/addfile.sh build/DFX.IDX build/TOTAL.DATA > src/index/dfx.idx.a
+	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
+	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.DATA > src/index/miniattract.idx.a
+	[ -f build/index ] || bin/addfile.sh build/TITLE.IDX build/TOTAL.DATA > src/index/title.idx.a
+	[ -f build/index ] || bin/addfile.sh build/DTITLE.IDX build/TOTAL.DATA > src/index/dtitle.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR0.IDX build/TOTAL.DATA > src/index/hgr0.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR1.IDX build/TOTAL.DATA > src/index/hgr1.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR2.IDX build/TOTAL.DATA > src/index/hgr2.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR3.IDX build/TOTAL.DATA > src/index/hgr3.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR4.IDX build/TOTAL.DATA > src/index/hgr4.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR5.IDX build/TOTAL.DATA > src/index/hgr5.idx.a
+	[ -f build/index ] || bin/addfile.sh build/HGR6.IDX build/TOTAL.DATA > src/index/hgr6.idx.a
+	[ -f build/index ] || bin/addfile.sh build/DHGR.IDX build/TOTAL.DATA > src/index/dhgr.idx.a
+	[ -f build/index ] || bin/addfile.sh build/GR.IDX build/TOTAL.DATA > src/index/gr.idx.a
+	[ -f build/index ] || bin/addfile.sh build/ARTWORK.IDX build/TOTAL.DATA > src/index/artwork.idx.a
 	touch build/index
 
 asmlauncher: md

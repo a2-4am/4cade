@@ -102,7 +102,6 @@ LoadIndexedSHRFile
 ; in:    caller has populated IndexedSHRFilename
 ; out:   all flags & registers clobbered
          jsr   LoadIndexedFile       ; load index file into $2000
-         !word kTotalIndexFile
 -        !word $2000
          !word kSHRArtworkIndexRecord
 
@@ -113,7 +112,6 @@ IndexedSHRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
-         !word kTotalDataFile
          !word $1FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

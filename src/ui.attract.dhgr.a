@@ -134,7 +134,6 @@ gMachineInDHGRMode=*+1
 ;------------------------------------------------------------------------------
 LoadDHGRTransition
          jsr   LoadIndexedFile       ; load DHGR transition effects list into $6000
-         !word kTotalIndexFile
 -        !word $6000
          !word kDFXIndexRecord
 
@@ -152,7 +151,6 @@ LoadDHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kTotalDataFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -187,7 +185,6 @@ DHGRTitleCallback
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadIndexedFile       ; load index file into $4000
-         !word kTotalIndexFile
 -        !word $4000
          !word kDHGRTitleIndexRecord
 
@@ -332,7 +329,6 @@ LoadIndexedDHGRFile
 ; in:    caller has set IndexedDHGRFilename
 ; out:   all flags & registers clobbered
          jsr   LoadIndexedFile       ; load index file into $4000
-         !word kTotalIndexFile
 -        !word $4000
          !word kDHGRActionIndexRecord
 
@@ -343,7 +339,6 @@ IndexedDHGRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadAuxIndexedFile    ; load compressed DHGR screenshot at aux $3FF8
-         !word kTotalDataFile
          !word $3FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

@@ -134,10 +134,6 @@ kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
 
-kTotalIndexFile
-         !byte 9
-         !raw  "TOTAL.IDX"
-
 kAnimatedTitleDirectory
          !byte 15
          !raw  "TITLE.ANIMATED/"

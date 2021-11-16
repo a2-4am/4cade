@@ -100,10 +100,9 @@ LoadAuxFile
 ; record within the index. Most callers use okvs_find() for this, although some
 ; have hard-coded records generated at build time.
 ;
-; in:    stack contains 6 bytes of parameters:
-;          +1 [word] pointer to filename of merged data file
-;          +3 [word] address of load destination
-;          +5 [word] pointer to index record
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] address of load destination
+;          +3 [word] pointer to index record
 ; out:   all flags clobbered
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
@@ -113,9 +112,9 @@ LoadAuxIndexedFile
 LoadIndexedFile
          lda   #$8D                  ; STA
          sta   @iauxreq
-         +PARAMS_ON_STACK 6
-         jsr   @set_nameaddr
-         +LDPARAMPTR 5, zpword
+         +PARAMS_ON_STACK 4
+         +LDPARAMPTR 1, @address
+         +LDPARAMPTR 3, zpword
          inc   $BF0E                 ; disable ROM mapping on return
          jsr   SwitchToBank2
          jsr   resetRoot
@@ -155,23 +154,10 @@ LoadIndexedFile
          dec   $BF0E                 ; re-enable ROM mapping on return
          jmp   SwitchToBank1
 
-@set_nameaddr
-         ldx   #0
-         ldy   #1
-         jsr   +
-         iny
-         ldx   #@address - @filename
-+        lda   (PARAM), y
-         sta   @filename, x
-         iny
-         lda   (PARAM), y
-         sta   @filename + 1, x
-         rts
-
 @c8_parms
          !byte 3
 @filename
-         !word $DFDF                 ; SMC
+         !word kTotalDataFile
          !byte 0
 @ce_parms
          !byte $d0

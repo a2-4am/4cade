@@ -111,7 +111,6 @@ LoadIndexedDHRFile
          sta   @dhgr_addr_aux + 1
          sta   @dhgr_addr_main + 1
          jsr   LoadAuxIndexedFile
-         !word kTotalDataFile
 @dhgr_addr_aux
          !word $FD00                 ; SMC high byte
          !word OKVS_CACHE
@@ -123,7 +122,6 @@ LoadIndexedDHRFile
          bcc   +
          inc   OKVS_CACHE + 1
 +        jsr   LoadIndexedFile       ; load next $2000 bytes into main memory
-         !word kTotalDataFile
 @dhgr_addr_main
          !word $FD00                 ; SMC high byte
          !word OKVS_CACHE
@@ -140,7 +138,6 @@ LoadIndexedDHRFile
          +LD16 PTR
          +ST16 @hgrIndexRecordPtr
          jsr   LoadIndexedFile
-         !word kTotalDataFile
 @hgr_addr
          !word $FD00                 ; SMC high byte
 @hgrIndexRecordPtr
