@@ -130,6 +130,12 @@ kHGRActionIndexRecord5
 kHGRActionIndexRecord6
          !source "src/index/hgr6.idx.a"
 
+kCreditsRecord
+         !source "src/index/credits.idx.a"
+
+kHelpTextRecord
+         !source "src/index/helptext.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
@@ -154,14 +160,6 @@ kFXDirectory
 kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
-
-kCreditsFile
-         !byte 7
-         !raw  "CREDITS"
-
-kHelpTextFile
-         !byte 8
-         !raw  "HELPTEXT"
 
 kCoverFadeFile
          !byte 9
