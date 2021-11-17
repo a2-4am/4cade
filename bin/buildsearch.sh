@@ -25,8 +25,7 @@ dhgrlog=$(< "$3")
  echo "!word $(wc -l < "$records")") > "$1"
 
 # make temp assembly source file that represents the binary OKVS data structure
-#source=$(mktemp)
-source=build/search.a
+source=$(mktemp)
 (echo '*=$6000'
  echo "!le16 $(wc -l <"$records")"     # OKVS header
  echo "!word KeyLookup"
@@ -69,5 +68,5 @@ cat "$out"
 
 # clean up
 rm "$out"
-#rm "$source"
+rm "$source"
 rm "$records"
