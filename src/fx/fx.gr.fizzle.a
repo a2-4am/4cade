@@ -2,7 +2,7 @@
 ;(c) 2019 by qkumba
 
 !cpu 6502
-!to "build/FX/GR.FIZZLE",plain
+!to "build/GR.FIZZLE",plain
 *=$6000
 
          ;init RNG

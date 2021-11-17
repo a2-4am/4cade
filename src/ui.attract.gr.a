@@ -68,10 +68,9 @@ BlankGR
 ;        of that, but no promises)
 ;------------------------------------------------------------------------------
 LoadGRTransition
-         jsr   LoadFile
-         !word kFXDirectory
-         !word kGRFizzleFile
+         jsr   LoadIndexedFile
          !word $6000
+         !word kGRFizzleRecord
 GRRTS    rts
 
 ;------------------------------------------------------------------------------

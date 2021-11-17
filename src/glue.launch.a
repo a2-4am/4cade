@@ -211,7 +211,5 @@ Joystick
 LoadStandardPrelaunch
          jsr   LoadIndexedFile       ; load standard prelaunch code at $0106
          !word $0106
-         !word +
+         !word kStandardPrelaunchRecord
          rts
-+
-         !source "src/index/standard.prelaunch.a"

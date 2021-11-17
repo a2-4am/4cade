@@ -167,17 +167,17 @@ kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kCoverFadeFile
-         !byte 9
-         !raw  "COVERFADE"
+kStandardPrelaunchRecord
+         !source "src/index/standard.prelaunch.a"
 
-kGRFizzleFile
-         !byte 9
-         !raw  "GR.FIZZLE"
+kCoverFadeRecord
+         !source "src/index/coverfade.idx.a"
 
-kSFXFizzleFile
-         !byte 10
-         !raw  "SHR.FIZZLE"
+kGRFizzleRecord
+         !source "src/index/gr.fizzle.idx.a"
+
+kSFXFizzleRecord
+         !source "src/index/shr.fizzle.idx.a"
 
 kHelpBackgroundRecord
          !source "src/index/res.help.idx.a"

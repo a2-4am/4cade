@@ -2,7 +2,7 @@
 ;(c) 2019-2020 by qkumba/4am/John Brooks
 
 !cpu 6502
-!to "build/FX/SHR.FIZZLE",plain
+!to "build/SHR.FIZZLE",plain
 *=$A000
 
 addrs=$80                            ; [128 bytes]

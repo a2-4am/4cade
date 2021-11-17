@@ -62,10 +62,9 @@ jmpblank
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadSHRTransition
-         jsr   LoadFile
-         !word kFXDirectory
-         !word kSFXFizzleFile
+         jsr   LoadIndexedFile
          !word $A000
+         !word kSFXFizzleRecord
 SHRRTS   rts
 
 ;------------------------------------------------------------------------------

@@ -81,10 +81,9 @@ CoverFade
          jsr   ShowOtherPage
          lda   OffscreenPage
          beq   CoverFade
-         jsr   LoadFile              ; load transition effect code at $6000
-         !word kFXDirectory
-         !word kCoverFadeFile
+         jsr   LoadIndexedFile       ; load transition effect code at $6000
          !word $6000
+         !word kCoverFadeRecord
          jsr   $6000                 ; call transition effect
          jmp   MegaAttractMode       ; exit via mega attract mode
 !if (RELBASE != $2000) and (>WaitForKeyFor30Seconds != >*) {

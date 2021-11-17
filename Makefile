@@ -200,6 +200,9 @@ index: md asmfx asmprelaunch compress
 #
 # add additional miscellaneous files
 #
+	[ -f build/index ] || bin/addfile.sh build/COVERFADE build/TOTAL.DATA > src/index/coverfade.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SHR.FIZZLE build/TOTAL.DATA > src/index/shr.fizzle.idx.a
+	[ -f build/index ] || bin/addfile.sh build/GR.FIZZLE build/TOTAL.DATA > src/index/gr.fizzle.idx.a
 	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
 	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a
 	[ -f build/index ] || bin/addfile.sh res/DECRUNCH build/TOTAL.DATA > src/index/decrunch.idx.a

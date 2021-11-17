@@ -6,7 +6,7 @@
 ;
 
 !cpu 6502
-!to "build/FX/COVERFADE",plain
+!to "build/COVERFADE",plain
 *=$6000
 
          !source "src/fx/macros.a"
