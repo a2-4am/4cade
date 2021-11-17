@@ -152,6 +152,9 @@ LoadIndexedFile
          !word @cc_parms
          jsr   swap_zpg              ; restore sizelo2/hi2
          dec   $BF0E                 ; re-enable ROM mapping on return
+         +LD16 @address
+         sta   ldrlo2                ; support Launch of what we just loaded
+         sty   ldrhi2
          jmp   SwitchToBank1
 
 @c8_parms

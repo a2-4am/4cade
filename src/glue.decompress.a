@@ -53,12 +53,11 @@ DecompressHGR
          pha
          lda   auxreq
          bne   +
-         jmp   LoadFile              ; load decompression code to $200
-+        jmp   LoadAuxFile           ; load decompression code to $200/aux
+         jmp   LoadIndexedFile       ; load decompression code to $200
++        jmp   LoadAuxIndexedFile    ; load decompression code to $200/aux
 @loaddecrunch
-         !word kRootDirectory
-         !word kDecrunchFile
          !word $200
+         !word kDecrunchRecord
          ldx   auxreq
          sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
          sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM

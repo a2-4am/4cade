@@ -45,8 +45,6 @@ dsk: index asmproboot asmlauncher
 	for f in \
 		build/TOTAL.DATA \
 		build/PREFS.CONF \
-		res/DECRUNCH \
-		res/JOYSTICK \
 		res/Finder.Data \
 		res/Finder.Root; do \
 	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; \
@@ -204,6 +202,8 @@ index: md asmfx asmprelaunch compress
 #
 	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
 	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a
+	[ -f build/index ] || bin/addfile.sh res/DECRUNCH build/TOTAL.DATA > src/index/decrunch.idx.a
+	[ -f build/index ] || bin/addfile.sh res/JOYSTICK build/TOTAL.DATA > src/index/joystick.idx.a
 	touch build/index
 
 asmlauncher: md

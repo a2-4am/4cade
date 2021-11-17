@@ -202,10 +202,9 @@ Launch
 Joystick
          jsr   LoadStandardPrelaunch
 
-         jsr   LoadFile
-         !word kRootDirectory
-         !word kJoystickFile
-         !word 0
+         jsr   LoadIndexedFile
+         !word $800
+         !word kJoystickRecord
 
          jmp   Launch
 

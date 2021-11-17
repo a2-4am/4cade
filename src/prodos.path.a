@@ -136,6 +136,12 @@ kCreditsRecord
 kHelpTextRecord
          !source "src/index/helptext.idx.a"
 
+kDecrunchRecord
+         !source "src/index/decrunch.idx.a"
+
+kJoystickRecord
+         !source "src/index/joystick.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
@@ -172,14 +178,6 @@ kGRFizzleFile
 kSFXFizzleFile
          !byte 10
          !raw  "SHR.FIZZLE"
-
-kDecrunchFile
-         !byte 8
-         !raw  "DECRUNCH"
-
-kJoystickFile
-         !byte 8
-         !raw  "JOYSTICK"
 
 kHelpBackgroundRecord
          !source "src/index/res.help.idx.a"
