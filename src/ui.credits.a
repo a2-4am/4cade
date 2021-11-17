@@ -37,10 +37,9 @@ Help
          clc
          bcc   .clearAndDisplayHelp  ; always branches
 
-@global  jsr   LoadFile              ; load help text into $800
-         !word kRootDirectory
-         !word kHelpTextFile
+@global  jsr   LoadIndexedFile       ; load help text into $800
          !word $800
+         !word kHelpTextRecord
 
          jsr   LoadHelpOffscreen     ; load fancy backdrop
          ldx   #7
@@ -55,10 +54,9 @@ Help
 ;        all other flags and registers clobbered
 ;------------------------------------------------------------------------------
 Credits
-         jsr   LoadFile              ; load credits text into $800
-         !word kRootDirectory
-         !word kCreditsFile
+         jsr   LoadIndexedFile       ; load credits text into $800
          !word $800
+         !word kCreditsRecord
 .clearAndDisplayHelp
          jsr   ForceHGRMode
          jsr   ClearOffscreen

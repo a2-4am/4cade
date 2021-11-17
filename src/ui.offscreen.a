@@ -50,7 +50,7 @@ OffscreenPage = * + 1
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-         lda   #<kTitleFile
+         lda   #<kTitleRecord
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadHelpOffscreen
@@ -60,7 +60,7 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadHelpOffscreen
-         lda   #<kHelpBackgroundFile
+         lda   #<kHelpBackgroundRecord
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadCoverOffscreen
@@ -70,18 +70,17 @@ LoadHelpOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
-         lda   #<kCoverFile
+         lda   #<kCoverRecord
 LoadOffscreenFromAY
-         sta   @fname
+         sta   @indexlo
          jsr   ForceHGRMode
          jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFile
-         !word kRootDirectory
-@fname   !byte $FD                   ; SMC
-         !byte >kCoverFile           ; all of these are on the same page
+         sta   @addrhi
+         jsr   LoadIndexedFile
          !byte $00
-+        !byte $FD                   ; SMC
+@addrhi  !byte $FD                   ; SMC
+@indexlo !byte $FD                   ; SMC
+         !byte >kCoverRecord         ; all of these are on the same page
          rts
 
 LoadGameTitleOffscreen

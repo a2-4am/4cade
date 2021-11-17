@@ -44,12 +44,7 @@ dsk: index asmproboot asmlauncher
 #
 	for f in \
 		build/TOTAL.DATA \
-		res/TITLE \
-		res/COVER \
-		res/HELP \
 		build/PREFS.CONF \
-		build/CREDITS \
-		build/HELPTEXT \
 		res/DECRUNCH \
 		res/JOYSTICK \
 		res/Finder.Data \
@@ -113,6 +108,9 @@ index: md asmfx asmprelaunch compress
 	[ -f build/index ] || bin/padto.sh build/TOTAL.DATA
 	[ -f build/index ] || ((for f in res/TITLE.HGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/TITLE.HGR build/HGR.TITLES.LOG > build/TITLE.IDX)
 	[ -f build/index ] || ((for f in res/TITLE.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/TITLE.DHGR build/DHGR.TITLES.LOG > build/DTITLE.IDX)
+	[ -f build/index ] || bin/addfile.sh res/COVER build/TOTAL.DATA > src/index/res.cover.idx.a
+	[ -f build/index ] || bin/addfile.sh res/TITLE build/TOTAL.DATA > src/index/res.title.idx.a
+	[ -f build/index ] || bin/addfile.sh res/HELP build/TOTAL.DATA > src/index/res.help.idx.a
 #
 # precompute indexed files for game help
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
@@ -201,6 +199,11 @@ index: md asmfx asmprelaunch compress
 	[ -f build/index ] || bin/addfile.sh build/DHGR.IDX build/TOTAL.DATA > src/index/dhgr.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GR.IDX build/TOTAL.DATA > src/index/gr.idx.a
 	[ -f build/index ] || bin/addfile.sh build/ARTWORK.IDX build/TOTAL.DATA > src/index/artwork.idx.a
+#
+# add additional miscellaneous files
+#
+	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
+	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a
 	touch build/index
 
 asmlauncher: md

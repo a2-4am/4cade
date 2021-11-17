@@ -159,21 +159,9 @@ kCreditsFile
          !byte 7
          !raw  "CREDITS"
 
-kHelpBackgroundFile
-         !byte 4
-         !raw  "HELP"
-
 kHelpTextFile
          !byte 8
          !raw  "HELPTEXT"
-
-kTitleFile
-         !byte 5
-         !raw  "TITLE"
-
-kCoverFile
-         !byte 5
-         !raw  "COVER"
 
 kCoverFadeFile
          !byte 9
@@ -194,3 +182,12 @@ kDecrunchFile
 kJoystickFile
          !byte 8
          !raw  "JOYSTICK"
+
+kHelpBackgroundRecord
+         !source "src/index/res.help.idx.a"
+
+kTitleRecord
+         !source "src/index/res.title.idx.a"
+
+kCoverRecord
+         !source "src/index/res.cover.idx.a"
