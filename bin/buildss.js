@@ -28,8 +28,16 @@ entries.sort()
 f = a.createtextfile("build\\GAMES.SORTED")
 f.write(entries.toString().replace(/,/g, "\n"))
 f.close()
-ss_off = a.fileexists(WScript.Arguments(2)) ? a.getFile(WScript.Arguments(2)).size : 0
+ss_off = a.fileexists(WScript.Arguments(3)) ? a.getFile(WScript.Arguments(3)).size : 0
 groups = "*=0\n" + "!le16 " + entries.length + ", 0\n"
+
+q = 0
+
+if (WScript.Arguments(2) != "nul")
+{
+  q = a.createtextfile(WScript.Arguments(2))
+  q.writeline()
+}
 
 for (i = 0; i < entries.length; i++)
 {
@@ -37,14 +45,24 @@ for (i = 0; i < entries.length; i++)
   c = ss_off
   ss_off += size
 
-  if (WScript.Arguments.length == 5)
+  if (WScript.Arguments.length == 6)
   {
     // if offset+size does not cross a block boundary, use the size
     // otherwise adjust size until it ends at the next block boundary to avoid a partial copy on the last block
     size = ((Math.floor(c / 512) == Math.floor((c + size) / 512)) ? size : (((c + size + 511) & -512) - c))
   }
 
-  groups += "!byte " + (1 + 1 + entries[i].length + 5) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size  + "\n"
+  groups += "!byte " + (entries[i].length + 7) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size  + "\n"
+
+  if (typeof(q) == "object")
+  {
+    q.writeline(entries[i] + "," + c + "," + size)
+  }
+}
+
+if (typeof(q) == "object")
+{
+  q.close()
 }
 
 f = a.createtextfile("build\\ss.tmp")
@@ -52,4 +70,4 @@ f.write(groups)
 f.close()
 x = new ActiveXObject("wscript.shell")
 x.run('cmd /c %acme% -o ' + WScript.Arguments(1) + ' build\\ss.tmp', 0, 1)
-x.run('cmd /c bin\\buildpreall.bat ' + p + ' ' + WScript.Arguments(2) + ' ' + WScript.Arguments(3), 0, 1)
+x.run('cmd /c bin\\buildpreall.bat ' + p + ' ' + WScript.Arguments(3) + ' ' + WScript.Arguments(4), 0, 1)

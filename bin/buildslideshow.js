@@ -41,9 +41,14 @@ if (!a.fileexists(WScript.Arguments(1)) || a.getfile(WScript.Arguments(1)).datel
     name = name.substr(0, name.indexOf("\n"))
     needsjoystick = q.substr(bits - 5, 1)
     needs128k = q.substr(bits - 4, 1)
-    source.writeline("!byte " + (entries[i].length - ((val >= 0) ? 1 : 0) + 3))
+    displayname = ((WScript.Arguments.length == 3) ? name : "")
+    source.writeline("!byte " + (entries[i].length - ((val >= 0) ? 1 : 0) + displayname.length + 5))
     source.writeline("!byte " + ((val >= 0) ? val : entries[i].length))
     source.writeline("!text \"" + ((val >= 0) ? entries[i].substr(0, val) : entries[i]) + "\"")
+    source.writeline("!byte " + ((val >= 0) ? (entries[i].length - (val + 1)) : 0))
+    source.writeline("!text \"" + ((val >= 0) ? (entries[i].substr(val + 1)) : "") + "\"")
+    source.writeline("!byte " + displayname.length)
+    source.writeline("!text \"" + displayname + "\"")
     source.writeline("!byte " + ((needsjoystick * 128) + (Number(needs128k) * 64)))
   }
 

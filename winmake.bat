@@ -33,9 +33,6 @@ cscript /nologo bin\padto.js 512 build\PREFS.CONF
 rem
 rem create _FileInformation.txt files for subdirectories
 rem
-cscript /nologo bin\buildfileinfo.js res\TITLE.HGR "06" "4000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\TITLE.DHGR "06" "4000" >>build/log
-cscript /nologo bin\buildfileinfo.js res\ACTION.GR "06" "6000" >>build/log
 cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
 cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build/log
 cscript /nologo bin\buildfileinfo.js build\PRELAUNCH "06" "0106" >>build/log
@@ -44,19 +41,9 @@ rem add everything to the disk
 rem
 echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.IDX" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\TITLE" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\COVER" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\HELP" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\CREDITS" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\HELPTEXT" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\DECRUNCH" >>build\log
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\JOYSTICK" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.HGR" "res\TITLE.HGR" >>build\log
-%CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.DHGR" "res\TITLE.DHGR" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
@@ -115,19 +102,10 @@ echo|set/p="converting gamehelp..."
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\converthelp.js %%q build\GAMEHELP\%%~nxq >>build\log
 echo done
 rem
-rem create a sorted list of game filenames, without metadata or display names
+rem create a list of all game filenames, without metadata or display names, sorted by game filename
 rem
 cscript /nologo bin\makesorted.js
-rem
-rem create search indexes: (game-requires-joystick) X (game-requires-128K)
-rem
-echo|set/p="indexing search..."
 cscript /nologo bin\builddisplaynames.js
-cscript /nologo bin\buildsearch.js "00" src\index\count00.a build\SEARCH00.IDX
-cscript /nologo bin\buildsearch.js "0" src\index\count01.a build\SEARCH01.IDX
-cscript /nologo bin\buildsearch.js ".0" src\index\count10.a build\SEARCH10.IDX
-cscript /nologo bin\buildsearch.js "." src\index\count11.a build\SEARCH11.IDX
-echo done
 rem
 rem precompute indexed files for prelaunch
 rem note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
@@ -138,30 +116,46 @@ echo|set/p="indexing prelaunch..."
 cscript /nologo bin\buildpre.js build\PRELAUNCH.INDEXED build\PRELAUNCH.IDX build\TOTAL.DATA >>build\log
 echo done
 rem
+rem precompute indexed files for HGR & DHGR titles
+rem note: these are not padded because they are all an exact block-multiple anyway
+rem
+echo|set/p="indexing titles..."
+cscript /nologo bin\padto.js 512 build\TOTAL.DATA
+cscript /nologo bin\buildss.js res\TITLE.HGR build\TITLE.IDX build\HGR.TITLES.LOG build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js res\TITLE.DHGR build\DTITLE.IDX build\DHGR.TITLES.LOG build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\addfile.js res\COVER src\index\res.cover.idx.a
+cscript /nologo bin\addfile.js res\TITLE src\index\res.title.idx.a
+cscript /nologo bin\addfile.js res\HELP src\index\res.help.idx.a
+echo done
+rem
 rem precompute indexed files for game help
+rem note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 rem
 echo|set/p="indexing gamehelp..."
+cscript /nologo bin\makesorted.js
 cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\TOTAL.DATA pad >>build\log
 echo done
 rem
 rem precompute indexed files for slideshows
+rem note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 rem
 echo|set/p="indexing slideshows..."
 for %%q in (res\SS\*) do (
   set _ss=%%~nxq
   set _ss=!_ss:~0,3!
   if !_ss!==ACT (
-    cscript /nologo bin\buildaction.js %%q build\SS\%%~nxq >>build\log
+    cscript /nologo bin\buildslideshow.js %%q build\SS\%%~nxq -d >>build\log
   ) else (
-    cscript /nologo bin\buildtitle.js %%q build\SS\%%~nxq >>build\log
+    cscript /nologo bin\buildslideshow.js %%q build\SS\%%~nxq >>build\log
   )
 )
-cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX build\TOTAL.DATA nul pad >>build\log
+cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX nul build\TOTAL.DATA nul pad >>build\log
 for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT\%%~nxq >>build\log
-cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX build\TOTAL.DATA nul pad >>build\log
+cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX nul build\TOTAL.DATA nul pad >>build\log
 echo done
 rem
 rem precompute indexed files for graphic effects
+rem note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
 rem
 echo|set/p="indexing fx..."
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
@@ -188,14 +182,14 @@ for %%q in (res\ACTION.HGR\Q* res\ACTION.HGR\R* res\ACTION.HGR\S* res\ACTION.HGR
 for %%q in (res\ACTION.HGR\U* res\ACTION.HGR\V* res\ACTION.HGR\W* res\ACTION.HGR\X*) do 1>nul >>build\ACTIONHGR5 echo %%q
 for %%q in (res\ACTION.HGR\Y* res\ACTION.HGR\Z*) do 1>nul >>build\ACTIONHGR6 echo %%q
 for %%q in (res\ACTION.DHGR\*) do 1>nul >>build\ACTIONDHGR echo %%q
-cscript /nologo bin\buildss.js build\ACTIONHGR0* build\HGR0.IDX build\TOTAL.DATA nul >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR1* build\HGR1.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR2* build\HGR2.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR3* build\HGR3.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
-cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR0* build\HGR0.IDX nul build\TOTAL.DATA nul >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR1* build\HGR1.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR2* build\HGR2.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR3* build\HGR3.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR4* build\HGR4.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
+cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
 echo done
 rem precompute indexed files for GR action screenshots
 rem note: these can be padded because they are not compressed
@@ -203,21 +197,30 @@ rem
 echo|set/p="indexing gr action..."
 1>nul copy /y nul build\ACTIONGR
 for %%q in (res\ACTION.GR\*) do 1>nul >>build\ACTIONGR echo %%q
-cscript /nologo bin\buildss.js build\ACTIONGR* build\GR.IDX build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
+cscript /nologo bin\buildss.js build\ACTIONGR* build\GR.IDX nul build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
 echo done
 rem
 rem precompute indexed files for SHR artwork
 rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
 echo|set/p="indexing shr..."
-cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX build\TOTAL.DATA nul >>build\log
+cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX nul build\TOTAL.DATA nul >>build\log
+echo done
+rem
+rem create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
+rem in the form of OKVS data structures, plus game counts in the form of source files
+rem
+echo|set/p="indexing search..."
+cscript /nologo bin\buildsearch.js "00" src\index\count00.a build\SEARCH00.IDX
+cscript /nologo bin\buildsearch.js "0" src\index\count01.a build\SEARCH01.IDX
+cscript /nologo bin\buildsearch.js ".0" src\index\count10.a build\SEARCH10.IDX
+cscript /nologo bin\buildsearch.js "." src\index\count11.a build\SEARCH11.IDX
 echo done
 rem
 rem add IDX files to the combined index file and generate
 rem the index records that callers use to reference them
 rem
 echo|set/p="preparing index file..."
-1>nul copy /y nul build\TOTAL.IDX 
 cscript /nologo bin\addfile.js build\SEARCH00.IDX src\index\search00.idx.a
 cscript /nologo bin\addfile.js res\CACHE00.IDX src\index\cache00.idx.a
 cscript /nologo bin\addfile.js build\SEARCH01.IDX src\index\search01.idx.a
@@ -233,6 +236,8 @@ cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
 cscript /nologo bin\addfile.js build\MINIATTRACT.IDX src\index\miniattract.idx.a
+cscript /nologo bin\addfile.js build\TITLE.IDX src\index\title.idx.a
+cscript /nologo bin\addfile.js build\DTITLE.IDX src\index\dtitle.idx.a
 cscript /nologo bin\addfile.js build\HGR0.IDX src\index\hgr0.idx.a
 cscript /nologo bin\addfile.js build\HGR1.IDX src\index\hgr1.idx.a
 cscript /nologo bin\addfile.js build\HGR2.IDX src\index\hgr2.idx.a
@@ -243,6 +248,16 @@ cscript /nologo bin\addfile.js build\HGR6.IDX src\index\hgr6.idx.a
 cscript /nologo bin\addfile.js build\DHGR.IDX src\index\dhgr.idx.a
 cscript /nologo bin\addfile.js build\GR.IDX src\index\gr.idx.a
 cscript /nologo bin\addfile.js build\ARTWORK.IDX src\index\artwork.idx.a
+rem
+rem add additional miscellaneous files
+rem
+cscript /nologo bin\addfile.js build\COVERFADE src\index\coverfade.idx.a
+cscript /nologo bin\addfile.js build\SHR.FIZZLE src\index\shr.fizzle.idx.a
+cscript /nologo bin\addfile.js build\GR.FIZZLE src\index\gr.fizzle.idx.a
+cscript /nologo bin\addfile.js build\HELPTEXT src\index\helptext.idx.a
+cscript /nologo bin\addfile.js build\CREDITS src\index\credits.idx.a
+cscript /nologo bin\addfile.js res\DECRUNCH src\index\decrunch.idx.a
+cscript /nologo bin\addfile.js res\JOYSTICK src\index\joystick.idx.a
 echo done
 goto :EOF
 
