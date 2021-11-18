@@ -4,7 +4,6 @@
 ; Ordered key/value store (6502 compatible)(256+ records compatible)
 ;
 ; Public functions
-; - okvs_init(address)                          reset (required)
 ; - okvs_len(address)                           get number of keys
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
@@ -66,36 +65,6 @@
 ; +K+2 value length (actual length, not max length)
 ; +K+3 value
 ;  ... filler bytes up to value max length (set at append() time)
-
-;------------------------------------------------------------------------------
-; okvs_init
-;
-; in:    A/Y = handle to storage space
-; out:   $00/$01 clobbered
-;        $02/$03 clobbered
-;        all registers clobbered
-;------------------------------------------------------------------------------
-okvs_init
-         jsr   GetStoreAddressFromAY
-                                     ; PTR -> store
-                                     ; Y = 0
-         tya
-         sta   (PTR),y               ; set number of keys in store to 0 (word)
-         iny
-         sta   (PTR),y
-
-         iny                         ; set next-free-space pointer to store + 4
-         ldx   PTR+1
-         lda   PTR
-         clc
-         adc   #$04
-         bcc   +
-         inx
-+        sta   (PTR),y
-         iny
-         txa
-         sta   (PTR),y
-         rts
 
 ;------------------------------------------------------------------------------
 ; okvs_len

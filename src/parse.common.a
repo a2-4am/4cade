@@ -238,3 +238,33 @@ okvs_append
          ldy   #0
          sta   (SAVE),y              ; set record length
          rts
+
+;------------------------------------------------------------------------------
+; okvs_init
+;
+; in:    A/Y = handle to storage space
+; out:   $00/$01 clobbered
+;        $02/$03 clobbered
+;        all registers clobbered
+;------------------------------------------------------------------------------
+okvs_init
+         jsr   GetStoreAddressFromAY
+                                     ; PTR -> store
+                                     ; Y = 0
+         tya
+         sta   (PTR),y               ; set number of keys in store to 0 (word)
+         iny
+         sta   (PTR),y
+
+         iny                         ; set next-free-space pointer to store + 4
+         ldx   PTR+1
+         lda   PTR
+         clc
+         adc   #$04
+         bcc   +
+         inx
++        sta   (PTR),y
+         iny
+         txa
+         sta   (PTR),y
+         rts
