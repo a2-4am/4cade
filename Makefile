@@ -120,8 +120,8 @@ index: md asmfx asmprelaunch compress
 #
 	[ -f build/index ] || ((for f in res/SS/*; do \
 	    [ $$(echo "$$(basename $$f)" | cut -c-3) = "ACT" ] && \
-	        bin/buildaction.sh build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)" || \
-	        bin/buildtitle.sh build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)"; \
+	        bin/buildslideshow.sh -d build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)" || \
+	        bin/buildslideshow.sh build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)"; \
 	    echo "$$(basename $$f)"; \
 	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
 	[ -f build/index ] || ((for f in res/ATTRACT/*; do \

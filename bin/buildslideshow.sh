@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# flags
+# -d  include game display name (default off = display name will be 0-length string)
+
+# parameters
+# stdin - input containing slideshow (e.g. some file in res/SS/)
+# stdout - binary OKVS data structure
+# 1 - list of games with metadata (e.g. build/GAMES.CONF)
+
+include_displayname=false
+while getopts ":d" opt; do
+    case $opt in
+        d) include_displayname=true
+           ;;
+    esac
+done
+shift $((OPTIND-1))
+
 games=$(cat "$1")
 
 # make temp file with just the key/value pairs (strip blank lines, comments, eof marker)
@@ -15,7 +32,11 @@ source=$(mktemp)
      line=$(echo "$games" | awk '/,'"$filename"'=/')
      needsjoystick=$(echo "$line" | cut -c1) # 'requires joystick' flag (0 or 1)
      needs128k=$(echo "$line" | cut -c2)    # 'requires 128K' flag (0 or 1)
-     displayname=$(echo "$line" | awk -F= '{ print $2 }')
+     if [ "$include_displayname" = false ]; then
+         displayname=""
+     else
+         displayname=$(echo "$line" | awk -F= '{ print $2 }')
+     fi
      echo "!byte ${#key}+${#value}+${#displayname}+5"  # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
      echo "!text \"$key\""             # OKVS key

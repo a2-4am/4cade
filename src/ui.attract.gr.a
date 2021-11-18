@@ -90,7 +90,7 @@ GRActionCallback
 
          +ST16 IndexedGRFilename
 
-         jsr   FindGameInActionSlideshow
+         jsr   FindGame
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
