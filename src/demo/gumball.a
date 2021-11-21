@@ -37,6 +37,13 @@
          jmp   $B2F1      ; stage 1 (title screen and credits)
 
 callback1
+         lda   #$A5       ; restore original code so callback
+         sta   $B21E      ; won't be called more than once
+         lda   #$5F
+         sta   $B21F
+         lda   #$0A
+         sta   $B220
+
          lda   #$4C
          sta   $0DFB
          lda   #0
