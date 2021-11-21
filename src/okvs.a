@@ -395,8 +395,11 @@ okvs_next_field
          +ST16 PTR
 okvs_next_field_PTR_is_already_set
          jsr   stepptr
-         bne   incptr
-
+         jmp   incptr                ; do NOT change this to BNE
+                                     ; because if the low byte of PTR is 0
+                                     ; and the value of (PTR) is also 0
+                                     ; then stepptr will return with Z=1 and
+                                     ; we will fall through here unexpectedly
 incptr4  jsr   incptr2
 incptr2  jsr   incptr
 incptr
