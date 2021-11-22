@@ -29,6 +29,10 @@
          sta   $2E07
          lda   #>callback2
          sta   $2E08
+         lda   #<callback3
+         sta   $6016
+         lda   #>callback3
+         sta   $6017
 
          +DISABLE_ACCEL
 
@@ -47,6 +51,13 @@ callback1
 +        jmp   $ADF9
 
 callback2
+         sec
+         sbc   #8
+         cmp   #2
+         bcs   -
+         jmp   $AE21
+
+callback3
          ldx   #6-1
 p1       lda   patch, x
          sta   $6055, x
@@ -59,12 +70,7 @@ p1       lda   patch, x
 
          lda   #$D0
          sta   $6299      ; don't lose keypress on return
-
-         sec
-         sbc   #8
-         cmp   #2
-         bcs   -
-         jmp   $AE21
+         jmp   $ADE0
 
 patch    !byte $AD,$88,$C0,$6C,$FC,$FF
 
