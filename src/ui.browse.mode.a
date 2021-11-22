@@ -68,8 +68,12 @@ OnBrowseSearch
          jmp   SearchMode
 
 OnBrowsePrevious
-         +LDX16 gGameToLaunch
-         +CPX16_0_NE @notFirstGame
+         jsr   AnyGameSelected
+                                     ; A/Y = gGameToLaunch
+         bcs   @goToLastGame         ; if no game selected, select last game
+         tax                         ; X/Y = gGameToLaunch
+         +CPX16_0_NE @notFirstGame   ; if first game selected, select last game
+@goToLastGame
          +LDX16 GameCount
 @notFirstGame
          +DEX16
