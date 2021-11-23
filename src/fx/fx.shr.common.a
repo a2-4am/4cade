@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2021 by 4am
+
+!macro BUILD_SHR_LOOKUP_TABLES .lo, .hi {
+         ldx   #$C8
+         lda   #$60
+         ldy   #$9C
+-        sta   .lo-1, x
+         sty   .hi-1, x
+         sec
+         sbc   #$A0
+         bcs   +
+         dey
++        dex
+         bne   -
+}
+
+!macro COPY_SCB_AND_PALETTES {
+         sta   $C005
+         ldy   #0
+-        lda   $9D00, y
+         sta   $9D00, y
+         lda   $9E00, y
+         sta   $9E00, y
+         lda   $9F00, y
+         sta   $9F00, y
+         iny
+         bne   -
+}

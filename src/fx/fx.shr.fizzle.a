@@ -5,6 +5,8 @@
 !to "build/SHR.FIZZLE",plain
 *=$A000
 
+         !source "src/fx/fx.shr.common.a"
+
 addrs=$80                            ; [128 bytes]
 
          ldx   #(end-start)          ; copy LFSR code to zero page
@@ -19,19 +21,17 @@ addrs=$80                            ; [128 bytes]
          sty   addrs-$21, x
          dex
          bne   -
-         sta   $C005
--        lda   $9D00, y              ; pre-copy SHR SCB and palette
-         sta   $9D00, y
-         lda   $9E00, y
-         sta   $9E00, y
-         lda   $9F00, y
-         sta   $9F00, y
-         iny
-         bne   -
+         ;X=0
+
+         +COPY_SCB_AND_PALETTES
+         ;Y=0
+
          jmp   loop
 
 start
 !pseudopc 0 {
+         ;X=0
+         ;Y=0
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax

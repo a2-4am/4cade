@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021 by 4am
+
+!cpu 6502
+!to "build/SHR.LR2",plain
+*=$A000
+
+         !source "src/fx/fx.shr.common.a"
+
+shrlo = $301                         ; $C8 bytes
+shrhi = $38                          ; $C8 bytes
+
+         ldx   #(end-start-1)        ; copy loop to zero page
+-        lda   start, x
+         sta   $00, x
+         dex
+         bpl   -
+
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         +COPY_SCB_AND_PALETTES
+
+         jmp   loop1
+
+start
+!pseudopc 0 {
+loop1    ldy   #1
+loop2    ldx   #0
+loop3    lda   shrlo-1, x
+         sta   <dst+1
+         lda   shrhi-1, x
+         sta   <dst+2
+         lda   (<dst+1), y
+dst      sta   $0000, y              ; SMC
+         inx
+         cpx   #$C8
+         bcc   loop3
+         lda   $C000
+         bmi   @exit
+         iny
+         iny
+         cpy   #$A0
+         bcc   loop2
+         dec   <loop1+1
+         bpl   loop1
+@exit    sta   $C004
+         rts
+}
+end
