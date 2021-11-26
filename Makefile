@@ -153,7 +153,7 @@ index: md asmfx asmprelaunch compress
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
-	[ -f build/index ] || parallel ::: \
+	[ -f build/index ] || $(PARALLEL) ::: \
 	    '(grep "^00" < build/GAMES.CONF | bin/buildsearch.sh src/index/count00.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH00.IDX)' \
 	    '(grep "^0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)' \
 	    '(grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count10.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH10.IDX)' \
@@ -230,12 +230,12 @@ attract: compress
 	bin/generate-mini-attract-mode.sh
 
 cache: md
-	parallel ::: \
+	$(PARALLEL) ::: \
 	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache00.a' \
 	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache01.a' \
 	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache10.a' \
 	    'awk -F= '"'"'!/^$$|^#|^\[/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache11.a'
-	parallel ::: \
+	$(PARALLEL) ::: \
 	    '$(ACME) -o res/CACHE00.IDX build/cache00.a' \
 	    '$(ACME) -o res/CACHE01.IDX build/cache01.a' \
 	    '$(ACME) -o res/CACHE10.IDX build/cache10.a' \
