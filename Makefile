@@ -23,6 +23,9 @@ ACME=acme
 # version 1.4.0 or later
 CADIUS=cadius
 
+# https://www.gnu.org/software/parallel/
+PARALLEL=parallel
+
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
@@ -61,9 +64,7 @@ dsk: index asmproboot asmlauncher
 	for i in 1 2 3 4 5 6; do \
 		$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; \
 	done
-	for f in res/dsk/*.po; do \
-	    $(CADIUS) EXTRACTVOLUME "$${f}" build/X/ >>build/log; \
-	done
+	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} build/X/ >>build/log' ::: res/dsk/*.po
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	for f in build/X/*; do \
@@ -82,9 +83,7 @@ index: md asmfx asmprelaunch compress
 #
 	[ -f build/index ] || (bin/converthelp.sh res/HELPTEXT build/HELPTEXT)
 	[ -f build/index ] || (bin/converthelp.sh res/CREDITS build/CREDITS)
-	[ -f build/index ] || (for f in res/GAMEHELP/*; do \
-	    bin/converthelp.sh "$$f" build/GAMEHELP/"$$(basename $$f)"; \
-	done)
+	[ -f build/index ] || $(PARALLEL) 'bin/converthelp.sh "{}" "build/GAMEHELP/{/}"' ::: res/GAMEHELP/*
 #
 # create a version of GAMES.CONF without comments or blank lines
 #
@@ -118,16 +117,10 @@ index: md asmfx asmprelaunch compress
 # precompute indexed files for slideshows
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	[ -f build/index ] || ((for f in res/SS/*; do \
-	    [ $$(echo "$$(basename $$f)" | cut -c-3) = "ACT" ] && \
-	        bin/buildslideshow.sh -d build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)" || \
-	        bin/buildslideshow.sh build/GAMES.CONF < "$$f" > "build/SS/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
-	[ -f build/index ] || ((for f in res/ATTRACT/*; do \
-	    bin/buildokvs.sh < "$$f" > "build/ATTRACT/$$(basename $$f)"; \
-	    echo "$$(basename $$f)"; \
-	done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX)
+	[ -f build/index ] || $(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d build/GAMES.CONF < "{}" > "build/SS/{/}" || bin/buildslideshow.sh build/GAMES.CONF < "{}" > "build/SS/{/}"' ::: res/SS/*
+	[ -f build/index ] || ((for f in build/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
+	[ -f build/index ] || $(PARALLEL) 'bin/buildokvs.sh < "{}" > "build/ATTRACT/{/}"' ::: res/ATTRACT/*
+	[ -f build/index ] || ((for f in build/ATTRACT/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX)
 #
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
@@ -155,9 +148,7 @@ index: md asmfx asmprelaunch compress
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do \
-	    echo "$$(basename $$f)"; \
-	done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
+	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
@@ -214,23 +205,19 @@ asmlauncher: md
 	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
 asmfx: md
-	for f in src/fx/*.a; do \
-	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f} || true; \
-	done
+	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/fx/*.a
 
 asmprelaunch: md
-	for f in src/prelaunch/*.a; do \
-	    grep "^\!to" $${f} >/dev/null && $(ACME) $${f}; \
-	done
+	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/prelaunch/*.a
 
 asmproboot: md
 	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a
 
 compress: md
-	for f in res/ACTION.HGR.UNCOMPRESSED/*; do  o=res/ACTION.HGR/$$(basename $$f);  [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
-	for f in res/ACTION.DHGR.UNCOMPRESSED/*; do o=res/ACTION.DHGR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x4000 -o "$$o" >>build/log; done
-	for f in res/ARTWORK.SHR.UNCOMPRESSED/*; do o=res/ARTWORK.SHR/$$(basename $$f); [ -f "$$o" ] || ${EXOMIZER} "$$f"@0x2000 -o "$$o" >>build/log; done
-	for f in res/TITLE.HGR.UNPACKED/*; do  o=res/TITLE.HGR/$$(basename $$f);  [ -f "$$o" ] || bin/packhgrfile.py $$f $$o >>build/log; done
+	$(PARALLEL) '[ -f "res/ACTION.HGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.HGR/{/}"' ::: res/ACTION.HGR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.DHGR/{/}"' ::: res/ACTION.DHGR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || ${EXOMIZER} "{}"@0x2000 -o "res/ARTWORK.SHR/{/}"' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/TITLE.HGR/{/}" ] || bin/packhgrfile.py "{}" "res/TITLE.HGR/{/}"' ::: res/TITLE.HGR.UNPACKED/*
 
 #
 # |attract| must be called separately because it is slow and
