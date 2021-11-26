@@ -153,10 +153,11 @@ index: md asmfx asmprelaunch compress
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
-	[ -f build/index ] || (grep "^00" < build/GAMES.CONF | bin/buildsearch.sh src/index/count00.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH00.IDX)
-	[ -f build/index ] || (grep "^0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)
-	[ -f build/index ] || (grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count10.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH10.IDX)
-	[ -f build/index ] || (bin/buildsearch.sh src/index/count11.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG < build/GAMES.CONF > build/SEARCH11.IDX)
+	[ -f build/index ] || parallel ::: \
+	    '(grep "^00" < build/GAMES.CONF | bin/buildsearch.sh src/index/count00.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH00.IDX)' \
+	    '(grep "^0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)' \
+	    '(grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count10.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH10.IDX)' \
+	    '(bin/buildsearch.sh src/index/count11.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG < build/GAMES.CONF > build/SEARCH11.IDX)'
 #
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
@@ -229,14 +230,16 @@ attract: compress
 	bin/generate-mini-attract-mode.sh
 
 cache: md
-	awk -F= '/^00/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache00.a
-	awk -F= '/^0/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache01.a
-	awk -F= '/^.0/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache10.a
-	awk -F= '!/^$$|^#|^\[/ { print $$2 }' < res/GAMES.CONF | bin/buildcache.py > build/cache11.a
-	$(ACME) -o res/CACHE00.IDX build/cache00.a
-	$(ACME) -o res/CACHE01.IDX build/cache01.a
-	$(ACME) -o res/CACHE10.IDX build/cache10.a
-	$(ACME) -o res/CACHE11.IDX build/cache11.a
+	parallel ::: \
+	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache00.a' \
+	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache01.a' \
+	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache10.a' \
+	    'awk -F= '"'"'!/^$$|^#|^\[/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache11.a'
+	parallel ::: \
+	    '$(ACME) -o res/CACHE00.IDX build/cache00.a' \
+	    '$(ACME) -o res/CACHE01.IDX build/cache01.a' \
+	    '$(ACME) -o res/CACHE10.IDX build/cache10.a' \
+	    '$(ACME) -o res/CACHE11.IDX build/cache11.a'
 
 mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
