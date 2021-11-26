@@ -7,9 +7,17 @@
 ## Mac OS X
 
 You will need
- - [Xcode command line tools](https://www.google.com/search?q=xcode+command+line+tools)
+ - [Xcode command line tools](https://developer.apple.com/library/archive/technotes/tn2339/_index.html)
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
+ - [Parallel](https://www.gnu.org/software/parallel/)
  - [Cadius](https://github.com/mach-kernel/cadius)
+
+As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
+
+``` shell
+$ brew tap lifepillar/appleii
+$ brew install acme parallel mach-kernel-cadius
+```
 
 Then open a terminal window and type
 
