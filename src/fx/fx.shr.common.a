@@ -6,7 +6,14 @@
          lda   #$60
          ldy   #$9C
 -        sta   .lo-1, x
+!if .hi < $100 {
          sty   .hi-1, x
+} else {
+         pha
+         tya
+         sta   .hi-1, x
+         pla
+}
          sec
          sbc   #$A0
          bcs   +
