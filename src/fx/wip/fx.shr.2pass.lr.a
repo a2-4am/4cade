@@ -46,3 +46,8 @@ dst      sta   $0000, y              ; SMC
          rts
 }
 end
+
+; if zero page code gets too large, move shrhi to $201
+!if end-start > $38 {
+    !error "code is too large: ends at ", end-start
+}

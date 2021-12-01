@@ -1,0 +1,173 @@
+;license:MIT
+;(c) 2021 by 4am
+
+!cpu 6502
+!to "build/FX/SHR.FIZZLE",plain
+*=$A000
+
+color = $F8                          ; byte
+fracv = $F9                          ; byte
+incv =  $FA                          ; byte
+src =   $FC                          ; word
+dst =   $FE                          ; word
+
+         !source "src/fx/macros.a"
+
+         sta   $C005
+         ldy   #0                    ; copy pixel data
+         sty   src
+         sty   dst
+         lda   #$20
+         sta   src+1
+         ldx   #$7D
+-        lda   (src), y
+         sta   (src), y
+         iny
+         bne   -
+         inc   src+1
+         dex
+         bne   -
+
+         ;Y=0
+-        lda   $9D00, y              ; copy SCB
+         sta   $9D00, y
+         lda   #0
+         sta   $9E00, y              ; clear palettes
+         sta   $9F00, y
+         iny
+         bne   -
+
+         ;Y=0
+         sta   $C004
+         lda   #$60                  ; clear $2000 bytes at $6000/main
+         sta   src+1                 ; for use as incremental palettes
+         ldx   #$20
+         tya
+-        sta   (src), y
+         iny
+         bne   -
+         inc   src+1
+         dex
+         bne   -
+
+;         lda   #$00
+;         sta   src
+         lda   #$9E
+         sta   src+1
+         ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
+rb_palette_loop
+         ldy   #$00                  ; byte offset of color # within palette (00.1F)
+rb_color_loop
+         lda   #$00
+         sta   fracv
+         sta   color
+         lda   src
+         sta   dst
+         lda   src+1
+         sec
+         sbc   #$3E
+         sta   dst+1
+         lda   (src), y              ; get final Red or Blue value for this color in this palette
+         asl                         ; Red or Blue value is bits 0-3, shift them into bits 4-7
+         asl
+         asl
+         asl
+         sta   incv
+-        lda   fracv
+         clc
+         adc   incv
+         sta   fracv
+         bcc   +
+         inc   color
++        lda   color
+         sta   (dst), y
+         inc   dst+1
+         inc   dst+1
+         bpl   -
+         iny
+         cpy   #$20
+         bcc   rb_color_loop
+         lda   src
+         clc
+         adc   #$20
+         sta   src
+         bcc   +
+         inc   src+1
++        dex
+         bpl   rb_palette_loop
+
+;         lda   #$00
+;         sta   src
+         lda   #$9E
+         sta   src+1
+         ldx   #$0F                  ; palette #
+g_palette_loop
+         ldy   #$00                  ; byte offset of color # within palette (00.1F)
+g_color_loop
+         lda   #$00
+         sta   fracv
+         sta   color
+         lda   src
+         sta   dst
+         lda   src+1
+         sec
+         sbc   #$3E
+         sta   dst+1
+         lda   (src), y              ; get final Green value for this color in this palette
+         and   #$F0                  ; Green value is bits 4-7, mask out other bits
+         sta   incv
+-        lda   fracv
+         clc
+         adc   incv
+         sta   fracv
+         lda   color
+         bcc   +
+         clc
+         adc   #$10
+         sta   color
++        ora   (dst), y              ; keep existing Blue value in bits 0-3
+         sta   (dst), y
+         inc   dst+1
+         inc   dst+1
+         bpl   -
+         iny
+         iny                         ; high nibble of second color byte is always 0 so skip it
+         cpy   #$20
+         bcc   g_color_loop
+         lda   src
+         clc
+         adc   #$20
+         sta   src
+         bcc   +
+         inc   src+1
++        dex
+         bpl   g_palette_loop
+
+         ldx   #$62
+         stx   copy1+2
+         inx
+         stx   copy2+2
+         ldx   #$0E
+         ldy   #$00
+copyloop jsr   WaitForVBL
+         sta   $C005
+copy1    lda   $6200, y              ; SMC
+         sta   $9E00, y
+copy2    lda   $6300, y              ; SMC
+         sta   $9F00, y
+         iny
+         bne   copy1
+         sta   $C004
+         inc   copy1+2
+         inc   copy1+2
+         inc   copy2+2
+         inc   copy2+2
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
+         bmi   exit
+         dex
+         bpl   copyloop
+exit     sta   $C004
+         jmp   UnwaitForVBL
+
+         !source "src/wait.a"

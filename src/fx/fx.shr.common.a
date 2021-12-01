@@ -22,6 +22,27 @@
          bne   -
 }
 
+!macro BUILD_SHR_REVERSE_LOOKUP_TABLES .lo, .hi {
+         ldx   #$C8
+         lda   #$00
+         ldy   #$20
+-        sta   .lo-1, x
+!if .hi < $100 {
+         sty   .hi-1, x
+} else {
+         pha
+         tya
+         sta   .hi-1, x
+         pla
+}
+         clc
+         adc   #$A0
+         bcc   +
+         iny
++        dex
+         bne   -
+}
+
 !macro COPY_SCB_AND_PALETTES {
          sta   $C005
          ldy   #0
