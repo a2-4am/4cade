@@ -1,60 +1,159 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba/4am/John Brooks
+;(c) 2021 by 4am
 
 !cpu 6502
-!to "build/SHR.FIZZLE",plain
+!to "build/FX/SHR.FIZZLE",plain
 *=$A000
 
-         !source "src/fx/fx.shr.common.a"
+color = $F8                          ; byte
+fracv = $F9                          ; byte
+incv =  $FA                          ; byte
+src =   $FC                          ; word
+dst =   $FE                          ; word
 
-addrs=$80                            ; [128 bytes]
+         !source "src/fx/macros.a"
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
+         sta   $C005
+         ldy   #0                    ; copy pixel data
+         sty   src
+         sty   dst
+         lda   #$20
+         sta   src+1
+         ldx   #$7D
+-        lda   (src), y
+         sta   (src), y
+         iny
+         bne   -
+         inc   src+1
          dex
          bne   -
-         lda   #$A0                  ; create address lookup table
-         tax
-         tay
--        dey
-         sty   addrs-$21, x
-         dex
+
+         ;Y=0
+-        lda   $9D00, y              ; copy SCB
+         sta   $9D00, y
+         lda   #0
+         sta   $9E00, y              ; clear palettes
+         sta   $9F00, y
+         iny
          bne   -
-         ;X=0
 
-         +COPY_SCB_AND_PALETTES
-         ;Y=0
-
-         jmp   loop
-
-start
-!pseudopc 0 {
-         ;X=0
-         ;Y=0
-loop     txa
-loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
-         tax
-loop2    lda   addrs, x
-         sta   <src+1
-src=*+1
-         lda   $FD00, y              ; SMC high byte
-         sta   (<src), y
-         txa
-         lsr
-         tax
-         tya
-         ror
-         tay
-         bcc   loop2
-         bne   loop
-         bit   $C000
-         bmi   exit
-         txa
-         bne   loop1
-exit     lda   $2000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
          sta   $C004
-         rts
-}
-end
+         lda   #$9E
+         sta   src+1
+         ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
+rb_palette_loop
+         ldy   #$00                  ; byte offset within palette (00 -> 1F, used as index)
+rb_color_loop
+         lda   #$00
+         sta   fracv
+         sta   color
+         lda   src
+         sta   dst
+         lda   src+1
+         sec
+         sbc   #$3E
+         sta   dst+1
+         lda   (src), y              ; get final Red or Blue value for this color in this palette
+         asl                         ; Red or Blue value is bits 0-3, shift them into bits 4-7
+         asl
+         asl
+         asl
+         sta   incv
+rb_step_loop
+         lda   fracv
+         clc
+         adc   incv
+         sta   fracv
+         bcc   +
+         inc   color
++        lda   color
+         sta   (dst), y
+         inc   dst+1
+         inc   dst+1
+         bpl   rb_step_loop
+         iny
+         cpy   #$20
+         bcc   rb_color_loop
+         lda   src
+         clc
+         adc   #$20
+         sta   src
+         bcc   +
+         inc   src+1
++        dex
+         bpl   rb_palette_loop
+
+         lda   #$9E
+         sta   src+1
+         ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
+g_palette_loop
+         ldy   #$00                  ; byte offset within palette (00 -> 1E by 2, used as index)
+g_color_loop
+         lda   #$00
+         sta   fracv
+         sta   color
+         lda   src
+         sta   dst
+         lda   src+1
+         sec
+         sbc   #$3E
+         sta   dst+1
+         lda   (src), y              ; get final Green value for this color in this palette
+         and   #$F0                  ; Green value is bits 4-7, mask out other bits
+         sta   incv
+g_step_loop
+         lda   fracv
+         clc
+         adc   incv
+         sta   fracv
+         lda   color
+         bcc   +
+         clc
+         adc   #$10
+         sta   color
++        ora   (dst), y              ; keep existing Blue value in bits 0-3
+         sta   (dst), y
+         inc   dst+1
+         inc   dst+1
+         bpl   g_step_loop
+         iny
+         iny                         ; high nibble of second color byte is always 0 so skip it
+         cpy   #$20
+         bcc   g_color_loop
+         lda   src
+         clc
+         adc   #$20
+         sta   src
+         bcc   +
+         inc   src+1
++        dex
+         bpl   g_palette_loop
+
+         ldx   #$62
+         stx   copy1+2
+         inx
+         stx   copy2+2
+         ldx   #$0E
+         ldy   #$00
+copyloop jsr   WaitForVBL
+         sta   $C005
+copy1    lda   $6200, y              ; SMC
+         sta   $9E00, y
+copy2    lda   $6300, y              ; SMC
+         sta   $9F00, y
+         iny
+         bne   copy1
+         sta   $C004
+         inc   copy1+2
+         inc   copy1+2
+         inc   copy2+2
+         inc   copy2+2
+         lda   #$40
+         jsr   WaitForKeyWithTimeout
+         bmi   exit
+         dex
+         bpl   copyloop
+exit     sta   $C004
+         jmp   UnwaitForVBL
+
+         !source "src/wait.a"
