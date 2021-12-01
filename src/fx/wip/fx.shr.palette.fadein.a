@@ -37,26 +37,12 @@ dst =   $FE                          ; word
          iny
          bne   -
 
-         ;Y=0
          sta   $C004
-         lda   #$60                  ; clear $2000 bytes at $6000/main
-         sta   src+1                 ; for use as incremental palettes
-         ldx   #$20
-         tya
--        sta   (src), y
-         iny
-         bne   -
-         inc   src+1
-         dex
-         bne   -
-
-;         lda   #$00
-;         sta   src
          lda   #$9E
          sta   src+1
          ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
 rb_palette_loop
-         ldy   #$00                  ; byte offset of color # within palette (00.1F)
+         ldy   #$00                  ; byte offset within palette (00 -> 1F, used as index)
 rb_color_loop
          lda   #$00
          sta   fracv
@@ -73,7 +59,8 @@ rb_color_loop
          asl
          asl
          sta   incv
--        lda   fracv
+rb_step_loop
+         lda   fracv
          clc
          adc   incv
          sta   fracv
@@ -83,7 +70,7 @@ rb_color_loop
          sta   (dst), y
          inc   dst+1
          inc   dst+1
-         bpl   -
+         bpl   rb_step_loop
          iny
          cpy   #$20
          bcc   rb_color_loop
@@ -96,13 +83,11 @@ rb_color_loop
 +        dex
          bpl   rb_palette_loop
 
-;         lda   #$00
-;         sta   src
          lda   #$9E
          sta   src+1
-         ldx   #$0F                  ; palette #
+         ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
 g_palette_loop
-         ldy   #$00                  ; byte offset of color # within palette (00.1F)
+         ldy   #$00                  ; byte offset within palette (00 -> 1E by 2, used as index)
 g_color_loop
          lda   #$00
          sta   fracv
@@ -116,7 +101,8 @@ g_color_loop
          lda   (src), y              ; get final Green value for this color in this palette
          and   #$F0                  ; Green value is bits 4-7, mask out other bits
          sta   incv
--        lda   fracv
+g_step_loop
+         lda   fracv
          clc
          adc   incv
          sta   fracv
@@ -129,7 +115,7 @@ g_color_loop
          sta   (dst), y
          inc   dst+1
          inc   dst+1
-         bpl   -
+         bpl   g_step_loop
          iny
          iny                         ; high nibble of second color byte is always 0 so skip it
          cpy   #$20
@@ -167,7 +153,6 @@ copy2    lda   $6300, y              ; SMC
          bmi   exit
          dex
          bpl   copyloop
-exit     sta   $C004
-         jmp   UnwaitForVBL
+exit     jmp   UnwaitForVBL
 
          !source "src/wait.a"
