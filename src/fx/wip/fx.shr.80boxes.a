@@ -81,7 +81,35 @@ shrhi     = $301                     ; [$C8 bytes]
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-         ldx   #0
+         lda   #<BoxesX
+         sta   $FE
+         lda   #>BoxesX
+         sta   $FF
+---      ldx   #8
+seta     lda   #0
+--       pha
+         ldy   #10-1
+-        sta   ($FE), y
+         sec
+sub1     sbc   #0
+         dey
+         bpl   -
+         clc
+         lda   $FE
+         adc   #10
+         sta   $FE
+         pla
+         sec
+sub2     sbc   #-25
+         dex
+         bne   --
+         lda   #$90
+         sta   seta+1
+         lda   #$10
+         sta   sub1+1
+         stx   sub2+1
+         bcc   ---
+         
          txa
 -        ldy   start, x
          sty   $00, x
@@ -215,25 +243,6 @@ BoxStages
 ;         !byte $F2,$FF,$F2,$FF,$F2,$FF,$F2,$FF,$F2,$FF
 }
 
-BoxesX ; starting row for each box
-         !byte 0,0,0,0,0,0,0,0,0,0
-         !byte 25,25,25,25,25,25,25,25,25,25
-         !byte 50,50,50,50,50,50,50,50,50,50
-         !byte 75,75,75,75,75,75,75,75,75,75
-         !byte 100,100,100,100,100,100,100,100,100,100
-         !byte 125,125,125,125,125,125,125,125,125,125
-         !byte 150,150,150,150,150,150,150,150,150,150
-         !byte 175,175,175,175,175,175,175,175,175,175
-BoxesY ; starting byte offset for each box
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
-
 !macro INIT_DRAW .toprowoffset, .siderowcount, .leftoffset {
          adc   #.toprowoffset
          ldx   #.siderowcount
@@ -283,6 +292,28 @@ copy00
          +COPY_BYTE_AND_INY
          +COPY_BYTE
          rts
+
+BoxesX ; starting row for each box
+;         !byte 0,0,0,0,0,0,0,0,0,0
+;         !byte 25,25,25,25,25,25,25,25,25,25
+;         !byte 50,50,50,50,50,50,50,50,50,50
+;         !byte 75,75,75,75,75,75,75,75,75,75
+;         !byte 100,100,100,100,100,100,100,100,100,100
+;         !byte 125,125,125,125,125,125,125,125,125,125
+;         !byte 150,150,150,150,150,150,150,150,150,150
+;         !byte 175,175,175,175,175,175,175,175,175,175
+BoxesY = BoxesX + 10*8 ; starting byte offset for each box
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+;         !byte $00,$10,$20,$30,$40,$50,$60,$70,$80,$90
+!if (>BoxesY != >BoxesX) {
+  !error "Boxes array crosses a page"
+}
 
 !align $FF,0,0                       ; align to page
 copy01
