@@ -216,9 +216,8 @@ BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
          stx   box
          sta   j+2
-         lda   BoxesX-1, x
+         lda   BoxesX-1, x           ; A = starting HGR row for this box
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
-         tax                         ; X = starting HGR row for this box
          clc
 j        jsr   $0000                 ; [SMC] call drawing routine for this stage
          ldx   box
@@ -260,9 +259,8 @@ INX_AND_RECALC_E
 RECALC_AND_INY_E
 STAGE_INIT                           ; 8 bytes
 ROW_COUNT=*+1
-         lda   #$1F                  ; SMC
-         sta   rowcount
-         txa
+         ldx   #$1F                  ; SMC
+         stx   rowcount
 FIRST_ROW=*+1
          adc   #$0E                  ; SMC
          tax
