@@ -286,18 +286,14 @@ OUTER_BRANCHES                       ; 6 bytes
          ; another -2 for the previous branch as well
          !byte $10,MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2-2
 OUTER_BRANCHES_E
-EDGE_LEFT_MASK                       ; 1 byte
-         !byte $FD
-EDGE_LEFT_MASK_E
-EDGE_RIGHT_MASK                      ; 1 byte
-         !byte $FD
-EDGE_RIGHT_MASK_E
-LEFT_MASK                            ; 1 byte
-         !byte $FD
-LEFT_MASK_E
-RIGHT_MASK                           ; 1 byte
-         !byte $FD
-RIGHT_MASK_E
+EDGE_LEFT_MASK   = $FC
+EDGE_LEFT_MASK_E = $FD
+EDGE_RIGHT_MASK  = $FD
+EDGE_RIGHT_MASK_E = $FE
+LEFT_MASK         = $FE
+LEFT_MASK_E       = $FF
+RIGHT_MASK        = $FF
+RIGHT_MASK_E      = $100
 
 codegen_piece_lengths                ; length of each of the pieces
          !byte RTS0_E-RTS0
