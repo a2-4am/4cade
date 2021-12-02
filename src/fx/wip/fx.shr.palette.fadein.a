@@ -5,8 +5,9 @@
 !to "build/FX/SHR.FIZZLE",plain
 *=$A000
 
-color = $F8                          ; byte
-fracv = $F9                          ; byte
+color = $F7                          ; byte
+fracv = $F8                          ; byte
+fracv_hi = $F9
 incv =  $FA                          ; byte
 src =   $FC                          ; word
 dst =   $FE                          ; word
@@ -59,12 +60,13 @@ rb_palette_loop
 rb_color_loop
          lda   #$00
          sta   fracv
+         sta   fracv_hi
          sta   color
          lda   src
          sta   dst
          lda   src+1
          sec
-         sbc   #>(palettes-$6000)
+         sbc   #>(palettes-$4000)
          sta   dst+1
          lda   (src), y              ; get final Red or Blue value for this color in this palette
          asl                         ; Red or Blue value is bits 0-3, shift them into bits 4-7
@@ -78,6 +80,10 @@ rb_step_loop
          adc   incv
          sta   fracv
          bcc   +
+         lda   fracv_hi
+         eor   #$01
+         sta   fracv_hi
+         bne   +
          inc   color
 +        lda   color
          sta   (dst), y
@@ -104,12 +110,13 @@ g_palette_loop
 g_color_loop
          lda   #$00
          sta   fracv
+         sta   fracv_hi
          sta   color
          lda   src
          sta   dst
          lda   src+1
          sec
-         sbc   #>(palettes-$6000)
+         sbc   #>(palettes-$4000)
          sta   dst+1
          lda   (src), y              ; get final Green value for this color in this palette
          and   #$F0                  ; Green value is bits 4-7, mask out other bits
@@ -119,12 +126,17 @@ g_step_loop
          clc
          adc   incv
          sta   fracv
-         lda   color
          bcc   +
+         lda   fracv_hi
+         eor   #$01
+         sta   fracv_hi
+         bne   +
+         lda   color
          clc
          adc   #$10
          sta   color
-+        ora   (dst), y              ; keep existing Blue value in bits 0-3
++        lda   color
+         ora   (dst), y              ; keep existing Blue value in bits 0-3
          sta   (dst), y
          inc   dst+1
          inc   dst+1
@@ -142,17 +154,19 @@ g_step_loop
 +        dex
          bpl   g_palette_loop
 
-         ldx   #$62
+         ldx   #$44
          stx   copy1+2
          inx
          stx   copy2+2
-         ldx   #$0E
+         lda   #$40
+         sta   incv
+         ldx   #$1D
          ldy   #$00
 copyloop jsr   WaitForVBL
          sta   $C005
-copy1    lda   $6200, y              ; SMC
+copy1    lda   $4400, y              ; SMC
          sta   $9E00, y
-copy2    lda   $6300, y              ; SMC
+copy2    lda   $4500, y              ; SMC
          sta   $9F00, y
          iny
          bne   copy1
@@ -161,9 +175,11 @@ copy2    lda   $6300, y              ; SMC
          inc   copy1+2
          inc   copy2+2
          inc   copy2+2
-         lda   #$40
+         lda   incv
          jsr   WaitForKeyWithTimeout
          bmi   exit
+         dec   incv
+         dec   incv
          dex
          bpl   copyloop
 exit     jmp   UnwaitForVBL
