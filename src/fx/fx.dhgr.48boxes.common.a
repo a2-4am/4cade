@@ -17,7 +17,7 @@
 ; are easy to find once you calculate the base address for that row.
 ;
 ; |BoxInitialStages| defines the initial grid of stages for each box.
-; Each stage is used an index into the |StagesHi| array
+; Each stage is used as an index into the |StagesHi| array
 ; to find the drawing routine for that stage (if any).
 ; Each box's stage is incremented after each iteration through the main loop.
 ; When the main loop iterates through all 48 boxes without drawing anything,
