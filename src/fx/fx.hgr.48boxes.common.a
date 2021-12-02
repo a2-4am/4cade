@@ -76,12 +76,10 @@
 src      = $00                       ; [word][must be at $00] used by drawing routines
 dst      = $02                       ; [word] used by drawing routines
 rowcount = $04                       ; [byte] used by drawing routines
-box      = $0E                       ; [byte] counter in main loop
-BoxStages = $10                      ; [$30 bytes] current stage for each box
-hgrhi    = $40                       ; [$C0 bytes] HGR base addresses
+hgrhi    = $200                      ; [$C0 bytes] HGR base addresses
 hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
-BoxesX   = $200                      ; [$30 bytes] starting row for each box
-BoxesY   = $230                      ; [$30 bytes] starting byte offset for each box
+BoxesX   = $90                       ; [$30 bytes] starting row for each box
+BoxesY   = $C0                       ; [$30 bytes] starting byte offset for each box
 
 ; High bytes of drawing routines for each stage (actual routines will be page-aligned).
 ; To minimize code size, we build drawing routines in this order:
@@ -94,38 +92,38 @@ BoxesY   = $230                      ; [$30 bytes] starting byte offset for each
 ; - clear07..clear02 (MIDDLE_STAGE)
 ; - clear01 (STAGE1)
 ; - clear00 (STAGE0)
-clear00  = $64
-clear01  = $65
-clear02  = $66
-clear03  = $67
-clear04  = $68
-clear05  = $69
-clear06  = $6A
-clear07  = $6B
-clear08  = $6C
-clear09  = $6D
-clear0A  = $6E
-clear0B  = $6F
-clear0C  = $70
-clear0D  = $71
-clear0E  = $72
-clear0F  = $73
-copy02   = $74
-copy03   = $75
-copy04   = $76
-copy05   = $77
-copy06   = $78
-copy07   = $79
-copy08   = $7A
-copy09   = $7B
-copy0A   = $7C
-copy0B   = $7D
-copy0C   = $7E
-copy0D   = $7F
-copy0E   = $80
-copy0F   = $81
-copy00   = $82
-copy01   = $83
+clear00  = $80
+clear01  = $81
+clear02  = $82
+clear03  = $83
+clear04  = $84
+clear05  = $85
+clear06  = $86
+clear07  = $87
+clear08  = $88
+clear09  = $89
+clear0A  = $8A
+clear0B  = $8B
+clear0C  = $8C
+clear0D  = $8D
+clear0E  = $8E
+clear0F  = $8F
+copy02   = $90
+copy03   = $91
+copy04   = $92
+copy05   = $93
+copy06   = $94
+copy07   = $95
+copy08   = $96
+copy09   = $97
+copy0A   = $98
+copy0B   = $99
+copy0C   = $9A
+copy0D   = $9B
+copy0E   = $9C
+copy0F   = $9D
+copy00   = $9E
+copy01   = $9F
 
 ; tokens for code generation
 ; used as indexes into |codegen_pieces| and |codegen_piece_lengths|,
@@ -152,6 +150,22 @@ k_right_mask              = 17
          !source "src/fx/macros.a"
 
 ; actual code starts here
+
+         ; drawing routines for each stage are constructed dynamically
+         ; and stored at copy00..copy0F and clear00..clear0F
+         jsr   BuildDrawingRoutines
+
+         ; set up zero page for drawing phase
+         ; A=0 here
+         tax
+-        ldy   start-5, x
+         sty   $00, x
+         sta   EndStagesHi, x
+         inx
+         bne   -
+
+         ; X=0 here
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
 
 ; Generate |BoxesX| and |BoxesY| arrays
 ; BoxesX (starting row for each box)
@@ -193,43 +207,7 @@ k_right_mask              = 17
          bne   -
          pla
 
-         ; drawing routines for each stage are constructed dynamically
-         ; and stored at copy00..copy0F and clear00..clear0F
-         jsr   BuildDrawingRoutines
-
-         ; set up zero page for drawing phase
-         ; A=0 here
-         tax
--        ldy   BoxInitialStages-BoxStages, x
-         sty   $00, x
-         sta   EndStagesHi, x
-         inx
-         bne   -
-
-         ; X=0 here
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
-
-MainLoop ldx   #48
-BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
-         inc   BoxStages-1, x        ; increment every box's stage every time through the loop
-         lda   StagesHi, y
-         beq   NextBox               ; if stage's drawing routine is 0, nothing to do
-         stx   box
-         sta   j+2
-         lda   BoxesX-1, x           ; A = starting HGR row for this box
-         ldy   BoxesY-1, x           ; Y = starting byte offset for this box
-         clc
-j        jsr   $0000                 ; [SMC] call drawing routine for this stage
-         ldx   box
-NextBox  dex
-         bne   BoxLoop
-         lda   j+2
-         beq   +                     ; if we didn't draw anything in any box, we're done
-         stx   j+2                   ; X=0 here
-         bit   $C000
-         bpl   MainLoop
-+
-         ; execution falls through here
+         jmp   MainLoop
 
 ; These are all the pieces of code we need to construct the drawing routines.
 ; There are 32 drawing routines (16 if USES_CLEAR=0), which we construct from
@@ -240,19 +218,19 @@ NextBox  dex
 CODEGEN_COPY_START
 !pseudopc 0 {
 RTS0                                 ; 1 byte
-         rts                         ; also terminates MainLoop
+         rts
 RTS0_E
 INX_AND_RECALC                       ; 16 bytes
          inx
 RECALC_AND_INY                       ; 16 bytes
 RECALC                               ; 15 bytes
          lda   hgrlo, x
-         sta   src
-         sta   dst
+         sta   <src
+         sta   <dst
          lda   hgrhi, x
-         sta   dst+1
+         sta   <dst+1
          eor   #$60
-         sta   src+1
+         sta   <src+1
 RECALC_E
 INX_AND_RECALC_E
          iny
@@ -260,7 +238,7 @@ RECALC_AND_INY_E
 STAGE_INIT                           ; 8 bytes
 ROW_COUNT=*+1
          ldx   #$1F                  ; SMC
-         stx   rowcount
+         stx   <rowcount
 FIRST_ROW=*+1
          adc   #$0E                  ; SMC
          tax
@@ -293,7 +271,7 @@ DEY2                                 ; 2 bytes
          dey
 DEY2_E
 MIDDLE_BRANCHES                      ; 6 bytes
-         dec   rowcount
+         dec   <rowcount
          ; these monsters avoid hard-coded branching
          ; trailing -2 for dec rowcount, -2 for branch itself
          !byte $F0,MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_LEFT_MASK-EDGE_LEFT_MASK_E+MASKCOPY_POST_AND_INY-MASKCOPY_POST_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_RIGHT_MASK-EDGE_RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2
@@ -301,7 +279,7 @@ MIDDLE_BRANCHES                      ; 6 bytes
          !byte $10,MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2-2
 MIDDLE_BRANCHES_E
 OUTER_BRANCHES                       ; 6 bytes
-         dec   rowcount
+         dec   <rowcount
          ; these monsters avoid hard-coded branching
          ; trailing -2 for dec rowcount, -2 for branch itself
          !byte $F0,MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_LEFT_MASK-EDGE_LEFT_MASK_E+MASKCOPY_POST_AND_INY-MASKCOPY_POST_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+COPY_AND_INY-COPY_AND_INY_E+MASKCOPY_PRE-MASKCOPY_PRE_E+EDGE_RIGHT_MASK-EDGE_RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+LEFT_MASK-LEFT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+INY2-INY2_E+INY2-INY2_E+MASKCOPY_PRE-MASKCOPY_PRE_E+RIGHT_MASK-RIGHT_MASK_E+MASKCOPY_POST-MASKCOPY_POST_E+DEY2-DEY2_E+DEY2-DEY2_E+INX_AND_RECALC-INX_AND_RECALC_E-2-2
@@ -498,7 +476,7 @@ piece_length=*+1
 
 BuildDrawingRoutines
          ; copy codegen data to zero page
-         ; X=0 here
+         ldx   #0
 -        lda   CODEGEN_COPY_START, x
          sta   $00, x
          inx
@@ -557,5 +535,30 @@ BuildStage1And0
          jsr   BuildDrawingRoutineFrom
          lda   #<STAGE0
          jmp   BuildDrawingRoutineFrom
+
+start
+!pseudopc 5 {
+MainLoop ldx   #47
+BoxLoop  ldy   <BoxStages, x         ; for each box, get its current stage
+         inc   <BoxStages, x         ; increment every box's stage every time through the loop
+         lda   StagesHi, y
+         beq   <NextBox              ; if stage's drawing routine is 0, nothing to do
+         sta   <j+2
+         lda   <BoxesX, x            ; A = starting HGR row for this box
+         ldy   <BoxesY, x            ; Y = starting byte offset for this box
+         clc
+         stx   <ReBox+1
+j        jsr   $0000                 ; [SMC] call drawing routine for this stage
+ReBox    ldx   #$FD                  ; [SMC]
+NextBox  dex
+         bpl   <BoxLoop
+         lda   <j+2
+         bpl   +                     ; if we didn't draw anything in any box, we're done
+         lda   $C000
+         sta   <j+2
+         bpl   <MainLoop
++        rts
+BoxStages
+}
 
 BoxInitialStages
