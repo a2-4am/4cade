@@ -219,11 +219,11 @@ k_bitcopy                 = 30       ; must be last token
 
          sta   $C001                 ; 80STORE mode so we can bank $2000/aux in & out with STA $C055 & $C054
 MainLoop ldx   #48
-BoxLoop  stx   box
-         ldy   BoxStages-1, x        ; for each box, get its current stage
+BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          inc   BoxStages-1, x        ; increment every box's stage every time through the loop
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
+         stx   box
          sta   j+2
          lda   BoxesX-1, x
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
