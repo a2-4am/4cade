@@ -133,17 +133,15 @@ BoxLoop  ldy   <BoxStages-1, x       ; for each box, get its current stage
          sta   <j+2
          lda   BoxesX-1, x           ; A = starting SHR row for this box
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
-         inc   <any
          clc
          stx   <ReBox+1
-j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
+j        jsr   $0000                 ; [SMC] call drawing routine for this stage
 ReBox    ldx   #$00                  ; [SMC]
 NextBox  dex
          bne   <BoxLoop
-any=*+1
-         lda   #$00                  ; [SMC]
+         lda   <j+2
          beq   <exit                 ; if we didn't draw anything in any box, we're done
-         stx   <any                  ; X=0 here
+         stx   <j+2                  ; X=0 here
          bit   $C000
          bpl   MainLoop
 exit     sta   WRITEMAINMEM

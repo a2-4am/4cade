@@ -77,7 +77,6 @@ src      = $00                       ; [word][must be at $00] used by drawing ro
 dst      = $02                       ; [word] used by drawing routines
 rowcount = $04                       ; [byte] used by drawing routines
 box      = $0E                       ; [byte] counter in main loop
-any      = $0F                       ; [byte][must be at $0F] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 hgrhi    = $40                       ; [$C0 bytes] HGR base addresses
 hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
@@ -220,15 +219,14 @@ BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          lda   BoxesX-1, x
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
          tax                         ; X = starting HGR row for this box
-         inc   any                   ; was initialized by the BoxStages copy loop
          clc
-j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
+j        jsr   $0000                 ; [SMC] call drawing routine for this stage
          ldx   box
 NextBox  dex
          bne   BoxLoop
-         lda   any
+         lda   j+2
          beq   +                     ; if we didn't draw anything in any box, we're done
-         stx   any                   ; X=0 here
+         stx   j+2                   ; X=0 here
          bit   $C000
          bpl   MainLoop
 +
@@ -561,8 +559,5 @@ BuildStage1And0
          jsr   BuildDrawingRoutineFrom
          lda   #<STAGE0
          jmp   BuildDrawingRoutineFrom
-         ; note: the high byte of the final JMP is later copied
-         ; to zero page $0F and used in MainLoop, so don't put any
-         ; more code before BoxInitialStages
 
 BoxInitialStages
