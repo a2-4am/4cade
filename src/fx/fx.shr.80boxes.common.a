@@ -1,0 +1,232 @@
+;license:MIT
+;(c) 2021 by 4am & qkumba
+;
+; The SHR screen in 320x200 mode is separated into 80 boxes.
+; Boxes are laid out in a grid, left-to-right, top-down:
+;
+; 0  1  2  3  4  5  6  7  8  9
+; 10 11 12 13 14 15 16 17 18 19
+; 20 21 22 23 24 25 26 27 28 29
+; 30 31 32 33 34 35 36 37 38 39
+; 40 41 42 43 44 45 46 47 48 49
+; 50 51 52 53 54 55 56 57 58 59
+; 60 61 62 63 64 65 66 67 68 69
+; 70 71 72 73 74 75 76 77 78 79
+;
+; Each box is 32x25 pixels, so each row of each box is 16 consecutive
+; bytes in memory (2 pixels per byte) once you calculate the SHR base
+; address for that row.
+;
+; |BoxInitialStages| defines the initial grid of stages for each box.
+; Each stage is used as an index into the |StageInitialIndexes| array
+; to find the drawing routine for that stage (if any).
+; Each box's stage is incremented after each iteration through the main loop.
+; When the main loop iterates through all 80 boxes without drawing anything,
+; the program exits.
+;
+; There are 7 copy routines that copy certain pixels from the source
+; image in mainmem to the destination image in auxmem. Technically
+; these all have the same entry point, with X = 1..7 on entry.
+; We always copy pixels in horizontal pairs, meaning we can just copy
+; bytes without having to worry about masking high and low nibbles.
+;
+; row|             pixels
+; ---+.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+; 00 |77777777777777777777777777777777
+; 01 |77777777777777777777777777777777
+; 02 |77666666666666666666666666666677
+; 03 |77666666666666666666666666666677
+; 04 |77665555555555555555555555556677
+; 05 |77665555555555555555555555556677
+; 06 |77665544444444444444444444556677
+; 07 |77665544444444444444444444556677
+; 08 |77665544333333333333333344556677
+; 09 |77665544333333333333333344556677
+; 10 |77665544332222222222223344556677
+; 11 |77665544332222222222223344556677
+; 12 |77665544332211111111223344556677
+; 13 |77665544332222222222223344556677
+; 14 |77665544332222222222223344556677
+; 15 |77665544333333333333333344556677
+; 16 |77665544333333333333333344556677
+; 17 |77665544444444444444444444556677
+; 18 |77665544444444444444444444556677
+; 19 |77665555555555555555555555556677
+; 20 |77665555555555555555555555556677
+; 21 |77666666666666666666666666666677
+; 22 |77666666666666666666666666666677
+; 23 |77777777777777777777777777777777
+; 24 |77777777777777777777777777777777
+;
+
+!macro SET_ROW_X {
+; out:   Z=0 because shrhi is never 0
+         lda   shrlo, x
+         sta   <src+1
+         lda   shrhi, x
+         sta   <src+2
+}
+
+!macro COPY_BYTE {
+         lda   (src+1), y
+         sta   (src+1), y
+}
+
+!macro COPY_BYTE_AND_INY {
+         +COPY_BYTE
+         iny
+}
+
+!macro SIDE_ROWS {
+}
+
+shrlo     = $201                     ; [$C8 bytes][accessed via shrlo-1][should not cross page]
+shrhi     = $301                     ; [$C8 bytes][accessed via shrhi-1][should not cross page]
+BoxStages = $106                     ; [$50 bytes][should not cross page]
+StageIndexes = $BD00                 ; [$100 bytes][should be page-aligned]
+BoxesX    = $BE60                    ; [$50 bytes][accessed via BoxesX-1][should not cross page]
+BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should not cross page]
+
+         !source "src/fx/macros.a"   ; no code in these
+         !source "src/fx/fx.shr.common.a"
+
+         ldx   #80
+         lda   #175
+--       ldy   #10
+-        sta   BoxesX-1, x
+         dex
+         dey
+         bne   -
+         sec
+         sbc   #25
+         bcs   --
+         ldx   #80
+--       ldy   #10
+         lda   #$90
+-        sta   BoxesY-1, x
+         sec
+         sbc   #$10
+         dex
+         dey
+         bne   -
+         txa
+         bne   --
+-        lda   start, x
+         sta   <MainLoop, x
+         lda   #0
+         sta   EndStageInitialIndexes, x
+         lda   StageInitialIndexes, x
+         sta   StageIndexes, x
+         inx
+         bne   -
+         ldx   #80                   ; can't do full $100 here because we'd clobber the stack
+-        lda   BoxInitialStages-1, x
+         sta   BoxStages-1, x
+         dex
+         bne   -
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
+         jmp   MainLoop
+
+start
+!pseudopc 0 {
+MainLoop ldx   #80
+BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
+         inc   BoxStages-1, x        ; increment every box's stage every time through the loop
+         lda   StageIndexes, y
+         beq   NextBox               ; if stage's index is 0, nothing to do
+         sta   <StageIndex+1
+         stx   <ReBox+1
+         lda   BoxesX-1, x           ; A = starting SHR row for this box
+         ldy   BoxesY-1, x           ; Y = starting byte offset for this box
+         clc
+StageIndex
+         ldx   #$00                  ; [SMC] X = stage index 1..7
+         jsr   copy
+ReBox    ldx   #$00                  ; [SMC] X = BoxLoop index 1..80
+NextBox  dex
+         bne   BoxLoop
+         lda   <StageIndex+1
+         beq   <exit                 ; if we didn't draw anything in any box, we're done
+         stx   <StageIndex+1         ; X=0 here
+         bit   $C000
+         bpl   MainLoop
+exit     sta   WRITEMAINMEM
+setV     rts
+
+toprow   !byte 12,10,8,6,4,2,0
+leftbyte !byte 6,5,4,3,2,1
+siderows !byte 0,1,5,9,13,17,21
+across_lo
+         !byte <across1
+         !byte <across2
+         !byte <across3
+         !byte <across4
+         !byte <across5
+         !byte <across6
+
+across6  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across5  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across4  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across3  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across2  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across1  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+across0  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+         lda   (src+1), y
+src      sta   $FDFD, y              ; [SMC]
+copyexit rts
+copy1    pla
+         tax
+         ldy   <lefty+1
+         +SET_ROW_X
+         bne   across0               ; always branches
+copy     adc   toprow-1, x
+         pha
+         tya
+         adc   leftbyte-1, x
+         sta   <lefty+1
+         lda   siderows-1, x
+         sta   <rowcount
+         dex
+         beq   copy1
+         lda   across_lo-1, x
+         sta   <j+1
+         pla
+         tax
+         bit   <setV
+copy2row clc
+         !byte $A9
+copy1row sec
+         +SET_ROW_X
+         ldy   <lefty+1
+j        jsr   across6               ; [SMC low byte]
+         inx
+         bcc   copy1row
+         bvc   copyexit
+         sty   <righty+1
+copyside +SET_ROW_X
+lefty    ldy   #$FD                  ; [SMC]
+         +COPY_BYTE
+righty   ldy   #$FD                  ; [SMC]
+         +COPY_BYTE
+         inx
+         dec   <rowcount
+         bne   copyside
+         clv
+         bvc   copy2row
+rowcount
+}
+!if (*-start>=$FF) {
+         !error "Code is too big to fit on zero page! ", *-start
+}
+
+BoxInitialStages
