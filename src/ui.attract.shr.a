@@ -54,17 +54,36 @@ jmpblank
          jmp   BlankHGR
 
 ;------------------------------------------------------------------------------
-; LoadSHGRTransition [private]
-; load the SHR transition effect code (currently always the same file)
+; LoadSHRTransition [private]
+; looks up name of next SHR transition effect in SFX.CONF and loads that file
+; at $A000
 ;
 ; in:    none
 ; out:   all registers and flags clobbered
 ;        $A000..$BFFF/main contains transition effect code
 ;------------------------------------------------------------------------------
 LoadSHRTransition
+         jsr   LoadIndexedFile       ; load SHR transition effects list into $A000
+-        !word $A000
+         !word kSFXIndexRecord
+
+         jsr   pref_get              ; get SHR transition effect from prefs
+         !word kNextSFX
+         !word -
+         +ST16 @indexRecordPtr       ; A/Y = filename (don't load file yet)
+                                     ; $WINDEX = index of the transition in SFX store
+         +LDADDR -
+         jsr   okvs_next             ; get transition after this one
+         +ST16 +
+
+         jsr   pref_set              ; update prefs store and save to disk
+         !word kNextSFX
++        !word $FDFD                 ; SMC
+
          jsr   LoadIndexedFile
-         !word $A000
-         !word kSFXFizzleRecord
+         !word $A000                 ; load actual transition effect code into $A000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
 SHRRTS   rts
 
 ;------------------------------------------------------------------------------

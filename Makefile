@@ -127,6 +127,7 @@ index: md asmfx asmprelaunch compress
 #
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/SFX.CONF > build/SFX.IDX)
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -174,6 +175,7 @@ index: md asmfx asmprelaunch compress
 	[ -f build/index ] || bin/addfile.sh build/ATTRACT.IDX build/TOTAL.DATA > src/index/attract.idx.a
 	[ -f build/index ] || bin/addfile.sh build/FX.IDX build/TOTAL.DATA > src/index/fx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/DFX.IDX build/TOTAL.DATA > src/index/dfx.idx.a
+	[ -f build/index ] || bin/addfile.sh build/SFX.IDX build/TOTAL.DATA > src/index/sfx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
 	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.DATA > src/index/miniattract.idx.a
@@ -193,7 +195,6 @@ index: md asmfx asmprelaunch compress
 # add additional miscellaneous files
 #
 	[ -f build/index ] || bin/addfile.sh build/COVERFADE build/TOTAL.DATA > src/index/coverfade.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SHR.FIZZLE build/TOTAL.DATA > src/index/shr.fizzle.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GR.FIZZLE build/TOTAL.DATA > src/index/gr.fizzle.idx.a
 	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
 	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a

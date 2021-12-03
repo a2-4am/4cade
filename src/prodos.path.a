@@ -81,6 +81,9 @@ kFXIndexRecord
 kDFXIndexRecord
          !source "src/index/dfx.idx.a"
 
+kSFXIndexRecord
+         !source "src/index/sfx.idx.a"
+
 kGameHelpIndexRecord
          !source "src/index/gamehelp.idx.a"
 
@@ -175,9 +178,6 @@ kCoverFadeRecord
 
 kGRFizzleRecord
          !source "src/index/gr.fizzle.idx.a"
-
-kSFXFizzleRecord
-         !source "src/index/shr.fizzle.idx.a"
 
 kHelpBackgroundRecord
          !source "src/index/res.help.idx.a"

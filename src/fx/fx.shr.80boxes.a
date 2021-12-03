@@ -3,7 +3,7 @@
 ;
 
 !cpu 6502
-!to "build/SHR.FIZZLE",plain
+!to "build/FX.INDEXED/SHR.80BOXES",plain
 *=$A000
 
 ; The SHR screen in 320x200 mode is separated into 80 boxes.
@@ -81,23 +81,30 @@ shrhi     = $301                     ; [$C8 bytes]
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-         lda   #<BoxesX
-         sta   $FE
-         lda   #>BoxesX
-         sta   $FF
+         ldx   #0
+-        ldy   start, x
+         sty   $00, x
+         sta   EndStagesHi, x
+         inx
+         bne   -
+
+         stx   seta+1
+         stx   sub1+1
+         ldx   #-25
+         stx   sub2+1
 ---      ldx   #8
 seta     lda   #0
 --       pha
          ldy   #10-1
--        sta   ($FE), y
+-        sta   (<src), y
          sec
 sub1     sbc   #0
          dey
          bpl   -
          clc
-         lda   $FE
+         lda   <src
          adc   #10
-         sta   $FE
+         sta   <src
          pla
          sec
 sub2     sbc   #-25
@@ -109,13 +116,6 @@ sub2     sbc   #-25
          sta   sub1+1
          stx   sub2+1
          bcc   ---
-         
-         txa
--        ldy   start, x
-         sty   $00, x
-         sta   EndStagesHi, x
-         inx
-         bne   -
 
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
          +COPY_SCB_AND_PALETTES
@@ -147,7 +147,7 @@ NextBox  dex
 exit     sta   WRITEMAINMEM
 setV     rts
 
-src      !word 0
+src      !word BoxesX
 rowcount !byte 0
 lefty    !byte 0
 righty   !byte 0
@@ -253,9 +253,9 @@ BoxStages
 
 !macro SET_ROW_X {
          lda   shrlo, x
-         sta   src
+         sta   <src
          lda   shrhi, x
-         sta   src+1
+         sta   <src+1
          ldy   lefty
 }
 

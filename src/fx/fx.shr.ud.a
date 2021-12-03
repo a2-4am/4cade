@@ -2,13 +2,15 @@
 ;(c) 2021 by 4am
 
 !cpu 6502
-!to "build/SHR.LR2",plain
+!to "build/FX.INDEXED/SHR.UD",plain
 *=$A000
 
          !source "src/fx/fx.shr.common.a"
 
 shrlo = $301                         ; $C8 bytes
 shrhi = $38                          ; $C8 bytes
+reverseshrlo = $BD01                 ; $C8 bytes
+reverseshrhi = $BE01                 ; $C8 bytes
 
          ldx   #(end-start-1)        ; copy loop to zero page
 -        lda   start, x
@@ -17,32 +19,36 @@ shrhi = $38                          ; $C8 bytes
          bpl   -
 
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         +BUILD_SHR_REVERSE_LOOKUP_TABLES reverseshrlo, reverseshrhi
          +COPY_SCB_AND_PALETTES
 
-         jmp   loop1
+         ldx   #$C8
+         jmp   loop
 
 start
 !pseudopc 0 {
-loop1    ldy   #1
-loop2    ldx   #0
-loop3    lda   shrlo-1, x
+loop     lda   shrlo-1, x
          sta   <dst+1
          lda   shrhi-1, x
          sta   <dst+2
-         lda   (<dst+1), y
+         lda   reverseshrlo-1, x
+         sta   <rdst+1
+         lda   reverseshrhi-1, x
+         sta   <rdst+2
+         ldy   #$00
+loop2    lda   (<dst+1), y
 dst      sta   $0000, y              ; SMC
-         inx
-         cpx   #$C8
-         bcc   loop3
-         lda   $C000
-         bmi   @exit
          iny
+         lda   (<rdst+1), y
+rdst     sta   $0000, y              ; SMC
          iny
          cpy   #$A0
          bcc   loop2
-         dec   <loop1+1
-         bpl   loop1
-@exit    sta   $C004
+         lda   $C000
+         bmi   exit
+         dex
+         bne   loop
+exit     sta   $C004
          rts
 }
 end

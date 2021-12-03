@@ -27,6 +27,9 @@ kNextFX
 kNextDFX
          !byte 7
          !raw  "NEXTDFX"
+kNextSFX
+         !byte 7
+         !raw  "NEXTSFX"
 kCheat
          !byte 5
          !raw  "CHEAT"
@@ -46,7 +49,10 @@ kCheat
 .kFluff3 !byte .kFluff4-*-1
          !byte $0A
          !raw  "# value=effect listed in DFX.CONF",$0A
-.kFluff4 !byte .kEOF-*-1
+.kFluff4 !byte .kFluff5-*-1
+         !byte $0A
+         !raw  "# value=effect listed in SFX.CONF",$0A
+.kFluff5 !byte .kEOF-*-1
          !byte $0A
          !raw  "# value=0 or 1",$0A
 .kEOF    !byte ._-*-1
@@ -206,6 +212,11 @@ pref_set
          jsr     .addStringFromStore
 
          +LDADDR .kFluff4
+         jsr     .addString
+         +LDADDR kNextSFX
+         jsr     .addStringFromStore
+
+         +LDADDR .kFluff5
          jsr     .addString
          +LDADDR kCheat
          jsr     .addStringFromStore

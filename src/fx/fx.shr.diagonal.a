@@ -2,7 +2,7 @@
 ;(c) 2021 by 4am
 
 !cpu 6502
-!to "build/FX/SHR.FIZZLE",plain
+!to "build/FX.INDEXED/SHR.DIAGONAL",plain
 *=$A000
 
          !source "src/fx/fx.shr.common.a"

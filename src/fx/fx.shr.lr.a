@@ -2,7 +2,7 @@
 ;(c) 2021 by 4am
 
 !cpu 6502
-!to "build/SHR.TWOPASS.LR",plain
+!to "build/FX.INDEXED/SHR.LR",plain
 *=$A000
 
          !source "src/fx/fx.shr.common.a"
@@ -19,29 +19,25 @@ shrhi = $38                          ; $C8 bytes
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
          +COPY_SCB_AND_PALETTES
 
-         jmp   loop1
+         jmp   loop
 
 start
 !pseudopc 0 {
-loop1    ldy   #0
-loop2    ldx   #1
-loop3    lda   shrlo-1, x
+         ;Y=0
+loop     ldx   #$C8
+loop2    lda   shrlo-1, x
          sta   <dst+1
          lda   shrhi-1, x
          sta   <dst+2
          lda   (<dst+1), y
 dst      sta   $0000, y              ; SMC
-         inx
-         inx
-         cpx   #$C8
-         bcc   loop3
+         dex
+         bne   loop2
          lda   $C000
          bmi   @exit
          iny
          cpy   #$A0
-         bne   loop2
-         dec   <loop2+1
-         bpl   loop1
+         bne   loop
 @exit    sta   $C004
          rts
 }
