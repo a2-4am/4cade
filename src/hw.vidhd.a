@@ -16,8 +16,6 @@
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
 HasVidHDCard
-         sec
-         rts
          ldx   #$C7
 @slotLoop
          stx   @byteLoop+2
