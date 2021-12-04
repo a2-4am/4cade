@@ -18,11 +18,11 @@
          !byte $F0,$F1,$F2,$F3,$F4,$F5,$F6,$F7,$F8,$F9
 
 StageInitialIndexes
-         !byte 7,0,0,0,0,0,0
-         !byte 6,0,0,0,0,0,0
-         !byte 5,0,0,0,0,0,0
-         !byte 4,0,0,0,0,0,0
-         !byte 3,0,0,0,0,0,0
-         !byte 2,0,0,0,0,0,0
-         !byte 1
+         !byte 7,7,0
+         !byte 6,6,0
+         !byte 5,5,0
+         !byte 4,4,0
+         !byte 3,3,0
+         !byte 2,2,0
+         !byte 1,1
 EndStageInitialIndexes
