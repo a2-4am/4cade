@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2021 by 4am & qkumba
+;
+
+!cpu 6502
+!to "build/FX.INDEXED/SHR.80.SIDE2",plain
+*=$A000
+
+         !source "src/fx/fx.shr.80boxes.common.a"
+
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4,$E0,$DC
+         !byte $DC,$E0,$E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4,$E0,$DC
+         !byte $DC,$E0,$E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4,$E0,$DC
+         !byte $DC,$E0,$E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+         !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4,$E0,$DC
+         !byte $DC,$E0,$E4,$E8,$EC,$F0,$F4,$F8,$FC,$00
+
+StageInitialIndexes
+         !byte 1,1
+         !byte 2,1
+         !byte 3,1
+         !byte 4,1
+         !byte 5,1
+         !byte 6,1
+         !byte 7,1
+EndStageInitialIndexes
