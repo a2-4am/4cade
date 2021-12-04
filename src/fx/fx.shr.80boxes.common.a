@@ -77,9 +77,6 @@
          iny
 }
 
-!macro SIDE_ROWS {
-}
-
 shrlo     = $201                     ; [$C8 bytes][accessed via shrlo-1][should not cross page]
 shrhi     = $301                     ; [$C8 bytes][accessed via shrhi-1][should not cross page]
 BoxStages = $106                     ; [$50 bytes][should not cross page]
@@ -112,7 +109,7 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
          txa
          bne   --
 -        lda   start, x
-         sta   <MainLoop, x
+         sta   $00, x
          lda   #0
          sta   EndStageInitialIndexes, x
          lda   StageInitialIndexes, x
@@ -131,41 +128,69 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
 
 start
 !pseudopc 0 {
+copy1
+         ldx   <topx+1
+         +SET_ROW_X
+         ldy   <lefty+1
+         jsr   across1
+copyexit
+ReBox    ldx   #$00                  ; [SMC] X = BoxLoop index 1..80
+NextBox  dex
+         bne   BoxLoop
+         lda   <stage+1
+         beq   exit                  ; if we didn't draw anything in any box, we're done
+         stx   <stage+1              ; X=0 here
+         bit   $C000
+         bpl   MainLoop
+exit     sta   WRITEMAINMEM
+setV     rts
 MainLoop ldx   #80
 BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          inc   BoxStages-1, x        ; increment every box's stage every time through the loop
          lda   StageIndexes, y
          beq   NextBox               ; if stage's index is 0, nothing to do
-         sta   <StageIndex+1
+         sta   <stage+1
          stx   <ReBox+1
          lda   BoxesX-1, x           ; A = starting SHR row for this box
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
+stage    ldx   #$00                  ; [SMC] X = stage index 1..7, reinitialized to 0 after BoxLoop
          clc
-StageIndex
-         ldx   #$00                  ; [SMC] X = stage index 1..7
-         jsr   copy
-ReBox    ldx   #$00                  ; [SMC] X = BoxLoop index 1..80
-NextBox  dex
-         bne   BoxLoop
-         lda   <StageIndex+1
-         beq   <exit                 ; if we didn't draw anything in any box, we're done
-         stx   <StageIndex+1         ; X=0 here
-         bit   $C000
-         bpl   MainLoop
-exit     sta   WRITEMAINMEM
-setV     rts
+         adc   <toprow-1, x
+         sta   <topx+1
+         tya
+         adc   <leftbyte-1, x
+         sta   <lefty+1
+         lda   <siderows-1, x
+         sta   <rowcount
+         dex
+         beq   copy1
+         lda   <across_lo-1, x
+         sta   <j+1
+topx     ldx   #$FD                  ; [SMC]
+         clv
+copy2row clc
+         !byte $A9
+copy1row sec
+         +SET_ROW_X
+         ldy   <lefty+1
+j        jsr   across7               ; [SMC low byte]
+         inx
+         bcc   copy1row
+         bvs   copyexit
+         sty   <righty+1
+copyside +SET_ROW_X
+lefty    ldy   #$FD                  ; [SMC]
+         +COPY_BYTE
+righty   ldy   #$FD                  ; [SMC]
+         +COPY_BYTE
+         inx
+         dec   <rowcount
+         bne   copyside
+         bit   <setV
+         bvs   copy2row              ; always branches
 
-toprow   !byte 12,10,8,6,4,2,0
-leftbyte !byte 6,5,4,3,2,1
-siderows !byte 0,1,5,9,13,17,21
-across_lo
-         !byte <across1
-         !byte <across2
-         !byte <across3
-         !byte <across4
-         !byte <across5
-         !byte <across6
-
+across7  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
 across6  +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
 across5  +COPY_BYTE_AND_INY
@@ -178,51 +203,21 @@ across2  +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
 across1  +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
-across0  +COPY_BYTE_AND_INY
-         +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
          lda   (src+1), y
 src      sta   $FDFD, y              ; [SMC]
-copyexit rts
-copy1    pla
-         tax
-         ldy   <lefty+1
-         +SET_ROW_X
-         bne   across0               ; always branches
-copy     adc   toprow-1, x
-         pha
-         tya
-         adc   leftbyte-1, x
-         sta   <lefty+1
-         lda   siderows-1, x
-         sta   <rowcount
-         dex
-         beq   copy1
-         lda   across_lo-1, x
-         sta   <j+1
-         pla
-         tax
-         bit   <setV
-copy2row clc
-         !byte $A9
-copy1row sec
-         +SET_ROW_X
-         ldy   <lefty+1
-j        jsr   across6               ; [SMC low byte]
-         inx
-         bcc   copy1row
-         bvc   copyexit
-         sty   <righty+1
-copyside +SET_ROW_X
-lefty    ldy   #$FD                  ; [SMC]
-         +COPY_BYTE
-righty   ldy   #$FD                  ; [SMC]
-         +COPY_BYTE
-         inx
-         dec   <rowcount
-         bne   copyside
-         clv
-         bvc   copy2row
+         rts
+
+toprow   !byte 12,10,8,6,4,2,0
+leftbyte !byte 6,5,4,3,2,1
+siderows !byte 0,1,5,9,13,17,21
+across_lo
+         !byte <across2
+         !byte <across3
+         !byte <across4
+         !byte <across5
+         !byte <across6
+         !byte <across7
 rowcount
 }
 !if (*-start>=$FF) {
