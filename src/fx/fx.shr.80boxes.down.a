@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+
+!cpu 6502
+!to "build/FX.INDEXED/SHR.80.DOWN",plain
+*=$A000
+
+         !source "src/fx/fx.shr.80boxes.common.a"
+
+         !byte $00,$FF,$00,$FF,$00,$FF,$00,$FF,$00,$FF
+         !byte $FE,$FD,$FE,$FD,$FE,$FD,$FE,$FD,$FE,$FD
+         !byte $FC,$FB,$FC,$FB,$FC,$FB,$FC,$FB,$FC,$FB
+         !byte $FA,$F9,$FA,$F9,$FA,$F9,$FA,$F9,$FA,$F9
+         !byte $F8,$F7,$F8,$F7,$F8,$F7,$F8,$F7,$F8,$F7
+         !byte $F6,$F5,$F6,$F5,$F6,$F5,$F6,$F5,$F6,$F5
+         !byte $F4,$F3,$F4,$F3,$F4,$F3,$F4,$F3,$F4,$F3
+         !byte $F2,$F1,$F2,$F1,$F2,$F1,$F2,$F1,$F2,$F1
+
+StageInitialIndexes
+         !byte 7,0,0
+         !byte 6,0,0
+         !byte 5,0,0
+         !byte 4,0,0
+         !byte 3,0,0
+         !byte 2,0,0
+         !byte 1
+EndStageInitialIndexes
