@@ -22,9 +22,10 @@ addrs=$80                            ; [128 bytes]
          dex
          bne   -
          ;X=0
+         ldy   #0
 
          +COPY_SCB_AND_PALETTES
-         ;Y=0
+         ;WRITEAUXMEM active
 
          jmp   loop
 

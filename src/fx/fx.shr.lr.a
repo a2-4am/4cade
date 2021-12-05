@@ -17,8 +17,10 @@ shrhi = $38                          ; $C8 bytes
          bpl   -
 
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
          +COPY_SCB_AND_PALETTES
-
+         ;WRITEAUXMEM active
+         ldy   #0
          jmp   loop
 
 start

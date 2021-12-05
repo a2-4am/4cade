@@ -101,6 +101,10 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
 --       ldy   #10
          lda   #$90
 -        sta   BoxesY-1, x
+         pha
+         lda   BoxInitialStages-1, x
+         sta   BoxStages-1, x
+         pla
          sec
          sbc   #$10
          dex
@@ -116,24 +120,18 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
          sta   StageIndexes, x
          inx
          bne   -
-         ldx   #80                   ; can't do full $100 here because we'd clobber the stack
--        lda   BoxInitialStages-1, x
-         sta   BoxStages-1, x
-         dex
-         bne   -
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
          +COPY_SCB_AND_PALETTES
          ;WRITEAUXMEM active
          jmp   MainLoop
 
 start
 !pseudopc 0 {
-copy1
-         ldx   <topx+1
+copy1    ldx   <topx+1
          +SET_ROW_X
          ldy   <lefty+1
          jsr   across1
-copyexit
 ReBox    ldx   #$00                  ; [SMC] X = BoxLoop index 1..80
 NextBox  dex
          bne   BoxLoop
@@ -160,10 +158,10 @@ stage    ldx   #$00                  ; [SMC] X = stage index 1..7, reinitialized
          tya
          adc   <leftbyte-1, x
          sta   <lefty+1
-         lda   <siderows-1, x
-         sta   <rowcount
          dex
          beq   copy1
+         lda   <siderows-1, x
+         sta   <rowcount
          lda   <across_lo-1, x
          sta   <j+1
 topx     ldx   #$FD                  ; [SMC]
@@ -176,7 +174,7 @@ copy1row sec
 j        jsr   across7               ; [SMC low byte]
          inx
          bcc   copy1row
-         bvs   copyexit
+         bvs   ReBox
          sty   <righty+1
 copyside +SET_ROW_X
 lefty    ldy   #$FD                  ; [SMC]
@@ -209,8 +207,8 @@ src      sta   $FDFD, y              ; [SMC]
          rts
 
 toprow   !byte 12,10,8,6,4,2,0
-leftbyte !byte 6,5,4,3,2,1
-siderows !byte 0,1,5,9,13,17,21
+leftbyte !byte 6,5,4,3,2,1,0
+siderows !byte 1,5,9,13,17,21
 across_lo
          !byte <across2
          !byte <across3

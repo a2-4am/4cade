@@ -18,9 +18,11 @@ reverseshrhi = $BE01                 ; $C8 bytes
          dex
          bpl   -
 
-         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
          +BUILD_SHR_REVERSE_LOOKUP_TABLES reverseshrlo, reverseshrhi
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
          +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
 
          ldx   #$C8
          jmp   loop

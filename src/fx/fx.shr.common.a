@@ -2,6 +2,9 @@
 ;(c) 2021 by 4am
 
 !macro BUILD_SHR_LOOKUP_TABLES .lo, .hi {
+; in:    none
+; out:   X=0
+;        Z=1
          ldx   #$C8
          lda   #$60
          ldy   #$9C
@@ -23,6 +26,9 @@
 }
 
 !macro BUILD_SHR_REVERSE_LOOKUP_TABLES .lo, .hi {
+; in:    none
+; out:   X=0
+;        Z=1
          ldx   #$C8
          lda   #$00
          ldy   #$20
@@ -44,14 +50,17 @@
 }
 
 !macro COPY_SCB_AND_PALETTES {
+; in:    X=0 /!\
+; out:   X=0
+;        Z=1
+;        WRITEAUXMEM active
          sta   $C005
-         ldy   #0
--        lda   $9D00, y
-         sta   $9D00, y
-         lda   $9E00, y
-         sta   $9E00, y
-         lda   $9F00, y
-         sta   $9F00, y
-         iny
+-        lda   $9D00, x
+         sta   $9D00, x
+         lda   $9E00, x
+         sta   $9E00, x
+         lda   $9F00, x
+         sta   $9F00, x
+         inx
          bne   -
 }

@@ -17,7 +17,9 @@ shrhi = $201                         ; $C8 bytes
          bpl   -
 
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
          +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
 
          jmp   colloop
 
