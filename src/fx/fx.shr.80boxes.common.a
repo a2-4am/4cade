@@ -126,12 +126,23 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
          ;WRITEAUXMEM active
          jmp   MainLoop
 
+siderows !byte 1,5,9,13,17,21
+branches !byte across2-back
+         !byte across3-back
+         !byte across4-back
+         !byte across5-back
+         !byte across6-back
+         !byte across7-back
+
 start
 !pseudopc 0 {
 copy1    ldx   <topx+1
          +SET_ROW_X
          ldy   <lefty+1
-         jsr   across1
+         +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
+         +COPY_BYTE
 ReBox    ldx   #$00                  ; [SMC] X = BoxLoop index 1..80
 NextBox  dex
          bne   BoxLoop
@@ -142,6 +153,7 @@ NextBox  dex
          bpl   MainLoop
 exit     sta   WRITEMAINMEM
 setV     rts
+
 MainLoop ldx   #80
 BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          inc   BoxStages-1, x        ; increment every box's stage every time through the loop
@@ -160,20 +172,19 @@ stage    ldx   #$00                  ; [SMC] X = stage index 1..7, reinitialized
          sta   <lefty+1
          dex
          beq   copy1
-         lda   <siderows-1, x
+         lda   siderows-1, x
          sta   <rowcount
-         lda   <across_lo-1, x
-         sta   <j+1
+         lda   branches-1, x
+         sta   <branch+1
 topx     ldx   #$FD                  ; [SMC]
          clv
 copy2row clc
          !byte $A9
 copy1row sec
-         +SET_ROW_X
          ldy   <lefty+1
-j        jsr   across7               ; [SMC low byte]
-         inx
-         bcc   copy1row
+         +SET_ROW_X
+branch   bne   across7               ; [SMC branch target][always branches]
+back     bcc   copy1row
          bvs   ReBox
          sty   <righty+1
 copyside +SET_ROW_X
@@ -199,26 +210,19 @@ across3  +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
 across2  +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
-across1  +COPY_BYTE_AND_INY
+         +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
          +COPY_BYTE_AND_INY
          lda   (src+1), y
 src      sta   $FDFD, y              ; [SMC]
-         rts
+         inx
+         bne   back                  ; always branches
 
 toprow   !byte 12,10,8,6,4,2,0
 leftbyte !byte 6,5,4,3,2,1,0
-siderows !byte 1,5,9,13,17,21
-across_lo
-         !byte <across2
-         !byte <across3
-         !byte <across4
-         !byte <across5
-         !byte <across6
-         !byte <across7
 rowcount
 }
-!if (*-start>=$FF) {
+!if (*-start>$FF) {
          !error "Code is too big to fit on zero page! ", *-start
 }
 
