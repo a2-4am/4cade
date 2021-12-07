@@ -27,9 +27,9 @@ start
 !pseudopc 0 {
 loop1    ldy   #0
 loop2    ldx   #1
-loop3    lda   shrlo-1, x
+loop3    lda   shrlo, x
          sta   <dst+1
-         lda   shrhi-1, x
+         lda   shrhi, x
          sta   <dst+2
          lda   (<dst+1), y
 dst      sta   $0000, y              ; SMC
