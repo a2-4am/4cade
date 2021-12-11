@@ -211,11 +211,13 @@ RunAttractModule
          !byte <DHGRActionSlideshow
          !byte <SHRSlideshow
          !byte <GRActionSlideshow
+         !byte <DGRActionSlideshow
 @singleslo
          !byte <HGRSingle
          !byte <DHGRSingle
          !byte <SHRSingle
          !byte <GRSingle
+         !byte <DGRSingle
 @slideshowshi
          !byte >HGRTitleSlideshow
          !byte >HGRActionSlideshow
@@ -223,11 +225,13 @@ RunAttractModule
          !byte >DHGRActionSlideshow
          !byte >SHRSlideshow
          !byte >GRActionSlideshow
+         !byte >DGRActionSlideshow
 @singleshi
          !byte >HGRSingle
          !byte >DHGRSingle
          !byte >SHRSingle
          !byte >GRSingle
+         !byte >DGRSingle
 
 DemoFilename
          !byte 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15

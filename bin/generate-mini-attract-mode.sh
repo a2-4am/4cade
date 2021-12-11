@@ -43,6 +43,14 @@ cat res/GAMES.CONF |
             sort |
             uniq >> /tmp/g
 
+        # add DGR action screenshots, if any
+        cat res/SS/ACTDGR*.CONF |
+            egrep "(^|=)""$game""$" |
+            cut -d"=" -f1 |
+            sed -e "s/$/=E/g" |
+            sort |
+            uniq >> /tmp/g
+
         # add self-running demo, if any
         cat res/ATTRACT.CONF |
             grep "^$game=0" >> /tmp/g

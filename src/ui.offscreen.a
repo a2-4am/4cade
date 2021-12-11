@@ -233,14 +233,15 @@ ClearMem
 ;------------------------------------------------------------------------------
 CopyHGR
          ldx   #$20
-         ldy   #$B9                  ; LDY
+         ldy   #$B9                  ; LDA $0000,Y opcode
 +        sty   PageFrom
          sta   PageTo+2
+ClearToBlack
          lda   #$00
 ClearGR
          ldy   #0
-PageFrom lda   $FD00,y               ; SMC
-PageTo   sta   $FD00,y               ; SMC
+PageFrom lda   $FD00,y               ; SMC address high byte, also SMC opcode (might be BIT)
+PageTo   sta   $FD00,y               ; SMC address high byte
          iny
          bne   PageFrom
          inc   PageFrom+2

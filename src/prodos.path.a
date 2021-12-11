@@ -102,6 +102,9 @@ kDHGRActionIndexRecord
 kGRActionIndexRecord
          !source "src/index/gr.idx.a"
 
+kDGRActionIndexRecord
+         !source "src/index/dgr.idx.a"
+
 kHGRActionIndexLo
          !byte <kHGRActionIndexRecord0
          !byte <kHGRActionIndexRecord1
@@ -178,6 +181,9 @@ kCoverFadeRecord
 
 kGRFizzleRecord
          !source "src/index/gr.fizzle.idx.a"
+
+kDGRFizzleRecord
+         !source "src/index/dgr.fizzle.idx.a"
 
 kHelpBackgroundRecord
          !source "src/index/res.help.idx.a"

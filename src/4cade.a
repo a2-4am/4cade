@@ -104,6 +104,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
+         !source "src/ui.attract.dgr.a"
          !source "src/ui.offscreen.a"
          !source "src/ui.cheats.a"
          !source "src/ui.credits.a"

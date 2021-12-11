@@ -141,10 +141,11 @@ index: md asmfx asmprelaunch compress
 	[ -f build/index ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX)
 	[ -f build/index ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.DHGR > build/DHGR.IDX)
 #
-# precompute indexed files for GR action screenshots
+# precompute indexed files for GR and DGR action screenshots
 # note: these can be padded because they are not compressed
 #
 	[ -f build/index ] || ((for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA res/ACTION.GR > build/GR.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.DGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA res/ACTION.DGR > build/DGR.IDX)
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -190,12 +191,14 @@ index: md asmfx asmprelaunch compress
 	[ -f build/index ] || bin/addfile.sh build/HGR6.IDX build/TOTAL.DATA > src/index/hgr6.idx.a
 	[ -f build/index ] || bin/addfile.sh build/DHGR.IDX build/TOTAL.DATA > src/index/dhgr.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GR.IDX build/TOTAL.DATA > src/index/gr.idx.a
+	[ -f build/index ] || bin/addfile.sh build/DGR.IDX build/TOTAL.DATA > src/index/dgr.idx.a
 	[ -f build/index ] || bin/addfile.sh build/ARTWORK.IDX build/TOTAL.DATA > src/index/artwork.idx.a
 #
 # add additional miscellaneous files
 #
 	[ -f build/index ] || bin/addfile.sh build/COVERFADE build/TOTAL.DATA > src/index/coverfade.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GR.FIZZLE build/TOTAL.DATA > src/index/gr.fizzle.idx.a
+	[ -f build/index ] || bin/addfile.sh build/DGR.FIZZLE build/TOTAL.DATA > src/index/dgr.fizzle.idx.a
 	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
 	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a
 	[ -f build/index ] || bin/addfile.sh res/DECRUNCH build/TOTAL.DATA > src/index/decrunch.idx.a

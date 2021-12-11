@@ -1,0 +1,106 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+; DGR action slideshows
+;
+; Public functions
+; - DGRActionSlideshow
+; - DGRSingle
+;
+
+;------------------------------------------------------------------------------
+; DGRActionSlideshow
+; display a slideshow of double lo-res action screenshots
+;
+; safe to call if machine only has 64K (does nothing and exits)
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen, which is blank
+;------------------------------------------------------------------------------
+DGRActionSlideshow
+         bit   MachineStatus         ; only run DGR slideshow if we have 128K
+         bvc   DGRRTS
+         jsr   LoadDGRTransition     ; load transition effect code at $6000
+         jsr   BlankDGR              ; switch to DGR mode with initial blank screen
+         jsr   okvs_iter             ; cycle through all listed DGR files
+         !word gSlideshowStore
+         !word DGRActionCallback     ; address of callback (called on each file)
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
+;------------------------------------------------------------------------------
+; DGRSingle
+; display a single lo-res screenshot, with transition effect
+;
+; in:    none
+; out:   everything clobbered
+;        graphics mode set to display hi-res screen
+;------------------------------------------------------------------------------
+DGRSingle
+         +ST16 IndexedDGRFilename
+         jsr   BlankDGR              ; switch to DGR mode with initial blank screen
+         jsr   LoadIndexedDGRFile    ; load DGR screen at $4000
+         jsr   LoadDGRTransition     ; load transition effect code at $6000
+         jsr   ExecuteTransitionAt6000AndWait
+         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+
+;------------------------------------------------------------------------------
+; LoadDGRTransition [private]
+;
+; in:    none
+; out:   all registers and flags clobbered
+;        $6000..$BFFF/main contains transition effect code (probably not all
+;        of that, but no promises)
+;------------------------------------------------------------------------------
+LoadDGRTransition
+         jsr   LoadIndexedFile
+         !word $6000
+         !word kDGRFizzleRecord
+DGRRTS   rts
+
+;------------------------------------------------------------------------------
+; DGRActionCallback [private]
+; callback called by okvs_iter on gSlideshowStore
+; to load and display a single DGR action screenshot
+
+; in:    A/Y contains address of filename (name only, path is always /ACTION.DGR/)
+;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
+; out:   all registers and flags clobbered
+;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
+;        $2000..$BFFF clobbered by graphics data and transition code
+;------------------------------------------------------------------------------
+DGRActionCallback
+         bit   KBD
+         bmi   DGRRTS
+
+         +ST16 IndexedDGRFilename
+
+         jsr   FindGame
+         ; if game name is not found (C will be set here), it means the game
+         ; can't be played due to memory or joystick requirements, so we hide
+         ; it from slideshows
+         bcs   DGRRTS
+
+         jsr   LoadIndexedDGRFile
+         jmp   ExecuteTransitionAt6000AndWait
+
+LoadIndexedDGRFile
+; in:    caller has set IndexedDGRFilename
+; out:   all flags & registers clobbered
+         jsr   LoadIndexedFile       ; load index file into $4A00
+-        !word $4A00
+         !word kDGRActionIndexRecord
+
+         jsr   okvs_find
+         !word -
+IndexedDGRFilename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load entire DGR screenshot at $4000..$47FF
+         !word $4000                 ; because that's where the transition code expects to find it
+                                     ; auxmem half is first ($4000..$43FF)
+                                     ; mainmem half is second ($4400..$47FF)
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+         rts

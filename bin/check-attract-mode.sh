@@ -81,6 +81,8 @@ cat res/ATTRACT.CONF |
             check_slideshow res/SS/"$module_name" res/ARTWORK.SHR/
         elif [ "$module_type" = "6" ]; then
             check_slideshow res/SS/"$module_name" res/ACTION.GR/
+        elif [ "$module_type" = "7" ]; then
+            check_slideshow res/SS/"$module_name" res/ACTION.DGR/
         else
             fatal_error "Unknown module type" $module_type
         fi
