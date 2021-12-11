@@ -5,32 +5,95 @@
 !to "build/DGR.FIZZLE",plain
 *=$6000
 
-src      = $FC
-dst      = $FE
+addrs=$F8                            ; [8 bytes]
 
+         ldx   #$03                  ; build address lookup tables
+-        txa
+         eor   #$44
+         sta   addrs, x
+         ora   #$80
+         sta   addrs+4, x
+         dex
+         bpl   -
+
+         ldx   #(end-start-1)        ; copy LFSR code to zero page
+-        lda   start, x
+         sta   $00, x
+         dex
+         bpl   -
+
+         jmp   copyaux
+
+start
+!pseudopc 0 {
+copyaux  sta   $C005
+         ldx   #4
          ldy   #0
-         sty   src
-         sty   dst
-         lda   #$40
-         sta   src+1
-         sta   $C005
-         clv
---       ldx   #4
-         stx   dst+1
--        tya
+@a       lda   $4000, y
+@b       sta   $4400, y
+         iny
+         bne   @a
+         inc   @a+2
+         inc   @b+2
+         dex
+         bne   @a
+         ;X=0
+         ;Y=0
+loop     txa
+loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
+         ldx   #0
+wait     dex
+         bne   wait
+         tax
+loop2    tya
          and   #$78
          cmp   #$78
-         beq   +                     ; skip screen holes
-         lda   (src), y
-         sta   (dst), y
-+        iny
-         bne   -
-         inc   src+1
-         inc   dst+1
-         dex
-         bne   -
-         bvs   exit
+         beq   next
+         lda   addrs, x
+         bmi   aux
+         sta   $C002
          sta   $C004
-         bit   exit
-         bvs   --                    ; always branches
-exit     rts
+         sta   <mainsrc+2
+         eor   #$40
+         sta   <maindst+2
+mainsrc  lda   $FD00, y              ; SMC high byte
+maindst  sta   $FD00, y              ; SMC high byte
+next     txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+exit     lda   $4400                 ; last lousy byte (because LFSR never hits 0)
+         sta   $0400
+         sta   $C004
+         rts
+aux      sta   $C003
+         sta   $C005
+         and   #$7F
+         sta   <auxsrc+2
+         eor   #$40
+         sta   <auxdst+2
+auxsrc   lda   $FD00, y              ; SMC high byte
+auxdst   sta   $FD00, y              ; SMC high byte
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         lda   $C000
+         bmi   exit
+         txa
+         bne   loop1
+         beq   exit
+}
+end
