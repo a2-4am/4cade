@@ -54,22 +54,6 @@ Home
          lda   TEXTMODE
          jmp   UnwaitForVBL
 
-BlankDGR
-         jsr   BlankDHGR
-         ldy   #$2C                  ; BIT
-         sty   PageFrom
-         ldx   #$04
-         stx   PageTo+2
-         jsr   ClearToBlack
-         sta   WRITEAUXMEM
-         ldx   #$04
-         stx   PageTo+2
-         jsr   ClearToBlack
-         sta   WRITEMAINMEM
-         lda   #1
-         sta   OffscreenPage
-         bne   DGRMode               ; always branches
-
 ;------------------------------------------------------------------------------
 ; BlankDHGR
 ; clear and show DHGR page 1 without flickering
@@ -89,20 +73,13 @@ BlankDHGR
 
          ; /!\ execution falls through here to DHGRMode
 ;------------------------------------------------------------------------------
-; DHGRMode / DGRMode
+; DHGRMode
 ; switch to DHGR or DGR mode (HARDER THAN IT SOUNDS)
 ;
 ; in:    none
 ; out:   none
 ;------------------------------------------------------------------------------
 DHGRMode
-         jsr   +
-         jmp   HGRMode
-DGRMode
-         jsr   +
-         bit   $C056
-         jmp   GRMode
-+
          ; magic sequence to set colour mode on an RGB card
          ; SET80VID clears the RGB-card shift-register
          ; DHIRESON/OFF shifts that bit into the mode register
@@ -121,7 +98,8 @@ DGRMode
          jsr   ShowOtherPage
          lda   #1
          sta   gMachineInDHGRMode
-         jmp   UnwaitForVBL
+         jsr   UnwaitForVBL
+         jmp   HGRMode
 
 ;------------------------------------------------------------------------------
 ; IsSearchKey

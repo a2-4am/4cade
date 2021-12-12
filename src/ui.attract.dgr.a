@@ -6,6 +6,8 @@
 ; Public functions
 ; - DGRActionSlideshow
 ; - DGRSingle
+; - BlankDGR
+; - LoadIndexedDGRFile
 ;
 
 ;------------------------------------------------------------------------------
@@ -26,7 +28,7 @@ DGRActionSlideshow
          jsr   okvs_iter             ; cycle through all listed DGR files
          !word gSlideshowStore
          !word DGRActionCallback     ; address of callback (called on each file)
-         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+         jmp   BlankHGRNoHome        ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
 ; DGRSingle
@@ -42,7 +44,7 @@ DGRSingle
          jsr   LoadIndexedDGRFile    ; load DGR screen at $4000
          jsr   LoadDGRTransition     ; load transition effect code at $6000
          jsr   ExecuteTransitionAt6000AndWait
-         jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
+         jmp   BlankHGRNoHome        ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
 ; LoadDGRTransition [private]
@@ -83,6 +85,23 @@ DGRActionCallback
 
          jsr   LoadIndexedDGRFile
          jmp   ExecuteTransitionAt6000AndWait
+
+BlankDGR
+         jsr   BlankDHGR             ; clear and display DHGR screen
+         ldy   #$2C                  ; BIT
+         sty   PageFrom              ; now clear DGR screen
+         ldx   #$04
+         stx   PageTo+2
+         jsr   ClearToBlack
+         sta   WRITEAUXMEM
+         ldx   #$04
+         stx   PageTo+2
+         jsr   ClearToBlack
+         sta   WRITEMAINMEM
+         lda   #1
+         sta   OffscreenPage
+         bit   $C056                 ; display DGR screen
+         rts
 
 LoadIndexedDGRFile
 ; in:    caller has set IndexedDGRFilename
