@@ -28,9 +28,10 @@ loop2    tya
          and   #$78
          cmp   #$78
          beq   next
-         lda   <dst_addrs, x
+         txa
+         ora   #$04
          sta   <dst+2
-         lda   <src_addrs, x
+         lda   <addrs, x
          bmi   aux
          sta   $C004
          bpl   +                     ; always branches
@@ -56,11 +57,9 @@ exit     lda   $4400                 ; last lousy byte (because LFSR never hits 
          sta   $C004
          rts
          ; source data is at $4000-$47FF/main
-         ; $4400-$47FF/main -> $0400-$07FF/main
          ; $4000-$43FF/main -> $0400-$07FF/aux
-src_addrs
+         ; $4400-$47FF/main -> $0400-$07FF/main
+addrs
          !byte $44,$45,$46,$47,$C0,$C1,$C2,$C3
-dst_addrs
-         !byte $04,$05,$06,$07,$04,$05,$06,$07
 }
 end
