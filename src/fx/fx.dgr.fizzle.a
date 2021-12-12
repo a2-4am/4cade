@@ -5,43 +5,22 @@
 !to "build/DGR.FIZZLE",plain
 *=$6000
 
-addrs=$F8                            ; [8 bytes]
-
-         ldx   #$03                  ; build address lookup tables
--        txa
-         eor   #$44
-         sta   addrs, x
-         ora   #$80
-         sta   addrs+4, x
+         ldx   #(end-start)          ; copy LFSR code to zero page
+-        ldy   start-1, x
+         sty   $FF, x
          dex
-         bpl   -
+         bne   -
 
-         ldx   #(end-start-1)        ; copy LFSR code to zero page
--        lda   start, x
-         sta   $00, x
-         dex
-         bpl   -
-
-         jmp   copyaux
+         jmp   loop
 
 start
 !pseudopc 0 {
-copyaux  sta   $C005
-         ldx   #4
-         ldy   #0
-@a       lda   $4000, y
-@b       sta   $4400, y
-         iny
-         bne   @a
-         inc   @a+2
-         inc   @b+2
-         dex
-         bne   @a
+         !byte 0
          ;X=0
          ;Y=0
 loop     txa
 loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
-         ldx   #0
+         ldx   #$80
 wait     dex
          bne   wait
          tax
@@ -49,15 +28,17 @@ loop2    tya
          and   #$78
          cmp   #$78
          beq   next
-         lda   addrs, x
+         lda   <dst_addrs, x
+         sta   <dst+2
+         lda   <src_addrs, x
          bmi   aux
-         sta   $C002
          sta   $C004
-         sta   <mainsrc+2
-         eor   #$40
-         sta   <maindst+2
-mainsrc  lda   $FD00, y              ; SMC high byte
-maindst  sta   $FD00, y              ; SMC high byte
+         bpl   +                     ; always branches
+aux      and   #$7F
+         sta   $C005
++        sta   <src+2
+src      lda   $FD00, y              ; SMC high byte
+dst      sta   $FD00, y              ; SMC high byte
 next     txa
          lsr
          tax
@@ -74,26 +55,12 @@ exit     lda   $4400                 ; last lousy byte (because LFSR never hits 
          sta   $0400
          sta   $C004
          rts
-aux      sta   $C003
-         sta   $C005
-         and   #$7F
-         sta   <auxsrc+2
-         eor   #$40
-         sta   <auxdst+2
-auxsrc   lda   $FD00, y              ; SMC high byte
-auxdst   sta   $FD00, y              ; SMC high byte
-         txa
-         lsr
-         tax
-         tya
-         ror
-         tay
-         bcc   loop2
-         bne   loop
-         lda   $C000
-         bmi   exit
-         txa
-         bne   loop1
-         beq   exit
+         ; source data is at $4000-$47FF/main
+         ; $4400-$47FF/main -> $0400-$07FF/main
+         ; $4000-$43FF/main -> $0400-$07FF/aux
+src_addrs
+         !byte $44,$45,$46,$47,$C0,$C1,$C2,$C3
+dst_addrs
+         !byte $04,$05,$06,$07,$04,$05,$06,$07
 }
 end
