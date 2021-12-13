@@ -144,7 +144,7 @@ IndexedSHRFilename
 ;        NOTE: THIS ROUTINE WILL CRASH ON AN APPLE //C due to writing to $C029,
 ;        so it is imperative that the caller ensures the machine type.
 ;        Thanks to John Brooks for explaining all of this to me. Twice.
-; out:   text page clobbered (but screen holes preserved)
+; out:   text page clobbered
 ;        $2000..$9FFF/aux cleared
 ;------------------------------------------------------------------------------
 BlankSHR

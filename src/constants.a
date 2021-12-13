@@ -35,7 +35,7 @@
 ; MAIN MEMORY DURING MEGA-ATTRACT MODE
 ; 0100..0105 - re-entry code for demos (reloaded before demo)
 ; 0106..01BF - prelaunch code (reloaded before demo)
-; 0400..07FF - text screen (cleared before each module, screen holes preserved)
+; 0400..07FF - text screen (cleared before each module)
 ; 0800..1EFF - slideshow configuration file (persistent during slideshow module)
 ; 2000..5FFF - hi-res screens (cleared before each module)
 ; 4000..5FFF - slideshow index file (loaded before slideshow module)
@@ -46,7 +46,7 @@
 ; MAIN MEMORY DURING MINI-ATTRACT MODE
 ; 0100..0105 - re-entry code for demos (reloaded before demo)
 ; 0106..01BF - prelaunch code (reloaded before demo)
-; 0400..07FF - text screen (cleared before each module, screen holes preserved)
+; 0400..07FF - text screen (cleared before each module)
 ; 0800..1FFF - mini-attract index file (loaded once)
 ; 2000..5FFF - hi-res screens
 ; 6000..     - mini-attract configuration file (reloaded before each module)
@@ -56,7 +56,7 @@
 ; MAIN MEMORY DURING GAME LAUNCH
 ; 0100..0105 - re-entry code
 ; 0106..01BF - prelaunch code
-; 0400..7FFF - text screen cleared (screen holes preserved)
+; 0400..7FFF - text screen cleared
 ; 2000..5FFF - hi-res screens cleared
 ; A000..     - prelaunch index file
 ;

@@ -82,7 +82,7 @@ DHGRSingle
 ; clear and show HGR page 1 without flickering
 ;
 ; in:    none
-; out:   text page clobbered (but screen holes preserved)
+; out:   text page clobbered
 ;        A/X/Y=0 (guaranteed by ClearHGR1)
 ;        $2000..$3FFF cleared
 ;------------------------------------------------------------------------------
