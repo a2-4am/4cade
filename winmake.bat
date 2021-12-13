@@ -23,8 +23,9 @@ set GIT=git
 
 
 if "%1" equ "dsk" (
-call :asm
 call :index
+call :asmproboot
+call :asmlauncher
 1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
 1>nul copy /y res\_FileInformation.txt build\ >>build\log
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
@@ -64,13 +65,8 @@ echo done
 goto :EOF
 )
 
-if "%1" equ "asm" (
-:asm
-call :md
-call :asmlauncher
-call :asmfx
-call :asmprelaunch
-call :asmproboot
+if "%1" equ "index" (
+call index
 goto :EOF
 )
 
@@ -88,6 +84,9 @@ echo usage: %0 clean / asm / dsk
 goto :EOF
 
 :index
+call :md
+call :asmfx
+call :asmprelaunch
 rem
 rem precompute binary data structure for mega-attract mode configuration file
 rem
@@ -160,6 +159,7 @@ rem
 echo|set/p="indexing fx..."
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
+cscript /nologo bin\buildfx.js res\SFX.CONF build\SFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 echo done
 rem
 rem precompute indexed files for HGR & DHGR action screenshots
@@ -191,13 +191,16 @@ cscript /nologo bin\buildss.js build\ACTIONHGR5* build\HGR5.IDX nul build\TOTAL.
 cscript /nologo bin\buildss.js build\ACTIONHGR6* build\HGR6.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
 cscript /nologo bin\buildss.js build\ACTIONDHGR* build\DHGR.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
 echo done
-rem precompute indexed files for GR action screenshots
+rem precompute indexed files for GR and DGR action screenshots
 rem note: these can be padded because they are not compressed
 rem
-echo|set/p="indexing gr action..."
+echo|set/p="indexing (d)gr action..."
 1>nul copy /y nul build\ACTIONGR
+1>nul copy /y nul build\ACTIONDGR
 for %%q in (res\ACTION.GR\*) do 1>nul >>build\ACTIONGR echo %%q
+for %%q in (res\ACTION.DGR\*) do 1>nul >>build\ACTIONDGR echo %%q
 cscript /nologo bin\buildss.js build\ACTIONGR* build\GR.IDX nul build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
+cscript /nologo bin\buildss.js build\ACTIONDGR* build\DGR.IDX nul build\TOTAL.DATA build\TOTAL.DATA pad >>build\log
 echo done
 rem
 rem precompute indexed files for SHR artwork
@@ -233,6 +236,7 @@ cscript /nologo bin\addfile.js build\PRELAUNCH.IDX src\index\prelaunch.idx.a
 cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
 cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
 cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
+cscript /nologo bin\addfile.js build\SFX.IDX src\index\sfx.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
 cscript /nologo bin\addfile.js build\MINIATTRACT.IDX src\index\miniattract.idx.a
@@ -247,13 +251,14 @@ cscript /nologo bin\addfile.js build\HGR5.IDX src\index\hgr5.idx.a
 cscript /nologo bin\addfile.js build\HGR6.IDX src\index\hgr6.idx.a
 cscript /nologo bin\addfile.js build\DHGR.IDX src\index\dhgr.idx.a
 cscript /nologo bin\addfile.js build\GR.IDX src\index\gr.idx.a
+cscript /nologo bin\addfile.js build\DGR.IDX src\index\dgr.idx.a
 cscript /nologo bin\addfile.js build\ARTWORK.IDX src\index\artwork.idx.a
 rem
 rem add additional miscellaneous files
 rem
 cscript /nologo bin\addfile.js build\COVERFADE src\index\coverfade.idx.a
-cscript /nologo bin\addfile.js build\SHR.FIZZLE src\index\shr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\GR.FIZZLE src\index\gr.fizzle.idx.a
+cscript /nologo bin\addfile.js build\DGR.FIZZLE src\index\dgr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\HELPTEXT src\index\helptext.idx.a
 cscript /nologo bin\addfile.js build\CREDITS src\index\credits.idx.a
 cscript /nologo bin\addfile.js res\DECRUNCH src\index\decrunch.idx.a
