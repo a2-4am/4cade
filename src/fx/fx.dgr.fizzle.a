@@ -45,8 +45,8 @@ next     txa
          bmi   exit
          txa
          bne   loop1
-exit     lda   $7C00                 ; last lousy byte (because LFSR never hits 0)
-         sta   $0400
+exit     lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (dst+1), y
          rts
 }
 end
