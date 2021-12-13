@@ -7,14 +7,14 @@
 
          ldx   #(end-start+1)        ; copy LFSR code to zero page
 -        ldy   start-2, x
-         sty   $81, x
+         sty   $FE, x
          dex
          bne   -
 
          jmp   loop
 
 start
-!pseudopc $83 {
+!pseudopc 0 {
          ;X=0
          ;Y=0
 loop     txa
@@ -32,14 +32,13 @@ loop2    tya
          txa
          ;C=0
          adc   #$7C
-         bpl   aux
+         sta   <src+2
+         bpl   src
          sta   $C004
-         !byte $24
-aux      sta   $C005
-setsrc   sta   <src+2
 src      lda   $FD00, y              ; SMC high byte
 dst      sta   $FD00, y              ; SMC high byte
-next     txa
+next     sta   $C005
+         txa
          lsr
          tax
          tya
@@ -52,9 +51,6 @@ next     txa
          txa
          bne   loop1
 exit     lda   $7C00                 ; last lousy byte (because LFSR never hits 0)
-!if *+1 != $C0 {
-         !error *
-}
          sta   $0400
          sta   $C004
          rts
