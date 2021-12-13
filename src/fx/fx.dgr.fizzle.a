@@ -10,7 +10,6 @@
          sty   $FE, x
          dex
          bne   -
-
          jmp   loop
 
 start
@@ -22,23 +21,19 @@ loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
 wait     inx
          bpl   wait
          tax
-loop2    tya
-         and   #$78
-         cmp   #$78
-         beq   next
-         txa
+loop2    txa
          ora   #$04
          sta   <dst+2
          txa
-         ;C=0
+         clc
          adc   #$7C
          sta   <src+2
-         bpl   src
          sta   $C004
+         bmi   src
+         sta   $C005
 src      lda   $FD00, y              ; SMC high byte
 dst      sta   $FD00, y              ; SMC high byte
-next     sta   $C005
-         txa
+next     txa
          lsr
          tax
          tya
