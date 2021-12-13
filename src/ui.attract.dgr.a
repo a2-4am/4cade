@@ -106,8 +106,8 @@ BlankDGR
 LoadIndexedDGRFile
 ; in:    caller has set IndexedDGRFilename
 ; out:   all flags & registers clobbered
-         jsr   LoadIndexedFile       ; load index file into $4A00
--        !word $4A00
+         jsr   LoadIndexedFile       ; load index file into $4000
+-        !word $4000
          !word kDGRActionIndexRecord
 
          jsr   okvs_find
@@ -116,10 +116,9 @@ IndexedDGRFilename
          !word $FDFD                 ; SMC
          +ST16 @indexRecordPtr
 
-         jsr   LoadIndexedFile       ; load entire DGR screenshot at $4000..$47FF
-         !word $4000                 ; because that's where the transition code expects to find it
-                                     ; auxmem half is first ($4000..$43FF)
-                                     ; mainmem half is second ($4400..$47FF)
+         jsr   LoadIndexedFile       ; load entire DGR screenshot at $7C00
+         !word $7C00                 ; because that's where the transition code expects to find it
+                                     ; auxmem half is first, mainmem second
 @indexRecordPtr
          !word $FDFD                 ; SMC
          rts

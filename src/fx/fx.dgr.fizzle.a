@@ -5,24 +5,22 @@
 !to "build/DGR.FIZZLE",plain
 *=$6000
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        ldy   start-1, x
-         sty   $FF, x
+         ldx   #(end-start+1)        ; copy LFSR code to zero page
+-        ldy   start-2, x
+         sty   $81, x
          dex
          bne   -
 
          jmp   loop
 
 start
-!pseudopc 0 {
-         !byte 0
+!pseudopc $83 {
          ;X=0
          ;Y=0
 loop     txa
 loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
-         ldx   #$80
-wait     dex
-         bne   wait
+wait     inx
+         bpl   wait
          tax
 loop2    tya
          and   #$78
@@ -31,13 +29,14 @@ loop2    tya
          txa
          ora   #$04
          sta   <dst+2
-         lda   <addrs, x
-         bmi   aux
+         txa
+         ;C=0
+         adc   #$7C
+         bpl   aux
          sta   $C004
-         bpl   +                     ; always branches
-aux      and   #$7F
-         sta   $C005
-+        sta   <src+2
+         !byte $24
+aux      sta   $C005
+setsrc   sta   <src+2
 src      lda   $FD00, y              ; SMC high byte
 dst      sta   $FD00, y              ; SMC high byte
 next     txa
@@ -52,14 +51,12 @@ next     txa
          bmi   exit
          txa
          bne   loop1
-exit     lda   $4400                 ; last lousy byte (because LFSR never hits 0)
+exit     lda   $7C00                 ; last lousy byte (because LFSR never hits 0)
+!if *+1 != $C0 {
+         !error *
+}
          sta   $0400
          sta   $C004
          rts
-         ; source data is at $4000-$47FF/main
-         ; $4000-$43FF/main -> $0400-$07FF/aux
-         ; $4400-$47FF/main -> $0400-$07FF/main
-addrs
-         !byte $44,$45,$46,$47,$C0,$C1,$C2,$C3
 }
 end
