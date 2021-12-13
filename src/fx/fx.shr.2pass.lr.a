@@ -44,7 +44,7 @@ dst      sta   $0000, y              ; SMC
          bne   loop2
          dec   <loop2+1
          bpl   loop1
-@exit    sta   $C004
+@exit
          rts
 }
 end

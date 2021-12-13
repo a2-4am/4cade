@@ -40,7 +40,7 @@ dst      sta   $0000, y              ; SMC
          iny
          cpy   #$A0
          bne   loop
-@exit    sta   $C004
+@exit
          rts
 }
 end

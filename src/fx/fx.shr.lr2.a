@@ -43,7 +43,7 @@ dst      sta   $0000, y              ; SMC
          bcc   loop2
          dec   <loop1+1
          bpl   loop1
-@exit    sta   $C004
+@exit
          rts
 }
 end

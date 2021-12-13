@@ -50,7 +50,7 @@ rdst     sta   $0000, y              ; SMC
          bmi   exit
          dex
          bne   loop
-exit     sta   $C004
+exit
          rts
 }
 end

@@ -151,7 +151,7 @@ NextBox  dex
          stx   <stage+1              ; X=0 here
          bit   $C000
          bpl   MainLoop
-exit     sta   WRITEMAINMEM
+exit
 setV     rts
 
 MainLoop ldx   #80

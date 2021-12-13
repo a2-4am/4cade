@@ -27,6 +27,8 @@ ExecuteTransitionAndWait
          lda   #0
          +ST16 @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
+         sta   WRITEMAINMEM          ; several transition effects exit with
+                                     ; auxmem writeable so we reset it here
          ldx   #$20                  ; picture is showing so now we wait
 -        lda   #0
          jsr   WaitForKeyWithTimeout

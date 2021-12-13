@@ -60,7 +60,7 @@ dst      sta   $FDFD, y   ; SMC
          bne   colloop
          dec   <counter+1
          bne   colloop
-exit     sta   $C004
+exit
          rts
 counter  !word 200 + 160 + 256
 }

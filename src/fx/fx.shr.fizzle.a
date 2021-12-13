@@ -55,7 +55,6 @@ src=*+1
          bne   loop1
 exit     lda   $2000                 ; last lousy byte (because LFSR never hits 0)
          sta   $2000
-         sta   $C004
          rts
 }
 end
