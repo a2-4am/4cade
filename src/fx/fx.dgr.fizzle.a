@@ -29,11 +29,10 @@ loop2    txa
          adc   #$7C
          sta   <src+2
          sta   $C004
-         bmi   src
+         bmi   +
          sta   $C005
-src      lda   $FD00, y              ; SMC high byte
-dst      sta   $FD00, y              ; SMC high byte
-next     txa
++        jsr   src
+         txa
          lsr
          tax
          tya
@@ -45,8 +44,8 @@ next     txa
          bmi   exit
          txa
          bne   loop1
-exit     lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
-         sta   (dst+1), y
-         rts
+src      lda   $FD00, y
+dst      sta   $FD00, y
+exit     rts
 }
 end

@@ -106,8 +106,8 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          txa
          bne   --
          jsr   $1
-         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (dst+1), y
          lda   #$2C                  ; BIT
          sta   <applyshapemask
          jmp   $1

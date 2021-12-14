@@ -63,8 +63,8 @@ dst      sta   $FD00, y              ; write the result
          bmi   exit
          txa
          bne   loop1
-exit     lda   $4000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
+exit     lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (dst+1), y
          rts
 }
 end
