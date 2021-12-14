@@ -5,7 +5,7 @@
 !to "build/FX.INDEXED/DHGR.FIZZLE",plain
 *=$6000
 
-addrs=$C0                            ; [$40 bytes]
+addrs=$BF                            ; [$40 bytes]
 
          ldx   #$1F                  ; build address lookup table
 -        txa
@@ -15,18 +15,20 @@ addrs=$C0                            ; [$40 bytes]
          sta   addrs+$20, x
          dex
          bpl   -
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
+         ldx   #(end-start+1)        ; copy LFSR code to zero page
+-        ldy   start-2, x
+         sty   $FE, x
          dex
          bne   -
+         ;X=0
+         ;Y=0
          jmp   copyaux
 
 start
 !pseudopc 0 {
+;Y=0 on entry to copyaux
 copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
          ldx   #$20
-         ldy   #$00
 a        lda   $4000, y
 b        sta   $8000, y
          iny
@@ -37,8 +39,7 @@ b        sta   $8000, y
          bne   a
          sta   $C002
          sta   $C001                 ; 80STORE mode
-; X,Y=0 on entry to LFSR
-; in: X,Y=0
+;X,Y=0 on entry to LFSR
 loop     txa
 loop1    eor   #$35                  ; LFSR form 0x3500 with period 16383
          tax
@@ -62,9 +63,9 @@ dst      sta   $FD00, y
          bmi   exit
          txa
          bne   loop1
-exit     lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
          sta   (dst+1), y
-         sta   $C000                 ; 80STORE mode off
+exit     sta   $C000                 ; 80STORE mode off
          rts
 aux      sta   $C055                 ; switch $2000 access to aux memory (read/write!)
          sta   <auxsrc+2

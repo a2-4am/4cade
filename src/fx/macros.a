@@ -6,12 +6,14 @@
 ; posted on comp.sys.apple2 on 2018-07-11
 ; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
 !macro BUILD_HGR_LOOKUP_TABLES .hgrlo, .hgr1hi {
+; preserves Y
          ldx   #0
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi
 }
 
 ; use this macro instead if you know X is already 0 on entry, to save 2 bytes
 !macro BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi {
+; preserves Y
 -        txa
          and   #$F8
          bpl   +

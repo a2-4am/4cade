@@ -15,6 +15,7 @@ hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
          sta   $FF, x
          dex
          bne   -
+         ;X=0
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
          jmp   loop
 

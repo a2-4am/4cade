@@ -11,14 +11,14 @@ hgr1hi = $300                        ; [$C0 bytes, main memory only]
 
          !source "src/fx/macros.a"
 
-         ldx   #(end-start)          ; copy code to zero page
--        lda   start-1, x
-         sta   $FF, x
          lda   #0
+         ldx   #(end-start)          ; copy code to zero page
+-        ldy   start-1, x
+         sty   $FF, x
          sta   startrows_by_column-1, x
          dex
          bne   -
-
+         ;X=0
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
 
          jmp   loop

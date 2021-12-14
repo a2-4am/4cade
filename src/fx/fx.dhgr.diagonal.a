@@ -16,7 +16,7 @@ copymasks=     $02C0                 ; [$08 bytes, different values in main and 
          sta   $FF, x
          dex
          bne   -
-
+         ;X=0
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
 
          ldy   #8                    ; copy copymask arrays into place in main and auxmem

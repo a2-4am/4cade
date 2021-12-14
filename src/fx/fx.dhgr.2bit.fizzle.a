@@ -13,6 +13,8 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
          sta   $FF, x
          dex
          bne   -
+         ;X=0
+         ;A=3
 --       ldy   #$40                  ; create identical copymask tables in main and aux memory
          ora   #%10000000
 -        sta   copymasks, x
@@ -50,9 +52,9 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
 start
 !pseudopc 0 {
          !byte %00000011
+;Y=0 on entry to copyaux
 copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
          ldx   #$20
-         ldy   #$00
 a        lda   $4000, y
 b        sta   $8000, y
          iny
@@ -90,9 +92,9 @@ dst      sta   $FD00, y              ; write the result
          bmi   exit
          txa
          bne   loop1
-exit     lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
          sta   (dst+1), y
-         sta   $C000                 ; 80STORE mode off
+exit     sta   $C000                 ; 80STORE mode off
          rts
 
 aux      sta   $C055                 ; switch $2000 access to aux memory (read/write!)
