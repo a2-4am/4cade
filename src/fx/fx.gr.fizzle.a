@@ -49,7 +49,7 @@ dst      sta   $FD00, y              ; SMC high byte
          bmi   exit
          txa
          bne   loop1
-         lda   (src+1), y
+         lda   (src+1), y            ; last lousy byte
          sta   (dst+1), y
 exit     rts
 }

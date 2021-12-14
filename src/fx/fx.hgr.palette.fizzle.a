@@ -1,100 +1,66 @@
 ;license:MIT
-;(c) 2017-2019 by qkumba and 4am
+;(c) 2017-2021 by qkumba/4am/John Brooks
 
 !cpu 6502
 !to "build/FX.INDEXED/PALETTE.FIZZLE",plain
 *=$6000
 
-copymask_even = $f0
-copymask_odd = $f1
-counter = $f2
+         !source "src/fx/macros.a"   ; no code in here
 
-         !source "src/fx/macros.a"
-
-         ;init masks
-
-         lda   #%11010101
-         sta   copymask_even
-         lda   #%10101010
-         sta   copymask_odd
-         lda   #2
-         sta   counter
-
-@outerloop
-         ;init RNG
-
-         ldx   #1
-         stx   @rnd1+1
+         ldx   #(end-start+1)        ; copy LFSR code to zero page
+-        ldy   start-2, x
+         sty   $FE, x
          dex
-         stx   @rnd2+1
+         bne   -
+         bit   <exit
+         jmp   loop
 
-         ;iterate
-
-@loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
-         bcc   +
-
-         ;feedback polynomial forms #$100D for period of 8191
-
-         lda   @rnd1+1
-         eor   #$0d
-         sta   @rnd1+1
-         lda   @rnd2+1
-         eor   #$10
-         sta   @rnd2+1
-
-         ;little hack to avoid missing offset zero
-         ;screen hole at $xxFF is missed instead
-
-+        tya
-         eor   #$ff
-         sta   $26
-         sta   $3c
-         txa
-
-         ;target page 1
-
+start
+!pseudopc 0 {
+         ;X=0
+         ;Y=0
+loop     txa
+loop1    eor   #$1B                  ; LFSR form 0x1B00 with period 8191
+wait     dex
+         bpl   wait
+         tax
+loop2    txa
          ora   #$20
-         sta   $27
+         sta   <dst+2
          eor   #$60
-         sta   $3d
-
-         ;copy pixel from other page to this page
-         ldy   #0
-         lda   $26
+         sta   <src+2
+         tya
          ror
-         bcs   @odd
-         lda   ($26),y
-         eor   ($3c),y
-         and   copymask_even
-         eor   ($26),y
-         sta   ($26),y
-         jmp   @next
-@odd
-         lda   ($26),y
-         eor   ($3c),y
-         and   copymask_odd
-         eor   ($26),y
-         sta   ($26),y
-@next
-
-         lda   $c000
-         bmi   @exit
-
-         ;and exit condition
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
-         bne   @loop
-
-         lda   #$FF
-         sta   copymask_even
-         sta   copymask_odd
-         dec   counter
-         +LBNE @outerloop
-@exit    rts
+         bcs   odd
+even     lda   #%11010101            ; SMC
+         bne   +                     ; always branches
+odd      lda   #%10101010            ; SMC
++        sta   <mask+1
+src      and   $FD00, y              ; SMC high byte
+         eor   (dst+1), y
+mask     and   #$FD                  ; SMC
+         eor   (dst+1), y
+dst      sta   $FD00, y              ; SMC high byte
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         lda   $C000
+         bmi   exit
+         txa
+         bne   loop1
+         bvc   llb
+         lda   #%11111111
+         sta   <even+1
+         sta   <odd+1
+         clv
+         bvc   loop                  ; always branches
+llb      lda   (src+1), y            ; last lousy byte
+         sta   (dst+1), y
+exit     rts
+}
+end
