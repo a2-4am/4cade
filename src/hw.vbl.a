@@ -4,7 +4,7 @@
 ; Functions to enable and disable VBL polling on various
 ; Apple II models
 
-iWaitForVBL   
+iWaitForVBL
          sei              ; IIc is special
          sta   $C07F      ; enable access to VBL register
          sta   $C05B      ; enable VBL polling

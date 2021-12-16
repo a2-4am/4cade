@@ -1,0 +1,143 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+!cpu 6502
+!to "build/FX.INDEXED/SHR.IRIS",plain
+*=$A000
+
+mirror_cols = $126         ; $A0 bytes but clobbers $20 bytes before
+shrlo    = $201           ; $C8 bytes
+CoordinatesFileCopy = $2C8; $11 bytes
+shrhi    = $301           ; $C8 bytes
+coords   = $9F00          ; $1F40 bytes
+mirror_rows = $BE40       ; $C0 bytes
+
+!macro BUILD_MIRROR_COLS .mirror_cols {
+         ; build lookup table to get $9F-y for y in $00..$9F
+; X=0
+}
+
+         !source "src/constants.a"
+         !source "src/macros.a"
+         !source "src/fx/fx.shr.common.a"
+
+start
+         ldx   #$C0
+         ldy   #$00
+-        tya
+         sta   mirror_cols-$21, x
+         sta   mirror_rows-1, x
+         iny
+         dex
+         bne   -
+
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
+         +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
+         +WRITE_MAIN
+         ;X=0
+-        lda   start, x
+         sta   $9D00, x
+         lda   start+$100, x
+         sta   $9E00, x
+         inx
+         bne   -
+         jmp   stage2
+
+!pseudopc *-$300 {
+CoordinatesFile
+         !byte 16
+         !text "FX/SHR.IRIS.DATA"
+
+stage2
+         ldx   #(stage2-CoordinatesFile) ; LOAD_FILE_AT macro destroys pathname
+-        lda   CoordinatesFile, x        ; so we need to make a copy
+         sta   CoordinatesFileCopy, x
+         dex
+         bpl   -
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT CoordinatesFileCopy, coords
+         ;WRITEMAINMEM active after LOAD_FILE_AT macro
+
+         ldx   #(endzp-startzp)      ; copy loop code to zero page
+-        lda   startzp-1, x
+         sta   $FF, x
+         dex
+         bne   -
+
+         +WRITE_AUX
+         jsr   InputLoop
+         +WRITE_MAIN
+
+         ldx   #$00
+-        lda   $9D00, x              ; copy main code back to $A000
+         sta   start, x              ; so it can be called again if necessary
+         lda   $9E00, x
+         sta   start+$100, x
+         inx
+         bne   -
+         +READ_RAM1_WRITE_RAM1
+
+startzp
+!pseudopc 0 {
+exit     rts                         ; also terminates stage2 code
+InputLoop
+         ldy   #0
+input    ldx   coords, y             ; first value: SHR row (only 0..99 will be in input array)
+         bmi   exit                  ; if > 127 then we're done
+         inc   <input+1              ; (technically the first byte of mirror_rows serves as this EOF delimiter)
+         lda   (<input+1), y
+         tay
+
+         ; main 2x2 block in top-left quadrant
+         jsr   copy_block_from_x
+
+         ; corresponding 2x2 block in top-right quadrant
+         lda   mirror_cols, y
+         tay
+         jsr   copy_block
+         dey
+
+         ; corresponding 2x2 block in bottom-right quadrant
+         lda   mirror_rows, x
+         tax
+         jsr   copy_block_from_x
+
+         ; corresponding 2x2 block in bottom-left quadrant
+         lda   mirror_cols, y
+         tay
+         jsr   copy_block
+
+         inc   <input+1
+         bne   InputLoop
+         bit   $C000
+         bmi   exit
+         inc   <input+2
+         bne   InputLoop             ; always branches
+
+copy_block_from_x
+         lda   shrlo, x
+         sta   <src1+1
+         lda   shrhi, x
+         sta   <src1+2
+         lda   shrlo+1, x
+         sta   <src2+1
+         lda   shrhi+1, x
+         sta   <src2+2
+copy_block
+src1     lda   $FD00, y              ; SMC high byte
+         sta   (src1+1), y
+src2     lda   $FD00, y              ; SMC high byte
+         sta   (src2+1), y
+         iny
+         lda   (src1+1), y
+         sta   (src1+1), y
+         lda   (src2+1), y
+         sta   (src2+1), y
+         rts
+}
+endzp
+}
+end

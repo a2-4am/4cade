@@ -44,7 +44,7 @@ SaveSmallFileInternal
          lda   #0                    ; 0 = read into main memory
          sta   sizelo
          ;sta   sizehi                ; 0 = query load address
-         ;jsr   hddopendir            ; call ProRWTS2         
+         ;jsr   hddopendir            ; call ProRWTS2
          ;lda   ldrlo2
          sta   ldrlo
          lda   #>kGlobalPrefsBuffer ;lda   ldrhi2

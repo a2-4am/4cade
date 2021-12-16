@@ -240,6 +240,22 @@
          bit   $C082
 }
 
+!macro   READ_AUX {
+         sta   READMAINMEM
+}
+
+!macro   READ_MAIN {
+         sta   READAUXMEM
+}
+
+!macro   WRITE_AUX {
+         sta   WRITEAUXMEM
+}
+
+!macro   WRITE_MAIN {
+         sta   WRITEMAINMEM
+}
+
 ; requires setting zpCharMask in zero page to #$FF or #$DF before use
 !macro   FORCE_UPPERCASE_IF_REQUIRED {
          cmp   #$E1

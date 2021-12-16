@@ -103,7 +103,9 @@ def halfripple(unique_vals):
         ripple_vals.append(unique_vals[j])
     return ripple_vals
 
-def write(filename, vals):
+def write(filename, vals, header="", footer=""):
     with open(filename, "w") as f:
+        f.write(header)
         for aval, bval in vals:
             f.write("         !byte %s,%s\n" % (aval, bval))
+        f.write(footer)
