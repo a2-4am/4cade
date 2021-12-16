@@ -1,22 +1,22 @@
 ;license:MIT
 ;(c) 2021 by 4am
 ;
-mirror_cols = $126         ; $A0 bytes but clobbers $20 bytes before
 shrlo    = $201           ; $C8 bytes
 CoordinatesFileCopy = $2C8; $11 bytes
 shrhi    = $301           ; $C8 bytes
-coords   = $9F00          ; $1F40 bytes
-mirror_rows = $BE40       ; $C0 bytes
+mirror_cols = $1E29       ; $A0 bytes but clobbers $28 bytes before
+mirror_rows = $1F01       ; $C7 bytes
+coords   = $9F00          ; $1F41 bytes
 
          !source "src/constants.a"
          !source "src/macros.a"
          !source "src/fx/fx.shr.common.a"
 
 start
-         ldx   #$C0
+         ldx   #$C6
          ldy   #$00
 -        tya
-         sta   mirror_cols-$21, x
+         sta   mirror_cols-$27, x
          sta   mirror_rows-1, x
          iny
          dex
@@ -74,7 +74,7 @@ InputLoop
          ldy   #0
 input    ldx   coords, y             ; first value: SHR row (only 0..99 will be in input array)
          bmi   exit                  ; if > 127 then we're done
-         inc   <input+1              ; (technically the first byte of mirror_rows serves as this EOF delimiter)
+         inc   <input+1
          lda   (<input+1), y
          tay
 
@@ -85,7 +85,6 @@ input    ldx   coords, y             ; first value: SHR row (only 0..99 will be 
          lda   mirror_cols, y
          tay
          jsr   copy_block
-         dey
 
          ; corresponding 2x2 block in bottom-right quadrant
          lda   mirror_rows, x
@@ -117,11 +116,6 @@ copy_block
 src1     lda   $FD00, y              ; SMC high byte
          sta   (src1+1), y
 src2     lda   $FD00, y              ; SMC high byte
-         sta   (src2+1), y
-         iny
-         lda   (src1+1), y
-         sta   (src1+1), y
-         lda   (src2+1), y
          sta   (src2+1), y
          rts
 }

@@ -24,9 +24,19 @@ unique_coords = util.unique(coords)
 util.write("../../../src/fx/fx.shr.iris.data.a", unique_coords, header="""!cpu 6502
 !to "build/FX/SHR.IRIS.DATA",plain
 *=$9F00
+""", footer="""         !byte 128
 """)
+
+unique_coords.reverse()
+util.write("../../../src/fx/fx.shr.iris.in.data.a", unique_coords, header="""!cpu 6502
+!to "build/FX/SHR.IRISIN.DATA",plain
+*=$9F00
+""", footer="""         !byte 128
+""")
+unique_coords.reverse()
 
 util.write("../../../src/fx/fx.shr.ripple.data.a", util.ripple(unique_coords), header="""!cpu 6502
 !to "build/FX/SHR.RIPPLE.DATA",plain
 *=$9F00
+""", footer="""         !byte 128
 """)
