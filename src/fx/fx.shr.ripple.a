@@ -12,11 +12,6 @@ shrhi    = $301           ; $C8 bytes
 coords   = $9F00          ; $1F40 bytes
 mirror_rows = $BE40       ; $C0 bytes
 
-!macro BUILD_MIRROR_COLS .mirror_cols {
-         ; build lookup table to get $9F-y for y in $00..$9F
-; X=0
-}
-
          !source "src/constants.a"
          !source "src/macros.a"
          !source "src/fx/fx.shr.common.a"
