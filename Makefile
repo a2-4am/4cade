@@ -26,6 +26,9 @@ CADIUS=cadius
 # https://www.gnu.org/software/parallel/
 PARALLEL=parallel
 
+# https://python.org/
+PYTHON=python3
+
 # https://bitbucket.org/magli143/exomizer/wiki/Home
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
@@ -72,7 +75,7 @@ dsk: index asmproboot asmlauncher
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
-index: md asmfx asmprelaunch compress
+index: preconditions md asmfx asmprelaunch compress
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
@@ -209,16 +212,16 @@ asmlauncher: md
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>build/relbase.log
 	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 
-asmfx: md
+asmfx: preconditions md
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/fx/*.a
 
-asmprelaunch: md
+asmprelaunch: preconditions md
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/prelaunch/*.a
 
 asmproboot: md
 	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a
 
-compress: md
+compress: preconditions md
 	$(PARALLEL) '[ -f "res/ACTION.HGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.HGR/{/}"' ::: res/ACTION.HGR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.DHGR/{/}"' ::: res/ACTION.DHGR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || ${EXOMIZER} "{}"@0x2000 -o "res/ARTWORK.SHR/{/}"' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
@@ -233,7 +236,7 @@ attract: compress
 	bin/check-attract-mode.sh
 	bin/generate-mini-attract-mode.sh
 
-cache: md
+cache: preconditions md
 	$(PARALLEL) ::: \
 	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache00.a' \
 	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < res/GAMES.CONF | bin/buildcache.py > build/cache01.a' \
@@ -254,6 +257,12 @@ md:
 
 clean:
 	rm -rf build/ || rm -rf build
+
+preconditions:
+	@$(ACME) --version | grep -q "ACME, release" || (echo "ACME is not installed" && exit 1)
+	@$(CADIUS) | grep -q "cadius v" || (echo "Cadius is not installed" && exit 1)
+	@$(PARALLEL) --version | grep -q "GNU" || (echo "GNU Parallel is not installed" && exit 1)
+	@$(PYTHON) --version | grep -q "Python 3" || (echo "Python 3 is not installed" && exit 1)
 
 all: clean dsk mount
 
