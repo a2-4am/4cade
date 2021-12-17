@@ -1,12 +1,17 @@
 ;license:MIT
 ;(c) 2021 by 4am
 ;
-shrlo    = $201           ; $C8 bytes
+!cpu 6502
+!to "build/FX.INDEXED/SHR.RADIAL",plain
+*=$A000
+
+shrlo          = $201     ; $C8 bytes
 CoordinatesFileCopy = $2C8; $11 bytes
-shrhi    = $301           ; $C8 bytes
-mirror_cols = $1E29       ; $A0 bytes but clobbers $28 bytes before
-mirror_rows = $1F01       ; $C7 bytes
-coords   = $9F00          ; $1F41 bytes
+shrhi          = $301     ; $C8 bytes
+mirror_cols    = $1E29    ; $A0 bytes but clobbers $28 bytes before
+mirror_rows    = $1F01    ; $C7 bytes
+coords         = $9F00    ; $1F41 bytes
+last_coords = coords+$1F3E
 
          !source "src/constants.a"
          !source "src/macros.a"
@@ -47,6 +52,8 @@ stage2
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT CoordinatesFileCopy, coords
          ;WRITEMAINMEM active after LOAD_FILE_AT macro
+         lda   #$80
+         sta   coords-2
 
          ldx   #(endzp-startzp)      ; copy loop code to zero page
 -        lda   startzp-1, x
@@ -55,7 +62,7 @@ stage2
          bne   -
 
          +WRITE_AUX
-         jsr   InputLoop
+         jsr   LoopBL
          +WRITE_MAIN
 
          ldx   #$00
@@ -70,40 +77,81 @@ stage2
 
 startzp
 !pseudopc 0 {
-InputLoop
-input    ldx   coords                ; first value: SHR row (only 0..99 will be in input array)
-         bmi   exit                  ; if > 127 then we're done
-         ldy   #1
-         lda   (<input+1), y
-         tay
-
-         ; main 2x2 block in top-left quadrant
-         jsr   copy_block_from_x
-
-         ; corresponding 2x2 block in top-right quadrant
-         lda   mirror_cols, y
-         tay
-         jsr   copy_block
-
-         ; corresponding 2x2 block in bottom-right quadrant
+         ; bottom-left quadrant (opposite row, original column, reverse input order)
+LoopBL   ldx   last_coords           ; SMC
+         bmi   LoopTL
          lda   mirror_rows, x
          tax
-         jsr   copy_block_from_x
+         ldy   #1
+         lda   (LoopBL+1), y
+         tay
+         jsr   copy
+         lda   <LoopBL+1
+         php
+         dec   <LoopBL+1
+         dec   <LoopBL+1
+         plp
+         bne   LoopBL
+         dec   <LoopBL+2
+         bit   $C000
+         bpl   LoopBL
+         rts
 
-         ; corresponding 2x2 block in bottom-left quadrant
+         ; top-left quadrant (original row, original column, original input order)
+LoopTL   ldx   coords                ; SMC
+         bmi   LoopTR
+         ldy   #1
+         lda   (LoopTL+1), y
+         tay
+         jsr   copy
+         inc   <LoopTL+1
+         inc   <LoopTL+1
+         bne   LoopTL
+         inc   <LoopTL+2
+         bit   $C000
+         bpl   LoopTL
+         rts
+
+         ; top-right quadrant (original row, opposite column, reverse input order)
+LoopTR   ldx   last_coords           ; SMC
+         bmi   LoopBR
+         ldy   #1
+         lda   (LoopTR+1), y
+         tay
          lda   mirror_cols, y
          tay
-         jsr   copy_block
-
-         inc   <input+1
-         inc   <input+1
-         bne   InputLoop
-         inc   <input+2
+         jsr   copy
+         lda   <LoopTR+1
+         php
+         dec   <LoopTR+1
+         dec   <LoopTR+1
+         plp
+         bne   LoopTR
+         dec   <LoopTR+2
          bit   $C000
-         bpl   InputLoop
+         bpl   LoopTR
+         rts
+
+         ; bottom-right quadrant (opposite row, opposite column, original input order)
+LoopBR   ldx   coords                ; SMC
+         bmi   exit
+         lda   mirror_rows, x
+         tax
+         ldy   #1
+         lda   (LoopBR+1), y
+         tay
+         lda   mirror_cols, y
+         tay
+         jsr   copy
+         inc   <LoopBR+1
+         inc   <LoopBR+1
+         bne   LoopBR
+         inc   <LoopBR+2
+         bit   $C000
+         bpl   LoopBR
 exit     rts
 
-copy_block_from_x
+copy
          lda   shrlo, x
          sta   <src1+1
          lda   shrhi, x
@@ -112,7 +160,6 @@ copy_block_from_x
          sta   <src2+1
          lda   shrhi+1, x
          sta   <src2+2
-copy_block
 src1     lda   $FD00, y              ; SMC high byte
          sta   (src1+1), y
 src2     lda   $FD00, y              ; SMC high byte
@@ -121,3 +168,7 @@ src2     lda   $FD00, y              ; SMC high byte
 }
 endzp
 }
+
+CoordinatesFile
+         !byte 18
+         !text "FX/SHR.RADIAL.DATA"
