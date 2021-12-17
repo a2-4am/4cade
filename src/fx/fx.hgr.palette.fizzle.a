@@ -7,12 +7,11 @@
 
          !source "src/fx/macros.a"   ; no code in here
 
-         ldx   #(end-start+1)        ; copy LFSR code to zero page
--        ldy   start-2, x
-         sty   $FE, x
-         dex
-         bne   -
+         +OVERCOPY_TO_0 start, end
+         ;X=0
+         ;Y=0
          bit   <exit
+         ;V=1
          jmp   loop
 
 start

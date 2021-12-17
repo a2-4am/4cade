@@ -8,11 +8,9 @@
 addrs     = $6100                    ; [256 bytes, page-aligned]
 copymasks = $6200                    ; [256 bytes, page-aligned]
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
-         dex
-         bne   -
+         !source "src/fx/macros.a"
+
+         +COPY_TO_0 start, end
          ;X=0
          ;A=1
 --       ldy   #$20                  ; create copymask table

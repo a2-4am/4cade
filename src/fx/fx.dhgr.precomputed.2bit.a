@@ -57,11 +57,7 @@
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
          +COPY_SELF_TO_AUXMEM
-         ldx   #(end-start)          ; copy InputLoop code to zero page
--        lda   start-1, x
-         sta   $FF, x
-         dex
-         bne   -
+         +COPY_TO_0 start, end
          jmp   InputLoop
 
 start
@@ -70,7 +66,7 @@ Exit2Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         ldx   .coords, y            ; first value: HGR row + 1
+         ldx   .coords               ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
          +ROW_X_TO_2BIT_BASE_ADDRESSES
 

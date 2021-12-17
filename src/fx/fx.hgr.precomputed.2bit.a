@@ -265,11 +265,7 @@ zerotbl  !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
-         ldx   #(end-start-1)        ; copy InputLoop code to zero page
--        lda   start, x
-         sta   $0, x
-         dex
-         bpl   -
+         +COPY_TO_0 start, end
          jmp   InputLoop
 start
 !pseudopc 0 {
@@ -277,7 +273,7 @@ Exit2Bit rts
 InputLoop
          ldy   #0
 input=*+1
-         ldx   .coords, y            ; first value: HGR row + 1
+         ldx   .coords               ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
          +ROW_X_TO_2BIT_BASE_ADDRESSES
 

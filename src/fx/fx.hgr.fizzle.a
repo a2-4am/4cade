@@ -5,11 +5,11 @@
 !to "build/FX.INDEXED/FIZZLE",plain
 *=$6000
 
-         ldx   #(end-start+1)        ; copy LFSR code to zero page
--        ldy   start-2, x
-         sty   $FE, x
-         dex
-         bne   -
+         !source "src/fx/macros.a"
+
+         +OVERCOPY_TO_0 start, end
+         ;X=0
+         ;Y=0
          jmp   loop
 
 start

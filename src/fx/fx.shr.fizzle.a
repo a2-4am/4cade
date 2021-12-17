@@ -5,6 +5,7 @@
 !to "build/FX.INDEXED/SHR.FIZZLE",plain
 *=$A000
 
+         !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
 addrs=$7F                            ; [128 bytes]
@@ -17,11 +18,7 @@ addrs=$7F                            ; [128 bytes]
          dex
          bne   -
 
-         ldx   #(end-start+1)        ; copy LFSR code to zero page
--        ldy   start-2, x
-         sty   $FE, x
-         dex
-         bne   -
+         +OVERCOPY_TO_0 start, end
          ;X=0
          ;Y=0
 

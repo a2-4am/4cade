@@ -7,6 +7,8 @@
 
 addrs=$BF                            ; [$40 bytes]
 
+         !source "src/fx/macros.a"
+
          ldx   #$1F                  ; build address lookup table
 -        txa
          eor   #$20
@@ -15,11 +17,8 @@ addrs=$BF                            ; [$40 bytes]
          sta   addrs+$20, x
          dex
          bpl   -
-         ldx   #(end-start+1)        ; copy LFSR code to zero page
--        ldy   start-2, x
-         sty   $FE, x
-         dex
-         bne   -
+
+         +OVERCOPY_TO_0 start, end
          ;X=0
          ;Y=0
          jmp   copyaux

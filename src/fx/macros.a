@@ -161,5 +161,27 @@
 +
 }
 
+!macro COPY_TO_0 .start, .end {
+; out:   X=0
+;        Z=1
+         ldx   #(.end-.start)
+-        lda   .start-1, x
+         sta   $FF, x
+         dex
+         bne   -
+}
+
+!macro OVERCOPY_TO_0 .start, .end {
+; over-copy region to $00
+; clobbers $FF
+; out:   X=0
+;        Y=last byte before start (e.g. 0 if the last instruction is JMP $0000)
+         ldx   #(.end-.start+1)
+-        ldy   .start-2, x
+         sty   $FE, x
+         dex
+         bne   -
+}
+
 _FX_MACROS_=*
 }

@@ -5,19 +5,15 @@
 !to "build/FX.INDEXED/SHR.UD",plain
 *=$A000
 
-         !source "src/fx/fx.shr.common.a"
-
 shrlo = $301                         ; $C8 bytes
 shrhi = $38                          ; $C8 bytes
 reverseshrlo = $BD01                 ; $C8 bytes
 reverseshrhi = $BE01                 ; $C8 bytes
 
-         ldx   #(end-start-1)        ; copy loop to zero page
--        lda   start, x
-         sta   $00, x
-         dex
-         bpl   -
+         !source "src/fx/macros.a"
+         !source "src/fx/fx.shr.common.a"
 
+         +COPY_TO_0 start, end
          +BUILD_SHR_REVERSE_LOOKUP_TABLES reverseshrlo, reverseshrhi
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
          ;X=0

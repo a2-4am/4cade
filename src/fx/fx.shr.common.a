@@ -64,3 +64,55 @@
          inx
          bne   -
 }
+
+!macro BUILD_SHR_MIRROR_ROWS_AND_COLS .mirror_rows, .mirror_cols {
+; out:   X=0
+;        Z=1
+         ldx   #$C6
+         ldy   #$00
+-        tya
+         sta   .mirror_cols-$27, x
+         sta   .mirror_rows-1, x
+         iny
+         dex
+         bne   -
+}
+
+!macro SHR_COPY_TO_STAGE_2 {
+; in:    X=0 /!\
+; out:   X=0
+;        Z=1
+;        WRITEMAINMEM active
+         +WRITE_MAIN
+-        lda   $A000, x
+         sta   $9D00, x
+         lda   $A100, x
+         sta   $9E00, x
+         inx
+         bne   -
+}
+
+!macro SHR_RESTORE_FROM_STAGE_2 {
+; out:   X=0
+;        Z=1
+         ldx   #$00
+-        lda   $9D00, x              ; copy main code back to $A000
+         sta   $A000, x              ; so it can be called again if necessary
+         lda   $9E00, x
+         sta   $A100, x
+         inx
+         bne   -
+}
+
+!macro LOAD_SHR_COORDINATES_AT .coords, .filename, .scratch {
+; out:   WRITEMAINMEM active
+;        LC RAM2 active and read/write
+         ldx   .filename             ; LOAD_FILE_AT macro destroys pathname
+-        lda   .filename, x          ; so we need to make a copy
+         sta   .scratch, x
+         dex
+         bpl   -
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT .scratch, .coords
+}
