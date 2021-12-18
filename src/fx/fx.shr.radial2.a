@@ -1,0 +1,115 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+!cpu 6502
+!to "build/FX.INDEXED/SHR.RADIAL2",plain
+*=$A000
+
+shrlo          = $201     ; $C8 bytes
+CoordinatesFileCopy = $2C8; $11 bytes
+shrhi          = $301     ; $C8 bytes
+mirror_cols    = $1E29    ; $A0 bytes but clobbers $28 bytes before
+mirror_rows    = $1F01    ; $C7 bytes
+coords         = $9F00    ; $1F41 bytes
+last_coords = coords+$1F3E
+
+         !source "src/fx/macros.a"
+         !source "src/fx/fx.shr.common.a"
+
+start
+         +BUILD_SHR_MIRROR_ROWS_AND_COLS mirror_rows, mirror_cols
+         ;X=0
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
+         +COPY_SCB_AND_PALETTES
+         ;X=0
+         ;WRITEAUXMEM active
+         +SHR_COPY_TO_STAGE_2
+         jmp   stage2
+
+!pseudopc *-$300 {
+stage2
+         +LOAD_SHR_COORDINATES_AT coords, CoordinatesFile, CoordinatesFileCopy
+         ;WRITEMAINMEM active
+
+         lda   #$80
+         sta   coords-2
+
+         +COPY_TO_0 startzp, endzp
+
+         +WRITE_AUX
+         jsr   input
+         +WRITE_MAIN
+
+         +SHR_RESTORE_FROM_STAGE_2
+         +READ_RAM1_WRITE_RAM1
+         rts
+
+startzp
+!pseudopc 0 {
+         ; top-left quadrant (original row, original column, original input order)
+input    ldx   coords                ; SMC
+         bmi   exit
+         ldy   #1
+         lda   (input+1), y
+         tay
+         jsr   copy
+
+         ; bottom-right quadrant (opposite row, opposite column, original input order)
+         lda   mirror_rows, x
+         tax
+         lda   mirror_cols, y
+         tay
+         jsr   copy
+
+         ; bottom-left quadrant (opposite row, original column, reverse input order)
+reverse_input
+         ldx   last_coords           ; SMC
+         lda   mirror_rows, x
+         tax
+         ldy   #1
+         lda   (reverse_input+1), y
+         tay
+         jsr   copy
+
+         ; top-right quadrant (original row, opposite column, reverse input order)
+         lda   mirror_rows, x        ; mirror of the mirror
+         tax
+         lda   mirror_cols, y
+         tay
+         jsr   copy
+
+         inc   <input+1
+         inc   <input+1
+         bne   +
+         inc   <input+2
++        lda   <reverse_input+1
+         php
+         dec   <reverse_input+1
+         dec   <reverse_input+1
+         plp
+         bne   +
+         dec   <reverse_input+2
++        bit   $C000
+         bpl   input
+copy
+         lda   shrlo, x
+         sta   <src1+1
+         lda   shrhi, x
+         sta   <src1+2
+         lda   shrlo+1, x
+         sta   <src2+1
+         lda   shrhi+1, x
+         sta   <src2+2
+src1     lda   $FD00, y              ; SMC high byte
+         sta   (src1+1), y
+src2     lda   $FD00, y              ; SMC high byte
+         sta   (src2+1), y
+exit     rts
+}
+endzp
+}
+
+CoordinatesFile
+         !byte 18
+         !text "FX/SHR.RADIAL.DATA"
