@@ -116,3 +116,104 @@
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT .scratch, .coords
 }
+
+!macro SHR_STAGE_1 .shrlo, .shrhi, .mirror_rows, .mirror_cols {
+         +BUILD_SHR_MIRROR_ROWS_AND_COLS .mirror_rows, .mirror_cols
+         ;X=0
+         +BUILD_SHR_LOOKUP_TABLES .shrlo, .shrhi
+         ;X=0
+         +COPY_SCB_AND_PALETTES
+         ;X=0
+         ;WRITEAUXMEM active
+         +SHR_COPY_TO_STAGE_2
+}
+
+!macro SHR_STAGE_3 .coords, .shrlo, .shrhi, .mirror_rows, .mirror_cols {
+input    ldx   .coords               ; first value: SHR row (only 0..99 will be in input array)
+         bmi   exit                  ; if > 127 then we're done
+         ldy   #1
+         lda   (<input+1), y
+         tay
+
+         ; main 2x2 block in top-left quadrant
+         jsr   copy_block_from_x
+
+         ; corresponding 2x2 block in top-right quadrant
+         lda   .mirror_cols, y
+         tay
+         jsr   copy_block
+
+         ; corresponding 2x2 block in bottom-right quadrant
+         lda   .mirror_rows, x
+         tax
+         jsr   copy_block_from_x
+
+         ; corresponding 2x2 block in bottom-left quadrant
+         lda   .mirror_cols, y
+         tay
+         jsr   copy_block
+
+         inc   <input+1
+         inc   <input+1
+         bne   input
+         inc   <input+2
+         bit   $C000
+         bpl   input
+
+copy_block_from_x
+         lda   .shrlo, x
+         sta   <src1+1
+         lda   .shrhi, x
+         sta   <src1+2
+         lda   .shrlo+1, x
+         sta   <src2+1
+         lda   .shrhi+1, x
+         sta   <src2+2
+copy_block
+src1     lda   $FD00, y              ; SMC high byte
+         sta   (src1+1), y
+src2     lda   $FD00, y              ; SMC high byte
+         sta   (src2+1), y
+exit     rts
+}
+
+!macro SHR_REVERSE .coords, .endcoords {
+         ldy   #<coords
+         sty   $f0
+         lda   #>coords
+         sta   $f1
+         lda   #<(.endcoords - 2)
+         sta   $f2
+         lda   #>(.endcoords - 2)
+         sta   $f3
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
++        lda   $f1
+         eor   #>(.coords + (.endcoords-.coords)/2)
+         bne   +
+         lda   $f0
+         eor   #<(.coords + (.endcoords-.coords)/2)
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always
+++
+}
