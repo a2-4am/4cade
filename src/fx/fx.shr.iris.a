@@ -21,16 +21,7 @@ coords   = $9F00          ; $1F41 bytes
 !pseudopc *-$300 {
 stage2
          +LOAD_SHR_COORDINATES_AT coords, CoordinatesFile, CoordinatesFileCopy
-         ;WRITEMAINMEM active
-
-         +COPY_TO_0 startzp, endzp
-
-         +WRITE_AUX
-         jsr   stage3
-         +WRITE_MAIN
-
-         +SHR_RESTORE_FROM_STAGE_2
-         +READ_RAM1_WRITE_RAM1
+         +SHR_STAGE_2 startzp, endzp
          rts
 
 startzp

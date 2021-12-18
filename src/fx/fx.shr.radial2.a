@@ -16,14 +16,7 @@ last_coords = coords+$1F3E
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-         +BUILD_SHR_MIRROR_ROWS_AND_COLS mirror_rows, mirror_cols
-         ;X=0
-         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
-         ;X=0
-         +COPY_SCB_AND_PALETTES
-         ;X=0
-         ;WRITEAUXMEM active
-         +SHR_COPY_TO_STAGE_2
+         +SHR_STAGE_1 shrlo, shrhi, mirror_rows, mirror_cols
          jmp   stage2
 
 !pseudopc *-$300 {
@@ -34,14 +27,7 @@ stage2
          lda   #$80
          sta   coords-2
 
-         +COPY_TO_0 startzp, endzp
-
-         +WRITE_AUX
-         jsr   input
-         +WRITE_MAIN
-
-         +SHR_RESTORE_FROM_STAGE_2
-         +READ_RAM1_WRITE_RAM1
+         +SHR_STAGE_2 startzp, endzp
          rts
 
 startzp

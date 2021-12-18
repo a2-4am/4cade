@@ -128,6 +128,17 @@
          +SHR_COPY_TO_STAGE_2
 }
 
+!macro SHR_STAGE_2 .startzp, .endzp {
+         +COPY_TO_0 .startzp, .endzp
+
+         +WRITE_AUX
+         jsr   $0
+         +WRITE_MAIN
+
+         +SHR_RESTORE_FROM_STAGE_2
+         +READ_RAM1_WRITE_RAM1
+}
+
 !macro SHR_STAGE_3 .coords, .shrlo, .shrhi, .mirror_rows, .mirror_cols {
 input    ldx   .coords               ; first value: SHR row (only 0..99 will be in input array)
          bmi   exit                  ; if > 127 then we're done
@@ -177,14 +188,15 @@ src2     lda   $FD00, y              ; SMC high byte
 exit     rts
 }
 
-!macro SHR_REVERSE .coords, .endcoords {
-         ldy   #<coords
+!macro SHR_REVERSE .coords {
+.length=$1F40
+         ldy   #<.coords
          sty   $f0
-         lda   #>coords
+         lda   #>.coords
          sta   $f1
-         lda   #<(.endcoords - 2)
+         lda   #<(.coords + .length - 2)
          sta   $f2
-         lda   #>(.endcoords - 2)
+         lda   #>(.coords + .length - 2)
          sta   $f3
          clc
          !byte $24
@@ -204,10 +216,10 @@ exit     rts
          bne   +
          inc   $f1
 +        lda   $f1
-         eor   #>(.coords + (.endcoords-.coords)/2)
+         eor   #>(.coords + .length/2)
          bne   +
          lda   $f0
-         eor   #<(.coords + (.endcoords-.coords)/2)
+         eor   #<(.coords + .length/2)
          beq   ++
 +        lda   $f2
          bne   +
