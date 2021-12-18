@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+!cpu 6502
+!to "build/FX.INDEXED/SHR.SOFTIRIS.IN",plain
+*=$A000
+
+shrlo    = $201           ; $C8 bytes
+CoordinatesFileCopy = $2C8; $11 bytes
+shrhi    = $301           ; $C8 bytes
+mirror_cols = $1E29       ; $A0 bytes but clobbers $28 bytes before
+mirror_rows = $1F01       ; $C7 bytes
+coords   = $9F00          ; $1F41 bytes
+
+         !source "src/fx/macros.a"
+         !source "src/fx/fx.shr.common.a"
+
+         +SHR_STAGE_1 shrlo, shrhi, mirror_rows, mirror_cols
+         jmp   stage2
+
+!pseudopc *-$300 {
+stage2
+         +LOAD_SHR_COORDINATES_AT coords, CoordinatesFile, CoordinatesFileCopy
+         +SHR_REVERSE coords
+         +SHR_STAGE_2 startzp, endzp
+         rts
+
+startzp
+!pseudopc 0 {
+stage3
+         +SHR_STAGE_3 coords, shrlo, shrhi, mirror_rows, mirror_cols
+}
+endzp
+}
+
+CoordinatesFile
+         !byte 18
+         !text "FX/SHR.SFIRIS.DATA"
