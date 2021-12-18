@@ -11,7 +11,6 @@ coords   = $9F00          ; $1F41 bytes
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-start
          +BUILD_SHR_MIRROR_ROWS_AND_COLS mirror_rows, mirror_cols
          ;X=0
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
@@ -70,7 +69,6 @@ input    ldx   coords                ; first value: SHR row (only 0..99 will be 
          inc   <input+2
          bit   $C000
          bpl   InputLoop
-exit     rts
 
 copy_block_from_x
          lda   shrlo, x
@@ -86,7 +84,7 @@ src1     lda   $FD00, y              ; SMC high byte
          sta   (src1+1), y
 src2     lda   $FD00, y              ; SMC high byte
          sta   (src2+1), y
-         rts
+exit     rts
 }
 endzp
 }

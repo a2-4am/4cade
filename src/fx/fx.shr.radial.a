@@ -16,7 +16,6 @@ last_coords = coords+$1F3E
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-start
          +BUILD_SHR_MIRROR_ROWS_AND_COLS mirror_rows, mirror_cols
          ;X=0
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
@@ -119,8 +118,6 @@ LoopBR   ldx   coords                ; SMC
          inc   <LoopBR+2
          bit   $C000
          bpl   LoopBR
-exit     rts
-
 copy
          lda   shrlo, x
          sta   <src1+1
@@ -134,7 +131,7 @@ src1     lda   $FD00, y              ; SMC high byte
          sta   (src1+1), y
 src2     lda   $FD00, y              ; SMC high byte
          sta   (src2+1), y
-         rts
+exit     rts
 }
 endzp
 }

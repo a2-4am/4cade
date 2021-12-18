@@ -16,7 +16,6 @@ last_coords = coords+$1F3E
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-start
          +BUILD_SHR_MIRROR_ROWS_AND_COLS mirror_rows, mirror_cols
          ;X=0
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
