@@ -11,7 +11,7 @@ fracv_hi = $F9
 incv =  $FA                          ; byte
 src =   $FC                          ; word
 dst =   $FE                          ; word
-palettes = $BD00                     ; $200 bytes
+palettes = $BC00                     ; $200 bytes
 
          !source "src/fx/macros.a"
 

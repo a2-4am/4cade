@@ -68,10 +68,10 @@
 !macro BUILD_SHR_MIRROR_ROWS_AND_COLS .mirror_rows, .mirror_cols {
 ; out:   X=0
 ;        Z=1
-         ldx   #$C6
+         ldx   #$C7
          ldy   #$00
 -        tya
-         sta   .mirror_cols-$27, x
+         sta   .mirror_cols-$28, x
          sta   .mirror_rows-1, x
          iny
          dex

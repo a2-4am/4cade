@@ -8,11 +8,12 @@
          !source "src/fx/macros.a"
          !source "src/fx/fx.shr.common.a"
 
-shrlo = $301                         ; $C8 bytes
-shrhi = $37                          ; $C8 bytes
+shrlo = $301                         ; $C8 bytes, indexed as shrlo-1,x
+shrhi = $37                          ; $C8 bytes, indexed as shrhi-1,x
 
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
          +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
          ;X=0
          ;Y=0
          +COPY_SCB_AND_PALETTES

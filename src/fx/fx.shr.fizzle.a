@@ -19,6 +19,7 @@ addrs=$7F                            ; [128 bytes]
          bne   -
 
          +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
          ;X=0
          ;Y=0
 
