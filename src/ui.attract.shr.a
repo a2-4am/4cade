@@ -41,6 +41,8 @@ SHRSlideshow
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 SHRSingle
+         jsr   SetPath
+         +LDADDR gPathname
          +ST16 IndexedSHRFilename
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
          and   #SUPPORTS_SHR
