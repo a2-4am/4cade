@@ -201,14 +201,18 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
 launchpatch    = $D853               ; glue.launch.a
-iAddToPath     = $FEBF               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iAddToPath     = $FEBF               ; Roger Rabbit (via prelaunch), avoid, use Infiltrator 2 style instead
+                                     ; also Columns (via file in disk image)
 itraverse      = $DB31               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+                                     ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant
 namhi          = $58                 ; constant
 ldrlo2         = $64                 ; constant
 ldrhi2         = $65                 ; constant
+
+; Columns also calls (de)accelerator functions directly
 
 _CONSTANTS_=*
 }
