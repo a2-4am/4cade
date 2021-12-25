@@ -32,7 +32,11 @@ source=$(mktemp)
  count=0
  while IFS="=" read -r key value; do
      count=$((count+1))
-     dhgr=$(echo "$key" | cut -c3)     # 'has DHGR title screen' flag (0 or 1)
+     if [ -z "$dhgrlog" ]; then
+         dhgr="0"
+     else
+         dhgr=$(echo "$key" | cut -c3)     # 'has DHGR title screen' flag (0 or 1)
+     fi
      cheat=$(echo "$key" | cut -c4)    # 'cheat category' (0..5)
      key=$(echo "$key" | cut -d"," -f2)
      if [ "$dhgr" -eq "0" ]; then
