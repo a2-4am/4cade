@@ -39,6 +39,12 @@ for (i = 0; i < entries.length; i++)
 {
   bits = entries[i].indexOf(",")
   dhgr = entries[i].substr(bits - 2, 1)
+
+  if (WScript.Arguments(1).substr(WScript.Arguments(1).length - 3, 1) == "0")
+  {
+    dhgr = "0"
+  }
+
   cheat = entries[i].substr(bits - 1, 1)
   eq = entries[i].indexOf("=")
   key = ((eq >= 0) ? entries[i].substr(bits + 1, eq - bits - 1) : entries[i])
