@@ -31,7 +31,7 @@
          sta   $8819+1
          lda   #>callback
          sta   $8819+2
-         jsr   $87F9      ; load/title
+         jsr   $87F9      ; load, show title
 
          lda   #$60
          sta   $7818
@@ -63,10 +63,10 @@ callback bit   $C000
          ldx   #$30
 -        bit   $C055
          lda   #$0B
-         jsr   $FCA8
+         jsr   fakewait
          bit   $C054
          lda   #$0B
-         jsr   $FCA8
+         jsr   fakewait
          bit   $C000
          bmi   exit
          dey
@@ -75,6 +75,15 @@ callback bit   $C000
          bne   -
          jmp   $8839
 exit     jmp   $100
+
+fakewait sec
+wait1    pha
+wait2    sbc   #$01
+         bne   wait2
+         pla
+         sbc   #$01
+         bne   wait1
+         rts
 
 newpath
          !byte 15
