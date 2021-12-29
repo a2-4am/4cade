@@ -7,7 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
          lda   #$60
          sta   $36D3
          jsr   $366D      ; decompress
@@ -21,7 +20,6 @@
          rol   $3F3       ; point to $300 instead
          jsr   $FB6F
 
-         +DISABLE_ACCEL
          jmp   $837
 
 !if * > $1C0 {
