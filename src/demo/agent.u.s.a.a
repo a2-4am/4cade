@@ -9,7 +9,6 @@
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
          +LOAD_FILE_AT title, $00
          +READ_ROM_NO_WRITE
 
@@ -19,12 +18,12 @@
 
          ldx   #5
 -        lda   $100,x
-         sta   reset,x
+         sta   $300,x
          dex
          bpl   -
          sec
          rol   $3F3       ; point to $300 instead
-         jsr   $FB6F      ; reset vector checksum (bank ROM in)
+         jsr   $FB6F
 
          lda   #$EA
          sta   $15DD
@@ -44,11 +43,7 @@
          lda   #$D0
          sta   $AC64      ; disable sound
 
-         +DISABLE_ACCEL
-
          jmp   $837
-
-reset    !byte $00,$00,$00,$00,$00,$00
 
 title    !byte x_e-x_b
 x_b      !text "X/AGENT.U.S.A/AGENT.U.S.A"

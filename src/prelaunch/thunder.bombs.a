@@ -9,7 +9,13 @@
 
          lda   #$60
          sta   $887F
-         jsr   $87F9      ; load/title
+         lda   #<fakewait
+         sta   $8823+1
+         sta   $8823+2
+         lda   #>fakewait
+         sta   $8823+2
+         sta   $882B+2    ; fix timing of title screen on //gs
+         jsr   $87F9      ; load, show title
 
          +ENABLE_ACCEL
          lda   #$60
@@ -17,7 +23,8 @@
          jsr   $7800      ; unpack/setup
 
          lda   #0
-         sta   $3F2
+         sta   $3F2       ; reset vector
+
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          +READ_ROM_NO_WRITE
@@ -43,6 +50,15 @@
 
          lda   $323
          jmp   $781B
+
+fakewait sec
+wait1    pha
+wait2    sbc   #$01
+         bne   wait2
+         pla
+         sbc   #$01
+         bne   wait1
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -9,7 +9,6 @@
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
 
 ;+LOAD_FILE_KEEP_DIR
          ldx   #0         ; read to main memory
@@ -43,8 +42,6 @@
          sta   $07A4, x
          dex
          bpl   -          ; exit at end of demo cycle
-
-         +DISABLE_ACCEL
 
          jmp   $0767
 
