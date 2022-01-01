@@ -1,0 +1,68 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/GALAXIAN",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $5813
+         jsr   $5800      ; decompress
+
+         ldx   #0
+         stx   $83F
+         inx
+         stx   $847       ; reset vector fix
+
+         lda   #$2C
+         sta   $1909
+         sta   $190C      ; ignore joystick buttons
+
+         ldx   #5-1
+-        lda   patch1, x
+         sta   $8E5, x
+         dex
+         bpl   -          ; exit on keypress during title screen
+
+         ldx   #5-1
+-        lda   patch2, x
+         sta   $E50, x
+         dex
+         bpl   -          ; exit on keypress during demo
+
+         lda   #<callback
+         sta   $8FF+1
+         lda   #>callback
+         sta   $8FF+2     ; set exit at end of demo cycle
+
+         +DISABLE_ACCEL
+         jmp   $800
+
+callback dec   count
+         bne   +
+         lda   #0
+         sta   $8FF+1
+         lda   #1
+         sta   $8FF+2     ; exit after 3 times
++        jmp   $A00
+
+count    !byte $03
+
+patch1   !byte $10,$05,$4C,$00,$01
+
+patch2   !byte $10,$49,$4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "X/GALAXIAN/GALAXIAN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
