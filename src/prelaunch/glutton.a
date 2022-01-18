@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH.INDEXED/XEVIOUS",plain
+!to "build/PRELAUNCH.INDEXED/GLUTTON",plain
 *=$106
 
          !source "src/prelaunch/common.a"
