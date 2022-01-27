@@ -57,7 +57,7 @@ echo|set/p="adding files..."
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
 %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
 for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
-1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS build\X\LOADER.SYSTEM
+1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM*
 %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
 %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
 cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
