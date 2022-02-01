@@ -459,6 +459,7 @@ not_floppy
                 ;but the virtual slot behaviour differs slightly from regular ProDOS
                 ;so we scan for the SmartPort interface in all cases
 
+iterdevice
 -               dex
                 stx     scratchhi
                 ldy     #0
@@ -589,9 +590,11 @@ slot            ldx     $cfff
                 sta     hackstar
 
 iterunit        inc     unrunit2
-                jsr     unrentrysei
-
-+               ldy     #$10
+                bne     +
+                ldx     slot + 2
+                jmp     iterdevice
++               jsr     unrentrysei
+                ldy     #$10
 -               lda     readbuff + 3, y
                 cmp     readbuff + $203, y
                 bne     iterunit
