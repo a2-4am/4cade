@@ -25,6 +25,7 @@ x_b !pseudopc $200 {
          sta   $c009
          jsr   $2036      ; decompress
          sta   $c008
+         +RESET_VECTOR $873
          +DISABLE_ACCEL
          sta   $c009
          jmp   $800
