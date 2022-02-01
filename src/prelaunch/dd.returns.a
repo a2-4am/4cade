@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DD.RETURNS",plain
@@ -27,6 +27,7 @@ x_b !pseudopc $200 {
          sta   $c008
          +DISABLE_ACCEL
          sta   $c009
+         +NEW_RESET_VECTOR_64K $200
          jmp   $800
 }
 x_e
