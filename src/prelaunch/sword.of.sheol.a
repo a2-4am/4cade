@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SWORD.OF.SHEOL",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $86A3
+         jsr   $6300      ; decompress
+         +RESET_VECTOR $106
+
+         inc   $70        ; uninitialised variable
+         
+         +DISABLE_ACCEL
+         jmp   $50F
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
