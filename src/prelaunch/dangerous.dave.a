@@ -1,57 +1,36 @@
 ;license:MIT
-;(c) 2020 by Tom Greene
+;(c) 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DANGEROUS.DAVE",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+         !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60       ; patch loader to return
-         sta   $20C6
 
-         ; auto-patch lowercase on II+
-+        lda   ROM_MACHINEID
-         cmp   #$06
-         beq   +
-         lda   #<casefix
-         sta   $2390
-         lda   #>casefix
-         sta   $2391
-
-+        jsr   $2000
-
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-         ldx   #$2C
-         stx   $8A61      ; don't decrement lives
-
-+
-         ; the game calls the Applesoft RND function in ROM
-         ; so we need to copy the seed into ZP, otherwise it
-         ; will get stuck in an infinite loop
-         ldx   #$04
--        lda   seed,x
-         sta   $C9,x
-         dex
+         lda   #$60
+         sta   $2035
+         sta   $20A1
+         ldy   #(x_e - x_b) - 1
+-        lda   x_b, y
+         sta   $200, y
+         dey
          bpl   -
+         jmp   $200
 
+x_b !pseudopc $200 {
+         jsr   $2000      ; ProDOS init
+         tay
+         sta   $c009
+         jsr   $2036      ; decompress
+         sta   $c008
+         +RESET_VECTOR $870
          +DISABLE_ACCEL
-         jmp   $20EC
-
-casefix
-         cmp   #$E1
-         bcc   +
-         and   #$DF
-+        jsr   ROM_COUT
-         rts
-
-
-seed
-         !byte   $80, $4F, $C7, $52, $FF
-
+         sta   $c009
+         jmp   $800
+}
+x_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
