@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DEEP.SPACE",plain
@@ -14,6 +14,7 @@
          sta   $690A
          jsr   $0800      ; decompress
          lda   $C083
+         +LC_REBOOT
          jsr   DisableAccelerator
          lda   #$53
          jsr   $F800      ; now load that bit
