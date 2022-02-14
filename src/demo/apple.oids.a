@@ -18,7 +18,7 @@
 
          lda   #$4C
          sta   $4FD7      ; exit on keypress
-         sta   $4F99      ; exit at end of demo
+         sta   $4F96      ; exit at end of demo
          lda   #0
          sta   $4FD7+1
          lda   #1
@@ -32,9 +32,9 @@
          sta   $111F      ; alien
 
          lda   #<callback
-         sta   $4F99+1
+         sta   $4F96+1
          lda   #>callback
-         sta   $4F99+2    ; wait 10 seconds at end of demo once Twilight logo is shown
+         sta   $4F96+2    ; wait 10 seconds at end of demo once Twilight logo is shown
 
          +DISABLE_ACCEL
          jmp   $4D00
