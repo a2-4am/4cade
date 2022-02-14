@@ -1,0 +1,64 @@
+;license:MIT
+;(c) 2021 by Frank M.
+
+!cpu 6502
+!to "res/DEMO/AO",plain
+*=$B900
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+
+         lda   #$60
+         sta   $604E
+         jsr   $6000      ; decompress
+
+         lda   #$4C
+         sta   $4FD7      ; exit on keypress
+         sta   $4F99      ; exit at end of demo
+         lda   #0
+         sta   $4FD7+1
+         lda   #1
+         sta   $4FD7+2
+
+                          ; doesn't try to detect joystick or joystick buttons
+
+         lda   #$D0       ; disable sounds
+         sta   $0DA0      ; A-P-P-L-E-O-I-D-S
+         sta   $1118      ; alien
+         sta   $111F      ; alien
+
+         lda   #<callback
+         sta   $4F99+1
+         lda   #>callback
+         sta   $4F99+2    ; wait 10 seconds at end of demo once Twilight logo is shown
+
+         +DISABLE_ACCEL
+         jmp   $4D00
+
+callback lda   $C000
+         bmi   +
+         lda   #$FF
+         jsr   $FCA8      ; WAIT 0.16395694 seconds
+         dec   count
+         beq   +
+         jmp   callback
++        jmp   $100
+
+count    !byte $3D        ; number of 0.16395694 second WAIT cycles
+
+                          ; (A*A*2.5 + A*13.5 + 7) * 0.980 usec
+                          ; 163,840 + 3,456 + 7 = 167,303 * 0.980 usec = 163,956.94 usec
+                          ; 163,956.94 usec = 0.16395694 seconds
+                          ; 61 cycles (hex $3D) of A=256 WAIT = 10 seconds
+
+title    !byte x_e-x_b
+x_b      !text "X/AO/AO"
+x_e
+
+!if * > $BDFF {
+  !error "code is too large, ends at ", *
+}
