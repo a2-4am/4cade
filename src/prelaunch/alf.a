@@ -1,0 +1,41 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ALF",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $87F
+         sta   $888
+         sta   $892
+         sta   $8A0
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jsr   $8AA5
+         +ENABLE_ACCEL
+         jsr   $882       ; decompress
+         +DISABLE_ACCEL
+         jsr   $7150
+         +ENABLE_ACCEL
+         jsr   $88B       ; decompress
+         +DISABLE_ACCEL
+         jsr   $4000
+         +ENABLE_ACCEL
+         jsr   $895       ; decompress
+         ldy   #$60
+         sty   $3C7
+         jsr   $3BD
+         lda   #$4C
+         sta   $3C7
+         inc   $2B        ; seed RNG
+         +DISABLE_ACCEL
+         jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
