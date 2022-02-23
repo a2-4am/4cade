@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/J.BIRD",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $94E8
+         sta   $9538
+         jsr   $3F84      ; decompress
+
+         +DISABLE_ACCEL
+
+         jsr   $1F00      ; music
+
+         +ENABLE_ACCEL
+
+         jsr   $9ED8      ; decompress
+
+         +DISABLE_ACCEL
+
+         jmp   $B263
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

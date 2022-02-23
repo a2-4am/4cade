@@ -8,8 +8,5 @@ Cavern Creatures
 //classic crack (clean or salvageable)
 Trolls and Tribulations
 
-//woz (needs crack)
-J-Bird (Orion)
-
 //unacquired
 Torpedo Terror (Continental)
