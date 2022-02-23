@@ -1,17 +1,19 @@
+        Shoot the sea creatures
 
-          Shoot the jellyfish
-
-
+  Recover nuclear capsules from seabed
 
           joystick or keyboard
 
+     Player 1              Player 2
 
-           fire  Q
-                   E
-           move  S   D  move
-                   X
+       Q       fire / claw      P
+         E                    O
+       S   D      move      K   L        
+         X                    ,
 
+!* * * * * 1 player  " * * * * 2 players
 
+1 (slowest) / 2 / 3  * * *responsiveness
 
 Esc* * * * * * * * * * * * * * * * pause
 
