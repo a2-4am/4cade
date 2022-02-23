@@ -4,7 +4,6 @@ Treasure Dive (Nibble)
 
 //4am crack
 Cavern Creatures
-Sheila
 
 //classic crack (clean or salvageable)
 Trolls and Tribulations
