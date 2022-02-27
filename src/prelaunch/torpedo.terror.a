@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TORPEDO.TERROR",plain
@@ -12,6 +12,8 @@
          lda   #$60
          sta   $7A28
          jsr   $3FD4      ; decompress
+
+         +NEW_RESET_VECTOR $280
 
          +DISABLE_ACCEL
 
