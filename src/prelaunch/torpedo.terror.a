@@ -13,11 +13,27 @@
          sta   $7A28
          jsr   $3FD4      ; decompress
 
-         +NEW_RESET_VECTOR $280
+         ldy   #5
+-        lda   $100, y
+         sta   callback_e, y
+         dey
+         bpl   -
+         lda   #<callback_e
+         sta   $3f2
+         lda   #<callback
+         sta   $36
+         lda   #1
+         sta   $37
 
          +DISABLE_ACCEL
 
          jmp   $D566
+
+callback
+         cmp   #$DD
+         beq   callback_e
+         jmp   $FDF0
+callback_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
