@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/VIPER.PATROL",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$4C
+         sta   $948E
+         lda   #<callback
+         sta   $948F
+         lda   #>callback
+         sta   $9490
+         jmp   $5200      ; load "DOS"
+
+callback
+         +ENABLE_ACCEL
+
+         lda   #0
+         sta   $56
+         jsr   $BDAC      ; decompress
+
+         +DISABLE_ACCEL
+
+         lda   #0
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
