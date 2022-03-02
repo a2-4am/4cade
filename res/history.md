@@ -3,6 +3,7 @@
 ## New Games
 
  - A City Dies Whenever Night Falls
+ - Alf: The First Adventure
  - Alien Lander
  - Ape Escape
  - Apple Invader
@@ -17,7 +18,9 @@
  - Boulder Dash II
  - Bug Battle
  - C'est La Vie
+ - California Raisins
  - Captain Power
+ - Cavern Creatures
  - Chip Out
  - Chivalry
  - Conquering Worlds
@@ -40,6 +43,7 @@
  - Infiltrator
  - Infiltrator 2
  - It's The Pits
+ - J-Bird
  - Jellyfish
  - Jump Jet
  - Lamb Chops!
@@ -66,6 +70,7 @@
  - Retro-Ball
  - Roach Hotel
  - Robot Battle
+ - Sheila
  - Shuttle Intercept
  - Space Kadet
  - Spellwielder
@@ -94,15 +99,20 @@
  - Time Pilot
  - Titan Cronus
  - Torax
+ - Torpedo Terror
  - Track Attack
+ - Treasure Dive
+ - Trolls and Tribulations
  - Trompers
  - Tsunami
  - Video Vegas
+ - Viper Patrol
  - Vortex
  - Wall Defence
  - Wargle
  - Whomper Stomper
  - Willy Byte in the Digital Dimension
+ - Zero Gravity Pinball
  - Zoo Master
 
 ## Removed games (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
@@ -144,8 +154,10 @@
  - Add more game help (thanks Andrew R.)
  - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M., Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza)
  - Better-looking SHR graphics thanks to a new conversion tool by Kris Kennaway
- - Faster search for many queries
- - Faster startup
+ - Faster searching
+ - Faster browsing
+ - Faster booting
+ - Faster everything, really
 
 # Revision 4.01 / serial number 20210218
 
