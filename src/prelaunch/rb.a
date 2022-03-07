@@ -1,0 +1,53 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/RB",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +READ_RAM2_NO_WRITE
+
+         lda   WaitForVBL
+         cmp   #$60
+         beq   novbl1
+         jsr   EnableAccelerator
+         lda   #0
+         sta   $5FFC      ; enable our VBL
+
+novbl1
+         lda   #$4C
+         sta   $612F
+         lda   #<callback1
+         sta   $6130
+         lda   #>callback1
+         sta   $6131
+         jmp   $3FF8      ; decompress
+
+callback1
+         lda   WaitForVBL
+         cmp   #$60
+         beq   novbl2
+         lda   #$4C
+         sta   $14F9
+         lda   #<callback2
+         sta   $14FA
+         lda   #>callback2
+         sta   $14FB
+
+novbl2
+         lda   $C055
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         rts
+
+callback2
+         +READ_RAM2_NO_WRITE
+         jsr   WaitForVBL
+         +READ_ROM_NO_WRITE
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
