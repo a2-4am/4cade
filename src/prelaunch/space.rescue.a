@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SPACE.RESCUE",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $67ED
+         jsr   $4B43      ; decompress
+         +NEW_RESET_VECTOR $200
+                          ; game leaks stack
+
+         +DISABLE_ACCEL
+
+         jmp   $9500
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
