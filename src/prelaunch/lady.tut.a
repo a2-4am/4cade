@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am and qkumba
+;(c) 2019-2020, 2022 by 4am and qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/LADY.TUT",plain
@@ -39,6 +39,7 @@ patch
          asl
          ror   $AD
          lsr
+         and   #7
          ora   #$C0
          sta   $AC
          lda   #$4B

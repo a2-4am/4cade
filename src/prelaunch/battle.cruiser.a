@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BATTLE.CRUISER",plain
@@ -13,7 +13,7 @@
          jsr   $2000      ; decompress
 
          +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
-         bcs   +
+         bmi   +
          ldy   #0
          sty   $868
          sty   $9486

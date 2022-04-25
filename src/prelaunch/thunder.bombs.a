@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019 by Frank M., 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/THUNDER.BOMBS",plain
@@ -28,22 +28,21 @@
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          +READ_ROM_NO_WRITE
-         cmp   #1
-         bcc   ++
+         beq   ++
          tax
+         and   #7
          ora   #$C0
          sta   $341
          txa
+         ldy   #6         ; sound/speech
          asl
-         and   #$80
-         ora   #1         ; sound i
-         bpl   +
-         eor   #$85       ; sound ii
+         bcs   +
+         ldy   #4         ; sound ii
+         asl
+         bmi   +
+         dey              ; sound i
 +
-         bcc   +
-         lda   #6         ; +speech
-+
-         sta   $340
+         sty   $340
          jsr   $7CB4
 ++
          +DISABLE_ACCEL

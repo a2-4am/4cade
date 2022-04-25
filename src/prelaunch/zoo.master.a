@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ZOO.MASTER",plain
@@ -18,12 +18,11 @@
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          lda   MockingboardStuff
-         pha
          +READ_ROM_NO_WRITE
-         pla
          bmi   +
          jmp   $8C0
 +
+         and   #7
          ora   #$C0
          ldx   #0
 -        ldy   $9A00, x

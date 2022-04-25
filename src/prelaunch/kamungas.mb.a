@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/KAMUNGAS.MB",plain
@@ -30,22 +30,20 @@
 +
          lda   MockingboardStuff
          +READ_ROM_NO_WRITE
-         cmp   #1
-         bcc   ++
+         beq   ++
          tax
+         and   #7
          ora   #$C0
          sta   mbslot+1
          txa
+         ldy   #$0e       ; sound/speech
          asl
-         and   #$80
-         ora   #2         ; sound i
-         bpl   +
-         eor   #$88       ; sound ii
-+
-         bcc   +
-         ora   #4         ; +speech
-+
-         sta   mbtype+1
+         bcs   +
+         ldy   #$0a       ; sound ii
+         asl
+         bmi   +
+         ldy   #2         ; sound i
++        sty   mbtype+1
          lda   #$4C
          sta   $BD00
          lda   #<callback

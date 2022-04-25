@@ -169,9 +169,11 @@ iLoadFileDirect    = $FFEF  ; note: you really want LC RAM 2 banked in before ca
 WaitForVBL         = $FFF2
 UnwaitForVBL       = $FFF5
 
-MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C")
-                            ; bit 6 = 1 if Mockingboard "B" (stereo) found (else Mockingboard "A")
-                            ; bit 4-5 unused
+MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
+                            ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")
+                            ; bit 5 = 1 if two AY-3-8910s present (Sound II / Mockingboard "A"-"D")
+                            ; bit 5 = 0 if only AY-3-8910 present (Sound I)
+                            ; bit 4 unused
                             ; bits 0-3: slot number
 MachineStatus      = $FFF9
 

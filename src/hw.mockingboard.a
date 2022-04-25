@@ -18,9 +18,10 @@
 ;          (zp$81 will contain the slot in form $Cx)
 ;        /!\ ALL ACCELERATORS MUST BE OFF OR SET TO 1 MHZ
 ; out:   if card was found, X = #$?n where n is the slot number of the card, otherwise #$00
-;                           and    bit 6 = 0 if Mockingboard Sound I found
-;                               or bit 6 = 1 if Mockingboard Sound II or "A" found
-;                           and    bit 7 = 1 if Mockingboard Sound/Speech I or "C" found
+;                           and    bit 5 = 0 if Mockingboard Sound I found
+;                               or bit 5 = 1 if Mockingboard Sound II or "A"-"D" found
+;                           and    bit 6 = 1 if SSI-263 speech chip found
+;                               or bit 7 = 1 if SC-01 speech chip found
 ;        flags clobbered
 ;        zp $80-$82 clobbered
 ;        A/Y clobbered
@@ -127,11 +128,13 @@ GetMockingboardStuff
 
 @wait_irq
          lda   $80
-         bne   @got_irq
+         bne   +
          iny
          bne   @wait_irq
          inx
          bne   @wait_irq
+         clc
++        ror   $82
 
          ; detect speech - SC-01
          ;based on S/S I demo dsk
@@ -159,24 +162,22 @@ GetMockingboardStuff
          bne   -
          inx
          bne   -
-         clc                         ; not found
-         bcc   @got_irq
+         beq   @got_irq
 
 @mb_smc21
 +        sta   $c40d                 ; ifr, clear flag
          lda   #$00                  ; turn off cb2 pulse mode to disable false writes to sc01
 @mb_smc22
          sta   $c40c                 ; pcr
-         sec                         ; found, we have an S/S I
+         sec                         ; found, we have an SC-01
          ror   $82
-         ldy   #$ff
-         bcc   @ssI
+         bne   @ssI
 
 @got_irq
          sei
+         clc                         ; not found
          ror   $82
 
-@onlyI
          ldy   #$ff
 @mb_smc6
          sty   $c403                 ; 6522#1 ddra
@@ -190,16 +191,16 @@ GetMockingboardStuff
          sta   ($80),y               ; 6522#1 orb
          lda   #4
          sta   ($80),y               ; 6522#1 orb
-         dey
+
 @ssI
+         ldy   #$ff
 @mb_smc8
          sty   $c483                 ; 6522#2 ddra
          lda   #7
 @mb_smc9
          sta   $c482                 ; 6522#2 ddrb
 
-         iny
-         tya
+         lda   #0
          ldy   #$80
          sta   ($80),y               ; 6522#2 orb
          lda   #4

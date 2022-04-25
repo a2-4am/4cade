@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am, qkumba
+;(c) 2019-2020, 2022 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/S2",plain
@@ -20,15 +20,15 @@
          sta   $6AE7      ; patch - don't decrease lives
          sta   $87EE      ; patch - don't increase lives
 +
+         ldy   #2         ; sound / speech
          lda   MockingboardStuff
-         asl
-         bpl   skipmb
-         lsr
-         and   #7
+         beq   skipmb
+         bmi   +
+         iny              ; sound
++        and   #7
          ora   #$30
          sta   $8F33
-         lda   #3
-         sta   $8FEC
+         sty   $8FEC
 
 skipmb
          jsr   DisableAccelerator

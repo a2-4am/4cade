@@ -209,7 +209,7 @@
 
 ; various language card configurations
 !macro   READ_RAM1_NO_WRITE {
-         bit   $C088
+         sta   $C088
 }
 
 !macro   READ_RAM1_WRITE_RAM1 {
@@ -218,7 +218,7 @@
 }
 
 !macro   READ_RAM2_NO_WRITE {
-         bit   $C080
+         sta   $C080
 }
 
 !macro   READ_RAM2_WRITE_RAM2 {
@@ -237,7 +237,7 @@
 }
 
 !macro   READ_ROM_NO_WRITE {
-         bit   $C082
+         sta   $C082
 }
 
 !macro   READ_AUX {
@@ -314,18 +314,16 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SPEECH { ;carry set if present
+!macro   GET_MOCKINGBOARD_SPEECH { ;sign set if SC-01, overflow set if SSI-263
          +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         asl
+         bit   MockingboardStuff
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;carry set if present
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;sign set if SC-01, overflow set if SSI-263
          +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         asl
          lda   MachineStatus
+         bit   MockingboardStuff
          +READ_ROM_NO_WRITE
 }
 
@@ -333,6 +331,7 @@
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          cmp   #1
+         and   #7
          ora   #$C0
          +READ_ROM_NO_WRITE
 }
@@ -341,6 +340,7 @@
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          cmp   #1
+         and   #7
          ora   #$C0
          tax
          lda   MachineStatus

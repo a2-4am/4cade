@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/APE.ESCAPE",plain
@@ -26,11 +26,9 @@
          jsr   $94E4      ; decompress game
 
          lda   MockingboardStuff
-         cmp   #1
-         ora   #$C0
-         bcc   no_speech
-         ldx   MockingboardStuff
          bpl   no_speech
+         and   #7
+         ora   #$C0
 
          ldy   #0
 -        ldx   $1300,Y    ;find #$C4s
