@@ -13,7 +13,7 @@
          jsr   $2000      ; decompress
 
          +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
-         bmi   +
+         bvs   +
          ldy   #0
          sty   $868
          sty   $9486

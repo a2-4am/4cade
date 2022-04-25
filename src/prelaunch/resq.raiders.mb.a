@@ -17,7 +17,7 @@
          lda   #$4C
          sta   $4047
          +GET_MOCKINGBOARD_SPEECH
-         bmi   +
+         bvs   +
          lda   #$60
          sta   $40FB       ; no speech chip, pretend no MB
 +
