@@ -31,7 +31,12 @@
          sty   $8FEC
 
 skipmb
+         php
          jsr   DisableAccelerator
+         plp
+         beq   +
+         jsr   $8FB5      ; init MB
++
          +READ_ROM_NO_WRITE
          jmp   $6000
 
