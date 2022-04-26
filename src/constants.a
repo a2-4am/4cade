@@ -183,7 +183,7 @@ EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MockingboardStuff
 MOCKINGBOARD_SLOT = %00001111
-HAS_SPEECH        = %10000000
+HAS_SPEECH        = %11000000
 
 ; AND masks for game info bitfield (after game display name in gSearchStore)
 HAS_DHGR_TITLE    = %10000000        ; this one is hard-coded via BMI instead of AND/BNE
