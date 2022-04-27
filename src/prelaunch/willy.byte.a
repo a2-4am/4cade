@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/WILLY.BYTE",plain
@@ -11,10 +11,18 @@
          lda   #$60
          sta   $426B
          jsr   $4000      ; decompress
-         lda   #<callback
+         lda   #<callback1
          sta   $BD7C
-         lda   #>callback
+         lda   #>callback1
          sta   $BD7D
+         lda   #$20
+         sta   $7852
+         lda   #<callback2
+         sta   $7853
+         lda   #>callback2
+         sta   $7854
+         lda   #$EA
+         sta   $7855
          lda   #$4C
          sta   $B6D8
          ldx   #0
@@ -24,12 +32,19 @@
          +DISABLE_ACCEL
          jmp   $6000
 
-callback
+callback1
          +ENABLE_ACCEL
          jsr   $BD80      ; decompress
          +DISABLE_ACCEL
          lda   #0         ; set Z
          rts
+
+callback2
+         sbc   $8A
+         cmp   #8
+         beq   +
+         cmp   #9
++        rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
