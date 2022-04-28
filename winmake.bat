@@ -80,7 +80,7 @@ call :compress
 goto :EOF
 )
 
-echo usage: %0 clean / asm / dsk
+echo usage: %0 clean / dsk
 goto :EOF
 
 :index

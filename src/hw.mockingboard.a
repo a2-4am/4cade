@@ -28,6 +28,16 @@
 ;------------------------------------------------------------------------------
 GetMockingboardStuff
          +ST16 @callback+1
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   @not_iic
+         ldx   ROM_MACHINE2C
+         bne   @not_iic
+         dex                         ; enable Mockingboard 4C support
+         stx   $C403
+         stx   $C404
+
+@not_iic
          lda   #$00
          sta   $80
          sta   $82                   ; type
