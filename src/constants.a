@@ -106,6 +106,7 @@ ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_REBOOT =   $FAA6
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
+ROM_MACHINE2C =$FBC0
 ROM_HOME =     $FC58
 ROM_COUT =     $FDED
 ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
@@ -205,7 +206,7 @@ iCurBlockHi    = $D603               ; constant
 launchpatch    = $D853               ; glue.launch.a
 iAddToPath     = $FEBF               ; Roger Rabbit (via prelaunch), avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
-itraverse      = $DB31               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+itraverse      = $DB42               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
@@ -214,7 +215,7 @@ namhi          = $58                 ; constant
 ldrlo2         = $64                 ; constant
 ldrhi2         = $65                 ; constant
 
-; Columns also calls (de)accelerator functions directly
+; Columns and Dangerous Dave also call (de)accelerator functions directly
 
 _CONSTANTS_=*
 }

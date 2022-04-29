@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2021 by 4am & qkumba
+;(c) 2019-2022 by 4am & qkumba
 ;
 ; Pseudo-ProDOS environment
 ;
@@ -218,6 +218,7 @@ ProDOS_enter
 resetval=$f0
 @imp_seek
          jsr   @set_rdwrbuff
+         jsr   @reset
          lda   sizelo
          lsr
          tay
@@ -239,6 +240,7 @@ resetval=$f0
          jsr   hddreaddirsel
 
 @sametree
+         jsr   @close_reset
          lda   ldrlo
          sta   sizelo
          lda   ldrhi
@@ -252,6 +254,8 @@ resetval=$f0
          jmp   @restore_zp
 
 @seekreset
+         lda   #cmdseek
+         sta   reqcmd
          jsr   hddrdwrpart
 @reset
          lda   #resetval
@@ -298,7 +302,7 @@ resetval=$f0
          lda   @handles+1
          beq   @close_ret
          dec   @handles+1
-         bne   @close_ret
+         bne   @close_reset
          lda   #>hddencbuf
 
 @patch_buffer
@@ -325,6 +329,12 @@ resetval=$f0
          inx
          stx   treebufpatch3+2
 @close_ret
+         rts
+
+@close_reset
+         lda   #0
+         sta   blkofflo
+         sta   blkoffhi
          rts
 
 @fetchbyte
