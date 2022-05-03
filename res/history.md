@@ -28,6 +28,9 @@
 - Conquering Worlds
 - Cosmic Combat
 - Crickateer
+- Cross City
+- Dangerous Dave Goes Nutz
+- Dangerous Dave Returns
 - Deep Space
 - Defender (Joe Holt)
 - Demonic Decks
@@ -38,8 +41,10 @@
 - Escape
 - Federation
 - Firebug
+- Floppy
 - Fly Wars
 - Galactic Attack
+- Glutton
 - Grapple
 - Handy Dandy
 - Infiltrator
@@ -75,6 +80,7 @@
 - Sheila
 - Shuttle Intercept
 - Space Kadet
+- Space Rescue
 - Spellwielder
 - Sputnik Attack
 - Spy vs Spy
@@ -89,6 +95,7 @@
 - Super Huey
 - Super Puckman
 - Super Taxman 2
+- Sword of Sheol
 - Talon
 - Teleport
 - Teritory
