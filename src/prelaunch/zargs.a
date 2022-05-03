@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ZARGS",plain
@@ -17,7 +17,14 @@
 callback
          lda   #1
          sta   $60B0      ; reset vector fix
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $9FA7      ; don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $6000
 
 !if * > $1C0 {

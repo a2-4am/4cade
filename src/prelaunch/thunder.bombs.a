@@ -11,7 +11,7 @@
          sta   $887F
          lda   #<fakewait
          sta   $8823+1
-         sta   $8823+2
+         sta   $882A+2
          lda   #>fakewait
          sta   $8823+2
          sta   $882B+2    ; fix timing of title screen on //gs
@@ -27,7 +27,6 @@
 
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
-         +READ_ROM_NO_WRITE
          beq   ++
          tax
          and   #7
@@ -45,7 +44,14 @@
          sty   $340
          jsr   $7CB4
 ++
-         +DISABLE_ACCEL
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $E39       ; don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          lda   $323
          jmp   $781B
