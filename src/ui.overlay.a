@@ -26,6 +26,7 @@ kCheatDescriptionLo
          !byte <sInfiniteLives
          !byte <sInfiniteWeapons
          !byte <sInfiniteLivesAndWeapons
+         !byte <sInfiniteLivesAndTime
          !byte <sInvincibility
          !byte <sInGame
          !byte <sCheatsEnabled
@@ -34,6 +35,7 @@ kCheatDescriptionHi
          !byte >sInfiniteLives
          !byte >sInfiniteWeapons
          !byte >sInfiniteLivesAndWeapons
+         !byte >sInfiniteLivesAndTime
          !byte >sInvincibility
          !byte >sInGame
          !byte >sCheatsEnabled
@@ -59,6 +61,13 @@ sInfiniteLivesAndWeapons
          !byte $16        ; padlock character
          !text " "
          !text "infinite lives & weapons"
+         !text " "
+         !byte $16        ; padlock character
+sInfiniteLivesAndTime
+         !byte 25         ; length
+         !byte $16        ; padlock character
+         !text " "
+         !text "infinite lives & time"
          !text " "
          !byte $16        ; padlock character
 sInvincibility

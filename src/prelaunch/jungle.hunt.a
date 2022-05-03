@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/JUNGLE.HUNT",plain
@@ -7,6 +7,52 @@
 
     !source "src/prelaunch/common.a"
 
+         jmp   +
+
+callback
+         txa
+         pha
+         jsr   $BD47
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   no_hook
+
+         lda   #$60
+         sta   $D6F       ; no timer
+         ldx   #$A5
+         lda   $BDB1
+         cmp   #$C1
+         beq   hook_A
+         cmp   #$C1
+         beq   hook_A
+         cmp   #$C3
+         beq   hook_C
+         cmp   #$C6
+         beq   hook_F
+         cmp   #$C8
+         bne   no_hook
+         stx   $775E      ; no secondary timer
+         stx   $7965      ; don't decrease lives
+         beq   no_hook
+
+hook_F
+         stx   $78e0      ; don't decrease lives
+         beq   no_hook
+
+hook_C
+         stx   $78dc      ; don't decrease lives
+         beq   no_hook
+
+hook_A
+         stx   $7bd3      ; don't decrease lives
+
+no_hook
+         pla
+         tax
+         rts
+
++
          +ENABLE_ACCEL
          lda   #$60
          sta   $81E
@@ -20,6 +66,11 @@
          sta   $0A6C
          lda   #0
          sta   $0A67 ; reset vector patch
+
+         lda   #<callback
+         sta   $1D2D
+         lda   #>callback
+         sta   $1D2E
 
          +DISABLE_ACCEL
          jmp   $A00
