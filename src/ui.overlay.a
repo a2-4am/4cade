@@ -277,7 +277,12 @@ gDrawingOnscreen=*+1
          jmp   ShowOtherDHGRPage
 +        jmp   ShowOtherPage
 
+;------------------------------------------------------------------------------
+; internal functions
+
 CheckCheats
+; out:   (SAVE) -> length-prefixed string, either a game-specific description
+;          or the global 'cheats enabled' message
          ldx   #kCheatsEnabled
          jsr   AnyGameSelected
          bcs   +
@@ -294,6 +299,13 @@ OVERLAYRTS
          rts
 
 MaybeRedrawUIForDHGR
+; If this is a DHGR title screen, then redraw the already-drawn overlay
+; for double hi-res. This allows us to use a single font and drawing
+; routines for both HGR and DHGR. There is a small amount of flicker
+; if we're redrawing directly on the visible screen without swapping
+; pages (e.g. adding a dot without changing the selected game), but
+; gDrawingOnscreen tracks this and we reduce the redrawing to an
+; absolute minimum to reduce flicker.
          bit   MachineStatus
          bvc   OVERLAYRTS
          bit   gGameToLaunchInfo

@@ -70,6 +70,13 @@ MiniAttractMode
          jsr   GetGameToLaunch
          +ST16 @GameToLaunch
 
+; We want to load the mini attract index into $800 so we can get the
+; index record for this game, but we now have so many games that the
+; entire index is larger than $1800 bytes and loading it all at once
+; would visibly overwrite bytes in HGR page 1. So the index is now
+; split into 2 halves based on the first letter of the game's
+; directory name, and we figure out which half we want and load it.
+
          +ST16 PTR
          ldy   #1
          lda   (PTR), y
@@ -90,6 +97,10 @@ MiniAttractMode
 @MiniAttractIndexRecord
          !word $FDFD                 ; SMC
 
+; Find the index record for this game and copy it into LC RAM so we
+; can reuse it without reloading the mini attract index over and over
+; during attract mode.
+
          jsr   okvs_find
          !word -
 @GameToLaunch
@@ -97,11 +108,13 @@ MiniAttractMode
          jsr   okvs_next_field
          jsr   SwitchToBank2
          sty   OKVS_CACHE
-         ldy   #4
+         ldy   #4                    ; length of index record (-1)
 -        lda   (PTR), y
          sta   OKVS_CACHE + 1, y
          dey
          bpl   -
+
+; Now, finally, start the mini attract mode
 
          jsr   BlankHGR
                                      ; X = 0
