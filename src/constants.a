@@ -11,8 +11,8 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E7A7..FFEE - main program code
-; FFEF..FFF9 - API functions and global constants available for main program
+; E77E..FFEB - main program code
+; FFEC..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
 ; FFFA..FFFF - NMI, reset, IRQ vectors
@@ -166,6 +166,7 @@ gSearchIndex = $6000
 gSearchCache = $A000
 
 ; LC RAM 1 & 2
+iAddToPath         = $FFEC
 iLoadFileDirect    = $FFEF  ; note: you really want LC RAM 2 banked in before calling this
 WaitForVBL         = $FFF2
 UnwaitForVBL       = $FFF5
@@ -204,8 +205,6 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
 launchpatch    = $D853               ; glue.launch.a
-iAddToPath     = $FEB5               ; Roger Rabbit (via prelaunch), avoid, use Infiltrator 2 style instead
-                                     ; also Columns (via file in disk image)
 itraverse      = $DB42               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant

@@ -137,6 +137,9 @@ SwitchToBank2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
 
+; iAddToPath (label is in constants.a)
+         jmp   AddToPath             ; no direct calling - target can move
+
 ; iLoadFileDirect (label is in constants.a)
          jmp   LoadFileDirect        ; no direct calling - target can move
 

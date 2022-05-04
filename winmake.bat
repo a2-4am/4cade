@@ -149,8 +149,10 @@ for %%q in (res\SS\*) do (
   )
 )
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX nul build\TOTAL.DATA nul pad >>build\log
-for %%q in (res\ATTRACT\*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT\%%~nxq >>build\log
-cscript /nologo bin\buildss.js build\ATTRACT build\MINIATTRACT.IDX nul build\TOTAL.DATA nul pad >>build\log
+for %%q in (res\ATTRACT\A* res\ATTRACT\B* res\ATTRACT\C* res\ATTRACT\D* res\ATTRACT\E* res\ATTRACT\F* res\ATTRACT\G* res\ATTRACT\H* res\ATTRACT\I* res\ATTRACT\J* res\ATTRACT\K* res\ATTRACT\L* res\ATTRACT\M*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT0\%%~nxq >>build\log
+for %%q in (res\ATTRACT\N* res\ATTRACT\O* res\ATTRACT\P* res\ATTRACT\Q* res\ATTRACT\R* res\ATTRACT\S* res\ATTRACT\T* res\ATTRACT\U* res\ATTRACT\V* res\ATTRACT\W* res\ATTRACT\X* res\ATTRACT\Y* res\ATTRACT\Z*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT1\%%~nxq >>build\log
+cscript /nologo bin\buildss.js build\ATTRACT0 build\MINIATTRACT0.IDX nul build\TOTAL.DATA nul pad >>build\log
+cscript /nologo bin\buildss.js build\ATTRACT1 build\MINIATTRACT1.IDX nul build\TOTAL.DATA nul pad >>build\log
 echo done
 rem
 rem precompute indexed files for graphic effects
@@ -239,7 +241,8 @@ cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\SFX.IDX src\index\sfx.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
-cscript /nologo bin\addfile.js build\MINIATTRACT.IDX src\index\miniattract.idx.a
+cscript /nologo bin\addfile.js build\MINIATTRACT0.IDX src\index\miniattract0.idx.a
+cscript /nologo bin\addfile.js build\MINIATTRACT1.IDX src\index\miniattract1.idx.a
 cscript /nologo bin\addfile.js build\TITLE.IDX src\index\title.idx.a
 cscript /nologo bin\addfile.js build\DTITLE.IDX src\index\dtitle.idx.a
 cscript /nologo bin\addfile.js build\HGR0.IDX src\index\hgr0.idx.a
@@ -273,7 +276,8 @@ goto :EOF
 2>nul md build\FX
 2>nul md build\PRELAUNCH.INDEXED
 2>nul md build\PRELAUNCH
-2>nul md build\ATTRACT
+2>nul md build\ATTRACT0
+2>nul md build\ATTRACT1
 2>nul md build\SS
 2>nul md build\GAMEHELP
 1>nul copy nul build\log
