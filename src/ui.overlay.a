@@ -20,7 +20,7 @@ ReturnToPlay
          !byte $0D
          !text " to play"
 
-kCheatsEnabled = 6                  ; index of 'cheats enabled' string in following table
+kCheatsEnabled = 7                  ; index of 'cheats enabled' string in following table
 kCheatDescriptionLo
          !byte <sNoCheats
          !byte <sInfiniteLives
