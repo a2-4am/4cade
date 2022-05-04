@@ -123,7 +123,8 @@ index: preconditions md asmfx asmprelaunch compress
 	[ -f build/index ] || $(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d build/GAMES.CONF < "{}" > "build/SS/{/}" || bin/buildslideshow.sh build/GAMES.CONF < "{}" > "build/SS/{/}"' ::: res/SS/*
 	[ -f build/index ] || ((for f in build/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
 	[ -f build/index ] || $(PARALLEL) 'bin/buildokvs.sh < "{}" > "build/ATTRACT/{/}"' ::: res/ATTRACT/*
-	[ -f build/index ] || ((for f in build/ATTRACT/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT.IDX)
+	[ -f build/index ] || ((for f in build/ATTRACT/[ABCDEFGHIJKLM]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT0.IDX)
+	[ -f build/index ] || ((for f in build/ATTRACT/[NOPQRSTUVWXYZ]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT1.IDX)
 #
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
@@ -182,7 +183,8 @@ index: preconditions md asmfx asmprelaunch compress
 	[ -f build/index ] || bin/addfile.sh build/SFX.IDX build/TOTAL.DATA > src/index/sfx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
-	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT.IDX build/TOTAL.DATA > src/index/miniattract.idx.a
+	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT0.IDX build/TOTAL.DATA > src/index/miniattract0.idx.a
+	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT1.IDX build/TOTAL.DATA > src/index/miniattract1.idx.a
 	[ -f build/index ] || bin/addfile.sh build/TITLE.IDX build/TOTAL.DATA > src/index/title.idx.a
 	[ -f build/index ] || bin/addfile.sh build/DTITLE.IDX build/TOTAL.DATA > src/index/dtitle.idx.a
 	[ -f build/index ] || bin/addfile.sh build/HGR0.IDX build/TOTAL.DATA > src/index/hgr0.idx.a

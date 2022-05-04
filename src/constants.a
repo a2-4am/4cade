@@ -204,7 +204,7 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
 launchpatch    = $D853               ; glue.launch.a
-iAddToPath     = $FEBF               ; Roger Rabbit (via prelaunch), avoid, use Infiltrator 2 style instead
+iAddToPath     = $FEB5               ; Roger Rabbit (via prelaunch), avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
 itraverse      = $DB42               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)

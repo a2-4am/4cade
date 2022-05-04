@@ -69,8 +69,16 @@ kPrelaunchIndexRecord
 kAttractModeIndexRecord
          !source "src/index/attract.idx.a"
 
-kMiniAttractIndexRecord
-         !source "src/index/miniattract.idx.a"
+kMiniAttractIndexLo
+         !byte <kMiniAttractIndexRecord0
+         !byte <kMiniAttractIndexRecord1
+kMiniAttractIndexHi
+         !byte >kMiniAttractIndexRecord0
+         !byte >kMiniAttractIndexRecord1
+kMiniAttractIndexRecord0
+         !source "src/index/miniattract0.idx.a"
+kMiniAttractIndexRecord1
+         !source "src/index/miniattract1.idx.a"
 
 kAttractModeSlideshowIndexRecord
          !source "src/index/slideshow.idx.a"

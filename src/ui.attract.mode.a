@@ -68,13 +68,32 @@ MegaAttractMode
 ;------------------------------------------------------------------------------
 MiniAttractMode
          jsr   GetGameToLaunch
-         +ST16 +
+         +ST16 @GameToLaunch
+
+         +ST16 PTR
+         ldy   #1
+         lda   (PTR), y
+         sec
+         sbc   #$41                  ; A in [0..25]
+         lsr                         ; A in [0..15]
+         lsr                         ; A in [0..7]
+         lsr                         ; A in [0..3]
+         lsr                         ; A in [0..1]
+         tax
+         lda   kMiniAttractIndexLo, x
+         sta   @MiniAttractIndexRecord
+         lda   kMiniAttractIndexHi, x
+         sta   @MiniAttractIndexRecord+1
+
          jsr   LoadIndexedFile
 -        !word $0800
-         !word kMiniAttractIndexRecord
+@MiniAttractIndexRecord
+         !word $FDFD                 ; SMC
+
          jsr   okvs_find
          !word -
-+        !word $FDFD                 ; SMC
+@GameToLaunch
+         !word $FDFD                 ; SMC
          jsr   okvs_next_field
          jsr   SwitchToBank2
          sty   OKVS_CACHE
