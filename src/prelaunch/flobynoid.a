@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/FLOBYNOID",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $9C5
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $B624
+         sta   $B63A
+         jsr   $B600
+
+         jsr   DisableAccelerator
+
+         jsr   $BBB3
+         jsr   $B627
+         inc   $3F4       ; reboot
+         jmp   $8003
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
