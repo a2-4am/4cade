@@ -456,6 +456,25 @@
          sta   iCurBlockLo
 }
 
+; load an external file by pathname
+; set path to new directory
+; LC RAM 2 MUST BE BANKED IN
+!macro   LOAD_FILE_KEEP_DIR .filepath, .dirlen {
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR .filepath
+         jsr   iLoadFileDirect
+
+         ldx   #.dirlen
+         stx   $BFD0
+-        lda   .filepath,x
+         sta   $BFD0,x
+         dex
+         bne   -
+
+}
+
 ; Macros for demo launchers that need to check whether they should run
 ; on the current machine. Exit demo if the requirements are not met.
 !macro   GAME_REQUIRES_JOYSTICK {
