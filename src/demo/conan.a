@@ -1,0 +1,63 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/CONAN",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR conan, conan_dir_e-conan_dir_b
+         lda   #$60
+         sta   $81E
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $BD40
+         jsr   $BCCF
+         lda   #$4C
+         sta   $7C2C
+         jsr   $5FF8      ; decompress
+         sta   $80F6
+         jsr   $826
+         lda   #$60
+         sta   $6BA2
+         jsr   $3FFC      ; decompress
+         jsr   $BE00      ; decompress more
+         lda   #$60
+         sta   $1094
+         lda   #$6C
+         sta   $BD40
+         jsr   $6BA5
+         lda   #$4C
+         sta   $A4E2
+         sta   $A4D3
+         ldx   #0
+         stx   $A4E3
+         stx   $A4D4
+         stx   $A0D5
+         inx
+         stx   $A4E4
+         stx   $A4D5
+         stx   $A0D6
+         lda   $C057
+         lda   $C052
+         lda   $C050
+         +DISABLE_ACCEL
+         jmp   $A000
+
+conan
+         !byte conan_e-conan_b
+conan_b
+conan_dir_b
+         !text "X/CONAN"
+conan_dir_e
+conan_main
+         !text "/"
+conan_main_b
+         !text "CONAN"
+conan_e
+         !text ".MAIN"
+conan_main_e

@@ -430,7 +430,7 @@ traverse
          tay
 -        inx
          dey
-         bmi   @go                   ; no '/', just do the read
+         beq   @go                   ; no '/', just do the read
          lda   (namlo), y
          cmp   #'/'
          bne   -
