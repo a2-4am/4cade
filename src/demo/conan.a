@@ -17,6 +17,10 @@
          lda   #$60
          sta   $BD40
          jsr   $BCCF
+         lda   #1        ; reset vector fix
+         sta   $7C01     ; to $3F3
+         lda   #$A4
+         sta   $7C02     ; to $3F4 (doesn't change $3F2)
          lda   #$4C
          sta   $7C2C
          jsr   $5FF8      ; decompress
