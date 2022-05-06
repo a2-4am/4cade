@@ -17,6 +17,16 @@
          sta   $B63A
          jsr   $B600
 
+         ldx   #hook_e-hook_b
+-        lda   hook_b, x
+         sta   $2d0, x
+         dex
+         bpl   -
+         lda   #$d0
+         sta   $B6D6
+         lda   #2
+         sta   $B6D7
+
          jsr   DisableAccelerator
 
          jsr   $BBB3
@@ -24,6 +34,30 @@
          inc   $3F4       ; reboot
          jmp   $8003
 
+hook_b !pseudopc $2d0 {
+         pla
+         pla
+         jsr   $B64F
+         jsr   $B6D8
+         ldx   #$AD
+         lda   #$CE
+         cmp   $AD9
+         bne   +
+         stx   $AD9       ; patch - don't decrease lives
++        cmp   $1461
+         bne   +
+         stx   $1461      ; patch - don't trigger anti-cheat
++        lda   $1893
+         cmp   #$EE
+         bne   +
+         stx   $1893      ; patch - don't increase lives
++        clc
+         rts
+  !if * > $2FF {
+    !error "code is too large, ends at ", *
+  }
+}
+hook_e
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }

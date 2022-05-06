@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/EARLY.BIRD",plain
@@ -20,7 +20,16 @@ hook     lda   #0
          lda   #1
          sta   $BBA       ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $65AD      ; patch - don't decrease lives
+         sta   $6CFC      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $BB0
 
 !if * > $1C0 {

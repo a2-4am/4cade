@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/COSMIC.COMBAT",plain
@@ -8,7 +8,22 @@
     !source "src/prelaunch/common.a"
 
          +NEW_RESET_VECTOR $BFF0
-         jmp   $1A00
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $1A82
+         jsr   $1A00      ; decompress
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $65F2      ; patch - don't decrease lives
+         sta   $721C      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $D566
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
