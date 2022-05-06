@@ -44,7 +44,7 @@ dsk: index asmproboot asmlauncher
 #
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
-	bin/buildfileinfo.sh build/PRELAUNCH "06" "0106"
+	cp src/prelaunch/_FileInformation.txt build/PRELAUNCH/
 #
 # add everything to the disk
 #
