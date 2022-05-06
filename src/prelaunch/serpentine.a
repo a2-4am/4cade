@@ -7,9 +7,6 @@
 
          !source "src/prelaunch/common.a"
 
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         sta   cheat
          +NEW_RESET_VECTOR $3C0
          ldx   #$0E       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x
@@ -23,13 +20,6 @@
          jmp   $43F5      ; decompress and show title
 patch
          jsr   $00F0      ; decompress
-cheat=*+1
-         lda   #0         ; SMC
-         beq   +
-                          ; lives in $D8 (capped at 3)
-         lda   #$A5
-         sta   $868F      ; patch - don't decrease lives
-+
          jmp   $0800
 
 !if * > $1C0 {

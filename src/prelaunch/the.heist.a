@@ -15,11 +15,6 @@
          jmp   $4000      ; decompress
 
 callback
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-         dec   $A47       ; patch - don't decrease lives
-+
          +DISABLE_ACCEL
          jmp   $A05
 

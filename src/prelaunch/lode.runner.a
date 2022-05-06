@@ -11,15 +11,6 @@
          lda   #$60
          sta   $1F4E
          jsr   $1F00      ; decompress
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-                          ; lives in $98, capped at 255
-         lda   #$FF
-         sta   $606F      ; start with 255 lives
-         lda   #$A5
-         sta   $613F      ; patch - don't decrease lives
-+
          +DISABLE_ACCEL
          jmp   $9050
 

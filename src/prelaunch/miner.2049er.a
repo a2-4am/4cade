@@ -16,12 +16,6 @@
          jmp   $2000      ; decompress
 
 callback
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$BD
-         sta   $0964      ; patch - don't decrease lives
-+
          +DISABLE_ACCEL
          jmp   $0918
 
