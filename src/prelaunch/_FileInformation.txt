@@ -2,5 +2,6 @@
 
 BERZAP.MB=Type(06),AuxType(0200),Access(C3)
 CAVRN.CHEAT=Type(06),AuxType(0200),Access(C3)
+CG.CHEAT=Type(06),AuxType(0300),Access(C3)
 KAMUNGAS.MB=Type(06),AuxType(0200),Access(C3)
 RESQ.RAIDERS.MB=Type(06),AuxType(0300),Access(C3)
