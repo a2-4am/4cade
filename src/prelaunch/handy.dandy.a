@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HANDY.DANDY",plain
@@ -18,7 +18,17 @@
 hook     lda   #1
          sta   $75DD      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $7165      ; patch - don't decrease lives
+         sta   $72DC      ; patch - don't increase lives
+         sta   $72E1      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $6000
 
 !if * > $1C0 {

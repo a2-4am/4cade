@@ -1,11 +1,14 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HEAD.ON",plain
 *=$106
 
     !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
 
          ; clobbers $100, sets LC & page 3 reset vectors
          +NEW_RESET_VECTOR $7000
@@ -17,14 +20,31 @@
          lda   $105       ; clone actual TR reentry point to $7000
          sta   $7005      ; loops between LC and $7000 otherwise
                     
-         +READ_RAM2_WRITE_RAM2
          lda   #0
          sta   $FFFC
          lda   #$70
          sta   $FFFD      ; LC reset vector fix to $7000
+
+         lda   #$4C
+         sta   $203E
+         lda   #<callback
+         sta   $203F
+         lda   #>callback
+         sta   $2040
+         jmp   $2000      ; decompress
+
+callback
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1072      ; patch - don't increase lives
+         sta   $18B7      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 
-         jmp   $2000
+         jmp   $6900
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
