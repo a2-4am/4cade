@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/IP",plain
@@ -20,7 +20,19 @@
          sta   $1838
          sta   $183D      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1CD1      ; patch - don't decrease lives
+         sta   $2409      ; patch - don't increase lives
+         sta   $2442      ; patch - don't increase lives
+         sta   $2472      ; patch - don't increase lives
+         sta   $249E      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $1800
 
 !if * > $1C0 {
