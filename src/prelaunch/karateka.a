@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/KARATEKA",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4013
+         jsr   $3FF6      ; decompress
+         ldx   #callback_e-callback_b
+-        ldy   callback_b-1,x
+         sty   $60-1,x
+         dex
+         bne   -
+         ldy   #<callback
+         sty   $A51C
+         ldy   #>callback
+         sty   $A51D
+         jmp   $A495
+
+callback_b !pseudopc $1460 {
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $BC9       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $200
+}
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
