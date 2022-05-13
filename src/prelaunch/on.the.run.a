@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ON.THE.RUN",plain
@@ -17,6 +17,13 @@
 
 hook     +RESET_VECTOR $100
 
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A5
+         sta   $DC1       ; patch - don't decrease lives
+         sta   $1FD4      ; patch - don't increase lives
++
          jmp   $800
 
 !if * > $1C0 {
