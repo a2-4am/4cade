@@ -362,37 +362,49 @@
 !macro   RESET_VECTOR .addr {
          lda   #<.addr
          sta   $3F2
+  !ifndef .addr {
+    !set emitted=1
          lda   #>.addr
          sta   $3F3
          eor   #$A5
          sta   $3F4
+  } else {
+    !ifdef emitted {
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+    } else {
+      !if >.addr != 1 {
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+      }
+    }
+  }
 }
 
 !macro   RESET_AND_IRQ_VECTOR .addr {
          lda   #<.addr
          sta   $3F2
          sta   $3FE
+  !if >.addr != 1 {
          lda   #>.addr
          sta   $3F3
          sta   $3FF
          eor   #$A5
          sta   $3F4
+  }
 }
 ; for games that clobber $100-$105, the prelaunch code constructs a new reset vector
 ; somewhere else and sets its
 !macro   NEW_RESET_VECTOR .addr {
-         lda   #$2C
-         sta   .addr
-         lda   #$88
-         sta   .addr+1
-         lda   #$C0
-         sta   .addr+2
-         lda   #$6C       ; JMP ($FFFC) points to 'Reenter'
-         sta   .addr+3
-         lda   #$FC
-         sta   .addr+4
-         lda   #$FF
-         sta   .addr+5
+         ldx   #5
+-        lda   $100,x
+         sta   .addr,x
+         dex
+         bpl   -
          +RESET_VECTOR .addr
 }
 
@@ -412,11 +424,13 @@
          lda   #<.addr
          sta   $3F2
          sta   $FFFC
+  !if >.addr != 1 {
          lda   #>.addr
          sta   $3F3
          sta   $FFFD
          eor   #$A5
          sta   $3F4
+  }
 }
 
 ; for 64k games on ][+ which either hang or restart

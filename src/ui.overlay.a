@@ -20,13 +20,14 @@ ReturnToPlay
          !byte $0D
          !text " to play"
 
-kCheatsEnabled = 7                  ; index of 'cheats enabled' string in following table
+kCheatsEnabled = 8                  ; index of 'cheats enabled' string in following table
 kCheatDescriptionLo
          !byte <sNoCheats
          !byte <sInfiniteLives
          !byte <sInfiniteWeapons
          !byte <sInfiniteLivesAndWeapons
          !byte <sInfiniteLivesAndTime
+         !byte <sInfiniteTime
          !byte <sInvincibility
          !byte <sInGame
          !byte <sCheatsEnabled
@@ -36,6 +37,7 @@ kCheatDescriptionHi
          !byte >sInfiniteWeapons
          !byte >sInfiniteLivesAndWeapons
          !byte >sInfiniteLivesAndTime
+         !byte >sInfiniteTime
          !byte >sInvincibility
          !byte >sInGame
          !byte >sCheatsEnabled
@@ -68,6 +70,13 @@ sInfiniteLivesAndTime
          !byte $16        ; padlock character
          !text " "
          !text "infinite lives & time"
+         !text " "
+         !byte $16        ; padlock character
+sInfiniteTime
+         !byte 17         ; length
+         !byte $16        ; padlock character
+         !text " "
+         !text "infinite time"
          !text " "
          !byte $16        ; padlock character
 sInvincibility
