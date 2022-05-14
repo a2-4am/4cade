@@ -375,7 +375,7 @@
          eor   #$A5
          sta   $3F4
     } else {
-      !if >.addr != 1 {
+      !if (>.addr != 1) or (.addr = $100) {
          lda   #>.addr
          sta   $3F3
          eor   #$A5
@@ -385,17 +385,22 @@
   }
 }
 
+!macro   RESET_VECTOR_HALF .addr {
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+}
+
 !macro   RESET_AND_IRQ_VECTOR .addr {
          lda   #<.addr
          sta   $3F2
          sta   $3FE
-  !if >.addr != 1 {
          lda   #>.addr
          sta   $3F3
          sta   $3FF
          eor   #$A5
          sta   $3F4
-  }
 }
 ; for games that clobber $100-$105, the prelaunch code constructs a new reset vector
 ; somewhere else and sets its

@@ -7,11 +7,11 @@
 
     !source "src/prelaunch/common.a"
 
+         +NEW_RESET_VECTOR $160
+
          lda   #$60
          sta   $872
          jsr   $800       ; title
-
-         +NEW_RESET_VECTOR $100
 
          jmp   $2007
 

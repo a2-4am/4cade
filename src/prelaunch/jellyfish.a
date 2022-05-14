@@ -9,21 +9,25 @@
 
          +ENABLE_ACCEL
 
-         lda   #<reset
-         sta   $2049+1
-         lda   #>reset
-         sta   $2049+2
-
-         ldx   #(reset_e-reset)-1
--        lda   callback,x
+         ldx   #<reset_e
+-        lda+2 $ff,x
          sta   $50,x
          dex
-         bpl   -
+         bne   -
+
+         lda   #<reset
+         sta   $2049+1
+         stx   $2049+2
 
          jmp   $2000
 
-callback !pseudopc $50 {
-reset    +NEW_RESET_VECTOR $2F0
+!pseudopc $51+<* {
+reset    ldx   #5
+-        lda   $51, x
+         sta   $2F0, x
+         dex
+         bpl   -
+         +RESET_VECTOR $2f0
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -34,8 +38,8 @@ reset    +NEW_RESET_VECTOR $2F0
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $B800
-reset_e
 }
+reset_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

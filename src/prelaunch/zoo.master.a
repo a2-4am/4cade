@@ -11,7 +11,7 @@
          lda   #$60
          sta   $60A4
          jsr   $6000      ; decompress
-         +RESET_VECTOR $100
+         +RESET_VECTOR_HALF $100
          lda   #$60
          sta   $89F
          jsr   $800       ; decompress more

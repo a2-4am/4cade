@@ -24,10 +24,13 @@ hook2    lda   #<hook3
          sta   $9E4D+1
          lda   #>hook3
          sta   $9E4D+2
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector fix
          jmp   $9D84      ; decompress3
 
-hook3    +RESET_VECTOR $100
-         +READ_RAM2_NO_WRITE
+hook3    +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +

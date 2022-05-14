@@ -13,13 +13,6 @@
          ; clobbers $100, sets LC & page 3 reset vectors
          +NEW_RESET_VECTOR $7000
 
-         lda   #$4C
-         sta   $7003      ; JMP not (JMP)
-         lda   $104
-         sta   $7004
-         lda   $105       ; clone actual TR reentry point to $7000
-         sta   $7005      ; loops between LC and $7000 otherwise
-                    
          lda   #0
          sta   $FFFC
          lda   #$70
