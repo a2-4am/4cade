@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/RADWARRIOR",plain
@@ -8,7 +8,31 @@
     !source "src/prelaunch/common.a"
 
          +RESET_VECTOR $FAA6
-         jmp   $3FD7
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #callback_e-callback_b
+-        lda   callback_b,x
+         sta   callback,x
+         dex
+         bpl   -
+         lda   #<callback
+         sta   $4077
+         lda   #>callback
+         sta   $4078
++        jmp   $3FD7
+
+callback_b !pseudopc $240 {
+callback
+         lda   #$4C
+         sta   $400E
+         jsr   $3FF8
+         lda   #$a5
+         sta   $D587      ; patch - don't decrease lives
+         sta   $EFA9      ; patch - don't decrease lives
++        jmp   $4011
+}
+callback_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

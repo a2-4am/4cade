@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ROACH.HOTEL",plain
@@ -10,16 +10,14 @@
          +ENABLE_ACCEL
          lda   #<callback2
          sta   $5164
-         lda   #>callback2
-         sta   $5165
+         ldx   #>callback2
+         stx   $5165
          lda   #<pcallback2
          sta   $5034
-         lda   #>pcallback2
-         sta   $5035
+         stx   $5035
          lda   #<pcallback1
          sta   $5154
-         lda   #>pcallback1
-         sta   $5155
+         stx   $5155
          jmp   $800       ; decompress
 
 callback1
@@ -31,7 +29,15 @@ callback2
          jmp   $BDF4      ; decompress
 
 callback3
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $CBC       ; patch - don't increase lives
+         dec   $1029      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   ($200)
 
 pcallback1

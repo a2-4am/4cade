@@ -1,27 +1,27 @@
 ;license:MIT
-;(c) 2021-2022 by qkumba
+;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH.INDEXED/RG",plain
+!to "build/PRELAUNCH.INDEXED/RETRO.FEVER",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $9413
-         jsr   $7000      ; decompress
+         sta   $813
+         jsr   $800       ; decompress
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
-         sta   $FE2       ; patch - don't increase lives
-         sta   $1A65      ; patch - don't decrease lives
+         sta   $4817      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         jmp   $803
+
+         jmp   $4000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

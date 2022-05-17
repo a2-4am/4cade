@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/RAMPAGE",plain
@@ -7,8 +7,19 @@
 
     !source "src/prelaunch/common.a"
 
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         php
          inc   $3F4       ; force reboot
-         jmp   $2EED
+         lda   #$60
+         sta   $413A
+         jsr   $2EED
+         plp
+         beq   +
+         lda   #$b1
+         sta   $A3DC      ; patch - don't decrease lives
++
+         jmp   $E800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
