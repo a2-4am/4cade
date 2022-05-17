@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PICNIC.PARANOIA",plain
@@ -16,13 +16,21 @@
 
 callback
          nop
-         +DISABLE_ACCEL
          lda   #0
          sta   $45e5
          lda   #1
          sta   $45ea
          eor   #$A5
          sta   $45ef
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $79B7      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $78fb
 
 !if * > $1C0 {

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PEGASUS.II",plain
@@ -36,6 +36,14 @@ callback
          stx   $994A
          lda   #$A4
          sta   $994B
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $CD5       ; patch - don't decrease lives
+         sta   $719F      ; patch - don't increase lives
+         sta   $71C0      ; patch - don't decrease fuel
++
          clc
          rts
 

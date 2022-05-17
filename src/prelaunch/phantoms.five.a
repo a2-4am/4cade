@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PHANTOMS.FIVE",plain
@@ -8,7 +8,27 @@
     !source "src/prelaunch/common.a"
 
          +NEW_RESET_VECTOR $340
-         jmp   $26B2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #cheat_e-cheat_b
+-        lda   cheat_b, x
+         sta   cheat, x
+         dex
+         bpl   -
+         lda   #<cheat
+         sta   $8C99
+         lda   #>cheat
+         sta   $8C9A
++        jmp   $26B2
+
+cheat_b !pseudopc $346 {
+cheat
+         lda   #$a5
+         sta   $1D03      ; patch - don't decrease lives
+         jmp   $15B0
+}
+cheat_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
