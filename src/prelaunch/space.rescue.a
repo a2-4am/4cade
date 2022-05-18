@@ -15,7 +15,18 @@
          +NEW_RESET_VECTOR $200
                           ; game leaks stack
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $77A1      ; patch - don't decrease lives
+         sta   $7938      ; patch - don't decrease lives
+         sta   $8243      ; patch - don't increase lives
+         sta   $8726      ; patch - don't decrease fuel
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          jmp   $9500
 

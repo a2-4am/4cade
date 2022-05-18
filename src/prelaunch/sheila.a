@@ -17,9 +17,30 @@
          inx
          stx   $400C      ; reset vector
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $611       ; patch - don't decrease weapon
+         sta   $62A       ; patch - don't decrease weapon
+         dec   $470D      ; patch - don't decrease time
+         lda   #$ED
+         sta   $6EBA
+         lda   #$6F
+         sta   $6EBB      ; patch - don't decrease life
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
-         jmp   $4000
+         lda   #$4C
+         sta   $405A
+         jsr   $4000
+         pha
+         lda   #$A9
+         sta   $478       ; work around IIe firmware issue
+         pla
+         jmp   $405D
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

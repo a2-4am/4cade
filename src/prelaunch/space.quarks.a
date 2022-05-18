@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPACE.QUARKS",plain
@@ -8,14 +8,24 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $3E9D
+         lda   #$4C
+         sta   $3EC2
          jsr   $3E65      ; decompress/set reset vector
 
          +RESET_VECTOR $100
-         +DISABLE_ACCEL
 
-         jmp   $200
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1177      ; patch - don't increase lives
+         sta   $1196      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $203
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

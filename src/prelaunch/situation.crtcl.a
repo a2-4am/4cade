@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba
+;(c) 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SC",plain
@@ -7,26 +7,21 @@
 
     !source "src/prelaunch/common.a"
 
-         jmp   +
-
-callback
-         +ENABLE_ACCEL
-         jsr   $BD8E
-         +RESET_VECTOR reset
-         +DISABLE_ACCEL
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT sitcrit_cheat, 0
+         +READ_ROM_NO_WRITE
          lda   #0
-         rts
-
-reset
-         +READ_RAM1_NO_WRITE
-         jmp   ($FFFC)
-
-+
-         lda   #<callback
          sta   $8BF
-         lda   #>callback
+         lda   #$BC
          sta   $8C0
          jmp   $800      ; decompress
+
+sitcrit_cheat
+         !byte sitcrit_cheat_e-sitcrit_cheat_b
+sitcrit_cheat_b
+         !text "PRELAUNCH/SITCRIT.CHEAT"
+sitcrit_cheat_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

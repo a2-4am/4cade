@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/STAR.DANCE",plain
@@ -19,7 +19,15 @@ hook     lda   #0
          lda   #1
          sta   $700C      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1272      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $7000
 
 !if * > $1C0 {
