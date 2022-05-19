@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019, 2021 by qkumba
+;(c) 2019, 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/WARP.DESTROYER",plain
@@ -20,7 +20,21 @@
          lda   #$13
          sta   $76D2     ; disable unknown hardware support
                          ; otherwise hangs on IIGS
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $644D      ; patch - don't increase damage
+         sta   $6455      ; patch - don't increase damage
+         sta   $646D      ; patch - don't increase damage
+         sta   $647B      ; patch - don't increase damage
+         sta   $6488      ; patch - don't increase damage
+         sta   $649A      ; patch - don't increase damage
+         sta   $64AC      ; patch - don't increase damage
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          lda   #0
          jmp   $896
 !if * > $1C0 {

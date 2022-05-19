@@ -16,11 +16,26 @@
          sta   $89F
          jsr   $800       ; decompress more
          +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $48A0
+         lda   #>callback
+         sta   $48A1
++
          jsr   DisableAccelerator
          lda   MockingboardStuff
          +READ_ROM_NO_WRITE
          bmi   +
          jmp   $8C0
+
+callback
+         jsr   $4800
+         lda   #$AD
+         sta   $135E      ; patch - don't decrease lives
+         rts
+
 +
          and   #7
          ora   #$C0
