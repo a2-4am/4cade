@@ -7,7 +7,6 @@
 
          !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
          lda   #$60
          sta   $9E5
          jsr   $800       ; load "DOS"
@@ -29,7 +28,6 @@ callback1
          sta   $D402
          lda   #<callback2
          sta   $D401
-         jsr   DisableAccelerator
          lda   #$00
          ldx   #$0F
          jmp   $D000
