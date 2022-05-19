@@ -1,27 +1,32 @@
 ;license:MIT
-;(c) 2021-2022 by qkumba
+;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH.INDEXED/TORAX",plain
+!to "build/PRELAUNCH.INDEXED/TS",plain
 *=$106
 
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $2086
-         jsr   $2000      ; decompress
+         lda   #<callback
+         sta   $206F
+         lda   #>callback
+         sta   $2070
+         jmp   $2000      ; decompress
+
+callback
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
-         sta   $6183      ; patch - don't decrease lives
+         sta   $7301      ; patch - don't increase lives
+         sta   $7322      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         ldy   #$20
-         jmp   $2088
+
+         jmp   $4071
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

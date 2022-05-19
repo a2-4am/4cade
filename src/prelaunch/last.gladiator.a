@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/LG",plain
@@ -14,24 +14,31 @@
 
          lda   #$4C
          sta   $BC00
-         lda   #$40
+         lda   #<callback1
          sta   $BC01
-         lda   #$02
+         lda   #>callback1
          sta   $BC02
-         lda   #<callback2
-         sta   $BC0B
-         lda   #>callback2
+         ldx   #<callback2
+         stx   $BC0B
          sta   $BC0C
-         ldx   #(reset_e-callback1)-1
--        lda   callback1,x
-         sta   $240,x
+         ldx   #(reset_e-reset_b)-1
+-        lda   reset_b,x
+         sta   callback1,x
          dex
          bpl   -
 
          +DISABLE_ACCEL
          jmp   $11EF
 
-callback1 !pseudopc $240 {
+reset_b !pseudopc $240 {
+callback1
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $6FA4      ; patch - don't increase lives
+         sta   $7604      ; patch - don't decrease lives
++
          lda   #<reset
          sta   $3F2
          lda   #>reset
@@ -48,11 +55,11 @@ callback2
          bne   +
          lda   $2D
          bne   +
-         lda   #$15
+         lda   #<reset xor $58
          sta   $5FF2
-         lda   #2
+         lda   #>reset
          sta   $5FF3
-         lda   #$FE
+         lda   #(>reset xor $A5) xor $59
          sta   $5FF4
 +        rts
 }

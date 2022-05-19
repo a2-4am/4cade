@@ -33,7 +33,14 @@ callback_e
          lda   #1
          sta   $BE60
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $8521      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          jmp   $D566
 

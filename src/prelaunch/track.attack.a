@@ -26,7 +26,19 @@ callback
          tax
          pla
          jsr   $400
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   $9FC
+         cmp   #$C6
+         bne   +
+         lda   #$A5
+         sta   $9FC
+         sta   $10E4
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $800
 
 !if * > $1C0 {

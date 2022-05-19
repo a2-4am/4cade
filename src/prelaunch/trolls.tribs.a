@@ -13,6 +13,15 @@
          lda   #1
          sta   $6056
          +LC_REBOOT
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $60CB      ; patch - don't decrease lives
+         sta   $6564      ; patch - don't decrease weapon
+         sta   $656D      ; patch - don't decrease weapon
+         sta   $8257      ; patch - don't increase lives
++
          jmp   $6000
 
 !if * > $1C0 {

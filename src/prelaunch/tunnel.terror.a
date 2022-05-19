@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TUNNEL.TERROR",plain
@@ -12,7 +12,17 @@
          lda   #$A4
          sta   $6E15     ; to $3F4 (doesn't change $3F2)
 
-         jmp   $4000
+         lda   #$60
+         sta   $4026
+         jsr   $4000
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $E3A       ; patch - don't decrease lives
++
+         jmp   $e00
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
