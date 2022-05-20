@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ARTESIANS",plain
@@ -14,8 +14,35 @@
          sta   $87B+2
          jmp   $800       ; decompress
 
+callback1
+         lda   #<callback2
+         sta   $8E43
+         lda   #>callback2
+         sta   $8E44
+         jmp   $8E00
+
+callback2
+         lda   #0
+         sta   $A00       ; patch - don't decrease energy
+         lda   #$B0
+         sta   $1815      ; patch - don't decrease energy
+         jmp   $8E8C
+
 hook     +RESET_VECTOR $100
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback1
+         sta   $B31F
+         lda   #>callback1
+         sta   $B320
++
+         lda   #0
+         sta   $B7F0
+         bit   $C057      ; enable hires
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $B31B
 
 !if * > $1C0 {
