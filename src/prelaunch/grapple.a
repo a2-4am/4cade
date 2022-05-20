@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GRAPPLE",plain
@@ -18,6 +18,9 @@
          beq   +
          dec   $7A92      ; don't count deaths
 +
+         lda   #1
+         sta   $40D3      ; reset vector fix
+
          +DISABLE_ACCEL
          jmp   $4000
 
