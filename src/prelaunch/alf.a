@@ -15,9 +15,10 @@
          sta   $892
          sta   $8A0
          jsr   $800       ; decompress
-         +DISABLE_ACCEL
+;ran out of space
+;;         +DISABLE_ACCEL
          jsr   $8AA5
-         +ENABLE_ACCEL
+;;         +ENABLE_ACCEL
          jsr   $882       ; decompress
          +DISABLE_ACCEL
          jsr   $7150
@@ -33,7 +34,17 @@
          lda   #$4C
          sta   $3C7
          inc   $2B        ; seed RNG
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $16CA      ; cosmetic
+         lda   #$a5
+         sta   $17D8      ; patch - don't decrease food
+         sta   $1B73      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $800
 
 !if * > $1C0 {

@@ -21,5 +21,22 @@
 callback
          +ENABLE_ACCEL
          jsr   $B65A      ; decompress
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   ++
+         lda   $B75A
+         cmp   #'3'
+         bne   +
+         lda   #$ad
+         sta   $67E5      ; patch - don't decrease lives
+         bne   ++
++
+         cmp   #'5'
+         bne   ++
+         lda   #$ad
+         sta   $F97       ; patch - don't decrease energy
+++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          rts

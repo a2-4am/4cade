@@ -46,6 +46,16 @@
          sta   $7944
 
 no_speech
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $6632
+         sta   $6635      ; patch - don't decrease lives
+         lda   #4
+         sta   $6505      ; patch - don't fall any floors after the 1st
++
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $6200
