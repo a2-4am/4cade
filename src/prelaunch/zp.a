@@ -12,6 +12,7 @@
          sta   $313B
          jsr   $800       ; decompress some
          +ENABLE_ACCEL
+         ldy   #$28
          jsr   $3288
          jsr   $3079      ; decompress more
          +DISABLE_ACCEL
