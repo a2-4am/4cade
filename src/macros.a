@@ -454,19 +454,25 @@
 
 ; load an external file by pathname
 ; LC RAM 2 MUST BE BANKED IN
-; LOW BYTE OF .addr MUST BE $00
-; set .addr to $0000 to load anywhere in main
+; set .addr to $0000 to load to any aligned addres in main
+; LOW BYTE OF .addr MUST BE $00 IN THAT CASE
 !macro   LOAD_FILE_AT .filepath, .addr {
   !if .addr > 0 {
          lda   #>.addr
          sta   ldrhi
+  }
+  !if <.addr > 0 {
+         lda   #<.addr
+         sta   ldrlo
   }
          lda   iCurBlockLo
          pha
          lda   iCurBlockHi
          pha
          ldx   #0         ; read to main memory
+  !if <.addr = 0 {
          stx   ldrlo
+  }
          +LDADDR .filepath
          jsr   iLoadFileDirect
          pla
