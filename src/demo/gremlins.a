@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/GREMLINS",plain
+*=$be00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT gremlins, 0
+         +READ_ROM_NO_WRITE
+         lda   #$4C
+         sta   $082D
+         sta   $0863
+         lda   #$2C
+         sta   $839       ; no music
+         lda   #0
+         sta   $856       ; exit keycheck sooner
+         jsr   $0800      ; decompress
+         +DISABLE_ACCEL
+         jsr   $830       ; check key
+         ldx   #0
+         stx   $5219      ; exit keycheck sooner
+         lda   #$4C
+         sta   $51F2
+         sta   $61E4
+         stx   $51F3
+         stx   $5506
+         stx   $61E5
+         inx
+         stx   $51F4
+         stx   $5507
+         stx   $61E6
+         jmp   $4000
+
+gremlins
+         !byte gremlins_e-gremlins_b
+gremlins_b
+         !text "X/GREMLINS/GREMLINS"
+gremlins_e
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}
