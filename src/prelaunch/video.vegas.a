@@ -31,6 +31,7 @@ callback1
          lda   #$00
          ldx   #$0F
          jmp   $D000
+         nop              ; move out of overwritten range
 
 callback2
          jsr   $D432
