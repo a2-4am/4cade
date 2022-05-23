@@ -1,0 +1,39 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/GENETIC.DRIFT",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT genetic_drift, 0
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $846
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $8439
+         lda   #$4C
+         sta   $FC9
+         ldx   #0
+         stx   $FCA
+         inx
+         stx   $FCB
+         jsr   $8490      ; decompress more
+         +DISABLE_ACCEL
+         jsr   $F00
+         jmp   $100
+
+genetic_drift
+         !byte genetic_drift_e-genetic_drift_b
+genetic_drift_b
+         !text "X/GENETIC.DRIFT/GENETIC.DRIFT"
+genetic_drift_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
