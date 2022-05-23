@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BORG",plain
@@ -7,10 +7,10 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
+         ;+ENABLE_ACCEL   ; can't because of animation
          lda   #$60
          sta   $609E
-         jsr   $6000      ; decompress
+         jsr   $6000      ; decompress and show animation
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
@@ -19,7 +19,6 @@
          sta   $11E4      ; patch - don't decrease lives
 +
          inc   $C9        ; must be non-zero
-         +DISABLE_ACCEL
          jmp   $EB0
 
 !if * > $1C0 {
