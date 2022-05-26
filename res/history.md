@@ -22,6 +22,7 @@
 - C'est La Vie
 - California Raisins
 - Captain Power
+- Catacombs
 - Cavern Creatures
 - Chip Out
 - Chivalry
