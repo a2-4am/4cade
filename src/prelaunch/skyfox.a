@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2021 by qkumba/Frank M.
+;(c) 2019-2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SKYFOX",plain
@@ -7,41 +7,69 @@
 
     !source "src/prelaunch/common.a"
 
+         jmp   +
+
+callback2
+         jsr   $BC03
+         lda   #$85
+         ldx   #$A5
+         cmp   $7FB5
+         bne   plane
+         stx   $7FB5      ; patch - don't increase damage
+         stx   $9327      ; patch - don't decrease fuel
+
+plane
+         cmp   $9BC7
+         bne   nopatch
+         stx   $156A      ; patch - don't decrease fuel
+         stx   $9281      ; patch - don't decrease fuel
+         stx   $9BC7      ; patch - don't increase damage
+
+callback1
+         sec
+         sbc   #8
+         cmp   #2
+
+nopatch
+         lda   #0
+         rts
+
++
          +ENABLE_ACCEL
          inc   $80        ; requires a non-zero value for the RNG
          lda   #$60
          sta   $7E3A
          jsr   $4635
 
-         lda   #$82       ; READ_ROM_NO_WRITE
-         sta   $101
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; update TR hook to reboot
-         lda   #0
+         ldx   #$82       ; READ_ROM_NO_WRITE
+         stx   $101
+         ldx   #$A6
+         stx   $104
+         ldx   #$FA
+         stx   $105       ; update TR hook to reboot
          sta   $5FFC
-         lda   #1
-         sta   $5FFD      ; moved to LC $FFFC/D
+         sty   $5FFD      ; moved to LC $FFFC/D
 
          lda   #$4C
          sta   $6872
-         lda   #<callback
+         lda   #<callback1
          sta   $6873
-         lda   #>callback
-         sta   $6874
+         sty   $6874
          lda   #$B0
          sta   $685B
          lda   #$90
          sta   $6862
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback2
+         sta   $8882
+         sty   $8883
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $67BD
-
-callback
-         sec
-         sbc   #8
-         cmp   #2
-         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
