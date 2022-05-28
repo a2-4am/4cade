@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-22 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/WARGLE",plain
@@ -43,8 +43,14 @@ main
 callback1
          ldx   #$00
          stx   $9E52
-         inx
+         ldx   #$03
          stx   $9E53      ; reset vector
+         ldx   #5
+-        lda   $100,x
+         sta   $300,x
+         dex
+         bpl   -
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
