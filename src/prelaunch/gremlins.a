@@ -9,12 +9,12 @@
 
          +ENABLE_ACCEL
          lda   #$4C
-         sta   $082D
+         sta   $0839
          sta   $0863
          jsr   $0800      ; decompress
          +DISABLE_ACCEL
          jsr   $211       ; music
-         jsr   $830       ; check key
+         jsr   $83C       ; check key
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
