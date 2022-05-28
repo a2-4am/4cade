@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/WALL.DEFENCE",plain
@@ -11,6 +11,12 @@
          lda   #$60
          sta   $2013
          jsr   $2000      ; decompress
+
+         ldx   #0
+         stx   $D01
+         inx
+         stx   $D06       ; reset fix
+
          +DISABLE_ACCEL
          jmp   $D00
 
