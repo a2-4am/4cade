@@ -22,7 +22,10 @@
          jsr   $0800      ; decompress
          +DISABLE_ACCEL
          jsr   $830       ; check key
-         ldx   #0
+         bit   $C000
+         bpl   +
+         jmp   $100
++        ldx   #0
          stx   $5219      ; exit keycheck sooner
          lda   #$4C
          sta   $51F2
