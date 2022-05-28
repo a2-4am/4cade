@@ -23,7 +23,7 @@ x_b !pseudopc $200 {
 
 callback
          sta   $c008
-         +RESET_VECTOR $873
+         +RESET_VECTOR $1A6A
          bit   $c083
          lda   #$8b
          sta   $BF0E
