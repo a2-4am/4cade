@@ -36,8 +36,9 @@ callback1
          pha
          lda   #<(callback2 - 1)
          pha
-+
          jmp   $60D6
++
+         jmp   $60D2
 
 callback2
          lda   #$ad
