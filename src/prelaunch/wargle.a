@@ -38,6 +38,8 @@ main
          sta   $B748
          lda   #>callback1
          sta   $B749
+         lda   #$D0
+         sta   $D85A      ; disable keypress check
          jmp   $B700
 
 callback1
