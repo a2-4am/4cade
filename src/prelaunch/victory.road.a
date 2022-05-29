@@ -16,7 +16,6 @@ callback
          lda   #$a5
          sta   $D433      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
          jmp   $D000
 
 ++
@@ -26,11 +25,16 @@ callback
          jsr   $1000      ; decompress
          dex
          jsr   $D300      ; decompress more
+         lda   #$60
+         sta   $A0F7
+         jsr   $A000
+         jsr   DisableAccelerator
          lda   #<callback
          sta   $A17A
          lda   #>callback
          sta   $A17B
-         jmp   $A000      ; decompress
+         ldy   #0
+         jmp   $A0F9      ; decompress
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
