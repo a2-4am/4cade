@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SPELLWIELDER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #<callback1
+         sta   $77A2
+         lda   #>callback1
+         sta   $77A3
+         jmp   $6C00      ; decompress
+
+callback1
+         lda   #<callback2
+         sta   $2200
+         lda   #>callback2
+         sta   $2201
+         lda   #$A6
+         sta   $2204
+         lda   #$FA
+         sta   $2205      ; reset vector
+         jmp   $2000
+
+callback2
+         lda   #$A6
+         sta   $8778
+         lda   #$FA
+         sta   $877A      ; reset vector
+         jmp   $BE00
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
