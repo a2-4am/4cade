@@ -160,8 +160,8 @@ for %%q in (res\SS\*) do (
   )
 )
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX nul build\TOTAL.DATA nul pad >>build\log
-for %%q in (res\ATTRACT\A* res\ATTRACT\B* res\ATTRACT\C* res\ATTRACT\D* res\ATTRACT\E* res\ATTRACT\F* res\ATTRACT\G* res\ATTRACT\H* res\ATTRACT\I* res\ATTRACT\J* res\ATTRACT\K* res\ATTRACT\L* res\ATTRACT\M*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT0\%%~nxq >>build\log
-for %%q in (res\ATTRACT\N* res\ATTRACT\O* res\ATTRACT\P* res\ATTRACT\Q* res\ATTRACT\R* res\ATTRACT\S* res\ATTRACT\T* res\ATTRACT\U* res\ATTRACT\V* res\ATTRACT\W* res\ATTRACT\X* res\ATTRACT\Y* res\ATTRACT\Z*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT1\%%~nxq >>build\log
+for %%q in (res\ATTRACT\A* res\ATTRACT\B* res\ATTRACT\C* res\ATTRACT\D* res\ATTRACT\E* res\ATTRACT\F* res\ATTRACT\G* res\ATTRACT\H* res\ATTRACT\I* res\ATTRACT\J* res\ATTRACT\K* res\ATTRACT\L* res\ATTRACT\M* res\ATTRACT\N* res\ATTRACT\O* res\ATTRACT\P*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT0\%%~nxq >>build\log
+for %%q in (res\ATTRACT\Q* res\ATTRACT\R* res\ATTRACT\S* res\ATTRACT\T* res\ATTRACT\U* res\ATTRACT\V* res\ATTRACT\W* res\ATTRACT\X* res\ATTRACT\Y* res\ATTRACT\Z*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT1\%%~nxq >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT0 build\MINIATTRACT0.IDX nul build\TOTAL.DATA nul pad >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT1 build\MINIATTRACT1.IDX nul build\TOTAL.DATA nul pad >>build\log
 echo done
