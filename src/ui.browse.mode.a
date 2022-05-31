@@ -75,6 +75,7 @@ OnBrowsePrevious
                                      ; A/Y = gGameToLaunch
          bcs   @goToLastGame         ; if no game selected, select last game
          tax                         ; X/Y = gGameToLaunch
+         tya                         ; set up first comparison in CPX16 macro
          +CPX16_0_NE @notFirstGame   ; if first game selected, select last game
 @goToLastGame
          +LDX16 GameCount
