@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by qkumba
+;(c) 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/LEMMINGS",plain
@@ -9,19 +9,11 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $41B0
-         jsr   $4000      ; decompress
-         inc   $C9        ; RNG requires non-zero
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$ad
-         sta   $BA5E      ; patch - don't decrease lives
-+
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
-         jmp   $8C8
+         sta   $21A5
+         jsr   $2000      ; decompress
+         +ENABLE_ACCEL
+
+         jmp   $6000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
