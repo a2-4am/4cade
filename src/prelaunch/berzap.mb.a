@@ -32,6 +32,8 @@
 +        plp
 
 ++       bcc   skipmb
+         lda   #$0C
+         sta   $978D
          cpx   #$C4
          beq   skipslot
          txa
