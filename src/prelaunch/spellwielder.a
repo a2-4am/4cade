@@ -7,6 +7,9 @@
 
     !source "src/prelaunch/common.a"
 
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         sta   cheat+1
          lda   #<callback1
          sta   $77A2
          lda   #>callback1
@@ -29,7 +32,26 @@ callback2
          sta   $8778
          lda   #$FA
          sta   $877A      ; reset vector
+
+cheat
+         lda   #0         ; SMC
+         beq   +
+         lda   #<callback3
+         sta   $ABD3
+         lda   #>callback3
+         sta   $ABD4
+         sta   $1812
++
          jmp   $BE00
+
+callback3
+         ldx   $1812
+         dex
+         bne   +
+         stx   $1812
+         stx   $1ACB
++
+         jmp   $8774
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
