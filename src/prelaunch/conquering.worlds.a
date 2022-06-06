@@ -54,8 +54,13 @@ callback2
 +        cpx   #6
          bne   ++
          cmp   #$0D
-         bne   ++
+         bne   +++
          sty   $400E       ; fix reset vector
++++      cmp   #6
+         bne   ++
+         sty   $47B6
+         dey
+         sty   $47B1       ; fix reset vector
 ++       clc
          rts
 

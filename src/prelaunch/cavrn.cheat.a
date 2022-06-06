@@ -8,10 +8,10 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         ldy   #0
--        lda   callback, y
-         sta   $110, y
-         iny
+         ldy   #(callback_e-callback)
+-        lda   callback-1, y
+         sta   $10f, y
+         dey
          bne   -
          jmp   $110
 
@@ -83,3 +83,4 @@ noaccel
          +READ_ROM_NO_WRITE
          rts
 }
+callback_e
