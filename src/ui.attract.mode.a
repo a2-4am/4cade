@@ -34,10 +34,11 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-@next    jsr   LoadIndexedFile       ; load pre-parsed attract mode configuration data into $6000
+         jsr   LoadIndexedFile       ; load pre-parsed attract mode configuration data into $6000
 -        !word $6000
          !word kAttractModeIndexRecord
 
+@next
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
          !word -
@@ -56,17 +57,14 @@ MegaAttractMode
 @mname   !word $FDFD                 ; SMC
          ldy   #1
          lda   (PTR),y
-         tax                         ; X = module type
-         and   #$F0
-         cmp   #$30
-         bne   +
-         txa
-         and   #$0F
+         tax                         ; X = module type as ASCII digit
+
+         and   #$0F                  ; do we want to display this module type
          tay
-         lda   gMegaAttractModeFilter ; do we want to display this module type
+         lda   gMegaAttractModeFilter
          and   kAttractModeFilters, y
          beq   @next
-+
+
          +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
