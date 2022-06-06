@@ -34,7 +34,7 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         jsr   LoadIndexedFile       ; load pre-parsed attract mode configuration data into $6000
+@next    jsr   LoadIndexedFile       ; load pre-parsed attract mode configuration data into $6000
 -        !word $6000
          !word kAttractModeIndexRecord
 
@@ -65,7 +65,7 @@ MegaAttractMode
          tay
          lda   gMegaAttractModeFilter ; do we want to display this module type
          and   kAttractModeFilters, y
-         beq   MegaAttractMode
+         beq   @next
 +
          +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
