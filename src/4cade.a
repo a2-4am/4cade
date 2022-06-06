@@ -123,6 +123,17 @@ ResetVector                          ; 6 bytes, copied to $100
          ; add new files above here
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
+
+gMegaAttractModeFilter    ; module types to include in mega-attract mode
+         !byte %11111111
+;               |||||||+- bit 0 include self-running demos
+;               ||||||+-- bit 1 include HGR title slideshows
+;               |||||+--- bit 2 include HGR action slideshows
+;               ||||+---- bit 3 include DHGR title slideshows
+;               |||+----- bit 4 include DHGR action slideshows
+;               ||+------ bit 5 include SHR box art slideshows
+;               |+------- bit 6 include GR action slideshows
+;               +-------- bit 7 include DGR action slideshows
 gSearchStore
          !word $6000
 gSlideshowStore

@@ -8,6 +8,16 @@
 ; - MiniAttractMode
 ; - RunAttractModule
 
+kAttractModeFilters
+         !byte ATTRACT_DEMO
+         !byte ATTRACT_HGR_TITLE
+         !byte ATTRACT_HGR_ACTION
+         !byte ATTRACT_DHGR_TITLE
+         !byte ATTRACT_DHGR_ACTION
+         !byte ATTRACT_SHR
+         !byte ATTRACT_GR
+         !byte ATTRACT_DGR
+
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
 ; main entry point for Mega Attract Mode, which endlessly cycles through
@@ -47,6 +57,16 @@ MegaAttractMode
          ldy   #1
          lda   (PTR),y
          tax                         ; X = module type
+         and   #$F0
+         cmp   #$30
+         bne   +
+         txa
+         and   #$0F
+         tay
+         lda   gMegaAttractModeFilter ; do we want to display this module type
+         and   kAttractModeFilters, y
+         beq   MegaAttractMode
++
          +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD

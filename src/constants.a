@@ -199,6 +199,16 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
+; AND masks for gMegaAttractModeFilter
+ATTRACT_DEMO        = %00000001
+ATTRACT_HGR_TITLE   = %00000010
+ATTRACT_HGR_ACTION  = %00000100
+ATTRACT_DHGR_TITLE  = %00001000
+ATTRACT_DHGR_ACTION = %00010000
+ATTRACT_SHR         = %00100000
+ATTRACT_GR          = %01000000
+ATTRACT_DGR         = %10000000
+
 PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be determined at build-time
 
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions

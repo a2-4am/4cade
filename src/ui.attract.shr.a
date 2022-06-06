@@ -8,6 +8,15 @@
 ; - SHRSingle
 ;
 
+AllSHRSlideshow
+         clc
+         lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
+         and   #SUPPORTS_SHR
+         beq   SHRRTS
+         lda   #ATTRACT_SHR
+         sta   gMegaAttractModeFilter
+         jmp   MegaAttractMode
+
 ;------------------------------------------------------------------------------
 ; SHRSlideshow
 ; execute a slideshow of super hi-res artwork
