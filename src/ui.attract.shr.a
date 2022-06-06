@@ -4,10 +4,22 @@
 ; Super hi-res slideshows
 ;
 ; Public functions
+; - AllSHRSlideshow
 ; - SHRSlideshow
 ; - SHRSingle
 ;
 
+;------------------------------------------------------------------------------
+; AllSHRSlideshow
+; execute mega-attract mode of all super hi-res artwork (and nothing else)
+;
+; safe to call if machine can not display super hi-res graphics (clears carry
+; and exits)
+;
+; in:    none
+; out:   C=0 if machine can not display SHR
+;        otherwise all registers and flags clobbered
+;------------------------------------------------------------------------------
 AllSHRSlideshow
          clc
          lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card

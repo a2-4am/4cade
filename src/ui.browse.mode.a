@@ -36,6 +36,7 @@ kBrowseCheat    = 8
 kSoftBell       = 9 ; must match kInputError
 kBrowseJoystick = 10
 kBrowseQuit     = 11
+kBrowseSHR      = 12
 
          ldy   #kNumBrowseKeys
 -        dey
@@ -141,6 +142,7 @@ BrowseDispatchTableLo
          !byte <SoftBell
          !byte <Joystick
          !byte <OnQuit
+         !byte <AllSHRSlideshow
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -154,8 +156,9 @@ BrowseDispatchTableHi
          !byte >SoftBell
          !byte >Joystick
          !byte >OnQuit
+         !byte >AllSHRSlideshow
 
-kNumBrowseKeys = 14
+kNumBrowseKeys = 15
                                      ; number of entries in next 2 tables (each)
 BrowseKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
@@ -172,6 +175,7 @@ BrowseKeys
          !byte $88                   ; left arrow = previous
          !byte $90                   ; Ctrl-P = launch joystick calibration program
          !byte $91                   ; Ctrl-Q = quit
+         !byte $80                   ; Ctrl-@ = SHR-only slideshow
 BrowseKeyDispatch
          !byte kBrowseCheat
          !byte kBrowseCredits
@@ -187,6 +191,7 @@ BrowseKeyDispatch
          !byte kBrowsePrevious
          !byte kBrowseJoystick
          !byte kBrowseQuit
+         !byte kBrowseSHR
 
 GameCount
          !word 0
