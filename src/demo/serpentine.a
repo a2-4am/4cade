@@ -1,0 +1,78 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/SERPENTINE",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+reset
+         +LOAD_FILE_KEEP_DIR serpentine, $43F5, serpentine_dir_e-serpentine_dir_b
+         +READ_ROM_NO_WRITE
+         +NEW_RESET_VECTOR reset
+         lda   #<callback1
+         sta   $8C55
+         lda   #>callback1
+         sta   $8C56
+         jmp   $43F5
+
+callback1
+         stx   $00
+         lda   #$20
+         sta   $01
+         lda   #$CF
+         sta   $02
+         lda   #$83
+         sta   $03
+         lda   #<callback2
+         sta   $237
+         lda   #>callback2
+         sta   $238
+         jmp   $8C5A      ; decompress
+
+callback2
+         lda   #$4C
+         sta   $96AA
+         sta   $8834
+         lda   #$A9
+         sta   $9702
+         sta   $9707
+         sta   $91B
+         sta   $920
+         lda   #<reset
+         sta   $96AB
+         sta   $8835
+         lda   #0
+         sta   $9703
+         sta   $9708
+         sta   $91C
+         sta   $921
+         lda   #>reset
+         sta   $96AC
+         sta   $8836
+         lda   #$EA
+         sta   $9704
+         sta   $9709
+         sta   $91D
+         sta   $922
+         lda   #$D0
+         sta   $962D
+         +DISABLE_ACCEL
+         jmp   $800
+
+serpentine
+         !byte serpentine_e-serpentine_b
+serpentine_b
+serpentine_dir_b
+         !text "X/SERPENTINE"
+serpentine_dir_e
+         !text "/SERPENTINE"
+serpentine_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
