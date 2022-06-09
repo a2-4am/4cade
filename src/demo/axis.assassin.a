@@ -1,0 +1,74 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/AXIS.ASSASSIN",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT axis_assassin, $3EB1
+         +READ_ROM_NO_WRITE
+
+         lda   #$84
+         sta   $3ECC
+         lda   #$70
+         sta   $3ED0
+         lda   #$17
+         sta   $3EDC
+
+         lda   #$60
+         sta   $3f06
+         jsr   $3eb1      ; decompress
+
+         lda   #$4C
+         sta   $5B2E
+         sta   $701C
+         sta   $5D5B
+         ldx   #0
+         stx   $5DF4
+         stx   $5CD8
+         stx   $5E09
+         stx   $701D
+         inx
+         stx   $5B30      ; reset vector patch
+         stx   $5DF5
+         stx   $5CD9
+         stx   $5E0A
+         stx   $701E
+         stx   $5D5D
+         lda   #$24
+         sta   $5D24
+         lda   #$D0
+         sta   $5D14
+         lda   #$20
+         sta   $5D41
+         lda   #<callback
+         sta   $5D42
+         lda   #>callback
+         sta   $5D43
+         lsr   $5CBA
+
+         +DISABLE_ACCEL
+         jmp   $5c00
+
+counter  !byte 5
+callback
+         sta   $C010
+         dec   counter
+         bpl   +
+         jmp   $100
++        rts
+
+axis_assassin
+         !byte axis_assassin_e-axis_assassin_b
+axis_assassin_b
+         !text "X/AXIS.ASSASSIN/AXIS.ASSASSIN"
+axis_assassin_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
