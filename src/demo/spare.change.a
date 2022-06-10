@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/SPARE.CHANGE",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR spare_change, spare_change_dir_e-spare_change_dir_b
+         lda   #>(callback - 1)
+         sta   $277A
+         lda   #<(callback - 1)
+         sta   $277D
+         jmp   $2700     ; decompress
+
+callback
+         lda   #$4C
+         sta   $182F
+         jsr   $2000
+         lda   #$44
+         sta   $7A34
+         lda   #$4C
+         sta   $8E1C
+         ldx   #0
+         stx   $7F70
+         stx   $8E1D
+         inx
+         stx   $7F71
+         stx   $8E1E
+         +DISABLE_ACCEL
+         jmp   $1832
+
+spare_change
+         !byte spare_change_e-spare_change_b
+spare_change_b
+spare_change_dir_b
+         !text "X/SPARE.CHANGE"
+spare_change_dir_e
+         !text "/SPARE.CHANGE"
+spare_change_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

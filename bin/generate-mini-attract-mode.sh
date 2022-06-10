@@ -56,12 +56,12 @@ cat res/GAMES.CONF |
             grep "^$game=0" >> /tmp/g
 
         if [ "$game" == "SPARE.CHANGE" ]; then
-            echo "SPCARTOON.1=0" >> /tmp/g
-            echo "SPCARTOON.2=0" >> /tmp/g
-            echo "SPCARTOON.3=0" >> /tmp/g
-            echo "SPCARTOON.4=0" >> /tmp/g
-            echo "SPCARTOON.5=0" >> /tmp/g
-            echo "SPCARTOON.6=0" >> /tmp/g
+            echo "SPCARTOON.1.=0" >> /tmp/g
+            echo "SPCARTOON.2.=0" >> /tmp/g
+            echo "SPCARTOON.3.=0" >> /tmp/g
+            echo "SPCARTOON.4.=0" >> /tmp/g
+            echo "SPCARTOON.5.=0" >> /tmp/g
+            echo "SPCARTOON.6.=0" >> /tmp/g
         fi
 
         if [ "$game" == "PRINCEUNP" ]; then
