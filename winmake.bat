@@ -12,11 +12,13 @@ set VOLUME=TOTAL.REPLAY
 
 rem third-party tools required to build (must be in path)
 rem https://sourceforge.net/projects/acme-crossass/
+rem version 0.96.3 or later
 set ACME=acme
 rem https://bitbucket.org/magli143/exomizer/wiki/Home
+rem version 3.1.0 or later
 set EXOMIZER=exomizer mem -q -P23 -lnone
-rem https://www.brutaldeluxe.fr/products/crossdevtools/cadius/
 rem https://github.com/mach-kernel/cadius
+rem version 1.4.6 or later
 set CADIUS=cadius
 rem https://github.com/
 set GIT=git
