@@ -56,7 +56,8 @@
 - Jellyfish
 - Jump Jet
 - Lamb Chops!
-- Lemmings
+- Lemmings (deater's demake)
+- Lemmings (Sirius)
 - Lethal Labyrinth
 - Lunar Leepers
 - MIRV
