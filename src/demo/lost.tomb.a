@@ -1,0 +1,78 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/LOST.TOMB",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT lost_tomb, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $82A
+         jsr   $800       ; decompress
+         lda   #$4C
+         sta   $2762
+         sta   $2780
+         sta   $80AF
+         sta   $88D0
+         sta   $88B7
+         sta   $88E0
+         lda   #$10
+         sta   $277E
+         sta   $80AD
+         sta   $88B5
+         lda   #6
+         sta   $277F
+         sta   $88B6
+         lda   #$0A
+         sta   $80AE
+         lda   #$A9
+         sta   $896B
+         sta   $317C
+         ldx   #0
+         stx   $2763
+         stx   $2781
+         stx   $80B0
+         stx   $88D1
+         stx   $88B8
+         stx   $8022
+         stx   $88E1
+         inx
+         stx   $2764
+         stx   $2782
+         stx   $896C
+         stx   $317D
+         stx   $80B1
+         stx   $88D2
+         stx   $88B9
+         stx   $88E2
+         lda   #$EA
+         sta   $896D
+         sta   $317E
+         lda   #$20
+         sta   $8032
+         lda   #$1C
+         sta   $8033
+         lda   #$88
+         sta   $8034
+         lda   #$E3
+         sta   $8039
+
+         +DISABLE_ACCEL
+         jmp   $84D
+
+lost_tomb
+         !byte lost_tomb_e-lost_tomb_b
+lost_tomb_b
+         !text "X/LOST.TOMB/LOST.TOMB"
+lost_tomb_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
