@@ -1,0 +1,88 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/OM",plain
+*=$280
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT orileys_mine, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $81D
+         jsr   $800       ; decompress
+
+         +NEW_RESET_VECTOR $280
+         lda   #$80
+         sta   $2001
+         sta   $2016
+         sta   $812E
+         lda   #$02
+         sta   $2006
+         sta   $201B      ; reset vector patch
+         sta   $8133      ; (yes, that's 3 times)
+
+         lda   #$D0
+         sta   $1966
+         sta   $3D32
+         sta   $3D4C
+         sta   $872B
+         sta   $1874
+         sta   $86B3
+         sta   $17B7
+         sta   $189E
+         sta   $8975
+         sta   $8816
+         sta   $188D
+         sta   $90C2
+         sta   $90CA
+         lda   #$4C
+         sta   $306D
+         sta   $95C7
+         sta   $95D5
+         sta   $94F8
+         sta   $80F9
+         sta   $8324
+         lda   #$30
+         sta   $95CD
+         ldy   #6
+         sty   $95CE
+         lda   #$EA
+         sta   $95CF
+         sta   $95D0
+         lda   #$10
+         sta   $80F7
+         dey
+         sty   $80F8
+         ldx   #0
+         stx   $306E
+         stx   $95C8
+         stx   $95D6
+         stx   $94F9
+         stx   $80FA
+         stx   $8325
+         inx
+         stx   $306F
+         stx   $95C9
+         stx   $95D7
+         stx   $94FA
+         stx   $80FB
+         stx   $8326
+
+         +DISABLE_ACCEL
+         jmp   $8FD
+
+orileys_mine
+         !byte orileys_mine_e-orileys_mine_b
+orileys_mine_b
+         !text "X/OM/OM"
+orileys_mine_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
