@@ -19,6 +19,8 @@
          lda   #$4C
          sta   $182F
          jsr   $2000
+         lda   #$44
+         sta   $7A34
          lda   #$B0
          sta   $963B
          lda   #$6C
