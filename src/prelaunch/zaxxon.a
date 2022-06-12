@@ -21,6 +21,7 @@
          jsr   $D15B      ; decompress Mockingboard code
          tax
          pla
+         and   #7
          ora   #$C0
 -        ldy   $70B, x
          cpy   #$C4

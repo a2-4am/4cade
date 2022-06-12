@@ -19,6 +19,7 @@
 
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
+         and   #7
          cmp   #1
          ora   #$C0
          bcc   skipmb
