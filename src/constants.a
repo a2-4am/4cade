@@ -11,7 +11,7 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E76A..FFEB - main program code
+; E73A..FFEB - main program code
 ; FFEC..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -19,10 +19,10 @@
 ;
 ; LC RAM BANK 2
 ; D000..D5FF - ProRWTS data
-; D600..D8B4 - ProRWTS code
-; D8B5..DC6D - ProRWTS glue code
-; DC6E..DC73 - backup of stack (during gameplay and self-running demos)
-; DC74..DC79 - okvs cache (attract state saved across self-running demo)
+; D600..D8B6 - ProRWTS code
+; D8B7..DC6F - ProRWTS glue code
+; DC70..DC75 - backup of stack (during gameplay and self-running demos)
+; DC76..DC7B - okvs cache (attract state saved across self-running demo)
 ; ...unused...
 ; DFB4..DFFF - (de)acceleration function
 ;
@@ -214,8 +214,8 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
-launchpatch    = $D853               ; glue.launch.a
-itraverse      = $DB42               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+launchpatch    = $D855               ; glue.launch.a
+itraverse      = $DB44               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant

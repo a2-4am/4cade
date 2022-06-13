@@ -3538,6 +3538,7 @@ unrentrysei = unrelochdd + (* - reloc)
                 php
                 sei
 } ;no_interrupts = 1
+retry
 unrentry = unrelochdd + (* - reloc)
                 jsr     $d1d1
 !if use_smartport = 1 {
@@ -3546,6 +3547,7 @@ pcommand        !byte   $2c ;hide packet in non-SmartPort mode
 unrppacket = unrelochdd + (* - reloc)
                 !word   unrelochdd + (packet - reloc)
 } ;use_smartport = 1
+                bcs     retry
 !if no_interrupts = 1 {
                 plp
 } ;no_interrupts = 1
