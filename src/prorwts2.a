@@ -521,7 +521,8 @@ slot            ldx     $cfff
                 sta     unrcommand2 + 2
   } ;rwts_mode = 0 and aligned_read = 0 and enable_write = 1
                 sta     unrcommand3 + 2
-                iny      ;STA
+                sta     unrgetreq + 2
+                iny     ;STA
                 sty     unrblokhi1
                 sty     unrunit1 + 2
                 iny     ;STX
@@ -562,13 +563,20 @@ slot            ldx     $cfff
                 sta     unrblokhi2
                 ldy     #$ad ;LDA
                 sty     unrblokhi3
-                iny ;LDX
+                sty     unrgetreq
+                iny     ;LDX
                 sty     unrbloklo2
   } ;rwts_mode = 1 and write_sparse = 1
                 lda     #adrlo
                 sta     unrunit1 + 1
                 lda     #<paddr
                 sta     unrunit1 + 3
+  !if (rwts_mode and write_sparse) = 0 {
+                lda     #$ad ;LDA
+                sta     unrgetreq
+  } ;if rwts_mode = 0 or write_sparse = 0
+                lda     #<pcommand
+                sta     unrgetreq + 1
 
                 ;use SmartPort entrypoint instead
 
@@ -3547,7 +3555,20 @@ pcommand        !byte   $2c ;hide packet in non-SmartPort mode
 unrppacket = unrelochdd + (* - reloc)
                 !word   unrelochdd + (packet - reloc)
 } ;use_smartport = 1
-                bcs     retry
+                bcc     goodread
+unrgetreq = unrelochdd + (* - reloc)
+                lda     reqcmd
+!if use_smartport = 1 {
+                nop ;allow replacing "lda reqcmd" with "lda pcommand" in extended SmartPort mode
+} ;use_smartport = 1
+
+                ;read failures are assumed to be transient
+                ;write failures are assumed to be permanent
+
+                cmp     #cmdread
+                beq     retry
+
+goodread
 !if no_interrupts = 1 {
                 plp
 } ;no_interrupts = 1

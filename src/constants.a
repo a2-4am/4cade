@@ -19,10 +19,10 @@
 ;
 ; LC RAM BANK 2
 ; D000..D5FF - ProRWTS data
-; D600..D8B6 - ProRWTS code
-; D8B7..DC6F - ProRWTS glue code
-; DC70..DC75 - backup of stack (during gameplay and self-running demos)
-; DC76..DC7B - okvs cache (attract state saved across self-running demo)
+; D600..D8BD - ProRWTS code
+; D8BE..DC76 - ProRWTS glue code
+; DC77..DC7C - backup of stack (during gameplay and self-running demos)
+; DC7D..DC82 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
 ; DFB4..DFFF - (de)acceleration function
 ;
@@ -214,8 +214,8 @@ PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be d
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
-launchpatch    = $D855               ; glue.launch.a
-itraverse      = $DB44               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+launchpatch    = $D85C               ; glue.launch.a
+itraverse      = $DB4B               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
