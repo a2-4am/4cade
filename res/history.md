@@ -167,7 +167,7 @@
 - Add more game help (thanks Andrew R.)
 - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M.,
   Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza,
-  A2Canada)
+  A2Canada, John K M)
 - Better-looking SHR graphics thanks to a new conversion tool by Kris Kennaway
 - Faster searching
 - Faster browsing
