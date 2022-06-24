@@ -38,7 +38,9 @@
          lda   #$D0
          sta   $4056
          sta   $405C
-         sta   $1641
+         sta   $5D28
+         sta   $160C
+         sta   $1643
          sta   $164B
          lda   #$4C
          sta   $49A9
