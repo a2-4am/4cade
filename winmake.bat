@@ -30,7 +30,7 @@ if "%2". equ "". (
   call :asmlauncher
   1>nul copy /y res\blank.hdv "build\%DISK%" >>build\log
   1>nul copy /y res\_FileInformation.txt build\ >>build\log
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
+  %CADIUS% ADDFILE -C "build\%DISK%" "/%VOLUME%/" "build\LAUNCHER.SYSTEM" >>build\log
   1>nul copy /y "res\PREFS.CONF" "build" >>build\log
   cscript /nologo bin\padto.js 512 build\PREFS.CONF
   rem
@@ -44,16 +44,16 @@ if "%2". equ "". (
   rem
 )
 echo|set/p="adding files..."
-%CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
+%CADIUS% ADDFILE -C "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" >>build\log
 if "%2". equ "". (
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX/" "build\FX" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH/" "build\PRELAUNCH" >>build\log
+  %CADIUS% ADDFILE -C "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" >>build\log
+  %CADIUS% ADDFILE -C "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" >>build\log
+  %CADIUS% ADDFILE -C "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/FX/" "build\FX" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/PRELAUNCH/" "build\PRELAUNCH" >>build\log
   %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
   %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
   %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
@@ -62,8 +62,8 @@ if "%2". equ "". (
   %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
   for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
   1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM*
-  %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
+  %CADIUS% CREATEFOLDER -C "build\%DISK%" "/%VOLUME%/X/" >>build\log
+  %CADIUS% ADDFOLDER -C "build\%DISK%" "/%VOLUME%/X" "build\X" >>build\log
   cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 )
 echo done

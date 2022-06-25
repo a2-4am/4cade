@@ -36,7 +36,7 @@ EXOMIZER=exomizer mem -q -P23 -lnone
 dsk: index asmproboot asmlauncher
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
+	$(CADIUS) ADDFILE -C build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM >>build/log
 	cp res/PREFS.CONF build/PREFS.CONF
 	bin/padto.sh build/PREFS.CONF
 #
@@ -53,7 +53,7 @@ dsk: index asmproboot asmlauncher
 		build/PREFS.CONF \
 		res/Finder.Data \
 		res/Finder.Root; do \
-	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; \
+	    $(CADIUS) ADDFILE -C build/"$(DISK)" "/$(VOLUME)/" "$$f" >>build/log; \
 	done
 	for f in \
                 res/DEMO \
@@ -62,16 +62,16 @@ dsk: index asmproboot asmlauncher
 		build/FX \
 		build/PRELAUNCH; do \
             rm -f "$$f"/.DS_Store; \
-            $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; \
+            $(CADIUS) ADDFOLDER -C build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" >>build/log; \
         done
 	for i in 1 2 3 4 5 6; do \
 		$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; \
 	done
 	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} build/X/ >>build/log' ::: res/dsk/*.po
 	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
-	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
+	$(CADIUS) CREATEFOLDER -C build/"$(DISK)" "/$(VOLUME)/X/" >>build/log
 	for f in build/X/*; do \
-	    $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f" >>build/log; \
+	    $(CADIUS) ADDFOLDER -C build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f" >>build/log; \
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
