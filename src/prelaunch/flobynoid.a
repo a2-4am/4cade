@@ -19,10 +19,10 @@
 
          ldx   #hook_e-hook_b
 -        lda   hook_b, x
-         sta   $2d0, x
+         sta   $2c8, x
          dex
          bpl   -
-         lda   #$d0
+         lda   #$c8
          sta   $B6D6
          lda   #2
          sta   $B6D7
@@ -34,7 +34,7 @@
          inc   $3F4       ; reboot
          jmp   $8003
 
-hook_b !pseudopc $2d0 {
+hook_b !pseudopc $2c8 {
          pla
          pla
          jsr   $B64F
@@ -51,6 +51,10 @@ hook_b !pseudopc $2d0 {
          cmp   #$EE
          bne   +
          stx   $1893      ; patch - don't increase lives
+         lda   $B088
+         eor   #$0D
+         bne   +
+         sta   $B088      ; patch - don't trigger anti-tamper
 +        clc
          rts
   !if * > $2FF {
