@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/demo/PHASER.FIRE",plain
+*=$B200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $402D
+         sta   $403A
+         sta   $4074
+         jsr   $4000
+         jsr   $9200      ; decompress
+         sta   $400E
+         jsr   $4000
+         lda   #$C4
+         sta   $30
+         jsr   $920D      ; decompress
+         lda   #$D0
+         sta   $A08
+         sta   $A2D
+         sta   $A30
+         sta   $A33
+         sta   $439E
+         sta   $6546
+         sta   $8B94
+         lda   #$4C
+         sta   $54C0
+         sta   $980
+         ldx   #0
+         stx   $54C1
+         stx   $981
+         inx
+         stx   $54C2
+         stx   $982
+         jmp   ($20)
+
+title    !byte x_e-x_b
+x_b      !text "X/PHASER.FIRE/PHASER.FIRE"
+x_e
