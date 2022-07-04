@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/demo/SPY.HUNTER",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT title, $00
+         +READ_ROM_NO_WRITE
+
+         lda   #<(callback - 1)
+         sta   $4013
+         lda   #>(callback - 1)
+         sta   $4010
+         jmp   $4000
+
+callback 
+         +RESET_AND_IRQ_VECTOR $100
+         ldy   #0
+         sty   $0D8E
+         sty   $E94
+         sty   $EB3
+         sty   $61C6
+         iny
+         sty   $0D93
+         sty   $E95
+         sty   $EB4
+         sty   $61C7
+         lda   #$EA
+         sta   $433
+         sta   $434
+         sta   $2C5E
+         sta   $2C5F
+         lda   #$2C
+         sta   $7AB
+         lda   #3
+         sta   $7AA
+         sta   $7CF
+         lda   #$1A
+         sta   $E78
+         lda   #$12
+         sta   $E80
+         lda   #$60
+         sta   $E92
+         lda   #$4C
+         sta   $E93
+         sta   $EB2
+         sta   $61C5
+         jmp   $0451
+
+title    !byte x_e-x_b
+x_b      !text "X/SPY.HUNTER/SPY.HUNTER"
+x_e
