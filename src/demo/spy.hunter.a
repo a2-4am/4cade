@@ -9,6 +9,7 @@
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
          +LOAD_FILE_AT title, $00
          +READ_ROM_NO_WRITE
 
@@ -50,6 +51,7 @@ callback
          sta   $E93
          sta   $EB2
          sta   $61C5
+         +DISABLE_ACCEL
          jmp   $0451
 
 title    !byte x_e-x_b
