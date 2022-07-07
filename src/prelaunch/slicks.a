@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SLICKS",plain
@@ -23,6 +23,7 @@
          cmp   #1
          ora   #$C0
          bcc   skipmb
+         inc   $8EE8      ;select MB
          cmp   #$C4
          beq   skipmb
          ldy   #0
