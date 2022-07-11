@@ -9,8 +9,14 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
+
+         lda   $7fe
+         pha
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
+
          +LOAD_FILE_AT title, $00
          +READ_ROM_NO_WRITE
 
@@ -49,7 +55,13 @@
          sta   $46C0+2    ; exit on keypress
          sta   $4A9B      ; exit at end of demo loop (moved to $1E37+2)
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   $7fe
+         pha
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
 
          jmp   $5F00
 
