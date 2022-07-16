@@ -16,7 +16,6 @@
 ; Fastchip firmware 0.4b-compatibility fix by Frank M. (0.5b seems unaffected)
 ;------------------------------------------------------------------------------
 HasJoystick
-
          lda   $FBB3
          cmp   #$06
          bne   ++
