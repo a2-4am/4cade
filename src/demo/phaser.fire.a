@@ -20,6 +20,7 @@
          jsr   $4000
          jsr   $9200      ; decompress
          sta   $400E
+         sta   $4065
          jsr   $4000
          lda   #$C4
          sta   $30
