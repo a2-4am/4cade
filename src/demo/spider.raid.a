@@ -46,13 +46,12 @@
          sta   $49A9
          ldx   #0
          stx   $49AA
+         stx   $99A6
          inx
          stx   $49AB
-         lda   #$A9
-         sta   $5A79
-         stx   $5A7A
-         lda   #$EA
-         sta   $5A7B
+         stx   $99A7
+         sec
+         rol   $976A
          +DISABLE_ACCEL
          jmp   $4246
 
