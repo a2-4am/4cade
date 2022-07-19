@@ -1,0 +1,64 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/FIREBIRD",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         lda   #$60
+         sta   $3361
+         jsr   $3300      ; decompress
+         lda   #$D0
+         sta   $277C
+         sta   $278F
+         sta   $2795
+         sta   $3156
+         sta   $315E
+         sta   $8C35
+         sta   $8EDE
+         sta   $8CBD
+         sta   $8C7B
+         sta   $8C9D
+         lda   #$4C
+         sta   $3170
+         sta   $A370
+         sta   $7E48
+         sta   $18A5
+         sta   $198D
+         ldx   #0
+         stx   $3171
+         stx   $A371
+         stx   $7E49
+         stx   $18A6
+         stx   $198E
+         inx
+         stx   $3172
+         stx   $A372
+         stx   $7E4A
+         stx   $18A7
+         stx   $198F
+         stx   $7B2A
+         lda   #$30
+         sta   $A367
+         lda   #7
+         sta   $A368
+         lda   #$EA
+         sta   $A369
+         sta   $A36A
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $30A0
+
+title    !byte x_e-x_b
+x_b      !text "X/FIREBIRD/FIREBIRD"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
