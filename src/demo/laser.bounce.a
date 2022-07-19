@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/LASER.BOUNCE",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $3E69
+         lda   #$2C
+         sta   $3ECB
+         lsr   $3ECF
+         lda   #$60
+         sta   $3F06
+         jsr   $3E69      ; decompress
+         sta   $743F
+         sta   $7425
+         sta   $888C
+         lda   #$CE
+         sta   $6006
+         lda   #<counter
+         sta   $6007
+         lda   #>counter
+         sta   $6008
+         lda   #$4C
+         sta   $600B
+         sta   $6E41
+         sta   $6E98
+         ldx   #0
+         stx   $600C
+         stx   $6E42
+         stx   $6E99
+         inx
+         stx   $600D
+         stx   $6E43
+         stx   $6E9A
+         lda   #4
+         sta   $6E2B
+         lda   #$30
+         sta   $6E95
+         stx   $6E96
+         asl
+         sta   $6E97
+         sta   $6ECC
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $6000
+
+counter  !byte 3
+
+title    !byte x_e-x_b
+x_b      !text "X/LASER.BOUNCE/LASER.BOUNCE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
