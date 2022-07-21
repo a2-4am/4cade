@@ -11,24 +11,13 @@
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
 
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #13-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
+         +LOAD_FILE_KEEP_DIR vindicator, vindicator_dir_e-vindicator_dir_b
+         +NEW_RESET_VECTOR $BFF0
 
          lda   #$60
          sta   $1867
          jsr   $180F      ; decompress
 
-         +NEW_RESET_VECTOR $BFF0
          lda   #$4C
          sta   $56D9
          sta   $4902      ; set exits
@@ -54,13 +43,15 @@
 
          jmp   $4000
 
-newpath
-         !byte 12
+vindicator
+         !byte vindicator_e-vindicator_b
+vindicator_b
+vindicator_dir_b
          !text "X/VINDICATOR"
-
-title    !byte x_e-x_b
-x_b      !text "X/VINDICATOR/VINDICATOR"
-x_e
+vindicator_dir_e
+         !text "/"
+         !text "VINDICATOR"
+vindicator_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *
