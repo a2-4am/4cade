@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/CEILING.ZERO",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         lda   #$60
+         sta   $083A
+         jsr   $0800      ; decompress
+         lda   #$4C
+         sta   $7D9C
+         sta   $7DE8
+         sta   $7DE3
+         sty   $7D98
+         sty   $7D9D
+         sty   $8118
+         sty   $7DD8
+         sty   $7DE9
+         sty   $7E6A
+         sty   $7DE4
+         lda   #1
+         sta   $7D9E
+         sta   $7DEA
+         sta   $7DE5
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $5FED
+
+title    !byte x_e-x_b
+x_b      !text "X/CEILING.ZERO/CEILING.ZERO"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
