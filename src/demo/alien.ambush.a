@@ -1,0 +1,37 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/ALIEN.AMBUSH",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
+         lda   #$60
+         sta   $81c
+         jsr   $800       ; decompress
+         lda   #$4C
+         sta   $60CA
+         sta   $6040
+         lda   #$E0
+         sta   $60CB
+         sta   $6041
+         lda   #3
+         sta   $60CC
+         sta   $6042
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $4000
+
+title    !byte x_e-x_b
+x_b      !text "X/ALIEN.AMBUSH/ALIEN.AMBUSH"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

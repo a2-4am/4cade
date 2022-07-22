@@ -2,7 +2,7 @@
 
 AC=Type(06),AuxType(9B00),Access(C3)
 AGENT.U.S.A=Type(06),AuxType(0300),Access(C3)
-ALIEN.AMBUSH=Type(06),AuxType(4000),Access(C3)
+ALIEN.AMBUSH=Type(06),AuxType(0300),Access(C3)
 ALIEN.DOWNPOUR=Type(06),AuxType(0300),Access(C3)
 ALIEN.MUNCHIES=Type(06),AuxType(0200),Access(C3)
 ALIEN.TYPHOON=Type(06),AuxType(0300),Access(C3)
