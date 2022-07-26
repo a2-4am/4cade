@@ -15,24 +15,17 @@ reset
          +READ_ROM_NO_WRITE
          +NEW_RESET_VECTOR reset
          lda   #<callback1
-         sta   $8C55
+         sta   $8C58
          lda   #>callback1
-         sta   $8C56
+         sta   $8C59
          jmp   $43F5
 
 callback1
-         stx   $00
-         lda   #$20
-         sta   $01
-         lda   #$CF
-         sta   $02
-         lda   #$83
-         sta   $03
          lda   #<callback2
          sta   $237
          lda   #>callback2
          sta   $238
-         jmp   $8C5A      ; decompress
+         rts
 
 callback2
          lda   #$4C
