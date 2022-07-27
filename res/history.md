@@ -161,14 +161,17 @@
 
 - Upgrade Bejeweled to v2.7 (thanks Jeremy R.)
 - Upgrade Columns (thanks Tom G.)
+- Upgrade Genius 1 and 2 to r18
 - Upgrade Manic Miner to v1.1
-- Fix Mockingboard issues in Apple Cider Spider, Bouncing Kamungas, Rescue
-  Raiders, Skyfox, Thunder Bombs
+- Fix Mockingboard issues in 8-Bit Slicks, Apple Cider Spider, Bouncing
+  Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
 - Add more game help (thanks Andrew R.)
 - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M.,
   Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza,
   A2Canada, John K M)
 - Better-looking SHR graphics thanks to a new conversion tool by Kris Kennaway
+- Retries on read for better compatibility with network-backed mass storage
+  devices
 - Faster searching
 - Faster browsing
 - Faster booting
