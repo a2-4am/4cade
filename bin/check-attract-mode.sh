@@ -11,6 +11,7 @@ check_slideshow() {
     [ -f "$1" ] ||
         fatal_error "Can't find slideshow" "$1"
     cat "$1" |
+        tr -d "\r" |
         grep -v "^#" |
         grep -v "^\[" |
         grep -v "^$" |
@@ -28,15 +29,17 @@ check_slideshow() {
 
 # fatal error if an attract mode module is listed more than once
 dupes=$(cat res/ATTRACT.CONF |
-    grep -v "^#" |
-    grep -v "^$" |
-    sort |
-    uniq -d)
+            tr -d "\r" |
+            grep -v "^#" |
+            grep -v "^$" |
+            sort |
+            uniq -d)
 if [[ $dupes ]]; then
     fatal_error "Duplicate ATTRACT.CONF module:" "$dupes"
 fi
 
 cat res/GAMES.CONF |
+    tr -d "\r" |
     grep -v "^#" |
     grep -v "^\[" |
     grep -v "^$" |
@@ -45,6 +48,7 @@ cat res/GAMES.CONF |
 
 # warn about unused self-running demos
 cat res/DEMO/_FileInformation.txt |
+    tr -d "\r" |
     grep "Type(06)" |
     grep -v "SPCARTOON" |
     cut -d"=" -f1 |
@@ -60,6 +64,7 @@ done
 cd ../..
 
 cat res/ATTRACT.CONF |
+    tr -d "\r" |
     grep "=" |
     grep -v "^#" |
     while read line; do

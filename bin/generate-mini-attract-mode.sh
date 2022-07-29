@@ -3,6 +3,7 @@
 # run from project root directory
 
 cat res/GAMES.CONF |
+    tr -d "\r" |
     grep "," |
     grep -v "^#" |
     cut -d"," -f2 |
@@ -13,6 +14,7 @@ cat res/GAMES.CONF |
 
         # add box art, if any
         cat res/SS/SHR*.CONF |
+            tr -d "\r" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=C/g" |
@@ -21,6 +23,7 @@ cat res/GAMES.CONF |
 
         # add DHGR action screenshots, if any
         cat res/SS/ACTDHGR*.CONF |
+            tr -d "\r" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=B/g" |
@@ -29,6 +32,7 @@ cat res/GAMES.CONF |
 
         # add HGR action screenshots, if any
         cat res/SS/ACTION*.CONF |
+            tr -d "\r" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=A/g" |
@@ -37,6 +41,7 @@ cat res/GAMES.CONF |
 
         # add GR action screenshots, if any
         cat res/SS/ACTGR*.CONF |
+            tr -d "\r" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=D/g" |
@@ -45,6 +50,7 @@ cat res/GAMES.CONF |
 
         # add DGR action screenshots, if any
         cat res/SS/ACTDGR*.CONF |
+            tr -d "\r" |
             egrep "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=E/g" |
@@ -53,6 +59,7 @@ cat res/GAMES.CONF |
 
         # add self-running demo, if any
         cat res/ATTRACT.CONF |
+            tr -d "\r" |
             grep "^$game=0" >> /tmp/g
 
         if [ "$game" == "SPARE.CHANGE" ]; then
