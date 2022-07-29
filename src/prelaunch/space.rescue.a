@@ -10,8 +10,8 @@
          +ENABLE_ACCEL
 
          lda   #$60
-         sta   $67ED
-         jsr   $4B43      ; decompress
+         sta   $67DE
+         jsr   $4B29      ; decompress
          +NEW_RESET_VECTOR $200
                           ; game leaks stack
 
