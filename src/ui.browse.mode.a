@@ -161,37 +161,37 @@ BrowseDispatchTableHi
 kNumBrowseKeys = 15
                                      ; number of entries in next 2 tables (each)
 BrowseKeys
+         !byte $80                   ; Ctrl-@ = SHR-only slideshow
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $81                   ; Ctrl-A = about
          !byte $AF                   ; '/' = help
          !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
          !byte $89                   ; TAB = mini attract mode
-         !byte $8D                   ; ENTER = launch current game
-         !byte $9B                   ; Esc = switch to search mode
-         !byte $8A                   ; down arrow = next
-         !byte $95                   ; right arrow = next
-         !byte $8B                   ; up arrow = previous
-         !byte $88                   ; left arrow = previous
          !byte $90                   ; Ctrl-P = launch joystick calibration program
          !byte $91                   ; Ctrl-Q = quit
-         !byte $80                   ; Ctrl-@ = SHR-only slideshow
+         !byte $9B                   ; Esc = switch to search mode
+         !byte $8D                   ; ENTER = launch current game
+         !byte $8B                   ; up arrow = previous
+         !byte $8A                   ; down arrow = next
+         !byte $88                   ; left arrow = previous
+         !byte $95                   ; right arrow = next
 BrowseKeyDispatch
+         !byte kBrowseSHR
          !byte kBrowseCheat
          !byte kBrowseCredits
          !byte kBrowseHelp
          !byte kBrowseHelp
          !byte kBrowseTab
          !byte kBrowseTab
-         !byte kBrowseLaunch
-         !byte kBrowseExitToSearch
-         !byte kBrowseNext
-         !byte kBrowseNext
-         !byte kBrowsePrevious
-         !byte kBrowsePrevious
          !byte kBrowseJoystick
          !byte kBrowseQuit
-         !byte kBrowseSHR
+         !byte kBrowseExitToSearch
+         !byte kBrowseLaunch
+         !byte kBrowsePrevious
+         !byte kBrowseNext
+         !byte kBrowsePrevious
+         !byte kBrowseNext
 
 GameCount
          !word 0
