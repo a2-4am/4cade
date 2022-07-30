@@ -21,7 +21,7 @@ games=$(cat "$1")
 
 # make temp file with just the key/value pairs (strip blank lines, comments, eof marker)
 records=$(mktemp)
-awk '!/^$|^#|^\[/' > "$records"
+tr -d "\r" | awk '!/^$|^#|^\[/' > "$records"
 
 # make temp assembly source file that represents the binary OKVS data structure
 source=$(mktemp)
@@ -35,7 +35,7 @@ source=$(mktemp)
      if [ "$include_displayname" = false ]; then
          displayname=""
      else
-         displayname=$(echo "$line" | awk -F= '{ print $2 }')
+         displayname=$(echo "$line" | tr -d "\r" | awk -F= '{ print $2 }')
      fi
      echo "!byte ${#key}+${#value}+${#displayname}+5"  # OKVS record length
      echo "!byte ${#key}"              # OKVS key length
