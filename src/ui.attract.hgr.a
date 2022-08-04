@@ -128,7 +128,13 @@ HGRTitleCallback
 @indexRecordPtr
          !word $FDFD                 ; SMC
 
+         lda   $5FFD
+         stx   $5FFD                 ; ensure that we won't find it again if next
+                                     ; file is really compressed
+         cmp   #$4C                  ; Check if screen hole now contains a JMP
+         beq   @noUnpack             ; if so, file was not packed, so skip unpack
          jsr   UnpackHGRTitle
+@noUnpack
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------

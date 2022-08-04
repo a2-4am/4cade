@@ -27,7 +27,15 @@
          lda   #2
          sta   $B6D7
 
-         jsr   DisableAccelerator
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$8E       ; STX
+         sta   cheat1
+         sta   cheat2
+         sta   cheat3
+
++        jsr   DisableAccelerator
 
          jsr   $BBB3
          jsr   $B627
@@ -43,15 +51,15 @@ hook_b !pseudopc $2c8 {
          lda   #$CE
          cmp   $AD9
          bne   +
-         stx   $AD9       ; patch - don't decrease lives
+cheat1   cpx   $AD9       ; SMC patch - don't decrease lives
 +        cmp   $1461
          bne   +
-         stx   $1461      ; patch - don't trigger anti-cheat
+cheat2   cpx   $1461      ; patch - don't trigger anti-cheat
 +        lda   $1893
          cmp   #$EE
          bne   +
-         stx   $1893      ; patch - don't increase lives
-         lda   $B088
+cheat3   cpx   $1893      ; SMC patch - don't increase lives
++        lda   $B088
          eor   #$0D
          bne   +
          sta   $B088      ; patch - don't trigger anti-tamper
