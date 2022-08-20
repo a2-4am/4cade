@@ -135,6 +135,7 @@
 - Bop'n Wrestle
 - California Games
 - Fight Night
+- Flight Simulator II
 - Formula 1 Racer
 - Fuji Crowded Speedway
 - Hardball
