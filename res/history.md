@@ -45,6 +45,7 @@
 - Flobynoid
 - Floppy
 - Fly Wars
+- Gadgetz
 - Galactic Attack
 - Glutton
 - Grapple
@@ -64,6 +65,7 @@
 - Marauder
 - Mazeblox
 - Mouskattack
+- Mutant
 - Neon
 - Neut Tower
 - Neutrons
