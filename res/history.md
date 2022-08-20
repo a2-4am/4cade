@@ -101,6 +101,7 @@
 - Super Puckman
 - Super Taxman 2
 - Sword of Sheol
+- Syzygy
 - Talon
 - Teleport
 - Teritory
