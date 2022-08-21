@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPACE.RACE",plain
@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $300
          lda   #$60
          sta   $1621
          jsr   $1600      ; decompress
