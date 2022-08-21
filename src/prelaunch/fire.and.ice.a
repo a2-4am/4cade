@@ -11,6 +11,10 @@
          lda   #$60
          sta   $27BD
          jsr   $2760      ; decompress
+         sty   $1C03
+         iny
+         sty   $1C08
+         jsr   $FB6F      ; reset vector
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
