@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/FIRE.AND.ICE",plain
@@ -14,7 +14,8 @@
          sty   $1C03
          iny
          sty   $1C08
-         jsr   $FB6F      ; reset vector
+         ldy   #$A4
+         sty   $1C0D      ; reset vector
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
