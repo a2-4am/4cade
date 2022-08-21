@@ -21,6 +21,10 @@ callback1
          lda   #0
          sta   $56
          jsr   $BDAC      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
          lda   $1B82
          cmp   #$4C
          bne   +
@@ -33,7 +37,8 @@ callback1
          lda   #>callback3
          sta   $1BCB
 +
-         +DISABLE_ACCEL
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          lda   #0
          rts
