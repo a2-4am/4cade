@@ -9,6 +9,7 @@
 - Alien Lander
 - Ape Escape
 - Apple Invader
+- Apple Zap
 - Apple-Oids
 - Arena
 - Artesians
@@ -28,6 +29,7 @@
 - Chivalry
 - Conquering Worlds
 - Cosmic Combat
+- Creepy Corridors
 - Crickateer
 - Cross City
 - Dangerous Dave Goes Nutz
@@ -57,13 +59,14 @@
 - Jellyfish
 - Jump Jet
 - Lamb Chops!
-- Lemmings (deater's demake)
 - Lemmings (Sirius)
+- Lemmings (deater's demake)
 - Lethal Labyrinth
 - Lunar Leepers
 - MIRV
 - Marauder
 - Mazeblox
+- Mine Sweep
 - Mouskattack
 - Mutant
 - Neon
@@ -85,6 +88,7 @@
 - Sheila
 - Shuttle Intercept
 - Space Kadet
+- Space Race
 - Space Rescue
 - Spellwielder
 - Sputnik Attack
