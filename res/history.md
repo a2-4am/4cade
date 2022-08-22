@@ -149,6 +149,7 @@
 - One on One
 - Shuffleboard
 - Ski Crazed
+- Solo Flight
 - Speedway Classic
 - Street Sports Baseball
 - Street Sports Basketball
