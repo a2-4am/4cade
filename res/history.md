@@ -139,6 +139,7 @@
 - Battle Chess
 - Bop'n Wrestle
 - California Games
+- Dive Bomber
 - Fight Night
 - Flight Simulator II
 - Formula 1 Racer
