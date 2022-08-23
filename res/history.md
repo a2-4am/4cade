@@ -74,22 +74,27 @@
 - Neutrons
 - Oil's Well
 - On The Run
+- Paipec
 - Peeping Tom
 - Pegasus ][
 - Pengo
 - Pig Pen
 - Planetoids
 - Raiders of the Lost Ring
+- Rainbow Zone
 - Rear Guard
 - Retro Fever
 - Retro-Ball
 - Roach Hotel
 - Robot Battle
+- Sabotage II
+- Sadar's Revenge
 - Sheila
 - Shuttle Intercept
 - Space Kadet
 - Space Race
 - Space Rescue
+- Space Warrior
 - Spellwielder
 - Sputnik Attack
 - Spy vs Spy
