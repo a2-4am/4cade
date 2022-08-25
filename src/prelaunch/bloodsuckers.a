@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/BLOODSUCKERS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $950B
+         jsr   $59E8       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1B11       ; patch - don't decrease weapons
+         sta   $8B8A       ; patch - don't decrease health
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $7E03
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
