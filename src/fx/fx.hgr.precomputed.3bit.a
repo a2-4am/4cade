@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am
+;(c) 2019-2022 by 4am
 ;
 
 copymasks      = $0200    ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00, $20, $40...
@@ -12,10 +12,18 @@ hgrlo3c        = $BD00    ; $80 bytes
 hgrhi3a        = $BD80    ; $80 bytes
 hgrhi3b        = $BE00    ; $80 bytes
 hgrhi3c        = $BE80    ; $80 bytes
+dither1_lo     = $6900    ; $80 bytes
+dither2_lo     = $6980    ; $80 bytes
+dither3_lo     = $6A00    ; $80 bytes
+; the next 3 addresses should all be on the same page
+evenrow_masks  = $6A80    ; $28 bytes (for dithering)
+oddrow_masks   = $6AA8    ; $28 bytes (for dithering)
+no_masks       = $6AD0    ; $28 bytes (for dithering)
 Coordinates3Bit= $6B00    ; pixel data is $5001 bytes ($5000 on disk + 1 byte as EOF marker)
                           ; and for optimization we only support loading external files page-aligned
                           ; and $BC00+ is used by the 3bit macros for data tables
                           ; so we load at $6B00 and waste $FF bytes at $BB01+ but it's okay
+EndCoordinates3Bit = Coordinates3Bit + $5000
 
          !source "src/fx/macros.a"
 
@@ -279,13 +287,159 @@ dest3=*+1
 
          inc   <input
          bne   InputLoop
-         bit   $c000
+         bit   KBD
          bmi   Exit3Bit
          inc   <input+1
          bne   InputLoop             ; always branches
 }
 end
-!if * and 1 {
-         !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
 }
+
+!macro FX_PRECOMPUTED_3BIT_DITHER .coords, .endcoords {
+         +BUILD_DITHER_MASKS dither_masks, evenrow_masks, oddrow_masks, no_masks
+         +BUILD_3BIT_HGR_LOOKUP_TABLES
+         +BUILD_EXTRA_COLS
+         +BUILD_SPARSE_BITMASKS_3BIT
+
+         ; phase 1 - in reverse, with additional masking
+         +COPY_TO_0 start, end
+
+         ; set up starting coordinate for reading coordinates in reverse order
+         +LDADDR .endcoords-2
+         sta   <input
+         sty   <input+1
+
+         ; set up EOF marker to stop reading coordinates in reverse order
+         lda   #$80
+         sta   .coords-2
+
+         ; set up logic to advance to next coordinates in reverse order
+         ldx   #(next2_end-next2_start-1)
+-        lda   next2_start, x
+         sta   <next, x
+         dex
+         bpl   -
+
+         ; set up pointers to dither mask pointers so even rows do even-row dithering and odd rows do odd-row dithering
+         ldx   #$7F
+-        lda   #<evenrow_masks
+         sta   dither1_lo, x
+         sta   dither2_lo-1, x
+         sta   dither3_lo, x
+         lda   #<oddrow_masks
+         sta   dither1_lo-1, x
+         sta   dither2_lo, x
+         sta   dither3_lo-1, x
+         dex
+         dex
+         bpl   -
+         jsr   InputLoop
+
+         bit   KBD
+         bmi   start
+
+         ; phase 2 - in order, without additional masking
+         +COPY_TO_0 start, end
+
+         ; set up pointers to dither mask pointers so all rows do no dithering
+         ldx   #$7F
+-        lda   #<no_masks
+         sta   dither1_lo, x
+         sta   dither2_lo, x
+         sta   dither3_lo, x
+         dex
+         bpl   -
+         jmp   InputLoop
+start
+!pseudopc 0 {
+Exit3Bit rts
+dither1_ptr
+         !word evenrow_masks
+dither2_ptr
+         !word oddrow_masks
+dither3_ptr
+         !word evenrow_masks
+InputLoop
+         ldy   #0
+input=*+1
+         lda   .coords
+         bmi   Exit3Bit              ; if high bit is 1 then we're done
+         cmp   #$40
+         php
+         tax
+         lda   dither1_lo, x
+         sta   dither1_ptr
+         lda   dither2_lo, x
+         sta   dither2_ptr
+         lda   dither3_lo, x
+         sta   dither3_ptr
+         +ROW_X_TO_3BIT_BASE_ADDRESSES
+
+         iny
+         lda   (<input), y
+         and   #%11100000
+         tax
+         eor   (<input), y
+         plp
+         bcc   +
+         tay
+         lda   extra_cols, y
++        tay
+
+         ; 2x3 block
+src1=*+1
+         lda   $FDFD, y
+         eor   (<dest1), y
+         and   copymasks, x
+         and   (dither1_ptr), y
+         eor   (<dest1), y
+dest1=*+1
+         sta   $FDFD, y
+src2=*+1
+         lda   $FDFD, y
+         eor   (<dest2), y
+         and   copymasks, x
+         and   (dither2_ptr), y
+         eor   (<dest2), y
+dest2=*+1
+         sta   $FDFD, y
+src3=*+1
+         lda   $FDFD, y
+         eor   (<dest3), y
+         and   copymasks, x
+         and   (dither3_ptr), y
+         eor   (<dest3), y
+dest3=*+1
+         sta   $FDFD, y
+
+next
+         inc   <input
+         inc   <input
+         bne   +
+         bit   KBD
+         bmi   ++
+         inc   <input+1
++        jmp   InputLoop
+++       rts
+
+}
+end
+
+next2_start
+!pseudopc next {
+         lda   <input
+         php
+         dec   <input
+         dec   <input
+         plp
+         bne   +
+         dec   <input+1
+         bit   KBD
+         bmi   ++
++        jmp   InputLoop
+++       rts
+}
+next2_end
+
+         +DITHER_MASK_DATA
 }

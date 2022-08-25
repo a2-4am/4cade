@@ -62,6 +62,22 @@
          bne   -
 }
 
+!macro BUILD_DITHER_MASKS .dither_masks, .evenrow_masks, .oddrow_masks, .no_masks {
+         ldy   #$28
+--       ldx   #$03
+-        dey
+         lda   .dither_masks, x
+         sta   .evenrow_masks, y
+         lda   .dither_masks+2, x
+         sta   .oddrow_masks, y
+         lda   #$FF
+         sta   .no_masks, y
+         dex
+         bpl   -
+         tya
+         bne   --
+}
+
 !macro HGR_CALC {
 ; in:    A = HGR row (0x00..0xBF)
 ; out:   A/X clobbered
@@ -124,6 +140,25 @@
          and   .copymasks,x          ; isolate the bits to replace, zero the rest
          eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
          sta   (.dest1),y            ; write the result
+}
+
+!macro COPY_BIT_DITHER .src1, .dest1, .copymasks, .dithermaskptr {
+         lda   (.src1),y
+         eor   (.dest1),y            ; merge source and destination bits
+         and   .copymasks,x          ; isolate the bits to replace, zero the rest
+         and   (.dithermaskptr),y
+         eor   (.dest1),y            ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (.dest1),y            ; write the result
+}
+
+!macro DITHER_MASK_DATA {
+dither_masks
+         !byte %10110011
+         !byte %11100110
+         !byte %11001100
+         !byte %10011001
+         !byte %10110011
+         !byte %11100110
 }
 
 !macro COPY_BIT_ZP .src1, .dest1, .zpcopymask {

@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019-2022 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX.INDEXED/DITHER.SLOWSTAR",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+Start
+         +FX_PRECOMPUTED_1BIT_DITHER Coordinates1Bit, EndCoordinates1Bit
+
+CoordinatesFile
+         !byte 17
+         !text "FX/SLOW.STAR.DATA"
