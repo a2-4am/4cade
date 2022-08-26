@@ -11,7 +11,6 @@ reverseshrlo = $BD01                 ; $C8 bytes
 reverseshrhi = $BE01                 ; $C8 bytes
 
          !source "src/fx/macros.a"
-         !source "src/fx/fx.shr.common.a"
 
          +COPY_TO_0 start, end
          +BUILD_SHR_REVERSE_LOOKUP_TABLES reverseshrlo, reverseshrhi

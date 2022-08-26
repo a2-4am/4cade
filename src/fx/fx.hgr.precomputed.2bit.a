@@ -8,25 +8,14 @@ hgrlomirror    = $BD40    ; $C0 bytes
 mirror_cols    = $BE00    ; $28 bytes
 hgr1hi         = $BE40    ; $C0 bytes
 hgr1himirror   = $BF40    ; $C0 bytes
-; the next 3 addresses should all be on the same page
-evenrow_masks  = $8000    ; $28 bytes (used for dithering)
-oddrow_masks   = $8028    ; $28 bytes (used for dithering)
-no_masks       = $8050    ; $28 bytes (used for dithering)
+dithermasks    = $8000    ; $58 bytes
+evenrow_masks  = dithermasks
+oddrow_masks   = dithermasks+2
+no_masks       = dithermasks+44
 Coordinates2Bit= $8100    ; $3C01 bytes ($3C00 on disk + 1 byte as EOF)
 EndCoordinates2Bit = Coordinates2Bit + $3C00
 
          !source "src/fx/macros.a"
-
-!macro BUILD_MIRROR_COLS .mirror_cols {
-         ; build lookup table to get $27-y for y in $00..$27
-         ldx   #$27
-         ldy   #$00
--        tya
-         sta   .mirror_cols, x
-         iny
-         dex
-         bpl   -
-}
 
 !macro BUILD_SPARSE_BITMASKS_2BIT .copymasks, .mirror_copymasks {
          ; build sparse lookup tables for bitmasks
@@ -79,13 +68,6 @@ EndCoordinates2Bit = Coordinates2Bit + $3C00
          sta   <dest2+1
          eor   #$60
          sta   <src2+1
-}
-
-!macro HIGH_3_LOW_5 .input {
-         and   #%11100000            ; second value: high 3 bits = index into tables to find bitmasks
-         tax
-         eor   (.input), y           ; second value: low 5 bits = byte offset within the row (implicitly "and #%00011111")
-         tay
 }
 
 !macro FX_INITONCE_2BIT .CoordinatesFile, .Start {
@@ -319,7 +301,7 @@ end
 }
 
 !macro FX_PRECOMPUTED_2BIT_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS dither_masks, evenrow_masks, oddrow_masks, no_masks
+         +BUILD_DITHER_MASKS dithermasks
          +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
@@ -438,6 +420,4 @@ next2_start
          rts
 }
 next2_end
-
-         +DITHER_MASK_DATA
 }

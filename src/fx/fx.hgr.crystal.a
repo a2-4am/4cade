@@ -124,7 +124,7 @@
          inc   $FF
 +        rts
 
-@table1  
+@table1
          !byte $05, $AF, $05, $AF, $06, $90, $FA, $50, $FA, $50, $50, $5A, $F0, $5A, $F0, $0F
          !byte $A5, $0F, $A5, $05, $A5, $05, $AF, $05, $AF, $FA, $50, $FA, $50, $5A, $FA, $50
          !byte $5A, $F0, $5A, $A5, $0F, $A5, $05, $AF, $0F, $A5, $05, $AF, $05, $50, $FA, $50
@@ -142,7 +142,6 @@
          !byte $F0, $0F, $A5, $0F, $A5, $05, $05, $AF, $05, $AF, $06, $90, $FA, $50, $FA, $50
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
 Coordinates

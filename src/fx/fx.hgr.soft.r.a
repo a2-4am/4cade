@@ -195,4 +195,3 @@ copymasks6
          !byte %11010101
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"

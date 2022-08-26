@@ -10,6 +10,8 @@ row2 = $ff
 src  = $3c
 dst  = $26
 
+         !source "src/fx/macros.a"
+
          lda   #$00
          sta   row1
          lda   #$BF
@@ -61,7 +63,6 @@ dst  = $26
 @exit    rts
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_CALC_ROUTINES
 
 mask1    !byte %10110011

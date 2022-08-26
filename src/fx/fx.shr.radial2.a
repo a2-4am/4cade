@@ -14,7 +14,6 @@ CoordinatesFileCopy = $BE42; $11 bytes
 mirror_cols = $BE60       ; $A0 bytes but clobbers $27 previous bytes during construction
 
          !source "src/fx/macros.a"
-         !source "src/fx/fx.shr.common.a"
 
          +SHR_STAGE_1 shrlo, shrhi, mirror_rows, mirror_cols
          jmp   stage2

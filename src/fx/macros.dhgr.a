@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2019-2022 by 4am
+;
+
+!ifndef _FX_MACROS_DHGR_ {
+
+!macro COPY_TO_AUXMEM .startpage, .pagecount {
+         ldx   #.pagecount
+         lda   #.startpage
+         sta   $FF
+         lda   #$00
+         sta   $FE
+         tay
+         sta   $C005
+-        lda   ($FE),y
+         sta   ($FE),y
+         iny
+         bne   -
+         inc   $FF
+         dex
+         bne   -
+         sta   $C004
+}
+
+!macro BUILD_MIRROR_COLS_DHGR .mirror_cols {
+         ; build lookup table to get $27-y for y in $00..$27
+         ; duplicate in both mainmem and auxmem
+         ldx   #$28
+         ldy   #$00
+-        tya
+         sta   .mirror_cols-1, x
+         sta   $C005
+         sta   .mirror_cols-1, x
+         sta   $C004
+         iny
+         dex
+         bne   -
+; X=0
+}
+
+_FX_MACROS_DHGR_=*
+}

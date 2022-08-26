@@ -15,10 +15,10 @@ hgrhi3c        = $BE80    ; $80 bytes
 dither1_lo     = $6900    ; $80 bytes
 dither2_lo     = $6980    ; $80 bytes
 dither3_lo     = $6A00    ; $80 bytes
-; the next 3 addresses should all be on the same page
-evenrow_masks  = $6A80    ; $28 bytes (for dithering)
-oddrow_masks   = $6AA8    ; $28 bytes (for dithering)
-no_masks       = $6AD0    ; $28 bytes (for dithering)
+dithermasks    = $6A80    ; $58 bytes
+evenrow_masks  = dithermasks
+oddrow_masks   = dithermasks+2
+no_masks       = dithermasks+44
 Coordinates3Bit= $6B00    ; pixel data is $5001 bytes ($5000 on disk + 1 byte as EOF marker)
                           ; and for optimization we only support loading external files page-aligned
                           ; and $BC00+ is used by the 3bit macros for data tables
@@ -296,7 +296,7 @@ end
 }
 
 !macro FX_PRECOMPUTED_3BIT_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS dither_masks, evenrow_masks, oddrow_masks, no_masks
+         +BUILD_DITHER_MASKS dithermasks
          +BUILD_3BIT_HGR_LOOKUP_TABLES
          +BUILD_EXTRA_COLS
          +BUILD_SPARSE_BITMASKS_3BIT
@@ -440,6 +440,4 @@ next2_start
 ++       rts
 }
 next2_end
-
-         +DITHER_MASK_DATA
 }

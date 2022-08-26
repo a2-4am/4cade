@@ -9,7 +9,6 @@ shrlo = $301                         ; $C8 bytes, indexed as shrlo-1,x
 shrhi = $201                         ; $C8 bytes, indexed as shrhi-1,x
 
          !source "src/fx/macros.a"
-         !source "src/fx/fx.shr.common.a"
 
          +COPY_TO_0 start, end
          +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi

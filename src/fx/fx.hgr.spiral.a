@@ -5,6 +5,7 @@
 !to "build/FX.INDEXED/SPIRAL",plain
 *=$6000
 
+         !source "src/fx/macros.a"
          !source "src/constants.a"
 
          lda   #$27
@@ -77,5 +78,4 @@
 @exit    rts
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_BLOCK_COPY_ROUTINES

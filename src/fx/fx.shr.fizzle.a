@@ -6,7 +6,6 @@
 *=$A000
 
          !source "src/fx/macros.a"
-         !source "src/fx/fx.shr.common.a"
 
 addrs=$7F                            ; [128 bytes]
 

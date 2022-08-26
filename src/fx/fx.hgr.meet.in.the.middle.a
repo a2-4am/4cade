@@ -10,6 +10,7 @@ row = $fd
 col1 = $fe
 col2 = $ff
 
+         !source "src/fx/macros.a"
          !source "src/constants.a"
 
          lda   #0
@@ -94,5 +95,4 @@ copymasks2
          !byte %11000000
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_CALC_ROUTINES

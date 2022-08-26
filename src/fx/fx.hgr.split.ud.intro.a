@@ -123,6 +123,5 @@ row2 = $FF
 @exit    jmp   UnwaitForVBL
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_CALC_ROUTINES
          +HGR_WHITE_ROUTINES

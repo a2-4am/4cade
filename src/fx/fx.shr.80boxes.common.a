@@ -85,7 +85,6 @@ BoxesX    = $BE60                    ; [$50 bytes][accessed via BoxesX-1][should
 BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should not cross page]
 
          !source "src/fx/macros.a"   ; no code in these
-         !source "src/fx/fx.shr.common.a"
 
          ldx   #80
          lda   #175

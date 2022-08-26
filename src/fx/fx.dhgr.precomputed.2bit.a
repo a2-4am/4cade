@@ -2,7 +2,6 @@
 ;(c) 2019-2020 by 4am
 ;
          !source "src/fx/fx.hgr.precomputed.2bit.a"
-         !source "src/fx/fx.dhgr.common.a"
 
 !macro BUILD_SPARSE_BITMASKS_2BIT_DHGR .copymasks, .mirror_copymasks {
          ; build sparse lookup tables for bitmasks
@@ -55,8 +54,7 @@
 !macro FX_PRECOMPUTED_2BIT_DHGR .coords {
          +BUILD_SPARSE_BITMASKS_2BIT_DHGR copymasks, mirror_copymasks
          +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
-         +BUILD_MIRROR_COLS mirror_cols
-         +COPY_SELF_TO_AUXMEM
+         +BUILD_MIRROR_COLS_DHGR mirror_cols
          +COPY_TO_0 start, end
          jmp   InputLoop
 
@@ -125,7 +123,138 @@ dest2=*+1
 +        rts
 }
 end
-!if * and 1 {
-         !byte 0 ;align 2 but avoids the fake allocation bug if it was aligned already
 }
+
+!macro FX_PRECOMPUTED_2BIT_DHGR_DITHER .coords, .endcoords {
+         +BUILD_DITHER_MASKS_DHGR dithermasks
+         +BUILD_SPARSE_BITMASKS_2BIT_DHGR copymasks, mirror_copymasks
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         +BUILD_MIRROR_COLS_DHGR mirror_cols
+
+         ; phase 1 - in reverse, with additional masking (dithering)
+         jsr   copytozp
+
+         ; set up starting coordinate for reading coordinates in reverse order
+         +LDADDR .endcoords-2
+         sta   <input
+         sty   <input+1
+
+         ; set up EOF marker to stop reading coordinates in reverse order
+         lda   #$00
+         sta   .coords-2
+
+         ; set up logic to advance to next coordinates in reverse order
+         ldx   #(next2_end-next2_start-1)
+-        lda   next2_start, x
+         sta   <next, x
+         dex
+         bpl   -
+
+         jsr   InputLoop
+
+         bit   KBD
+         bmi   start
+
+         ; phase 2 - in order, without additional masking
+         jsr   copytozp
+
+         ; redirect additional masking pointers to an array that contains #$FFs (so no dithering)
+         lda   #<no_masks
+         sta   <evenrow_ptr
+         sta   <oddrow_ptr
+
+         jmp   InputLoop
+
+copytozp
+         +COPY_TO_0 start, end
+start
+!pseudopc 0 {
+Exit2Bit rts
+evenrow_ptr
+         !word evenrow_masks
+oddrow_ptr
+         !word oddrow_masks
+InputLoop
+         ldy   #0
+input=*+1
+         ldx   .coords               ; first value: HGR row + 1
+         beq   Exit2Bit              ; if 0 then we're done
+         +ROW_X_TO_2BIT_BASE_ADDRESSES
+
+         iny
+         lda   (<input), y
+         +HIGH_3_LOW_5 input
+
+         ; main 2x2 block in left half
+         clc
+-        lda   copymasks, x
+         beq   +
+src1=*+1
+         lda   $FDFD, y
+         eor   (<dest1), y
+         and   copymasks, x
+         and   (<evenrow_ptr), y
+         eor   (<dest1), y
+dest1=*+1
+         sta   $FDFD, y
+src2=*+1
+         lda   $FDFD, y
+         eor   (<dest2), y
+         and   copymasks, x
+         and   (<oddrow_ptr), y
+         eor   (<dest2), y
+dest2=*+1
+         sta   $FDFD, y
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+         ; corresponding 2x2 block in right half (same row, opposite column)
+         lda   mirror_cols, y
+         tay
+         clc
+-        lda   mirror_copymasks, x
+         beq   +
+         +COPY_BIT_DITHER src1, dest1, mirror_copymasks, evenrow_ptr
+         +COPY_BIT_DITHER src2, dest2, mirror_copymasks, oddrow_ptr
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+next
+         inc   <input
+         inc   <input
+         bne   +
+         bit   KBD
+         bmi   ++
+         inc   <input+1
++        jmp   InputLoop
+++       rts
+
+}
+end
+
+next2_start
+!pseudopc next {
+         lda   <input
+         php
+         dec   <input
+         dec   <input
+         plp
+         bne   +
+         dec   <input+1
+         bit   KBD
+         bmi   ++
++        jmp   InputLoop
+++       rts
+}
+next2_end
 }

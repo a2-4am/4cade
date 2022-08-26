@@ -1,0 +1,312 @@
+;license:MIT
+;(c) 2019-2022 by 4am
+;
+
+!ifndef _FX_MACROS_HGR_ {
+
+; .hgrlo, .hgr1hi will each be filled with $C0 bytes
+; based on routine by John Brooks
+; posted on comp.sys.apple2 on 2018-07-11
+; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
+!macro BUILD_HGR_LOOKUP_TABLES .hgrlo, .hgr1hi {
+; preserves Y
+         ldx   #0
+         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi
+}
+
+; use this macro instead if you know X is already 0 on entry, to save 2 bytes
+!macro BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi {
+; preserves Y
+-        txa
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlo,x
+         txa
+         and   #7
+         rol
+         asl   .hgrlo,x
+         rol
+         ora   #$20
+         sta   .hgr1hi,x
+         inx
+         cpx   #$C0
+         bne   -
+}
+
+; .hgrlomirror, .hgr1himirror will each be filled with $C0 bytes
+!macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror {
+         ldx   #$C0
+         ldy   #0
+-        tya
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   .hgrlomirror-1,x
+         tya
+         and   #7
+         rol
+         asl   .hgrlomirror-1,x
+         rol
+         ora   #$20
+         sta   .hgr1himirror-1,x
+         iny
+         dex
+         bne   -
+}
+
+!macro BUILD_MIRROR_COLS .mirror_cols {
+; in:    none
+; out:   .mirror_cols populated with lookup table to get $27-y for y in $00..$27
+;        all registers and flags clobbered
+         ldx   #$27
+         ldy   #$00
+-        tya
+         sta   .mirror_cols, x
+         iny
+         dex
+         bpl   -
+}
+
+!macro HGR_CALC {
+; in:    A = HGR row (0x00..0xBF)
+; out:   A/X clobbered
+;        Y preserved
+;        ($26) points to first byte of given HGR row on hi-res page 1
+;        ($3C) points to same byte on hi-res page 2
+; based on 'Woz Recodes Hi-Res Address Calculations'
+; Apple Assembly Line vol. 7 issue 3 (December 1986)
+; http://www.txbobsc.com/aal/1986/aal8612.html#a9
+         asl
+         tax
+         and   #$F0
+         bpl   @calc1
+         ora   #$05
+@calc1   bcc   @calc2
+         ora   #$0A
+@calc2   asl
+         asl
+         sta   $26
+         txa
+         and   #$0E
+         adc   #$10
+         asl   $26
+         rol
+         sta   $27
+         eor   #$60
+         sta   $3d
+         lda   $26
+         sta   $3c
+}
+
+!macro HGR_ROW_CALC {
+         asl
+         asl
+         asl
+         +HGR_CALC
+}
+
+; /!\ C must be clear before using this macro
+!macro HGR_INC_WITHIN_BLOCK {
+         lda   $27
+         adc   #$04
+         sta   $27
+         eor   #$60
+         sta   $3d
+}
+
+!macro RESET_HGR_CALC {
+         lda   $27
+         sec
+         sbc   #$20
+         sta   $27
+         eor   #$60
+         sta   $3d
+}
+
+!macro SWITCH_TO_MASKS .copy {
+         lda   #<.copy
+         sta   CopyMaskAddr
+         lda   #>.copy
+         sta   CopyMaskAddr+1
+}
+
+!macro ROW_X_TO_BASE_ADDRESSES {
+         lda   hgrlo, x
+         sta   <dest1
+         sta   <src1
+         lda   hgr1hi, x
+         sta   <dest1+1
+         eor   #$60
+         sta   <src1+1
+         lda   hgrlo+1, x
+         sta   <dest2
+         sta   <src2
+         lda   hgr1hi+1, x
+         sta   <dest2+1
+         eor   #$60
+         sta   <src2+1
+}
+
+!macro ROW_X_TO_MIRROR_ADDRESSES {
+         lda   hgrlomirror, x
+         sta   <mirror_dest1
+         sta   <mirror_src1
+         lda   hgr1himirror, x
+         sta   <mirror_dest1+1
+         eor   #$60
+         sta   <mirror_src1+1
+         lda   hgrlomirror+1, x
+         sta   <mirror_dest2
+         sta   <mirror_src2
+         lda   hgr1himirror+1, x
+         sta   <mirror_dest2+1
+         eor   #$60
+         sta   <mirror_src2+1
+}
+
+!macro HGR_CALC_ROUTINES {
+HGRCalc
+; in:    A = HGR row (0x00..0xBF)
+; out:   A/X clobbered
+;        Y preserved
+;        ($26) points to first byte of given HGR row on hi-res page 1
+;        ($3C) points to same byte on hi-res page 2
+; based on 'Woz Recodes Hi-Res Address Calculations'
+; Apple Assembly Line vol. 7 issue 3 (December 1986)
+; http://www.txbobsc.com/aal/1986/aal8612.html#a9
+         +HGR_CALC
+         rts
+}
+
+!macro HGR_BLOCK_COPY_ROUTINES {
+HGRBlockCopy
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         +HGR_ROW_CALC
+HGRBlockCopyNoRecalc
+         clc
+         ldx   #$08
+@loop
+         lda   ($3c),y
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @loop
+         rts
+}
+
+!macro HGR_HALF_BLOCK_COPY_ROUTINES {
+HGRHalfBlockCopy
+; in:    A = HGR row / 4 (0x00..0x2F)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         asl
+         asl
+         +HGR_CALC
+HGRStaggerCopy
+         clc
+         ldx   #$04
+@loop
+         lda   ($3c),y
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @loop
+         rts
+}
+
+!macro HGR_WHITE_ROUTINES {
+HGRBlockToWhite
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         +HGR_ROW_CALC
+         clc
+         ldx   #$08
+@loop
+         lda   #$7F
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @loop
+         rts
+
+HGRHalfBlockToWhite
+; in:    A = HGR row / 4 (0x00..0x2F)
+;        Y = HGR column (0x00..0x27)
+; out:   Y preserved
+;        X = #$00
+;        Z set
+;        C clear
+;        all other flags and registers clobbered
+         asl
+         asl
+         +HGR_CALC
+HGRStaggerToWhite
+         clc
+         ldx   #$04
+@loop
+         lda   #$7F
+         sta   ($26),y
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bne   @loop
+         rts
+}
+
+!macro HGR_COPY_MASK_ROUTINES {
+SetCopyMask
+; in:    A/Y points to 8-byte array of bit masks used by HGRBlockCopyWithMask
+         +ST16 CopyMaskAddr
+         rts
+
+HGRBlockCopyWithMask
+; in:    A = HGR row / 8 (0x00..0x17)
+;        Y = HGR column (0x00..0x27)
+;        must call SetCopyMask first
+; out:   Y preserved
+;        A/X clobbered
+;        $00 clobbered
+         +HGR_ROW_CALC
+HGRBlockCopyWithMaskNoRecalc
+         ldx   #7
+HGRBlockCopyWithMasksLoop
+         lda   ($26),y
+         eor   ($3c),y
+CopyMaskAddr=*+1
+         and   $FDFD,x               ; call SetCopyMask to set
+         eor   ($26),y
+         sta   ($26),y
+         clc
+         +HGR_INC_WITHIN_BLOCK
+         dex
+         bpl   HGRBlockCopyWithMasksLoop
+         rts
+}
+
+_FX_MACROS_HGR_=*
+}
