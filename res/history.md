@@ -7,6 +7,7 @@
 - A City Dies Whenever Night Falls
 - Alf: The First Adventure
 - Alien Lander
+- Angel-1
 - Ape Escape
 - Apple Invader
 - Apple Zap
@@ -17,6 +18,8 @@
 - Beach Landing
 - Bezare
 - Bezoff
+- Blitzkrieg
+- Bloodsuckers
 - Bongo's Bash
 - Boulder Dash II
 - Bug Battle
@@ -27,11 +30,13 @@
 - Cavern Creatures
 - Chip Out
 - Chivalry
+- Collect
 - Conquering Worlds
 - Cosmic Combat
 - Creepy Corridors
 - Crickateer
 - Cross City
+- Cyclotron
 - Dangerous Dave Goes Nutz
 - Dangerous Dave Returns
 - Deep Space
@@ -44,6 +49,7 @@
 - Escape
 - Federation
 - Firebug
+- Flak
 - Flobynoid
 - Floppy
 - Fly Wars
@@ -89,6 +95,7 @@
 - Robot Battle
 - Sabotage II
 - Sadar's Revenge
+- Sanitron
 - Sheila
 - Shuttle Intercept
 - Space Kadet
