@@ -1,0 +1,72 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/FLAK.MB",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GET_MOCKINGBOARD_SLOT
+         php
+         pha
+         bcs   yesmb1
+         lda   #$60
+         sta   $B95
+         sta   $BC1
+         sta   $BE2
+         sta   $BEE
+         sta   $C0A
+         sta   $C76
+         sta   $D00
+         bcc   nomb1
+
+pages    !byte 3
+yesmb1
+         ldy   #$99
+base1    ldx   $B00,Y     ;find #$C4s
+         cpx   #$C4
+         bne   +
+base2    sta   $B00,Y     ;Replace #$C4 with detected slot
++        iny
+         bne   base1
+         inc   base1+2
+         inc   base2+2
+         dec   pages
+         bne   base1
+
+nomb1
+         +DISABLE_ACCEL
+         jsr   $800        ; title animation
+         +ENABLE_ACCEL
+         jsr   $AAB3       ; decompress more
+         pla
+         plp
+         bcs   yesmb2
+         lda   #$60
+         sta   $1E01
+         sta   $1E2D
+         bcc   nomb2
+
+yesmb2
+         ldy   #5
+-        ldx   $1E00,Y    ;find #$C4s
+         cpx   #$C4
+         bne   +
+         sta   $1E00,Y    ;Replace #$C4 with detected slot
++        iny
+         bne   -
+
+nomb2
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $1860       ; patch - don't decrease lives
+         sta   $1E5C       ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $800
