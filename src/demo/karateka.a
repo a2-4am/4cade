@@ -1,0 +1,109 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "res/DEMO/KARATEKA",plain
+*=$200
+
+    !source "src/prelaunch/common.a"
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+reset
+         +LOAD_FILE_KEEP_DIR karateka, $3FF6, karateka_dir_e-karateka_dir_b
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $4013
+         jsr   $3FF6      ; decompress
+         ldx   #5
+-        lda   $100,x
+         sta   $BF29+return-callback1,x
+         dex
+         bpl   -
+         ldx   #callback_e-callback_b
+-        lda   callback_b-1,x
+         sta   $BF29-1,x
+         dex
+         bne   -
+         lda   #$AD
+         sta   $A4A6
+         lda   #<callback1
+         sta   $A51C
+         lda   #>callback1
+         sta   $A51D
+         txa
+         jmp   $A495
+
+callback_b !pseudopc $329 {
+callback1
+         lda   #<callback2
+         sta   $20F
+         lda   #>callback2
+         sta   $210
+         jmp   $200
+
+callback2
+         jsr   $104
+         lda   #$A9
+         sta   $B7EA
+         sta   $B7EF
+         sta   $B80C
+         sta   $B818
+         lda   #0
+         sta   $B7EB
+         sta   $B7F0
+         sta   $B80D
+         sta   $B819
+         lda   #$EA
+         sta   $B7EC
+         sta   $B7F1
+         sta   $B80E
+         sta   $B81A
+         lda   #$AD
+         sta   $D0A
+         sta   $C59
+         sta   $C68
+         sta   $C78
+         sta   $C8D
+         sta   $CB9
+         sta   $D72
+         sta   $D88
+         sta   $DDF
+         lda   #$60
+         sta   $777F
+         lda   #<return
+         sta   $B7FD
+         sta   $D16
+         sta   $B5D8
+         sta   $3F2
+         lda   #>return
+         sta   $B7FE
+         sta   $D17
+         sta   $B5D9
+         sta   $3F3
+         lda   #$A6
+         sta   $3F4
+
+         +DISABLE_ACCEL
+         lda   #0
+         rts
+
+return
+}
+callback_e
+
+karateka
+         !byte karateka_e-karateka_b
+karateka_b
+karateka_dir_b
+         !text "X/KARATEKA"
+karateka_dir_e
+         !text "/KARATEKA"
+karateka_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
