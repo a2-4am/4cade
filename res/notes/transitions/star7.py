@@ -3,12 +3,12 @@
 import PIL.Image # https://pillow.readthedocs.io/
 import util
 
-# maple.png is the source image. The source image MUST have a white background,
+# star7.png is the source image. The source image MUST have a white background,
 # but other colors and pixel depth are irrelevant. This one is black & white.
 # Due to the Apple II pixel aspect ratio, we do a 1-time aspect-ratio-losing resize
 # to squash the image to 87% height.
 #
-# $ gm convert maple.png -resize "100%x87%!" squash.png
+# $ gm convert star7.png -resize "100%x87%!" squash.png
 # (Depending on your shell, you may need to escape the exclamation point. Grr.)
 #
 # Now we can create individual images for each "frame" of the animation, by
@@ -52,25 +52,15 @@ import util
 frames = 1500 # number of "thumbN.png" files
 
 coords = []
-for i in range(5, frames, 5):
-    p = PIL.Image.open("maple/thumb%s.png" % i)
+for i in range(1, frames):
+    p = PIL.Image.open("star7/thumb%s.png" % i)
     for x in range(0, 280//2, 2):
         for y in range(0, 192, 2):
-            if p.getpixel((x,191-y))[0] != (255,255,255,255):
+            if p.getpixel((x,191-y)) == (0,0,0,255):
                 coords.append((x,y))
 
 unique_coords = util.unique(coords)
 unique_vals = util.vals_2bit(unique_coords)
-with open("../../../src/fx/fx.hgr.maple.data.a", "w") as f:
-    for aval, bval in unique_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-ripple_vals = util.ripple(unique_vals)
-with open("../../../src/fx/fx.hgr.maple.ripple.data.a", "w") as f:
-    for aval, bval in ripple_vals:
-        f.write("         !byte %s,%s\n" % (aval, bval))
-
-unique_vals.reverse()
-with open("../../../src/fx/fx.hgr.maple.in.data.a", "w") as f:
+with open("../../../src/fx/fx.hgr.star7.data.a", "w") as f:
     for aval, bval in unique_vals:
         f.write("         !byte %s,%s\n" % (aval, bval))
