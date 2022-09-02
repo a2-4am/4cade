@@ -58,11 +58,14 @@
 - Glutton
 - Grapple
 - Handy Dandy
+- Hellstorm
 - Infiltrator
 - Infiltrator 2
 - It's The Pits
 - J-Bird
 - Jellyfish
+- Jouster
+- Jovian Attack
 - Jump Jet
 - Lamb Chops!
 - Lemmings (Sirius)
@@ -78,6 +81,7 @@
 - Neon
 - Neut Tower
 - Neutrons
+- Night Crawler
 - Oil's Well
 - Paipec
 - Peeping Tom
