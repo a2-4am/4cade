@@ -30,6 +30,7 @@
 - Cavern Creatures
 - Chip Out
 - Chivalry
+- Chrono Warrior
 - Collect
 - Conquering Worlds
 - Cosmic Combat
