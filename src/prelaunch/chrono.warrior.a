@@ -1,0 +1,85 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CHRONO.WARRIOR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   skip
+
+callback
+         jsr   $BC9D
+         lda   $1A81
+         ldy   $1A82
+         ldx   #$A5
+         cmp   #$13
+         beq   level1
+         cmp   #$18
+         beq   level2
+         cmp   #$19
+         beq   level3
+         cmp   #$1C
+         beq   level4
+         cmp   #$1D
+         beq   level5
+         cmp   #$20
+         beq   level6
+         bne   notlevel
+
+level1
+         tya
+         bne   notlevel
+         stx   $891F       ; patch - don't decrease lives
+
+level2
+         cpy   #2
+         bne   notlevel
+         stx   $8782       ; patch - don't decrease lives
+
+level3
+         cpy   #$0E
+         bne   notlevel
+         stx   $88DD       ; patch - don't decrease lives
+
+level4
+         tya
+         bne   notlevel
+         stx   $87BE       ; patch - don't decrease lives
+
+level5
+         cpy   #8
+         bne   notlevel
+         stx   $8CA5       ; patch - don't decrease lives
+
+level6
+         cpy   #$0C
+         bne   notlevel
+         stx   $813F       ; patch - don't increase lives
+
+notlevel
+         lda   #0
+         rts
+
+skip
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2079
+         jsr   $2000       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BC90
+         lda   #>callback
+         sta   $BC91
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $1B40
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
