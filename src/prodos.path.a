@@ -149,6 +149,9 @@ kDecrunchRecord
 kJoystickRecord
          !source "src/index/joystick.idx.a"
 
+kXSingleRecord
+         !source "src/index/xsingle.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"

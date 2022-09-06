@@ -189,7 +189,10 @@ HAS_SPEECH        = %11000000
 
 ; AND masks for game info bitfield (after game display name in gSearchStore)
 HAS_DHGR_TITLE    = %10000000        ; this one is hard-coded via BMI instead of AND/BNE
+IS_SINGLE_LOAD    = %01000000
 CHEAT_CATEGORY    = %00001111
+;                      ^^
+;                      ++-- your bits here!
 
 ; AND masks for MachineStatus
 HAS_JOYSTICK   = %10000000

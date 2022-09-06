@@ -71,7 +71,12 @@ MegaAttractMode
          bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   +                     ; Any other key switches to Search Mode.
+         jsr   ReloadSearchIndexOnly
          +LD16 gLastMegaAttractGame
+         +ST16 @game
+         jsr   okvs_find
+         !word SearchIndexHandle
+@game    !word $FDFD                 ; SMC
          jsr   PlayGameInAY          ; (might return if user hits Ctrl-Reset)
 +        jmp   SearchMode
 

@@ -33,7 +33,7 @@ PYTHON=python3
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: index asmproboot asmlauncher
+dsk: index asmproboot asmlauncher extract
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM -C >>build/log
@@ -56,9 +56,9 @@ dsk: index asmproboot asmlauncher
 	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" -C >>build/log; \
 	done
 	for f in \
-                res/DEMO \
-                res/TITLE.ANIMATED \
-                res/ICONS \
+		res/DEMO \
+		res/TITLE.ANIMATED \
+		res/ICONS \
 		build/FX \
 		build/PRELAUNCH; do \
             rm -f "$$f"/.DS_Store; \
@@ -67,15 +67,19 @@ dsk: index asmproboot asmlauncher
 	for i in 1 2 3 4 5 6; do \
 		$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; \
 	done
-	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} build/X/ >>build/log' ::: res/dsk/*.po
-	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" -C >>build/log
 	for f in build/X/*; do \
 	    $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f" -C >>build/log; \
 	done
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
-index: preconditions md asmfx asmprelaunch compress
+extract: preconditions md
+	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} build/X/ >>build/log' ::: res/dsk/*.po
+	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM*
+	for f in $$(grep '^....1' res/GAMES.CONF | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv build/X/"$$(basename $$f)"/"$$(basename $$f)"* build/X.INDEXED/; rm -rf build/X/"$$(basename $$f)"; done
+	(for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA build/X.INDEXED > build/XSINGLE.IDX
+
+index: preconditions md asmfx asmprelaunch compress extract
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
@@ -155,6 +159,12 @@ index: preconditions md asmfx asmprelaunch compress
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
 	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
+#
+# precompute indexed files for single-load game binaries
+# note: these can be padded because they are loaded at a time when all of main memory is clobber-able
+#
+	[ -f build/index ] || ((for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA build/X.INDEXED > build/XSINGLE.IDX)
+	[ -f build/index ] || bin/addfile.sh build/XSINGLE.IDX build/TOTAL.DATA > src/index/xsingle.idx.a
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
@@ -254,7 +264,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/FX.INDEXED build/FX build/PRELAUNCH.INDEXED build/PRELAUNCH build/ATTRACT build/SS build/GAMEHELP
+	mkdir -p build/X build/X.INDEXED build/FX build/FX.INDEXED build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP
 	touch build/log
 
 clean:

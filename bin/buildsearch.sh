@@ -35,9 +35,10 @@ source=$(mktemp)
      if [ -z "$dhgrlog" ]; then
          dhgr="0"
      else
-         dhgr=$(echo "$key" | cut -c3)     # 'has DHGR title screen' flag (0 or 1)
+         dhgr=$(echo "$key" | cut -c3) # 'has DHGR title screen' flag (0 or 1)
      fi
-     cheat=$(echo "$key" | cut -c4)    # 'cheat category' (0..5)
+     cheat=$(echo "$key" | cut -c4)    # 'cheat category' (0..7)
+     single=$(echo "$key" | cut -c5)   # 'single-load' flag (0 or 1)
      key=$(echo "$key" | cut -d"," -f2)
      if [ "$dhgr" -eq "0" ]; then
          offset=$hgrlog
@@ -55,7 +56,7 @@ source=$(mktemp)
      echo "!byte ${#value}"            # OKVS value length
      echo "!text \"$value\""           # OKVS value (display name)
      echo "!byte 1"
-     echo "!byte $((dhgr*128))+$cheat"
+     echo "!byte $((dhgr*128))+$((single*64))+$cheat"
      echo "!be24 $offset"
      echo "!le16 $size"
  done < "$records"
