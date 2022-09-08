@@ -2,6 +2,7 @@
 rem
 rem 4cade Makefile for Windows
 rem assembles source code, optionally builds a disk image
+rem note: non-Windows users should probably use Makefile instead
 rem
 rem a qkumba monstrosity from 2018-10-29
 rem
@@ -11,17 +12,21 @@ set DISK=4cade.hdv
 set VOLUME=TOTAL.REPLAY
 
 rem third-party tools required to build (must be in path)
+
 rem https://sourceforge.net/projects/acme-crossass/
 rem version 0.96.3 or later
 set ACME=acme
-rem https://bitbucket.org/magli143/exomizer/wiki/Home
-rem version 3.1.0 or later
-set EXOMIZER=exomizer mem -q -P23 -lnone
+
 rem https://github.com/mach-kernel/cadius
 rem version 1.4.6 or later
 set CADIUS=cadius
+
 rem https://github.com/
 set GIT=git
+
+rem https://bitbucket.org/magli143/exomizer/wiki/Home
+rem version 3.1.0 or later
+set EXOMIZER=exomizer mem -q -P23 -lnone
 
 if "%1" equ "dsk" (
 call :index
@@ -46,22 +51,12 @@ if "%2". equ "". (
 echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" -C >>build\log
 if "%2". equ "". (
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\PREFS.CONF" -C >>build\log
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Data" -C >>build\log
-  %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "res\Finder.Root" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/DEMO" "res\DEMO" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/TITLE.ANIMATED" "res\TITLE.ANIMATED" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/ICONS" "res\ICONS" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/FX/" "build\FX" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/PRELAUNCH/" "build\PRELAUNCH" -C >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.11" "SPCARTOON.1." >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.22" "SPCARTOON.2." >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.33" "SPCARTOON.3." >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.44" "SPCARTOON.4." >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.55" "SPCARTOON.5." >>build\log
-  %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.66" "SPCARTOON.6." >>build\log
-  for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
-  1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM*
+  for %%q in (build\PREFS.CONF res\Finder.Data res\Finder.Root) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\%%~nxq" -C >>build\log
+  for %%q in (res\DEMO res\TITLE.ANIMATED res\ICONS build\FX build\PRELAUNCH) do (
+    1>nul 2>nul del /s "%%q\.DS_Store"
+    %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/%%~nxq" %%q -C >>build\log
+  )
+  for %%q in (1 2 3 4 5 6) do %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.%%q%%q" "SPCARTOON.%%q." >>build\log
   %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" -C >>build\log
   %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" -C >>build\log
   cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
@@ -162,8 +157,8 @@ for %%q in (res\SS\*) do (
   )
 )
 cscript /nologo bin\buildss.js build\SS build\SLIDESHOW.IDX nul build\TOTAL.DATA nul pad >>build\log
-for %%q in (res\ATTRACT\A* res\ATTRACT\B* res\ATTRACT\C* res\ATTRACT\D* res\ATTRACT\E* res\ATTRACT\F* res\ATTRACT\G* res\ATTRACT\H* res\ATTRACT\I* res\ATTRACT\J* res\ATTRACT\K* res\ATTRACT\L* res\ATTRACT\M* res\ATTRACT\N* res\ATTRACT\O* res\ATTRACT\P*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT0\%%~nxq >>build\log
-for %%q in (res\ATTRACT\Q* res\ATTRACT\R* res\ATTRACT\S* res\ATTRACT\T* res\ATTRACT\U* res\ATTRACT\V* res\ATTRACT\W* res\ATTRACT\X* res\ATTRACT\Y* res\ATTRACT\Z*) do cscript /nologo bin\buildokvs.js %%q build\ATTRACT1\%%~nxq >>build\log
+for %%q in (A B C D E F G H I J K L M N O P) do for %%k in (res\ATTRACT\%%q*) do cscript /nologo bin\buildokvs.js %%k build\ATTRACT0\%%~nxk >>build\log
+for %%q in (Q R S T U V W X Y Z) do for %%k in (res\ATTRACT\%%q*) do cscript /nologo bin\buildokvs.js %%k build\ATTRACT1\%%~nxk >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT0 build\MINIATTRACT0.IDX nul build\TOTAL.DATA nul pad >>build\log
 cscript /nologo bin\buildss.js build\ATTRACT1 build\MINIATTRACT1.IDX nul build\TOTAL.DATA nul pad >>build\log
 echo done
@@ -189,13 +184,13 @@ echo|set/p="indexing (d)hgr action..."
 1>nul copy /y nul build\ACTIONHGR5
 1>nul copy /y nul build\ACTIONHGR6
 1>nul copy /y nul build\ACTIONDHGR
-for %%q in (res\ACTION.HGR\A* res\ACTION.HGR\B* res\ACTION.HGR\C* res\ACTION.HGR\D*) do 1>nul >>build\ACTIONHGR0 echo %%q
-for %%q in (res\ACTION.HGR\E* res\ACTION.HGR\F* res\ACTION.HGR\G* res\ACTION.HGR\H*) do 1>nul >>build\ACTIONHGR1 echo %%q
-for %%q in (res\ACTION.HGR\I* res\ACTION.HGR\J* res\ACTION.HGR\K* res\ACTION.HGR\L*) do 1>nul >>build\ACTIONHGR2 echo %%q
-for %%q in (res\ACTION.HGR\M* res\ACTION.HGR\N* res\ACTION.HGR\O* res\ACTION.HGR\P*) do 1>nul >>build\ACTIONHGR3 echo %%q
-for %%q in (res\ACTION.HGR\Q* res\ACTION.HGR\R* res\ACTION.HGR\S* res\ACTION.HGR\T*) do 1>nul >>build\ACTIONHGR4 echo %%q
-for %%q in (res\ACTION.HGR\U* res\ACTION.HGR\V* res\ACTION.HGR\W* res\ACTION.HGR\X*) do 1>nul >>build\ACTIONHGR5 echo %%q
-for %%q in (res\ACTION.HGR\Y* res\ACTION.HGR\Z*) do 1>nul >>build\ACTIONHGR6 echo %%q
+for %%q in (A B C D) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR0 echo %%k
+for %%q in (E F G H) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR1 echo %%k
+for %%q in (I J K L) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR2 echo %%k
+for %%q in (M N O P) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR3 echo %%k
+for %%q in (Q R S T) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR4 echo %%k
+for %%q in (U V W X) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR5 echo %%k
+for %%q in (Y Z) do for %%k in (res\ACTION.HGR\%%q*) do 1>nul >>build\ACTIONHGR6 echo %%k
 for %%q in (res\ACTION.DHGR\*) do 1>nul >>build\ACTIONDHGR echo %%q
 cscript /nologo bin\buildss.js build\ACTIONHGR0* build\HGR0.IDX nul build\TOTAL.DATA nul >>build\log
 cscript /nologo bin\buildss.js build\ACTIONHGR1* build\HGR1.IDX nul build\TOTAL.DATA build\TOTAL.DATA >>build\log
@@ -223,6 +218,17 @@ rem note: these can not be padded because they are compressed and the decompress
 rem
 echo|set/p="indexing shr..."
 cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX nul build\TOTAL.DATA nul >>build\log
+echo done
+rem
+rem precompute indexed files for single-load game binaries
+rem note: these can be padded because they are loaded at a time when all of main memory is clobber-able
+rem
+echo|set/p="indexing single-loaders..."
+for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
+1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM*
+1>nul copy /y nul build\XSINGLE.IDX
+cscript /nologo bin\buildsingle.js build\X.INDEXED build\XSINGLE.IDX build\TOTAL.DATA pad >>build\log
+cscript /nologo bin\addfile.js build\XSINGLE.IDX src\index\xsingle.idx.a
 echo done
 rem
 rem create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
@@ -285,10 +291,11 @@ goto :EOF
 :md
 2>nul md build
 2>nul md build\X
-2>nul md build\FX.INDEXED
+2>nul md build\X.INDEXED
 2>nul md build\FX
-2>nul md build\PRELAUNCH.INDEXED
+2>nul md build\FX.INDEXED
 2>nul md build\PRELAUNCH
+2>nul md build\PRELAUNCH.INDEXED
 2>nul md build\ATTRACT0
 2>nul md build\ATTRACT1
 2>nul md build\SS
@@ -333,3 +340,4 @@ goto :EOF
 for %%q in (res\action.dhgr.uncompressed\*) do if not exist res\action.dhgr\%%~nxq %EXOMIZER% res\action.dhgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
 for %%q in (res\action.hgr.uncompressed\*) do if not exist res\action.hgr\%%~nxq %EXOMIZER% res\action.hgr.uncompressed\%%~nxq@0x4000 -o res\action.hgr\%%~nxq
 for %%q in (res\artwork.shr.uncompressed\*) do if not exist res\artwork.shr\%%~nxq %EXOMIZER% res\artwork.shr.uncompressed\%%~nxq@0x2000 -o res\artwork.shr\%%~nxq
+for %%q in (res\title.hgr.uncompressed\*) do if not exist res\title.hgr\%%~nxq %EXOMIZER% res\title.hgr.uncompressed\%%~nxq@0x2000 -o res\title.hgr\%%~nxq
