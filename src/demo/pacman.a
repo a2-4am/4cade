@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          +NEW_RESET_VECTOR $280
 
@@ -56,7 +55,7 @@
          jmp   $1000
 
 title    !byte x_e-x_b
-x_b      !text "X/PACMAN/PACMAN"
+x_b      !text "PACMAN"
 x_e
 
 !if * > $3F0 {

@@ -9,9 +9,8 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $4697
@@ -62,7 +61,7 @@
          jmp   $5000
 
 title    !byte x_e-x_b
-x_b      !text "X/STARGATE/STARGATE"
+x_b      !text "STARGATE"
 x_e
 
 !if * > $3F0 {

@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #<(callback - 1)
          sta   $4013
@@ -19,7 +17,7 @@
          sta   $4010
          jmp   $4000
 
-callback 
+callback
          +RESET_AND_IRQ_VECTOR $100
          ldy   #0
          sty   $0D8E
@@ -51,9 +49,11 @@ callback
          sta   $E93
          sta   $EB2
          sta   $61C5
+
          +DISABLE_ACCEL
+
          jmp   $0451
 
 title    !byte x_e-x_b
-x_b      !text "X/SPY.HUNTER/SPY.HUNTER"
+x_b      !text "SPY.HUNTER"
 x_e

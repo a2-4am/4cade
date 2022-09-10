@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #1         ; reset vector fix
          sta   $6E13      ; to $3F3
@@ -71,7 +69,7 @@
          jmp   $E00
 
 title    !byte x_e-x_b
-x_b      !text "X/TUNNEL.TERROR/TUNNEL.TERROR"
+x_b      !text "TUNNEL.TERROR"
 x_e
 
 !if * > $BFD0 {

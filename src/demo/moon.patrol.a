@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $49DD
@@ -55,7 +53,7 @@
          jmp   $919
 
 title    !byte x_e-x_b
-x_b      !text "X/MOON.PATROL/MOON.PATROL"
+x_b      !text "MOON.PATROL"
 x_e
 
 patch    !byte $20,$B8,$0A,$2C,$10,$C0,$A2,$41,$A9,$FF,$20,$A8,$FC,$AD,$00,$C0,$10,$05,$4C,$00,$01,$EA,$EA,$CA,$D0,$EE

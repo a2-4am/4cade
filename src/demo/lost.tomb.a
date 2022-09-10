@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT lost_tomb, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $82A
@@ -67,11 +65,9 @@
          +DISABLE_ACCEL
          jmp   $84D
 
-lost_tomb
-         !byte lost_tomb_e-lost_tomb_b
-lost_tomb_b
-         !text "X/LOST.TOMB/LOST.TOMB"
-lost_tomb_e
+title    !byte x_e-x_b
+x_b      !text "LOST.TOMB"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

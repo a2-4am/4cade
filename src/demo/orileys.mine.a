@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT orileys_mine, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $81D
@@ -75,13 +73,12 @@
          stx   $8326
 
          +DISABLE_ACCEL
+
          jmp   $8FD
 
-orileys_mine
-         !byte orileys_mine_e-orileys_mine_b
-orileys_mine_b
-         !text "X/OM/OM"
-orileys_mine_e
+title    !byte x_e-x_b
+x_b      !text "OM"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

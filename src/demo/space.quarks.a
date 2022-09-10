@@ -8,9 +8,9 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT space_quarks, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
+
          lda   #$4C
          sta   $3EC9
          jsr   $3E65      ; decompress/set reset vector
@@ -36,12 +36,13 @@
          sta   $72BD, x
          dex
          bpl   -
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $20A
 
-space_quarks
-         !byte 27
-         !text "X/SPACE.QUARKS/SPACE.QUARKS"
+title    !byte x_e-x_b
+x_b      !text "SPACE.QUARKS"
+x_e
 
 patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D,$4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68

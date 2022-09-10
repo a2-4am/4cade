@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT spider_raid, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $3EFD
@@ -52,14 +50,14 @@
          stx   $99A7
          sec
          rol   $976A
+
          +DISABLE_ACCEL
+
          jmp   $4246
 
-spider_raid
-         !byte spider_raid_e-spider_raid_b
-spider_raid_b
-         !text "X/SPIDER.RAID/SPIDER.RAID"
-spider_raid_e
+title    !byte x_e-x_b
+x_b      !text "SPIDER.RAID"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *
