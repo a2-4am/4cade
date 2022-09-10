@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $5813
@@ -60,7 +59,7 @@ patch1   !byte $10,$05,$4C,$00,$01
 patch2   !byte $10,$49,$4C,$00,$01
 
 title    !byte x_e-x_b
-x_b      !text "X/GALAXIAN/GALAXIAN"
+x_b      !text "GALAXIAN"
 x_e
 
 !if * > $3F0 {

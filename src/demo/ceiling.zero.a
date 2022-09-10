@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $083A
          jsr   $0800      ; decompress
@@ -29,12 +28,13 @@
          sta   $7D9E
          sta   $7DEA
          sta   $7DE5
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $5FED
 
 title    !byte x_e-x_b
-x_b      !text "X/CEILING.ZERO/CEILING.ZERO"
+x_b      !text "CEILING.ZERO"
 x_e
 
 !if * > $3F0 {

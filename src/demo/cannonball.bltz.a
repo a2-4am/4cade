@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $1e61
@@ -39,7 +37,7 @@
 patch    !byte $CE,$98,$A0,$10,$93,$4C,$00,$01,$02
 
 title    !byte x_e-x_b
-x_b      !text "X/CB/CB"
+x_b      !text "CB"
 x_e
 
 !if * > $300 {

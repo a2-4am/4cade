@@ -8,8 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT title, $00
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $3f0b
@@ -31,7 +30,7 @@
          jmp   $6000
 
 title    !byte x_e-x_b
-x_b      !text "X/FALCONS/FALCONS"
+x_b      !text "FALCONS"
 x_e
 
 !if * > $BFFF {

@@ -8,10 +8,9 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT kamikaze, $739A
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
+
          lda   #$60
          sta   $7B12
          jsr   $739A      ; decompress
@@ -33,13 +32,12 @@
          stx   $61C2
 
          +DISABLE_ACCEL
+
          jmp   $9400
 
-kamikaze
-         !byte kamikaze_e-kamikaze_b
-kamikaze_b
-         !text "X/KAMIKAZE/KAMIKAZE"
-kamikaze_e
+title    !byte x_e-x_b
+x_b      !text "KAMIKAZE"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

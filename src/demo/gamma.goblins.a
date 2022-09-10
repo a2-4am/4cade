@@ -9,9 +9,8 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $2034
@@ -41,7 +40,7 @@
          jmp   $2035
 
 title    !byte x_e-x_b
-x_b      !text "X/GAMMA.GOBLINS/GAMMA.GOBLINS"
+x_b      !text "GAMMA.GOBLINS"
 x_e
 
 !if * > $BFFF {

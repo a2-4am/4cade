@@ -8,9 +8,9 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $3E69
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
+
          lda   #$2C
          sta   $3ECB
          lsr   $3ECF
@@ -46,14 +46,15 @@
          asl
          sta   $6E97
          sta   $6ECC
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $6000
 
 counter  !byte 3
 
 title    !byte x_e-x_b
-x_b      !text "X/LASER.BOUNCE/LASER.BOUNCE"
+x_b      !text "LASER.BOUNCE"
 x_e
 
 !if * > $3F0 {

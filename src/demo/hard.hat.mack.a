@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #<patcher
          sta   $9431
@@ -62,7 +60,7 @@ patcher  rts
          rts
 
 title    !byte x_e-x_b
-x_b      !text "X/HARD.HAT.MACK/HARD.HAT.MACK"
+x_b      !text "HARD.HAT.MACK"
 x_e
 
 patch    !byte $8D,$10,$72,$8D,$13,$72,$8D,$14,$72,$EE,$14,$72,$60

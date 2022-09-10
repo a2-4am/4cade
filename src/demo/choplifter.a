@@ -9,9 +9,8 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT choplifter, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $403F
          jsr   $4000      ; decompress
@@ -25,14 +24,13 @@
          stx   $08F1
          lda   #$18
          sta   $0DA9
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          ldy   #0
          jmp   $400
 
-choplifter
-         !byte 23
-         !text "X/CHOPLIFTER/CHOPLIFTER"
+title    !byte x_e-x_b
+x_b      !text "CHOPLIFTER"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

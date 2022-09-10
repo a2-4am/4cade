@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $3EEE
@@ -60,7 +59,7 @@
          jmp   $8F63
 
 title    !byte x_e-x_b
-x_b      !text "X/FLIP.OUT/FLIP.OUT"
+x_b      !text "FLIP.OUT"
 x_e
 
 patch1   !byte $B0,$08,$AD,$00,$C0,$10,$1F,$4C,$00,$01,$20,$69,$8B

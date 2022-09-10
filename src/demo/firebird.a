@@ -8,9 +8,9 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
+
          lda   #$60
          sta   $3361
          jsr   $3300      ; decompress
@@ -51,12 +51,13 @@
          lda   #$EA
          sta   $A369
          sta   $A36A
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $30A0
 
 title    !byte x_e-x_b
-x_b      !text "X/FIREBIRD/FIREBIRD"
+x_b      !text "FIREBIRD"
 x_e
 
 !if * > $3F0 {

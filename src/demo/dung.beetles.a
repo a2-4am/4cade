@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $603A
@@ -59,7 +57,7 @@
 patch    !byte $A9,$01,$EA,$EA,$EA,$EA
 
 title    !byte x_e-x_b
-x_b      !text "X/DUNG.BEETLES/DUNG.BEETLES"
+x_b      !text "DUNG.BEETLES"
 x_e
 
 !if * > $3F0 {

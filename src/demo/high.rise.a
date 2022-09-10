@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $0836
@@ -36,7 +35,7 @@
          jmp   $449A
 
 title    !byte x_e-x_b
-x_b      !text "X/HIGH.RISE/HIGH.RISE"
+x_b      !text "HIGH.RISE"
 x_e
 
 !if * > $3F0 {

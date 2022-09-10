@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $0813
          jsr   $0800      ; decompress
@@ -31,14 +30,13 @@
          sta   $66CB
          lda   #>counter
          sta   $66CC
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          jmp   $6000
 
 counter  !byte $FD
 
 title    !byte x_e-x_b
-x_b      !text "X/BELLHOP/BELLHOP"
+x_b      !text "BELLHOP"
 x_e
 
 !if * > $3F0 {
