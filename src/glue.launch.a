@@ -151,7 +151,6 @@ PlayGameInAY
          plp
          beq   @loadFromSubdirectory
 
-         bit   $ff58
          jsr   LoadIndexedFile       ; load xsingle index file (contains pointers to game binaries)
 -        !word gSearchCache          ; clobber prelaunch index file which we no longer need
          !word kXSingleRecord
