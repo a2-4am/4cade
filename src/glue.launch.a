@@ -9,6 +9,9 @@
 ; - FindGame
 ; - PlayGame
 ; - Launch
+; - Joystick
+; - LoadXSingle
+; - LoadStandardPrelaunch
 ;
 ; Public variables:
 ; - gGameToLaunch - 0-based index into gSearchStore (word)
@@ -121,7 +124,7 @@ PlayGame
 PlayGameInAY
          +ST16 SAVE
          +ST16 @pfile
-         +ST16 @xfile
+         +ST16 xfile
          jsr   okvs_next_field
          jsr   okvs_next_field_PTR_is_already_set
                                      ; (PTR) -> length-prefixed game info bitfield
@@ -151,27 +154,7 @@ PlayGameInAY
          plp
          beq   @loadFromSubdirectory
 
-         jsr   LoadIndexedFile       ; load xsingle index file (contains pointers to game binaries)
--        !word gSearchCache          ; clobber prelaunch index file which we no longer need
-         !word kXSingleRecord
-
-         jsr   okvs_find             ; find this game's xsingle index record
-         !word -
-@xfile   !word $FDFD                 ; SMC
-         +ST16 @xsingleIndexRecordPtr
-         jsr   okvs_next_field
-         ldy   #5
-         lda   (PTR), y              ; get game load address (stored immediately after index record)
-         sta   @xsingleAddr
-         iny
-         lda   (PTR), y
-         sta   @xsingleAddr+1
-
-         jsr   LoadIndexedFile       ; load this game binary
-@xsingleAddr
-         !word $FDFD                 ; SMC
-@xsingleIndexRecordPtr
-         !word $FDFD                 ; SMC
+         jsr   LoadXSingle_NameIsAlreadySet
          jmp   Launch
 
 @loadFromSubdirectory
@@ -233,6 +216,46 @@ Launch
          sta   launchpatch
          jmp   LaunchInternal
 
+;------------------------------------------------------------------------------
+; LoadXSingle
+; load an indexed file from the xsingle OKVS
+;
+; in:    A/Y points to game filename (must be listed in xsingle OKVS)
+; out:   all flags & registers clobbered
+;------------------------------------------------------------------------------
+LoadXSingle
+         +ST16 xfile
+LoadXSingle_NameIsAlreadySet
+         jsr   LoadIndexedFile       ; load xsingle index file (contains pointers to game binaries)
+-        !word gSearchCache          ; clobber prelaunch index file which we no longer need
+         !word kXSingleRecord
+
+         jsr   okvs_find             ; find this game's xsingle index record
+         !word -
+xfile    !word $FDFD                 ; SMC
+         +ST16 @xsingleIndexRecordPtr
+         jsr   okvs_next_field
+         ldy   #5
+         lda   (PTR), y              ; get game load address (stored immediately after index record)
+         sta   @xsingleAddr
+         iny
+         lda   (PTR), y
+         sta   @xsingleAddr+1
+
+         jsr   LoadIndexedFile       ; load this game binary
+@xsingleAddr
+         !word $FDFD                 ; SMC
+@xsingleIndexRecordPtr
+         !word $FDFD                 ; SMC
+         rts
+
+;------------------------------------------------------------------------------
+; Joystick
+; launch joystick calibration program
+;
+; in:    none
+; out:   exits via Launch
+;------------------------------------------------------------------------------
 Joystick
          jsr   LoadStandardPrelaunch
 

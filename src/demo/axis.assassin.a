@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT axis_assassin, $3EB1
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$84
          sta   $3ECC
@@ -63,11 +61,9 @@ callback
          jmp   $100
 +        rts
 
-axis_assassin
-         !byte axis_assassin_e-axis_assassin_b
-axis_assassin_b
-         !text "X/AXIS.ASSASSIN/AXIS.ASSASSIN"
-axis_assassin_e
+title    !byte x_e-x_b
+x_b      !text "AXIS.ASSASSIN"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

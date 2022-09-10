@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
          lda   #$60
          sta   $81c
@@ -24,12 +23,11 @@
          lda   #3
          sta   $60CC
          sta   $6042
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          jmp   $4000
 
 title    !byte x_e-x_b
-x_b      !text "X/ALIEN.AMBUSH/ALIEN.AMBUSH"
+x_b      !text "ALIEN.AMBUSH"
 x_e
 
 !if * > $3F0 {

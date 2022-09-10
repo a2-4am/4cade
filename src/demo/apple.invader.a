@@ -12,13 +12,11 @@
 
          lda   $7fe
          pha
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL
          pla
          sta   $7fe       ; overwritten by GS acceleration
 
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $6020
@@ -55,18 +53,16 @@
          sta   $46C0+2    ; exit on keypress
          sta   $4A9B      ; exit at end of demo loop (moved to $1E37+2)
 
-         +READ_RAM2_NO_WRITE
          lda   $7fe
          pha
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          pla
          sta   $7fe       ; overwritten by GS acceleration
 
          jmp   $5F00
 
 title    !byte x_e-x_b
-x_b      !text "X/APPLE.INVADER/APPLE.INVADER"
+x_b      !text "APPLE.INVADER"
 x_e
 
 !if * > $300 {

@@ -517,6 +517,13 @@
          bne   -
 }
 
+!macro   LOAD_XSINGLE .title {
+         +READ_RAM1_WRITE_RAM1
+         +LDADDR .title
+         jsr   iLoadXSingle
+         +READ_ROM_NO_WRITE
+}
+
 ; Macros for demo launchers that need to check whether they should run
 ; on the current machine. Exit demo if the requirements are not met.
 !macro   GAME_REQUIRES_JOYSTICK {

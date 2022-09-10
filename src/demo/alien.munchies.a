@@ -8,10 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $1638
@@ -53,7 +51,7 @@ patch2   !byte $10,$0A,$4C,$00,$01
 patch3   !byte $4C,$00,$01
 
 title    !byte x_e-x_b
-x_b      !text "X/ALIEN.MUNCHIES/ALIEN.MUNCHIES"
+x_b      !text "ALIEN.MUNCHIES"
 x_e
 
 !if * > $3F0 {

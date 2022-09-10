@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $604E
@@ -56,7 +55,7 @@ count    !byte $3D        ; number of 0.16395694 second WAIT cycles
                           ; 61 cycles (hex $3D) of A=256 WAIT = 10 seconds
 
 title    !byte x_e-x_b
-x_b      !text "X/AO/AO"
+x_b      !text "AO"
 x_e
 
 !if * > $BDFF {

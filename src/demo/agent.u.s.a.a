@@ -8,9 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT title, $00
-         +READ_ROM_NO_WRITE
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $36D3
@@ -46,7 +44,7 @@
          jmp   $837
 
 title    !byte x_e-x_b
-x_b      !text "X/AGENT.U.S.A/AGENT.U.S.A"
+x_b      !text "AGENT.U.S.A"
 x_e
 
 !if * > $3F0 {

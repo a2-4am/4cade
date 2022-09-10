@@ -8,9 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT alien_downpour, $00
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $201f
          jsr   $2000      ; decompress
@@ -34,13 +33,12 @@
          stx   $907A
          lda   #$D0
          sta   $6E6D
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          jmp   $73a0
 
-alien_downpour
-         !byte 31
-         !text "X/ALIEN.DOWNPOUR/ALIEN.DOWNPOUR"
+title    !byte x_e-x_b
+x_b      !text "ALIEN.DOWNPOUR"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

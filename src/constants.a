@@ -166,6 +166,7 @@ gSearchIndex = $6000
 gSearchCache = $A000
 
 ; LC RAM 1 & 2
+iLoadXSingle       = $FFE9
 iAddToPath         = $FFEC
 iLoadFileDirect    = $FFEF  ; note: you really want LC RAM 2 banked in before calling this
 WaitForVBL         = $FFF2
