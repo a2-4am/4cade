@@ -90,6 +90,7 @@
 - Pengo
 - Pig Pen
 - Planetoids
+- Quasar
 - Raiders of the Lost Ring
 - Rainbow Zone
 - Rear Guard
