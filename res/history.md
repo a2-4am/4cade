@@ -110,6 +110,7 @@
 - Sadar's Revenge
 - Sanitron
 - Sheila
+- Shooting Gallery
 - Shuttle Intercept
 - Space Kadet
 - Space Race
