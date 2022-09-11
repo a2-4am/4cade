@@ -64,6 +64,7 @@
 - Hellstorm
 - Infiltrator
 - Infiltrator 2
+- Invasion Force
 - It's The Pits
 - J-Bird
 - Jellyfish
