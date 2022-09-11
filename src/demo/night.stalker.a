@@ -3,7 +3,7 @@
 
 !cpu 6502
 !to "res/DEMO/NIGHT.STALKER",plain
-*=$a000
+*=$BD00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -18,10 +18,8 @@
          eor   #$A5
          sta   $618E                 ; fix reset checksum
                                      ; (game picks up vectors from un-initialized memory)
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT night_stalker, $00
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $6017
          sta   $603F
@@ -100,6 +98,6 @@ patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03,$4C,$00,$01,$60,$AD,$6F,$03,$05,$
 }
 x_e
 
-night_stalker
-         !byte 29
-         !text "X/NIGHT.STALKER/NIGHT.STALKER"
+title    !byte xx_e-xx_b
+xx_b     !text "NIGHT.STALKER"
+xx_e

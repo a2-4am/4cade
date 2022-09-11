@@ -8,29 +8,15 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #5-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #$60
          sta   $3ec9
          sta   $3f09
          jsr   $3e97      ; decompress
 
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
 
          lda   #$4C
          sta   $653F
@@ -75,12 +61,8 @@
 
          jmp   $a300
 
-newpath
-         !byte 4
-         !text "X/BU"
-
 title    !byte x_e-x_b
-x_b      !text "X/BU/BU"
+x_b      !text "BU"
 x_e
 
 !if * > $3F0 {

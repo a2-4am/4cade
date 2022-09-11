@@ -3,20 +3,13 @@
 
 !cpu 6502
 !to "res/DEMO/ROBOTRON.2084",plain
-*=$BF70
+*=$9000
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
+         +ENABLE_ACCEL
+         +LOAD_XSINGLE title
 
          lda   #<callback
          sta   $141D+1
@@ -39,8 +32,7 @@ callback ldx   #6-1
          lda   #$D0
          sta   $053B      ; disable sound
 
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
 
          jmp   $4015
 
@@ -49,7 +41,7 @@ patch1   !byte $AD,$88,$C0,$6C,$FC,$FF
 patch2   !byte $4C,$42,$45
 
 title    !byte x_e-x_b
-x_b      !text "X/ROBOTRON.2084/ROBOTRON.2084"
+x_b      !text "ROBOTRON.2084"
 x_e
 
 !if * > $C000 {
