@@ -23,6 +23,7 @@
 - Bongo's Bash
 - Boulder Dash II
 - Bug Battle
+- ButcherBob '86
 - C'est La Vie
 - California Raisins
 - Captain Power
