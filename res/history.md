@@ -75,6 +75,7 @@
 - Lemmings (Sirius)
 - Lemmings (deater's demake)
 - Lethal Labyrinth
+- Lunar Explorer
 - Lunar Leepers
 - MIRV
 - Marauder
