@@ -84,6 +84,7 @@
 - Mine Sweep
 - Mouskattack
 - Mutant
+- Narnia
 - Neon
 - Neut Tower
 - Neutrons
@@ -94,6 +95,8 @@
 - Pegasus ][
 - Pengo
 - Pig Pen
+- Pill Box
+- Planet Protector
 - Planetoids
 - Quasar
 - Raiders of the Lost Ring
