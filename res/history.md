@@ -77,7 +77,8 @@
 - Lethal Labyrinth
 - Lunar Explorer
 - Lunar Leepers
-- MIRV
+- M.I.R.V
+- Mapple
 - Marauder
 - Mazeblox
 - Mine Sweep
