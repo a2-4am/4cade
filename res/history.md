@@ -22,6 +22,7 @@
 - Bloodsuckers
 - Bongo's Bash
 - Boulder Dash II
+- Bubble Head
 - Bug Battle
 - ButcherBob '86
 - C'est La Vie
@@ -94,6 +95,7 @@
 - Peeping Tom
 - Pegasus ][
 - Pengo
+- People Pong
 - Pig Pen
 - Pill Box
 - Planet Protector
@@ -112,6 +114,7 @@
 - Sheila
 - Shooting Gallery
 - Shuttle Intercept
+- Smooth Max
 - Space Kadet
 - Space Race
 - Space Rescue
@@ -141,7 +144,9 @@
 - The Snapper
 - The Space Ark
 - The Voyage of the Valkyrie
+- Thunderbird GX
 - Time Pilot
+- Time Tunnels
 - Titan Cronus
 - Torax
 - Torpedo Terror
