@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ROBOTICS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2090
+         jsr   $2000       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2C
+         sta   $6BA6       ; patch - don't decrease time
+         lda   #$A5
+         sta   $6AE6       ; patch - don't decrease lives
+         sta   $73B5       ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $130C
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
