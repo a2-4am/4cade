@@ -31,12 +31,12 @@
          lda   #$4C
          sta   $0A06
          sta   $1605
-         lda   #0
-         sta   $0A06+1
-         sta   $1605+1
-         lda   #1
-         sta   $0A06+2
-         sta   $1605+2    ; set exits
+         inx
+         stx   $0A06+1
+         stx   $1605+1
+         inx
+         stx   $0A06+2
+         stx   $1605+2    ; set exits
 
          lda   #$D0
          sta   $AC64      ; disable sound

@@ -18,10 +18,10 @@
          lda   #$4C
          sta   $4FD7      ; exit on keypress
          sta   $4F96      ; exit at end of demo
-         lda   #0
-         sta   $4FD7+1
-         lda   #1
-         sta   $4FD7+2
+         ldx   #0
+         stx   $4FD7+1
+         inx
+         stx   $4FD7+2
 
                           ; doesn't try to detect joystick or joystick buttons
 
@@ -43,8 +43,7 @@ callback lda   $C000
          lda   #$FF
          jsr   $FCA8      ; WAIT 0.16395694 seconds
          dec   count
-         beq   +
-         jmp   callback
+         bne   callback
 +        jmp   $100
 
 count    !byte $3D        ; number of 0.16395694 second WAIT cycles
