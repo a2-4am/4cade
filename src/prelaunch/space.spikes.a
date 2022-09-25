@@ -49,6 +49,8 @@ callback2
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         lda   #$21
+         jsr   $FCA8       ; allow joystick timers to expire
          jmp   $A00
 }
 
