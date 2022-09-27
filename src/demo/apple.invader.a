@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/APPLE.INVADER",plain
@@ -12,7 +12,7 @@
 
          lda   $7fe
          pha
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          pla
          sta   $7fe       ; overwritten by GS acceleration
 

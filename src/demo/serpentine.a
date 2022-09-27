@@ -28,34 +28,25 @@ callback1
          rts
 
 callback2
-         lda   #$4C
-         sta   $96AA
-         sta   $8834
-         lda   #$A9
-         sta   $9702
-         sta   $9707
-         sta   $91B
-         sta   $920
-         lda   #<reset
-         sta   $96AB
-         sta   $8835
-         lda   #0
-         sta   $9703
-         sta   $9708
-         sta   $91C
-         sta   $921
-         lda   #>reset
-         sta   $96AC
-         sta   $8836
-         lda   #$EA
-         sta   $9704
-         sta   $9709
-         sta   $91D
-         sta   $922
+         ldx   #3-1
+-        lda   patch,x
+         sta   $8834,x
+         sta   $96AA,x
+         lda   patch2,x
+         sta   $9702,x
+         sta   $9707,x
+         sta   $91B,x
+         sta   $920,x
+         dex
+         bpl   -
+
          lda   #$D0
          sta   $962D
          +DISABLE_ACCEL
          jmp   $800
+
+patch    !byte $4C,<reset,>reset
+patch2   !byte $A9,$00,$EA
 
 serpentine
          !byte serpentine_e-serpentine_b

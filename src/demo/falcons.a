@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/FALCONS",plain
@@ -17,17 +17,16 @@
          lda   #$2C
          sta   $602A      ; skip input selection
 
-         lda   #$4C
-         sta   $9FF7
-         sta   $9FDC
-         lda   #0
-         sta   $9FF7+1
-         sta   $9FDC+1
-         lda   #1
-         sta   $9FF7+2
-         sta   $9FDC+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $9FF7,x
+         sta   $9FDC,x    ; set exits
+         dex
+         bpl   -
 
          jmp   $6000
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "FALCONS"

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/SAMMY.LIGHTFOOT",plain
@@ -10,20 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #18-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR sammy_lightfoot, sammy_lightfoot_dir_e-sammy_lightfoot_dir_b
          lda   #$60
          sta   $4094
          lda   #$FF
@@ -31,37 +18,23 @@
          jsr   $4000      ; decompress 1
          jsr   $B7B5      ; decompress 2
 
-         lda   #$A9
-         sta   $022B
-         lda   #$01
-         sta   $022B+1
-         lda   #$EA
-         sta   $022B+2    ; disable initial key detection
-
          lda   #$10
          sta   $68C5      ; clear keyboard strobe
 
          lda   #$04
          sta   $4FBE      ; reduce number of sparkles
 
-         lda   #$4C
-         sta   $B050
-         sta   $7DB9
-         sta   $B15A
-         sta   $5035
-         sta   $5184      ; (moved to $7864)
-         lda   #0
-         sta   $B050+1
-         sta   $7DB9+1
-         sta   $B15A+1
-         sta   $5035+1
-         sta   $5184+1
-         lda   #1
-         sta   $B050+2
-         sta   $7DB9+2
-         sta   $B15A+2
-         sta   $5035+2
-         sta   $5184+2    ; set exits
+         ldx   #3-1
+-        lda   patch1,x
+         sta   $22B,x     ; disable initial key detection
+         lda   patch2,x
+         sta   $B050,x
+         sta   $7DB9,x
+         sta   $B15A,x
+         sta   $5035,x
+         sta   $5184,x    ; (moved to $7864)
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $6EE9      ; disable sound
@@ -73,13 +46,17 @@
          +DISABLE_ACCEL
          jmp   $B7A1
 
-newpath
-         !byte 17
-         !text "X/SAMMY.LIGHTFOOT"
+patch1   !byte $A9,$01,$EA
+patch2   !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "X/SAMMY.LIGHTFOOT/SAMMY.LIGHTFOOT"
-x_e
+sammy_lightfoot
+         !byte sammy_lightfoot_e-sammy_lightfoot_b
+sammy_lightfoot_b
+sammy_lightfoot_dir_b
+         !text "X/SAMMY.LIGHTFOOT"
+sammy_lightfoot_dir_e
+         !text "/SAMMY.LIGHTFOOT"
+sammy_lightfoot_e
 
 !if * > $BB00 {
   !error "code is too large, ends at ", *

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/PITFALL.II",plain
@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -17,25 +17,23 @@
          jsr   $0800      ; decompress
 
          +RESET_VECTOR reset
-         lda   #$4C
-         sta   $2DF5
-         sta   $2E06
-         lda   #<callback1
-         sta   $2DF6
-         lda   #>callback1
-         sta   $2DF7
-         lda   #<callback2
-         sta   $2E07
-         lda   #>callback2
-         sta   $2E08
-         lda   #<callback3
-         sta   $6016
-         lda   #>callback3
-         sta   $6017
+         ldx   #3-1
+-        lda   patch,x
+         sta   $2DF5,x
+         lda   patch2,x
+         sta   $2E06,x
+         lda   patch3,x
+         sta   $6015,x
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
+
+patch    !byte $4C,<callback1,>callback1
+patch2   !byte $4C,<callback2,>callback2
+patch3   !byte $4C,<callback3,>callback3
 
 reset
          +READ_RAM2_NO_WRITE
@@ -58,7 +56,7 @@ callback2
 
 callback3
          ldx   #6-1
-p1       lda   patch, x
+p1       lda   $100, x
          sta   $6055, x
          sta   $AB43, x
          dex
@@ -70,8 +68,6 @@ p1       lda   patch, x
          lda   #$D0
          sta   $6299      ; don't lose keypress on return
          jmp   $ADE0
-
-patch    !byte $AD,$88,$C0,$6C,$FC,$FF
 
 title    !byte x_e-x_b
 x_b      !text "PITFALL.II"

@@ -297,9 +297,14 @@
 
 ; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
 !macro   ENABLE_ACCEL {
+         +ENABLE_ACCEL_LC
+         +READ_ROM_NO_WRITE
+}
+
+; leave LC active on exit
+!macro   ENABLE_ACCEL_LC {
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         +READ_ROM_NO_WRITE
 }
 
 !macro   DISABLE_ACCEL {

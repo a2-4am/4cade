@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/N.O.R.A.D",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -17,18 +17,13 @@
 
          lda   #$1D
          sta   $0DB5+4
-         lda   #$4C
-         sta   $0DD7
-         sta   $0E64
-         sta   $0E4C      ; instead of $443D, this shows lores 'flash' at demo cycle end
-         lda   #0
-         sta   $0DD7+1
-         sta   $0E64+1
-         sta   $0E4C+1
-         lda   #1
-         sta   $0DD7+2
-         sta   $0E64+2
-         sta   $0E4C+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0DD7,x
+         sta   $0E64,x
+         sta   $0E4C,x    ; instead of $443D, this shows lores 'flash' at demo cycle end
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $0DE7+2
@@ -38,6 +33,8 @@
          +DISABLE_ACCEL
 
          jmp   $0EDD
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "N.O.R.A.D"

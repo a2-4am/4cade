@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/STARGATE",plain
@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -24,25 +24,20 @@
          sta   $0933
          lda   #$1E
          sta   $0933+1
-         lda   #$4C
-         sta   $0933+2
-         sta   $0905
-         sta   $51C7
-         sta   $51D2
-         lda   #0
-         sta   $0933+3
-         sta   $0905+1
-         sta   $51C7+1
-         sta   $51D2+1
-         sta   $47F2      ; fix reset (moved to $3F2/$3F3/$3F4)
-         sta   $47FE      ; fix IRQ (moved to $3FE/$3FF)
-         lda   #1
-         sta   $0933+4
-         sta   $0905+2
-         sta   $51C7+2
-         sta   $51D2+2    ; set exits
-         sta   $47F2+1
-         sta   $47FE+1
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0933+2,x
+         sta   $0905,x
+         sta   $51C7,x
+         sta   $51D2,x    ; set exits
+         dex
+         bpl   -
+         ldx   #2-1
+-        txa
+         sta   $47F2,x    ; fix reset (moved to $3F2/$3F3/$3F4)
+         sta   $47FE,x    ; fix IRQ (moved to $3FE/$3FF)
+         dex
+         bpl   -
          lda   #$A4
          sta   $47F2+2    ; fix reset checksum
 
@@ -59,6 +54,8 @@
          +DISABLE_ACCEL
 
          jmp   $5000
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "STARGATE"

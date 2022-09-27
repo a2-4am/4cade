@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/GALAXIAN",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -26,15 +26,11 @@
 
          ldx   #5-1
 -        lda   patch1, x
-         sta   $8E5, x
+         sta   $8E5, x    ; exit on keypress during title screen
+         lda   patch2, x
+         sta   $E50, x    ; exit on keypress during demo
          dex
-         bpl   -          ; exit on keypress during title screen
-
-         ldx   #5-1
--        lda   patch2, x
-         sta   $E50, x
-         dex
-         bpl   -          ; exit on keypress during demo
+         bpl   -
 
          lda   #<callback
          sta   $8FF+1
@@ -46,10 +42,10 @@
 
 callback dec   count
          bne   +
-         lda   #0
-         sta   $8FF+1
-         lda   #1
-         sta   $8FF+2     ; exit after 3 times
+         ldx   #0
+         stx   $8FF+1
+         inx
+         stx   $8FF+2     ; exit after 3 times
 +        jmp   $A00
 
 count    !byte $03

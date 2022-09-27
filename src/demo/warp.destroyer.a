@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/WARP.DESTROYER",plain
@@ -10,22 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #17-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
-         +READ_ROM_NO_WRITE
-
+         +LOAD_FILE_KEEP_DIR warp_destoyer, warp_destoyer_dir_e-warp_destoyer_dir_b
          lda   #$4C
          sta   $893
          jsr   $800       ; decompress, show title
@@ -40,12 +25,11 @@
          lda   #$13       ; disable unknown hardware support
          sta   $76D2      ; otherwise hangs on IIgs
 
-         lda   #$A9
-         sta   $7AA6
-         lda   #$CB
-         sta   $7AA6+1
-         lda   #$EA
-         sta   $7AA6+2    ; auto-select keyboard control
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7AA6,x    ; auto-select keyboard control
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $65D6      ; disable sound
@@ -57,31 +41,28 @@
          lda   #0
          jsr   $896       ; memory move, show second title
 
-         lda   #$4C
-         sta   $8051
-         sta   $8107
-         sta   $8157
-         sta   $839D
-         lda   #0
-         sta   $8051+1
-         sta   $8107+1
-         sta   $8157+1
-         sta   $839D+1
-         lda   #1
-         sta   $8051+2
-         sta   $8107+2
-         sta   $8157+2
-         sta   $839D+2    ; set exits
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $8051,x
+         sta   $8107,x
+         sta   $8157,x
+         sta   $839D,x    ; set exits
+         dex
+         bpl   -
 
          jmp   $667D
 
-newpath
-         !byte 16
-         !text "X/WARP.DESTROYER"
+patch    !byte $A9,$CB,$EA
+patch2   !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "X/WARP.DESTROYER/WARP.DESTROYER"
-x_e
+warp_destoyer
+         !byte warp_destoyer_e-warp_destoyer_b
+warp_destoyer_b
+warp_destoyer_dir_b
+         !text "X/WARP.DESTROYER"
+warp_destoyer_dir_e
+         !text "/WARP.DESTROYER"
+warp_destoyer_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

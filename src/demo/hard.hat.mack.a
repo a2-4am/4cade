@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/HARD.HAT.MACK",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #<patcher
@@ -25,25 +25,17 @@ patcher  rts
          sta   $BF7
          sta   $72B9
 
-         lda   #$4C
-         sta   $0BD0
-         sta   $0C82
-         lda   #0
-         sta   $0BD0+1
-         sta   $0C82+1
-         lda   #1
-         sta   $0BD0+2
-         sta   $0C82+2    ; exit on keypress
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $0BD0,x
+         sta   $0C82,x    ; exit on keypress
+         lda   patch3,x
+         sta   $7249,x    ; exit at end of demo cycle
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $5E4E      ; disable sound
-
-         lda   #$20
-         sta   $7249
-         lda   #6
-         sta   $7249+1
-         lda   #1
-         sta   $7249+2    ; exit at end of demo cycle
 
          ldx   #13-1
 -        lda   patch, x
@@ -64,6 +56,8 @@ x_b      !text "HARD.HAT.MACK"
 x_e
 
 patch    !byte $8D,$10,$72,$8D,$13,$72,$8D,$14,$72,$EE,$14,$72,$60
+patch2   !byte $4C,$00,$01
+patch3   !byte $20,$06,$01
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

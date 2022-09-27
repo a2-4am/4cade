@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/FLIP.OUT",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -37,18 +37,14 @@
          lda   #$1C
          sta   $6474+1
          sta   $685E+1
-         lda   #$4C
-         sta   $6474+2
-         sta   $685E+2
-         sta   $78CD
-         lda   #0
-         sta   $6474+3
-         sta   $685E+3
-         sta   $78CD+1
-         lda   #1
-         sta   $6474+4
-         sta   $685E+4
-         sta   $78CD+2    ; set exits
+
+         ldx   #3-1
+-        lda   patch3,x
+         sta   $6474+2,x
+         sta   $685E+2,x
+         sta   $78CD,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $7716
@@ -63,8 +59,8 @@ x_b      !text "FLIP.OUT"
 x_e
 
 patch1   !byte $B0,$08,$AD,$00,$C0,$10,$1F,$4C,$00,$01,$20,$69,$8B
-
-patch2   !byte $10,$03,$4C,$00,$01,$EA,$EA
+patch2   !byte $10,$03
+patch3   !byte $4C,$00,$01,$EA,$EA
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

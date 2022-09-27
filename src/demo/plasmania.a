@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/PLASMANIA",plain
@@ -23,35 +23,28 @@ callback
          lda   #$2C
          sta   $7352      ; silence voice
 
-         lda   #$4C
-         sta   $609C
-         sta   $6139
-         sta   $614C
-         sta   $65B7
-         sta   $8C31
-         sta   $8C5B
-         lda   #0
-         sta   $609C+1
-         sta   $6139+1
-         sta   $614C+1
-         sta   $65B7+1
-         sta   $8C31+1
-         sta   $8C5B+1
-         sta   $87BE
-         sta   $87CC
-         sta   $8AEE
-         sta   $8B89
-         sta   $8B91
-         sta   $8C21       ; disable sound
-         lda   #1
-         sta   $609C+2
-         sta   $6139+2
-         sta   $614C+2
-         sta   $65B7+2
-         sta   $8C31+2
-         sta   $8C5B+2     ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $609C,x
+         sta   $6139,x
+         sta   $614C,x
+         sta   $65B7,x
+         sta   $8C31,x
+         sta   $8C5B,x    ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $87BE
+         stx   $87CC
+         stx   $8AEE
+         stx   $8B89
+         stx   $8B91
+         stx   $8C21       ; disable sound
 
          jmp   $6000
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "X/PLASMANIA/PLASMANIA"

@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -21,19 +21,19 @@
          sta   $6A4E      ; no sound
          sta   $6A56      ; no sound
          sta   $70A8      ; no sound
-         lda   #$4C
-         sta   $6158
-         sta   $6173
-         ldx   #0
-         stx   $61C1
-         inx
-         stx   $615A
-         stx   $6175
-         stx   $61C2
+         ldx   #3-1
+-        lda   patch,x
+         sta   $6158,x
+         sta   $6173,x
+         sta   $61C0,x
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   $9400
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "KAMIKAZE"

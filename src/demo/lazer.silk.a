@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/LAZER.SILK",plain
@@ -8,37 +8,24 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $404B
          jsr   $4000      ; decompress
 
-         lda   #$4C
-         sta   $14D5
-         sta   $14E5
-         sta   $1125
-         sta   $16E8
-         sta   $0C3D
-         sta   $0C5B
-         sta   $0D04
-         lda   #0
-         sta   $14D5+1
-         sta   $14E5+1
-         sta   $1125+1
-         sta   $16E8+1
-         sta   $0C3D+1
-         sta   $0C5B+1
-         sta   $0D04+1
-         lda   #1
-         sta   $14D5+2
-         sta   $14E5+2
-         sta   $1125+2
-         sta   $16E8+2
-         sta   $0C3D+2
-         sta   $0C5B+2
-         sta   $0D04+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $14D5,x
+         sta   $14E5,x
+         sta   $1125,x
+         sta   $16E8,x
+         sta   $0C3D,x
+         sta   $0C5B,x
+         sta   $0D04,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$1F
          sta   $0D01      ; reduce time spent on final screen
@@ -52,6 +39,8 @@
          +DISABLE_ACCEL
 
          jmp   ($0020)
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "LAZER.SILK"

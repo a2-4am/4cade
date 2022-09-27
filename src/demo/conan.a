@@ -35,22 +35,20 @@
          lda   #$6C
          sta   $BD40
          jsr   $6BA5
-         lda   #$4C
-         sta   $A4E2
-         sta   $A4D3
-         ldx   #0
-         stx   $A4E3
-         stx   $A4D4
-         stx   $A0D5
-         inx
-         stx   $A4E4
-         stx   $A4D5
-         stx   $A0D6
+         ldx   #3-1
+-        lda   patch,x
+         sta   $A4E2,x
+         sta   $A4D3,x
+         sta   $A0D4,x
+         dex
+         bpl   -
          lda   $C057
          lda   $C052
          lda   $C050
          +DISABLE_ACCEL
          jmp   $A000
+
+patch    !byte $4C,$00,$01
 
 conan
          !byte conan_e-conan_b
@@ -58,10 +56,5 @@ conan_b
 conan_dir_b
          !text "X/CONAN"
 conan_dir_e
-conan_main
-         !text "/"
-conan_main_b
-         !text "CONAN"
+         !text "/CONAN"
 conan_e
-         !text ".MAIN"
-conan_main_e

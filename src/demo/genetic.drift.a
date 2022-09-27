@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -16,18 +16,18 @@
          jsr   $800       ; decompress
          lda   #$60
          sta   $8439
-         lda   #$4C
-         sta   $FC9
-         ldx   #0
-         stx   $FCA
-         inx
-         stx   $FCB
+         ldx   #3-1
+-        lda   patch,x
+         sta   $FC9,x
+         dex
+         bpl   -
          jsr   $8490      ; decompress more
 
          +DISABLE_ACCEL
 
          jsr   $F00
-         jmp   $100
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "GENETIC.DRIFT"

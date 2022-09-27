@@ -34,15 +34,14 @@
          +DISABLE_ACCEL
          jsr   $4000      ; title
          jsr   $60F       ; load level
-         ldx   #0
-         stx   $87D
-         stx   $12C4
-         stx   $12CC
-         inx
-         stx   $87E
-         stx   $12C5
-         stx   $12CD
+         ldx   #2-1
          stx   $A0D
+-        txa
+         sta   $87D,x
+         sta   $12C4,x
+         sta   $12CC,x
+         dex
+         bpl   -
          lda   #$4C
          sta   $12CB
          lda   #$D0

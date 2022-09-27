@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/PM",plain
@@ -10,20 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #5-1       ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR pieman, pieman_dir_e-pieman_dir_b
          +ENABLE_ACCEL
          lda   #$60
          sta   $3EA9
@@ -40,31 +27,27 @@
 
          +RESET_AND_IRQ_VECTOR $100
 
-         lda   #$4C
-         sta   $0EA6
-         sta   $13B7
-         sta   $09A1
-         lda   #0
-         sta   $0EA6+1
-         sta   $13B7+1
-         lda   #1
-         sta   $0EA6+2
-         sta   $13B7+2    ; set exits
-
-         lda   #$97
-         sta   $09A1+1
-         lda   #$0A
-         sta   $09A1+2    ; start quiet demo immediately
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0EA6,x
+         sta   $13B7,x    ; set exits
+         lda   patch2,x
+         sta   $09A1,x    ; start quiet demo immediately
+         dex
+         bpl   -
 
          jmp   $0950
 
-newpath
-         !byte 4
-         !text "X/PM"
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,$97,$0A
 
-title    !byte x_e-x_b
-x_b      !text "X/PM/PM"
-x_e
+pieman   !byte pieman_e-pieman_b
+pieman_b
+pieman_dir_b
+         !text "X/PM"
+pieman_dir_e
+         !text "/PM"
+pieman_e
 
 !if * > $2FF {
   !error "code is too large, ends at ", *

@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$B9
@@ -17,10 +17,13 @@
          sta   $0858
          jsr   $0800      ; decompress
 
-         lda   #$4C
-         sta   $621F
-         ldx   #0
-         stx   $6220
+         ldx   #3-1
+-        lda   patch,x
+         sta   $621F,x
+         dex
+         bpl   -
+
+         inx
          stx   $7807
          stx   $78ae
          stx   $7a11
@@ -32,7 +35,6 @@
          stx   $6C13
          stx   $7975
          inx
-         stx   $6221
          stx   $7808
          stx   $78af
          stx   $7a19
@@ -44,6 +46,8 @@
          +DISABLE_ACCEL
 
          jmp   $7680
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "SNAKE.BYTE"

@@ -23,16 +23,16 @@ callback
          jsr   $2000
          lda   #$44
          sta   $7A34
-         lda   #$4C
-         sta   $8E1C
-         ldx   #0
-         stx   $7F70
-         stx   $8E1D
-         inx
-         stx   $7F71
-         stx   $8E1E
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7F6F,x
+         sta   $8E1C,x
+         dex
+         bpl   -
          +DISABLE_ACCEL
          jmp   $1832
+
+patch    !byte $4C,$00,$01
 
 spare_change
          !byte spare_change_e-spare_change_b

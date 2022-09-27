@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/BUZZARD.BAIT",plain
@@ -8,35 +8,28 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $0827
          jsr   $0800      ; decompress
 
-         lda   #$4C
-         sta   $1067
-         sta   $1B31
-         sta   $7A6B
-         sta   $80DD
-         sta   $81FE
-         lda   #0
-         sta   $1067+1
-         sta   $1B31+1
-         sta   $7A6B+1
-         sta   $80DD+1
-         sta   $81FE+1
-         lda   #1
-         sta   $1067+2
-         sta   $1B31+2
-         sta   $7A6B+2
-         sta   $80DD+2
-         sta   $81FE+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $1067,x
+         sta   $1B31,x
+         sta   $7A6B,x
+         sta   $80DD,x
+         sta   $81FE,x    ; set exits
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   $8000
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "BUZZARD.BAIT"

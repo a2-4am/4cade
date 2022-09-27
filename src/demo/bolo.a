@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/BOLO",plain
@@ -8,25 +8,20 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $8034
          jsr   $4ab0      ; decompress and show title
 
-         lda   #$4C
-         sta   $129A
-         sta   $15F8
-         sta   $5D8A      ; (later moved to $7D8A)
-         lda   #0
-         sta   $129A+1
-         sta   $15F8+1
-         sta   $5D8A+1
-         lda   #1
-         sta   $129A+2
-         sta   $15F8+2
-         sta   $5D8A+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $129A,x
+         sta   $15F8,x
+         sta   $5D8A,x    ; (later moved to $7D8A)
+         dex
+         bpl   -          ; set exits
 
          lda   #$D0
          sta   $4E7A      ; (later moved to $6E7A)
@@ -36,6 +31,8 @@
          +DISABLE_ACCEL
 
          jmp   $1100
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "BOLO"

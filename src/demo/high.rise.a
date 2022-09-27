@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/HIGH.RISE",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -20,19 +20,18 @@
          sta   $44AD
          sta   $44B0      ; reset vector fix
 
-         lda   #$4C
-         sta   $455D
-         sta   $4695
-         lda   #0
-         sta   $455D+1
-         sta   $4695+1
-         lda   #1
-         sta   $455D+2
-         sta   $4695+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $455D,x
+         sta   $4695,x    ; set exits
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   $449A
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "HIGH.RISE"

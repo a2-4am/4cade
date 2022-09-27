@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/AQUATRON",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #>(callback - 1)
@@ -18,15 +18,12 @@
          jmp   $59C2      ; decompress
 
 callback
-         lda   #$4C
-         sta   $7AE1
-         sta   $7D1D
-         lda   #0
-         sta   $7AE1+1
-         sta   $7D1D+1
-         lda   #1
-         sta   $7AE1+2
-         sta   $7D1D+2     ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7AE1,x
+         sta   $7D1D,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $7E11
@@ -37,6 +34,8 @@ callback
          +DISABLE_ACCEL
 
          jmp   $400
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "AQUATRON"

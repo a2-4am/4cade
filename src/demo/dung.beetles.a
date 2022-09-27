@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/DUNG.BEETLES",plain
@@ -8,21 +8,15 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $603A
          jsr   $6000      ; decompress
 
-         lda   #1
-         sta   $083E      ; reset vector patch
-         lda   #$4C
-         sta   $847
-         lda   #0
-         sta   $848
-         lda   #$96       ; patch $847 - JMP ($3F2)
-         sta   $849       ; to JMP $9600
+         ldx   #1
+         stx   $083E      ; reset vector patch
 
          lda   #$60
          sta   $847
@@ -34,15 +28,12 @@
          dex
          bpl   -          ; disable button support on title screen
 
-         lda   #$4C
-         sta   $9B7D
-         sta   $97D5
-         lda   #0
-         sta   $9B7D+1
-         sta   $97D5+1
-         lda   #1
-         sta   $9B7D+2
-         sta   $97D5+2    ; set exits
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $9B7D,x
+         sta   $97D5,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $1C17
@@ -55,6 +46,7 @@
          jmp   $9600
 
 patch    !byte $A9,$01,$EA,$EA,$EA,$EA
+patch2   !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "DUNG.BEETLES"

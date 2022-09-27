@@ -8,32 +8,27 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          lda   #$60
          sta   $0813
          jsr   $0800      ; decompress
-         lda   #$4C
-         sta   $602F
-         sta   $6BD4
-         sta   $66D2
-         ldx   #0
-         stx   $6030
-         stx   $6BD5
-         inx
-         stx   $6031
-         stx   $6BD6
-         stx   $66D4
-         lda   #$EE
-         sta   $66CA
-         lda   #<counter
-         sta   $66CB
-         lda   #>counter
-         sta   $66CC
+         ldx   #3-1
+-        lda   patch,x
+         sta   $602F,x
+         sta   $6BD4,x
+         sta   $66D2,x
+         lda   patch2,x
+         sta   $66CA,x
+         dex
+         bpl   -
          +DISABLE_ACCEL
          jmp   $6000
 
 counter  !byte $FD
+
+patch    !byte $4C,$00,$01
+patch2   !byte $EE,<counter,>counter
 
 title    !byte x_e-x_b
 x_b      !text "BELLHOP"

@@ -14,18 +14,15 @@
          lda   #$60
          sta   $0853
          jsr   $0800      ; decompress
-         lda   #$4C
-         sta   $60D1
-         sta   $69B9
-         ldx   #0
-         stx   $60D2
-         stx   $69BA
-         stx   $6D71
-         stx   $72F3
+         ldx   #3-1
+-        lda   patch,x
+         sta   $60D1,x
+         sta   $69B9,x
+         sta   $6D70,x
+         dex
+         bpl   -
          inx
-         stx   $60D3
-         stx   $69BB
-         stx   $6D72
+         stx   $72F3
          asl   $7324
          inc   $7325
          lda   #$15
@@ -34,6 +31,8 @@
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $6000
+
+patch    !byte $4C,$00,$01
 
 sd
          !byte sd_e-sd_b

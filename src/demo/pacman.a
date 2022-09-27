@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/PACMAN",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          +NEW_RESET_VECTOR $280
@@ -22,37 +22,29 @@
          lda   #2
          sta   $104A      ; reset vector patch
 
-         lda   #$4C
-         sta   $18A6      ; (later moved to $48A6)
-         sta   $027C
-         sta   $22F9      ; (later moved to $52F9)
-         sta   $3F7C      ; (later moved to $6F7C)
-         sta   $5C0B      ; (later moved to $8C0B)
-         lda   #0
-         sta   $027C+1
-         sta   $22F9+1
-         sta   $3F7C+1
-         sta   $5C0B+1
-         lda   #1
-         sta   $027C+2
-         sta   $22F9+2
-         sta   $3F7C+2
-         sta   $5C0B+2
-         lda   #$CD
-         sta   $18A6+1
-         lda   #$48
-         sta   $18A6+2
-         lda   #$30
-         sta   $22F1      ; (later moved to $52F1)
-         lda   #6
-         sta   $22F1+1
+         ldx   #3-1
+-        lda   patch,x
+         sta   $027C,x
+         sta   $22F9,x    ; (later moved to $52F9)
+         sta   $3F7C,x    ; (later moved to $6F7C)
+         sta   $5C0B,x    ; (later moved to $8C0B)
+         lda   patch2,x
+         sta   $18A6,x    ; (later moved to $48A6)
+         lda   patch3,x
+         sta   $22F1,x    ; (later moved to $52F1)
+         dex
+         bpl   -
+
          lda   #$EA
-         sta   $22F1+2
          sta   $22F1+3    ; set exits
 
          +DISABLE_ACCEL
 
          jmp   $1000
+
+patch2   !byte $4C,$CD,$48
+patch    !byte $4C,$00,$01
+patch3   !byte $30,$06,$EA
 
 title    !byte x_e-x_b
 x_b      !text "PACMAN"

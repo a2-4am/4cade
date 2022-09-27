@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/GUMBALL",plain
@@ -10,51 +10,28 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #10-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR gumball, gumball_dir_e-gumball_dir_b
          lda   #$60
          sta   $851
          jsr   $800       ; load "DOS"
-         lda   #$20
-         sta   $B21E
-         lda   #<callback1
-         sta   $B21F
-         lda   #>callback1
-         sta   $B220
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $B21E,x
+         dex
+         bpl   -
          +DISABLE_ACCEL
          jmp   $B2F1      ; stage 1 (title screen and credits)
 
 callback1
-         lda   #$A5       ; restore original code so callback
-         sta   $B21E      ; won't be called more than once
-         lda   #$5F
-         sta   $B21F
-         lda   #$0A
-         sta   $B220
-
-         lda   #$4C
-         sta   $0DFB
-         lda   #0
-         sta   $0DFB+1
-         lda   #1
-         sta   $0DFB+2    ; exit on button press or keypress
-
-         lda   #<callback2
-         sta   $0FD0+1
-         lda   #>callback2
-         sta   $0FD0+2    ; continue to demo stage 2 after end of demo stage 1
+         ldx   #3-1
+-        lda   patch3,x   ; restore original code so callback
+         sta   $B21E,x    ; won't be called more than once
+         lda   patch4,x
+         sta   $0DFB,x    ; exit on button press or keypress
+         lda   patch5,x
+         sta   $0FD0,x    ; continue to demo stage 2 after end of demo stage 1
+         dex
+         bpl   -
 
          lda   $5F
          asl
@@ -63,35 +40,38 @@ callback1
 +        rts
 
 callback2
-         lda   #$4C
-         sta   $B22B
-         lda   #<callback3
-         sta   $B22B+1
-         lda   #>callback3
-         sta   $B22B+2
+         ldx   #3-1
+-        lda   patch,x
+         sta   $B22B,x
+         dex
+         bpl   -
 
          jmp   $E02
 
+patch    !byte $4C,<callback3,>callback3
+
 callback3
-         lda   #$4C
-         sta   $0DF6
-         sta   $12F6
-         lda   #0
-         sta   $0DF6+1
-         sta   $12F6+1
-         lda   #1
-         sta   $0DF6+2
-         sta   $12F6+2    ; stage 2 (demo play) - set exits
+         ldx   #3-1
+-        lda   patch4,x
+         sta   $0DF6,x
+         sta   $12F6,x    ; stage 2 (demo play) - set exits
+         dex
+         bpl   -
 
          jmp   $31F9
 
-newpath
-         !byte 9
-         !text "X/GUMBALL"
+patch2   !byte $20,<callback1,>callback1
+patch3   !byte $A5,$5F,$0A
+patch4   !byte $4C,$00,$01
+patch5   !byte $4C,<callback2,>callback2
 
-title    !byte x_e-x_b
-x_b      !text "X/GUMBALL/GUMBALL"
-x_e
+gumball  !byte gumball_e-gumball_b
+gumball_b
+gumball_dir_b
+         !text "X/GUMBALL"
+gumball_dir_e
+         !text "/GUMBALL"
+gumball_e
 
 !if * > $300 {
   !error "code is too large, ends at ", *

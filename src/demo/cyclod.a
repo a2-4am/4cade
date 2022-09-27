@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/CYCLOD",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -22,12 +22,11 @@
          dex
          bpl   -          ; exit on keypress
 
-         lda   #$4C
-         sta   $89EF
-         lda   #0
-         sta   $89EF+1
-         lda   #1
-         sta   $89EF+2    ; exit at end of demo cycle
+         ldx   #3-1
+-        lda   patch2, x
+         sta   $89EF,x    ; exit at end of demo cycle
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $7CED      ; disable sound
@@ -40,7 +39,8 @@ title    !byte x_e-x_b
 x_b      !text "CYCLOD"
 x_e
 
-patch    !byte $10,$03,$4C,$00,$01,$EA
+patch    !byte $10,$03
+patch2   !byte $4C,$00,$01,$EA
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

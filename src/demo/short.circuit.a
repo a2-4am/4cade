@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/SHORT.CIRCUIT",plain
@@ -10,32 +10,17 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #16-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR short_circuit, short_circuit_dir_e-short_circuit_dir_b
          lda   #$60
          sta   $207C
          jsr   $2000      ; decompress
 
-         lda   #$4C
-         sta   $A248
-         lda   #0
-         sta   $A248+1
-         sta   $A7B4+1
-         lda   #1
-         sta   $A248+2    ; set exit on keypress
-         sta   $A7B4+2    ; set exit at end of demo cycle
+         ldx   #3-1
+-        lda   patch,x
+         sta   $A248,x    ; set exit on keypress
+         sta   $A7B4,x    ; set exit at end of demo cycle
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $A654
@@ -50,13 +35,16 @@
 
          jmp   $A100
 
-newpath
-         !byte 15
-         !text "X/SHORT.CIRCUIT"
+patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "X/SHORT.CIRCUIT/SHORT.CIRCUIT"
-x_e
+short_circuit
+         !byte short_circuit_e-short_circuit_b
+short_circuit_b
+short_circuit_dir_b
+         !text "X/SHORT.CIRCUIT"
+short_circuit_dir_e
+         !text "/SHORT.CIRCUIT"
+short_circuit_e
 
 !if * > $300 {
   !error "code is too large, ends at ", *

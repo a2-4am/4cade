@@ -8,23 +8,22 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
          lda   #$60
          sta   $81c
          jsr   $800       ; decompress
-         lda   #$4C
-         sta   $60CA
-         sta   $6040
-         lda   #$E0
-         sta   $60CB
-         sta   $6041
-         lda   #3
-         sta   $60CC
-         sta   $6042
+         ldx   #3-1
+-        lda   patch,x
+         sta   $60CA,x
+         sta   $6040,x
+         dex
+         bpl   -
          +DISABLE_ACCEL
          jmp   $4000
+
+patch    !byte $4C,$E0,$03
 
 title    !byte x_e-x_b
 x_b      !text "ALIEN.AMBUSH"

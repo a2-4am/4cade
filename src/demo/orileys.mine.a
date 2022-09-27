@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -39,42 +39,32 @@
          sta   $188D
          sta   $90C2
          sta   $90CA
-         lda   #$4C
-         sta   $306D
-         sta   $95C7
-         sta   $95D5
-         sta   $94F8
-         sta   $80F9
-         sta   $8324
-         lda   #$30
-         sta   $95CD
-         ldy   #6
-         sty   $95CE
+         ldx   #3-1
+-        lda   patch,x
+         sta   $306D,x
+         sta   $95C7,x
+         sta   $95D5,x
+         sta   $94F8,x
+         sta   $80F9,x
+         sta   $8324,x
+         lda   patch2,x
+         sta   $95CD,x
+         dex
+         bpl   -
+
          lda   #$EA
-         sta   $95CF
          sta   $95D0
          lda   #$10
          sta   $80F7
-         dey
+         ldy   #5
          sty   $80F8
-         ldx   #0
-         stx   $306E
-         stx   $95C8
-         stx   $95D6
-         stx   $94F9
-         stx   $80FA
-         stx   $8325
-         inx
-         stx   $306F
-         stx   $95C9
-         stx   $95D7
-         stx   $94FA
-         stx   $80FB
-         stx   $8326
 
          +DISABLE_ACCEL
 
          jmp   $8FD
+
+patch    !byte $4C,$00,$01
+patch2   !byte $30,$06,$EA
 
 title    !byte x_e-x_b
 x_b      !text "OM"

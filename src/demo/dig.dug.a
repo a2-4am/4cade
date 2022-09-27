@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/DIG.DUG",plain
@@ -8,31 +8,28 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $826
          jsr   $800       ; decompress
 
-         lda   #$4C
-         sta   $A12E
-         sta   $A3AE
-         sta   $A3D4
-         lda   #0
-         sta   $A12E+1
-         sta   $A3D4+1
-         lda   #1
-         sta   $A12E+2
-         sta   $A3D4+2    ; set exits
-         lda   #$B9
-         sta   $A3AE+1
-         lda   #$A3
-         sta   $A3AE+2    ; skip title screen and input selection
+         ldx   #3-1
+-        lda   patch,x
+         sta   $A12E,x
+         sta   $A3D4,x    ; set exits
+         lda   patch2,x
+         sta   $A3AE,x    ; skip title screen and input selection
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   $8000
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,$B9,$A3
 
 title    !byte x_e-x_b
 x_b      !text "DIG.DUG"

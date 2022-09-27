@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/AGENT.U.S.A",plain
@@ -23,25 +23,21 @@
          rol   $3F3       ; point to $300 instead
          jsr   $FB6F
 
-         lda   #$EA
-         sta   $15DD
-         sta   $15DD+1
-         sta   $15DD+2    ; disable button press on main menu
-
-         lda   #$4C
-         sta   $0A06
-         sta   $1605
-         inx
-         stx   $0A06+1
-         stx   $1605+1
-         inx
-         stx   $0A06+2
-         stx   $1605+2    ; set exits
+         ldx   #3-1
+-        lda   #$EA
+         sta   $15DD,x    ; disable button press on main menu
+         lda   patch,x
+         sta   $0A06,x
+         sta   $1605,x    ; set exits
+         dex
+         bpl   -      
 
          lda   #$D0
          sta   $AC64      ; disable sound
 
          jmp   $837
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "AGENT.U.S.A"

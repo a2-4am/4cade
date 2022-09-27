@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/DINO.EGGS",plain
@@ -10,46 +10,33 @@
 
          +GAME_REQUIRES_JOYSTICK
          +READ_RAM2_WRITE_RAM2
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-         +READ_ROM_NO_WRITE
-
-         ldx   #12-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR dino_eggs, dino_eggs_dir_e-dino_eggs_dir_b
          lda   #$60
          sta   $2186
          jsr   $2100      ; decompress
 
-         lda   #$4C
-         sta   $AD7A
-         sta   $B29D
-         lda   #1
-         sta   $AD7A+2
-         sta   $B29D+2
-         lda   #0
-         sta   $AD7A+1
-         sta   $B29D+1    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $AD7A,x
+         sta   $B29D,x    ; set exits
+         dex
+         bpl   -
 
-         sta   $0863      ; disable sound
+         inx
+         stx   $0863      ; disable sound
 
          jmp   $A892
 
-newpath
-         !byte 11
-         !text "X/DINO.EGGS"
+patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "X/DINO.EGGS/DINO.EGGS"
-x_e
+dino_eggs
+         !byte dino_eggs_e-dino_eggs_b
+dino_eggs_b
+dino_eggs_dir_b
+         !text "X/DINO.EGGS"
+dino_eggs_dir_e
+         !text "/DINO.EGGS"
+dino_eggs_e
 
 !if * > $300 {
   !error "code is too large, ends at ", *

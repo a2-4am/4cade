@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/BB",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -30,18 +30,13 @@
          sta   $0C45
          sta   $0C48      ; skip inputs
 
-         lda   #$4C
-         sta   $15CC
-         sta   $0ED2
-         sta   $159A
-         lda   #0
-         sta   $15CC+1
-         sta   $0ED2+1
-         sta   $159A+1
-         lda   #1
-         sta   $15CC+2
-         sta   $0ED2+2
-         sta   $159A+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $15CC,x
+         sta   $0ED2,x
+         sta   $159A,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $170F
@@ -58,6 +53,8 @@
          +DISABLE_ACCEL
 
          jmp   $0A00
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "BB"

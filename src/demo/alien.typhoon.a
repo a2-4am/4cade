@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M./qkumba
+;(c) 2021-2022 by Frank M./qkumba
 
 !cpu 6502
 !to "res/DEMO/ALIEN.TYPHOON",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$61
@@ -36,6 +36,8 @@
          sta   $8FD6,x
          sta   $8FEF,x
          sta   $92B1,x    ; set exits
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/JUNGLE.HUNT",plain
@@ -10,20 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #14-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR jungle_hunt, jungle_hunt_dir_e-jungle_hunt_dir_b
          lda   #$60
          sta   $81E
          jsr   $800
@@ -32,29 +19,22 @@
          sta   $BD44
          jsr   $BD00
 
-         lda   #1
-         sta   $0A6C
-         lda   #0
-         sta   $0A67      ; reset vector patch
+         ldx   #1
+         stx   $0A6C
+         dex
+         stx   $0A67      ; reset vector patch
 
          lda   #$60
          sta   $1501      ; reduce wait times while not playing sounds
 
-         lda   #$4C
-         sta   $676C
-         sta   $0BD6
-         sta   $6553
-         sta   $0C28
-         lda   #0
-         sta   $676C+1
-         sta   $0BD6+1
-         sta   $6553+1
-         sta   $0C28+1
-         lda   #1
-         sta   $676C+2
-         sta   $0BD6+2
-         sta   $6553+2
-         sta   $0C28+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $676C,x
+         sta   $0BD6,x
+         sta   $6553,x
+         sta   $0C28,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $14A0
@@ -65,13 +45,16 @@
 
          jmp   $A00
 
-newpath
-         !byte 13
-         !text "X/JUNGLE.HUNT"
+patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "X/JUNGLE.HUNT/JUNGLE.HUNT"
-x_e
+jungle_hunt
+         !byte jungle_hunt_e-jungle_hunt_b
+jungle_hunt_b
+jungle_hunt_dir_b
+         !text "X/JUNGLE.HUNT"
+jungle_hunt_dir_e
+         !text "/JUNGLE.HUNT"
+jungle_hunt_e
 
 !if * > $300 {
   !error "code is too large, ends at ", *

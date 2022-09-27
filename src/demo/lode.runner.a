@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/LODE.RUNNER",plain
@@ -10,20 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #14-1      ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR lode_runner, lode_runner_dir_e-lode_runner_dir_b
          lda   #$60
          sta   $1F4E
          jsr   $1F00      ; decompress
@@ -32,19 +19,15 @@
          sta   $61FB      ; ignore <Ctrl-E> (would otherwise enter editor)
          sta   $61FD      ; ignore <RETURN> (would otherwise show high scores)
 
-         lda   #$4C
-         sta   $69CD
-         lda   #$62
-         sta   $69CD+2
-         lda   #$01
-         sta   $69CD+1    ; exit after user presses button
-
-         sta   $61F4
-         lda   #$62
-         sta   $61F4+1    ; exit after demo player dies
+         ldx   #3-1
+-        lda   patch,x
+         sta   $69CD,x    ; exit after user presses button
+         sta   $61F3,x    ; exit after demo player dies
+         dex
+         bpl   -
 
          ldx   #6-1
--        lda   patch, x
+-        lda   $100, x
          sta   $6201, x
          dex
          bpl   -          ; exit after user presses any key
@@ -53,15 +36,16 @@
 
          jmp   $9050
 
-patch    !byte $AD,$88,$C0,$6C,$FC,$FF
+patch    !byte $4C,$01,$62
 
-newpath
-         !byte 13
+lode_runner
+         !byte lode_runner_e-lode_runner_b
+lode_runner_b
+lode_runner_dir_b
          !text "X/LODE.RUNNER"
-
-title    !byte x_e-x_b
-x_b      !text "X/LODE.RUNNER/LODE.RUNNER"
-x_e
+lode_runner_dir_e
+         !text "/LODE.RUNNER"
+lode_runner_e
 
 !if * > $300 {
   !error "code is too large, ends at ", *

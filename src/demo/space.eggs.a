@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/SPACE.EGGS",plain
@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          +NEW_RESET_VECTOR $280
@@ -18,28 +18,19 @@
          sta   $2056
          jsr   $2000      ; decompress
 
+         ldx   #6-1
          lda   #$EA
-         sta   $4821
-         sta   $4821+1
-         sta   $4821+2
-         sta   $4821+3
-         sta   $4821+4
-         sta   $4821+5    ; avoid clobbering stack
+-        sta   $4821,x    ; avoid clobbering stack
+         dex
+         bpl   -
 
-         lda   #$AD
-         sta   $4B00
-         lda   #0
-         sta   $4B00+1
-         lda   #$C0
-         sta   $4B00+2    ; change button press detection to keypress detection
-
-
-         lda   #$4C
-         sta   $4B06
-         lda   #0
-         sta   $4B06+1
-         lda   #1
-         sta   $4B06+2    ; exit on keypress
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $4B00,x    ; change button press detection to keypress detection
+         lda   patch3,x
+         sta   $4B06,x    ; exit on keypress
+         dex
+         bpl   -
 
          ldx   #11-1
 -        lda   patch, x
@@ -54,7 +45,9 @@
 
          jmp   $4880
 
-patch    !byte $CE,$FF,$4B,$10,$03,$4C,$00,$01,$4C,$B0,$4B
+patch    !byte $CE,$FF,$4B,$10,$03
+patch3   !byte $4C,$00,$01,$4C,$B0,$4B
+patch2   !byte $AD,$00,$C0
 
 title    !byte x_e-x_b
 x_b      !text "SPACE.EGGS"

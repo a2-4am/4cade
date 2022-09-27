@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/BU",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -18,12 +18,11 @@
 
          +DISABLE_ACCEL
 
-         lda   #$4C
-         sta   $653F
-         lda   #$8D
-         sta   $653F+1
-         lda   #$65
-         sta   $653F+2    ; skip joystick/keyboard selection
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $653F,x    ; skip joystick/keyboard selection
+         dex
+         bpl   -
 
          lda   #$b1
          sta   $646b
@@ -33,33 +32,31 @@
 
          jsr   $811
 
-         lda   #0
-         sta   $A30A
-         lda   #1
-         sta   $A30F      ; reset vector patch
+         ldx   #3-1
+-        lda   patch,x
+         sta   $9FD3,x
+         sta   $9FCF,x
+         sta   $A497,x    ; set exits
+         dex
+         bpl   -
 
-         lda   #$4C
-         sta   $9FD3
-         sta   $9FCF
-         sta   $A497      ; set exits
+         inx
+         stx   $A30A
 
-         lda   #0
-         sta   $9FD3+1
-         sta   $9FCF+1
-         sta   $A497+1
-         sta   $A15B
-         sta   $A16A
-         sta   $A17B
-         sta   $A1D0      ; disable sound
+         stx   $A15B
+         stx   $A16A
+         stx   $A17B
+         stx   $A1D0      ; disable sound
 
-         lda   #1
-         sta   $9FD3+2
-         sta   $9FCF+2
-         sta   $A497+2
+         inx
+         stx   $A30F      ; reset vector patch
 
          +DISABLE_ACCEL
 
          jmp   $a300
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,$8D,$65
 
 title    !byte x_e-x_b
 x_b      !text "BU"

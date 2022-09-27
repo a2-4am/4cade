@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/TUNNEL.TERROR",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #1         ; reset vector fix
@@ -20,27 +20,21 @@
          sta   $4026
          jsr   $4000      ; decompress and show title
 
-         lda   #$4C
-         sta   $0EFE
-         sta   $06A4
-         sta   $AD10
-         sta   $0E66
-         sta   $1315+2
-         lda   #0
-         sta   $0EFE+1
-         sta   $06A4+1
-         sta   $AD10+1
-         sta   $0E66+1
-         sta   $1315+3
-         sta   $0F5D+1
-         sta   $0F72+1
-         lda   #1
-         sta   $03FF       ; fix IRQ
-         sta   $0EFE+2
-         sta   $06A4+2
-         sta   $AD10+2
-         sta   $0E66+2
-         sta   $1315+4     ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0EFE,x
+         sta   $06A4,x
+         sta   $AD10,x
+         sta   $0E66,x
+         sta   $1315+2,x  ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $0F5D+1
+         stx   $0F72+1
+         inx
+         stx   $03FF       ; fix IRQ
 
          lda   #$10
          sta   $1315
@@ -54,12 +48,6 @@
          sta   $0F5D+2
          sta   $0F72+2
 
-         lda   #$AD
-         sta   $8434
-         sta   $8441
-         lda   #$30
-         sta   $8434+1
-         sta   $8441+1
          lda   #$D0
          sta   $8434+2
          sta   $8441+2    ; disable sound
@@ -67,6 +55,8 @@
          +DISABLE_ACCEL
 
          jmp   $E00
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "TUNNEL.TERROR"

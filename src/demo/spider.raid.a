@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -40,20 +40,20 @@
          sta   $160C
          sta   $1643
          sta   $164B
-         lda   #$4C
-         sta   $49A9
-         ldx   #0
-         stx   $49AA
-         stx   $99A6
-         inx
-         stx   $49AB
-         stx   $99A7
+         ldx   #3-1
+-        lda   patch,x
+         sta   $49A9,x
+         sta   $99A5,x
+         dex
+         bpl   -
          sec
          rol   $976A
 
          +DISABLE_ACCEL
 
          jmp   $4246
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "SPIDER.RAID"

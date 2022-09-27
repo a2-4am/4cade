@@ -47,21 +47,14 @@ callback1
 
 callback2
          jsr   $104
-         lda   #$A9
-         sta   $B7EA
-         sta   $B7EF
-         sta   $B80C
-         sta   $B818
-         lda   #0
-         sta   $B7EB
-         sta   $B7F0
-         sta   $B80D
-         sta   $B819
-         lda   #$EA
-         sta   $B7EC
-         sta   $B7F1
-         sta   $B80E
-         sta   $B81A
+         ldx   #3-1
+-        lda   patch,x
+         sta   $B7EA,x
+         sta   $B7EF,x
+         sta   $B80C,x
+         sta   $B818,x
+         dex
+         bpl   -
          lda   #$AD
          sta   $D0A
          sta   $C59
@@ -74,22 +67,22 @@ callback2
          sta   $DDF
          lda   #$60
          sta   $777F
-         lda   #<return
-         sta   $B7FD
-         sta   $D16
-         sta   $B5D8
-         sta   $3F2
-         lda   #>return
-         sta   $B7FE
-         sta   $D17
-         sta   $B5D9
-         sta   $3F3
-         lda   #$A6
-         sta   $3F4
+         ldx   #2-1
+-        lda   patch2,x
+         sta   $B7FD,x
+         sta   $D16,x
+         sta   $B5D8,x
+         sta   $3F2,x
+         dex
+         bpl   -
+         jsr   $FB6F
 
          +DISABLE_ACCEL
          lda   #0
          rts
+
+patch    !byte $A9,$00,$EA
+patch2   !word return
 
 return
 }

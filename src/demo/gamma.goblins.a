@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/GAMMA.GOBLINS",plain
@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -18,26 +18,21 @@
 
          +RESET_AND_IRQ_VECTOR $100
 
-         lda   #$4C
-         sta   $5B9A
-         sta   $7ECC
-         sta   $50CB
-         sta   $50B5
-         lda   #0
-         sta   $5B9A+1
-         sta   $7ECC+1
-         sta   $50CB+1
-         sta   $50B5+1
-         lda   #1
-         sta   $5B9A+2
-         sta   $7ECC+2
-         sta   $50CB+2
-         sta   $50B5+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $5B9A,x
+         sta   $7ECC,x
+         sta   $50CB,x
+         sta   $50B5,x    ; set exits
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
          lda   #$00
          tay
          jmp   $2035
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "GAMMA.GOBLINS"

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/ROBOTRON.2084",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #<callback
@@ -18,13 +18,13 @@
          jmp   $1400      ; decompress
 
 callback ldx   #6-1
--        lda   patch1, x
+-        lda   $100, x
          sta   $4542, x
          dex
          bpl   -          ; exit on keypress
 
          ldx   #3-1
--        lda   patch2, x
+-        lda   patch, x
          sta   $453A, x
          dex
          bpl   -          ; exit at end of demo cycle
@@ -36,9 +36,7 @@ callback ldx   #6-1
 
          jmp   $4015
 
-patch1   !byte $AD,$88,$C0,$6C,$FC,$FF
-
-patch2   !byte $4C,$42,$45
+patch    !byte $4C,$42,$45
 
 title    !byte x_e-x_b
 x_b      !text "ROBOTRON.2084"

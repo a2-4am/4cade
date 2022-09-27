@@ -38,18 +38,17 @@ callback
          sta   $7B88
          lda   #$2C
          sta   $7FEE
-         lda   #$4C
-         sta   $7D99
-         sta   $812F
-         lda   #$70
-         sta   $7D9A
-         sta   $8130
-         lda   #0
-         sta   $7D9B
-         sta   $8131
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7D99,x
+         sta   $812F,x
+         dex
+         bpl   -
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $8460
+
+patch    !byte $4C,$70,$00
 
 title    !byte x_e-x_b
 x_b      !text "X/LADY.TUT/LADY.TUT"

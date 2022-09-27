@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$84
@@ -22,22 +22,22 @@
          sta   $3f06
          jsr   $3eb1      ; decompress
 
-         lda   #$4C
-         sta   $5B2E
-         sta   $701C
-         sta   $5D5B
-         ldx   #0
-         stx   $5DF4
-         stx   $5CD8
-         stx   $5E09
-         stx   $701D
-         inx
-         stx   $5B30      ; reset vector patch
-         stx   $5DF5
-         stx   $5CD9
-         stx   $5E0A
-         stx   $701E
-         stx   $5D5D
+         ldx   #3-1
+-        lda   patch,x
+         sta   $5B2E,x    ; reset vector patch
+         sta   $701C,x
+         sta   $5D5B,x
+         dex
+         bpl   -
+
+         ldx   #2-1
+-        lda   patch+1,x
+         sta   $5DF4,x
+         sta   $5CD8,x
+         sta   $5E09,x
+         dex
+         bpl   -
+
          lda   #$24
          sta   $5D24
          lda   #$D0
@@ -57,9 +57,10 @@ counter  !byte 5
 callback
          sta   $C010
          dec   counter
-         bpl   +
-         jmp   $100
-+        rts
+         bmi   patch
+         rts
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "AXIS.ASSASSIN"

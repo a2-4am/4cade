@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/BORG",plain
@@ -11,18 +11,7 @@
          +READ_RAM2_WRITE_RAM2
          ;jsr   EnableAccelerator    ; can't because of animation
 
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #7-1       ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
+         +LOAD_FILE_KEEP_DIR borg, borg_dir_e-borg_dir_b
 
          +READ_ROM_NO_WRITE
 
@@ -30,16 +19,13 @@
          sta   $609E
          jsr   $6000      ; decompress and show animation
 
-         lda   #$4C
-         sta   $8C27      ; exit after 1 cycle
-         sta   $ECA       ; exit on keypress 1 (joysticks not polled)
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $8C27,x    ; exit after 1 cycle
+         sta   $ECA,x     ; exit on keypress 1 (joysticks not polled)
+         dex
+         bpl   -
          sta   $99
-         lda   #0
-         sta   $8C27+1
-         sta   $ECA+1
-         lda   #1
-         sta   $8C27+2
-         sta   $ECA+2
 
          ldx   #7-1
 -        lda   patch, x
@@ -51,14 +37,15 @@
          jmp   $EB0
 
 patch    !byte $30,$F8,$EA,$20,$00,$0F,$60
+patch2   !byte $4C,$00,$01
 
-newpath
-         !byte 6
+borg     !byte borg_e-borg_b
+borg_b
+borg_dir_b
          !text "X/BORG"
-
-title    !byte x_e-x_b
-x_b      !text "X/BORG/BORG"
-x_e
+borg_dir_e
+         !text "/BORG"
+borg_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

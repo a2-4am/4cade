@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "res/DEMO/ALIEN.DOWNPOUR",plain
@@ -8,33 +8,26 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          lda   #$60
          sta   $201f
          jsr   $2000      ; decompress
-         lda   #$4C
-         sta   $868C
-         sta   $7B88
-         sta   $8FDF
-         sta   $902F
-         sta   $9078
-         ldx   #0
-         stx   $868D
-         stx   $7B89
-         stx   $8FE0
-         stx   $9030
-         stx   $9079
-         inx
-         stx   $868E
-         stx   $7B8A
-         stx   $8FE1
-         stx   $9031
-         stx   $907A
+         ldx   #3-1
+-        lda   patch,x
+         sta   $868C,x
+         sta   $7B88,x
+         sta   $8FDF,x
+         sta   $902F,x
+         sta   $9078,x
+         dex
+         bpl   -
          lda   #$D0
          sta   $6E6D
          +DISABLE_ACCEL
          jmp   $73a0
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "ALIEN.DOWNPOUR"

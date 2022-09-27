@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -31,19 +31,18 @@
          sta   $439E
          sta   $6546
          sta   $8B94
-         lda   #$4C
-         sta   $54C0
-         sta   $980
-         ldx   #0
-         stx   $54C1
-         stx   $981
-         inx
-         stx   $54C2
-         stx   $982
+         ldx   #3-1
+-        lda   patch,x
+         sta   $54C0,x
+         sta   $980,x
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
          jmp   ($20)
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "PHASER.FIRE"

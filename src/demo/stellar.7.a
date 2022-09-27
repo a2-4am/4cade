@@ -17,10 +17,10 @@
          sta   $863
          jsr   $800       ; unpack
 
-         lda   #0
-         sta   $AE2A
-         lda   #1
-         sta   $AE2C
+         ldx   #0
+         stx   $AE2A
+         inx
+         stx   $AE2C
          lda   #$A4
          sta   $AE28      ; reset vector patch
 

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/STAR.BLAZER",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -20,32 +20,26 @@
          +ENABLE_ACCEL
          jsr   $B4C6      ; decompress
 
-         lda   #$4C
-         sta   $17DB
-         sta   $1760
-         sta   $17AD
-         sta   $1705
-         lda   #0
-         sta   $17DB+1
-         sta   $1760+1
-         sta   $17AD+1
-         lda   #1
-         sta   $17DB+2
-         sta   $1760+2
-         sta   $17AD+2    ; set exits
-         lda   #<(count + 1)
-         sta   $1705+1
-         lda   #>(count + 1)
-         sta   $1705+2    ; decrement custom counter after demo cycle and eventually exit
+         ldx   #3
+-        lda   patch,x
+         sta   $17DB,x
+         sta   $1760,x
+         sta   $17AD,x    ; set exits
+         lda   patch2,x
+         sta   $1705,x    ; decrement custom counter after demo cycle and eventually exit
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
          jmp   ($20)
 
 count    !byte $03
          dec   count
-         bpl   +
-         jmp   $100
-+        jmp   $1750
+         bmi   patch
+         jmp   $1750
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,<(count + 1),>(count + 1)
 
 title    !byte x_e-x_b
 x_b      !text "STAR.BLAZER"

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/ALIEN.MUNCHIES",plain
@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
@@ -29,7 +29,7 @@
          bpl   -          ; exit on keypress at title screen & during demo
 
          ldx   #3-1
--        lda   patch1-3, x
+-        lda   patch3, x
          sta   $92F, x
          sta   $139F, x
          sta   $1392, x
@@ -46,7 +46,8 @@
 
          jmp   $833
 
-patch1   !byte $30,$05,$AD,$00,$C0,$10,$29,$4C,$00,$01
+patch1   !byte $30,$05,$AD,$00,$C0,$10,$29
+patch3   !byte $4C,$00,$01
 
 patch2   !byte $10,$0A
 

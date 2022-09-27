@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "res/DEMO/WAVY.NAVY",plain
@@ -8,14 +8,14 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $505d
          jsr   $800       ; decompress
          ldx   #5
--        lda   patch, x
+-        lda   $100, x
          sta   $09E8, x
          sta   $1547, x
          dex
@@ -31,8 +31,6 @@
 title    !byte x_e-x_b
 x_b      !text "WAVY.NAVY"
 x_e
-
-patch    !byte $AD,$88,$C0,$6C,$FC,$FF
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

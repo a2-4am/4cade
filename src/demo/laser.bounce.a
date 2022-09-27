@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$2C
@@ -20,28 +20,20 @@
          sta   $743F
          sta   $7425
          sta   $888C
-         lda   #$CE
-         sta   $6006
-         lda   #<counter
-         sta   $6007
-         lda   #>counter
-         sta   $6008
-         lda   #$4C
-         sta   $600B
-         sta   $6E41
-         sta   $6E98
-         ldx   #0
-         stx   $600C
-         stx   $6E42
-         stx   $6E99
-         inx
-         stx   $600D
-         stx   $6E43
-         stx   $6E9A
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $6006,x
+         lda   patch,x
+         sta   $600B,x
+         sta   $6E41,x
+         sta   $6E98,x
+         dex
+         bpl   -
          lda   #4
          sta   $6E2B
          lda   #$30
          sta   $6E95
+         ldx   #1
          stx   $6E96
          asl
          sta   $6E97
@@ -52,6 +44,9 @@
          jmp   $6000
 
 counter  !byte 3
+
+patch    !byte $4C,$00,$01
+patch2   !byte $CE,<counter,>counter
 
 title    !byte x_e-x_b
 x_b      !text "LASER.BOUNCE"

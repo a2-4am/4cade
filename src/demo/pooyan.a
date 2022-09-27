@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/POOYAN",plain
@@ -8,28 +8,21 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
          lda   #$60
          sta   $203A
          jsr   $2000      ; decompress
 
-         lda   #$4C
-         sta   $6069
-         sta   $60C8
-         sta   $60EA
-         sta   $7DB5
-         lda   #0
-         sta   $6069+1
-         sta   $60C8+1
-         sta   $60EA+1
-         sta   $7DB5+1
-         lda   #1
-         sta   $6069+2
-         sta   $60C8+2
-         sta   $60EA+2
-         sta   $7DB5+2    ; set exits
+         ldx   #3-1
+-        lda   patch,x
+         sta   $6069,x
+         sta   $60C8,x
+         sta   $60EA,x
+         sta   $7DB5,x    ; set exits
+         dex
+         bpl   -
 
          lda   #$D0
          sta   $A008
@@ -38,6 +31,8 @@
          +DISABLE_ACCEL
 
          jmp   $6000
+
+patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
 x_b      !text "POOYAN"

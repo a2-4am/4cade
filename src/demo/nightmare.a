@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "res/DEMO/NI",plain
@@ -10,39 +10,19 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-
-;+LOAD_FILE_KEEP_DIR
-         ldx   #0         ; read to main memory
-         stx   ldrhi
-         stx   ldrlo
-         +LDADDR title
-         jsr   iLoadFileDirect
-
-         ldx   #5-1       ; we also need to copy the length byte
--        lda   newpath,x
-         sta   $BFD0,x
-         dex
-         bpl   -
-
+         +LOAD_FILE_KEEP_DIR nightmare, nightmare_dir_e-nightmare_dir_b
          lda   #$60
          sta   $404B
          jsr   $4000      ; decompress
 
-         lda   #$4C
-         sta   $8C24
-         sta   $8C35
-         sta   $1669
-         lda   #0
-         sta   $8C24+1
-         sta   $8C35+1
-         lda   #1
-         sta   $8C24+2
-         sta   $8C35+2    ; set exits
-
-         lda   #<(count+1)
-         sta   $1669+1
-         lda   #>(count+1)
-         sta   $1669+2    ; decrement custom counter after demo cycle and eventually exit
+         ldx   #3-1
+-        lda   patch,x
+         sta   $8C24,x
+         sta   $8C35,x    ; set exits
+         lda   patch2,x
+         sta   $1669,x    ; decrement custom counter after demo cycle and eventually exit
+         dex
+         bpl   -
 
          +DISABLE_ACCEL
 
@@ -50,17 +30,20 @@
 
 count    !byte $03
          dec   count
-         beq   +
+         beq   patch
          jmp   $128E
-+        jmp   $100
 
-newpath
-         !byte 4
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,<(count+1),>(count+1)
+
+nightmare
+         !byte nightmare_e-nightmare_b
+nightmare_b
+nightmare_dir_b
          !text "X/NI"
-
-title    !byte x_e-x_b
-x_b      !text "X/NI/NI"
-x_e
+nightmare_dir_e
+         !text "/NI"
+nightmare_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *
