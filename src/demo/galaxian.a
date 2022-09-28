@@ -3,7 +3,7 @@
 
 !cpu 6502
 !to "res/DEMO/GALAXIAN",plain
-*=$300
+*=$320
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"

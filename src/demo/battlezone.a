@@ -36,7 +36,7 @@
          bpl   -
 
          ldx   #4-1
-         lda   patch2,x
+-        lda   patch2,x
          sta   $168F,x    ; set exits
          dex
          bpl   -

@@ -9,8 +9,9 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +ENABLE_ACCEL_LC
-         +LOAD_XSINGLE title
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
          lda   #$4C
          sta   $6BA8
          sta   $6C2D
@@ -25,6 +26,10 @@
          sta   $AC64,x
          dex
          bpl   -
+         inx
+         stx   $B3F0
+         stx   $B3F1
+         stx   $B3F2    ; erase high score
          lda   #$10
          sta   $AD28
          sta   $AB84
@@ -42,7 +47,7 @@
 patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
-x_b      !text "TB"
+x_b      !text "X/TB/TB"
 x_e
 
 !if * > $3F0 {
