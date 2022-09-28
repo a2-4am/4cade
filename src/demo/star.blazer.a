@@ -20,7 +20,7 @@
          +ENABLE_ACCEL
          jsr   $B4C6      ; decompress
 
-         ldx   #3
+         ldx   #3-1
 -        lda   patch,x
          sta   $17DB,x
          sta   $1760,x
