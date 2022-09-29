@@ -7,52 +7,16 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
-         lda   #$60
-         sta   $88D
-         sta   $905
-         sta   $96E
-         jsr   $800        ; decompress
--        lda   x_b, y
-         sta   $250, y
-         iny
-         bne   -
-         lda   #<callback1
-         sta   $9501
-         lda   #<callback2
-         sta   $95B1
-         lda   #>callback1
-         sta   $9502
-         sta   $95B2
-         jmp   $9500
-
-x_b !pseudopc $250 {
-callback1
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         jsr   $9503
-         +DISABLE_ACCEL
-         jsr   $BC69
-         sta   $C010
-
-callback2
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
-         jsr   $BC78
-
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$ad
-         sta   $6B5C       ; patch - don't decrease lives
-+
-         jsr   DisableAccelerator
+         +LOAD_FILE_AT space_spiker, $250
          +READ_ROM_NO_WRITE
-         lda   #$21
-         jsr   $FCA8       ; allow joystick timers to expire
-         jmp   $A00
-}
+         jmp   $250
+
+space_spiker
+         !byte x_e-x_b
+x_b      !text "PRELAUNCH/SPIKES.CHEAT"
+x_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
