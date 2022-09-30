@@ -47,11 +47,8 @@ cat res/GAMES.CONF |
     cut -d"=" -f1 > /tmp/games
 
 # warn about unused self-running demos
-cat res/DEMO/_FileInformation.txt |
-    tr -d "\r" |
-    grep "Type(06)" |
+grep '^\!to' src/demo/*.a | cut -d'/' -f5-|cut -d'#' -f1 |
     grep -v "SPCARTOON" |
-    cut -d"=" -f1 |
     while read f; do
         grep "$f=0" res/ATTRACT.CONF >/dev/null || echo "unused demo: $f";
     done
@@ -71,9 +68,9 @@ cat res/ATTRACT.CONF |
         IFS="=" read -r module_name module_type <<< "$line"
 #        echo "$module_name" "$module_type"
         if [ "$module_type" = "0" ]; then
-            [ -f res/DEMO/"$module_name" ] ||
-                [ "${module_name%???}" = "SPCARTOON" ] ||
-                fatal_error "Can't find demo" $module_name
+            [ "${module_name%???}" = "SPCARTOON" ] && continue
+            demo=$(grep 'to.*'"$module_name" src/demo/*.a)
+            [ -n "$demo" ] || fatal_error "Can't find demo" $module_name
         elif [ "$module_type" = "1" ]; then
             check_slideshow res/SS/"$module_name" res/TITLE.HGR/
         elif [ "$module_type" = "2" ]; then
