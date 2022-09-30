@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/SPCARTOON.11",plain
+!to "build/DEMO/SPCARTOON.33",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these
@@ -14,7 +14,7 @@
          lda   #$60
          sta   $277B
          jsr   $2700     ; decompress
-         lda   #0
+         lda   #2
          sta   $19C7
          lda   #$4C
          sta   $182F

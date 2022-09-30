@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "res/DEMO/CRIME.WAVE",plain
+!to "build/DEMO/CRIME.WAVE",plain
 *=$BE00
 
          !source "src/constants.a"   ; no code in these

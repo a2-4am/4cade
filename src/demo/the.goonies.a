@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/THE.GOONIES",plain
+!to "build/DEMO/THE.GOONIES",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these

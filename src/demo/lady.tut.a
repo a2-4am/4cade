@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/LADY.TUT",plain
+!to "build/DEMO/LADY.TUT",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these

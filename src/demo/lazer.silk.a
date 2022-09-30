@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "res/DEMO/LAZER.SILK",plain
+!to "build/DEMO/LAZER.SILK",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these

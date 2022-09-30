@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "res/DEMO/GALAXIAN",plain
+!to "build/DEMO/GALAXIAN",plain
 *=$320
 
          !source "src/constants.a"   ; no code in these

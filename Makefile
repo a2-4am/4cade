@@ -45,6 +45,7 @@ dsk: index asmproboot asmlauncher asmdemo extract
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
 	cp src/prelaunch/_FileInformation.txt build/PRELAUNCH/
+	cp src/demo/_FileInformation.txt build/DEMO/
 #
 # add everything to the disk
 #
@@ -56,7 +57,7 @@ dsk: index asmproboot asmlauncher asmdemo extract
 	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" -C >>build/log; \
 	done
 	for f in \
-		res/DEMO \
+		build/DEMO \
 		res/TITLE.ANIMATED \
 		res/ICONS \
 		build/FX \
@@ -267,7 +268,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/X.INDEXED build/FX build/FX.INDEXED build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP
+	mkdir -p build/X build/X.INDEXED build/FX build/FX.INDEXED build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP build/DEMO
 	touch build/log
 
 clean:

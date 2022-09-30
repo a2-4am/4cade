@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/STELLAR.7",plain
+!to "build/DEMO/STELLAR.7",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these

@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/SERPENTINE",plain
+!to "build/DEMO/SERPENTINE",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these
