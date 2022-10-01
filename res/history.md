@@ -108,6 +108,7 @@
 - Retro-Ball
 - Roach Hotel
 - Robot Battle
+- Robotics
 - Sabotage II
 - Sadar's Revenge
 - Sanitron
@@ -119,6 +120,7 @@
 - Space Kadet
 - Space Race
 - Space Rescue
+- Space Spikes
 - Space Warrior
 - Spellwielder
 - Sputnik Attack
