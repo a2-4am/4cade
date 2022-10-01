@@ -114,6 +114,7 @@
 - Sheila
 - Shooting Gallery
 - Shuttle Intercept
+- Sigma Seven
 - Smooth Max
 - Space Kadet
 - Space Race
