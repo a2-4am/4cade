@@ -59,6 +59,7 @@
 - Fly Wars
 - Gadgetz
 - Galactic Attack
+- Gemini
 - Glutton
 - Grapple
 - Handy Dandy
