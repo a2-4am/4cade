@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/KAMIKAZE",plain
+!to "build/DEMO/KAMIKAZE#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these

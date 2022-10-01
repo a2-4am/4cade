@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/CHOPLIFTER",plain
+!to "build/DEMO/CHOPLIFTER#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these

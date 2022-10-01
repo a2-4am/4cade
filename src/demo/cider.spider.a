@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/AC",plain
+!to "build/DEMO/AC#069B00",plain
 *=$9B00
 
          !source "src/constants.a"   ; no code in these

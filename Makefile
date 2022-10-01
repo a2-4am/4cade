@@ -33,7 +33,7 @@ PYTHON=python3
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: index asmproboot asmlauncher asmdemo extract
+dsk: index asmproboot asmlauncher extract
 	cp res/blank.hdv build/"$(DISK)"
 	cp res/_FileInformation.txt build/
 	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM -C >>build/log
@@ -45,7 +45,6 @@ dsk: index asmproboot asmlauncher asmdemo extract
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
 	bin/buildfileinfo.sh build/FX "06" "6000"
 	cp src/prelaunch/_FileInformation.txt build/PRELAUNCH/
-	cp src/demo/_FileInformation.txt build/DEMO/
 #
 # add everything to the disk
 #
@@ -57,7 +56,6 @@ dsk: index asmproboot asmlauncher asmdemo extract
 	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" -C >>build/log; \
 	done
 	for f in \
-		build/DEMO \
 		res/TITLE.ANIMATED \
 		res/ICONS \
 		build/FX \
@@ -65,9 +63,6 @@ dsk: index asmproboot asmlauncher asmdemo extract
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>build/log; \
         done
-	for i in 1 2 3 4 5 6; do \
-		$(CADIUS) RENAMEFILE build/"$(DISK)" "/$(VOLUME)/DEMO/SPCARTOON.$${i}$${i}" "SPCARTOON.$${i}." >>build/log; \
-	done
 	$(CADIUS) CREATEFOLDER build/"$(DISK)" "/$(VOLUME)/X/" -C >>build/log
 	for f in build/X/*; do \
 	    $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X/$$(basename $$f)" "$$f" -C >>build/log; \
@@ -80,7 +75,7 @@ extract: preconditions md
 	for f in $$(grep '^....1' res/GAMES.CONF | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv build/X/"$$(basename $$f)"/"$$(basename $$f)"* build/X.INDEXED/; rm -rf build/X/"$$(basename $$f)"; done
 	(for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA build/X.INDEXED > build/XSINGLE.IDX
 
-index: preconditions md asmfx asmprelaunch compress extract
+index: preconditions md asmfx asmprelaunch asmdemo compress extract
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
@@ -160,6 +155,13 @@ index: preconditions md asmfx asmprelaunch compress extract
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
 	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
+#
+# precompute indexed files for demo launchers
+# note: these can not be padded because some of them are loaded too close to $C000
+#
+	[ -f build/index ] || ((for f in build/DEMO/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/DEMO > build/DEMO.IDX)
+	[ -f build/index ] || bin/addfile.sh build/DEMO.IDX build/TOTAL.DATA > src/index/demo.idx.a
+
 #
 # precompute indexed files for single-load game binaries
 # note: these can be padded because they are loaded at a time when all of main memory is clobber-able

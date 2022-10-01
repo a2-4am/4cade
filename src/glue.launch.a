@@ -217,20 +217,21 @@ Launch
          jmp   LaunchInternal
 
 ;------------------------------------------------------------------------------
-; LoadXSingle
-; load an indexed file from the xsingle OKVS
+; LoadXSingle/LoadXSingle_NameIsAlreadySet/LoadXFile
+; load an indexed file via an extended index record that also contains starting
+; address information
 ;
 ; in:    A/Y points to game filename (must be listed in xsingle OKVS)
 ; out:   all flags & registers clobbered
 ;------------------------------------------------------------------------------
-LoadXSingle
+LoadXSingle                          ; entry point used by demos to load additional resources
          +ST16 xfile
-LoadXSingle_NameIsAlreadySet
+LoadXSingle_NameIsAlreadySet         ; entry point used by PlayGame
          jsr   LoadIndexedFile       ; load xsingle index file (contains pointers to game binaries)
--        !word gSearchCache          ; clobber prelaunch index file which we no longer need
+-        !word gSearchCache          ; clobber search cache which we no longer need
          !word kXSingleRecord
-
-         jsr   okvs_find             ; find this game's xsingle index record
+LoadXFile                            ; entry point used by attract mode to load self-running demo
+         jsr   okvs_find             ; find this game's extended index record
          !word -
 xfile    !word $FDFD                 ; SMC
          +ST16 @xsingleIndexRecordPtr

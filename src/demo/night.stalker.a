@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by qkumba/Frank M.
 
 !cpu 6502
-!to "build/DEMO/NIGHT.STALKER",plain
+!to "build/DEMO/NIGHT.STALKER#06BD00",plain
 *=$BD00
 
          !source "src/constants.a"   ; no code in these

@@ -195,7 +195,6 @@ ATTRTS   rts
 ;------------------------------------------------------------------------------
 RunAttractModule
          +ST16 @key
-         +ST16 @key2
          cpx   #$30
          bne   @NotDemo
 
@@ -217,14 +216,17 @@ RunAttractModule
          bpl   -
          +LDADDR DemoFilename
          +ST16 gLastMegaAttractGame  ; save game filename in LC in case user hits Return to launch
+         +ST16 xfile
 
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
          jsr   LoadStandardPrelaunch ; load standard prelaunch code (|Launch| will call it)
-         jsr   LoadFile              ; load self-running demo into its default address (varies)
-         !word kDemoDirectory
-@key     !word $FDFD
-         !word 0
+
+         jsr   LoadIndexedFile       ; load demo index file
+-        !word gSearchCache
+         !word kDemoIndexRecord
+
+         jsr   LoadXFile             ; load self-running demo into its default address (varies)
          jmp   Launch                ; will return to caller via |Reenter|
 
 ; not a demo, so maybe a slideshow or single screenshot
@@ -240,7 +242,7 @@ RunAttractModule
          !word kAttractModeSlideshowIndexRecord
          jsr   okvs_find
          !word -
-@key2    !word $FDFD                 ; SMC
+@key     !word $FDFD                 ; SMC
          +ST16 +
          jsr   LoadIndexedFile
          !word $800

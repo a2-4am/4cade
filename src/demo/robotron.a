@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/ROBOTRON.2084",plain
+!to "build/DEMO/ROBOTRON.2084#069000",plain
 *=$9000
 
          !source "src/constants.a"   ; no code in these

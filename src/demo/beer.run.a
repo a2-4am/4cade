@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/BEER.RUN",plain
+!to "build/DEMO/BEER.RUN#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these

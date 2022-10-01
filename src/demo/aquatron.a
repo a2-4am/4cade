@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/AQUATRON",plain
+!to "build/DEMO/AQUATRON#06BD00",plain
 *=$BD00
 
          !source "src/constants.a"   ; no code in these

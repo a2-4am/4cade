@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/CONAN",plain
+!to "build/DEMO/CONAN#060200",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these

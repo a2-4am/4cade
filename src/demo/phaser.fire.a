@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/PHASER.FIRE",plain
+!to "build/DEMO/PHASER.FIRE#06B200",plain
 *=$B200
 
          !source "src/constants.a"   ; no code in these

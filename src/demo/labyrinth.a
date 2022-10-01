@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/LABYRINTH",plain
+!to "build/DEMO/LABYRINTH#060310",plain
 *=$310
 
          !source "src/constants.a"   ; no code in these

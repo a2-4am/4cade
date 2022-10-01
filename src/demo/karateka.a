@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/KARATEKA",plain
+!to "build/DEMO/KARATEKA#060200",plain
 *=$200
 
     !source "src/prelaunch/common.a"

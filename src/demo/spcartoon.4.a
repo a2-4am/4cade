@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/SPCARTOON.44",plain
+!to "build/DEMO/SPCARTOON.4.#060200",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these

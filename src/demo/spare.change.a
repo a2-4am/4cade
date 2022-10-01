@@ -2,7 +2,7 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/SPARE.CHANGE",plain
+!to "build/DEMO/SPARE.CHANGE#060200",plain
 *=$200
 
          !source "src/constants.a"   ; no code in these
