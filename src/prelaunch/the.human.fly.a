@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/THE.HUMAN.FLY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $8759
+         sta   $8770
+         jsr   $4B00       ; decompress
+         lda   #(callback / 100) + 48
+         sta   $87D
+         lda   #((callback % 100) / 10) + 48
+         sta   $87E
+         lda   #(callback % 10) + 48
+         sta   $87F
+         lda   #0
+         sta   $880
+         +DISABLE_ACCEL
+         jmp   $D566
+
+callback
+         +ENABLE_ACCEL
+         jsr   $875C       ; decompress more
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$2c
+         sta   $4D24       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $1100
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

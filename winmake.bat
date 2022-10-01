@@ -52,11 +52,10 @@ echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" -C >>build\log
 if "%2". equ "". (
   for %%q in (build\PREFS.CONF res\Finder.Data res\Finder.Root) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\%%~nxq" -C >>build\log
-  for %%q in (res\DEMO res\TITLE.ANIMATED res\ICONS build\FX build\PRELAUNCH) do (
+  for %%q in (res\TITLE.ANIMATED res\ICONS build\FX build\PRELAUNCH) do (
     1>nul 2>nul del /s "%%q\.DS_Store"
     %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/%%~nxq" %%q -C >>build\log
   )
-  for %%q in (1 2 3 4 5 6) do %CADIUS% RENAMEFILE "build\%DISK%" "/%VOLUME%/DEMO/SPCARTOON.%%q%%q" "SPCARTOON.%%q." >>build\log
   %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" -C >>build\log
   %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" -C >>build\log
   cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
@@ -95,6 +94,7 @@ goto :EOF
 call :md
 call :asmfx
 call :asmprelaunch
+call :asmdemo
 rem
 rem precompute binary data structure for mega-attract mode configuration file
 rem
@@ -220,6 +220,14 @@ echo|set/p="indexing shr..."
 cscript /nologo bin\buildss.js res\ARTWORK.SHR build\ARTWORK.IDX nul build\TOTAL.DATA nul >>build\log
 echo done
 rem
+rem precompute indexed files for demo launchers
+rem note: these can not be padded because some of them are loaded too close to $C000
+rem
+echo|set/p="indexing demos..."
+cscript /nologo bin\buildss.js build\DEMO build\DEMO.IDX nul build\TOTAL.DATA nul >>build\log
+cscript /nologo bin\addfile.js build\DEMO.IDX src\index\demo.idx.a
+echo done
+rem
 rem precompute indexed files for single-load game binaries
 rem note: these can be padded because they are loaded at a time when all of main memory is clobber-able
 rem
@@ -300,6 +308,7 @@ goto :EOF
 2>nul md build\ATTRACT1
 2>nul md build\SS
 2>nul md build\GAMEHELP
+2>nul md build\DEMO
 1>nul copy nul build\log
 goto :EOF
 
@@ -310,6 +319,16 @@ if errorlevel 1 (set _build=0
 2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src\4cade.a
 for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
 %ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
+goto :EOF
+
+:asmdemo
+echo|set/p="building demos..."
+for %%q in (src\demo\*.a) do (
+  for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
+  set _to=!_to:~0,1!
+  if !_to!==t %ACME% %%q
+)
+echo done
 goto :EOF
 
 :asmfx
