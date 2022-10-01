@@ -144,6 +144,7 @@
 - Teritory
 - The Caverns of Freitag
 - The Chase on Tom Sawyer's Island
+- The Human Fly
 - The Movie Monster Game
 - The Snapper
 - The Space Ark
