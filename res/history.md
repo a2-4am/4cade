@@ -52,6 +52,7 @@
 - Early Bird
 - Escape
 - Federation
+- Fire and Ice
 - Firebug
 - Flak
 - Flobynoid
@@ -63,6 +64,7 @@
 - Glutton
 - Grapple
 - Handy Dandy
+- Hardhat
 - Hellstorm
 - Infiltrator
 - Infiltrator 2
