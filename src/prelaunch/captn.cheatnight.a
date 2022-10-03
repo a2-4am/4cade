@@ -1,0 +1,87 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CG.CHEAT",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         php
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $9E4
+         jsr   $800       ; decompress
+
+         +LC_REBOOT
+
+         plp
+         beq   +
+         lda   #$AD
+         sta   $1CFA      ; patch - don't decrease time
+         lda   #<callback
+         sta   $D02D
+         lda   #>callback
+         sta   $D02E
++
+         jmp   $6300
+
+callback
+         pla
+         pla
+         jsr   $D032
+         jsr   $D02F
+         lda   $D141
+         cmp   #'A'
+         beq   hook_A
+         cmp   #'B'
+         beq   hook_B
+         cmp   #'C'
+         beq   hook_C
+         cmp   #'D'
+         beq   hook_D
+         cmp   #'E'
+         beq   hook_E
+         cmp   #'F'
+         bne   no_hook
+         dec   $765E      ; patch - don't decrease time
+         dec   $7751      ; patch - don't decrease time
+         dec   $8A89      ; patch - don't decrease time
+         beq   no_hook    ; always
+
+hook_E
+         dec   $6D12      ; patch - don't decrease time
+         dec   $8B7D      ; patch - don't decrease time
+         dec   $8EA1      ; patch - don't decrease time
+         beq   no_hook    ; always
+
+hook_D
+         lda   #0
+         sta   $768A      ; patch - don't decrease time
+         sta   $867B      ; patch - don't decrease time
+         sta   $9098      ; patch - don't decrease time
+         beq   no_hook    ; always
+
+hook_C
+         dec   $6E93      ; patch - don't decrease time
+         dec   $8C7A      ; patch - don't decrease time
+         beq   no_hook    ; always
+
+hook_B
+         dec   $798E      ; patch - don't decrease time
+         beq   no_hook    ; always
+
+hook_A
+         dec   $6DCD      ; patch - don't decrease time
+
+no_hook
+         rts
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

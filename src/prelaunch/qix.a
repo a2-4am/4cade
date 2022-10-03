@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/QIX",plain
@@ -7,8 +7,45 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          inc   $3F4       ; force reboot
+         lda   #<callback1
+         sta   $60CA
+         lda   #>callback1
+         sta   $60CB
+         ldx   #callback_e-callback_b
+-        lda   callback_b,x
+         sta   callback1,x
+         dex
+         bpl   -
          jmp   $23AC
+
+callback_b !pseudopc $340 {
+callback1
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         php
+         jsr   DisableAccelerator
+         jsr   $100       ; decompress
+         sta   $0
+         lda   #8
+         sta   $1
+         plp
+         beq   +
+         lda   #>(callback2 - 1)
+         pha
+         lda   #<(callback2 - 1)
+         pha
+         jmp   $60D6
++
+         jmp   $60D2
+
+callback2
+         lda   #$ad
+         sta   $9B2F      ; patch - don't decrease lives
+         jmp   $801
+}
+callback_e         
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

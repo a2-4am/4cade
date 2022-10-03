@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019-2022 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX.INDEXED/DITHER.STAR7",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.2bit.a"
+
+         +FX_INITONCE_2BIT CoordinatesFile, Start
+Start
+         +FX_PRECOMPUTED_2BIT_DITHER Coordinates2Bit, EndCoordinates2Bit
+
+CoordinatesFile
+         !byte 13
+         !text "FX/STAR7.DATA"

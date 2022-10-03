@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HYPER.HEAD.ON",plain
@@ -8,7 +8,25 @@
     !source "src/prelaunch/common.a"
 
          +USES_TEXT_PAGE_2
-         jmp   $6d00
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6D32
+         jsr   $6D00      ; decompress
+         lda   #$60
+         sta   $F2F
+         jsr   $F01       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $4B0       ; patch - don't decrease lives
+         sta   $5FD       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         ldx   #$10
+         jmp   $7fd
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

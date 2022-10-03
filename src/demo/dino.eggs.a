@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/DINO.EGGS#060210",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_KEEP_DIR dino_eggs, dino_eggs_dir_e-dino_eggs_dir_b
+         lda   #$60
+         sta   $2186
+         jsr   $2100      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $AD7A,x
+         sta   $B29D,x    ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $0863      ; disable sound
+
+         jmp   $A892
+
+patch    !byte $4C,$00,$01
+
+dino_eggs
+         !byte dino_eggs_e-dino_eggs_b
+dino_eggs_b
+dino_eggs_dir_b
+         !text "X/DINO.EGGS"
+dino_eggs_dir_e
+         !text "/DINO.EGGS"
+dino_eggs_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

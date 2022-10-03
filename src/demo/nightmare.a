@@ -1,0 +1,50 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/NI#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR nightmare, nightmare_dir_e-nightmare_dir_b
+         lda   #$60
+         sta   $404B
+         jsr   $4000      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $8C24,x
+         sta   $8C35,x    ; set exits
+         lda   patch2,x
+         sta   $1669,x    ; decrement custom counter after demo cycle and eventually exit
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $1206
+
+count    !byte $03
+         dec   count
+         beq   patch
+         jmp   $128E
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,<(count+1),>(count+1)
+
+nightmare
+         !byte nightmare_e-nightmare_b
+nightmare_b
+nightmare_dir_b
+         !text "X/NI"
+nightmare_dir_e
+         !text "/NI"
+nightmare_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/STAR.CLONES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $608F
+         jsr   $53BE      ; decompress
+         +DISABLE_ACCEL
+         lda   #0
+         jmp   $A2A7
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

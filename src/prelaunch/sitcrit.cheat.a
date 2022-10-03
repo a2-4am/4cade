@@ -1,0 +1,59 @@
+;license:MIT
+;(c) 2019-2020, 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SITCRIT.CHEAT",plain
+*=$BC00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         jsr   $BD8E
+         +RESET_VECTOR reset
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #$A5
+         lda   $BE93
+         cmp   #'1'
+         beq   hook1
+         cmp   #'2'
+         beq   hook2
+         cmp   #'3'
+         bne   +
+
+hook3
+         stx   $16B4      ; patch - don't decrease bombs
+         stx   $1C57      ; patch - don't increase hits
+         stx   $1CA5      ; patch - don't decrease fuel
+         beq   +          ; always
+
+hook1
+         lda   #$AD
+         sta   $121C      ; patch - don't decrease armor
+         sta   $1562      ; patch - don't decrease armor
+         sta   $1B5B      ; patch - don't decrease armor
+         sta   $1B6F      ; patch - don't decrease armor
+         sta   $1B75      ; patch - don't decrease armor
+         bne   +          ; always
+
+hook2
+         lda   $7AE8
+         cmp   #$E6
+         bne   +
+         stx   $117E      ; patch - don't decrease time
+         stx   $160C      ; patch - don't increase hits
+         stx   $7AE8      ; patch - don't decrease fuel
+         stx   $795C      ; patch - don't decrease bombs
+
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         lda   #0
+         rts
+
+reset
+         +READ_RAM1_NO_WRITE
+         jmp   ($FFFC)

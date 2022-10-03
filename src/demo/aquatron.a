@@ -1,17 +1,15 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "res/DEMO/AQUATRON",plain
-*=$120
+!to "build/DEMO/AQUATRON#06BD00",plain
+*=$BD00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT aquatron, $00 ; $59C2
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
 
          lda   #>(callback - 1)
          sta   $5FC3
@@ -20,30 +18,29 @@
          jmp   $59C2      ; decompress
 
 callback
-         lda   #$4C
-         sta   $7AE1
-         sta   $7D1D
-         lda   #0
-         sta   $7AE1+1
-         sta   $7D1D+1
-         lda   #1
-         sta   $7AE1+2
-         sta   $7D1D+2
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7AE1,x
+         sta   $7D1D,x    ; set exits
+         dex
+         bpl   -
+
          lda   #$D0
          sta   $7E11
          sta   $7E38
          sta   $7E43
-         sta   $7EA0
+         sta   $7EA0       ; disable sound
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
+
          jmp   $400
 
-aquatron
-         !byte 19
-         !text "X/AQUATRON/AQUATRON"
+patch    !byte $4C,$00,$01
 
-!if * > $1F0 {
+title    !byte x_e-x_b
+x_b      !text "AQUATRON"
+x_e
+
+!if * > $BEFF {
   !error "code is too large, ends at ", *
 }

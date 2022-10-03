@@ -4,7 +4,6 @@
 ; UI functions for doing things then waiting, or waiting then doing things
 ;
 ; - ExecuteTransitionAt6000AndWait
-; - ExecuteTransitionAt6400AndWait
 ; - ExecuteTransitionAtA000AndWait
 ; - ExecuteTransitionAndWait
 ; - WaitForKeyFor30Seconds
@@ -12,9 +11,6 @@
 
 ExecuteTransitionAt6000AndWait
          ldy   #$60
-         +HIDE_NEXT_2_BYTES
-ExecuteTransitionAt6400AndWait
-         ldy   #$64
          +HIDE_NEXT_2_BYTES
 ExecuteTransitionAtA000AndWait
          ldy   #$A0
@@ -31,6 +27,8 @@ ExecuteTransitionAndWait
          lda   #0
          +ST16 @j+1
 @j       jsr   $FDFD                 ; SMC call transition effect code
+         sta   WRITEMAINMEM          ; several transition effects exit with
+                                     ; auxmem writeable so we reset it here
          ldx   #$20                  ; picture is showing so now we wait
 -        lda   #0
          jsr   WaitForKeyWithTimeout
@@ -85,10 +83,9 @@ CoverFade
          jsr   ShowOtherPage
          lda   OffscreenPage
          beq   CoverFade
-         jsr   LoadFile              ; load transition effect code at $6000
-         !word kFXDirectory
-         !word kCoverFadeFile
+         jsr   LoadIndexedFile       ; load transition effect code at $6000
          !word $6000
+         !word kCoverFadeRecord
          jsr   $6000                 ; call transition effect
          jmp   MegaAttractMode       ; exit via mega attract mode
 !if (RELBASE != $2000) and (>WaitForKeyFor30Seconds != >*) {

@@ -1,0 +1,69 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CQ",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $A37
+         jsr   $800        ; find and load "DOS"
+         lda   #<callback1
+         sta   $B748
+         lda   #>callback1
+         sta   $B749
+         jmp   $B700
+
+callback1
+         ldx   #$00
+         stx   $9E52
+         inx
+         stx   $9E53       ; fix reset vector
+
+         lda   #<callback2
+         sta   $BD07
+         lda   #>callback2
+         sta   $BD08
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+callback2
+         pla
+         pla
+         jsr   $BD5A
+         jsr   $BD09
+         lda   $BE9F
+         sta   $49
+         lda   $BE9E
+         sta   $48
+         ldy   #4
+         lda   ($48),y
+         tax
+         iny
+         lda   ($48),y
+         ldy   #1
+         cpx   #$13
+         bne   +
+         cmp   #$0E
+         bne   ++
+         sty   $985D
+         sty   $987A       ; fix reset vector
++        cpx   #6
+         bne   ++
+         cmp   #$0D
+         bne   +++
+         sty   $400E       ; fix reset vector
++++      cmp   #6
+         bne   ++
+         sty   $47B6
+         dey
+         sty   $47B1       ; fix reset vector
+++       clc
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

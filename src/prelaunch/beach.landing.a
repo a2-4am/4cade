@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BEACH.LANDING",plain
@@ -44,8 +44,21 @@ skip
          sta   $B7B8
          lda   #>callback
          sta   $B7B9
+         lda   #<callback2
+         sta   $B733
+         lda   #>callback2
+         sta   $B734
          +DISABLE_ACCEL
          jmp   $B700
+
+callback2
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $995       ; patch - don't decrease lives
++
+         jmp   $800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

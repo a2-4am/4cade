@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba/Frank M.
+;(c) 2021-2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DEMONIC.DECKS",plain
@@ -11,9 +11,17 @@
          lda   #$60
          sta   $206A
          jsr   $2000      ; decompress
-         +NEW_RESET_VECTOR $BFF0
-         +DISABLE_ACCEL
-         jmp   $200
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $1CE5      ; patch - don't decrease lives
+         sta   $1E24      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $200       ; no reset vector, code in $3Fx
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

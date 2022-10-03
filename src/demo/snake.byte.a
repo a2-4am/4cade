@@ -1,0 +1,58 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/SNAKE.BYTE#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$B9
+         sta   $842
+         lda   #$60
+         sta   $0858
+         jsr   $0800      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $621F,x
+         dex
+         bpl   -
+
+         inx
+         stx   $7807
+         stx   $78ae
+         stx   $7a11
+         stx   $6414
+         stx   $6465
+         stx   $64A4
+         stx   $64B5
+         stx   $64C3
+         stx   $6C13
+         stx   $7975
+         inx
+         stx   $7808
+         stx   $78af
+         stx   $7a19
+         inc   $7A26
+         lda   #$2C
+         sta   $7A12
+         sta   $7A1A
+
+         +DISABLE_ACCEL
+
+         jmp   $7680
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "SNAKE.BYTE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

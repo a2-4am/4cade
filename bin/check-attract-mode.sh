@@ -7,23 +7,11 @@ fatal_error() {
     exit 1
 }
 
-check_title_slideshow() {
+check_slideshow() {
     [ -f "$1" ] ||
-        fatal_error "Can't find HGR title slideshow" "$1"
+        fatal_error "Can't find slideshow" "$1"
     cat "$1" |
-        grep -v "^#" |
-        grep -v "^\[" |
-        grep -v "^$" |
-        while read ssline; do
-            [ -f "$2"/"$ssline" ] ||
-                fatal_error "Can't find title screenshot" "$ssline"
-        done
-}
-
-check_action_slideshow() {
-    [ -f "$1" ] ||
-        fatal_error "Can't find HGR action slideshow" "$1"
-    cat "$1" |
+        tr -d "\r" |
         grep -v "^#" |
         grep -v "^\[" |
         grep -v "^$" |
@@ -33,23 +21,25 @@ check_action_slideshow() {
                 gamename=$filename
             fi
             [ -f "$2"/"$filename" ] ||
-                fatal_error "Can't find action screenshot" "$filename"
+                fatal_error "Can't find screenshot" "$filename"
             grep "^$gamename$" /tmp/games >/dev/null ||
-                fatal_error "Action screenshot links to non-existent game" "$gamename"
+                fatal_error "Screenshot links to non-existent game" "$gamename"
         done
 }
 
 # fatal error if an attract mode module is listed more than once
 dupes=$(cat res/ATTRACT.CONF |
-    grep -v "^#" |
-    grep -v "^$" |
-    sort |
-    uniq -d)
+            tr -d "\r" |
+            grep -v "^#" |
+            grep -v "^$" |
+            sort |
+            uniq -d)
 if [[ $dupes ]]; then
     fatal_error "Duplicate ATTRACT.CONF module:" "$dupes"
 fi
 
 cat res/GAMES.CONF |
+    tr -d "\r" |
     grep -v "^#" |
     grep -v "^\[" |
     grep -v "^$" |
@@ -57,10 +47,8 @@ cat res/GAMES.CONF |
     cut -d"=" -f1 > /tmp/games
 
 # warn about unused self-running demos
-cat res/DEMO/_FileInformation.txt |
-    grep "Type(06)" |
+grep '^\!to' src/demo/*.a | cut -d'/' -f5-|cut -d'#' -f1 |
     grep -v "SPCARTOON" |
-    cut -d"=" -f1 |
     while read f; do
         grep "$f=0" res/ATTRACT.CONF >/dev/null || echo "unused demo: $f";
     done
@@ -73,27 +61,30 @@ done
 cd ../..
 
 cat res/ATTRACT.CONF |
+    tr -d "\r" |
     grep "=" |
     grep -v "^#" |
     while read line; do
         IFS="=" read -r module_name module_type <<< "$line"
 #        echo "$module_name" "$module_type"
         if [ "$module_type" = "0" ]; then
-            [ -f res/DEMO/"$module_name" ] ||
-                [ "${module_name%???}" = "SPCARTOON" ] ||
-                fatal_error "Can't find demo" $module_name
+            [ "${module_name%???}" = "SPCARTOON" ] && continue
+            demo=$(grep 'to.*'"$module_name" src/demo/*.a)
+            [ -n "$demo" ] || fatal_error "Can't find demo" $module_name
         elif [ "$module_type" = "1" ]; then
-            check_title_slideshow res/SS/"$module_name" res/TITLE.HGR/
+            check_slideshow res/SS/"$module_name" res/TITLE.HGR/
         elif [ "$module_type" = "2" ]; then
-            check_action_slideshow res/SS/"$module_name" res/ACTION.HGR/
+            check_slideshow res/SS/"$module_name" res/ACTION.HGR/
         elif [ "$module_type" = "3" ]; then
-            check_title_slideshow res/SS/"$module_name" res/TITLE.DHGR/
+            check_slideshow res/SS/"$module_name" res/TITLE.DHGR/
         elif [ "$module_type" = "4" ]; then
-            check_action_slideshow res/SS/"$module_name" res/ACTION.DHGR/
+            check_slideshow res/SS/"$module_name" res/ACTION.DHGR/
         elif [ "$module_type" = "5" ]; then
-            check_title_slideshow res/SS/"$module_name" res/ARTWORK.SHR/
+            check_slideshow res/SS/"$module_name" res/ARTWORK.SHR/
         elif [ "$module_type" = "6" ]; then
-            check_action_slideshow res/SS/"$module_name" res/ACTION.GR/
+            check_slideshow res/SS/"$module_name" res/ACTION.GR/
+        elif [ "$module_type" = "7" ]; then
+            check_slideshow res/SS/"$module_name" res/ACTION.DGR/
         else
             fatal_error "Unknown module type" $module_type
         fi

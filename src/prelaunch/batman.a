@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BATMAN",plain
@@ -7,9 +7,36 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          inc   $3F4       ; force reboot
-         jmp   $1000
+         lda   #$60
+         sta   $1196
+         jsr   $1000      ; decompress
+         dex
+         jsr   $D300      ; decompress
+         lda   #$60
+         sta   $901
+         jsr   $800       ; decompress
+         jsr   DisableAccelerator
+         ldx   #7
+         jsr   $984
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $AD37
+         lda   #>callback
+         sta   $AD38
++        lda   #0
+         sta   $FD31      ; uninitialised variable
+         jmp   $904
 
+callback
+         lda   #$AD
+         sta   $FC14
+         sta   $FC65
+         jmp   $AB18
+         
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }

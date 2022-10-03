@@ -1,0 +1,41 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/CEILING.ZERO#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+         lda   #$60
+         sta   $083A
+         jsr   $0800      ; decompress
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7D9C,x
+         sta   $7DE8,x
+         sta   $7DE3,x
+         dex
+         bpl   -
+
+         sty   $7D98
+         sty   $8118
+         sty   $7DD8
+         sty   $7E6A
+
+         +DISABLE_ACCEL
+
+         jmp   $5FED
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "CEILING.ZERO"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/MOON.PATROL#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $49DD
+         jsr   $800
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $2A95,x
+         sta   $2A7E,x
+         sta   $0C31,x
+         sta   $2E80,x    ; exit on keypress/end of demo
+         dex
+         bpl   -
+
+         lda   #$A2
+         sta   $0996
+         stx   $0996+1
+         lda   #$9A
+         sta   $0996+2    ; prevent stack pointer from overwriting $100
+
+         ldx   #26-1
+-        lda   patch, x
+         sta   $2726, x
+         dex
+         bpl   -          ; exit on keypress during title screen
+
+         lda   #$2C
+         sta   $2A61
+         sta   $2A88      ; disable options screen
+
+         +DISABLE_ACCEL
+
+         jmp   $919
+
+title    !byte x_e-x_b
+x_b      !text "MOON.PATROL"
+x_e
+
+patch    !byte $20,$B8,$0A,$2C,$10,$C0,$A2,$41,$A9,$FF,$20,$A8,$FC,$AD,$00,$C0,$10,$05
+patch2   !byte $4C,$00,$01,$EA,$EA,$CA,$D0,$EE
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

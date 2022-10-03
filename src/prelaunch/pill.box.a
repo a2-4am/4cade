@@ -1,0 +1,58 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/PILL.BOX",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         jmp   skip
+
+!pseudopc $300+*-$100 {
+callback
+         tay
+         pla
+         pha
+         cmp   #$fc
+         beq   +
+         sty   $8D24
++        tya
+         jmp   $8CDC
+}
+
+skip
+         ldy   #0
+-        lda   $100,y
+         sta   $300,y
+         iny
+         bpl   -
+         +RESET_VECTOR_HALF $300
+         lda   #$60
+         sta   $4064
+         jsr   $4000       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #6
+         sta   $825E       ; patch - avoid lives overdraw
+         lda   #$a5
+         sta   $8692       ; patch - don't decrease lives
+         sta   $8694       ; patch - don't decrease lives
+         sta   $8696       ; patch - don't decrease lives
+         lda   #$4C
+         sta   $8CD9
+         lda   #<callback
+         sta   $8CDA
+         lda   #>callback
+         sta   $8CDB
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $8100
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

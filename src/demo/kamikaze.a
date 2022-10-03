@@ -1,0 +1,44 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/KAMIKAZE#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $7B12
+         jsr   $739A      ; decompress
+
+         lda   #$D0
+         sta   $69AF      ; no sound
+         sta   $6A33      ; no sound
+         sta   $6A4E      ; no sound
+         sta   $6A56      ; no sound
+         sta   $70A8      ; no sound
+         ldx   #3-1
+-        lda   patch,x
+         sta   $6158,x
+         sta   $6173,x
+         sta   $61C0,x
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $9400
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "KAMIKAZE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

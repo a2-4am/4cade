@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/HIGH.RISE#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $0836
+         jsr   $0800      ; decompress
+
+         lda   #$2C
+         sta   $44AA
+         sta   $44AD
+         sta   $44B0      ; reset vector fix
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $455D,x
+         sta   $4695,x    ; set exits
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $449A
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "HIGH.RISE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

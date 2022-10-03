@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TREASURE.DIVE",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         jmp   +
+
+callback
+         cmp   #$DD
+         beq   callback_e
+         jmp   $FDF0
+callback_e
+
++        +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $409E
+         jsr   $4000      ; decompress
+
+         ldy   #5
+-        lda   $100, y
+         sta   callback_e, y
+         dey
+         bpl   -
+         lda   #<callback_e
+         sta   $3f2
+         lda   #<callback
+         sta   $BE5F
+         lda   #1
+         sta   $BE60
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $8521      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $D566
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

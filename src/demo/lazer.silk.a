@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/LAZER.SILK#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $404B
+         jsr   $4000      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $14D5,x
+         sta   $14E5,x
+         sta   $1125,x
+         sta   $16E8,x
+         sta   $0C3D,x
+         sta   $0C5B,x
+         sta   $0D04,x    ; set exits
+         dex
+         bpl   -
+
+         lda   #$1F
+         sta   $0D01      ; reduce time spent on final screen
+
+         lda   #$D0
+         sta   $7EE8
+         sta   $1077
+         sta   $1159
+         sta   $1549      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   ($0020)
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "LAZER.SILK"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

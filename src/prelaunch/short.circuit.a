@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SHORT.CIRCUIT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $207C
+         jsr   $2000      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #3
+-        lda   patch,x
+         sta   $9441,x
+         dex
+         bpl   -
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $A100
+
+patch    !byte $a9,1,$ea,$8d
+         
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

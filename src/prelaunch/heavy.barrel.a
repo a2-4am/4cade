@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HEAVY.BARREL",plain
@@ -7,8 +7,42 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $11EC
+         jsr   $1000      ; load "DOS"
+         lda   #$48
+         sta   $D34A
+         pha
+         tya
+         pha
+         jsr   $D34D      ; restore ZP
+         lda   #$60
+         sta   $8EB
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $ADC3
+         jsr   $A827      ; decompress more
          inc   $3F4       ; force reboot
-         jmp   $1000
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $A8BD
+         sta   $A8D5
+         lda   #>callback
+         sta   $A8BE
+         sta   $A8D6
++
+         jsr   DisableAccelerator
+         jmp   $A821
+
+callback
+         lda   #$ad
+         sta   $E76D      ; patch - don't decrease lives
+         sta   $E7B7      ; patch - don't increase lives
+         jmp   $A922
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

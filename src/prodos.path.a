@@ -24,14 +24,7 @@ kRootDirectory=*+1
          ldx   #0
          stx   gPathname
          ; execution falls through here
-!if RELBASE != $2000 {
-  !ifdef PASS2 {
-  } else { ;PASS2
-    !if * != iAddToPath {
-      !error "iAddToPath=",*, ", fix constants.a, rebuild prelaunch"
-    }
-  }
-}
+
 AddToPath
          +ST16 PTR
          ldy   #0
@@ -53,48 +46,122 @@ AddToPath
 @done
          rts
 
+kSearchIndexRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
+
+kSearchCacheRecord
+         !byte 0
+         !be24 0                     ; SMC in 4cade.init
+         !le16 0                     ; SMC in 4cade.init
+
+kPrelaunchIndexRecord
+         !source "src/index/prelaunch.idx.a"
+
+kDemoIndexRecord
+         !source "src/index/demo.idx.a"
+
+kAttractModeIndexRecord
+         !source "src/index/attract.idx.a"
+
+kMiniAttractIndexLo
+         !byte <kMiniAttractIndexRecord0
+         !byte <kMiniAttractIndexRecord1
+kMiniAttractIndexHi
+         !byte >kMiniAttractIndexRecord0
+         !byte >kMiniAttractIndexRecord1
+kMiniAttractIndexRecord0
+         !source "src/index/miniattract0.idx.a"
+kMiniAttractIndexRecord1
+         !source "src/index/miniattract1.idx.a"
+
+kAttractModeSlideshowIndexRecord
+         !source "src/index/slideshow.idx.a"
+
+kFXIndexRecord
+         !source "src/index/fx.idx.a"
+
+kDFXIndexRecord
+         !source "src/index/dfx.idx.a"
+
+kSFXIndexRecord
+         !source "src/index/sfx.idx.a"
+
+kGameHelpIndexRecord
+         !source "src/index/gamehelp.idx.a"
+
+kHGRTitleIndexRecord
+         !source "src/index/title.idx.a"
+
+kDHGRTitleIndexRecord
+         !source "src/index/dtitle.idx.a"
+
+kSHRArtworkIndexRecord
+         !source "src/index/artwork.idx.a"
+
+kDHGRActionIndexRecord
+         !source "src/index/dhgr.idx.a"
+
+kGRActionIndexRecord
+         !source "src/index/gr.idx.a"
+
+kDGRActionIndexRecord
+         !source "src/index/dgr.idx.a"
+
+kHGRActionIndexLo
+         !byte <kHGRActionIndexRecord0
+         !byte <kHGRActionIndexRecord1
+         !byte <kHGRActionIndexRecord2
+         !byte <kHGRActionIndexRecord3
+         !byte <kHGRActionIndexRecord4
+         !byte <kHGRActionIndexRecord5
+         !byte <kHGRActionIndexRecord6
+kHGRActionIndexHi
+         !byte >kHGRActionIndexRecord0
+         !byte >kHGRActionIndexRecord1
+         !byte >kHGRActionIndexRecord2
+         !byte >kHGRActionIndexRecord3
+         !byte >kHGRActionIndexRecord4
+         !byte >kHGRActionIndexRecord5
+         !byte >kHGRActionIndexRecord6
+kHGRActionIndexRecord0
+         !source "src/index/hgr0.idx.a"
+kHGRActionIndexRecord1
+         !source "src/index/hgr1.idx.a"
+kHGRActionIndexRecord2
+         !source "src/index/hgr2.idx.a"
+kHGRActionIndexRecord3
+         !source "src/index/hgr3.idx.a"
+kHGRActionIndexRecord4
+         !source "src/index/hgr4.idx.a"
+kHGRActionIndexRecord5
+         !source "src/index/hgr5.idx.a"
+kHGRActionIndexRecord6
+         !source "src/index/hgr6.idx.a"
+
+kCreditsRecord
+         !source "src/index/credits.idx.a"
+
+kHelpTextRecord
+         !source "src/index/helptext.idx.a"
+
+kDecrunchRecord
+         !source "src/index/decrunch.idx.a"
+
+kJoystickRecord
+         !source "src/index/joystick.idx.a"
+
+kXSingleRecord
+         !source "src/index/xsingle.idx.a"
+
 kTotalDataFile
          !byte 10
          !raw  "TOTAL.DATA"
 
-kHGRTitleDirectory
-         !byte 10
-         !raw  "TITLE.HGR/"
-
-kDHGRTitleDirectory
-         !byte 11
-         !raw  "TITLE.DHGR/"
-
 kAnimatedTitleDirectory
          !byte 15
          !raw  "TITLE.ANIMATED/"
-
-kHGRActionIndexFile
-         !byte 8
-         !raw  "HGR"
-gHGRActionIndexNumber
-         !raw  "_"
-         !raw  ".IDX"
-
-kHGRActionDataFile=kTotalDataFile
-
-kDHGRActionIndexFile
-         !byte 8
-         !raw  "DHGR.IDX"
-
-kDHGRActionDataFile=kTotalDataFile
-
-kDHGRActionDirectory
-         !byte 12
-         !raw  "ACTION.DHGR/"
-
-kGRActionDirectory
-         !byte 10
-         !raw  "ACTION.GR/"
-
-kDemoDirectory
-         !byte 5
-         !raw  "DEMO/"
 
 kGameDirectory
          !byte 2
@@ -105,103 +172,27 @@ kFXDirectory
          !byte 3
          !raw  "FX/"
 
-kPrelaunchIndexFile
-         !byte 13
-         !raw  "PRELAUNCH.IDX"
-
-kPrelaunchFulFile=kTotalDataFile
-
-kStandardPrelaunch
-         !byte 8
-         !raw  "STANDARD"
-
 kGlobalPrefsFilename
          !byte 10
          !raw  "PREFS.CONF"
 
-kAttractModeIndexFile
-         !byte 11
-         !raw  "ATTRACT.IDX"
+kStandardPrelaunchRecord
+         !source "src/index/standard.prelaunch.a"
 
-kMiniAttractIndexFile
-         !byte 15
-         !raw  "MINIATTRACT.IDX"
+kCoverFadeRecord
+         !source "src/index/coverfade.idx.a"
 
-kAttractModeFulFile=kTotalDataFile
+kGRFizzleRecord
+         !source "src/index/gr.fizzle.idx.a"
 
-kAttractModeSlideshowIndexFile
-         !byte 13
-         !raw  "SLIDESHOW.IDX"
+kDGRFizzleRecord
+         !source "src/index/dgr.fizzle.idx.a"
 
-kAttractModeSlideshowFulFile=kTotalDataFile
+kHelpBackgroundRecord
+         !source "src/index/res.help.idx.a"
 
-kFXIndexFile
-         !byte 6
-         !raw  "FX.IDX"
+kTitleRecord
+         !source "src/index/res.title.idx.a"
 
-kFXFile=kTotalDataFile
-
-kDFXIndexFile
-         !byte 7
-         !raw  "DFX.IDX"
-
-kGameHelpIndexFile
-         !byte 12
-         !raw  "GAMEHELP.IDX"
-
-kGameHelpFile=kTotalDataFile
-
-kSHRArtworkIndexFile
-         !byte 11
-         !raw  "ARTWORK.IDX"
-
-kSHRArtworkDataFile=kTotalDataFile
-
-kCreditsFile
-         !byte 7
-         !raw  "CREDITS"
-
-kHelpBackgroundFile
-         !byte 4
-         !raw  "HELP"
-
-kHelpTextFile
-         !byte 8
-         !raw  "HELPTEXT"
-
-kTitleFile
-         !byte 5
-         !raw  "TITLE"
-
-kCoverFile
-         !byte 5
-         !raw  "COVER"
-
-kCoverFadeFile
-         !byte 9
-         !raw  "COVERFADE"
-
-kGRFizzleFile
-         !byte 9
-         !raw  "GR.FIZZLE"
-
-kSFXFizzleFile
-         !byte 10
-         !raw  "SHR.FIZZLE"
-
-kDecrunchFile
-         !byte 8
-         !raw  "DECRUNCH"
-
-kJoystickFile
-         !byte 8
-         !raw  "JOYSTICK"
-
-kSearchIndexFile
-         !byte 12
-         !raw  "SEARCH"
-gSearchHasJoystick
-         !raw  "_"
-gSearchHas128K
-         !raw  "_"
-         !raw  ".IDX"
+kCoverRecord
+         !source "src/index/res.cover.idx.a"

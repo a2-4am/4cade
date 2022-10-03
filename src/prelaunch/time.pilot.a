@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TIME.PILOT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $47CD
+         jsr   $472D      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $A5E       ; patch - don't decrease lives
++
+         jmp   $D566
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

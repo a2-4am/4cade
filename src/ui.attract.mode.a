@@ -8,6 +8,16 @@
 ; - MiniAttractMode
 ; - RunAttractModule
 
+kAttractModeFilters
+         !byte ATTRACT_DEMO
+         !byte ATTRACT_HGR_TITLE
+         !byte ATTRACT_HGR_ACTION
+         !byte ATTRACT_DHGR_TITLE
+         !byte ATTRACT_DHGR_ACTION
+         !byte ATTRACT_SHR
+         !byte ATTRACT_GR
+         !byte ATTRACT_DGR
+
 ;------------------------------------------------------------------------------
 ; MegaAttractMode
 ; main entry point for Mega Attract Mode, which endlessly cycles through
@@ -24,11 +34,11 @@ MegaAttractMode
 
          jsr   BlankHGR              ; switch to HGR page 1 (once cleared)
 
-         jsr   LoadFile              ; load pre-parsed attract mode configuration data into $6000
-         !word kRootDirectory
-         !word kAttractModeIndexFile
+         jsr   LoadIndexedFile       ; load pre-parsed attract mode configuration data into $6000
 -        !word $6000
+         !word kAttractModeIndexRecord
 
+@next
          jsr   pref_get              ; get attract mode module from prefs
          !word kNextAttract
          !word -
@@ -47,48 +57,96 @@ MegaAttractMode
 @mname   !word $FDFD                 ; SMC
          ldy   #1
          lda   (PTR),y
-         tax                         ; X = module type
+         tax                         ; X = module type as ASCII digit
+
+         and   #$0F                  ; do we want to display this module type
+         tay
+         lda   gMegaAttractModeFilter
+         and   kAttractModeFilters, y
+         beq   @next
+
          +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
          bpl   MegaAttractMode
          cmp   #$8D                  ; Enter plays the game shown on screen.
          bne   +                     ; Any other key switches to Search Mode.
-         jsr   PlayGame              ; (might return if user hits Ctrl-Reset)
+         jsr   ReloadSearchIndexOnly
+         +LD16 gLastMegaAttractGame
+         +ST16 @game
+         jsr   okvs_find
+         !word SearchIndexHandle
+@game    !word $FDFD                 ; SMC
+         jsr   PlayGameInAY          ; (might return if user hits Ctrl-Reset)
 +        jmp   SearchMode
 
 ;------------------------------------------------------------------------------
 ; MiniAttractMode
 ; run attract modules related to one game
 ;
-; in:    gGameToLaunch = index in gGamesListStore (word)
+; in:    gGameToLaunch = index in gSearchStore (word)
+;        gSearchStore populated
 ; out:   all flags and registers clobbered
-;        assume all of main memory has been clobbered
+;        assume all of main memory has been clobbered (including gSearchStore)
 ;------------------------------------------------------------------------------
 MiniAttractMode
          jsr   GetGameToLaunch
-         +ST16 +
+         +ST16 @GameToLaunch
+
+; We want to load the mini attract index into $800 so we can get the
+; index record for this game, but we now have so many games that the
+; entire index is larger than $1800 bytes and loading it all at once
+; would visibly overwrite bytes in HGR page 1. So the index is now
+; split into 2 halves based on the first letter of the game's
+; directory name, and we figure out which half we want and load it.
+
+         +ST16 PTR
+         ldy   #1
+         lda   (PTR), y
+         sec
+         sbc   #$41                  ; A in [0..25]
+         lsr                         ; A in [0..15]
+         lsr                         ; A in [0..7]
+         lsr                         ; A in [0..3]
+         lsr                         ; A in [0..1]
+         tax
+         lda   kMiniAttractIndexLo, x
+         sta   @MiniAttractIndexRecord
+         lda   kMiniAttractIndexHi, x
+         sta   @MiniAttractIndexRecord+1
+
+         jsr   LoadIndexedFile
+-        !word $0800
+@MiniAttractIndexRecord
+         !word $FDFD                 ; SMC
+
+; Find the index record for this game and copy it into LC RAM so we
+; can reuse it without reloading the mini attract index over and over
+; during attract mode.
+
+         jsr   okvs_find
+         !word -
+@GameToLaunch
+         !word $FDFD                 ; SMC
+         jsr   okvs_next_field
+         jsr   SwitchToBank2
+         sty   OKVS_CACHE
+         ldy   #4                    ; length of index record (-1)
+-        lda   (PTR), y
+         sta   OKVS_CACHE + 1, y
+         dey
+         bpl   -
+
+; Now, finally, start the mini attract mode
 
          jsr   BlankHGR
                                      ; X = 0
          stx   @MiniAttractIndex+1
          stx   @MiniAttractIndex+3
 @loop
-         jsr   LoadFile              ; load mini attract mode configuration file into $6000
-         !word kRootDirectory
-         !word kMiniAttractIndexFile
--        !word $6000
-
-         jsr   okvs_find
-         !word -
-+        !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
          jsr   LoadIndexedFile
-         !word kAttractModeFulFile
 -        !word $6000
-@indexRecordPtr
-         !word $FDFD                 ; SMC
+         !word OKVS_CACHE
 
          +LDADDR -
          jsr   okvs_len
@@ -105,7 +163,7 @@ MiniAttractMode
          +LDADDR -
          jsr   okvs_nth              ; get the next module on the list
          +ST16 SAVE
-         jsr   okvs_get_current      ; get module type
+         jsr   okvs_next_field       ; get module type
                                      ; Y = 0
          iny
          lda   (PTR),y
@@ -137,34 +195,38 @@ ATTRTS   rts
 ;------------------------------------------------------------------------------
 RunAttractModule
          +ST16 @key
-         +ST16 @key2
          cpx   #$30
          bne   @NotDemo
 
 ; Self-running demos are loaded into main memory and executed.
-; Each binary has been patched to quit on any key and jump back
-; to the |Reenter| entry point.
+; Each demo has been patched to check joystick and memory requirements,
+; so a demo won't run if the actual game wouldn't be playable.
+; Demos are also patched to jump back to the |Reenter| entry point
+; on any key, or at the natural end of the demo cycle.
 ; All demos are strictly 48K / main memory. No demo uses the
 ; language card or auxiliary memory.
 
-         +LD16 @key
-         jsr   FindGame
-         bcs   ATTRTS                ; if game doesn't exist, skip the demo
-         +LD16 WINDEX
-         +CMP16_E $FFFF, @nogame
-         +ST16 gGameToLaunch         ; if this demo corresponds to a game, save its index
-                                     ; in case user presses RETURN during the demo (we will launch the game)
-@nogame
+         +ST16 PTR
+         ldy   #0
+         lda   (PTR), y
+         tay
+-        lda   (PTR), y
+         sta   DemoFilename, y
+         dey
+         bpl   -
+         +LDADDR DemoFilename
+         +ST16 gLastMegaAttractGame  ; save game filename in LC in case user hits Return to launch
+         +ST16 xfile
+
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
-
          jsr   LoadStandardPrelaunch ; load standard prelaunch code (|Launch| will call it)
 
-         jsr   LoadFile              ; load self-running demo into its default address (varies)
-         !word kDemoDirectory
-@key     !word $FDFD
-         !word 0
+         jsr   LoadIndexedFile       ; load demo index file
+-        !word gSearchCache
+         !word kDemoIndexRecord
 
+         jsr   LoadXFile             ; load self-running demo into its default address (varies)
          jmp   Launch                ; will return to caller via |Reenter|
 
 ; not a demo, so maybe a slideshow or single screenshot
@@ -175,16 +237,14 @@ RunAttractModule
 
 ; it's a slideshow, so load slideshow configuration file
          pha                         ; save module type
-         jsr   LoadFile              ; load slideshow configuration file into $4000
-         !word kAttractModeSlideshowIndexFile
-         !word kRootDirectory
+         jsr   LoadIndexedFile       ; load slideshow configuration file into $4000
 -        !word $4000
+         !word kAttractModeSlideshowIndexRecord
          jsr   okvs_find
          !word -
-@key2    !word $FDFD                 ; SMC
+@key     !word $FDFD                 ; SMC
          +ST16 +
          jsr   LoadIndexedFile
-         !word kAttractModeSlideshowFulFile
          !word $800
 +        !word $FDFD                 ; SMC
          pla                         ; restore module type
@@ -208,11 +268,13 @@ RunAttractModule
          !byte <DHGRActionSlideshow
          !byte <SHRSlideshow
          !byte <GRActionSlideshow
+         !byte <DGRActionSlideshow
 @singleslo
          !byte <HGRSingle
          !byte <DHGRSingle
          !byte <SHRSingle
          !byte <GRSingle
+         !byte <DGRSingle
 @slideshowshi
          !byte >HGRTitleSlideshow
          !byte >HGRActionSlideshow
@@ -220,8 +282,13 @@ RunAttractModule
          !byte >DHGRActionSlideshow
          !byte >SHRSlideshow
          !byte >GRActionSlideshow
+         !byte >DGRActionSlideshow
 @singleshi
          !byte >HGRSingle
          !byte >DHGRSingle
          !byte >SHRSingle
          !byte >GRSingle
+         !byte >DGRSingle
+
+DemoFilename
+         !byte 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15

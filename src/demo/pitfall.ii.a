@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/PITFALL.II#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $3D34
+         jsr   $0800      ; decompress
+
+         +RESET_VECTOR reset
+         ldx   #3-1
+-        lda   patch,x
+         sta   $6015,x
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
+
+patch    !byte $20,<callback,>callback
+
+reset
+         +READ_RAM2_NO_WRITE
+         jmp   ($FFFC)
+
+callback
+         ldx   #6-1
+p1       lda   $100, x
+         sta   $6055, x
+         sta   $AB43, x
+         dex
+         bpl   p1         ; set demo exits
+
+         lda   #$BF
+         sta   $6021      ; reduce time before demo starts
+
+         lda   #$D0
+         sta   $6299      ; don't lose keypress on return
+         jmp   $ADE0
+
+title    !byte x_e-x_b
+x_b      !text "PITFALL.II"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

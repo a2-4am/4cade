@@ -1,0 +1,69 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/WARP.DESTROYER#060320",plain
+*=$320
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR warp_destoyer, warp_destoyer_dir_e-warp_destoyer_dir_b
+         lda   #$4C
+         sta   $893
+         jsr   $800       ; decompress, show title
+
+         ldx   #1
+         stx   $6692
+         dex
+         stx   $669C      ; reset vector patch
+
+         lda   #$B0
+         sta   $76D1
+         lda   #$13       ; disable unknown hardware support
+         sta   $76D2      ; otherwise hangs on IIgs
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7AA6,x    ; auto-select keyboard control
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $65D6      ; disable sound
+
+         +DISABLE_ACCEL
+
+         lda   #$60
+         sta   $8BB
+         lda   #0
+         jsr   $896       ; memory move, show second title
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $8051,x
+         sta   $8107,x
+         sta   $8157,x
+         sta   $839D,x    ; set exits
+         dex
+         bpl   -
+
+         jmp   $667D
+
+patch    !byte $A9,$CB,$EA
+patch2   !byte $4C,$00,$01
+
+warp_destoyer
+         !byte warp_destoyer_e-warp_destoyer_b
+warp_destoyer_b
+warp_destoyer_dir_b
+         !text "X/WARP.DESTROYER"
+warp_destoyer_dir_e
+         !text "/WARP.DESTROYER"
+warp_destoyer_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

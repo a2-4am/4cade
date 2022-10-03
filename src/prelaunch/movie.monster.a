@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/MM",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $9C7
+         jsr   $800        ; find and load "DOS"
+         iny
+         sty   $B719
+         jsr   $B700
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BD07
+         lda   #>callback
+         sta   $BD08
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $900
+
+callback
+         pla
+         pla
+         jsr   $BD44
+         jsr   $BD09
+         lda   $B790
+         cmp   #$12
+         bne   +
+         lda   $B791
+         cmp   #$0b
+         bne   +
+         lda   $BD13
+         cmp   #$20
+         bne   +
+         lda   #$a5
+         sta   $7CD6      ; patch - don't decrease endurance
++        clc
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

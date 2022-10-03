@@ -1,0 +1,53 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/LABYRINTH#060310",plain
+*=$310
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR labyrinth, labyrinth_dir_e-labyrinth_dir_b
+         lda   #$60
+         sta   $3874
+         jsr   $37F6      ; decompress
+
+         lda   #$D0
+         sta   $1072
+         sta   $107A      ; disable sound
+
+         lda   #$60
+         sta   $BC41
+         +DISABLE_ACCEL
+         jsr   $BC00      ; show title animation
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $1E66,x
+         sta   $1EE9,x
+         sta   $8CAA,x    ; set exits
+         lda   patch2,x
+         sta   $1F00,x    ; disable joystick button detection
+         dex
+         bpl   -
+
+         jmp   $1E3E
+
+patch    !byte $4C,$00,$01
+patch2   !byte $EA,$A9,$00
+
+labyrinth
+         !byte labyrinth_e-labyrinth_b
+labyrinth_b
+labyrinth_dir_b
+         !text "X/LABYRINTH"
+labyrinth_dir_e
+         !text "/LABYRINTH"
+labyrinth_e
+
+!if * > $BFD0 {
+  !error "code is too large, ends at ", *
+}

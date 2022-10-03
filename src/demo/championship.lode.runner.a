@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/CL#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR champ_lode, champ_lode_dir_e-champ_lode_dir_b
+         lda   #$60
+         sta   $1F74
+         jsr   $1F00      ; decompress
+
+         lda   #$10
+         sta   $8AD3
+         lda   #$08
+         sta   $8AD3+1
+         ldx   #3-1
+-        lda   patch,x
+         sta   $8AD3+2,x
+         sta   $7524,x
+         sta   $61FF,x
+         sta   $626D,x    ; set exits
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $6000
+
+patch    !byte $4C,$00,$01
+
+champ_lode
+         !byte champ_lode_e-champ_lode_b
+champ_lode_b
+champ_lode_dir_b
+         !text "X/CL"
+champ_lode_dir_e
+         !text "/CL"
+champ_lode_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

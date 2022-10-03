@@ -1,26 +1,75 @@
 ;license:MIT
-;(c) 2018-2021 by 4am
+;(c) 2018-2022 by 4am
 ;
 
 ;------------------------------------------------------------------------------
 ; YE OLDE GRAND UNIFIED MEMORY MAP
 ;
 ; LC RAM BANK 1
-; D000..E7F4 - persistent data structures (gGlobalPrefsStore, gGamesListStore)
-; E9EE..FFEE - main program code
-; FFEF..FFF9 - API functions and global constants available for main program
+; D000       - reserved
+; D001..D06E - gGlobalPrefsStore
+; ...unused...
+; E000..E3FF - HGR font data
+; ...unused...
+; E730..FFEB - main program code
+; FFEC..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
 ; FFFA..FFFF - NMI, reset, IRQ vectors
 ;
 ; LC RAM BANK 2
-; D000..D3FF - ProRWTS data
-; D400..D6C3 - ProRWTS code
-; D6C4..DB91 - HGR font code & ProRWTS glue code
-; DB92..DBA1 - backup of stack (during gameplay and self-running demos)
+; D000..D5FF - ProRWTS data
+; D600..D8BD - ProRWTS code
+; D8BE..DC76 - ProRWTS glue code
+; DC77..DC7C - backup of stack (during gameplay and self-running demos)
+; DC7D..DC82 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
-; DBB4..DBFF - (de)acceleration function
-; DC00..DFFF - HGR font data
+; DFB4..DFFF - (de)acceleration function
+;
+; MAIN MEMORY DURING SEARCH/BROWSE MODE
+; 6000..9FFF - search index
+; A000..BCFF - search cache
+; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
+; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
+;
+; MAIN MEMORY DURING MEGA-ATTRACT MODE
+; 0100..0105 - re-entry code for demos (reloaded before demo)
+; 0106..01BF - prelaunch code (reloaded before demo)
+; 0400..07FF - text screen (cleared before each module)
+; 0800..1EFF - slideshow configuration file (persistent during slideshow module)
+; 2000..5FFF - hi-res screens (cleared before each module)
+; 4000..5FFF - slideshow index file (loaded before slideshow module)
+; 6000..     - mega-attract configuration file (reloaded before each module)
+; BD00..BEFF - prefs buffer (clobbered if cheat mode changes)
+; BF00..BFFF - ProRWTS glue (reset after demo)
+;
+; MAIN MEMORY DURING MINI-ATTRACT MODE
+; 0100..0105 - re-entry code for demos (reloaded before demo)
+; 0106..01BF - prelaunch code (reloaded before demo)
+; 0400..07FF - text screen (cleared before each module)
+; 0800..1FFF - mini-attract index file (loaded once)
+; 2000..5FFF - hi-res screens
+; 6000..     - mini-attract configuration file (reloaded before each module)
+; 6000..     - transition effect code (reloaded before each screenshot module)
+; BF00..BFFF - ProRWTS glue (reset after demo)
+;
+; MAIN MEMORY DURING GAME LAUNCH
+; 0100..0105 - re-entry code
+; 0106..01BF - prelaunch code
+; 0400..7FFF - text screen cleared
+; 2000..5FFF - hi-res screens cleared
+; A000..     - prelaunch index file
+;
+; MAIN MEMORY DURING CREDITS (preserves search index and cache)
+; 0800..     - credits text
+;
+; MAIN MEMORY DURING GLOBAL HELP (preserves search index and cache)
+; 0800..     - help text
+;
+; MAIN MEMORY DURING PER-GAME HELP (clobbers search cache)
+; 0800..     - help text
+; A000..     - game help index file
+;
 ;------------------------------------------------------------------------------
 
 !ifndef _CONSTANTS_ {
@@ -39,11 +88,11 @@ CLR80VID =     $C00C      ; 40 columns (also used to get out of DHGR mode)
 SET80VID =     $C00D      ; 80 columns (also used to get into DHGR mode)
 PRIMARYCHARSET= $C00E     ; no mousetext for you
 SLOT3STATUS =  $C017      ; bit 7 only
-TBCOLOR =      $C022      ; IIgs text foreground and background colors (also VidHD)
+TBCOLOR =      $C022      ; IIgs text foreground and background colors (also VidHD but write-only)
 NEWVIDEO =     $C029      ; IIgs graphics modes (also VidHD)
 SPEAKER =      $C030      ; chirp chirp
-CLOCKCTL =     $C034      ; bits 0-3 are IIgs border color (also VidHD)
-SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing (also VidHD)
+CLOCKCTL =     $C034      ; bits 0-3 are IIgs border color (also VidHD but write-only)
+SHADOW =       $C035      ; IIgs auxmem-to-bank-E1 shadowing (also VidHD but write-only)
 TEXTMODE =     $C051
 PAGE1 =        $C054      ; page 1 (affects text, HGR, DHGR)
 PAGE2 =        $C055      ; page 2 (affects text, HGR, DHGR)
@@ -57,6 +106,7 @@ ROM_TEXT2COPY =$F962      ; turn on alternate display mode on IIgs
 ROM_REBOOT =   $FAA6
 ROM_TEXT =     $FB2F
 ROM_MACHINEID =$FBB3
+ROM_MACHINE2C =$FBC0
 ROM_HOME =     $FC58
 ROM_COUT =     $FDED
 ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
@@ -100,12 +150,10 @@ firstletter=   $FA        ; byte
 MatchCount =   $FB        ; byte
 BestMatchScore = $FC      ; byte
 
-;              $FE        ; used by ParseGamesList
-;              $FF        ; used by ParseGamesList
-
 ; main memory
+gStackSize   = 6          ; seems like only six are needed
 gPathname    = $BFD0      ; used by SetPath/AddToPath
-gKeyLen      = $1F00      ; used by ParseGamesList
+gKeyLen      = $1F00
 gKey         = $1F01
 UILine1      = $1FB0
 UILine2      = $1FD8
@@ -114,28 +162,38 @@ UI_ToPlay    = $1FF7
 gValLen      = $1F80
 gVal         = $1F81
 
-; LC RAM 1
-iLoadFileDirect    = $FFEF
+gSearchIndex = $6000
+gSearchCache = $A000
+
+; LC RAM 1 & 2
+iLoadXSingle       = $FFE9
+iAddToPath         = $FFEC
+iLoadFileDirect    = $FFEF  ; note: you really want LC RAM 2 banked in before calling this
 WaitForVBL         = $FFF2
 UnwaitForVBL       = $FFF5
 
-MockingboardStuff  = $FFF8  ; bit 7 = 1 if speech chip present (Mockingboard "C")
-                            ; bit 6 = 1 if Mockingboard "B" (stereo) found (else Mockingboard "A")
-                            ; bit 4-5 unused
+MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
+                            ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")
+                            ; bit 5 = 1 if two AY-3-8910s present (Sound II / Mockingboard "A"-"D")
+                            ; bit 5 = 0 if only AY-3-8910 present (Sound I)
+                            ; bit 4 unused
                             ; bits 0-3: slot number
 MachineStatus      = $FFF9
 
 ; LC RAM 2
-DisableAccelerator = $DBB4
+DisableAccelerator = $DFB4
 EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MockingboardStuff
 MOCKINGBOARD_SLOT = %00001111
-HAS_SPEECH        = %10000000
+HAS_SPEECH        = %11000000
 
-; AND masks for game info bitfield (after game display name in gGamesListStore)
+; AND masks for game info bitfield (after game display name in gSearchStore)
 HAS_DHGR_TITLE    = %10000000        ; this one is hard-coded via BMI instead of AND/BNE
+IS_SINGLE_LOAD    = %01000000
 CHEAT_CATEGORY    = %00001111
+;                      ^^
+;                      ++-- your bits here!
 
 ; AND masks for MachineStatus
 HAS_JOYSTICK   = %10000000
@@ -145,18 +203,32 @@ HAS_VIDHD      = %00010000
 SUPPORTS_SHR   = %00110000
 CHEATS_ENABLED = %00001000
 
+; AND masks for gMegaAttractModeFilter
+ATTRACT_DEMO        = %00000001
+ATTRACT_HGR_TITLE   = %00000010
+ATTRACT_HGR_ACTION  = %00000100
+ATTRACT_DHGR_TITLE  = %00001000
+ATTRACT_DHGR_ACTION = %00010000
+ATTRACT_SHR         = %00100000
+ATTRACT_GR          = %01000000
+ATTRACT_DGR         = %10000000
+
+PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be determined at build-time
+
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
-iCurBlockLo    = $D401               ; constant
-iCurBlockHi    = $D403               ; constant
-launchpatch    = $D662               ; glue.launch.a
-iAddToPath     = $FE8F               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
-itraverse      = $D959               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+iCurBlockLo    = $D601               ; constant
+iCurBlockHi    = $D603               ; constant
+launchpatch    = $D85C               ; glue.launch.a
+itraverse      = $DB4B               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
+                                     ; also Columns (via file in disk image)
 ldrlo          = $55                 ; constant
 ldrhi          = $56                 ; constant
 namlo          = $57                 ; constant
 namhi          = $58                 ; constant
 ldrlo2         = $64                 ; constant
 ldrhi2         = $65                 ; constant
+
+; Columns and Dangerous Dave also call (de)accelerator functions directly
 
 _CONSTANTS_=*
 }

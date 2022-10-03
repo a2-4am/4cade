@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/NIBBLER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $8A19
+         jsr   $6550      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$EA
+         sta   $11A0      ; patch - don't decrease lives
+         lda   #$A5
+         sta   $12D3      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $900
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

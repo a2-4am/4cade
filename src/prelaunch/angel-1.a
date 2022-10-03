@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ANGEL.1",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $86E
+         jsr   $800        ; decompress
+         ldx   #0
+         stx   $B265
+         inx
+         stx   $B26A
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $938D       ; patch - don't decrease bombs
+         dec   $93E1       ; patch - don't decrease boxes
+         dec   $9459       ; patch - don't decrease fuel
+         lda   #$A5
+         sta   $9439       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $B00D
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019, 2022 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GREMLINS",plain
@@ -8,9 +8,13 @@
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $0866
+         lda   #$4C
+         sta   $0839
+         sta   $0863
          jsr   $0800      ; decompress
+         +DISABLE_ACCEL
+         jsr   $211       ; music
+         jsr   $83C       ; check key
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -22,11 +26,6 @@
          sta   $54B6      ; patch - don't decrease lives
          sta   $5162      ; patch - don't increase lives
 +
-         ldx   #0
-         stx   $67AA
-         dex
-         stx   $67A0
-         +DISABLE_ACCEL
          jmp   $4000
 
 !if * > $1C0 {

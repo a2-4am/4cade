@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/OUTPOST",plain
@@ -13,7 +13,16 @@
          jsr   $3EC8      ; decompress/title/set reset vector
 
          +RESET_VECTOR $100
-         jmp   $200
+         lda   #$60
+         sta   $211
+         jsr   $200
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$B5
+         sta   $8086      ; patch - don't decrease lives
++
+         jmp   $8000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

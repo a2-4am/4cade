@@ -19,7 +19,7 @@
          sta   $144B      ; patch - don't decrease lives
          sta   $E96       ; patch - don't increase lives
 +
-         +RESET_VECTOR $100
+         +RESET_VECTOR_HALF $100
          +DISABLE_ACCEL
          jmp   $305
 

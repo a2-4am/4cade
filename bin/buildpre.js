@@ -32,7 +32,7 @@ for (i = 0; i < entries.length; i++)
     size = ((Math.floor(c / 512) == Math.floor((c + size) / 512)) ? size : (((c + size + 511) & -512) - c))
   }
 
-  groups += "!byte " + (1 + 1 + entries[i].length + 5) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size + "\n"
+  groups += "!byte " + (1 + 1 + entries[i].length + 3 + 2) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size + "\n"
 }
 
 f = a.createtextfile("build\\pre.tmp")

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DJ",plain
@@ -13,6 +13,13 @@
          jsr   $2000      ; decompress
          lda   #$88
          sta   $E001
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $EE5       ; patch - don't increase lives
+         sta   $1226      ; patch - don't decrease lives
++
          jsr   DisableAccelerator
          jmp   $200
 

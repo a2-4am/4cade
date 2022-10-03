@@ -1,0 +1,71 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/AXIS.ASSASSIN#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$84
+         sta   $3ECC
+         lda   #$70
+         sta   $3ED0
+         lda   #$17
+         sta   $3EDC
+
+         lda   #$60
+         sta   $3f06
+         jsr   $3eb1      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $5B2E,x    ; reset vector patch
+         sta   $701C,x
+         sta   $5D5B,x
+         dex
+         bpl   -
+
+         ldx   #2-1
+-        lda   patch+1,x
+         sta   $5DF4,x
+         sta   $5CD8,x
+         sta   $5E09,x
+         dex
+         bpl   -
+
+         lda   #$24
+         sta   $5D24
+         lda   #$D0
+         sta   $5D14
+         lda   #$20
+         sta   $5D41
+         lda   #<callback
+         sta   $5D42
+         lda   #>callback
+         sta   $5D43
+         lsr   $5CBA
+
+         +DISABLE_ACCEL
+         jmp   $5c00
+
+counter  !byte 5
+callback
+         sta   $C010
+         dec   counter
+         bmi   patch
+         rts
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "AXIS.ASSASSIN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

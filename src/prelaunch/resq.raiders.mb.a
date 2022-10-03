@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/RESQ.RAIDERS.MB",plain
@@ -17,7 +17,7 @@
          lda   #$4C
          sta   $4047
          +GET_MOCKINGBOARD_SPEECH
-         bcs   +
+         bvs   +
          lda   #$60
          sta   $40FB       ; no speech chip, pretend no MB
 +

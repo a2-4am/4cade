@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TERITORY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback1
+         sta   $6065
+         lda   #>callback1
+         sta   $6066
+         jmp   $6000      ; decompress
+
+callback1
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$4C
+         sta   $56B6
+         lda   #<callback2
+         sta   $56B7
+         lda   #>callback2
+         sta   $56B8
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         lda   #0
+jmp60
+         jmp   $60
+
+callback2
+         lda   #$a5
+         sta   $4F70      ; patch - don't decrease lives
+         lda   $c4
+         bmi   jmp60+1    ; patch - don't decrease time
+         dec   $c4
+         bne   jmp60+1
++        jmp   $56BA
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

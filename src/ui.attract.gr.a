@@ -33,14 +33,11 @@ GRActionSlideshow
 ;        graphics mode set to display hi-res screen
 ;------------------------------------------------------------------------------
 GRSingle
-         +ST16 @fname
+         +ST16 IndexedGRFilename
          jsr   BlankGR               ; switch to GR mode with initial blank screen
-         jsr   LoadFile              ; load GR screenshot into $6000
-         !word kRootDirectory
-@fname   !word $FDFD                 ; SMC
-         !word $6000
-         jsr   LoadGRTransition      ; load transition effect code at $6400
-         jsr   ExecuteTransitionAt6400AndWait
+         jsr   LoadIndexedGRFile     ; load GR screen at $4000
+         jsr   LoadGRTransition      ; load transition effect code at $6000
+         jsr   ExecuteTransitionAt6000AndWait
          jmp   BlankHGR              ; switch back to HGR mode with initial blank screen on exit
 
 ;------------------------------------------------------------------------------
@@ -67,14 +64,13 @@ BlankGR
 ;
 ; in:    none
 ; out:   all registers and flags clobbered
-;        $6400..$BFFF/main contains transition effect code (probably not all
+;        $6000..$BFFF/main contains transition effect code (probably not all
 ;        of that, but no promises)
 ;------------------------------------------------------------------------------
 LoadGRTransition
-         jsr   LoadFile
-         !word kFXDirectory
-         !word kGRFizzleFile
-         !word $6400
+         jsr   LoadIndexedFile
+         !word $6000
+         !word kGRFizzleRecord
 GRRTS    rts
 
 ;------------------------------------------------------------------------------
@@ -84,7 +80,6 @@ GRRTS    rts
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.GR/)
 ;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
-;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -93,20 +88,32 @@ GRActionCallback
          bit   KBD
          bmi   GRRTS
 
-         +ST16 +
+         +ST16 IndexedGRFilename
 
-         jsr   FindGameInActionSlideshow
+         jsr   FindGame
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   GRRTS
 
-         +LD16 WINDEX                ; save game index in case user hits RETURN
-         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
+         jsr   LoadIndexedGRFile
+         jmp   ExecuteTransitionAt6000AndWait
 
-         jsr   LoadFile              ; load GR screenshot into $6000
-         !word kGRActionDirectory
-+        !word $FDFD                 ; SMC
-         !word $6000
+LoadIndexedGRFile
+; in:    caller has set IndexedGRFilename
+; out:   all flags & registers clobbered
+         jsr   LoadIndexedFile       ; load index file into $4600
+-        !word $4600
+         !word kGRActionIndexRecord
 
-         jmp   ExecuteTransitionAt6400AndWait
+         jsr   okvs_find
+         !word -
+IndexedGRFilename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load GR screenshot at $4000
+         !word $4000                 ; because that's where the transition code expects to find it
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+         rts

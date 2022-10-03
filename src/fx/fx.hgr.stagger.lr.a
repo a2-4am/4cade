@@ -9,6 +9,8 @@ row = $fd
 col1 = $fe
 col2 = $ff
 
+         !source "src/fx/macros.a"
+
          lda   #$00
          sta   col1
          lda   #$27
@@ -40,5 +42,4 @@ col2 = $ff
 @exit    rts
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES

@@ -1,47 +1,42 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/SPACE.QUARKS",plain
+!to "build/DEMO/SPACE.QUARKS#06B000",plain
 *=$B000
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT space_quarks, $00
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
          lda   #$4C
          sta   $3EC9
          jsr   $3E65      ; decompress/set reset vector
          +RESET_AND_IRQ_VECTOR $100
-         lda   #$EA
-         sta   $1C38
-         sta   $1C39
-         sta   $1C3A
-         sta   $0D6F
-         sta   $0D70
-         sta   $0D71
-         lda   #$4C
-         sta   $1C3F
-         sta   $0D76
-         ldx   #0
-         stx   $1C40
-         stx   $0D77
-         inx
-         stx   $1C41
-         stx   $0D78
+         ldx   #3-1
+-        lda   #$EA
+         sta   $1C38,x
+         sta   $0D6F,x
+         lda   patch2,x
+         sta   $1C3F,x
+         sta   $0D76,x
+         dex
+         bpl   -
          ldx   #16
 -        lda   patch, x
          sta   $72BD, x
          dex
          bpl   -
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $20A
 
-space_quarks
-         !byte 27
-         !text "X/SPACE.QUARKS/SPACE.QUARKS"
+title    !byte x_e-x_b
+x_b      !text "SPACE.QUARKS"
+x_e
 
-patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D,$4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68
+patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D
+patch2   !byte $4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68

@@ -1,0 +1,73 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/THUNDER.BOMBS#06B000",plain
+*=$B000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_KEEP_DIR thunder_bombs, thunder_bombs_dir_e-thunder_bombs_dir_b
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $887F
+         ldx   #3-1
+-        lda   patch,x
+         sta   $8819,x
+         dex
+         bpl   -
+         jsr   $87F9      ; load, show title
+
+         lda   #$60
+         sta   $7818
+         jsr   $7800      ; unpack/setup
+
+         lda   #0
+         sta   $3F2       ; reset vector
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $789B,x
+         sta   $78CB,x
+         sta   $7A8C,x
+         sta   $7837,x    ; set exits
+         dex
+         bpl   -
+
+         lda   $323
+         jmp   $781B
+
+callback bit   $C000
+         ldx   #$30
+-        bit   $C055
+         lda   #$0B
+         jsr   $FCA8
+         bit   $C054
+         lda   #$0B
+         jsr   $FCA8
+         bit   $C000
+         bmi   exit
+         dey
+         bne   -
+         dex
+         bne   -
+         jmp   $8839
+exit
+patch2   !byte $4C,$00,$01
+
+patch    !byte $4C,<callback,>callback
+
+thunder_bombs
+         !byte thunder_bombs_e-thunder_bombs_b
+thunder_bombs_b
+thunder_bombs_dir_b
+         !text "X/THUNDER.BOMBS"
+thunder_bombs_dir_e
+         !text "/THUNDER.BOMBS"
+thunder_bombs_e
+
+!if * > $B100 {
+  !error "code is too large, ends at ", *
+}

@@ -1,0 +1,69 @@
+;license:MIT
+;(c) 2022 by 4am
+;
+!cpu 6502
+!to "build/FX.INDEXED/DITHER.DISSOLVE",plain
+*=$6000
+
+row1 = $fe
+row2 = $ff
+src  = $3c
+dst  = $26
+
+         !source "src/fx/macros.a"
+
+         lda   #$00
+         sta   row1
+         lda   #$BF
+         sta   row2
+@loop    lda   row1
+         jsr   HGRCalc
+         ldy   #$27
+-        tya
+         and   #$03
+         tax
+         lda   (src),y
+         eor   (dst),y               ; merge source and destination bits
+@amask   and   mask1,x               ; isolate the bits to replace, zero the rest
+         eor   (dst),y               ; unmerge source and destination bits, leaves 'to keep' destination bits intact
+         sta   (dst),y               ; write the result
+         dey
+         bpl   -
+         lda   row2
+         jsr   HGRCalc
+         ldy   #$27
+-        tya
+         and   #$03
+         tax
+         lda   (src),y
+         eor   (dst),y
+@bmask   and   mask3,x
+         eor   (dst),y
+         sta   (dst),y
+         dey
+         bpl   -
+         lda   #$28
+         jsr   WaitForKeyWithTimeout
+         bmi   @exit
+         inc   row1
+         dec   row2
+         lda   row1
+         cmp   #$60
+         beq   @loop
+         ldx   @amask+1
+         ldy   @bmask+1
+         stx   @bmask+1
+         sty   @amask+1
+         cmp   #$C0
+         bne   @loop
+@exit    rts
+
+mask1    !byte %10110011
+mask2    !byte %11100110
+mask3    !byte %11001100
+mask4    !byte %10011001
+         !byte %10110011
+         !byte %11100110
+
+         !source "src/wait.a"
+         +HGR_CALC_ROUTINES

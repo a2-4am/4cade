@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SUPER.PUCKMAN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6823
+         jsr   $5ADC      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $B82       ; patch - don't decrease lives
+         sta   $1BF3      ; patch - don't increase lives
+         sta   $1C05      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $400
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

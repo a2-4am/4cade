@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/GAMMA.GOBLINS#06B000",plain
+*=$B000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $2034
+         jsr   $2000      ; decompress
+
+         +RESET_AND_IRQ_VECTOR $100
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $5B9A,x
+         sta   $7ECC,x
+         sta   $50CB,x
+         sta   $50B5,x    ; set exits
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+         lda   #$00
+         tay
+         jmp   $2035
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "GAMMA.GOBLINS"
+x_e
+
+!if * > $BFFF {
+  !error "code is too large, ends at ", *
+}

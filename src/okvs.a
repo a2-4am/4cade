@@ -4,9 +4,7 @@
 ; Ordered key/value store (6502 compatible)(256+ records compatible)
 ;
 ; Public functions
-; - okvs_init(address)                          reset (required)
 ; - okvs_len(address)                           get number of keys
-; - okvs_append(address, key, value, max_len)   add new key/value pair
 ; - okvs_update(address, key, value)            update key/value pair
 ; - okvs_get(address, key)                      get value by key lookup
 ; - okvs_find(address, key)                     get key by key lookup
@@ -18,39 +16,44 @@
 ; Call init() once. Call it again to reset the store to 0 records.
 ;
 ; Records are maintained in a singly linked list, so most functions are O(n).
-; len() and append() are O(1) though.
+; len() is always O(1). okvs_nth() can be O(1) if some other code produces
+; a key lookup table and stores its address in the 'free space pointer
+; after last record' field in the header.
 ;
 ; Record count is stored as a word, so a store can hold 65535 records.
 ;
 ; Keys and values are length-prefixed strings (Pascal style), so max length
-; of any single key or value is 255 bytes.
+; of any single key or value is 255 bytes. Record length is stored as a byte
+; that includes itself, so the maximum data length of a record is 254 bytes.
 ;
 ; Keys are case-sensitive. Lookups are an exact byte-for-byte comparison.
 ;
-; append() has a max_len argument to reserve more space for the value, in case
-; you want to update it later. max_len is the total space to reserve, not the
-; additional space. One exception: max_len can be 0, and it will be treated as
-; length(value) at append time. update() always modifies the value in place.
-; There is no range checking because this is assembly.
-
 ; All functions take the starting address of the store's data buffer in
 ; memory, so there can be multiple independent stores at one time. Only the
-; size of a record is stored, so stores are easily relocatable. append() will
-; happily extend the store's data buffer without limit. There is no overflow
-; protection because this is assembly.
+; size of a record is stored, so stores are easily relocatable. There is no
+; overflow protection because this is assembly.
+;
+; There is an append() function but it has been separated out of this version
+; because it is only used once during program startup, so it does not need
+; to persist in LC RAM.
 ;
 ; There is no sort() function.
 ;
 ; There is no delete() function.
 ;
-; Keys can be duplicated, but get() and find() will always return the one that
-; was append()ed first.
+; Keys can be duplicated, but get() and find() will always return the first
+; match.
+;
+; Records can technically have more fields than key and value, but callers
+; are on their own for navigating inside the record. If you have a pointer
+; to one length-prefixed field (including key or value), okvs_next_field()
+; will find the start of the next field.
 ;
 ; Structures:
 ;
 ; Store
 ;   +0 number of records (word)
-;   +2 free space pointer after last record (word)
+;   +2 free space pointer after last record (word) or $0000
 ;   +4 Record
 ;   ...Record...
 ;   ...Record...
@@ -62,36 +65,6 @@
 ; +K+2 value length (actual length, not max length)
 ; +K+3 value
 ;  ... filler bytes up to value max length (set at append() time)
-
-;------------------------------------------------------------------------------
-; okvs_init
-;
-; in:    A/Y = handle to storage space
-; out:   $00/$01 clobbered
-;        $02/$03 clobbered
-;        all registers clobbered
-;------------------------------------------------------------------------------
-okvs_init
-         jsr   GetStoreAddressFromAY
-                                     ; PTR -> store
-                                     ; Y = 0
-         tya
-         sta   (PTR),y               ; set number of keys in store to 0 (word)
-         iny
-         sta   (PTR),y
-
-         iny                         ; set next-free-space pointer to store + 4
-         ldx   PTR+1
-         lda   PTR
-         clc
-         adc   #$04
-         bcc   +
-         inx
-+        sta   (PTR),y
-         iny
-         txa
-         sta   (PTR),y
-         rts
 
 ;------------------------------------------------------------------------------
 ; okvs_len
@@ -176,7 +149,7 @@ KEYLEN = *+1
          clc
 @maybeGetValue
          brk                         ; SMC
-         jsr   okvs_get_current
+         jsr   okvs_next_field
          +LD16 PTR
          clc
          rts
@@ -226,19 +199,45 @@ okvs_next
 ;        $WINDEX = record index
 ; out:   A/Y = lo/hi address of nth key
 ;        $WINDEX preserved
-;        X = 0
-;        Z = 0
 ;        all other flags clobbered
 ;        $PTR clobbered
 ;------------------------------------------------------------------------------
 okvs_nth
-         jsr   GetStoreAddressFromAY
-                                     ; PTR -> store
-         jsr   incptr4
-                                     ; PTR -> first record
+         jsr   GetStoreAddressFromAY ; PTR -> store
          +LD16 WINDEX
          +ST16 SAVE
-         jmp   @next
+         jsr   incptr2               ; PTR -> store+2
+         ldy   #1
+         lda   (PTR), y
+         beq   @slowpath             ; if no key lookup table, iterate through store
+         pha                         ; otherwise look up key address and return it
+         dey
+         lda   (PTR), y
+         sta   PTR
+         pla
+         sta   PTR+1                 ; PTR -> key lookup table
+         asl   SAVE
+         rol   SAVE+1                ; SAVE = WINDEX*2 (16-bit)
+         lda   SAVE
+         clc
+         adc   PTR
+         bcc   +
+         clc
+         inc   PTR+1
++        sta   PTR
+         lda   SAVE+1
+         adc   PTR+1
+         sta   PTR+1                 ; PTR -> nth record key lookup table
+         lda   (PTR), y
+         pha
+         iny
+         lda   (PTR), y
+         tay
+         pla                         ; A/Y -> nth key in store
+         rts
+@slowpath
+         jsr   incptr2               ; PTR -> first record
+         bne   @next                 ; always branches
 -        jsr   stepptr
 @next
          lda   SAVE
@@ -251,7 +250,6 @@ okvs_nth
          bne   -
          jsr   incptr
          +LD16 PTR
-         ldx   #0
          rts
 
 ;------------------------------------------------------------------------------
@@ -392,12 +390,16 @@ okvs_iter_values
 ;------------------------------------------------------------------------------
 ; internal functions
 
-okvs_get_current
+okvs_next_field
 ; out:   Y = 0
          +ST16 PTR
+okvs_next_field_PTR_is_already_set
          jsr   stepptr
-         bne   incptr
-
+         jmp   incptr                ; do NOT change this to BNE
+                                     ; because if the low byte of PTR is 0
+                                     ; and the value of (PTR) is also 0
+                                     ; then stepptr will return with Z=1 and
+                                     ; we will fall through here unexpectedly
 incptr4  jsr   incptr2
 incptr2  jsr   incptr
 incptr

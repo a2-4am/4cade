@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba/Frank M.
+;(c) 2019-2020, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/THEXDER",plain
@@ -7,7 +7,12 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
+         and   #CHEATS_ENABLED
+         php
          lda   #$60
          sta   $83F
          jsr   $800
@@ -22,16 +27,29 @@
          sta   $47FC
          lda   #>reset
          sta   $47FD      ; moved to LC $FFFC/D
-         +DISABLE_ACCEL
-         jmp   $1800
+         plp
+         beq   ++
+         dec   $37ED      ; don't decrease energy
+         dec   $3FB4      ; don't decrease energy
+         dec   $401A      ; don't decrease energy
+         beq   ++         ; always
 
 reset
          +READ_ROM_NO_WRITE
          jmp   $FAA6
 
 +        inc   $3F4       ; force reboot
+         lda   #$60
+         sta   $13B3
+         jsr   $1200
+         plp
+         beq   ++
+         dec   $38D2      ; don't decrease energy
+         dec   $40A6      ; don't decrease energy
+         dec   $410C      ; don't decrease energy
+++
          +DISABLE_ACCEL
-         jmp   $1200
+         jmp   $1800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

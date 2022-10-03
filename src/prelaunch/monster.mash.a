@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MONSTER.MASH",plain
@@ -11,8 +11,38 @@
          lda   #$60
          sta   $A16
          jsr   $800       ; load DOS
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BD07
+         lda   #>callback
+         sta   $BD08
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
          jmp   $B700
+
+callback
+         pla
+         pla
+         jsr   $BD5A
+         jsr   $BD09
+         lda   $BEA3
+         cmp   #5
+         bne   +
+         lda   $407
+         cmp   #$21
+         bne   +
+         lda   $408
+         bne   +
+         lda   #$a5
+         sta   $6625      ; patch - don't decrease lives
++
+         clc
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

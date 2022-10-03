@@ -1,0 +1,66 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/THE.GOONIES#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +USES_TEXT_PAGE_2
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR the_goonies, the_goonies_dir_e-the_goonies_dir_b
+         lda   #$60
+         sta   $1045
+         jsr   $1000      ; decompress
+         ldx   #$2C
+         stx   $6BF
+         ldx   #$60
+         stx   $60C
+         stx   $622
+         ldx   #6
+         stx   $583
+         jsr   $55C       ; load next part
+         lda   #$4C
+         sta   $406F
+         ldx   #0
+         stx   $4070
+         inx
+         stx   $4071
+         lda   #$2C
+         sta   $4039
+         +DISABLE_ACCEL
+         jsr   $4000      ; title
+         jsr   $60F       ; load level
+         ldx   #2-1
+         stx   $A0D
+-        txa
+         sta   $87D,x
+         sta   $12C4,x
+         sta   $12CC,x
+         dex
+         bpl   -
+         lda   #$4C
+         sta   $12CB
+         lda   #$D0
+         sta   $83AF
+         sta   $832A
+         sta   $8330
+         sta   $8379
+         sta   $8391
+         jmp   $800
+
+the_goonies
+         !byte the_goonies_e-the_goonies_b
+the_goonies_b
+the_goonies_dir_b
+         !text "X/THE.GOONIES"
+the_goonies_dir_e
+         !text "/THE.GOONIES"
+the_goonies_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

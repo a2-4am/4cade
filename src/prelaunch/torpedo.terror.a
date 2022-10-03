@@ -1,0 +1,40 @@
+;license:MIT
+;(c) 2022 by qkumba/Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TORPEDO.TERROR",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $7A28
+         jsr   $3FD4      ; decompress
+
+         ldy   #5
+-        lda   $100, y
+         sta   callback_e, y
+         dey
+         bpl   -
+         lda   #<callback_e
+         sta   $3f2
+         lda   #<callback
+         sta   $36
+         lda   #1
+         sta   $37
+
+         +DISABLE_ACCEL
+
+         jmp   $D566
+
+callback
+         cmp   #$DD
+         beq   callback_e
+         jmp   $FDF0
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

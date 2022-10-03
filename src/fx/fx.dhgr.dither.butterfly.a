@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2019-2022 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX.INDEXED/DHGR.DITHBUTTER",plain
+*=$6000
+
+         !source "src/fx/fx.dhgr.precomputed.2bit.a"
+
+         +FX_INITONCE_2BIT CoordinatesFile, Start
+Start
+         +FX_PRECOMPUTED_2BIT_DHGR_DITHER Coordinates2Bit, EndCoordinates2Bit
+
+CoordinatesFile
+         !byte 17
+         !text "FX/BUTTERFLY.DATA"

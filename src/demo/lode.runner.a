@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/LODE.RUNNER#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR lode_runner, lode_runner_dir_e-lode_runner_dir_b
+         lda   #$60
+         sta   $1F4E
+         jsr   $1F00      ; decompress
+
+         lda   #$24
+         sta   $61FB      ; ignore <Ctrl-E> (would otherwise enter editor)
+         sta   $61FD      ; ignore <RETURN> (would otherwise show high scores)
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $69CD,x    ; exit after user presses button
+         sta   $61F3,x    ; exit after demo player dies
+         dex
+         bpl   -
+
+         ldx   #6-1
+-        lda   $100, x
+         sta   $6201, x
+         dex
+         bpl   -          ; exit after user presses any key
+
+         +DISABLE_ACCEL
+
+         jmp   $9050
+
+patch    !byte $4C,$01,$62
+
+lode_runner
+         !byte lode_runner_e-lode_runner_b
+lode_runner_b
+lode_runner_dir_b
+         !text "X/LODE.RUNNER"
+lode_runner_dir_e
+         !text "/LODE.RUNNER"
+lode_runner_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

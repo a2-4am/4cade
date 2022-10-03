@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CALI.RAISINS",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $5EC0
+         jsr   $36C0      ; decompress
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $69EE      ; patch - don't decrease lives
+         sta   $69F1      ; patch - don't decrease lives
+         sta   $7474      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $D566
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

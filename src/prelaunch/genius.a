@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GENIUS",plain
@@ -15,38 +15,38 @@
          and   #CHEATS_ENABLED
          pha
          lda   #$60
-         sta   $9462
+         sta   $95E2
          lda   #<callback1
-         sta   $950E
+         sta   $9684
          lda   #>callback1
-         sta   $950F
-         jsr   $9442
+         sta   $9685
+         jsr   $9592
          pla
          beq   +
-         dec   $1C40      ; patch - don't decrease lives
-         dec   $1C74      ; patch - don't increase lives
+         dec   $1A89      ; patch - don't decrease lives
+         dec   $1ABC      ; patch - don't increase lives
 +
          +LC_REBOOT
          +DISABLE_ACCEL
          inc   $9d        ; game relies on it
-         jmp   $9600
+         jmp   $95E5
 
 callback1
          lda   #$4C
-         sta   $D7D9
+         sta   $D7D5
          lda   #<callback2
-         sta   $D7DA
+         sta   $D7D6
          lda   #>callback2
-         sta   $D7DB
-         jmp   $D7C5
+         sta   $D7D7
+         jmp   $D7C2
 
 callback2
          sec
          sbc   #7
          cmp   #2
          bcc   +
-         jmp   $D7E7
-+        jmp   $D7DD
+         jmp   $D7E2
++        jmp   $D7D9
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

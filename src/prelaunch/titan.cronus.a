@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TITAN.CRONUS",plain
@@ -25,8 +25,28 @@ hook     +NEW_RESET_VECTOR $280
          lda   #$30
          sta   $C84+3     ; (replaces TEXT:HOME:END)
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $1073
+         lda   #>callback
+         sta   $1074
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $D566
+
+callback
+         pla
+         pla
+         jsr   $1080
+         jsr   $1075
+         lda   #$AD
+         sta   $808C      ; don't increase lives
+         sta   $8595      ; don't decrease lives
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

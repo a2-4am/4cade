@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2021 by 4am
+;
+
+!cpu 6502
+!to "build/FX.INDEXED/SHR.80.SNAKE",plain
+*=$A000
+
+         !source "src/fx/fx.shr.80boxes.common.a"
+
+         !byte $00,$FF,$FE,$FD,$FC,$FB,$FA,$F9,$F8,$F7
+         !byte $ED,$EE,$EF,$F0,$F1,$F2,$F3,$F4,$F5,$F6
+         !byte $EC,$EB,$EA,$E9,$E8,$E7,$E6,$E5,$E4,$E3
+         !byte $D9,$DA,$DB,$DC,$DD,$DE,$DF,$E0,$E1,$E2
+         !byte $D8,$D7,$D6,$D5,$D4,$D3,$D2,$D1,$D0,$CF
+         !byte $C5,$C6,$C7,$C8,$C9,$CA,$CB,$CC,$CD,$CE
+         !byte $C4,$C3,$C2,$C1,$C0,$BF,$BE,$BD,$BC,$BB
+         !byte $B1,$B2,$B3,$B4,$B5,$B6,$B7,$B8,$B9,$BA
+
+StageInitialIndexes
+         !byte 7,7,7
+         !byte 6,6,6
+         !byte 5,5,5
+         !byte 4,4,4
+         !byte 3,3,3
+         !byte 2,2,2
+         !byte 1,1,1
+EndStageInitialIndexes

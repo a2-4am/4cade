@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/FLAK",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $6597
+         sta   $6654
+         jsr   $50C0       ; decompress
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT flak_mb, $200
+         jsr   DisableAccelerator
+         jmp   $200
+
+flak_mb
+         !byte 17
+         !text "PRELAUNCH/FLAK.MB"
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

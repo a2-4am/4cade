@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GHOSTBUSTERS",plain
@@ -11,8 +11,23 @@
          lda   #$60
          sta   $4075
          jsr   $4000      ; decompress
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $914
+         lda   #>callback
+         sta   $915
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $800
+
+callback
+         lda   #0
+         sta   $9D31      ; patch - disable sprite collision
+         jmp   $9600
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

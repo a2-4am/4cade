@@ -1,0 +1,55 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/LADY.TUT#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT title, $00
+         ldx   #5
+-        lda   $100,x
+         sta   $70,x
+         dex
+         bpl   -
+         lda   #<callback
+         sta   $84F
+         lda   #>callback
+         sta   $850
+         jmp   $0800      ; decompress
+
+callback
+         lda   #$2C
+         sta   $8470      ; reset vector to reboot
+         sta   $84B7
+         lda   #$00
+         sta   $84BE
+         sta   $84C5
+         dec   $84C9
+         lda   #$D0
+         sta   $2547
+         sta   $257D
+         sta   $2598
+         sta   $2562
+         sta   $7B88
+         lda   #$2C
+         sta   $7FEE
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7D99,x
+         sta   $812F,x
+         dex
+         bpl   -
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $8460
+
+patch    !byte $4C,$70,$00
+
+title    !byte x_e-x_b
+x_b      !text "X/LADY.TUT/LADY.TUT"
+x_e

@@ -1,0 +1,64 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/SPIDER.RAID#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $3EFD
+         sta   $3F0E
+         jsr   $3EB9
+         stx   $3FFE
+         lda   #$B6
+         sta   $3FFF
+         lda   #$C7
+         sta   $00
+         lda   #$75
+         sta   $01
+         jsr   $181D      ; decompress
+
+         lda   #1
+         sta   $40D3      ; reset vector
+
+         lda   #$60
+         sta   $40F1
+         jsr   $4000
+
+         dec   $408E
+         dec   $4091
+         lda   #$D0
+         sta   $4056
+         sta   $405C
+         sta   $5D28
+         sta   $160C
+         sta   $1643
+         sta   $164B
+         ldx   #3-1
+-        lda   patch,x
+         sta   $49A9,x
+         sta   $99A5,x
+         dex
+         bpl   -
+         sec
+         rol   $976A
+
+         +DISABLE_ACCEL
+
+         jmp   $4246
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "SPIDER.RAID"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

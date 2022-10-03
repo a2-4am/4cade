@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SHEILA",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $C85
+         jsr   $C00       ; decompress
+         ldx   #0
+         stx   $4001
+         inx
+         stx   $400C      ; reset vector
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $611       ; patch - don't decrease weapon
+         sta   $62A       ; patch - don't decrease weapon
+         dec   $470D      ; patch - don't decrease time
+         lda   #$ED
+         sta   $6EBA
+         lda   #$6F
+         sta   $6EBB      ; patch - don't decrease life
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         lda   #$4C
+         sta   $405A
+         jsr   $4000
+         pha
+         lda   #$A9
+         sta   $478       ; work around IIe firmware issue
+         pla
+         jmp   $405D
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

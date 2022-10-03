@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/FIREBIRD#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $3361
+         jsr   $3300      ; decompress
+         lda   #$D0
+         sta   $277C
+         sta   $278F
+         sta   $2795
+         sta   $3156
+         sta   $315E
+         sta   $8C35
+         sta   $8EDE
+         sta   $8CBD
+         sta   $8C7B
+         sta   $8C9D
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $3170,x
+         sta   $A370,x
+         sta   $7E48,x
+         sta   $18A5,x
+         sta   $198D,x
+         dex
+         bpl   -
+
+         lda   #1
+         sta   $7B2A
+         lda   #$30
+         sta   $A367
+         lda   #7
+         sta   $A368
+         lda   #$EA
+         sta   $A369
+         sta   $A36A
+
+         +DISABLE_ACCEL
+
+         jmp   $30A0
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "FIREBIRD"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

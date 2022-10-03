@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2021 by 4am
+
+!cpu 6502
+!to "build/FX.INDEXED/SHR.LR",plain
+*=$A000
+
+         !source "src/fx/macros.a"
+
+shrlo = $301                         ; $C8 bytes, indexed as shrlo-1,x
+shrhi = $37                          ; $C8 bytes, indexed as shrhi-1,x
+
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
+         ;X=0
+         ;Y=0
+         +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
+
+         jmp   loop
+
+start
+!pseudopc 0 {
+         ;Y=0
+loop     ldx   #$C8
+loop2    lda   shrlo-1, x
+         sta   <dst+1
+         lda   shrhi-1, x
+         sta   <dst+2
+         lda   (<dst+1), y
+dst      sta   $0000, y              ; SMC
+         dex
+         bne   loop2
+         lda   $C000
+         bmi   @exit
+         iny
+         cpy   #$A0
+         bne   loop
+@exit
+         rts
+}
+end
+
+; if zero page code gets too large, move shrhi to $201
+!if end-start > shrhi {
+    !error "code is too large: ends at ", end-start
+}

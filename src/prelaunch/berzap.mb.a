@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/BERZAP.MB",plain
@@ -32,6 +32,8 @@
 +        plp
 
 ++       bcc   skipmb
+         lda   #$0C
+         sta   $978D
          cpx   #$C4
          beq   skipslot
          txa
@@ -93,21 +95,20 @@ setopt
          lda   $65AB
          cmp   #3
          bne   ++
-         +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         ldx   #3         ; MB/A
+
          ldy   #0
          sty   $382       ; joystick
-         asl
-         bpl   +
-         ldx   #1         ; Sound2
-+        bcc   +
-         txa
-         eor   #2
-         adc   #0
-         tax              ; Sound/Speech or MB/C
-         lsr
-         tay              ; Speech1 or Speech2
+         ldx   #2
+         iny              ; Sound/Speech I
+
+         +READ_RAM2_NO_WRITE
+         bit   MockingboardStuff
+         bmi   +          ; SC-01
+         ldx   #0
+         dey              ; Sound II
+         bvc   +          ; no speech
+         ldx   #4
+         ldy   #2         ; Mockingboard "C"
 +        stx   $380
          sty   $381
          lda   #$0D

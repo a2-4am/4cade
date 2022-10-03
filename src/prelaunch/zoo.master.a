@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ZOO.MASTER",plain
@@ -11,19 +11,33 @@
          lda   #$60
          sta   $60A4
          jsr   $6000      ; decompress
-         +RESET_VECTOR $100
+         +RESET_VECTOR_HALF $100
          lda   #$60
          sta   $89F
          jsr   $800       ; decompress more
          +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $48A0
+         lda   #>callback
+         sta   $48A1
++
          jsr   DisableAccelerator
          lda   MockingboardStuff
-         pha
          +READ_ROM_NO_WRITE
-         pla
          bmi   +
          jmp   $8C0
+
+callback
+         jsr   $4800
+         lda   #$AD
+         sta   $135E      ; patch - don't decrease lives
+         rts
+
 +
+         and   #7
          ora   #$C0
          ldx   #0
 -        ldy   $9A00, x

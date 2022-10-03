@@ -209,7 +209,7 @@
 
 ; various language card configurations
 !macro   READ_RAM1_NO_WRITE {
-         bit   $C088
+         sta   $C088
 }
 
 !macro   READ_RAM1_WRITE_RAM1 {
@@ -218,7 +218,7 @@
 }
 
 !macro   READ_RAM2_NO_WRITE {
-         bit   $C080
+         sta   $C080
 }
 
 !macro   READ_RAM2_WRITE_RAM2 {
@@ -237,7 +237,23 @@
 }
 
 !macro   READ_ROM_NO_WRITE {
-         bit   $C082
+         sta   $C082
+}
+
+!macro   READ_AUX {
+         sta   READMAINMEM
+}
+
+!macro   READ_MAIN {
+         sta   READAUXMEM
+}
+
+!macro   WRITE_AUX {
+         sta   WRITEAUXMEM
+}
+
+!macro   WRITE_MAIN {
+         sta   WRITEMAINMEM
 }
 
 ; requires setting zpCharMask in zero page to #$FF or #$DF before use
@@ -281,9 +297,14 @@
 
 ; these are mostly for prelaunchers -- code in the main program should keep track of which bank is active to minimize code size
 !macro   ENABLE_ACCEL {
+         +ENABLE_ACCEL_LC
+         +READ_ROM_NO_WRITE
+}
+
+; leave LC active on exit
+!macro   ENABLE_ACCEL_LC {
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         +READ_ROM_NO_WRITE
 }
 
 !macro   DISABLE_ACCEL {
@@ -298,18 +319,16 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SPEECH { ;carry set if present
+!macro   GET_MOCKINGBOARD_SPEECH { ;sign set if SC-01, overflow set if SSI-263
          +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         asl
+         bit   MockingboardStuff
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;carry set if present
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;sign set if SC-01, overflow set if SSI-263
          +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         asl
          lda   MachineStatus
+         bit   MockingboardStuff
          +READ_ROM_NO_WRITE
 }
 
@@ -317,6 +336,7 @@
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          cmp   #1
+         and   #7
          ora   #$C0
          +READ_ROM_NO_WRITE
 }
@@ -325,11 +345,13 @@
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
          cmp   #1
+         and   #7
          ora   #$C0
          tax
          lda   MachineStatus
          +READ_ROM_NO_WRITE
 }
+
 !macro   USES_TEXT_PAGE_2 {
          lda   ROM_MACHINEID
          cmp   #$06
@@ -345,6 +367,30 @@
 !macro   RESET_VECTOR .addr {
          lda   #<.addr
          sta   $3F2
+  !ifndef .addr {
+    !set emitted=1
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+  } else {
+    !ifdef emitted {
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+    } else {
+      !if (>.addr != 1) or (.addr = $100) {
+         lda   #>.addr
+         sta   $3F3
+         eor   #$A5
+         sta   $3F4
+      }
+    }
+  }
+}
+
+!macro   RESET_VECTOR_HALF .addr {
          lda   #>.addr
          sta   $3F3
          eor   #$A5
@@ -364,19 +410,37 @@
 ; for games that clobber $100-$105, the prelaunch code constructs a new reset vector
 ; somewhere else and sets its
 !macro   NEW_RESET_VECTOR .addr {
+         ldx   #5
+-        lda   $100,x
+         sta   .addr,x
+         dex
+         bpl   -
+         +RESET_VECTOR .addr
+}
+
+!macro   NEW_RESET_VECTOR_64K .addr {
          lda   #$2C
          sta   .addr
-         lda   #$88
+         lda   #$89
          sta   .addr+1
          lda   #$C0
          sta   .addr+2
-         lda   #$6C       ; JMP ($FFFC) points to 'Reenter'
+         lda   #$4C       ; JMP $FAA6 to reboot
          sta   .addr+3
-         lda   #$FC
+         lda   #$A6
          sta   .addr+4
-         lda   #$FF
+         lda   #$FA
          sta   .addr+5
-         +RESET_VECTOR .addr
+         lda   #<.addr
+         sta   $3F2
+         sta   $FFFC
+  !if >.addr != 1 {
+         lda   #>.addr
+         sta   $3F3
+         sta   $FFFD
+         eor   #$A5
+         sta   $3F4
+  }
 }
 
 ; for 64k games on ][+ which either hang or restart
@@ -395,25 +459,84 @@
 
 ; load an external file by pathname
 ; LC RAM 2 MUST BE BANKED IN
-; LOW BYTE OF .addr MUST BE $00
-; set .addr to $0000 to load anywhere in main
+; set .addr to $0000 to load to any aligned addres in main
+; LOW BYTE OF .addr MUST BE $00 IN THAT CASE
 !macro   LOAD_FILE_AT .filepath, .addr {
   !if .addr > 0 {
          lda   #>.addr
          sta   ldrhi
+  }
+  !if <.addr > 0 {
+         lda   #<.addr
+         sta   ldrlo
   }
          lda   iCurBlockLo
          pha
          lda   iCurBlockHi
          pha
          ldx   #0         ; read to main memory
+  !if <.addr = 0 {
          stx   ldrlo
+  }
          +LDADDR .filepath
          jsr   iLoadFileDirect
          pla
          sta   iCurBlockHi
          pla
          sta   iCurBlockLo
+}
+
+; load an external file by pathname
+; set path to new directory
+; LC RAM 2 MUST BE BANKED IN
+!macro   LOAD_FILE_KEEP_DIR .filepath, .dirlen {
+         ldx   #0         ; read to main memory
+         stx   ldrhi
+         stx   ldrlo
+         +LDADDR .filepath
+         jsr   iLoadFileDirect
+
+         ldx   #.dirlen
+         stx   $BFD0
+-        lda   .filepath,x
+         sta   $BFD0,x
+         dex
+         bne   -
+
+}
+
+!macro   LOAD_FILE_KEEP_DIR .filepath, .addr, .dirlen {
+         lda   #>.addr
+         sta   ldrhi
+         lda   #<.addr
+         sta   ldrlo
+         ldx   #0         ; read to main memory
+         +LDADDR .filepath
+         jsr   iLoadFileDirect
+
+         ldx   #.dirlen
+         stx   $BFD0
+-        lda   .filepath,x
+         sta   $BFD0,x
+         dex
+         bne   -
+}
+
+!macro   LOAD_XSINGLE .title {
+         +READ_RAM1_WRITE_RAM1
+         +LDADDR .title
+         jsr   iLoadXSingle
+         +READ_ROM_NO_WRITE
+}
+
+; Macros for demo launchers that need to check whether they should run
+; on the current machine. Exit demo if the requirements are not met.
+!macro   GAME_REQUIRES_JOYSTICK {
+         +GET_MACHINE_STATUS
+         and   #HAS_JOYSTICK
+         bne   +
+         jmp   $100
++
 }
 
 _MACROS_=*

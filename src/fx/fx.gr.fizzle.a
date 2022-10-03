@@ -1,86 +1,57 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2017-2021 by qkumba/4am/John Brooks
 
 !cpu 6502
-!to "build/FX/GR.FIZZLE",plain
-*=$6400
+!to "build/GR.FIZZLE",plain
+*=$6000
 
-         ;init RNG
+         !source "src/fx/macros.a"
 
-         ldx   #1
-         stx   @rnd1+1
-         dex
-         stx   @rnd2+1
+         +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
+         ;X=0
+         ;Y=0
+         jmp   loop
 
-         ;iterate
-
-@loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
+start
+!pseudopc 0 {
+         ;X=0
+         ;Y=0
+loop     txa
+loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
+wait     inx
+         bpl   wait
+         tax
+loop2    txa
+         and   #$03
+         ora   #$04
+         sta   <dst+2
+         eor   #$44
+         sta   <src+2
+         lda   #%00001111
+         cpx   #$04
          bcc   +
-
-         ;feedback polynomial forms #$402 for period of 2047
-
-         lda   @rnd1+1
-         eor   #2
-         sta   @rnd1+1
-         lda   @rnd2+1
-         eor   #4
-         sta   @rnd2+1
-
-         ;little hack to avoid missing offset zero
-         ;screen hole at $xxFF is missed instead
-
-+        tya
-         eor   #$ff
-         sta   $26
-         sta   $3c
-         and   #$78
-         cmp   #$78
-         beq   @rnd2
+         lda   #%11110000
++        sta   <mask+1
+src      and   $FD00, y              ; SMC high byte
+         eor   (dst+1), y
+mask     and   #$FD                  ; SMC
+         eor   (dst+1), y
+dst      sta   $FD00, y              ; SMC high byte
          txa
-         and   #3
-
-         ;target page 1
-
-         ora   #4
-         sta   $3d
-         eor   #$64
-         sta   $27
-
-         ;set mask according to offset
-
-         lda   #$0f
-         cpx   #4
-         bcc   @src
-         lda   #$f0
-
-         ;copy half-pixel from other page to this page
-
-@src     sta   @mask+1
-         ldy   #0
-         and   ($26),y         ; isolate source half
-         eor   ($3c),y         ; merge with whole target
-@mask    and   #$d1            ; SMC isolate merged half
-         eor   ($3c),y         ; unmerge half of target
-         sta   ($3c),y         ; store both halves
-
-         ;wait while checking for keypress
-
-         ldx   #$10
-@wait    lda   $c000
-         bmi   @exit
-         dex
-         bne   @wait
-
-         ;and exit condition
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
-         bne   @loop
-
-@exit    rts
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+         lda   (src+1), y            ; last lousy byte
+         sta   (dst+1), y
+exit     rts
+}
+end

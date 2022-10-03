@@ -29,6 +29,7 @@
 
 cheat !pseudopc $200 {
          jsr   $2000
+         dec   $4F88      ; patch - don't decrease weapons
          lda   #$AD
          sta   $AAAC      ; patch - don't decrease lives
          rts

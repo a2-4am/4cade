@@ -8,11 +8,11 @@
 addrs     = $6100                    ; [256 bytes, page-aligned]
 copymasks = $6200                    ; [256 bytes, page-aligned]
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
-         dex
-         bne   -
+         !source "src/fx/macros.a"
+
+         +COPY_TO_0 start, end
+         ;X=0
+         ;A=1
 --       ldy   #$20                  ; create copymask table
          ora   #%10000000
 -        sta   copymasks, x
@@ -63,8 +63,8 @@ dst      sta   $FD00, y              ; write the result
          bmi   exit
          txa
          bne   loop1
-exit     lda   $4000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
-         rts
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (dst+1), y
+exit     rts
 }
 end

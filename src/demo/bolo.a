@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/BOLO#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $8034
+         jsr   $4ab0      ; decompress and show title
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $129A,x
+         sta   $15F8,x
+         sta   $5D8A,x    ; (later moved to $7D8A)
+         dex
+         bpl   -          ; set exits
+
+         lda   #$D0
+         sta   $4E7A      ; (later moved to $6E7A)
+         sta   $4F96      ; (later moved to $6F96)
+         sta   $6735      ; (later moved to $8735) disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $1100
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "BOLO"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

@@ -13,6 +13,7 @@
          sta   $4010
          jmp   $4000
 callback nop
+         +RESET_AND_IRQ_VECTOR $100
          ldy   #0
          sty   $0D8E
          iny

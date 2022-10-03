@@ -78,14 +78,15 @@ RestoreStackNextTime
                                      ; reset to branch so we don't try to
          sta   RestoreStackNextTime + 1
                                      ; restore the same stack twice
-         ldx   #$F1
--        lda   STACKBASE - $EF,x     ; restore stack
-         sta   $100,x
-         inx
-         bne   -
 STACKPTR
          ldx   #$D1                  ; SMC, restore stack pointer
          txs
+         inx
+-        lda   STACKBASE - $100 + gStackSize,x
+                                     ; restore stack
+         sta   $100,x
+         inx
+         bne   -
 SwitchToBank1
          +READ_RAM1_WRITE_RAM1
          rts
@@ -103,6 +104,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/ui.attract.dhgr.a"
          !source "src/ui.attract.shr.a"
          !source "src/ui.attract.gr.a"
+         !source "src/ui.attract.dgr.a"
          !source "src/ui.offscreen.a"
          !source "src/ui.cheats.a"
          !source "src/ui.credits.a"
@@ -121,8 +123,19 @@ ResetVector                          ; 6 bytes, copied to $100
          ; add new files above here
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
+
+gMegaAttractModeFilter    ; module types to include in mega-attract mode
+         !byte %11111111
+;               |||||||+- bit 0 include self-running demos
+;               ||||||+-- bit 1 include HGR title slideshows
+;               |||||+--- bit 2 include HGR action slideshows
+;               ||||+---- bit 3 include DHGR title slideshows
+;               |||+----- bit 4 include DHGR action slideshows
+;               ||+------ bit 5 include SHR box art slideshows
+;               |+------- bit 6 include GR action slideshows
+;               +-------- bit 7 include DGR action slideshows
 gSearchStore
-         !word $8200
+         !word $6000
 gSlideshowStore
          !word $0800
 gGlobalPrefsStore
@@ -130,14 +143,16 @@ gGlobalPrefsStore
                                      ; flips out if it has certain values (it will
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
-gGamesListStore
-         !word $FDFD                 ; SMC
-StoreAYAndSwitchToBank2
-         +ST16 PTR
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
+
+; iLoadXSingle (label is in constants.a)
+         jmp   LoadXSingle           ; no direct calling - target can move
+
+; iAddToPath (label is in constants.a)
+         jmp   AddToPath             ; no direct calling - target can move
 
 ; iLoadFileDirect (label is in constants.a)
          jmp   LoadFileDirect        ; no direct calling - target can move
@@ -174,24 +189,21 @@ COPYSRC = *
 !pseudopc hdddataend {
   COPYDST = *
          !source "src/prodos.impl.lc2.a"
-         !source "src/ui.font.lc2.a"
          !source "src/glue.prorwts2.lc2.a"
          !source "src/glue.launch.lc2.a"
          !source "src/hw.accel.lc2.a"
   STACKBASE = *
-  LCRAM2_END = STACKBASE + 15
+  OKVS_CACHE = STACKBASE + gStackSize
+  LCRAM2_END = OKVS_CACHE + 5
   !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }
-  FONTDST = (LCRAM2_END + 255) and -256
+  FONTDST = $E000
 }
 EvenLasterMover
   FONTSRC = *
 !pseudopc FONTDST {
-         !source "src/ui.font.data.lc2.a"
-  !if * > $E000 {
-      !error "code is too large: ends at ", *
-  }
+         !source "src/ui.font.data.a"
 }
 !if RELBASE = $2000 {
   !ifdef PASS2 {
@@ -199,6 +211,7 @@ EvenLasterMover
     !set PASS2=1
     !warn "ProRWTS ends at ", hdddataend - 1
     !warn "STACK at ", STACKBASE
+    !warn "OKVS CACHE at ", OKVS_CACHE
     !warn "LCRAM2 ends at ", LCRAM2_END
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
   }

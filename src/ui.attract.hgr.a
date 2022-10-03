@@ -64,10 +64,9 @@ HGRSingle
 ;        $6000..$BFFF contains transition effect code
 ;------------------------------------------------------------------------------
 LoadHGRTransition
-         jsr   LoadFile              ; load HGR transition effects list into $6000
-         !word kRootDirectory
-         !word kFXIndexFile
+         jsr   LoadIndexedFile       ; load HGR transition effects list into $6000
 -        !word $6000
+         !word kFXIndexRecord
 
          jsr   pref_get              ; get HGR transition effect from prefs
          !word kNextFX
@@ -83,7 +82,6 @@ LoadHGRTransition
 +        !word $FDFD                 ; SMC
 
          jsr   LoadIndexedFile
-         !word kFXFile
          !word $6000
 @indexRecordPtr
          !word $FDFD                 ; SMC
@@ -104,7 +102,8 @@ HGRTitleCallback
          bit   KBD
          bmi   HGRRTS
 
-         +ST16 +
+         +ST16 @fname
+         +ST16 gLastMegaAttractGame
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on
@@ -115,11 +114,27 @@ HGRTitleCallback
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
-         jsr   LoadFile              ; load HGR screenshot at $4000
-         !word kHGRTitleDirectory
-+        !word $FDFD                 ; SMC
-         !word $4000
+         jsr   LoadIndexedFile       ; load index file into $4000
+-        !word $4000
+         !word kHGRTitleIndexRecord
 
+         jsr   okvs_find
+         !word -
+@fname   !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load HGR graphic at $4000
+         !word $4000
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+
+         lda   $5FFD
+         stx   $5FFD                 ; ensure that we won't find it again if next
+                                     ; file is really compressed
+         cmp   #$4C                  ; Check if screen hole now contains a JMP
+         beq   @noUnpack             ; if so, file was not packed, so skip unpack
+         jsr   UnpackHGRTitle
+@noUnpack
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
@@ -129,7 +144,6 @@ HGRTitleCallback
 
 ; in:    A/Y contains address of filename (name only, path is always /ACTION.HGR/)
 ;        $WINDEX contains 0-based index of the current record in gSlideshowStore (word)
-;        gGamesListStore must be initialized
 ; out:   all registers and flags clobbered
 ;        $0800..$1EFF preserved (this contains the gSlideshowStore OKVS data)
 ;        $2000..$BFFF clobbered by graphics data and transition code
@@ -140,17 +154,11 @@ HGRActionCallback
 
          +ST16 IndexedHGRFilename
 
-         jsr   FindGameInActionSlideshow
+         jsr   FindGame
          ; if game name is not found (C will be set here), it means the game
          ; can't be played due to memory or joystick requirements, so we hide
          ; it from slideshows
          bcs   HGRRTS
-
-         ; found the game
-         +ST16 SAVE                  ; (SAVE) -> game display name + game info bitfield
-
-         +LD16 WINDEX                ; save game index in case user hits RETURN
-         +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
 
          jsr   LoadIndexedHGRFile
          jsr   DecompressHGR
@@ -164,18 +172,20 @@ LoadIndexedHGRFile
          ldy   #1
          lda   (PTR), y
          sec
-         sbc   #$41
-         lsr
-         lsr
-         clc
-         adc   #$30                  ; A = "0".."6" (ASCII)
-         sta   gHGRActionIndexNumber ; part of kHGRActionIndexFile
+         sbc   #$41                  ; A in [0..25]
+         lsr                         ; A in [0..15]
+         lsr                         ; A in [0..7]
+         tax
+         lda   kHGRActionIndexLo, x
+         sta   HGRActionIndexRecord
+         lda   kHGRActionIndexHi, x
+         sta   HGRActionIndexRecord+1
 
-         jsr   LoadFile              ; load index file into $4000
-         !word kRootDirectory
-         !word kHGRActionIndexFile
+         jsr   LoadIndexedFile       ; load index file into $4000
 HGRActionIndexPtr
          !word $4000
+HGRActionIndexRecord
+         !word $FDFD                 ; SMC
 
          jsr   okvs_find
          !word HGRActionIndexPtr
@@ -184,7 +194,6 @@ IndexedHGRFilename
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile       ; load compressed HGR screenshot at $3FF8
-         !word kHGRActionDataFile
          !word $3FF8
 @indexRecordPtr
          !word $FDFD                 ; SMC

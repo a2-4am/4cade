@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/PHASER.FIRE#06B200",plain
+*=$B200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $402D
+         sta   $403A
+         sta   $4074
+         jsr   $4000
+         jsr   $9200      ; decompress
+         sta   $400E
+         sta   $4065
+         jsr   $4000
+         lda   #$C4
+         sta   $30
+         jsr   $920D      ; decompress
+         lda   #$D0
+         sta   $A08
+         sta   $A2D
+         sta   $A30
+         sta   $A33
+         sta   $439E
+         sta   $6546
+         sta   $8B94
+         ldx   #3-1
+-        lda   patch,x
+         sta   $54C0,x
+         sta   $980,x
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   ($20)
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "PHASER.FIRE"
+x_e

@@ -21,6 +21,7 @@ kInputCheat    = 8
 kInputError    = 9
 kInputJoystick = 10
 kInputQuit     = 11
+kInputSHR      = 12
 
 InputDispatchTableLo
          !byte <OnSearch
@@ -35,6 +36,7 @@ InputDispatchTableLo
          !byte <OnError
          !byte <Joystick
          !byte <OnQuit
+         !byte <AllSHRSlideshow
 InputDispatchTableHi
          !byte >OnSearch
          !byte >OnClear
@@ -48,8 +50,9 @@ InputDispatchTableHi
          !byte >OnError
          !byte >Joystick
          !byte >OnQuit
+         !byte >AllSHRSlideshow
 
-kNumInputKeys = 12
+kNumInputKeys = 13
                                      ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
@@ -66,6 +69,7 @@ InputKeys
                                      ;   or switch to mega attract mode
          !byte $90                   ; Ctrl-P = launch joystick calibration program
          !byte $91                   ; Ctrl-Q = quit
+         !byte $80                   ; Ctrl-@ = SHR-only slideshow
 InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
@@ -79,6 +83,7 @@ InputKeyDispatch
          !byte kInputClear
          !byte kInputJoystick
          !byte kInputQuit
+         !byte kInputSHR
 
 .noKeyMatch
          jsr   IsSearchKey
@@ -112,7 +117,8 @@ SearchMode
          txs
          stx   gGameToLaunch         ; $FFFF = no game selected
          stx   gGameToLaunch+1
-         jsr   BuildSearchStore
+         stx   gMegaAttractModeFilter ; $FF = all module types
+         jsr   ReloadSearchIndex
          jsr   Home                  ; clear screen (switches to text mode)
          stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   OnInputChanged        ; draw UI offscreen
@@ -162,7 +168,8 @@ OnTab
          jsr   MiniAttractMode
          cmp   #$8D                  ; if we exited mini attract mode
          bne   .req_redraw           ; by pressing Enter, launch the game
-
+         jsr   ReloadSearchIndex     ; must reload search index before calling PlayGame
+         ; /!\ execution falls through here
 OnLaunch
          ldx   gGameToLaunch+1
          inx
@@ -170,7 +177,7 @@ OnLaunch
          jsr   PlayGame
 
 .req_redraw
-         sec                         ; tell caller to redraw UI
+         sec                         ; tell caller to reload search index and redraw UI from scratch
          rts
 
 OnCheat
@@ -199,8 +206,10 @@ FindMatchingTitle
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
 
-         jsr   ResetTextRank
+         jsr   FindTitleInCache
+         bcc   +                     ; sets BestMatchIndex on success
 
+         jsr   ResetTextRank
          jsr   okvs_iter_values      ; iterate through all game display names
          !word gSearchStore          ; and rank them for the best match
          !word TextRankCallback      ; to the current input buffer

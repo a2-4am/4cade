@@ -1,71 +1,47 @@
 ;license:MIT
-;(c) 2017-2018 by qkumba
+;(c) 2017-2021 by qkumba/4am/John Brooks
 
 !cpu 6502
 !to "build/FX.INDEXED/FIZZLE",plain
 *=$6000
 
-         ;init RNG
+         !source "src/fx/macros.a"
 
-         ldx   #1
-         stx   @rnd1+1
-         dex
-         stx   @rnd2+1
+         +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
+         ;X=0
+         ;Y=0
+         jmp   loop
 
-         ;iterate
-
-@loop
-         ldy   @rnd1+1
-         ldx   @rnd2+1
-         lsr   @rnd2+1
-         ror   @rnd1+1
-         bcc   +
-
-         ;feedback polynomial forms #$100D for period of 8191
-
-         lda   @rnd1+1
-         eor   #$0d
-         sta   @rnd1+1
-         lda   @rnd2+1
-         eor   #$10
-         sta   @rnd2+1
-
-         ;little hack to avoid missing offset zero
-         ;screen hole at $xxFF is missed instead
-
-+        tya
-         eor   #$ff
-         sta   $26
-         sta   $3c
-         txa
-
-         ;target page 1
-
+start
+!pseudopc 0 {
+         ;X=0
+         ;Y=0
+loop     txa
+loop1    eor   #$1B                  ; LFSR form 0x1B00 with period 8191
+wait     dex
+         bne   wait
+         tax
+loop2    txa
          ora   #$20
-         sta   $27
+         sta   <dst+2
          eor   #$60
-         sta   $3d
-
-         ;copy pixel from other page to this page
-
-         ldy   #0
-         lda   ($3c),y
-         sta   ($26),y
-
-         ;wait while checking for keypress
-
-         ldx   #8
-@wait    lda   $c000
-         bmi   @exit
-         dex
-         bne   @wait
-
-         ;and exit condition
-
-@rnd2    lda   #0
-         bne   @loop
-@rnd1    lda   #0
-         cmp   #1
-         bne   @loop
-
-@exit    rts
+         sta   <src+2
+         jsr   src
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+src      lda   $FD00, y              ; SMC high byte
+dst      sta   $FD00, y              ; SMC high byte
+exit     rts
+}
+end

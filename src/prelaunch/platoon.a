@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PLATOON",plain
@@ -7,8 +7,47 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          inc   $3F4       ; force reboot
-         jmp   $1000
+         lda   #$60
+         sta   $1196
+         jsr   $1000
+         dex
+         jsr   $D300
+         lda   #$4C
+         sta   $852
+         jsr   $800
+         lda   #$60
+         sta   $8FB
+         jsr   DisableAccelerator
+         jsr   $855
+         ldx   #callback_e-callback_b
+-        lda   callback_b,x
+         sta   callback,x
+         dex
+         bpl   -
+         lda   #<callback
+         sta   $88C0
+         lda   #>callback
+         sta   $88C1
+         jmp   $882D
+
+callback_b !pseudopc $200 {
+callback
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #0
+         sta   $F329      ; patch - don't decrease morale
+         sta   $F32E      ; patch - don't decrease lives
+         lda   #$ad
+         sta   $FA30      ; patch - don't decrease lives
+         sta   $FA33      ; patch - don't decrease morale
+         sta   $FAE8      ; patch - don't decrease morale
+         sta   $FAEB      ; patch - don't decrease lives
++        jmp   $EA00
+}
+callback_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

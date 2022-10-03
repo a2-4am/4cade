@@ -1,0 +1,63 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/SAMMY.LIGHTFOOT#06BA00",plain
+*=$BA00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR sammy_lightfoot, sammy_lightfoot_dir_e-sammy_lightfoot_dir_b
+         lda   #$60
+         sta   $4094
+         lda   #$FF
+         sta   $4206
+         jsr   $4000      ; decompress 1
+         jsr   $B7B5      ; decompress 2
+
+         lda   #$10
+         sta   $68C5      ; clear keyboard strobe
+
+         lda   #$04
+         sta   $4FBE      ; reduce number of sparkles
+
+         ldx   #3-1
+-        lda   patch1,x
+         sta   $22B,x     ; disable initial key detection
+         lda   patch2,x
+         sta   $B050,x
+         sta   $7DB9,x
+         sta   $B15A,x
+         sta   $5035,x
+         sta   $5184,x    ; (moved to $7864)
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $6EE9      ; disable sound
+
+         lda   #$AD
+         sta   $209
+         sta   $211
+         sta   $21C
+         +DISABLE_ACCEL
+         jmp   $B7A1
+
+patch1   !byte $A9,$01,$EA
+patch2   !byte $4C,$00,$01
+
+sammy_lightfoot
+         !byte sammy_lightfoot_e-sammy_lightfoot_b
+sammy_lightfoot_b
+sammy_lightfoot_dir_b
+         !text "X/SAMMY.LIGHTFOOT"
+sammy_lightfoot_dir_e
+         !text "/SAMMY.LIGHTFOOT"
+sammy_lightfoot_e
+
+!if * > $BB00 {
+  !error "code is too large, ends at ", *
+}

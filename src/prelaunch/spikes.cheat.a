@@ -1,0 +1,73 @@
+;license:MIT
+;(c) 2020, 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/SPIKES.CHEAT",plain
+*=$250
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $99A
+         sta   $A15
+         sta   $A84
+         sta   $BE3
+         jsr   $900        ; decompress
+         lda   #<callback3
+         sta   $8B1
+         lda   #<callback1
+         sta   $9501
+         lda   #<callback2
+         sta   $95B1
+         lda   #>callback1
+         sta   $8B2
+         sta   $9502
+         sta   $95B2
+         jmp   $9500
+
+callback1
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         jsr   $9503
+         +DISABLE_ACCEL
+         jsr   $BC6C
+         sta   $C010
+
+callback2
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         jsr   $BC7B
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $6AB0       ; patch - don't decrease fuel
+         sta   $6B5C       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         lda   #$30
+         jsr   $FCA8       ; allow joystick timers to expire
+         jmp   $A00
+
+callback3
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         jsr   $BDFC
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $6D9B       ; patch - don't decrease fuel
+         sta   $7EA0       ; patch - don't decrease lives
+         sta   $8AF1       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $8D00

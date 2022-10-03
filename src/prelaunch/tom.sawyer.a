@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $206F
+         lda   #>callback
+         sta   $2070
+         jmp   $2000      ; decompress
+
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $7301      ; patch - don't increase lives
+         sta   $7322      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $4071
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

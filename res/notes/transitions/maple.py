@@ -14,7 +14,7 @@ import util
 # Now we can create individual images for each "frame" of the animation, by
 # resizing the (squashed) source image and putting it in a 280x192 frame.
 #
-# $ for w in `seq 1 1500`; do \
+# $ for w in $(seq 1 1500); do \
 #     gm convert -size 280x192 squash.png \
 #                -resize "$w" \
 #                -background white \
@@ -29,22 +29,25 @@ import util
 # Now we have 1500 (or so) PNG images of what the HGR screen should look like at
 # each stage. Despite each frame being 280x192 and in the correct aspect ratio,
 # only coordinates
-#  - on every 3rd row
+#  - in the left half of the screen, AND
+#  - on even rows, AND
 #  - on even columns
-# are included in the final data set.
+# are included. It is assumed that the image is symmetrical across
+# the left and half sides of the screen (along an axis at X=140).
 #
 # X coordinates are converted to byte+bitmask (but see notes below).
 # Y coordinates are flipped (so 0,0 ends up on the bottom left) then
-# divided by 3.
+# incremented by 1 so that 0 can terminate the loop,
 #
 # 6502 code will be responsible for plotting each of these coordinates
-# in a 2x3 block. The bitmask usually includes 2 adjacent pixels;
-# the code will also plot the same 2 adjacent pixels in the next two rows.
+# in a 2x2 block. The bitmask usually includes 2 adjacent pixels;
+# the code will also plot the same 2 adjacent pixels in the adjacent row,
+# AND mirror both of those plots in the right half of the screen.
 #
-# Unfortunately, since bytes are 7 pixels across, some of the 2-pixel-wide
-# blocks will cross a byte boundary. To simplify the 6502 code, these are
-# simply listed as separate coordinate pairs, each with a bitmask that
-# includes 1 pixel instead of 2.
+# Unfortunately, since bytes are 7 bits across, some blocks will cross a
+# byte boundary. To simplify the 6502 code, those are simply listed as
+# separate coordinate pairs, each with a bitmask that includes 1 pixel
+# instead of 2.
 
 frames = 1500 # number of "thumbN.png" files
 
@@ -53,7 +56,7 @@ for i in range(5, frames, 5):
     p = PIL.Image.open("maple/thumb%s.png" % i)
     for x in range(0, 280//2, 2):
         for y in range(0, 192, 2):
-            if p.getpixel((x,191-y))[0] == 0:
+            if p.getpixel((x,191-y))[0] != (255,255,255,255):
                 coords.append((x,y))
 
 unique_coords = util.unique(coords)

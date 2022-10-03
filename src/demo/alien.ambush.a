@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/ALIEN.AMBUSH#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+         +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
+         lda   #$60
+         sta   $81c
+         jsr   $800       ; decompress
+         ldx   #3-1
+-        lda   patch,x
+         sta   $60CA,x
+         sta   $6040,x
+         dex
+         bpl   -
+         +DISABLE_ACCEL
+         jmp   $4000
+
+patch    !byte $4C,$E0,$03
+
+title    !byte x_e-x_b
+x_b      !text "ALIEN.AMBUSH"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

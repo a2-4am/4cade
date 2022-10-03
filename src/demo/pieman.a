@@ -1,0 +1,54 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/PM#060210",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR pieman, pieman_dir_e-pieman_dir_b
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $3EA9
+         jsr   $3E88      ; decompress
+         +DISABLE_ACCEL
+
+         lda   #$60
+         sta   $A050
+         jsr   $A000      ; title
+
+         lda   #$60
+         sta   $0948
+         jsr   $0940
+
+         +RESET_AND_IRQ_VECTOR $100
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0EA6,x
+         sta   $13B7,x    ; set exits
+         lda   patch2,x
+         sta   $09A1,x    ; start quiet demo immediately
+         dex
+         bpl   -
+
+         jmp   $0950
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,$97,$0A
+
+pieman   !byte pieman_e-pieman_b
+pieman_b
+pieman_dir_b
+         !text "X/PM"
+pieman_dir_e
+         !text "/PM"
+pieman_e
+
+!if * > $2FF {
+  !error "code is too large, ends at ", *
+}

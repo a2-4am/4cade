@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2021 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/STAR.AVENGER",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $82D
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jmp   $A111
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

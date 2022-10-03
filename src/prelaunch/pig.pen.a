@@ -1,0 +1,36 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/PIG.PEN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $933D
+         jsr   $6500      ; decompress
+         lda   #$60
+         sta   $936D
+         +DISABLE_ACCEL
+         jsr   $9340
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         jsr   $9396      ; decompress more
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $733A      ; patch - don't decrease lives
+         lda   #0
+         sta   $7336      ; patch - don't update draw position
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

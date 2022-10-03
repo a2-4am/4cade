@@ -1,0 +1,49 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/PEST.PATROL#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $0837
+         jsr   $0800      ; decompress
+
+         ldx   #11-1
+-        lda   patch, x
+         sta   $47BA, x
+         dex
+         bpl   -          ; exit when user presses a key during main menu
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $57C4,x
+         sta   $5589,x
+         lda   patch2,x
+         sta   $B493,x    ; set exits
+         dex
+         bpl   -
+         inx
+         stx   $485A      ; disable sound
+         stx   $48AE      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4003
+
+title    !byte x_e-x_b
+x_b      !text "PEST.PATROL"
+x_e
+
+patch    !byte $4C,$00,$01,$AD,$00,$C0,$30,$F8,$4C,$90,$B3
+patch2   !byte $4C,$BD,$47
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

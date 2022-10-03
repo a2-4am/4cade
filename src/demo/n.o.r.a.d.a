@@ -1,0 +1,45 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/N.O.R.A.D#060330",plain
+*=$330
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $497E
+         jsr   $4900      ; decompress
+
+         lda   #$1D
+         sta   $0DB5+4
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0DD7,x
+         sta   $0E64,x
+         sta   $0E4C,x    ; instead of $443D, this shows lores 'flash' at demo cycle end
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $0DE7+2
+         sta   $1486+2
+         sta   $40E7+2    ; disable sound/cassette output
+
+         +DISABLE_ACCEL
+
+         jmp   $0EDD
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "N.O.R.A.D"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

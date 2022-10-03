@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ARCTIC.FOX",plain
@@ -8,19 +8,36 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #>(callback-1)
+         lda   #>(callback1-1)
          sta   $4280
-         lda   #<(callback-1)
+         lda   #<(callback1-1)
          sta   $4283
          jmp   $3FFD      ; decompress
 
-callback
+callback2
+         lda   $BD09
+         cmp   #'E'
+         bne   +
+         lda   #$AD
+         sta   $8006      ; patch - don't decrease oxygen
+         sta   $97D1      ; patch - don't increase damage
++        jmp   $7F00
+
+callback1
          +LC_REBOOT
          inc   $3F4       ; force reboot
-         bit   $C083
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback2
+         sta   $11C5
+         lda   #>callback2
+         sta   $11C6
++
          jsr   DisableAccelerator
-         sta   $C05F      ; fix //c and //c+ HGR color
          +READ_RAM1_WRITE_RAM1
+         sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $1170
 
 !if * > $1C0 {

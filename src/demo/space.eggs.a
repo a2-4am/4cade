@@ -1,0 +1,58 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/SPACE.EGGS#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         +NEW_RESET_VECTOR $280
+
+         lda   #$60
+         sta   $2056
+         jsr   $2000      ; decompress
+
+         ldx   #6-1
+         lda   #$EA
+-        sta   $4821,x    ; avoid clobbering stack
+         dex
+         bpl   -
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $4B00,x    ; change button press detection to keypress detection
+         lda   patch3,x
+         sta   $4B06,x    ; exit on keypress
+         dex
+         bpl   -
+
+         ldx   #11-1
+-        lda   patch, x
+         sta   $4BD6, x
+         dex
+         bpl   -          ; decrement custom counter after demo cycle and eventually exit
+
+         lda   #$02
+         sta   $4BFF      ; initialize custom counter
+
+         +DISABLE_ACCEL
+
+         jmp   $4880
+
+patch    !byte $CE,$FF,$4B,$10,$03
+patch3   !byte $4C,$00,$01,$4C,$B0,$4B
+patch2   !byte $AD,$00,$C0
+
+title    !byte x_e-x_b
+x_b      !text "SPACE.EGGS"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

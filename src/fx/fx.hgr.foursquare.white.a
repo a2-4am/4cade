@@ -5,6 +5,8 @@
 !to "build/FX.INDEXED/FOURSQUARE",plain
 *=$6000
 
+         !source "src/fx/macros.a"
+
          lda   #23
          sta   $FD
          lda   #<Coordinates
@@ -157,7 +159,6 @@ stainc   sta   ($FE), y
 +        rts
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
 

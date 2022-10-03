@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/NIGHT.STALKER",plain
@@ -18,8 +18,18 @@
          lda   #$FA
          sta   $6496      ; reset vector patch (reboot)
 
+         lda   #$60
+         sta   $2A5
          +DISABLE_ACCEL
-         jmp   $283
+         jsr   $283
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #0
+         sta   $1DEC      ; patch - don't increase lives
+         sta   $13D0      ; patch - don't decrease lives
++
+         jmp   $6000
 
 
 !if * > $1C0 {

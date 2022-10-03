@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/JOVIAN.ATTACK",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $404D
+         lda   #>callback
+         sta   $404E
+         jmp   $4000       ; decompress
+
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $11D2       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $46E
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

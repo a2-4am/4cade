@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ES",plain
@@ -7,9 +7,29 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          +NEW_RESET_VECTOR $BFF0
 
-         jmp   $523E
+         lda   #<callback
+         sta   $6037
+         lda   #>callback
+         sta   $6038
+         jmp   $523E      ; decompress
+
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   $1E5B
+         cmp   #$31
+         bne   +
+         dec   $1E5B      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $D566
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

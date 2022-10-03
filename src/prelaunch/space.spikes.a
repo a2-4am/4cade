@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SPACE.SPIKES",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT space_spiker, $250
+         +READ_ROM_NO_WRITE
+         jmp   $250
+
+space_spiker
+         !byte x_e-x_b
+x_b      !text "PRELAUNCH/SPIKES.CHEAT"
+x_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

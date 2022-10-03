@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PEEPING.TOM",plain
@@ -22,6 +22,11 @@ hook1    lda   #<hook2
          jmp   $BE81      ; decompress2
 
 hook2    +RESET_VECTOR $100
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $94a       ; patch - don't decrease lives
++
          jmp   $17E3
 
 !if * > $1C0 {

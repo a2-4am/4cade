@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/GENETIC.DRIFT#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $846
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $8439
+         ldx   #3-1
+-        lda   patch,x
+         sta   $FC9,x
+         dex
+         bpl   -
+         jsr   $8490      ; decompress more
+
+         +DISABLE_ACCEL
+
+         jsr   $F00
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "GENETIC.DRIFT"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

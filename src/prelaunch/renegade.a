@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/RENEGADE",plain
@@ -8,7 +8,35 @@
     !source "src/prelaunch/common.a"
 
          inc   $3F4       ; force reboot
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #callback_e-callback_b
+-        lda   callback_b,x
+         sta   callback,x
+         dex
+         bpl   -
+         lda   #<callback
+         sta   $25D9
+         lda   #>callback
+         sta   $25DA
++
          jmp   $2000
+
+callback_b !pseudopc $200 {
+callback
+         jsr   $1C1D
+         dec   $D58B      ; patch - don't decrease time
+         lda   #$bd
+         sta   $D05C      ; patch - don't decrease lives
+         lda   #$a5
+         sta   $D9E0      ; patch - don't decrease lives
+         sta   $DB39      ; patch - don't decrease lives
+         sta   $DBC8      ; patch - don't decrease lives
+         sta   $DBE9      ; patch - don't decrease lives
+         rts
+}
+callback_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

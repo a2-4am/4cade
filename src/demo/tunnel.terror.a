@@ -1,0 +1,67 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/TUNNEL.TERROR#06BD00",plain
+*=$BD00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #1         ; reset vector fix
+         sta   $6E13      ; to $3F3
+         lda   #$A4
+         sta   $6E15      ; to $3F4 (doesn't change $3F2)
+
+         lda   #$60
+         sta   $4026
+         jsr   $4000      ; decompress and show title
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0EFE,x
+         sta   $06A4,x
+         sta   $AD10,x
+         sta   $0E66,x
+         sta   $1315+2,x  ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $0F5D+1
+         stx   $0F72+1
+         inx
+         stx   $03FF       ; fix IRQ
+
+         lda   #$10
+         sta   $1315
+         lda   #$1B
+         sta   $1315+1
+
+         lda   #$A9
+         sta   $0F5D
+         sta   $0F72
+         lda   #$EA
+         sta   $0F5D+2
+         sta   $0F72+2
+
+         lda   #$D0
+         sta   $8434+2
+         sta   $8441+2    ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $E00
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "TUNNEL.TERROR"
+x_e
+
+!if * > $BFD0 {
+  !error "code is too large, ends at ", *
+}

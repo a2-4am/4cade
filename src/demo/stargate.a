@@ -1,0 +1,66 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/STARGATE#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $4697
+         jsr   $800       ; decompress
+
+         lda   #$60
+         sta   $9A03
+         jsr   $9A00      ; decompress2
+
+         lda   #$10
+         sta   $0933
+         lda   #$1E
+         sta   $0933+1
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0933+2,x
+         sta   $0905,x
+         sta   $51C7,x
+         sta   $51D2,x    ; set exits
+         dex
+         bpl   -
+         ldx   #2-1
+-        txa
+         sta   $47F2,x    ; fix reset (moved to $3F2/$3F3/$3F4)
+         sta   $47FE,x    ; fix IRQ (moved to $3FE/$3FF)
+         dex
+         bpl   -
+         lda   #$A4
+         sta   $47F2+2    ; fix reset checksum
+
+         lda   #$D0
+         sta   $153B
+         sta   $5F0E
+         sta   $50B8
+         sta   $1DF7
+         sta   $1151
+         sta   $16E0
+         sta   $166B
+         sta   $167A      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $5000
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "STARGATE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

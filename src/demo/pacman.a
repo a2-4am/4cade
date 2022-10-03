@@ -1,0 +1,55 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/PACMAN#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         +NEW_RESET_VECTOR $280
+
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+
+         lda   #$80
+         sta   $103F
+         lda   #2
+         sta   $104A      ; reset vector patch
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $027C,x
+         sta   $22F9,x    ; (later moved to $52F9)
+         sta   $3F7C,x    ; (later moved to $6F7C)
+         sta   $5C0B,x    ; (later moved to $8C0B)
+         lda   patch2,x
+         sta   $18A6,x    ; (later moved to $48A6)
+         lda   patch3,x
+         sta   $22F1,x    ; (later moved to $52F1)
+         dex
+         bpl   -
+
+         lda   #$EA
+         sta   $22F1+3    ; set exits
+
+         +DISABLE_ACCEL
+
+         jmp   $1000
+
+patch2   !byte $4C,$CD,$48
+patch    !byte $4C,$00,$01
+patch3   !byte $30,$06,$EA
+
+title    !byte x_e-x_b
+x_b      !text "PACMAN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

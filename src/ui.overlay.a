@@ -20,12 +20,14 @@ ReturnToPlay
          !byte $0D
          !text " to play"
 
-kCheatsEnabled = 6                  ; index of 'cheats enabled' string in following table
+kCheatsEnabled = 8                  ; index of 'cheats enabled' string in following table
 kCheatDescriptionLo
          !byte <sNoCheats
          !byte <sInfiniteLives
          !byte <sInfiniteWeapons
          !byte <sInfiniteLivesAndWeapons
+         !byte <sInfiniteLivesAndTime
+         !byte <sInfiniteTime
          !byte <sInvincibility
          !byte <sInGame
          !byte <sCheatsEnabled
@@ -34,6 +36,8 @@ kCheatDescriptionHi
          !byte >sInfiniteLives
          !byte >sInfiniteWeapons
          !byte >sInfiniteLivesAndWeapons
+         !byte >sInfiniteLivesAndTime
+         !byte >sInfiniteTime
          !byte >sInvincibility
          !byte >sInGame
          !byte >sCheatsEnabled
@@ -59,6 +63,20 @@ sInfiniteLivesAndWeapons
          !byte $16        ; padlock character
          !text " "
          !text "infinite lives & weapons"
+         !text " "
+         !byte $16        ; padlock character
+sInfiniteLivesAndTime
+         !byte 25         ; length
+         !byte $16        ; padlock character
+         !text " "
+         !text "infinite lives & time"
+         !text " "
+         !byte $16        ; padlock character
+sInfiniteTime
+         !byte 17         ; length
+         !byte $16        ; padlock character
+         !text " "
+         !text "infinite time"
          !text " "
          !byte $16        ; padlock character
 sInvincibility
@@ -124,16 +142,18 @@ DrawUI
 
          jsr   GetGameToLaunch       ; get current game, if any
          bcs   @doneWithLine2        ; if no game, nothing more to do on UI line 2
-         jsr   GetGameDisplayName
-                                     ; A/Y -> game display name + bitfield of game info
-         +ST16 PTR
-         ldy   #0
-         lda   (PTR),y               ; A = game display name length + 1
-         sta   SAVE
+                                     ; A/Y -> key of current game (in gSearchStore)
+         jsr   okvs_next_field       ; (PTR) -> display name of current game
+                                     ; Y = 0
+         lda   (PTR), y
          tay
-         lda   (PTR),y               ; A = game info bitfield
+         iny
+         sty   SAVE
+         iny
+         lda   (PTR), y              ; A = game info bitfield
          sta   gGameToLaunchInfo
          ldy   #0
+
 -        iny
 @printCursor
          lda   #$FD                  ; SMC
@@ -194,7 +214,7 @@ DrawUI
          ldy   #0
 @dotloop
          iny
-         lda   (PTR),y               ; (PTR) still points to game display name + game info bitfield
+         lda   (PTR),y               ; (PTR) still points to game display name
          ora   #$20                  ; force lower-case always
          cmp   InputBuffer,x
          bne   +
@@ -259,10 +279,19 @@ gDrawingOnscreen=*+1
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
 @uidone  lda   #0
          sta   gDrawingOnscreen
-         clc
-         jmp   ShowOtherPage
+         bit   MachineStatus
+         bvc   +
+         bit   gGameToLaunchInfo
+         bpl   +
+         jmp   ShowOtherDHGRPage
++        jmp   ShowOtherPage
+
+;------------------------------------------------------------------------------
+; internal functions
 
 CheckCheats
+; out:   (SAVE) -> length-prefixed string, either a game-specific description
+;          or the global 'cheats enabled' message
          ldx   #kCheatsEnabled
          jsr   AnyGameSelected
          bcs   +
@@ -275,11 +304,19 @@ gGameToLaunchInfo=*+1
          sta   SAVE
          lda   kCheatDescriptionHi,x
          sta   SAVE+1
--        rts
+OVERLAYRTS
+         rts
 
 MaybeRedrawUIForDHGR
+; If this is a DHGR title screen, then redraw the already-drawn overlay
+; for double hi-res. This allows us to use a single font and drawing
+; routines for both HGR and DHGR. There is a small amount of flicker
+; if we're redrawing directly on the visible screen without swapping
+; pages (e.g. adding a dot without changing the selected game), but
+; gDrawingOnscreen tracks this and we reduce the redrawing to an
+; absolute minimum to reduce flicker.
          bit   MachineStatus
-         bvc   -
+         bvc   OVERLAYRTS
          bit   gGameToLaunchInfo
-         bpl   -
+         bpl   OVERLAYRTS
          jmp   RedrawForDHGR

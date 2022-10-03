@@ -36,6 +36,7 @@ kBrowseCheat    = 8
 kSoftBell       = 9 ; must match kInputError
 kBrowseJoystick = 10
 kBrowseQuit     = 11
+kBrowseSHR      = 12
 
          ldy   #kNumBrowseKeys
 -        dey
@@ -61,6 +62,9 @@ kBrowseQuit     = 11
 @j       jsr   $FDFD                 ; SMC
          jmp   @BrowseModeInputLoop
 
+;------------------------------------------------------------------------------
+; internal functions
+
 OnBrowseSearch
          sta   InputBuffer
          lda   #$01
@@ -68,8 +72,13 @@ OnBrowseSearch
          jmp   SearchMode
 
 OnBrowsePrevious
-         +LDX16 gGameToLaunch
-         +CPX16_0_NE @notFirstGame
+         jsr   AnyGameSelected
+                                     ; A/Y = gGameToLaunch
+         bcs   @goToLastGame         ; if no game selected, select last game
+         tax                         ; X/Y = gGameToLaunch
+         tya                         ; set up first comparison in CPX16 macro
+         +CPX16_0_NE @notFirstGame   ; if first game selected, select last game
+@goToLastGame
          +LDX16 GameCount
 @notFirstGame
          +DEX16
@@ -85,6 +94,8 @@ notLastGame
          +STX16 gGameToLaunch
          jmp   OnBrowseChanged
 
+ReloadIndexAndLaunch
+         jsr   ReloadSearchIndex
 OnBrowseLaunch
          jsr   PlayGame
          jsr   BlankHGR
@@ -97,13 +108,15 @@ OnBrowseCheat
 OnBrowseTab
          jsr   MiniAttractMode
          cmp   #$8D
-         beq   OnBrowseLaunch
+         beq   ReloadIndexAndLaunch
          ; execution falls through here
 ForceBrowseChanged
+         jsr   ReloadSearchIndex
          bit   CLEARKBD
          ; execution falls through here
 OnBrowseChanged
 ; in:    gGameToLaunch = game index (word)
+;        gSearchStore populated
          jsr   SwitchToBank2
          jsr   EnableAcceleratorAndSwitchToBank1
          jsr   LoadGameTitleOffscreen
@@ -115,8 +128,6 @@ BrowseCreditsWrapper
 BrowseHelpWrapper
          jsr   Help
          jmp   ForceBrowseChanged
-
-;------------------------------------------------------------------------------
 
 BrowseDispatchTableLo
          !byte <OnBrowseSearch
@@ -131,6 +142,7 @@ BrowseDispatchTableLo
          !byte <SoftBell
          !byte <Joystick
          !byte <OnQuit
+         !byte <AllSHRSlideshow
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -144,39 +156,42 @@ BrowseDispatchTableHi
          !byte >SoftBell
          !byte >Joystick
          !byte >OnQuit
+         !byte >AllSHRSlideshow
 
-kNumBrowseKeys = 14
+kNumBrowseKeys = 15
                                      ; number of entries in next 2 tables (each)
 BrowseKeys
+         !byte $80                   ; Ctrl-@ = SHR-only slideshow
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $81                   ; Ctrl-A = about
          !byte $AF                   ; '/' = help
          !byte $BF                   ; '?' = help
          !byte $A0                   ; Space = mini attract mode
          !byte $89                   ; TAB = mini attract mode
-         !byte $8D                   ; ENTER = launch current game
-         !byte $9B                   ; Esc = switch to search mode
-         !byte $8A                   ; down arrow = next
-         !byte $95                   ; right arrow = next
-         !byte $8B                   ; up arrow = previous
-         !byte $88                   ; left arrow = previous
          !byte $90                   ; Ctrl-P = launch joystick calibration program
          !byte $91                   ; Ctrl-Q = quit
+         !byte $9B                   ; Esc = switch to search mode
+         !byte $8D                   ; ENTER = launch current game
+         !byte $8B                   ; up arrow = previous
+         !byte $8A                   ; down arrow = next
+         !byte $88                   ; left arrow = previous
+         !byte $95                   ; right arrow = next
 BrowseKeyDispatch
+         !byte kBrowseSHR
          !byte kBrowseCheat
          !byte kBrowseCredits
          !byte kBrowseHelp
          !byte kBrowseHelp
          !byte kBrowseTab
          !byte kBrowseTab
-         !byte kBrowseLaunch
-         !byte kBrowseExitToSearch
-         !byte kBrowseNext
-         !byte kBrowseNext
-         !byte kBrowsePrevious
-         !byte kBrowsePrevious
          !byte kBrowseJoystick
          !byte kBrowseQuit
+         !byte kBrowseExitToSearch
+         !byte kBrowseLaunch
+         !byte kBrowsePrevious
+         !byte kBrowseNext
+         !byte kBrowsePrevious
+         !byte kBrowseNext
 
 GameCount
          !word 0

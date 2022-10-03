@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2017-2021 by qkumba/4am/John Brooks
+;
+!cpu 6502
+!to "build/DGR.FIZZLE",plain
+*=$6000
+
+         !source "src/fx/macros.a"
+
+         +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
+         ;X=0
+         ;Y=0
+         jmp   loop
+
+start
+!pseudopc 0 {
+         ;X=0
+         ;Y=0
+loop     txa
+loop1    eor   #$05                  ; LFSR form 0x0500 with period 2047
+wait     inx
+         bpl   wait
+         tax
+loop2    txa
+         ora   #$04
+         sta   <dst+2
+         txa
+         clc
+         adc   #$7C
+         sta   <src+2
+         sta   $C004
+         bmi   +
+         sta   $C005
++        jsr   src
+         txa
+         lsr
+         tax
+         tya
+         ror
+         tay
+         bcc   loop2
+         bne   loop
+         bit   $C000
+         bmi   exit
+         txa
+         bne   loop1
+src      lda   $FD00, y
+dst      sta   $FD00, y
+exit     rts
+}
+end

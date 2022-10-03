@@ -1,0 +1,65 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/BK#06A800",plain
+*=$A800
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR kamungas, kamungas_dir_e-kamungas_dir_b
+         lda   #$60
+         sta   $52DB
+         jsr   $527C      ; decompress 1
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $1B50,x
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $1D00
+         sta   $1D09
+         sta   $1BB6      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jsr   $8d4       ; show title
+
+         lda   #$60
+         sta   $BD40
+         jsr   $BD20      ; decompress 2
+
+         lda   #$4C
+         sta   $7215
+         jsr   $7200      ; setup for second title
+
+         +RESET_AND_IRQ_VECTOR $100
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $7513,x
+         sta   $73BA,x
+         sta   $7242,x    ; set exits
+         dex
+         bpl   -
+
+         jmp   $7218      ; show second title
+
+patch    !byte $4C,$00,$01
+
+kamungas !byte kamungas_e-kamungas_b
+kamungas_b
+kamungas_dir_b
+         !text "X/BK"
+kamungas_dir_e
+         !text "/BK"
+kamungas_e
+
+!if * > $A900 {
+  !error "code is too large, ends at ", *
+}

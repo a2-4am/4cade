@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TELEPORT",plain
@@ -9,9 +9,18 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $548B
+         sta   $549F
          jsr   $52D1      ; decompress
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $41D1      ; patch - don't decrease lives
+         sta   $507C      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $803
 
 !if * > $1C0 {

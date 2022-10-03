@@ -12,6 +12,8 @@ hgrlo     = $6400                    ; [$C0 bytes, should not cross page boundar
 hgrhi     = $6500                    ; [$C0 bytes, should not cross page boundary]
 shapemask = $8000                    ; [$2000 bytes, page-aligned]
 
+         !source "src/fx/macros.a"
+
          ldx   #0                    ; build an HGR base address lookup table,
 -        txa                         ; except the first address is |shapemask| instead of $2000
          and   #$F8
@@ -70,11 +72,8 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          inx
          cpx   #$C0
          bne   --
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
-         dex
-         bne   -
+         +COPY_TO_0 start, end
+         ;X=0
 --       ldy   #$20                  ; create copymask lookup table
          ora   #%10000000
 -        sta   copymasks, x
@@ -106,8 +105,8 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          txa
          bne   --
          jsr   $1
-         lda   $4000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (dst+1), y
          lda   #$2C                  ; BIT
          sta   <applyshapemask
          jmp   $1

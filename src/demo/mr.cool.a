@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/MC#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR mr_cool, mr_cool_dir_e-mr_cool_dir_b
+         lda   #$60
+         sta   $83C
+         jsr   $800       ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $597F,x    ; set exit on keypress
+         sta   $5A05,x    ; set exit on button press
+         lda   patch2,x
+         sta   $7F37,x    ; exit at end of demo cycle
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+
+         jmp   $4000
+
+callback
+         sta   $5E9B
+         lda   $5C04
+         cmp   #$0C
+         beq   patch
+         rts
+
+patch    !byte $4C,$00,$01
+patch2   !byte $20,<callback,>callback
+
+mr_cool  !byte mr_cool_e-mr_cool_b
+mr_cool_b
+mr_cool_dir_b
+         !text "X/MC"
+mr_cool_dir_e
+         !text "/MC"
+mr_cool_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

@@ -218,4 +218,3 @@ copymask_odd6
          !byte %11111111
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"

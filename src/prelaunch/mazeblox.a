@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MAZEBLOX",plain
@@ -24,11 +24,40 @@ hook2    lda   #<hook3
          sta   $9E4D+1
          lda   #>hook3
          sta   $9E4D+2
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector fix
          jmp   $9D84      ; decompress3
 
-hook3    +RESET_VECTOR $100
-         +DISABLE_ACCEL
+hook3    +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<hook4
+         sta   $BD07
+         lda   #>hook4
+         sta   $BD08
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $A180
+
+hook4
+         pla
+         pla
+         jsr   $BD5F
+         jsr   $BD09
+         lda   $B7EC
+         cmp   #$13
+         bne   +
+         lda   $B7ED
+         cmp   #5
+         bne   +
+         lda   #$AD
+         sta   $1920      ; patch - don't decrease time
++        clc
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

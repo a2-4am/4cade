@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CAVRN.CREATURES",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT cavrn_cheat, 0
+         +READ_ROM_NO_WRITE
+         jmp   $200
+
+cavrn_cheat
+         !byte cavrn_cheat_e-cavrn_cheat_b
+cavrn_cheat_b
+         !text "PRELAUNCH/CAVRN.CHEAT"
+cavrn_cheat_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

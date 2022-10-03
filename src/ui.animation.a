@@ -13,7 +13,7 @@
 ; slow down to 1 Mhz (always), then check if there is an animation for the
 ; title screenshot we just displayed, and if so, load it and call it
 ;
-; in:    none
+; in:    gSearchStore is populated
 ; out:   C clear
 ;        all other flags clobbered
 ;        all registers clobbered
@@ -61,7 +61,7 @@ MaybeAnimateTitle
          bit   $c050                 ; turn on graphics mode (Home set text mode)
          jsr   Launch                ; execute the animation
 
-         jsr   BuildSearchStore
+         jsr   ReloadSearchIndex
          jsr   ResyncPage            ; we don't know which HGR page is showing
                                      ; when the animation returns, so resync
                                      ; the current one with our OffscreenPage

@@ -1,0 +1,40 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ROBOTRON.2084",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         ldx   #(callback_e-callback_b)+1
+-        lda   callback_b-1,x
+         sta   <(callback-1),x
+         dex
+         bne   -
+         lda   #<callback
+         sta   $141E
+         stx   $141F
+         jmp   $1400      ; decompress
+
+callback_b !pseudopc $80 {
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $40CC      ; patch - don't decrease lives
+         sta   $4E00      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $4015
+}
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

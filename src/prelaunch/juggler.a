@@ -1,11 +1,13 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/JUGGLER",plain
 *=$106
 
     !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
 
          ldy   #6
 -        lda   $100-1,y
@@ -19,7 +21,21 @@
          sta   $7D1F
          jsr   $3FF5      ; unpack
 
-         jmp   $BA00
+         lda   #$60
+         sta   $BA21
+         jsr   $BA00
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $9475      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $6000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

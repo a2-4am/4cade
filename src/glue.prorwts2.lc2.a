@@ -28,33 +28,12 @@ LoadFileDirect
          +LD16 ldrlo2
          +ST16 ldrlo
 +        lda   #$FF                  ; read entire file (ProRWTS2 will figure out exact size)
+LoadFileInternal_SizePatch
          sta   sizehi
          pla
          sta   auxreq
 JumpOpen
          jmp   hddopendir            ; exit via ProRWTS2
-
-LoadDHRFileInternal
-         +LDADDR gPathname
-         +ST16 namlo                 ; set filename
-         jsr   traverse              ; go to subdirectory, set up filename for read
-         lda   #$20
-         sta   sizehi
-         asl
-         sta   ldrhi                 ; into $4000
-         lda   #cmdread              ; read (instead of write)
-         sta   reqcmd
-         ;;lda   #1                    ; 1 = read into aux memory
-         sta   auxreq
-         lsr                         ; read first $2000 bytes
-         sta   sizelo
-         sta   ldrlo
-         jsr   hddopendir            ; call ProRWTS2
-         lda   #$20                  ; read next $2000 bytes
-         sta   sizehi
-         dec   auxreq                ; 0 = read into main memory
-         clc                         ; not a subdirectory
-         jmp   hddrdwrpart           ; call ProRWTS2
 
 SaveSmallFileInternal
          +LDADDR gPathname
@@ -65,10 +44,10 @@ SaveSmallFileInternal
          lda   #0                    ; 0 = read into main memory
          sta   sizelo
          ;sta   sizehi                ; 0 = query load address
-         ;jsr   hddopendir            ; call ProRWTS2         
+         ;jsr   hddopendir            ; call ProRWTS2
          ;lda   ldrlo2
          sta   ldrlo
-         lda   #$80 ;lda   ldrhi2
+         lda   #>kGlobalPrefsBuffer ;lda   ldrhi2
          sta   ldrhi
          lda   #cmdwrite             ; write (instead of read)
          sta   reqcmd

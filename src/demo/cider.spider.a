@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/AC#069B00",plain
+*=$9B00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR cider_spider, cider_spider_dir_e-cider_spider_dir_b
+         lda   #$60
+         sta   $2076
+         jsr   $1FFD      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0C00,x
+         sta   $1D27,x    ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $10AC
+         inx
+         stx   $10B1      ; reset vector patch
+
+         +DISABLE_ACCEL
+
+         jmp   $1000
+
+patch    !byte $4C,$00,$01
+
+cider_spider
+         !byte cider_spider_e-cider_spider_b
+cider_spider_b
+cider_spider_dir_b
+         !text "X/AC"
+cider_spider_dir_e
+         !text "/AC"
+cider_spider_e
+
+!if * > $9BA0 {
+  !error "code is too large, ends at ", *
+}

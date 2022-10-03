@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPIDERBOT",plain
@@ -7,8 +7,31 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          inc   $3F4       ; force reboot
-         jmp   $6000
+         lda   #$60
+         sta   $6085
+         jsr   $6000
+         lda   #$60
+         sta   $843
+         jsr   $800
+         ldx   #$60
+         stx   $4047
+         stx   $407E
+         jsr   $4000
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         php
+         jsr   DisableAccelerator
+         jsr   $4081
+         jsr   $404A
+         plp
+         beq   +
+         lda   #$ad
+         sta   $DC4E      ; patch - don't decrease power
+         sta   $F8FC      ; patch - don't decrease power
++
+         jmp   $3EE
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

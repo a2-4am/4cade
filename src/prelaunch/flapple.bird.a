@@ -7,7 +7,6 @@
 
     !source "src/prelaunch/common.a"
 
-         inc   $3F4       ; force reboot
          jmp   $800
 
 !if * > $1C0 {

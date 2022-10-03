@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SS2",plain
@@ -8,10 +8,11 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         +LC_REBOOT
+         +NEW_RESET_VECTOR_64K $70
+
          lda   #$60
          sta   $DBE
-         sta   $DE2
+         sta   $DE3
          jsr   $C24
          jsr   $BCFC      ; decompress
          +DISABLE_ACCEL
@@ -19,8 +20,7 @@
          +ENABLE_ACCEL
          jsr   $BCFC      ; decompress
          +DISABLE_ACCEL
-         jsr   $DE5
-         jmp   $4000
+         jmp   $DE6
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

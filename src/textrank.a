@@ -4,8 +4,9 @@
 ; text rank - an implementation of the Quicksilver search rank algorithm
 ;
 ; Public functions
-; - BuildSearchStore
+; - ReloadSearchIndex
 ; - ResetTextRank
+; - FindTitleInCache
 ; - TextRankCallback (as okvs_iter_values callback)
 ;
 ; Public variables
@@ -25,21 +26,63 @@ InputBuffer
          !text "                         "
 
 ;------------------------------------------------------------------------------
-; BuildSearchStore
-; Build a temporary data structure in main memory to support search UI.
-; Now that gGamesListStore no longer contains full game display names, we call
-; this to build a store that does. It's built in main memory and will be
-; clobbered as soon as we enter attract mode (mega- or mini-), run a game,
-; run a demo, or sneeze.
+; ReloadSearchIndex
+;
+; Load indexes to support search UI
 ;
 ; in:    none
 ; out:   gSearchStore populated
 ;------------------------------------------------------------------------------
-BuildSearchStore
-         jsr   LoadFile              ; load appropriate search index into $8200
-         !word kRootDirectory
-         !word kSearchIndexFile
-         !word $8200
+ReloadSearchIndex
+         jsr   LoadIndexedFile       ; load appropriate search cache into $B000
+         !word gSearchCache
+         !word kSearchCacheRecord
+ReloadSearchIndexOnly
+         jsr   LoadIndexedFile       ; load appropriate search index into $6000
+SearchIndexHandle
+         !word gSearchIndex
+         !word kSearchIndexRecord
+         rts
+
+FindTitleInCache
+         ldx   InputLength
+         cpx   #5
+         bcs   @nomatch
+         lda   #$20
+         sta   InputBuffer, x
+         +LDADDR gSearchCache
+         +ST16 PTR
+         ldx   #$FF
+--       inx
+         ldy   #0
+-        lda   (PTR), y
+         beq   @nomatch
+         cmp   InputBuffer, x
+         beq   @matchchar
+         iny
+         iny
+         iny
+         bne   -                     ; always branches
+@matchchar
+         iny
+         lda   (PTR), y
+         pha
+         iny
+         lda   (PTR), y
+         bpl   @foundindex
+         sta   PTR+1
+         pla
+         sta   PTR
+         cpx   InputLength
+         bcc   --
+@nomatch
+         sec
+         rts
+@foundindex
+         sta   BestMatchIndex+1
+         pla
+         sta   BestMatchIndex
+         clc
          rts
 
 ;------------------------------------------------------------------------------

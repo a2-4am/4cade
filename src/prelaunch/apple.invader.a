@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/APPLE.INVADER",plain
@@ -7,7 +7,11 @@
 
     !source "src/prelaunch/common.a"
 
-         ;+ENABLE_ACCEL   ; text on screen
+         lda   $7fe
+         pha
+         +ENABLE_ACCEL
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
 
          lda   #$60
          sta   $6020
@@ -37,6 +41,20 @@
          sta   $1DE8
          sta   $1E5A
 
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A5
+         sta   $1997      ; patch - don't increase lives
+         sta   $1E33      ; patch - don't decrease lives
++
+         lda   $7fe
+         pha
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         pla
+         sta   $7fe       ; overwritten by GS acceleration
          jmp   $5F00
 
 !if * > $1C0 {

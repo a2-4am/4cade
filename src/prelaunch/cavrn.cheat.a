@@ -1,0 +1,86 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/CAVRN.CHEAT",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         ldy   #(callback_e-callback)
+-        lda   callback-1, y
+         sta   $10f, y
+         dey
+         bne   -
+         jmp   $110
+
+callback !pseudopc $110 {
+callback1
+         +ENABLE_ACCEL
+
+         lda   #$4C
+         sta   $8F9
+         lda   #<callback2
+         sta   $8FA
+         lda   #>callback2
+         sta   $8FB
+         jmp   $800       ; decompress
+
+callback2
+         lda   #<callback1
+         sta   $BE13
+         lda   #>callback1
+         sta   $BE14
+         ldx   #$60
+         lda   $D49
+         cmp   #'0'
+         beq   patch0
+         cmp   #'1'
+         beq   patch1
+         cmp   #'2'
+         beq   patch2
+         stx   $83BB
+         jsr   $6000      ; decompress
+         jsr   noaccel
+         beq   +
+         dec   $B14       ; patch - don't decrease lives
+         dec   $D5E       ; patch - don't increase lives
++
+         jmp   $800
+
+patch0
+         stx   $1812
+         jsr   $1800      ; decompress
+         jsr   noaccel
+         jmp   $1C00
+
+patch1
+         stx   $2023
+         jsr   $2000      ; decompress
+         jsr   noaccel
+         beq   +
+         dec   $4F43      ; patch - don't decrease lives
+         dec   $5548      ; patch - don't increase lives
++
+         jmp   $4A00
+
+patch2
+         stx   $2039
+         jsr   $2000      ; decompress
+         jsr   noaccel
+         beq   +
+         dec   $1239      ; patch - don't decrease lives
+         dec   $1608      ; patch - don't increase lives
++
+         jmp   $1A4E
+
+noaccel
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         +READ_ROM_NO_WRITE
+         rts
+}
+callback_e

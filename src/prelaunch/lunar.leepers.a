@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/LUNAR.LEEPERS",plain
@@ -15,8 +15,26 @@
 
          +RESET_VECTOR $100
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $33D
+         lda   #>callback
+         sta   $33E
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
          jmp   $6000
+
+callback
+         lda   #$A5
+         sta   $E55       ; patch - don't decrease lives
+         sta   $131A      ; patch - don't increase lives
+         dec   $7DA4      ; patch - don't decrease fuel
+         jmp   $800
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

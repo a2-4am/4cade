@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/PHASER.FIRE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $4074
+         jsr   $4000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $96A       ; patch - don't decrease lives
++
+
+         jmp   ($20)
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

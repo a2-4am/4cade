@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/STARBALL",plain
@@ -14,13 +14,39 @@
          sta   $A1E+2
          jmp   $800       ; decompress
 
-hook     lda   #0
-         sta   $9E52
-         lda   #1
-         sta   $9E53      ; reset vector fix
+hook     ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $BD07
+         lda   #>callback
+         sta   $BD08
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $9D84
+
+callback
+         pla
+         pla
+         jsr   $BD5F
+         jsr   $BD09
+         lda   $B7EC
+         cmp   #$15
+         bne   +
+         ldx   $B7ED
+         dex
+         bne   +
+         lda   #$ad
+         sta   $96DE      ; patch - don't decrease balls
++        clc
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

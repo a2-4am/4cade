@@ -25,18 +25,10 @@ counter = $FF
          +SET_HGR_HI_WITH_OFFSET .offset
 }
 
-!macro COPY_WITH_MASK .copymask {
-         lda   (src), y
-         eor   (dst), y              ; merge source and destination bits
-         and   #.copymask            ; isolate the bits to replace, zero the rest
-         eor   (dst), y              ; unmerge source and destination bits, leaves 'to keep' destination bits intact
-         sta   (dst), y              ; write the result
-}
-
 ; note: .copymask is an immediate value, not an indexed array or a memory address
 !macro COPY_WITH_OFFSET_AND_MASK .offset, .copymask {
          +RESET_HGR_HI_WITH_OFFSET .offset
-         +COPY_WITH_MASK .copymask
+         +COPY_BIT_IMMEDIATE .copymask
 }
 
 !macro COPY_BYTE .offset {
@@ -46,7 +38,6 @@ counter = $FF
 }
 
          !source "src/fx/macros.a"
-         !source "src/fx/fx.dhgr.common.a"
 
 exit=*+3
          +COPY_TO_AUXMEM $60, $07
@@ -79,7 +70,7 @@ RowLoop
 
          +BRANCH_IF_Y_IS_OFFSCREEN @block2
          +SET_HGR_HI_WITH_OFFSET 3
-         +COPY_WITH_MASK %10000001
+         +COPY_BIT_IMMEDIATE %10000001
          +COPY_WITH_OFFSET_AND_MASK 4, %10000001
 @block2
          iny

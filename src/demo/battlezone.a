@@ -1,0 +1,67 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/BATTLEZONE#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         ;+ENABLE_ACCEL   ; can't
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $201e
+         jsr   $2000      ; decompress
+
+         ldx   #0
+         stx   $0811
+         inx
+         stx   $0816      ; reset vector patch
+
+         ldx   #3-1
+-        lda   #$EA
+         sta   $1632,x    ; disable clearing keyboard strobe
+         lda   patch,x
+         sta   $0872,x
+         sta   $161A,x
+         sta   $7661,x
+         sta   $766C,x
+         sta   $7693,x
+         sta   $0B6A,x
+         sta   $73A7,x
+         sta   $168F+4,x
+         dex
+         bpl   -
+
+         ldx   #4-1
+-        lda   patch2,x
+         sta   $168F,x    ; set exits
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $7733
+         sta   $774D
+         sta   $78B8
+         sta   $78BB
+         sta   $7815
+         sta   $5180
+         sta   $5576
+         sta   $0B8E      ; disable sound
+
+         ;+DISABLE_ACCEL
+
+         jmp   $810
+
+patch    !byte $4C,$00,$01
+patch2   !byte $C9,$FF,$F0,$16
+
+title    !byte x_e-x_b
+x_b      !text "BATTLEZONE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

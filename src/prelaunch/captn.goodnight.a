@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/CG",plain
@@ -7,14 +7,17 @@
 
     !source "src/prelaunch/common.a"
 
-         lda   #$60
-         sta   $9DE
-         jsr   $800       ; decompress
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT goodnight_cheat, 0
+         +READ_ROM_NO_WRITE
+         jmp   $300
 
-         +LC_REBOOT
-
-         lda   #8         ; x=45, y=1 here
-         jmp   $B800
+goodnight_cheat
+         !byte goodnight_cheat_e-goodnight_cheat_b
+goodnight_cheat_b
+         !text "PRELAUNCH/CG.CHEAT"
+goodnight_cheat_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

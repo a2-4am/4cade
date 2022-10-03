@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2019-2020 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX.INDEXED/DITHER.RADIAL5",plain
+*=$6000
+
+         !source "src/fx/fx.hgr.precomputed.1bit.a"
+
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_RIPPLE_1BIT aslmod3
+
+Start
+         !source "src/fx/fx.hgr.dither.radial.common.a"
+
+CoordinatesFile
+         !byte 14
+         !text "FX/RADIAL.DATA"
+Coordinates=Coordinates1Bit
+EndCoordinates=EndCoordinates1Bit

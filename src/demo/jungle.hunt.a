@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/JUNGLE.HUNT#060210",plain
+*=$210
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR jungle_hunt, jungle_hunt_dir_e-jungle_hunt_dir_b
+         lda   #$60
+         sta   $81E
+         jsr   $800
+
+         lda   #$60
+         sta   $BD44
+         jsr   $BD00
+
+         ldx   #1
+         stx   $0A6C
+         dex
+         stx   $0A67      ; reset vector patch
+
+         lda   #$60
+         sta   $1501      ; reduce wait times while not playing sounds
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $676C,x
+         sta   $0BD6,x
+         sta   $6553,x
+         sta   $0C28,x    ; set exits
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $14A0
+         sta   $14BA
+         sta   $1425      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $A00
+
+patch    !byte $4C,$00,$01
+
+jungle_hunt
+         !byte jungle_hunt_e-jungle_hunt_b
+jungle_hunt_b
+jungle_hunt_dir_b
+         !text "X/JUNGLE.HUNT"
+jungle_hunt_dir_e
+         !text "/JUNGLE.HUNT"
+jungle_hunt_e
+
+!if * > $300 {
+  !error "code is too large, ends at ", *
+}

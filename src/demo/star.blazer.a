@@ -1,0 +1,50 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/STAR.BLAZER#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $722A
+         sta   $725D
+         jsr   $4A58      ; decompress
+         +DISABLE_ACCEL
+         jsr   $4400
+         +ENABLE_ACCEL
+         jsr   $B4C6      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $17DB,x
+         sta   $1760,x
+         sta   $17AD,x    ; set exits
+         lda   patch2,x
+         sta   $1705,x    ; decrement custom counter after demo cycle and eventually exit
+         dex
+         bpl   -
+
+         +DISABLE_ACCEL
+         jmp   ($20)
+
+count    !byte $03
+         dec   count
+         bmi   patch
+         jmp   $1750
+
+patch    !byte $4C,$00,$01
+patch2   !byte $4C,<(count + 1),>(count + 1)
+
+title    !byte x_e-x_b
+x_b      !text "STAR.BLAZER"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

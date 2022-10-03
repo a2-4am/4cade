@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019 by Frank M., 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/THUNDER.BOMBS",plain
@@ -9,7 +9,13 @@
 
          lda   #$60
          sta   $887F
-         jsr   $87F9      ; load/title
+         lda   #<fakewait
+         sta   $8823+1
+         sta   $882A+2
+         lda   #>fakewait
+         sta   $8823+2
+         sta   $882B+2    ; fix timing of title screen on //gs
+         jsr   $87F9      ; load, show title
 
          +ENABLE_ACCEL
          lda   #$60
@@ -17,32 +23,47 @@
          jsr   $7800      ; unpack/setup
 
          lda   #0
-         sta   $3F2
+         sta   $3F2       ; reset vector
+
          +READ_RAM2_NO_WRITE
          lda   MockingboardStuff
-         +READ_ROM_NO_WRITE
-         cmp   #1
-         bcc   ++
+         beq   ++
          tax
+         and   #7
          ora   #$C0
          sta   $341
          txa
+         ldy   #6         ; sound/speech
          asl
-         and   #$80
-         ora   #1         ; sound i
-         bpl   +
-         eor   #$85       ; sound ii
+         bcs   +
+         ldy   #4         ; sound ii
+         asl
+         bmi   +
+         dey              ; sound i
 +
-         bcc   +
-         lda   #6         ; +speech
-+
-         sta   $340
+         sty   $340
          jsr   $7CB4
 ++
-         +DISABLE_ACCEL
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $E39       ; don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
 
          lda   $323
          jmp   $781B
+
+fakewait sec
+wait1    pha
+wait2    sbc   #$01
+         bne   wait2
+         pla
+         sbc   #$01
+         bne   wait1
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

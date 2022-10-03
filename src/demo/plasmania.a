@@ -1,0 +1,55 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/PLASMANIA#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT title, $00
+
+         lda   #>(callback-1)
+         sta   $84E
+         lda   #<(callback-1)
+         sta   $851
+         lda   #$60
+         sta   $853       ; skip loading PLASMANIA.SND
+         jmp   $800
+
+callback
+         lda   #$2C
+         sta   $7352      ; silence voice
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $609C,x
+         sta   $6139,x
+         sta   $614C,x
+         sta   $65B7,x
+         sta   $8C31,x
+         sta   $8C5B,x    ; set exits
+         dex
+         bpl   -
+
+         inx
+         stx   $87BE
+         stx   $87CC
+         stx   $8AEE
+         stx   $8B89
+         stx   $8B91
+         stx   $8C21       ; disable sound
+
+         jmp   $6000
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "X/PLASMANIA/PLASMANIA"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

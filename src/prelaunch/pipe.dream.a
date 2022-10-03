@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PIPE.DREAM",plain
@@ -14,6 +14,9 @@ my_vbl
          sta   @copy_vbl+1
          lda   WaitForVBL+2
          sta   @copy_vbl+2
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         php
          ldy   #0
 
 @copy_vbl
@@ -31,7 +34,19 @@ my_vbl
          sta   $9D53
          lda   #>my_vbl
          sta   $9D54
+         plp
+         beq   +
+         lda   #<callback
+         sta   $8BB
+         lda   #>callback
+         sta   $8BC
++
          jmp   $881
+
+callback
+         lda   #$A5
+         sta   $A453      ; patch - don't decrease time
+         jmp   $B679
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

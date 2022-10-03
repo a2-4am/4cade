@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am & qkumba
+;(c) 2019-2022 by 4am & qkumba
 ;
 ; Pseudo-ProDOS environment
 ;
@@ -218,65 +218,44 @@ ProDOS_enter
 resetval=$f0
 @imp_seek
          jsr   @set_rdwrbuff
-         ldx   #0
-         stx   blkidx
-         stx   treeidx
-         stx   blkofflo
-         stx   blkoffhi
-         stx   reqcmd
-         ldy   sizelo
-         beq   @testzero
-@seekloop
          jsr   @reset
-         ldy   sizelo
-         bne   @seek64
-         cmp   ldrhi
-         bcc   @seek64
-         bne   @seek32
-         cpx   ldrlo
-         bne   @seek64
-
-@seek32
-         lda   ldrhi
-         ldx   ldrlo
-@seek64
-         sta   sizehi
-         stx   sizelo
-         lda   ldrhi
-         pha
-         lda   sizehi
-         pha
-         lda   ldrlo
-         pha
-         txa
-         pha
-         tya
-         pha
-         jsr   @seekreset
-         pla
+         lda   sizelo
+         lsr
          tay
-         sec
-         pla
-         sta   ldrlo
-         pla
-         sbc   ldrlo
-         sta   ldrlo
-         pla
-         sta   ldrhi
-         pla
-         sbc   ldrhi
-         sta   ldrhi
-@testzero
-         tya
-         sbc   #0
+         lda   ldrhi
+         ror
+         sta   blkidx
+         ldx   istree
+         beq   @sametree
+         tax
+         beq   @skiptree
+         iny
+         cpy   treeidx
+
+@skiptree
+         sty   treeidx
+         beq   @sametree
+         ldx   hddtreebuf - 1, y
+         lda   hddtreebuf + 255, y
+         jsr   hddreaddirsel
+
+@sametree
+         jsr   @close_reset
+         lda   ldrlo
          sta   sizelo
-         ora   ldrlo
-         ora   ldrhi
-         bne   @seekloop
+         lda   ldrhi
+         and   #1
+         sta   sizehi
+         ora   sizelo
+         beq   @link_jmpzp
+         jsr   @seekreset
+
 @link_jmpzp
-         jmp   @jmp_zp
+         jmp   @restore_zp
 
 @seekreset
+         lda   #cmdseek
+         sta   reqcmd
          jsr   hddrdwrpart
 @reset
          lda   #resetval
@@ -323,7 +302,7 @@ resetval=$f0
          lda   @handles+1
          beq   @close_ret
          dec   @handles+1
-         bne   @close_ret
+         bne   @close_reset
          lda   #>hddencbuf
 
 @patch_buffer
@@ -341,13 +320,21 @@ resetval=$f0
          stx   dirbufpatch9+2
          stx   dirbufpatch10+1
          stx   dirbufpatch11+1
-         stx   dirbufpatch12+1
-         stx   dirbufpatch13+2
          inx
          stx   dirbufpatch5+2
          stx   dirbufpatch8+2
-         stx   dirbufpatch14+2
+         inx
+         stx   treebufpatch1+1
+         stx   treebufpatch2+2
+         inx
+         stx   treebufpatch3+2
 @close_ret
+         rts
+
+@close_reset
+         lda   #0
+         sta   blkofflo
+         sta   blkoffhi
          rts
 
 @fetchbyte
@@ -412,6 +399,13 @@ resetval=$f0
 @saved_zp
          !fill (last_zp - first_zp) + 1
 
+resetRoot
+gRootDirectory
+         +LDADDR 0                   ; SMC
+         sta   (reloc + unrhddblocklo - unrelochdd) + 1
+         sty   (reloc + unrhddblockhi - unrelochdd) + 1
+         rts
+
 ;------------------------------------------------------------------------------
 ; traverse [private]
 ;
@@ -426,10 +420,7 @@ resetval=$f0
   }
 }
 traverse
-gRootDirectory
-         +LDADDR 0                   ; SMC
-         sta   (reloc + unrhddblocklo - unrelochdd) + 1
-         sty   (reloc + unrhddblockhi - unrelochdd) + 1
+         jsr   resetRoot
 
          ;search for '/' character in filename
 
@@ -439,7 +430,7 @@ gRootDirectory
          tay
 -        inx
          dey
-         bmi   @go                   ; no '/', just do the read
+         beq   @go                   ; no '/', just do the read
          lda   (namlo), y
          cmp   #'/'
          bne   -

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019, 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/STELLAR.7",plain
@@ -20,9 +20,25 @@
          lda   #$A4
          sta   $AE28      ; reset vector patch
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $AE71
+         lda   #>callback
+         sta   $AE72
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $AE27
 
+callback
+         jsr   $AF60
+         lda   #$AD
+         sta   $80D8      ; patch - don't decrease fuel
+         sta   $8095      ; patch - don't increase damage
+         jmp   $A440
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

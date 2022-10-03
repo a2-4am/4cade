@@ -1,0 +1,61 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/VIPER.PATROL",plain
+*=$106
+
+         !source "src/prelaunch/common.a"
+
+         lda   #$4C
+         sta   $948E
+         lda   #<callback1
+         sta   $948F
+         lda   #>callback1
+         sta   $9490
+         jmp   $5200      ; load "DOS"
+
+callback1
+         +ENABLE_ACCEL
+
+         lda   #0
+         sta   $56
+         jsr   $BDAC      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   $1B82
+         cmp   #$4C
+         bne   +
+         lda   #<callback2
+         sta   $1B83
+         lda   #>callback2
+         sta   $1B84
+         lda   #<callback3
+         sta   $1BCA
+         lda   #>callback3
+         sta   $1BCB
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         lda   #0
+         rts
+
+callback2
+         lda   #$A5
+         sta   $B7D       ; patch - don't increase lives
+         sta   $B8B       ; patch - don't decrease lives
+         lda   #$EA
+         sta   $C39       ; patch - don't decrease fuel
+         bne   +
+
+callback3
+         dec   $100C      ; patch - don't increase lives
+         dec   $101A      ; patch - don't decrease lives
++        jmp   $800
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

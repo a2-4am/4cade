@@ -1,39 +1,35 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/TB",plain
+!to "build/DEMO/TB#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +GAME_REQUIRES_JOYSTICK
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT tubeway, $00
+         +LOAD_FILE_AT title, $00
          lda   #$4C
          sta   $6BA8
          sta   $6C2D
          jsr   $4EC6      ; decompress
          jsr   $B2EC
-         lda   #$4C
-         sta   $4F46
-         sta   $AD44
-         sta   $AD2A
-         sta   $AB86
-         sta   $AC64
-         ldx   #0
-         stx   $4F47
-         stx   $AD45
-         stx   $AD2B
-         stx   $AB87
-         stx   $AC65
+         ldx   #3-1
+-        lda   patch,x
+         sta   $4F46,x
+         sta   $AD44,x
+         sta   $AD2A,x
+         sta   $AB86,x
+         sta   $AC64,x
+         dex
+         bpl   -
          inx
-         stx   $4F48
-         stx   $AD46
-         stx   $AD2C
-         stx   $AB88
-         stx   $AC66
+         stx   $B3F0
+         stx   $B3F1
+         stx   $B3F2    ; erase high score
          lda   #$10
          sta   $AD28
          sta   $AB84
@@ -48,9 +44,11 @@
          +DISABLE_ACCEL
          jmp   $9000
 
-tubeway
-         !byte 7
-         !text "X/TB/TB"
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "X/TB/TB"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

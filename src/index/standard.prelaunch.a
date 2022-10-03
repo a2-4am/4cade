@@ -1,0 +1,8 @@
+;
+; Index record for standard prelaunch code
+;
+; The file is maintained by hand
+;
+         !byte 0
+         !be24 0
+         !le16 PRELAUNCH_STANDARD_SIZE

@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2019-2022 by 4am/qkumba
+;
+!cpu 6502
+!to "build/FX.INDEXED/DHGR.DITHRAD4",plain
+*=$6000
+
+         !source "src/fx/fx.dhgr.precomputed.1bit.a"
+
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+         jsr EndCoordinates1Bit+1
+
+Start
+         !source "src/fx/fx.dhgr.dither.radial.common.a"
+
+CoordinatesFile
+         !byte 14
+         !text "FX/RADIAL.DATA"
+Coordinates=Coordinates1Bit
+EndCoordinates=EndCoordinates1Bit

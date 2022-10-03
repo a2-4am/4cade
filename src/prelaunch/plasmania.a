@@ -7,9 +7,8 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          +USES_TEXT_PAGE_2
-         inc   $3f4 ; mismatch checksum to trigger reboot
-                    ; game overwrites LC during title
          lda   #>(callback1-1)
          sta   $84E
          lda   #<(callback1-1)
@@ -28,6 +27,19 @@ callback1
          sta   $7353
          lda   #>callback2
          sta   $7354
+         lda   #$4C
+         sta   $6F31      ; patch - fix bug causing stack overflow
+         sta   $8E99      ; patch - fix bug causing stack overflow
+         sta   $8E9A      ; patch - fix bug causing stack overflow
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $92D7      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $6000
 
 !if * > $1C0 {

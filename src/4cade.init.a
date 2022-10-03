@@ -89,7 +89,7 @@
          ; increase text window width so we can print to the edge of the screen without scrolling
          inc   $21
          ; print version or build number in lower right corner
-         ldx   #30
+         ldx   #28
          ldy   #23
          jsr   SetCursorPosition
          +LDADDR LoadingVersion
@@ -102,7 +102,7 @@
 }
 
          ; set up text window so it only covers lower left corner
-         lda   #30
+         lda   #28
          sta   $21
          lda   #19
          sta   $22
@@ -181,7 +181,7 @@
 
          ldy   #4
 @ELM     lda   FONTSRC,x
-                                     ; relocate font data to RAM bank 2
+                                     ; relocate font data to $E000
          sta   FONTDST,x
          inx
          bne   @ELM
@@ -277,14 +277,14 @@ REPLAY
          !text "R E P L A Y"
 !ifndef RELEASE {
 LoadingVersion
-         !byte 6
-         !text "build "
+         !byte 8
+         !text "  build "
 LoadingBuild
          !word BUILDNUMBER
 } else {
 LoadingVersion
-         !byte 10
-         !text "      v4.0"
+         !byte 12
+         !text "v5.0-alpha.4"
 }
 Loading64K
          !byte 3
@@ -342,7 +342,6 @@ PrintAsDecimal
          !source "src/hw.accel.a"
          !source "src/hw.vbl.init.a"
          !source "src/parse.common.a"
-         !source "src/parse.games.a"
 
 OneTimeSetup
          lda   zpMachineStatus
@@ -381,56 +380,6 @@ CopyDevs
          !word gGlobalPrefsStore
          !word -
          !byte 16
-         +LD16 SAVE
-         +ST16 PTR
-         jsr   stepptr
-         +LD16 PTR                   ; (PTR) points to free space after the OKVS data structure we just created
-         +ST16 gGamesListStore       ; save pointer to free space for next store
-
-         jsr   LoadFile              ; load games list file into $8200
-         !word kRootDirectory
-         !word @kGameListConfFile
--        !word $8200
-         jsr   ParseGamesList        ; parse games list into OKVS data structure in LC RAM bank
-         !word gGamesListStore
-         !word -
-
-!ifndef RELEASE {
-         +LD16 SAVE
-         +ST16 PTR
-         jsr   stepptr
-         +READ_ROM_NO_WRITE
-         lda   #40
-         sta   $21
-         lda   #36
-         sta   $24
-         dec   $25
-         jsr   $FC22
-         lda   PTR+1
-         jsr   $FDDA
-         lda   PTR
-         jsr   $FDDA
-         +READ_RAM1_WRITE_RAM1
-}
-
-         ldx   #$30
-         lda   MachineStatus
-         and   #HAS_JOYSTICK
-         beq   +
-         inx
-+        stx   gSearchHasJoystick
-         ldx   #$30
-         lda   MachineStatus
-         and   #HAS_128K
-         beq   +
-         inx
-+        stx   gSearchHas128K
-
-         +LDADDR gGamesListStore
-         jsr   okvs_len
-         +LD16 WCOUNT
-         +ST16 GameCount
-         +ST16 SAVE
 
          jsr   pref_get              ; see if cheats are enabled by default
                                      ; sets PTR -> cheat pref value as length-prefixed string '1' or '0'
@@ -445,8 +394,40 @@ CopyDevs
          ora   MachineStatus
          sta   MachineStatus         ; set bit 3 of MachineStatus
 
-         ; calculate and update visible game count (3-digit decimal number as ASCII string)
-         dey                         ; Y = 0
+         rol
+         rol
+         rol
+         rol
+         and   #%00000110
+         tax                         ; X in (0,2,4,6)
+         ldy   kGameCounts, x
+         sty   GameCount             ; store total game count based on based on (has-joystick) X (has-128K)
+         sty   SAVE
+         ldy   kGameCounts+1, x
+         sty   GameCount+1
+         sty   SAVE+1
+         lsr
+         tax                         ; X in (0,1,2,3)
+         lda   kSearchIndexLo, x
+         sta   @searchIndexSrc+1     ; set up search index record based on (has-joystick) X (has-128K)
+         lda   kSearchIndexHi, x
+         sta   @searchIndexSrc+2
+         lda   kSearchCacheLo, x
+         sta   @searchCacheSrc+1     ; set up search cache record based on (has-joystick) X (has-128K)
+         lda   kSearchCacheHi, x
+         sta   @searchCacheSrc+2
+         ldy   #5
+@searchIndexSrc
+         lda   $FDFD, y              ; SMC
+         sta   kSearchIndexRecord, y
+@searchCacheSrc
+         lda   $FDFD, y
+         sta   kSearchCacheRecord, y
+         dey
+         bpl   @searchIndexSrc
+
+         ; convert GameCount (word) to VisibleGameCount (3-digit decimal number as ASCII string)
+         iny                         ; Y = 0
 @outer
          lda   #0
          pha
@@ -477,11 +458,49 @@ CopyDevs
          bit   CLEARKBD
          jmp   Reenter
 
-@kGameListConfFile
-         !byte 10
-         !text "GAMES.CONF"
-
 @kPowersOfTen
          !byte 100
          !byte 10
          !byte 1
+
+kSearchIndexLo
+         !byte <kSearchIndexRecord00
+         !byte <kSearchIndexRecord01
+         !byte <kSearchIndexRecord10
+         !byte <kSearchIndexRecord11
+kSearchIndexHi
+         !byte >kSearchIndexRecord00
+         !byte >kSearchIndexRecord01
+         !byte >kSearchIndexRecord10
+         !byte >kSearchIndexRecord11
+kSearchCacheLo
+         !byte <kSearchCacheRecord00
+         !byte <kSearchCacheRecord01
+         !byte <kSearchCacheRecord10
+         !byte <kSearchCacheRecord11
+kSearchCacheHi
+         !byte >kSearchCacheRecord00
+         !byte >kSearchCacheRecord01
+         !byte >kSearchCacheRecord10
+         !byte >kSearchCacheRecord11
+kSearchIndexRecord00
+         !source "src/index/search00.idx.a"
+kSearchIndexRecord01
+         !source "src/index/search01.idx.a"
+kSearchIndexRecord10
+         !source "src/index/search10.idx.a"
+kSearchIndexRecord11
+         !source "src/index/search11.idx.a"
+kSearchCacheRecord00
+         !source "src/index/cache00.idx.a"
+kSearchCacheRecord01
+         !source "src/index/cache01.idx.a"
+kSearchCacheRecord10
+         !source "src/index/cache10.idx.a"
+kSearchCacheRecord11
+         !source "src/index/cache11.idx.a"
+kGameCounts
+         !source "src/index/count00.a"
+         !source "src/index/count01.a"
+         !source "src/index/count10.a"
+         !source "src/index/count11.a"

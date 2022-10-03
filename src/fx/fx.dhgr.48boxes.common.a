@@ -17,7 +17,7 @@
 ; are easy to find once you calculate the base address for that row.
 ;
 ; |BoxInitialStages| defines the initial grid of stages for each box.
-; Each stage is used an index into the |StagesHi| array
+; Each stage is used as an index into the |StagesHi| array
 ; to find the drawing routine for that stage (if any).
 ; Each box's stage is incremented after each iteration through the main loop.
 ; When the main loop iterates through all 48 boxes without drawing anything,
@@ -79,7 +79,6 @@ dst      = $02                       ; [word] used by drawing routines
 rowcount = $04                       ; [byte] used by drawing routines
 tmpy     = $05                       ; [byte] used by drawing routines
 box      = $0E                       ; [byte] counter in main loop
-any      = $0F                       ; [byte][must be at $0F] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 auxsrc_hgrhi = $BC00                 ; [$C0 bytes] HGR base addresses (hi) starting at $9000
 hgrhi    = $BD00                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000
@@ -219,24 +218,22 @@ k_bitcopy                 = 30       ; must be last token
 
          sta   $C001                 ; 80STORE mode so we can bank $2000/aux in & out with STA $C055 & $C054
 MainLoop ldx   #48
-BoxLoop  stx   box
-         ldy   BoxStages-1, x        ; for each box, get its current stage
+BoxLoop  ldy   BoxStages-1, x        ; for each box, get its current stage
          inc   BoxStages-1, x        ; increment every box's stage every time through the loop
          lda   StagesHi, y
          beq   NextBox               ; if stage's drawing routine is 0, nothing to do
+         stx   box
          sta   j+2
-         lda   BoxesX-1, x
+         lda   BoxesX-1, x           ; A = starting HGR row for this box
          ldy   BoxesY-1, x           ; Y = starting byte offset for this box
-         tax                         ; X = starting HGR row for this box
-         inc   any                   ; was initialized by the BoxStages copy loop
          clc
-j        jsr   $FD00                 ; [SMC] call drawing routine for this stage
+j        jsr   $0000                 ; [SMC] call drawing routine for this stage
          ldx   box
 NextBox  dex
          bne   BoxLoop
-         lda   any
+         lda   j+2
          beq   +                     ; if we didn't draw anything in any box, we're done
-         stx   any                   ; X=0 here
+         stx   j+2                   ; X=0 here
          bit   $C000                 ; check for key
          bpl   MainLoop
 +        sta   $C000                 ; 80STORE off
@@ -312,12 +309,11 @@ INX_AND_RECALC_E
 ;
 SET_ROW_COUNT
 ROW_COUNT=*+1
-         lda   #$1D                  ; SMC
-         sta   rowcount
+         ldx   #$1D                  ; SMC
+         stx   rowcount
 SET_ROW_COUNT_E
 ;
 SET_FIRST_ROW
-         txa
 FIRST_ROW=*+1
          adc   #$0E                  ; SMC
          tax
@@ -394,10 +390,10 @@ MASKCOPY_POST
 MASKCOPY_POST_E
 ;
 MIDDLE_JSR
-         !byte $20,$47
+         !byte $20,$46
 MIDDLE_JSR_E
 OUTER_JSR
-         !byte $20,$48
+         !byte $20,$47
 OUTER_JSR_E
 ;
          !byte 1                     ; current page
@@ -754,6 +750,4 @@ OUTER_STAGE
 !if >* != >STAGE0 {
          !error "Templates are not all on same page"
 }
-; Note: the final k_rts is later copied to zero page $0F and used in MainLoop,
-;       so don't put any more code before BoxInitialStages.
 BoxInitialStages

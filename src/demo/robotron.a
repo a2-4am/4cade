@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/ROBOTRON.2084#069000",plain
+*=$9000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #<callback
+         sta   $141D+1
+         lda   #>callback
+         sta   $141D+2
+         jmp   $1400      ; decompress
+
+callback ldx   #6-1
+-        lda   $100, x
+         sta   $4542, x
+         dex
+         bpl   -          ; exit on keypress
+
+         ldx   #3-1
+-        lda   patch, x
+         sta   $453A, x
+         dex
+         bpl   -          ; exit at end of demo cycle
+
+         lda   #$D0
+         sta   $053B      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4015
+
+patch    !byte $4C,$42,$45
+
+title    !byte x_e-x_b
+x_b      !text "ROBOTRON.2084"
+x_e
+
+!if * > $C000 {
+  !error "code is too large, ends at ", *
+}

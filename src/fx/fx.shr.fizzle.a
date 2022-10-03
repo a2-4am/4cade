@@ -2,16 +2,13 @@
 ;(c) 2019-2020 by qkumba/4am/John Brooks
 
 !cpu 6502
-!to "build/FX/SHR.FIZZLE",plain
+!to "build/FX.INDEXED/SHR.FIZZLE",plain
 *=$A000
 
-addrs=$80                            ; [128 bytes]
+         !source "src/fx/macros.a"
 
-         ldx   #(end-start)          ; copy LFSR code to zero page
--        lda   start-1, x
-         sta   $FF, x
-         dex
-         bne   -
+addrs=$7F                            ; [128 bytes]
+
          lda   #$A0                  ; create address lookup table
          tax
          tay
@@ -19,27 +16,28 @@ addrs=$80                            ; [128 bytes]
          sty   addrs-$21, x
          dex
          bne   -
-         sta   $C005
--        lda   $9D00, y              ; pre-copy SHR SCB and palette
-         sta   $9D00, y
-         lda   $9E00, y
-         sta   $9E00, y
-         lda   $9F00, y
-         sta   $9F00, y
-         iny
-         bne   -
+
+         +OVERCOPY_TO_0 start, end
+         ;$FF clobbered
+         ;X=0
+         ;Y=0
+
+         +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
+
          jmp   loop
 
 start
 !pseudopc 0 {
+         ;X=0
+         ;Y=0
 loop     txa
 loop1    eor   #$60                  ; LFSR form 0x6000 with period 32767
          tax
 loop2    lda   addrs, x
-         sta   <src+1
-src=*+1
-         lda   $FD00, y              ; SMC high byte
-         sta   (<src), y
+         sta   <src+2
+src      lda   $FD00, y              ; SMC high byte
+         sta   (src+1), y
          txa
          lsr
          tax
@@ -52,9 +50,8 @@ src=*+1
          bmi   exit
          txa
          bne   loop1
-exit     lda   $2000                 ; last lousy byte (because LFSR never hits 0)
-         sta   $2000
-         sta   $C004
-         rts
+         lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
+         sta   (src+1), y
+exit     rts
 }
 end

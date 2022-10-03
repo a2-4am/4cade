@@ -59,7 +59,7 @@ Home
 ; clear and show DHGR page 1 without flickering
 ;
 ; in:    none
-; out:   text page clobbered (but screen holes preserved)
+; out:   text page clobbered
 ;        $2000..$3FFF/main and /aux cleared
 ;------------------------------------------------------------------------------
 BlankDHGR
@@ -68,11 +68,13 @@ BlankDHGR
          sta   WRITEAUXMEM
          jsr   ClearHGR1             ; clear hi-res screen 1 in auxmem
          sta   WRITEMAINMEM
+         lda   #1
+         sta   OffscreenPage
 
          ; /!\ execution falls through here to DHGRMode
 ;------------------------------------------------------------------------------
 ; DHGRMode
-; switch to DHGR mode (HARDER THAN IT SOUNDS)
+; switch to DHGR or DGR mode (HARDER THAN IT SOUNDS)
 ;
 ; in:    none
 ; out:   none
@@ -92,9 +94,9 @@ DHGRMode
          sta   DHIRESOFF
 
          sta   DHIRESON              ; then turn DHGR on
-         bit   PAGE1
+         jsr   ToggleOffscreenPage
+         jsr   ShowOtherPage
          lda   #1
-         sta   OffscreenPage
          sta   gMachineInDHGRMode
          jsr   UnwaitForVBL
          jmp   HGRMode

@@ -1,0 +1,64 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/LOST.TOMB#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $82A
+         jsr   $800       ; decompress
+         ldx   #3-1
+-        lda   patch,x
+         sta   $2762,x
+         sta   $2780,x
+         sta   $80AF,x
+         sta   $88D0,x
+         sta   $88B7,x
+         sta   $88E0,x
+         lda   patch2,x
+         sta   $896B,x
+         sta   $317C,x
+         dex
+         bpl   -
+
+         lda   #$10
+         sta   $277E
+         sta   $80AD
+         sta   $88B5
+         lda   #6
+         sta   $277F
+         sta   $88B6
+         lda   #$0A
+         sta   $80AE
+
+         inx
+         stx   $8022
+         lda   #$20
+         sta   $8032
+         lda   #$1C
+         sta   $8033
+         lda   #$88
+         sta   $8034
+         lda   #$E3
+         sta   $8039
+
+         +DISABLE_ACCEL
+         jmp   $84D
+
+patch    !byte $4C,$00,$01
+patch2   !byte $A9,$01,$EA
+
+title    !byte x_e-x_b
+x_b      !text "LOST.TOMB"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

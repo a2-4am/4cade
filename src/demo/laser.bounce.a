@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/LASER.BOUNCE#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$2C
+         sta   $3ECB
+         lsr   $3ECF
+         lda   #$60
+         sta   $3F06
+         jsr   $3E69      ; decompress
+         sta   $743F
+         sta   $7425
+         sta   $888C
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $6006,x
+         lda   patch,x
+         sta   $600B,x
+         sta   $6E41,x
+         sta   $6E98,x
+         dex
+         bpl   -
+         lda   #4
+         sta   $6E2B
+         lda   #$30
+         sta   $6E95
+         ldx   #1
+         stx   $6E96
+         asl
+         sta   $6E97
+         sta   $6ECC
+
+         +DISABLE_ACCEL
+
+         jmp   $6000
+
+counter  !byte 3
+
+patch    !byte $4C,$00,$01
+patch2   !byte $CE,<counter,>counter
+
+title    !byte x_e-x_b
+x_b      !text "LASER.BOUNCE"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

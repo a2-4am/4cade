@@ -1,0 +1,58 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/VINDICATOR#060320",plain
+*=$320
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+
+         +LOAD_FILE_KEEP_DIR vindicator, vindicator_dir_e-vindicator_dir_b
+         +NEW_RESET_VECTOR $BFF0
+
+         lda   #$60
+         sta   $1867
+         jsr   $180F      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $56D9,x
+         sta   $4902,x    ; set exits
+         dex
+         bpl   -
+         lda   #$F0
+         sta   $4001
+         lda   #$BF
+         sta   $400F      ; reset vector fix (overwrites $100)
+
+         lda   #$60       ; annunciator fix - kills Gizmo/joyport support
+         sta   $5B77      ; but fixes ][+ 80-col softswitch
+         sta   $5B43      ; and //c+ coloring
+
+         lda   #$D0
+         sta   $441F
+         sta   $5E25
+         sta   $5DDC      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $4000
+
+patch    !byte $4C,$F0,$BF
+
+vindicator
+         !byte vindicator_e-vindicator_b
+vindicator_b
+vindicator_dir_b
+         !text "X/VINDICATOR"
+vindicator_dir_e
+         !text "/VINDICATOR"
+vindicator_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

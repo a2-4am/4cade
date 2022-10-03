@@ -1,0 +1,43 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/POOYAN#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $203A
+         jsr   $2000      ; decompress
+
+         ldx   #3-1
+-        lda   patch,x
+         sta   $6069,x
+         sta   $60C8,x
+         sta   $60EA,x
+         sta   $7DB5,x    ; set exits
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $A008
+         sta   $A025      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $6000
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "POOYAN"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

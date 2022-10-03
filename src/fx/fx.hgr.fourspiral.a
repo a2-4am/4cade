@@ -5,6 +5,8 @@
 !to "build/FX.INDEXED/FOURSPIRAL",plain
 *=$6000
 
+         !source "src/fx/macros.a"
+
          lda   #$13
          sta   $FB
          lda   #$17
@@ -90,5 +92,4 @@
 @exit    rts
 
          !source "src/wait.a"
-         !source "src/fx/fx.hgr.common.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by Frank M.
+;(c) 2020, 2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/IKARI.WARRIORS",plain
@@ -7,8 +7,43 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $11A7
+         jsr   $1000      ; load "DOS"
+         dex
+         jsr   $D300      ; decompress
+         lda   #$60
+         sta   $840
+         jsr   $803       ; decompress
+         dex
+         jsr   $D300      ; decompress
          inc   $3F4       ; force reboot
-         jmp   $1000
+         lda   #$20
+         sta   $E093
+         sta   $E0D8
+         lda   #<EnableAccelerator
+         sta   $E094
+         lda   #>EnableAccelerator
+         sta   $E095
+         lda   #<callback
+         sta   $E0D9
+         lda   #>callback
+         sta   $E0DA
+         jsr   DisableAccelerator
+         jmp   $E000
+
+callback
+         jsr   DisableAccelerator
+         +READ_RAM1_WRITE_RAM1
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $D06B      ; patch - don't decrease lives
+         dec   $D07A      ; patch - don't increase lives
++
+         rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

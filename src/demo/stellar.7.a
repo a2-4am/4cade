@@ -1,0 +1,71 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/STELLAR.7#060200",plain
+*=$200
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +USES_TEXT_PAGE_2
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR stellar_7, stellar_7_dir_e-stellar_7_dir_b
+
+         lda   #$60
+         sta   $863
+         jsr   $800       ; unpack
+
+         ldx   #0
+         stx   $AE2A
+         inx
+         stx   $AE2C
+         lda   #$A4
+         sta   $AE28      ; reset vector patch
+
+         lda   #<callback1
+         sta   $AE71
+         lda   #>callback1
+         sta   $AE72
+
+         +DISABLE_ACCEL
+         jmp   $AE27
+
+callback1
+         jsr   $AF60
+         lda   #<callback2
+         sta   $A572
+         lda   #>callback2
+         sta   $A573
+         lda   #$4C
+         sta   $A484
+         ldx   #0
+         stx   $A485
+         inx
+         stx   $A486
+         rts
+
+callback2
+         lda   #7
+         sta   $8539
+         lda   #$4C
+         sta   $8541
+         sta   $84C3
+         ldx   #0
+         stx   $8542
+         stx   $84C4
+         inx
+         stx   $8543
+         stx   $84C5
+         jmp   $8400
+
+stellar_7
+         !byte stellar_7_e-stellar_7_b
+stellar_7_b
+stellar_7_dir_b
+         !text "X/STELLAR.7"
+stellar_7_dir_e
+         !text "/"
+         !text "STELLAR.7"
+stellar_7_e

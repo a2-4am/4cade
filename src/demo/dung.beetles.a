@@ -1,0 +1,57 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/DUNG.BEETLES#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $603A
+         jsr   $6000      ; decompress
+
+         ldx   #1
+         stx   $083E      ; reset vector patch
+
+         lda   #$60
+         sta   $847
+         jsr   $800       ; memory move
+
+         ldx   #6-1
+-        lda   patch, x
+         sta   $9B93, x
+         dex
+         bpl   -          ; disable button support on title screen
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $9B7D,x
+         sta   $97D5,x    ; set exits
+         dex
+         bpl   -
+
+         lda   #$D0
+         sta   $1C17
+         sta   $12CE
+         sta   $9B4D
+         sta   $9B56      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $9600
+
+patch    !byte $A9,$01,$EA,$EA,$EA,$EA
+patch2   !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "DUNG.BEETLES"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

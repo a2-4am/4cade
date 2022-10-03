@@ -1,0 +1,75 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/FLOBYNOID",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $9C5
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $B624
+         sta   $B63A
+         jsr   $B600
+
+         ldx   #hook_e-hook_b
+-        lda   hook_b, x
+         sta   $2c8, x
+         dex
+         bpl   -
+         lda   #$c8
+         sta   $B6D6
+         lda   #2
+         sta   $B6D7
+
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$8E       ; STX
+         sta   cheat1
+         sta   cheat2
+         sta   cheat3
+
++        jsr   DisableAccelerator
+
+         jsr   $BBB3
+         jsr   $B627
+         inc   $3F4       ; reboot
+         jmp   $8003
+
+hook_b !pseudopc $2c8 {
+         pla
+         pla
+         jsr   $B64F
+         jsr   $B6D8
+         ldx   #$AD
+         lda   #$CE
+         cmp   $AD9
+         bne   +
+cheat1   cpx   $AD9       ; SMC patch - don't decrease lives
++        cmp   $1461
+         bne   +
+cheat2   cpx   $1461      ; patch - don't trigger anti-cheat
++        lda   $1893
+         cmp   #$EE
+         bne   +
+cheat3   cpx   $1893      ; SMC patch - don't increase lives
++        lda   $B088
+         eor   #$0D
+         bne   +
+         sta   $B088      ; patch - don't trigger anti-tamper
++        clc
+         rts
+  !if * > $2FF {
+    !error "code is too large, ends at ", *
+  }
+}
+hook_e
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

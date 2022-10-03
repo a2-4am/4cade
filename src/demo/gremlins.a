@@ -1,0 +1,47 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/GREMLINS#06BE00",plain
+*=$be00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$4C
+         sta   $082D
+         sta   $0863
+         lda   #$2C
+         sta   $839       ; no music
+         lda   #0
+         sta   $856       ; exit keycheck sooner
+         jsr   $0800      ; decompress
+
+         +DISABLE_ACCEL
+
+         jsr   $830       ; check key
+         bit   $C000
+         bmi   patch
+         ldx   #0
+         stx   $5219      ; exit keycheck sooner
+         ldx   #3-1
+-        lda   patch,x
+         sta   $51F2,x
+         sta   $5505,x
+         sta   $61E4,x
+         dex
+         bpl   -
+         jmp   $4000
+
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "GREMLINS"
+x_e
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}

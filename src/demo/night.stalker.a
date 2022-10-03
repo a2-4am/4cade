@@ -1,27 +1,25 @@
 ;license:MIT
-;(c) 2021 by qkumba/Frank M.
+;(c) 2021-2022 by qkumba/Frank M.
 
 !cpu 6502
-!to "res/DEMO/NIGHT.STALKER",plain
-*=$a000
+!to "build/DEMO/NIGHT.STALKER#06BD00",plain
+*=$BD00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
 
-         lda   #0
-         sta   $618C                 ; fix reset
-         sta   $6198                 ; fix IRQ
-         lda   #1
-         sta   $618D                 ; fix reset
-         sta   $6199                 ; fix IRQ
-         eor   #$A5
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+         ldx   #0
+         stx   $618C                 ; fix reset
+         stx   $6198                 ; fix IRQ
+         inx
+         stx   $618D                 ; fix reset
+         stx   $6199                 ; fix IRQ
+         lda   #$A4
          sta   $618E                 ; fix reset checksum
                                      ; (game picks up vectors from un-initialized memory)
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT night_stalker, $00
-         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $6017
          sta   $603F
@@ -53,17 +51,13 @@ x_b !pseudopc $1C1 {
          sta   $ABC9
          sta   $AC6E
          sta   $B765
-         lda   #$4C
-         sta   $BF00
-         sta   $BB6B
-         ldx   #0
-         stx   $196E
-         stx   $BF01
-         stx   $BB6C
-         inx
-         stx   $196F
-         stx   $BF02
-         stx   $BB6D
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $196D,x
+         sta   $BF00,x
+         sta   $BB6B,x
+         dex
+         bpl   -
          lda   #$60
          sta   $1D67
          lda   #$A9
@@ -92,7 +86,8 @@ x_b !pseudopc $1C1 {
          +DISABLE_ACCEL
          jmp   $6000
 
-patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03,$4C,$00,$01,$60,$AD,$6F,$03,$05,$EA,$60,$8D,$6F,$03,$A2,$FF,$60
+patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03
+patch2   !byte $4C,$00,$01,$60,$AD,$6F,$03,$05,$EA,$60,$8D,$6F,$03,$A2,$FF,$60
 
   !if * > $282 {
     !error "code is too large, ends at ", *
@@ -100,6 +95,6 @@ patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03,$4C,$00,$01,$60,$AD,$6F,$03,$05,$
 }
 x_e
 
-night_stalker
-         !byte 29
-         !text "X/NIGHT.STALKER/NIGHT.STALKER"
+title    !byte xx_e-xx_b
+xx_b     !text "NIGHT.STALKER"
+xx_e

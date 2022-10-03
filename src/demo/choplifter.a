@@ -1,37 +1,36 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/CHOPLIFTER",plain
+!to "build/DEMO/CHOPLIFTER#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT choplifter, $00
+         +GAME_REQUIRES_JOYSTICK
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
          lda   #$60
          sta   $403F
          jsr   $4000      ; decompress
-         lda   #$4C
-         sta   $0DAB
-         ldx   #0
-         stx   $0DAC
-         stx   $08F0
-         inx
-         stx   $0DAD
-         stx   $08F1
+         ldx   #3-1
+-        lda   patch,x
+         sta   $0DAB,x
+         sta   $08EF,x
+         dex
+         bpl   -
          lda   #$18
          sta   $0DA9
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL
          ldy   #0
          jmp   $400
 
-choplifter
-         !byte 23
-         !text "X/CHOPLIFTER/CHOPLIFTER"
+patch    !byte $4C,$00,$01
+
+title    !byte x_e-x_b
+x_b      !text "CHOPLIFTER"
+x_e
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

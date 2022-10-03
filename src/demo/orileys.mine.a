@@ -1,0 +1,75 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/OM#060280",plain
+*=$280
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $81D
+         jsr   $800       ; decompress
+
+         +NEW_RESET_VECTOR $280
+         lda   #$80
+         sta   $2001
+         sta   $2016
+         sta   $812E
+         lda   #$02
+         sta   $2006
+         sta   $201B      ; reset vector patch
+         sta   $8133      ; (yes, that's 3 times)
+
+         lda   #$D0
+         sta   $1966
+         sta   $3D32
+         sta   $3D4C
+         sta   $872B
+         sta   $1874
+         sta   $86B3
+         sta   $17B7
+         sta   $189E
+         sta   $8975
+         sta   $8816
+         sta   $188D
+         sta   $90C2
+         sta   $90CA
+         ldx   #3-1
+-        lda   patch,x
+         sta   $306D,x
+         sta   $95C7,x
+         sta   $95D5,x
+         sta   $94F8,x
+         sta   $80F9,x
+         sta   $8324,x
+         lda   patch2,x
+         sta   $95CD,x
+         dex
+         bpl   -
+
+         lda   #$EA
+         sta   $95D0
+         lda   #$10
+         sta   $80F7
+         ldy   #5
+         sty   $80F8
+
+         +DISABLE_ACCEL
+
+         jmp   $8FD
+
+patch    !byte $4C,$00,$01
+patch2   !byte $30,$06,$EA
+
+title    !byte x_e-x_b
+x_b      !text "OM"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

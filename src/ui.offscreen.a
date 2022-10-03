@@ -8,8 +8,10 @@
 ; - LoadCoverOffscreen
 ; - LoadHelpOffscreen
 ; - LoadGameTitleOffscreen
+; - UnpackHGRTitle
 ; - ResyncPage
 ; - ShowOtherPage
+; - ShowOtherDHGRPage
 ; - ToggleOffscreenPage
 ; - ClearScreens
 ; - ClearOffscreen
@@ -48,7 +50,7 @@ OffscreenPage = * + 1
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadTitleOffscreen
-         lda   #<kTitleFile
+         lda   #<kTitleRecord
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadHelpOffscreen
@@ -58,7 +60,7 @@ LoadTitleOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadHelpOffscreen
-         lda   #<kHelpBackgroundFile
+         lda   #<kHelpBackgroundRecord
          +HIDE_NEXT_2_BYTES
 ;------------------------------------------------------------------------------
 ; LoadCoverOffscreen
@@ -68,52 +70,121 @@ LoadHelpOffscreen
 ; out:   all flags and registers clobbered
 ;------------------------------------------------------------------------------
 LoadCoverOffscreen
-         lda   #<kCoverFile
+         lda   #<kCoverRecord
 LoadOffscreenFromAY
-         sta   @fname
-         jsr   ForceHGRMode
-         jsr   GetOffscreenAddress
-         sta   +
-         jsr   LoadFile
-         !word kRootDirectory
-@fname   !byte $FD                   ; SMC
-         !byte >kCoverFile           ; all of these are on the same page
-         !byte $00
-+        !byte $FD                   ; SMC
-         rts
-
-LoadGameTitleOffscreen
-; in:    gGameToLaunch = index into gGamesListStore (word)
-         jsr   GetGameToLaunch
-         +ST16 @fname
-         bit   MachineStatus         ; if < 128K, don't bother checking for DHGR title
-         bvc   @hgr
-         jsr   okvs_get_current
-                                     ; (PTR) -> game display name + bitfield of game info
-                                     ; Y = 0
-         lda   (PTR),y               ; A = game display name length + 1
-         sta   SAVE
-         tay
-         lda   (PTR),y               ; A = game info bitfield
-         ;;and   #HAS_DHGR_TITLE
-         bmi   @dhgr
-@hgr
+         sta   @indexlo
          jsr   ForceHGRMode
          jsr   GetOffscreenAddress
          sta   @addrhi
-         jsr   LoadFile
-         !word kHGRTitleDirectory
-@fname   !word $FDFD                 ; SMC
+         jsr   LoadIndexedFile
          !byte $00
 @addrhi  !byte $FD                   ; SMC
+@indexlo !byte $FD                   ; SMC
+         !byte >kCoverRecord         ; all of these are on the same page
          rts
-@dhgr
-         jsr   BlankDHGR
-         +LD16 @fname
-         +ST16 +
-         jsr   LoadDHRFile
-         !word kDHGRTitleDirectory
-+        !word $FDFD
+
+LoadGameTitleOffscreen
+; in:    gGameToLaunch = index into gSearchStore (word)
+         jsr   GetGameToLaunch
+         jsr   okvs_next_field
+         jsr   okvs_next_field_PTR_is_already_set
+                                     ; (PTR) -> length-prefixed game info bitfield
+                                     ; Y = 0
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
+         bpl   .LoadHGRGameTitleOffscreen ; bit 7 = 1 if game has DHGR title, 0 if HGR title
+
+         jsr   SwitchToBank2
+-        iny
+         lda   (PTR), y
+         sta   OKVS_CACHE-1, y
+         cpy   #6
+         bne   -
+LoadIndexedDHRFile
+         jsr   SwitchToBank2
+         lda   #0
+         sta   OKVS_CACHE
+         lda   #$20                  ; load first $2000 bytes into auxiliary memory
+         sta   OKVS_CACHE + 5
+         jsr   GetOffscreenAddress
+         sta   @dhgr_addr_aux + 1
+         sta   @dhgr_addr_main + 1
+         jsr   LoadAuxIndexedFile
+@dhgr_addr_aux
+         !word $FD00                 ; SMC high byte
+         !word OKVS_CACHE
+         jsr   SwitchToBank2
+         lda   OKVS_CACHE + 2        ; offset += $2000 (note: stored in big-endian)
+         clc
+         adc   #$20
+         sta   OKVS_CACHE + 2
+         bcc   +
+         inc   OKVS_CACHE + 1
++        jsr   LoadIndexedFile       ; load next $2000 bytes into main memory
+@dhgr_addr_main
+         !word $FD00                 ; SMC high byte
+         !word OKVS_CACHE
+         rts
+
+.LoadHGRGameTitleOffscreen
+         jsr   ForceHGRMode
+         jsr   GetOffscreenAddress
+         sta   @hgr_addr + 1
+         eor   #$1F
+         sta   @poke+2
+         sta   @peek+2
+@poke    sta   $3FFD                 ; SMC high byte to clear screen hole before load
+         +LD16 PTR
+         +ST16 @hgrIndexRecordPtr
+         jsr   LoadIndexedFile
+@hgr_addr
+         !word $FD00                 ; SMC high byte
+@hgrIndexRecordPtr
+         !word $FDFD                 ; SMC
+@peek    lda   $3FFD                 ; SMC high byte
+         cmp   #$4C                  ; Check if screen hole now contains a JMP
+         beq   OFFSCREENRTS          ; if so, file was not packed, so skip unpack
+         ; /!\ execution falls through here to UnpackHGRTitle
+;------------------------------------------------------------------------------
+; UnpackHGRTitle
+; unpack data from screen holes of the off screen HGR page
+;
+;------------------------------------------------------------------------------
+UnpackHGRTitle
+         jsr   GetOffscreenAddress
+         sta   src+2
+         ora   #$1E
+         sta   dest+2
+         lda   #$00
+         sta   src+1
+         sta   dest+1
+         lda   #3
+         sta   $E0
+loop
+         ldx   #0
+--       ldy   #$78
+src
+-        lda   $0000,y  ;smc
+dest
+         sta   $0000,x  ;smc
+         inx
+         iny
+         bpl   -
+         tya            ; y = #$80
+         eor   src+1
+         sta   src+1
+         bne   +
+         inc   src+2
++        cpx   #$78
+         bne   --
+         lda   dest+1
+         eor   #$80
+         sta   dest+1
+         bne   +
+         inc   dest+2
++        dec   $E0
+         bpl   loop
+OFFSCREENRTS
          rts
 
 ;------------------------------------------------------------------------------
@@ -162,14 +233,15 @@ ClearMem
 ;------------------------------------------------------------------------------
 CopyHGR
          ldx   #$20
-         ldy   #$B9                  ; LDY
+         ldy   #$B9                  ; LDA $0000,Y opcode
 +        sty   PageFrom
          sta   PageTo+2
+ClearToBlack
          lda   #$00
 ClearGR
          ldy   #0
-PageFrom lda   $FD00,y               ; SMC
-PageTo   sta   $FD00,y               ; SMC
+PageFrom lda   $FD00,y               ; SMC address high byte, also SMC opcode (might be BIT)
+PageTo   sta   $FD00,y               ; SMC address high byte
          iny
          bne   PageFrom
          inc   PageFrom+2
@@ -197,6 +269,10 @@ ShowOtherPage
          rts
 +        bit   PAGE1                 ; show page 1
          rts
+
+ShowOtherDHGRPage
+         jsr   ToggleOffscreenPage
+         jmp   DHGRMode
 
 ;------------------------------------------------------------------------------
 ; ToggleOffscreenPage

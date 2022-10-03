@@ -1,0 +1,48 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/DEMO/SD#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR sd, sd_dir_e-sd_dir_b
+         lda   #$60
+         sta   $0853
+         jsr   $0800      ; decompress
+         ldx   #3-1
+-        lda   patch,x
+         sta   $60D1,x
+         sta   $69B9,x
+         sta   $6D70,x
+         dex
+         bpl   -
+         inx
+         stx   $72F3
+         asl   $7324
+         inc   $7325
+         lda   #$15
+         sta   $732A
+         inc   $732B
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $6000
+
+patch    !byte $4C,$00,$01
+
+sd
+         !byte sd_e-sd_b
+sd_b
+sd_dir_b
+         !text "X/SD"
+sd_dir_e
+         !text "/SD"
+sd_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

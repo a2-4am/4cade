@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019, 2022 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SNAKE.BYTE",plain
@@ -7,14 +7,28 @@
 
     !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
+         lda   #$B9
+         sta   $842
          lda   #$60
          sta   $0858
          jsr   $0800      ; decompress
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $7639      ; patch - don't increase lives
+         dec   $78A8      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
          +LC_REBOOT
-         lda   #0
-         sta   $7a11
-         lda   #1
-         sta   $7a19
+         +READ_ROM_NO_WRITE
+         ldx   #0
+         stx   $7a11
+         inx
+         stx   $7a19
+         inc   $7A26
          jmp   $7680
 
 !if * > $1C0 {

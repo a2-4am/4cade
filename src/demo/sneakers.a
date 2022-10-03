@@ -1,16 +1,16 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "res/DEMO/SNEAKERS",plain
+!to "build/DEMO/SNEAKERS#060300",plain
 *=$300
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         +LOAD_FILE_AT sneakers, $00
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
          lda   #$60
          sta   $84c7
          jsr   $3ffa      ; decompress
@@ -24,13 +24,14 @@
          sta   $4068, x
          dex
          bpl   -
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+
+         +DISABLE_ACCEL
+
          jmp   $9e00
 
-sneakers
-         !byte 19
-         !text "X/SNEAKERS/SNEAKERS"
+title    !byte x_e-x_b
+x_b      !text "SNEAKERS"
+x_e
 
 patch    !byte $10,$03,$4C,$00,$01,$EA,$EA,$A9,$00
 

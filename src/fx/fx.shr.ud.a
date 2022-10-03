@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2021 by 4am
+
+!cpu 6502
+!to "build/FX.INDEXED/SHR.UD",plain
+*=$A000
+
+shrlo = $301                         ; $C8 bytes
+shrhi = $38                          ; $C8 bytes
+reverseshrlo = $BD01                 ; $C8 bytes
+reverseshrhi = $BE01                 ; $C8 bytes
+
+         !source "src/fx/macros.a"
+
+         +COPY_TO_0 start, end
+         +BUILD_SHR_REVERSE_LOOKUP_TABLES reverseshrlo, reverseshrhi
+         +BUILD_SHR_LOOKUP_TABLES shrlo, shrhi
+         ;X=0
+         +COPY_SCB_AND_PALETTES
+         ;WRITEAUXMEM active
+
+         ldx   #$C8
+         jmp   loop
+
+start
+!pseudopc 0 {
+loop     lda   shrlo-1, x
+         sta   <dst+1
+         lda   shrhi-1, x
+         sta   <dst+2
+         lda   reverseshrlo-1, x
+         sta   <rdst+1
+         lda   reverseshrhi-1, x
+         sta   <rdst+2
+         ldy   #$00
+loop2    lda   (<dst+1), y
+dst      sta   $0000, y              ; SMC
+         iny
+         lda   (<rdst+1), y
+rdst     sta   $0000, y              ; SMC
+         iny
+         cpy   #$A0
+         bcc   loop2
+         lda   $C000
+         bmi   exit
+         dex
+         bne   loop
+exit
+         rts
+}
+end
+
+; if zero page code gets too large, move shrhi to $201
+!if end-start > $38 {
+    !error "code is too large: ends at ", end-start
+}

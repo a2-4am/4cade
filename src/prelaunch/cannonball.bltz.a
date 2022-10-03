@@ -18,7 +18,7 @@
          sta   $7dbf      ; patch - don't increase lives
          sta   $9c01      ; patch - don't decrease lives
 +
-         +RESET_VECTOR $100
+         +RESET_VECTOR_HALF $100
          lda   #$2C
          sta   $A0D2
          sta   $A0D5

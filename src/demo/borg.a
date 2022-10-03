@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/BORG#060310",plain
+*=$310
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         ;jsr   EnableAccelerator    ; can't because of animation
+
+         +LOAD_FILE_KEEP_DIR borg, borg_dir_e-borg_dir_b
+
+         +READ_ROM_NO_WRITE
+
+         lda   #$60
+         sta   $609E
+         jsr   $6000      ; decompress and show animation
+
+         ldx   #3-1
+-        lda   patch2,x
+         sta   $8C27,x    ; exit after 1 cycle
+         sta   $ECA,x     ; exit on keypress 1 (joysticks not polled)
+         dex
+         bpl   -
+         sta   $99
+
+         ldx   #7-1
+-        lda   patch, x
+         sta   $8C2D, x
+         dex
+         bpl   -          ; exit on keypress 2
+
+         inc   $C9        ; must be non-zero
+         jmp   $EB0
+
+patch    !byte $30,$F8,$EA,$20,$00,$0F,$60
+patch2   !byte $4C,$00,$01
+
+borg     !byte borg_e-borg_b
+borg_b
+borg_dir_b
+         !text "X/BORG"
+borg_dir_e
+         !text "/BORG"
+borg_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

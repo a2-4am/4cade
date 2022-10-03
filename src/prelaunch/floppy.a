@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/FLOPPY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $1AED
+         jsr   $18B0      ; decompress
+         lda   #1
+         sta   $42AF
+
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $4400      ; patch - don't increase lives
+         sta   $46E0      ; patch - don't decrease lives
+         lda   #0
+         sta   $4255      ; patch - don't decrease time
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

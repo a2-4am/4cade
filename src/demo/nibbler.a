@@ -1,0 +1,46 @@
+;license:MIT
+;(c) 2021-2022 by Frank M., qkumba
+
+!cpu 6502
+!to "build/DEMO/NIBBLER#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $8A19
+         jsr   $6550      ; decompress and show title
+
+         lda   #$0A
+         sta   $1984
+         ldx   #3-1
+-        lda   patch,x
+         sta   $1984+1,x
+         sta   $166D,x
+         sta   $0981,x
+         sta   $11BC,x    ; set exits
+         lda   patch2,x
+         sta   $165C,x    ; disable button detection
+         dex
+         bpl   -
+
+         stx   $0914      ; disable sound
+
+         +DISABLE_ACCEL
+
+         jmp   $900
+
+patch    !byte $4C,$00,$01
+patch2   !byte $A9,$01,$EA
+
+title    !byte x_e-x_b
+x_b      !text "NIBBLER"
+x_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}

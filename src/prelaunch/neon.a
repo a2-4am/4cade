@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by Frank M.
+;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/NEON",plain
@@ -17,8 +17,34 @@
          lda   #1
          sta   $14A0      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #<callback
+         sta   $1667
+         lda   #>callback
+         sta   $1668
+         lda   #$A5
+         sta   $1865      ; patch - don't increase lives
+         sta   $1873      ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $149A
+
+callback
+         jsr   $BD00
+         lda   $7B
+         bne   +
+         dec   $9EC4      ; patch - don't decrease time
+         dec   $9ECC      ; patch - don't decrease time
+         beq   ++
++        cmp   #3
+         bne   ++
+         dec   $9338      ; patch - don't decrease time
+         dec   $9380      ; patch - don't decrease time
+++       rts
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
