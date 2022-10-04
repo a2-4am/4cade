@@ -9,10 +9,10 @@
 
          +ENABLE_ACCEL
          lda   #>(callback-1)
-         sta   $4C9C
+         sta   $4C76
          lda   #<(callback-1)
-         sta   $4C9F
-         jmp   $4A86      ; decompress
+         sta   $4C79
+         jmp   $4A53      ; decompress
 
 reset
          +READ_ROM_NO_WRITE
