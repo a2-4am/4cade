@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/THE.HUMAN.FLY",plain
@@ -33,6 +33,7 @@ callback
          lda   #$2c
          sta   $4D24       ; patch - don't decrease lives
 +
+         +NEW_RESET_VECTOR $280
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $1100
