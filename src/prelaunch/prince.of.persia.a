@@ -15,21 +15,31 @@
          and   #CHEATS_ENABLED
          sta   cheat_smc1+1
          sta   cheat_smc2+1
+         lda   WaitForVBL
+         cmp   #$60
+         php
          +READ_ROM_NO_WRITE
          lda   #$60
          sta   $13B8
          jsr   $1200      ; decompress
+
          lda   #<callback1
          sta   $FE06
+         lda   #<callback2
+         sta   $FD26
          lda   #>callback1
          sta   $FE07
+         sta   $FD27
+         plp
+         bne   @good_vbl
+         ldx   #<callback3
+         stx   $FD6A
+         sta   $FD6B
+
+@good_vbl
          jmp   $EE00
 
 callback1
-         lda   #<callback2
-         sta   $FD26
-         lda   #>callback2
-         sta   $FD27
 cheat_smc1
          lda   #0
          beq   +
@@ -49,6 +59,11 @@ cheat_smc2
          sta   $2612      ; patch - don't decrease lives
 +
          rts
+
+callback3
+         lda   #$60       ; if VBL disabled in TR
+         sta   $4ED       ; then disable VBL in game
+         jmp   $F924
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

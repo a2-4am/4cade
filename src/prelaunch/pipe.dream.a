@@ -10,17 +10,23 @@ my_vbl
     !source "src/prelaunch/common.a"
 
          +READ_RAM1_NO_WRITE
+         lda   WaitForVBL
+         cmp   #$60
+         beq   @skip_vbl
          lda   WaitForVBL+1
          sta   @copy_vbl+1
          lda   WaitForVBL+2
          sta   @copy_vbl+2
+
+@skip_vbl
          lda   MachineStatus
          and   #CHEATS_ENABLED
          php
          ldy   #0
 
 @copy_vbl
-         lda   $d1d1,y    ; SMC
+         lda   WaitForVBL,y
+                          ; SMC, default to no VBL
          sta   my_vbl,y
          iny
          cmp   #$60
