@@ -22,7 +22,7 @@ BuildVBLFunction
          beq   @build_iic            ; //c family
          lda   romid_mac
          cmp   #ROMID_IIECARD
-         beq   @build_none           ; broken in some versions, disable
+	 beq   @build_iiecard        ; Mac Apple IIe card
          sec
          jsr   idroutine             ; check for IIgs
          bcs   @NotGS
@@ -45,6 +45,21 @@ BuildVBLFunction
          lda   #$4C
          sta   UnwaitForVBL
          rts
+
+@build_iiecard
+         lda   $FBBE                 ; check IIe card software version because v2.2.2d1 is broken
+         cmp   #$03                  ; $03 = v2.2.x
+         bne   @NotGS                ; all other versions are ok
+
+         ldy   #$08                  ; Found v2.2.x but don't know which one, so test if VBL works
+         ldx   #$00
+-        bit   $C019
+         bmi   @NotGS
+         dex
+         bne   -
+         dey                         ; keep checking for ~22,000 cycles (a little over 1/50 of a second)
+         bne   -                     ; if no VBL by then fall through to @build_none
+
 @build_none
          lda   #$60
          sta   WaitForVBL
