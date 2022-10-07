@@ -12,6 +12,8 @@ while (!b.stdout.atendofstream)
   entries.push(c)
 }
 
+entries.sort()
+
 for (i = 0; i < entries.length; i++)
 {
   x.run('cmd /c move /y build\\X\\' + entries[i] + ' ' + WScript.Arguments(0), 0, 1)
