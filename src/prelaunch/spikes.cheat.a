@@ -57,7 +57,7 @@ callback2
 callback3
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         jsr   $BDFC
+         jsr   $BE01
 
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
