@@ -282,4 +282,4 @@ GetMockingboardStuff
          jmp   $FDFD                 ; SMC
 
 magic_z80_bytes
-         !byte $32, $00, $E4, $C3, $FC, $FF
+         !byte $32, $00, $E4, $C3, $FD, $FF
