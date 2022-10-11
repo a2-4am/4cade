@@ -52,7 +52,16 @@ for (i = 0; i < entries.length; i++)
     size = ((Math.floor(c / 512) == Math.floor((c + size) / 512)) ? size : (((c + size + 511) & -512) - c))
   }
 
-  groups += "!byte " + (entries[i].length + 7) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size  + "\n"
+  r = entries[i].indexOf("#06")
+
+  if (r == -1)
+  {
+    groups += "!byte " + (entries[i].length + 7) + "\n" + "!byte " + entries[i].length + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size  + "\n"
+  }
+  else
+  {
+    groups += "!byte " + (entries[i].substr(0, r).length + 9) + "\n" + "!byte " + entries[i].substr(0, r).length + "\n" + "!text \"" + entries[i].substr(0, r) + "\"\n" + "!be24 " + c + "\n" + "!le16 " + size  + "\n" + "!le16 $" + entries[i].substr(r + 3)  + "\n"
+  }
 
   if (typeof(q) == "object")
   {

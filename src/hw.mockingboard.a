@@ -26,8 +26,29 @@
 ;        zp $80-$82 clobbered
 ;        A/Y clobbered
 ;------------------------------------------------------------------------------
+
+MAGIC_Z80_LOCATION=$FFD
+
 GetMockingboardStuff
          +ST16 @callback+1
+
+         ; from mgcaret
+         ; https://github.com/a2-4am/4cade/issues/483
+         ; the Mockingboard init can accidentally enable the Softcard Z80
+         ; and can crash the machine
+         ; solved by loading a small Z80 routine at $0FFD (FFFDh in the Z80 space):
+         ; $32 $00 $E4 $C3 FD FF which is
+         ; NOP
+         ; LD (E400h),A ; card is at $E400 due to memory translation
+         ; JP  FFFDh
+         ; returns the system to 6502 mode and leaves it in the same state as the Z80 after RESET:
+         ; ready to execute the instruction at 0000h (from the Z80 perspective)
+         ldx   #5
+-        lda   magic_z80_bytes, x
+         sta   MAGIC_Z80_LOCATION, x
+         dex
+         bpl   -
+
          lda   ROM_MACHINEID
          cmp   #$06
          bne   @not_iic
@@ -259,3 +280,6 @@ GetMockingboardStuff
 
 @callback
          jmp   $FDFD                 ; SMC
+
+magic_z80_bytes
+         !byte $32, $00, $E4, $C3, $FD, $FF

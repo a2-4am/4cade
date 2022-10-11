@@ -284,7 +284,7 @@ LoadingBuild
 } else {
 LoadingVersion
          !byte 12
-         !text "v5.0-alpha.4"
+         !text " v5.0-beta.1"
 }
 Loading64K
          !byte 3
