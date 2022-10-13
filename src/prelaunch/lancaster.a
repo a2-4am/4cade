@@ -27,6 +27,10 @@ mbslot
          lda   #$60
          sta   $16A1      ; no MB, don't write to random slot
          sta   $671A      ; no MB, don't write to random slot
+         lda   #$4C
+         sta   $67D6      ; no MB, don't write to random slot
+         lda   #$48
+         sta   $12A5      ; no MB, don't write to random slot
          bne   skipmb
 +        cpx   #$C4
          beq   skipmb

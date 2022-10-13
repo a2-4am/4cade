@@ -12,6 +12,11 @@
          sta   $200,x
          dex
          bpl   -
+         ldx   #5
+-        lda   $100,x
+         sta   $2C0,x
+         dex
+         bpl   -
          lda   #$00
          sta   $084F
          lda   #$02
@@ -26,8 +31,11 @@ patch
          lda   #$A5
          sta   $76AC      ; patch - don't decrease lives
 +
+         lda   #$C0
+         sta   $8461
+         lda   #2
+         sta   $8468      ; reset vector
          lda   #$2C
-         sta   $8470      ; reset vector to reboot
          sta   $84B7
          lda   #$00
          sta   $84BE
