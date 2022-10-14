@@ -44,6 +44,8 @@
 -        lda   patch,x
          sta   $49A9,x
          sta   $99A5,x
+-        lda   patch2,x
+         sta   $5A79,x
          dex
          bpl   -
          sec
@@ -53,7 +55,13 @@
 
          jmp   $4246
 
+callback
+         lda   $C000
+         bmi   patch
+         rts
+
 patch    !byte $4C,$00,$01
+patch2   !byte $20,<callback,>callback
 
 title    !byte x_e-x_b
 x_b      !text "SPIDER.RAID"
