@@ -26,6 +26,10 @@
          sta   $773       ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+
+         lda   #$8d       ; fix opcode overwritten by 
+         sta   $07fe      ; Laser accelerator code
+
          +READ_ROM_NO_WRITE
          jmp   $68E
 
