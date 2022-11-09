@@ -56,6 +56,42 @@ If that fails, perhaps you have out-of-date versions of one of the required tool
 
 If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
+## Linux
+
+You will need
+ - [Cadius](https://github.com/mach-kernel/cadius)
+
+Most of the packages are already available pre-compiled and can be installed with the following
+
+``` shell
+$ sudo apt-get install git parallel acme
+```
+
+To compile Cadius enter the following
+
+``` shell
+$ git clone https://github.com/mach-kernel/cadius.git
+$ cd cadius
+$ make
+$ cd bin/release
+$ sudo cp cadius /usr/bin
+```
+
+Then open a terminal window and type
+
+``` shell
+$ cd 4cade/
+$ make
+```
+
+If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
+
+If all does not go well, try doing a clean build (`make clean dsk`)
+
+If that fails, perhaps you have out-of-date versions of one of the required tools? The [Makefile](https://github.com/a2-4am/4cade/blob/main/Makefile) lists, but does not enforce, the minimum version requirements of each third-party tool.
+
+If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
+
 # Navigating the code
 
 ## Initialization
