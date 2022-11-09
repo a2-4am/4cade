@@ -32,6 +32,12 @@ MAGIC_Z80_LOCATION=$FFD
 GetMockingboardStuff
          +ST16 @callback+1
 
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   @not_iic
+         ldx   ROM_MACHINE2C
+         bne   @not_iic
+
          ; from mgcaret
          ; https://github.com/a2-4am/4cade/issues/483
          ; the Mockingboard init can accidentally enable the Softcard Z80
@@ -48,14 +54,7 @@ GetMockingboardStuff
          sta   MAGIC_Z80_LOCATION, x
          dex
          bpl   -
-
-         lda   ROM_MACHINEID
-         cmp   #$06
-         bne   @not_iic
-         ldx   ROM_MACHINE2C
-         bne   @not_iic
-         dex                         ; enable Mockingboard 4C support
-         stx   $C403
+         stx   $C403                 ; enable Mockingboard 4C support
          stx   $C404
 
 @not_iic
