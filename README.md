@@ -80,6 +80,7 @@ $ sudo cp cadius /usr/bin
 Then open a terminal window and type
 
 ``` shell
+$ git clone https://github.com/a2-4am/4cade.git
 $ cd 4cade/
 $ make
 ```
