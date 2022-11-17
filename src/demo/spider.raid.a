@@ -44,7 +44,7 @@
 -        lda   patch,x
          sta   $49A9,x
          sta   $99A5,x
--        lda   patch2,x
+         lda   patch2,x
          sta   $5A79,x
          dex
          bpl   -
