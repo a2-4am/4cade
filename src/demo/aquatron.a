@@ -9,7 +9,10 @@
          !source "src/macros.a"
 
          +ENABLE_ACCEL_LC
-         +LOAD_XSINGLE title
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR aquatron, $59C2, aquatron_dir_e-aquatron_dir_b
+         +READ_ROM_NO_WRITE
 
          lda   #>(callback - 1)
          sta   $5FC3
@@ -37,9 +40,14 @@ callback
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "AQUATRON"
-x_e
+aquatron
+         !byte aquatron_e-aquatron_b
+aquatron_b
+aquatron_dir_b
+         !text "X/AQUATRON"
+aquatron_dir_e
+         !text "/AQUATRON"
+aquatron_e
 
 !if * > $BEFF {
   !error "code is too large, ends at ", *
