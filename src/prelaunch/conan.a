@@ -15,13 +15,16 @@
          sta   $bd40
          jsr   $bc94
 
-         lda   #1        ; reset vector fix
-         sta   $7C01     ; to $3F3
+         lda   #0        ; vector fixes
+         sta   $7C09     ; to $3FE - IRQ
+         lda   #1
+         sta   $7C01     ; to $3F3 - reset
+         sta   $7C0B     ; to $3FF - IRQ
          lda   #$A4
-         sta   $7C02     ; to $3F4 (doesn't change $3F2)
+         sta   $7C02     ; to $3F4 - reset ($3F2 doesn't change)
 
          +DISABLE_ACCEL
-         jsr   $5ff8     ; run intro
+         jsr   $5ff8     ; decompress, run intro
 
          +ENABLE_ACCEL
          lda   #$6c
