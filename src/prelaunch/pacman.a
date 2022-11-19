@@ -17,7 +17,7 @@
          lda   #$80
          sta   $103F
          lda   #2
-         sta   $104A      ; reset vector patch
+         sta   $104A      ; reset/IRQ vector patch
 
          +READ_RAM2_NO_WRITE
          lda   MachineStatus

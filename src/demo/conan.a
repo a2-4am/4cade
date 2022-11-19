@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/DEMO/CONAN#060200",plain
@@ -17,13 +17,18 @@
          lda   #$60
          sta   $BD40
          jsr   $BCCF
-         lda   #1        ; reset vector fix
-         sta   $7C01     ; to $3F3
+
+         lda   #0        ; vector fixes
+         sta   $7C09     ; to $3FE - IRQ
+         lda   #1
+         sta   $7C01     ; to $3F3 - reset
+         sta   $7C0B     ; to $3FF - IRQ
          lda   #$A4
-         sta   $7C02     ; to $3F4 (doesn't change $3F2)
+         sta   $7C02     ; to $3F4 - reset ($3F2 doesn't change)
+
          lda   #$4C
          sta   $7C2C
-         jsr   $5FF8      ; decompress
+         jsr   $5FF8      ; decompress, run intro
          sta   $80F6
          jsr   $826
          lda   #$60

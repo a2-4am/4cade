@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2019-2022 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GAMMA.GOBLINS",plain
@@ -21,7 +21,7 @@
          lda   #$00
          sta   $7F62      ; patch - don't increase lives
 +
-         +RESET_VECTOR $100
+         +RESET_AND_IRQ_VECTOR $100
          +DISABLE_ACCEL
          lda   #$00
          tay
