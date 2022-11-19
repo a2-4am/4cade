@@ -22,6 +22,9 @@
          sta   $6020
          jsr   $6002      ; decompress
 
+         lda   #$D0
+         sta   $1C37      ; kill occasional sound
+
          ldx   #$D8       ; move location from $3F2 to $3D8
          stx   $1113      ; (program uses reset vector for storage)
          stx   $1245
@@ -43,6 +46,19 @@
          stx   $19DF
          stx   $1DE8
          stx   $1E5A      ; reset vector fix
+
+         inx              ; move location from $3FE to $3DB
+         stx   $4AF9      ; (program uses IRQ vector for storage)
+         stx   $4B0F
+         stx   $5B69
+         stx   $5B7F
+         inx              ; move location from $3FF to $3DC
+         stx   $4B02
+         stx   $4B07
+         stx   $4B14
+         stx   $5B72
+         stx   $5B77
+         stx   $5B84      ; IRQ vector fix
 
          lda   #$4C
          sta   $46C0

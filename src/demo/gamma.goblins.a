@@ -9,6 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
+         +USES_TEXT_PAGE_2
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 

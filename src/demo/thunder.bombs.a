@@ -25,7 +25,8 @@
          jsr   $7800      ; unpack/setup
 
          lda   #0
-         sta   $3F2       ; reset vector
+         sta   $3F2       ; reset vector B8F2
+         sta   $3FE       ; IRQ vector B8FE
 
          ldx   #3-1
 -        lda   patch2,x
@@ -43,10 +44,10 @@ callback bit   $C000
          ldx   #$30
 -        bit   $C055
          lda   #$0B
-         jsr   $FCA8
+         jsr   fakewait   ; fix timing of title screen on //gs
          bit   $C054
          lda   #$0B
-         jsr   $FCA8
+         jsr   fakewait
          bit   $C000
          bmi   exit
          dey
@@ -54,6 +55,15 @@ callback bit   $C000
          dex
          bne   -
          jmp   $8839
+
+fakewait sec
+wait1    pha
+wait2    sbc   #$01
+         bne   wait2
+         pla
+         sbc   #$01
+         bne   wait1
+         rts
 exit
 patch2   !byte $4C,$00,$01
 
