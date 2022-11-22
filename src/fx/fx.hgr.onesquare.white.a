@@ -145,4 +145,7 @@
          +HGR_BLOCK_COPY_ROUTINES
 
          !byte $80,$80
+!if * and 1 {
+         !byte 0
+}
 Coordinates

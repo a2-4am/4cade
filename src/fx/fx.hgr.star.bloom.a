@@ -9,6 +9,9 @@
 
          +FX_PRECOMPUTED_2BIT Coordinates
 
+!if * and 1 {
+         !byte 0
+}
 Coordinates
          !source "src/fx/fx.hgr.star.bloom.data.a"
          !byte $00

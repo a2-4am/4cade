@@ -144,4 +144,7 @@
          !source "src/wait.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
+!if * and 1 {
+         !byte 0
+}
 Coordinates
