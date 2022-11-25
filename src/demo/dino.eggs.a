@@ -11,6 +11,7 @@
          +GAME_REQUIRES_JOYSTICK
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_KEEP_DIR dino_eggs, dino_eggs_dir_e-dino_eggs_dir_b
+         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $2186
          jsr   $2100      ; decompress
