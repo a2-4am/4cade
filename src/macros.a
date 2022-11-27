@@ -371,14 +371,19 @@
          sec
          jsr   $FE1F                 ; check for IIgs
          bcs   ++
-         lda   #$20                  ; check if Alternate Display Mode is already on
-         sta   $0800
+         tya                         ; GS ID routine returns with ROM version in Y
+         cmp   #0                    ; ROM 0?
+         beq   ++
+         cmp   #1                    ; ROM 1?
+         beq   ++
+         lda   #$20
+         sta   $0800                 ; check if Alternate Display Mode is already on
          lda   #$FF
-         jsr   ROM_WAIT
+         jsr   ROM_WAIT              ; skip a VBL cycle
 !cpu 65816
-         lda   $E00800               ; did we shadow copy data to shadow bank $E0?
+         lda   $E00800               ; did we shadow copy data to bank $E0?
          cmp   #$20
-         beq   +
+         beq   +                     ; only call TEXT2COPY if we know it's off
 !cpu 6502              ; https://archive.org/details/develop-04_9010_October_1990/page/n51/mode/1up
          jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
 +        cli                         ; enable VBL interrupts
