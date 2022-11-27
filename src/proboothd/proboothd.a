@@ -35,7 +35,7 @@
          sta   $c002
          sta   $c004
          lda   $c000
-         cmp   #$d3
+         cmp   #$d3    ; Press "S" on bootup
          bne   +
          jsr   seasons
 +        jsr   $fb2f
