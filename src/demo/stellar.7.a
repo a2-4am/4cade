@@ -8,7 +8,6 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +USES_TEXT_PAGE_2
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_KEEP_DIR stellar_7, stellar_7_dir_e-stellar_7_dir_b
@@ -16,6 +15,8 @@
          lda   #$60
          sta   $863
          jsr   $800       ; unpack
+
+         +TEST_TEXT_PAGE_2
 
          ldx   #0
          stx   $AE2A
