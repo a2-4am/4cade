@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +USES_TEXT_PAGE_2
+         +TEST_TEXT_PAGE_2
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_KEEP_DIR the_goonies, the_goonies_dir_e-the_goonies_dir_b
@@ -16,7 +16,7 @@
          sta   $1045
          jsr   $1000      ; decompress
          ldx   #$2C
-         stx   $6BF
+         stx   $6BF       ; skip text screen
          ldx   #$60
          stx   $60C
          stx   $622
@@ -28,9 +28,9 @@
          ldx   #0
          stx   $4070
          inx
-         stx   $4071
+         stx   $4071      ; set exit
          lda   #$2C
-         sta   $4039
+         sta   $4039      ; don't play music
          +DISABLE_ACCEL
          jsr   $4000      ; title
          jsr   $60F       ; load level

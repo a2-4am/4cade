@@ -364,6 +364,27 @@
 +
 }
 
+!macro   TEST_TEXT_PAGE_2 {
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   ++
+         sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   ++
+         lda   #$20                  ; check if Alternate Display Mode is already on
+         sta   $0800
+         lda   #$FF
+         jsr   ROM_WAIT
+!cpu 65816
+         lda   $E00800               ; did we shadow copy data to shadow bank $E0?
+         cmp   #$20
+         beq   +
+!cpu 6502              ; https://archive.org/details/develop-04_9010_October_1990/page/n51/mode/1up
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
++        cli                         ; enable VBL interrupts
+++
+}
+
 !macro   RESET_VECTOR .addr {
          lda   #<.addr
          sta   $3F2

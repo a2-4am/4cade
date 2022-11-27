@@ -11,12 +11,13 @@
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
-         +USES_TEXT_PAGE_2
          +NEW_RESET_VECTOR $280
 
          lda   #$60
          sta   $813
          jsr   $800       ; decompress
+
+         +TEST_TEXT_PAGE_2
 
          lda   #$80
          sta   $103F
