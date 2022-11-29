@@ -91,11 +91,12 @@
          and   #IS_IIGS
          beq   +
          ldx   #0
+         txa
 !cpu 65816
--        stz   $E00800,x             ; when Alternate Display Mode is turned off, the "2"s
-         stz   $E00900,x             ; displayed on the screen live at $E00800
-         stz   $E00A00,x             ; (page "2"/$0800 of IIgs bank $E0)
-         stz   $E00B00,x             ; They are initialized by the IIgs boot ROM
+-        sta   $E00800,x             ; when Alternate Display Mode is turned off, the "2"s
+         sta   $E00900,x             ; displayed on the screen live at $E00800
+         sta   $E00A00,x             ; (page "2"/$0800 of IIgs bank $E0)
+         sta   $E00B00,x             ; They are initialized by the IIgs boot ROM
          inx
          bne   -
 !cpu 6502
