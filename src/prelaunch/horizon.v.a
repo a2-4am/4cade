@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $4483
+         sta   $4494
          jsr   $4400      ; decompress
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
