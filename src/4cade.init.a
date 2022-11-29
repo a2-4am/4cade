@@ -75,7 +75,7 @@
                                      ;     bit 7 = 1 if joystick
                                      ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
 
-         ; accommodate uppercase-only machines (64K ][+ is supported)
+         ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
          lda   ROM_MACHINEID
          cmp   #$A0
          beq   +                     ; Spectrum ED
@@ -85,6 +85,22 @@
          +HIDE_NEXT_2_BYTES
 +        lda   #$FF
          sta   zpCharMask
+
+         ; IIgs fix for Alternate Display Mode (clear shadow page 2)
+         lda   zpMachineStatus
+         and   #IS_IIGS
+         beq   +
+         ldx   #0
+         txa
+!cpu 65816
+-        sta   $E00800,x             ; when Alternate Display Mode is turned off, the "2"s
+         sta   $E00900,x             ; displayed on the screen live at $E00800
+         sta   $E00A00,x             ; (page "2"/$0800 of IIgs bank $E0)
+         sta   $E00B00,x             ; They are initialized by the IIgs boot ROM
+         inx
+         bne   -
+!cpu 6502
++
 
          ; increase text window width so we can print to the edge of the screen without scrolling
          inc   $21
