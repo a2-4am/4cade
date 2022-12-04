@@ -88,6 +88,7 @@ CLR80VID =     $C00C      ; 40 columns (also used to get out of DHGR mode)
 SET80VID =     $C00D      ; 80 columns (also used to get into DHGR mode)
 PRIMARYCHARSET= $C00E     ; no mousetext for you
 SLOT3STATUS =  $C017      ; bit 7 only
+MONOCOLOR =    $C021      ; IIgs bit 7 switches composite mono/color modes
 TBCOLOR =      $C022      ; IIgs text foreground and background colors (also VidHD but write-only)
 NEWVIDEO =     $C029      ; IIgs graphics modes (also VidHD)
 SPEAKER =      $C030      ; chirp chirp
