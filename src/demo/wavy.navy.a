@@ -24,6 +24,9 @@
          stx   $6B22
          stx   $084C
 
+         lda   #$d0       ; disable alt-palette access
+         sta   $AE8       ; otherwise UltraWarp dies
+
          +DISABLE_ACCEL
 
          jmp   $800

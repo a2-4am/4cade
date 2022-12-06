@@ -16,6 +16,9 @@
          beq   +
          dec   $1e65      ; patch - don't decrease lives
 +
+         lda   #$d0       ; disable alt-palette access
+         sta   $AE8       ; otherwise UltraWarp dies
+
          +DISABLE_ACCEL
          jmp   $800
 
