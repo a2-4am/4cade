@@ -24,8 +24,12 @@
          stx   $6B22
          stx   $084C
 
-         lda   #$d0       ; disable alt-palette access
+         lda   ROM_MACHINEID
+         cmp   #$06
+         bne   +
+         lda   #$d0       ; disable AN1 access on IIe-class
          sta   $AE8       ; otherwise UltraWarp dies
++
 
          +DISABLE_ACCEL
 
