@@ -100,6 +100,13 @@
          inx
          bne   -
 !cpu 6502
+
+         ; Since we know we are on IIgs, let's also force Mono Mode off
+         lda   NEWVIDEO
+         and   #$DF
+         sta   NEWVIDEO              ; Bit 5=1 for B/W double hi-res
+         lda   #$00
+         sta   MONOCOLOR             ; bit 7=1 disables color
 +
 
          ; increase text window width so we can print to the edge of the screen without scrolling
