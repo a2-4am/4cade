@@ -1,0 +1,26 @@
+;license:MIT
+;(c) 2022 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/GB.TETRIS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #<callback
+         sta   $46A2
+         lda   #>callback
+         sta   $46A3
+         jmp   $800
+
+callback
+         jsr   $BE00      ; decompress
+
+         +DISABLE_ACCEL
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
