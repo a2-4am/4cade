@@ -10,6 +10,7 @@
          lda   #$60
          sta   $47CD
          jsr   $472D      ; decompress
+         +NEW_RESET_VECTOR $110
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
