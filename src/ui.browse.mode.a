@@ -107,6 +107,7 @@ OnBrowseCheat
 
 OnBrowseTab
          jsr   MiniAttractMode
+         jsr   HGRMode
          cmp   #$8D
          beq   ReloadIndexAndLaunch
          ; execution falls through here

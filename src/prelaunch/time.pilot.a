@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TIME.PILOT",plain
@@ -7,6 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
+         +NEW_RESET_VECTOR $180
          lda   #$60
          sta   $47CD
          jsr   $472D      ; decompress
