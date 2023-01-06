@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2023 by 4am
 ;
 ; first-run initialization code
 ;
@@ -157,7 +157,6 @@
          lda   zpMachineStatus
          and   #HAS_JOYSTICK
          beq   +
-         jsr   LoadingCR
          +LDADDR LoadingJoystick
          jsr   LoadingPrint
 +
@@ -165,7 +164,6 @@
          lda   zpMachineStatus
          and   #HAS_VIDHD
          beq   +
-         jsr   LoadingCR
          +LDADDR LoadingVidHD
          jsr   LoadingPrint
 +
@@ -235,11 +233,21 @@
          stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM
          +READ_ROM_NO_WRITE
 
+         txa
+         beq   +
+         and   #HAS_STEREO
+         beq   @mb_mono
+         +LDADDR LoadingMockingboardStereo
+         bne   @mb_print
+@mb_mono
+         +LDADDR LoadingMockingboardStereo
+@mb_print
+         jsr   LoadingPrint
+
          ; if Mockingboard AND HAS_SPEECH then print CR & '...and it talks!'
          txa
          and   #HAS_SPEECH
          beq   +
-         jsr   LoadingCR
          +LDADDR LoadingMockingboardSpeech
          jsr   LoadingPrint
 
@@ -280,13 +288,8 @@ LoadingPrint
          bne   -
          rts
 
-LoadingCR
-         lda   #$8D
-         jmp   ROM_COUT
-
 FoundMockingboardCallback
 ; in:    zp$81 contains slot number in form $Cx
-         jsr   LoadingCR
          +LDADDR LoadingMockingboard
          jsr   LoadingPrint
          lda   $81
@@ -319,14 +322,20 @@ LoadingIIgs
          !byte 4
          !text "IIgs"
 LoadingJoystick
-         !byte 8
-         !text "joystick"
+         !byte 9
+         !text $8D,"joystick"
 LoadingVidHD
-         !byte 5
-         !text "VidHD"
+         !byte 6
+         !text $8D,"VidHD"
 LoadingMockingboard
-         !byte 21
-         !text "Mockingboard in slot "
+         !byte 22
+         !text $8D,"Mockingboard in slot "
+LoadingMockingboardStereo
+         !byte 7
+         !text $8D,"Stereo"
+LoadingMockingboardMono
+         !byte 5
+         !text $8D,"Mono"
 LoadingMockingboardSpeech
          !byte 16
          !text "...and it talks!"

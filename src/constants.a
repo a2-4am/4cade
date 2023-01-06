@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2022 by 4am
+;(c) 2018-2023 by 4am
 ;
 
 ;------------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 ; ...unused...
 ; E000..E3FF - HGR font data
 ; ...unused...
-; E730..FFEB - main program code
+; E6C9..FFEB - main program code
 ; FFEC..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -110,6 +110,7 @@ ROM_MACHINEID =$FBB3
 ROM_MACHINE2C =$FBC0
 ROM_HOME =     $FC58
 ROM_WAIT =     $FCA8
+ROM_CROUT=     $FD8E
 ROM_COUT =     $FDED
 ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
@@ -188,6 +189,7 @@ EnableAccelerator  = DisableAccelerator+3
 
 ; AND masks for MockingboardStuff
 MOCKINGBOARD_SLOT = %00001111
+HAS_STEREO        = %00100000
 HAS_SPEECH        = %11000000
 
 ; AND masks for game info bitfield (after game display name in gSearchStore)
