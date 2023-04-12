@@ -189,6 +189,7 @@
 - International Gran Prix
 - Karate Champ
 - One on One
+- Pitstop II
 - Shuffleboard
 - Ski Crazed
 - Solo Flight
