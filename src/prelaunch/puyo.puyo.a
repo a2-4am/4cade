@@ -1,0 +1,22 @@
+;license:MIT
+;(c) 2023 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/PUYO.PUYO",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         +LC_REBOOT
+
+         lda   #$4C
+         sta   $7E7B
+         jsr   $6000      ; decompress
+
+         jsr   DisableAccelerator
+         jmp   $7E7E
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
