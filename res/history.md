@@ -60,6 +60,7 @@
 - Fly Wars
 - Gadgetz
 - Galactic Attack
+- Game Boy Tetris
 - Gemini
 - Glutton
 - Grapple
@@ -103,6 +104,7 @@
 - Pill Box
 - Planet Protector
 - Planetoids
+- Puyo Puyo
 - Quasar
 - Raiders of the Lost Ring
 - Rainbow Zone
@@ -174,6 +176,7 @@
 
 ### Games removed in v5 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
+- 8-bit Slicks
 - Battle Chess
 - Bop'n Wrestle
 - California Games
@@ -216,6 +219,7 @@
 - Upgrade Manic Miner to v1.1
 - Fix Mockingboard issues in 8-Bit Slicks, Apple Cider Spider, Bouncing
   Kamungas, Rescue Raiders, Skyfox, Thunder Bombs
+- Display "mono" or "stereo" on start if a Mockingboard was detected
 - Add more game help (thanks Andrew R.)
 - Add even more super hi-res artwork for IIgs users (thanks Alex L., Frank M.,
   Brian Wiser, mr_breaddoughrising, Antoine V., Andrew R., Tony D., cosmoza,
