@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by Frank M., qkumba
+;(c) 2021-2023 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MAZEBLOX",plain
@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<hook1
-         sta   $A10+1
+         sta   $A19+1
          lda   #>hook1
-         sta   $A10+2
+         sta   $A1A+2
          jmp   $800       ; decompress1
 
 hook1    lda   #<hook2
@@ -46,7 +46,7 @@ hook3    +READ_RAM2_NO_WRITE
 hook4
          pla
          pla
-         jsr   $BD5F
+         jsr   $BD5A
          jsr   $BD09
          lda   $B7EC
          cmp   #$13
