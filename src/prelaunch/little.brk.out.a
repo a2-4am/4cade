@@ -1,0 +1,32 @@
+;license:MIT
+;(c) 2023 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/LITTLE.BRK.OUT",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         +NEW_RESET_VECTOR reset
+         lda   #$60
+         sta   $3046
+         jsr   $3000      ; decompress
+         lda   #<(reset / 100) + '0'
+         sta   $2253
+         lda   #<((reset / 10) mod 10) + '0'
+         sta   $2254
+         lda   #<(reset mod 10) + '0'
+         sta   $2255
+         lda   #$3a
+         sta   $2256
+
+         +DISABLE_ACCEL
+         jmp   $D566
+
+reset
+   
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
