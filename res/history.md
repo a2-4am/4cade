@@ -5,6 +5,7 @@
 ### Games added in v5
 
 - A City Dies Whenever Night Falls
+- Aerial
 - Alf: The First Adventure
 - Alien Lander
 - Angel-1
@@ -14,28 +15,34 @@
 - Apple-Oids
 - Arena
 - Artesians
+- Ascend
 - Bats in the Belfry
+- Battlot
 - Beach Landing
 - Bezare
 - Bezoff
 - Blitzkrieg
 - Bloodsuckers
 - Bongo's Bash
+- Bootskell
 - Boulder Dash II
 - Bubble Head
 - Bug Battle
 - ButcherBob '86
 - C'est La Vie
+- Cacorm
 - California Raisins
 - Captain Power
 - Catacombs
 - Cavern Creatures
+- Cavit
 - Chip Out
 - Chivalry
 - Chrono Warrior
 - Collect
 - Conquering Worlds
 - Cosmic Combat
+- Cracky
 - Creepy Corridors
 - Crickateer
 - Cross City
@@ -64,9 +71,11 @@
 - Gemini
 - Glutton
 - Grapple
+- Guntus
 - Handy Dandy
 - Hardhat
 - Hellstorm
+- Impetus
 - Infiltrator
 - Infiltrator 2
 - Invasion Force
@@ -80,17 +89,21 @@
 - Lemmings (Sirius)
 - Lemmings (deater's demake)
 - Lethal Labyrinth
+- Lift
+- Little Brick Out
 - Lunar Explorer
 - Lunar Leepers
 - M.I.R.V
 - Mapple
 - Marauder
 - Mazeblox
+- Mazy
 - Mine Sweep
 - Mouskattack
 - Mutant
 - Narnia
 - Neon
+- Neuras
 - Neut Tower
 - Neutrons
 - Night Crawler
@@ -114,6 +127,7 @@
 - Roach Hotel
 - Robot Battle
 - Robotics
+- Ruptus
 - Sabotage II
 - Sadar's Revenge
 - Sanitron
