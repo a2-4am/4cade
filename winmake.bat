@@ -29,6 +29,7 @@ rem version 3.1.0 or later
 set EXOMIZER=exomizer mem -q -P23 -lnone
 
 if "%1" equ "dsk" (
+call :clean
 call :index
 if "%2". equ "". (
   call :asmproboot
@@ -73,6 +74,7 @@ if "%1" equ "clean" (
 if "%2". neq "". (
 1>nul move build\%DISK%
 )
+:clean
 echo y|1>nul 2>nul rd build /s
 if "%2". neq "". (
 md build
