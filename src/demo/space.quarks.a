@@ -2,8 +2,8 @@
 ;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/SPACE.QUARKS#06B000",plain
-*=$B000
+!to "build/DEMO/SPACE.QUARKS#06BE00",plain
+*=$BE00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -40,3 +40,7 @@ x_e
 
 patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D
 patch2   !byte $4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}

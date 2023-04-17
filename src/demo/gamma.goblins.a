@@ -2,8 +2,8 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/GAMMA.GOBLINS#06B000",plain
-*=$B000
+!to "build/DEMO/GAMMA.GOBLINS#069B00",plain
+*=$9B00
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -37,7 +37,3 @@ patch    !byte $4C,$00,$01
 title    !byte x_e-x_b
 x_b      !text "GAMMA.GOBLINS"
 x_e
-
-!if * > $BFFF {
-  !error "code is too large, ends at ", *
-}

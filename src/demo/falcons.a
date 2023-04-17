@@ -2,8 +2,8 @@
 ;(c) 2021-2022 by Frank M., qkumba
 
 !cpu 6502
-!to "build/DEMO/FALCONS#06B000",plain
-*=$B000
+!to "build/DEMO/FALCONS#060200",plain
+*=$200
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -31,7 +31,3 @@ patch    !byte $4C,$00,$01
 title    !byte x_e-x_b
 x_b      !text "FALCONS"
 x_e
-
-!if * > $BFFF {
-  !error "code is too large, ends at ", *
-}

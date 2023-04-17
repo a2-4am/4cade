@@ -2,8 +2,8 @@
 ;(c) 2022 by qkumba
 
 !cpu 6502
-!to "build/DEMO/SPY.HUNTER#060200",plain
-*=$200
+!to "build/DEMO/SPY.HUNTER#0602400",plain
+*=$2400
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
