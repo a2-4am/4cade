@@ -38,7 +38,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
- - [Cadius for Windows](https://www.brutaldeluxe.fr/products/crossdevtools/cadius/)
+ - [Cadius for Windows](https://github.com/mach-kernel/cadius)
 
 (Those tools will need to be added to your command-line PATH.)
 
