@@ -11,11 +11,11 @@
          +LC_REBOOT
 
          lda   #$4C
-         sta   $7E7B
+         sta   $7E76
          jsr   $6000      ; decompress
 
          jsr   DisableAccelerator
-         jmp   $7E7E
+         jmp   $7E7C
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
