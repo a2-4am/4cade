@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by Frank M., qkumba
+;(c) 2021-2023 by Frank M., qkumba
 
 !cpu 6502
 !to "build/DEMO/GALAXIAN#060320",plain
@@ -21,6 +21,7 @@
          stx   $847       ; reset vector fix
 
          lda   #$2C
+         sta   $8DD
          sta   $1909
          sta   $190C      ; ignore joystick buttons
 
