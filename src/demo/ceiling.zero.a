@@ -8,6 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +GAME_REQUIRES_JOYSTICK
+
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          lda   #$60

@@ -8,6 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +GAME_REQUIRES_JOYSTICK
+
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
@@ -20,8 +22,6 @@
          sta   $6040,x
          dex
          bpl   -
-         sta   $69C7
-         sta   $69D2      ; disable sound(?)
          +DISABLE_ACCEL
          jmp   $4000
 

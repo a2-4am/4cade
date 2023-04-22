@@ -8,6 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +GAME_REQUIRES_JOYSTICK
+
          +TEST_TEXT_PAGE_2
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
