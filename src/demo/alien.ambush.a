@@ -20,6 +20,8 @@
          sta   $6040,x
          dex
          bpl   -
+         sta   $69C7
+         sta   $69D2      ; disable sound(?)
          +DISABLE_ACCEL
          jmp   $4000
 
