@@ -123,14 +123,15 @@ HGRTitleCallback
 @fname   !word $FDFD                 ; SMC
          +ST16 @indexRecordPtr
 
+         lda   #$00
+         sta   $5FFD
+
          jsr   LoadIndexedFile       ; load HGR graphic at $4000
          !word $4000
 @indexRecordPtr
          !word $FDFD                 ; SMC
 
          lda   $5FFD
-         stx   $5FFD                 ; ensure that we won't find it again if next
-                                     ; file is really compressed
          cmp   #$4C                  ; Check if screen hole now contains a JMP
          beq   @noUnpack             ; if so, file was not packed, so skip unpack
          jsr   UnpackHGRTitle
