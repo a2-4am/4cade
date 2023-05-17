@@ -1,6 +1,6 @@
 # Total Replay changelog
 
-## Revision 5 / unreleased
+## Revision 5 / serial number 20230517
 
 ### Games added in v5
 
