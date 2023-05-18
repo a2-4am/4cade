@@ -42,6 +42,7 @@ FirstMover
 ;------------------------------------------------------------------------------
 Reenter
          cld
+         sta   $C000                 ; Turn 80STORE switch off
          ldx   #$ff
          txs                         ; so that we never trash the reset vector
          jsr   SwitchToBank2
