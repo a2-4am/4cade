@@ -20,10 +20,11 @@
          inx
          stx   $847       ; reset vector fix
 
-         lda   #$2C
-         sta   $8DD
+         lda   #$A9
          sta   $1909
-         sta   $190C      ; ignore joystick buttons
+         stx   $1909
+         lda   #$60
+         sta   $190A      ; ignore joystick buttons
 
          ldx   #5-1
 -        lda   patch1, x
