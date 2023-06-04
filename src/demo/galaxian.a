@@ -22,9 +22,9 @@
 
          lda   #$A9
          sta   $1909
-         stx   $1909
+         stx   $190A
          lda   #$60
-         sta   $190A      ; ignore joystick buttons
+         sta   $190B      ; ignore joystick buttons
 
          ldx   #5-1
 -        lda   patch1, x
