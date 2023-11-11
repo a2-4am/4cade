@@ -29,7 +29,7 @@ util.write("../../../src/fx/fx.hgr.ripple.data.a", util.ripple(unique_vals))
 unique_vals.reverse()
 util.write("../../../src/fx/fx.hgr.iris.in.data.a", unique_vals)
 
-corner4_coords = [(139-x,95-y) for (x,y) in unique_coords]
+corner4_coords = [(139-x,94-y) for (x,y) in unique_coords]
 corner4_vals = util.vals_1bit(corner4_coords)
 util.write("../../../src/fx/fx.hgr.corner4.in.data.a", corner4_vals)
 corner4_vals.reverse()
