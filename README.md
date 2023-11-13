@@ -26,7 +26,7 @@ $ cd 4cade/
 $ make
 ```
 
-If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
+If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots), [Ample](https://github.com/ksherlock/ample), or [Virtual II](http://virtualii.com/).
 
 If all does not go well, try doing a clean build (`make clean dsk`)
 
@@ -85,7 +85,7 @@ $ cd 4cade/
 $ make
 ```
 
-If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots) or [Virtual II](http://virtualii.com/).
+If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [MAME](http://www.mamedev.org).
 
 If all does not go well, try doing a clean build (`make clean dsk`)
 
