@@ -1,5 +1,11 @@
 # Total Replay changelog
 
+## Revision 5.0.1 / serial number 20231113
+
+- Fix display issue after quitting DGR games ([PR 549](https://github.com/a2-4am/4cade/pull/549), thanks Tom G.)
+- Fix off-by-1 bug in several transition effects ([issue 553](https://github.com/a2-4am/4cade/issues/553), thanks xotmatrix)
+- Mark Galaxian as requiring a joystick, which it does
+
 ## Revision 5 / serial number 20230517
 
 ### Games added in v5

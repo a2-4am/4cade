@@ -310,7 +310,7 @@ LoadingBuild
 } else {
 LoadingVersion
          !byte 12
-         !text "        v5.0"
+         !text "      v5.0.1"
 }
 Loading64K
          !byte 3
