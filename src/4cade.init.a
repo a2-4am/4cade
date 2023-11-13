@@ -18,19 +18,20 @@
          jsr   ROM_NORMAL
          jsr   ROM_IN0
          jsr   ROM_PR0
+
+         ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
+         lda   ROM_MACHINEID
+         cmp   #$A0
+         beq   +                     ; Spectrum ED
+         cmp   #$06
+         beq   +
+         lda   #$DF
+         +HIDE_NEXT_2_BYTES
++        lda   #$FF
+         sta   zpCharMask
+
          ; print text title in same place as graphical title will appear
-         ldy   #9
--        lda   TOTAL-1,y
-         ora   #$80
-         sta   $04B7-1,y
-         dey
-         bne   -
-         ldy   #11
--        lda   REPLAY-1,y
-         ora   #$80
-         sta   $0536-1,y
-         dey
-         bne   -
+         jsr   PrintBranding
 
          ; proboothd duplicates the above code and jumps here,
          ; so if you make any changes before this comment, you
@@ -74,17 +75,6 @@
                                      ;     bit 6 = 1 if 128K
                                      ;     bit 7 = 1 if joystick
                                      ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
-
-         ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
-         lda   ROM_MACHINEID
-         cmp   #$A0
-         beq   +                     ; Spectrum ED
-         cmp   #$06
-         beq   +
-         lda   #$DF
-         +HIDE_NEXT_2_BYTES
-+        lda   #$FF
-         sta   zpCharMask
 
          ; IIgs fix for Alternate Display Mode (clear shadow page 2)
          lda   zpMachineStatus
@@ -297,21 +287,8 @@ FoundMockingboardCallback
          ora   #$B0
          jmp   ROM_COUT
 
-TOTAL
-         !text "T O T A L"
-REPLAY
-         !text "R E P L A Y"
-!ifndef RELEASE {
-LoadingVersion
-         !byte 8
-         !text "  build "
-LoadingBuild
-         !word BUILDNUMBER
-} else {
-LoadingVersion
-         !byte 12
-         !text "      v5.0.1"
-}
+         !src  "src/4cade.branding.a"
+
 Loading64K
          !byte 3
          !text "64K"

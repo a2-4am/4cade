@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2018-2023 by 4am
+;
+
+PrintBranding
+         ldy   #9
+-        lda   TOTAL-1,y
+         ora   #$80
+         sta   $04B7-1,y
+         dey
+         bne   -
+         ldy   #11
+-        lda   REPLAY-1,y
+         ora   #$80
+         sta   $0536-1,y
+         dey
+         bne   -
+         rts
+
+TOTAL
+         !text "T O T A L"
+REPLAY
+         !text "R E P L A Y"
+!ifndef RELEASE {
+LoadingVersion
+         !byte 8
+         !text "  build "
+LoadingBuild
+         !word BUILDNUMBER
+} else {
+LoadingVersion
+         !byte 12
+         !text "      v5.0.1"
+}
