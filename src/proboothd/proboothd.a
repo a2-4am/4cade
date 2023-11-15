@@ -151,7 +151,7 @@ blockind ldy   $ff
          txa
          bne   readfile
 
-readdone jmp   $2036
+readdone jmp   $2021
 
 seekread stx   bloklo
          sty   blokhi
