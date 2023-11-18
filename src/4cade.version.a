@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2023 by 4am
+;
+
+!ifndef RELEASE {
+LoadingVersion
+         !byte 8
+         !text "  build "
+LoadingBuild
+         !word BUILDNUMBER
+} else {
+LoadingVersion
+         !byte 12
+         !text "      v5.0.1"
+}

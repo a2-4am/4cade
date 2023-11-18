@@ -161,6 +161,7 @@ gKey         = $1F01
 UILine1      = $1FB0
 UILine2      = $1FD8
 UI_ToPlay    = $1FF7
+ProBootEntry = $2025
 
 gValLen      = $1F80
 gVal         = $1F81

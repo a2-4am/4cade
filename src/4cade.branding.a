@@ -3,32 +3,18 @@
 ;
 
 PrintBranding
-         ldy   #9
--        lda   TOTAL-1,y
-         ora   #$80
-         sta   $04B7-1,y
-         dey
-         bne   -
+; in:    text screen is showing
+; out:   Y = 0 (important! some callers rely on this!)
          ldy   #11
--        lda   REPLAY-1,y
-         ora   #$80
-         sta   $0536-1,y
+-        lda   TOTAL-1, y
+         sta   $04B5-1, y
+         lda   REPLAY-1, y
+         sta   $0535-1, y
          dey
          bne   -
          rts
 
 TOTAL
-         !text "T O T A L"
+         !scrxor $80," T O T A L "
 REPLAY
-         !text "R E P L A Y"
-!ifndef RELEASE {
-LoadingVersion
-         !byte 8
-         !text "  build "
-LoadingBuild
-         !word BUILDNUMBER
-} else {
-LoadingVersion
-         !byte 12
-         !text "      v5.0.1"
-}
+         !scrxor $80,"R E P L A Y"

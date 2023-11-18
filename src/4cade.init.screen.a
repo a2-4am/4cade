@@ -1,0 +1,14 @@
+;license:MIT
+;(c) 2023 by 4am
+;
+; initialize and clear screen
+; assumes zero page is completely trashed other than |zpCharMask|
+; assumes ROM is banked in on entry
+;
+; note: this file is included by both the launcher and proboothd
+
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
+         jsr   ROM_NORMAL
+         jsr   ROM_IN0
+         jsr   ROM_PR0

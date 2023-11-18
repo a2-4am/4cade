@@ -7,28 +7,8 @@
 ; .SYSTEM file is loaded
 ;
 
-         +READ_ROM_NO_WRITE
-         sta   PRIMARYCHARSET
-         sta   CLR80VID
-         sta   STOREOFF
-         sta   READMAINMEM
-         sta   WRITEMAINMEM
-         jsr   ROM_TEXT
-         jsr   ROM_HOME
-         jsr   ROM_NORMAL
-         jsr   ROM_IN0
-         jsr   ROM_PR0
-
-         ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
-         lda   ROM_MACHINEID
-         cmp   #$A0
-         beq   +                     ; Spectrum ED
-         cmp   #$06
-         beq   +
-         lda   #$DF
-         +HIDE_NEXT_2_BYTES
-+        lda   #$FF
-         sta   zpCharMask
+         !src  "src/4cade.init.machine.a"
+         !src  "src/4cade.init.screen.a"
 
          ; print text title in same place as graphical title will appear
          jsr   PrintBranding
@@ -36,6 +16,9 @@
          ; proboothd duplicates the above code and jumps here,
          ; so if you make any changes before this comment, you
          ; MUST adjust the final JMP in src/proboothd/proboothd.a
+         !if (* != ProBootEntry) {
+                  !serious "ProBootEntry is wrong, should be ", *
+         }
 
          jsr   Has64K                ; check for 64K (required)
          bcc   +
@@ -98,6 +81,17 @@
          lda   #$00
          sta   MONOCOLOR             ; bit 7=1 disables color
 +
+
+         ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
+         lda   ROM_MACHINEID
+         cmp   #$A0
+         beq   +                     ; Spectrum ED
+         cmp   #$06
+         beq   +
+         lda   #$DF
+         +HIDE_NEXT_2_BYTES
++        lda   #$FF
+         sta   zpCharMask
 
          ; increase text window width so we can print to the edge of the screen without scrolling
          inc   $21
@@ -288,6 +282,7 @@ FoundMockingboardCallback
          jmp   ROM_COUT
 
          !src  "src/4cade.branding.a"
+         !src  "src/4cade.version.a"
 
 Loading64K
          !byte 3

@@ -1,0 +1,15 @@
+;license:MIT
+;(c) 2023 by 4am
+;
+; initialize machine from a cold boot
+; assumes absolutely nothing about machine state
+;
+; note: this file is included by both the launcher and proboothd
+
+         cld
+         +READ_ROM_NO_WRITE
+         sta   PRIMARYCHARSET
+         sta   CLR80VID
+         sta   STOREOFF
+         sta   READMAINMEM
+         sta   WRITEMAINMEM

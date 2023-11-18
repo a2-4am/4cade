@@ -5,6 +5,8 @@
 !to "build/proboothd",plain
 *=$800
 
+         !src  "src/macros.a"
+
          ;zpage usage, arbitrary selection except for the "ProDOS constant" ones
          command   = $42         ;ProDOS constant
          unit      = $43         ;ProDOS constant
@@ -25,34 +27,21 @@
          txa
          pha
 
-         ; put machine in a known state, clear screen
+         !src  "src/4cade.init.machine.a"
 
-         cld
-         bit   $c082
-         sta   $c00e
-         sta   $c00c
-         sta   $c000
-         sta   $c002
-         sta   $c004
-         lda   $c000
-         cmp   #$d3    ; Press "S" on bootup
+         lda   KBD
+         cmp   #$D3              ; 'S'
+         beq   @s
+         cmp   #$F3              ; 's'
          bne   +
+@s
          jsr   seasons
-+        jsr   $fb2f
-         jsr   $fc58
-         jsr   $fe84
-         jsr   $fe89
-         jsr   $fe93
++
+         !src  "src/4cade.init.screen.a"
 
-         ; print title
+         ; print text title in same place as graphical title will appear
+         jsr   PrintBranding
 
-         ldy   #11
--        lda   TOTAL-1, y
-         sta   $04B6-1, y
-         lda   REPLAY-1, y
-         sta   $0536-1, y
-         dey
-         bne   -
          pla
          sta   unit
          tax
@@ -151,7 +140,7 @@ blockind ldy   $ff
          txa
          bne   readfile
 
-readdone jmp   $2036
+readdone jmp   ProBootEntry
 
 seekread stx   bloklo
          sty   blokhi
@@ -369,10 +358,12 @@ filename
 filename_b
          !text "LAUNCHER.SYSTEM" ;your start-up file, file is max 40kb
 filename_e
-TOTAL
-         !byte $A0,$D4,$A0,$CF,$A0,$D4,$A0,$C1,$A0,$CC,$A0
-REPLAY
-         !byte $D2,$A0,$C5,$A0,$D0,$A0,$CC,$A0,$C1,$A0,$D9
+
+         !src  "src/4cade.branding.a"
+
+!if (* > $9f7) {
+         !serious "Bootloader is too large"
+}
 
 *=$9f8
 !byte $D3,$C1,$CE,$A0,$C9,$CE,$C3,$AE
