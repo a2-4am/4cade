@@ -1,0 +1,290 @@
+;license:MIT
+;(c) 2023 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/FLAPPLE.MAC",plain
+*=$b000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         lda   #$CD        ; disable palette switch
+         sta   $26C9
+         sta   $270F
+         sta   $2755
+         sta   $279B
+         sta   $2AAB
+         sta   $2B19
+
+         lda   #$6c        ; fix title screen
+         sta   $00
+         lda   #$30
+         sta   $01
+         ldx   #$16
+         ldy   #$21
+         lda   #$11
+         jsr   @swap_palette
+
+         lda   #$18
+         sta   $00
+         lda   #$36
+         sta   $01
+         ldx   #6
+         ldy   #$18
+         lda   #$11
+         jsr   @swap_palette
+
+         lda   #$38
+         sta   $00
+         lda   #$37
+         sta   $01
+         ldx   #6
+         ldy   #6
+         lda   #$22
+         jsr   @swap_palette
+
+         lda   #$80
+         sta   $00
+         lda   #$37
+         sta   $01
+         ldx   #6
+         ldy   #$13
+         lda   #$22
+         jsr   @swap_palette
+
+         lda   #$64
+         sta   $00
+         lda   #$38
+         sta   $01
+         ldx   #6
+         ldy   #3
+         lda   #$11
+         jsr   @swap_palette
+
+         lda   #$88
+         sta   $00
+         lda   #$38
+         sta   $01
+         ldx   #3
+         ldy   #3
+         lda   #$11
+         jsr   @swap_palette
+
+         lda   #$ae        ; fix high score
+         sta   $00
+         lda   #$38
+         sta   $01
+         ldx   #2
+         ldy   #$3
+         lda   #$11
+         jsr   @swap_palette
+
+         lda   #$d2        ; fix high score
+         sta   $00
+         lda   #$38
+         sta   $01
+         ldx   #2
+         ldy   #3
+         lda   #$11
+         jsr   @swap_palette
+
+         ldx   #$BD        ; fix pipe
+         ldy   #$3A
+         jsr   @swap_palette2
+
+         ldx   #$67        ; fix bird sprite
+         ldy   #$47
+         jsr   @swap_palette1
+
+         ldx   #$C1        ; fix bird sprite
+         ldy   #$47
+         jsr   @swap_palette1
+
+         ldx   #$1B        ; fix bird sprite
+         ldy   #$48
+         jsr   @swap_palette1
+
+         ldx   #$93        ; fix bird sprite
+         ldy   #$48
+         jsr   @swap_palette1
+
+         lda   #$55
+         sta   $3BFC
+         sta   $3D22
+         sta   $3DE7
+         sta   $3E4D
+         sta   $3E7F
+         sta   $40C4
+         sta   $41B6
+         sta   $4328
+         lda   #$E5
+         sta   $3C07
+         sta   $3C18
+         sta   $3D9F
+         sta   $3E8E
+         sta   $3EA3
+         sta   $4064
+         sta   $4196
+         sta   $41AB
+         sta   $4386
+         lda   #$5E
+         sta   $3C0D
+         sta   $3DA5
+         sta   $3E94
+         sta   $406A
+         sta   $419C
+         sta   $438C
+         lda   #$C5
+         sta   $3C1F
+         sta   $3C30
+         sta   $3DAC
+         sta   $3DBD
+         sta   $3EAE
+         sta   $3EC3
+         sta   $4075
+         sta   $408A
+         sta   $4167
+         sta   $417C
+         sta   $4357
+         sta   $436C
+         lda   #$5C
+         sta   $3C25
+         sta   $3C3B
+         sta   $3DB2
+         sta   $3DC8
+         sta   $3EB4
+         sta   $3ED2
+         sta   $407B
+         sta   $4099
+         sta   $416D
+         sta   $418B
+         sta   $435D
+         sta   $437B
+         lda   #$45
+         sta   $3C42
+         sta   $3DCF
+         sta   $3DE0
+         sta   $3EDD
+         sta   $40A4
+         sta   $40B9
+         sta   $4156
+         sta   $4337
+         sta   $434C
+         lda   #$54
+         sta   $3C48
+         sta   $3DD5
+         sta   $3EE3
+         sta   $40AA
+         sta   $415C
+         sta   $433D
+         lda   #$77
+         sta   $3C4F
+         sta   $3D27
+         sta   $3E67
+         sta   $3EEE
+         sta   $4147
+         sta   $49BF
+         sta   $4AEA
+         lda   #$EE
+         sta   $3D0D
+         sta   $3E52
+         lda   #$CC
+         sta   $3D12
+         sta   $3E5A
+         lda   #$44
+         sta   $3D1A
+         sta   $3E62
+
+         lda   #$27
+         sta   $2971
+         lda   #$4C
+         sta   $29B8
+         lda   #<@callback
+         sta   $29B9
+         lda   #>@callback
+         sta   $29BA
+
+         rts
+
+@callback
+         lda   #$3f
+         jmp   $fca8
+
+@swap_palette2
+         stx   $00
+         sty   $01
+         ldx   #1
+         ldy   #$0f
+         bne   +
+
+@swap_palette1
+         stx   $00
+         sty   $01
+         ldx   #4
+         ldy   #5
++        lda   #0
+
+@swap_palette
+         sta   @patch5 + 1
+         pha
+         and   #$f0
+         sta   @patch3 + 1
+         pla
+         and   #$0f
+         sta   @patch4 + 1
+         tya
+         sta   @patch1 + 1
+         asl
+         tay
+         dey
+         sty   @patch2 + 1
+--       ldy   #0
+-        lda   ($00), y
+@patch5
+         cmp   #$d1        ; SMC
+         beq   ++
+         and   #$f0
+@patch3
+         cmp   #$d1        ; SMC
+         beq   +
+         lda   ($00), y
+         lsr
+         lsr
+         lsr
+         lsr
+         eor   ($00), y
+         and   #$0f
+         eor   ($00), y
+         asl
++        and   #$f0
+         sta   $02
+         lda   ($00), y
+         and   #$0f
+@patch4
+         cmp   #$d1        ; SMC
+         beq   +
+         lda   ($00), y
+         lsr
+         lsr
+         lsr
+         lsr
+         lda   ($00), y
+         rol
+         and   #$0f
++        ora   $02
+         sta   $02
+         lda   $02
+         sta   ($00), y
+++       iny
+@patch1
+         cpy   #$d1        ; SMC
+         bcc   -
+         lda   $00
+@patch2
+         adc   #$d1        ; SMC
+         sta   $00
+         bcc   +
+         inc   $01
++        dex
+         bne   --
+         rts

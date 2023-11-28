@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022 by Frank M., qkumba
+;(c) 2020, 2022, 2023 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/FLAPPLE.BIRD",plain
@@ -7,8 +7,7 @@
 
     !source "src/prelaunch/common.a"
 
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL
          lda   #$60
          sta   $813
          jsr   $800
@@ -20,7 +19,26 @@
 
 @good_vbl
          +DISABLE_ACCEL
+         lda   $fbb3
+         cmp   #$6
+         bne   @not_mac
+         lda   $fbc0
+         cmp   #$e0
+         bne   @not_mac
+         lda   $fbdd
+         cmp   #$02
+         bne   @not_mac
+         +READ_RAM2_WRITE_RAM2
+         +LOAD_FILE_AT flapple_mac, $b000
+         jsr   $b000
+         +READ_ROM_NO_WRITE
+
+@not_mac
          jmp   $2000
+
+flapple_mac
+         !byte 21
+         !text "PRELAUNCH/FLAPPLE.MAC"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
