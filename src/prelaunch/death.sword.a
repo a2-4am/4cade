@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba/Frank M.
+;(c) 2019-2020, 2023 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DEATH.SWORD",plain
@@ -12,7 +12,12 @@
            lda   #$8b
            sta   $bf0e      ; disable ROM mapping
 
-           jmp   $2000
+           +GET_MACHINE_STATUS
+           and   #IS_IIGS
+           bne   +
+           lda   #$A9
+           sta   $21E0      ; don't write to non-GS softswitch
++          jmp   $2000
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
