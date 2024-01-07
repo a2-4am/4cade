@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2023 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/APPLZ",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $847
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
