@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by 4am
+;(c) 2019-2020, 2023 by 4am and qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SERPENTINE",plain
@@ -7,20 +7,29 @@
 
          !source "src/prelaunch/common.a"
 
+         +ENABLE_ACCEL
          +NEW_RESET_VECTOR $3C0
-         ldx   #$0E       ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
+         ldx   #(patch_e-patch)-1
 -        lda   patch,x
-         sta   $3B0,x
+         sta   $390,x
          dex
          bpl   -
-         lda   #$B0       ; call patch instead of $233
-         sta   $8C96
+         lda   #$90       ; call patch instead of $4000
+         sta   $8C58
          lda   #$03
-         sta   $8C97
+         sta   $8C59
+         lda   #$4C
+         sta   $8CEF
          jmp   $43F5      ; decompress and show title
-patch
-         jsr   $00F0      ; decompress
+patch !pseudopc $390 {
+         +DISABLE_ACCEL
+         jsr   $4000
+         +ENABLE_ACCEL
+         jsr   $8C5A
+         +DISABLE_ACCEL
          jmp   $0800
+}
+patch_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
