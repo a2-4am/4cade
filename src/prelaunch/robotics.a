@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022, 2023 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ROBOTICS",plain
@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $2090
-         jsr   $2000       ; decompress
+         sta   $87E
+         jsr   $800        ; decompress
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
