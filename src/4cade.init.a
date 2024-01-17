@@ -164,6 +164,7 @@
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
                                      ; ProRWTS2 disk-data live at $D000-D3FF
+         sei                         ; we're about to overwrite ProDOS's IRQ handler
          ldx   #$00                  ; relocate program code to top of language card
                                      ; since we end at $0000 now, adjust low offset to avoid destroying zpage
 @FM      lda   FirstMover - (RELBASE & $FF),x
