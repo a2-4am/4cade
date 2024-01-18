@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022 by qkumba
+;(c) 2020, 2022, 2023 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BATTLE.CRUISER",plain
@@ -12,31 +12,28 @@
          sta   $2027
          jsr   $2000      ; decompress
 
+         tax
          +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
          bvs   +
-         ldy   #0
-         sty   $868
-         sty   $9486
-         ldy   #$60
-         sty   $B000      ; no speech chip, pretend no MB
+         stx   $868
+         stx   $9486
+         ldx   #$60
+         stx   $B000      ; no speech chip, pretend no MB
 +        and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $A22       ; patch - don't decrease lives
 +
-         lda   #$4C
-         sta   $8FFF
-         sta   $9010
-         lda   #<callback1
-         sta   $9000
-         lda   #>callback1
-         sta   $9001
-         lda   #<callback2
-         sta   $9011
-         lda   #>callback2
-         sta   $9012
+         iny
+-        lda   call1, y
+         sta   $8FFF, y
+         lda   call2, y
+         sta   $9010, y
+         dey
+         bpl   -
          lda   #$C5
          sta   $902A
+         +NEW_RESET_VECTOR $110
          +DISABLE_ACCEL
          jmp   $845
 
@@ -55,6 +52,9 @@ callback2
          cmp   #2
          bcs   -
          jmp   $902C
+
+call1    jmp   callback1
+call2    jmp   callback2
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
