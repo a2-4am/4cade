@@ -22,9 +22,7 @@
                           ; reset vector in high score file
                           ; gets loaded directly to $300
          lda   MockingboardStuff
-         asl
          bpl   skipmb
-         lsr
          and   #7
          sta   $A0C9
          lda   #2
