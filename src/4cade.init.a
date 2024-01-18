@@ -165,6 +165,11 @@
          jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
                                      ; ProRWTS2 disk-data live at $D000-D3FF
          sei                         ; we're about to overwrite ProDOS's IRQ handler
+         lda   #<NOIRQ
+         sta   $3FE
+         lda   #>NOIRQ               ; in case another routine re-enables them
+         sta   $3FF
+         cli
          ldx   #$00                  ; relocate program code to top of language card
                                      ; since we end at $0000 now, adjust low offset to avoid destroying zpage
 @FM      lda   FirstMover - (RELBASE & $FF),x
@@ -281,6 +286,8 @@ FoundMockingboardCallback
          and   #$0F
          ora   #$B0
          jmp   ROM_COUT
+
+NOIRQ    rti
 
          !src  "src/4cade.branding.a"
          !src  "src/4cade.version.a"

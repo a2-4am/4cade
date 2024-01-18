@@ -99,14 +99,14 @@ setopt
          ldy   #0
          sty   $382       ; joystick
          ldx   #2
-         iny              ; Sound/Speech I
+         iny
 
          +READ_RAM2_NO_WRITE
          bit   MockingboardStuff
-         bmi   +          ; SC-01
-         ldx   #0
-         dey              ; Sound II
-         bvc   +          ; no speech
+         bmi   +          ; Sounds / Speech (mono, SC-01)
+         dex
+         dey
+         bvc   +          ; Sound II / A (stereo, no speech)
          ldx   #4
          ldy   #2         ; Mockingboard "C"
 +        stx   $380
