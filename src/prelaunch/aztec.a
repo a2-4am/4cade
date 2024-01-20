@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba
+;(c) 2023 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/AZTEC",plain
@@ -9,13 +9,27 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $A00
-         jsr   $800       ; find and load "DOS"
-         lda   #<callback
-         sta   $B748
-         lda   #>callback
-         sta   $B749
-         jmp   $B700
+         sta   $1F3C
+         jsr   $1E60      ; decompress
+         lda   #$20
+         sta   $6571
+         lda   #<keypress
+         sta   $6572
+         lda   #>keypress
+         sta   $6573
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $61B5
+         sta   $61BD
+         sta   $61C3
+         sta   $61D0
+         sta   $52D7
+         sta   $144B
++
+         +DISABLE_ACCEL
+         jmp   $1B00
 
 keypress
          lda   $C000
@@ -24,37 +38,6 @@ keypress
          bne   keypress
          lda   #$8D
          rts
-
-intercept
-         jsr   $BD5F
-         jsr   $BD09
-         lda   $656B
-         cmp   #$2C
-         clc
-         bne   +
-         lda   #$20
-         sta   $656B
-         lda   #<keypress
-         sta   $656C
-         lda   #>keypress
-         sta   $656D
-+        rts
-
-callback
-         ldx   #0
-         stx   $9E52
-         inx
-         stx   $9E53      ; reset vector patch
-         lda   #$4C
-         sta   $BD06
-         lda   #<intercept
-         sta   $BD07
-         lda   #>intercept
-         sta   $BD08
-         sta   $656B
-
-         +DISABLE_ACCEL
-         jmp   $9D84
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
