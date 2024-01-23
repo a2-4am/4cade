@@ -44,9 +44,30 @@ skip
          lda   #>callback
          sta   $50BF
 +
+         lda   MockingboardStuff
+         beq   no_mb
+         and   #7
+         ora   #$C0
+         ldx   #0
+mb_page1
+         ldy   $6D00, x
+         cpy   #$C4
+         bne   +
+mb_page2
+         sta   $6D00, x
++        inx
+         bne   mb_page1
+         inc   mb_page1+2
+         inc   mb_page2+2
+         dec   pages
+         bne   mb_page1
+
+no_mb
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   $4000
+
+pages    !byte 3
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
