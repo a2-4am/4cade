@@ -1,5 +1,22 @@
 # Total Replay changelog
 
+## Revision 5.1 / serial number 20240216
+
+### Games added in v5.1
+
+- Angry Birds
+- Applz
+
+### Enhancements & bug fixes in v5.1
+
+- Upgrade Aztec to retail version
+- Fix crash in Serpentine ([issue 559](https://github.com/a2-4am/4cade/issues/559), thanks audetto)
+- Fix reset issues in Battle Cruiser
+- Fix Mockingboard issues in Berzap, Crime Wave, Mapple
+- Fix compatibility issues in Deathsword ([issue 556](https://github.com/a2-4am/4cade/issues/556), thanks JDW1)
+- Fix compatibility issues in Flapple Bird
+- Fix text display issues during boot
+
 ## Revision 5.0.1 / serial number 20231113
 
 - Fix display issue after quitting DGR games ([PR 549](https://github.com/a2-4am/4cade/pull/549), thanks Tom G.)

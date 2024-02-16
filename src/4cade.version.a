@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2023 by 4am
+;(c) 2023-2024 by 4am
 ;
 
 !ifndef RELEASE {
@@ -11,5 +11,5 @@ LoadingBuild
 } else {
 LoadingVersion
          !byte 12
-         !text "      v5.0.1"
+         !text "        v5.1"
 }
