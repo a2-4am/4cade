@@ -546,3 +546,209 @@
 ## Revision 1 / serial number 190720
 
 - Initial release
+
+### Games included in v1.0
+
+- Agent U.S.A.
+- Airheart
+- Alcazar
+- Alien Ambush
+- Alien Downpour
+- Alien Rain
+- Alien Typhoon
+- Alien Munchies
+- Ankh
+- Apple Cider Spider
+- Apple Panic
+- Aquatron
+- Argos
+- Arkanoid
+- Axis Assassin
+- Bad Dudes
+- Ballblazer
+- Batman
+- Battlezone
+- BC's Quest For Tires
+- Beer Run
+- Bellhop
+- Berzap
+- Bill Budge's Trilogy
+- Black Magic
+- Blister Ball
+- BlockChain
+- Bolo
+- Bouncing Kamungas
+- Brainteaser Boulevard
+- Bruce Lee
+- Bubble Bobble
+- BurgerTime
+- Buzzard Bait
+- Cannonball Blitz
+- Canyon Climber
+- Captain Goodnight
+- Castle Wolfenstein
+- Ceiling Zero
+- Centipede
+- Championship Lode Runner
+- Choplifter
+- Commando
+- Conan
+- Crazy Mazey
+- Crime Wave
+- Crisis Mountain
+- Crossfire
+- Cubit
+- Cyber Strike
+- Cyclod
+- D-Generation
+- David's Midnight Magic
+- Death Sword
+- Defender
+- Dig Dug
+- Dino Eggs
+- Donkey Kong
+- Drelbs
+- Drol
+- Dung Beetles
+- Eggs-It
+- Epoch
+- Falcons
+- Flight Simulator I
+- Flip Out
+- Firebird
+- Formula 1 Racer
+- Frogger
+- Frogger II
+- Galaxian
+- Galaxy Gates
+- Gamma Goblins
+- Genetic Drift
+- Gold Rush
+- Gorgon
+- Gremlins
+- Gumball
+- Hadron
+- H.E.R.O
+- Hard Hat Mack
+- Head On
+- Heavy Barrel
+- High Rise
+- Horizon V
+- Hungry Boy
+- Ikari Warriors
+- Impossible Mission
+- International Gran Prix
+- Joust
+- Juggler
+- Jumpman
+- Jungle Hunt
+- Kamikaze
+- Karateka
+- Kid Niki
+- Labyrinth
+- Lady Tut
+- Lancaster
+- Laser Bounce
+- Lazer Silk
+- Lode Runner
+- Lost Tomb
+- Mad Bomber
+- Marble Madness
+- Mario Bros
+- Miner 2049er
+- Montezuma's Revenge
+- Moon Patrol
+- Mr. Cool
+- Mr. Do
+- Mr. Robot
+- Ms. Pacman
+- Nibbler
+- Night Mission Pinball
+- Night Stalker
+- Nightmare Gallery
+- NORAD
+- O'Riley's Mine
+- Orbitron
+- Outpost
+- Pac-Man
+- Paperboy
+- Pest Patrol
+- Phantoms Five
+- Phaser Fire
+- Photar
+- Picnic Paranoia
+- Pie-Man
+- Pipe Dream
+- Pit Stop II
+- Pitfall II
+- Plasmania
+- Platoon
+- Pollywog
+- Pooyan
+- Prince of Persia
+- Puckman
+- Qix
+- Quadrant 6112
+- Radwarrior
+- Rampage
+- Raster Blaster
+- Red Alert
+- Renegade
+- Repton
+- Rescue Raiders
+- Ribbit
+- Roadblock
+- Robocop
+- Robotron 2084
+- Russki Duck
+- Sabotage
+- Sammy Lightfoot
+- Serpentine
+- Shamus
+- Shuffleboard
+- Snack Attack
+- Snake Byte
+- Sneakers
+- Snoggle
+- Space Eggs
+- Space Quarks
+- Space Raiders
+- Spare Change
+- Speedway Classic
+- Spider Raid
+- Spiderbot
+- Spy Hunter
+- Spy's Demise
+- Starblaster
+- Stargate
+- Star Blazer
+- Stellar 7
+- Succession
+- Suicide!
+- Swashbuckler
+- Tag Team Wrestling
+- Tapper
+- Tetris
+- Tetris (DHGR)
+- The Bilestoad
+- The Games: Summer Edition
+- The Games: Winter Edition
+- The Goonies
+- Thexder
+- Thexder (DHGR)
+- Thief
+- Threshold
+- Thunder Bombs
+- Tomahawk
+- Track & Field
+- Tubeway ][
+- Tunnel Terror
+- Twerps
+- Up'n Down
+- Victory Road
+- Vindicator
+- Warp Destroyer
+- Wavy Navy
+- Xevious
+- Zaxxon
+- Zenith
