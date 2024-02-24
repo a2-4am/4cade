@@ -77,7 +77,6 @@
 - Defender (Joe Holt)
 - Demonic Decks
 - Depth Charge
-- Dive Bomber
 - Dragonfire
 - Early Bird
 - Escape
@@ -175,7 +174,6 @@
 - Star Maze
 - Starball
 - Starmines
-- Super Huey
 - Super Puckman
 - Super Taxman 2
 - Sword of Sheol
@@ -217,7 +215,6 @@
 - Battle Chess
 - Bop'n Wrestle
 - California Games
-- Dive Bomber
 - Fight Night
 - Flight Simulator II
 - Formula 1 Racer
@@ -237,7 +234,6 @@
 - Street Sports Soccer
 - Summer Games
 - Summer Games II
-- Super Huey
 - Tag Team Wrestling
 - Test Drive
 - The Dam Busters
