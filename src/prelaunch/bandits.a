@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2024 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BANDITS",plain
@@ -11,20 +11,20 @@
          lda   #$60
          sta   $87A
          jsr   $800       ; decompress
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
          lda   #<callback
          sta   $481
          lda   #>callback
          sta   $482
-+
+
          +DISABLE_ACCEL
          jmp   $8F40
 
 callback
          +ENABLE_ACCEL
          jsr   $4C8       ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
          lda   $57
          cmp   #$0F
          bne   +
@@ -34,6 +34,11 @@ callback
          lda   #$AD
          sta   $63AE      ; patch - don't decrease lives
 +
+         lda   #$35       ; map shield to button 1
+         sta   $2AF
+         lda   #2
+         sta   $2B4
+
          +DISABLE_ACCEL
          lda   #0
          rts
