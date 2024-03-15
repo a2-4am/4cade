@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019, 2024 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/APPLE.PANIC",plain
@@ -8,9 +8,15 @@
          !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $819D
+         lda   #$4C
+         sta   $7115
+         sta   $7137
          jsr   $3FF8      ; decompress
+         +DISABLE_ACCEL
+         jsr   $1000      ; title sequence
+         +ENABLE_ACCEL
+         jsr   $711B      ; decompress
+
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
