@@ -12,7 +12,7 @@
          sta   $955A
          jsr   $8000      ; decompress
          +DISABLE_ACCEL
-         jmp   $4000
+         jmp   $955D
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
