@@ -1,5 +1,11 @@
 # Total Replay changelog
 
+## Revision 5.2 / unreleased
+
+### Games added in v5.2
+
+- AntiAir
+
 ## Revision 5.1 / serial number 20240216
 
 ### Games added in v5.1

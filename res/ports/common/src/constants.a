@@ -1,0 +1,73 @@
+;license:MIT
+;(c) 2024 by 4am
+;
+
+!ifndef _CONSTANTS_ {
+
+SELF_MODIFIED_BYTE        = $FD
+SELF_MODIFIED_WORD        = $FDFD
+
+; standard memory addresses
+CH                        = $24
+CV                        = $25
+BASL                      = $28
+INVFLG                    = $32
+RWTS_PTR                  = $48
+RNDL                      = $4E
+RNDH                      = $4F
+PRODOS_MLI                = $BF00
+PRODOS_BOOT_UNIT          = $BF30
+PRODOS_MEMORY_MAP         = $BF58
+PRODOS_MACHID             = $BF98
+KBD                       = $C000
+CLEARKBD                  = $C010
+STOREOFF                  = $C000    ; STA then use the following 4 flags:
+READMAINMEM               = $C002    ; STA to read from main mem
+READAUXMEM                = $C003    ; STA to read from aux mem
+WRITEMAINMEM              = $C004    ; STA to write to main mem
+WRITEAUXMEM               = $C005    ; STA to write to aux mem
+CLR80VID                  = $C00C    ; 40 columns
+PRIMARYCHARSET            = $C00E    ; no mousetext for you
+ALTCHARSET                = $C00F    ; yay mousetext
+CLEARKBD                  = $C010    ; clear last key pressed
+SLOT3STATUS               = $C017    ; bit 7 only
+MONOCOLOR                 = $C021    ; IIgs bit 7 switches composite mono/color modes
+TBCOLOR                   = $C022    ; IIgs text foreground and background colors (also VidHD but write-only)
+NEWVIDEO                  = $C029    ; IIgs graphics modes (also VidHD)
+CLOCKCTL                  = $C034    ; bits 0-3 are IIgs border color (also VidHD)
+GFXMODE                   = $C050
+TEXTMODE                  = $C051
+FULLGFX                   = $C052
+MIXEDGFX                  = $C053
+PAGE1                     = $C054    ; page 1 (affects text, HGR, DHGR)
+PAGE2                     = $C055    ; page 2 (affects text, HGR, DHGR)
+HIRES                     = $C057
+AUXMOVE                   = $C311
+ROM_TEXT                  = $FB2F
+ROM_FINALIZE_RESET        = $FB6F
+ROM_MACHINEID             = $FBB3
+ROM_BASCALC               = $FBC1
+ROM_HOME                  = $FC58
+ROM_CLREOL_FROM_Y         = $FC9E
+ROM_WAIT                  = $FCA8
+ROM_KEYIN                 = $FD1B
+ROM_COUT                  = $FDED
+ROM_COUT1                 = $FDF0
+ROM_INVERSE               = $FE80    ; INVERSE text
+ROM_NORMAL                = $FE84    ; NORMAL text (instead of INVERSE or FLASH)
+ROM_IN0                   = $FE89    ; SETKBD
+ROM_PR0                   = $FE93    ; SETVID
+
+; ProDOS constants
+CMD_QUIT                  = $65
+CMD_ONLINE                = $C5
+CMD_SETPREFIX             = $C6
+CMD_GETPREFIX             = $C7
+CMD_OPEN                  = $C8
+CMD_READ                  = $CA
+CMD_WRITE                 = $CB
+CMD_CLOSE                 = $CC
+CMD_SEEK                  = $CE
+
+_CONSTANTS_=*
+}

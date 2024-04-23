@@ -1,0 +1,55 @@
+!macro INIT_MACHINE {
+         cld
+         bit   $C082
+         sta   PRIMARYCHARSET
+         sta   CLR80VID
+         sta   STOREOFF
+         sta   READMAINMEM
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
+         jsr   ROM_PR0
+         jsr   ROM_IN0
+}
+
+; X=0, Z=1 on exit
+; A clobbered
+; Y preserved
+!macro SHORT_COPY .start, .end, .target {
+         ldx   #<(.end-.start)
+-        lda   .start-1, x
+         sta   .target-1, x
+         dex
+         bne   -
+}
+
+!macro READ_ENTIRE_FILE .parm_open, .parm_read {
+         jsr   PRODOS_MLI
+         !byte CMD_OPEN
+         !word .parm_open
+         jsr   PRODOS_MLI
+         !byte CMD_READ
+         !word .parm_read
+         jsr   PRODOS_MLI
+         !byte CMD_CLOSE
+         !word +
+         !byte $2C
++        !byte 1
+         !byte 0
+}
+
+!macro COPY_TO_AUXMEM .mainstart, .mainend, .auxstart {
+         lda   #<.mainstart
+         sta   $3C
+         lda   #>.mainstart
+         sta   $3D
+         lda   #<.mainend
+         sta   $3E
+         lda   #>.mainend
+         sta   $3F
+         lda   #<.auxstart
+         sta   $42
+         lda   #>.auxstart
+         sta   $43
+         sec
+         jsr   AUXMOVE
+}

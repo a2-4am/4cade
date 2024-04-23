@@ -1,0 +1,29 @@
+!cpu 6502
+*=$8000
+!to "build/ANTIAIR#068000",plain
+
+         !src  "../common/src/constants.a"
+         !src  "../common/src/macros.a"
+
+         jmp   start
+
+compressed_data
+         !bin "src/OBJ.X"
+FORWARD_DECRUNCHING = 1
+SHOW_PROGRESS_DURING_DECRUNCH = 0
+         !src  "../common/src/exodecrunch.a"
+
+start
+         +INIT_MACHINE
+!if * != $955A {
+  !serious "Adjust prelaunch to patch JSR at ", *, " to JMP"
+}
+         jsr   decrunch              ; compressed data contains target address
+         jmp   $4000
+
+get_crunched_byte
+         lda   compressed_data
+         inc   get_crunched_byte+1
+         bne   +
+         inc   get_crunched_byte+2
++        rts

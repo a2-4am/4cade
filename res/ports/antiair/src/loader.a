@@ -1,0 +1,25 @@
+!cpu 6502
+*=$2000
+!to "build/LOADER.SYSTEM#FF2000",plain
+
+         !src  "../common/src/constants.a"
+         !src  "../common/src/macros.a"
+
+         +READ_ENTIRE_FILE parm_boot_open, parm_boot_read
+         jmp   (entry)
+
+parm_boot_open
+         !byte 3
+         !word filename
+         !word $2100
+         !byte 0
+
+parm_boot_read
+         !byte 4
+         !byte 1
+entry    !word $8000
+         !word $FFFF
+         !word 0
+
+filename
+         !text 7,"ANTIAIR"
