@@ -5,6 +5,7 @@
 ### Games added in v5.2
 
 - AntiAir
+- Hopman
 - Yewdow
 
 ## Revision 5.1 / serial number 20240216

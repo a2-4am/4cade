@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2024 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/HOPMAN",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $98D6
+         jsr   $8000      ; decompress
+         +DISABLE_ACCEL
+         jmp   $98D9
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
