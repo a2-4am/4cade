@@ -1,0 +1,52 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SUDOKU",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+         lda   $BF0B
+         sta   nohelp + 1
+         lda   $BF0C
+         sta   nohelp + 2
+         lda   #<helper
+         sta   $BF0B
+         lda   #>helper
+         sta   $BF0C
+         +DISABLE_ACCEL
+         jmp   $4000
+
+helper
+         lda   $9F4C
+         cmp   #$CB       ; write file
+         bne   nohelp
+         lda   $A50D      ; write address (low)
+         cmp   #$EE       ; erasing save
+         beq   nohelp
+         cmp   #$F3       ; writing "valid"
+         beq   nocall     ; ignore it
+         cmp   #$F7       ; writing options
+         beq   nohelp
+         inc   $A053      ; mark save valid
+         dec   $A50D      ; write address (low)
+         inc   $A50F      ; increase size
+
+nohelp
+         jmp   $FDFD      ; SMC
+
+nocall
+         plp
+         pla
+         pla
+         clc
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
