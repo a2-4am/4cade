@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by 4am
+;(c) 2024 by 4am, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ANTIAIR",plain
@@ -11,6 +11,12 @@
          lda   #$4C
          sta   $955A
          jsr   $8000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $4C76      ; patch - don't decrease lives
++
          +DISABLE_ACCEL
          jmp   $955D
 

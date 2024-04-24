@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by 4am
+;(c) 2024 by 4amm, qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HOPMAN",plain
@@ -11,6 +11,13 @@
          lda   #$4C
          sta   $98D6
          jsr   $8000      ; decompress
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $454B      ; patch - don't decrease time
+         sta   $4562      ; patch - don't decrease lives
++
          +DISABLE_ACCEL
          jmp   $98D9
 
