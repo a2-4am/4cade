@@ -1,0 +1,38 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ROCKY.HORROR",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $41A6
+         jsr   $4000      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         ldx   #callback_e - callback
+-        lda   callback - 1, x
+         sta   $f0 - 1, x
+         dex
+         bne   -
+         lda   #$f0
+         sta   $8A0
+         stx   $8A1
++        +READ_ROM_NO_WRITE
+         jmp   $800
+
+callback
+         lda   #$2c
+         sta   $D79B      ; patch - don't decrease time
+         dec   $D79F      ; patch - don't increase time
+         jmp   $FAF
+callback_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
