@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/PICK.N.PILE",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $83A
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+
+         jmp   $803F
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
