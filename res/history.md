@@ -6,6 +6,7 @@
 
 - AntiAir
 - Hopman
+- The Rocky Horror Show
 - Yewdow
 
 ## Revision 5.1 / serial number 20240216
