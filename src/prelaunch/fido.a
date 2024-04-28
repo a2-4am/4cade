@@ -1,0 +1,35 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/FIDO",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         lda   #$60
+         sta   $8808
+         jsr   $3FF5      ; decompress
+         +ENABLE_ACCEL
+         lda   #>(callback - 1)
+         sta   $8821
+         lda   #<(callback - 1)
+         sta   $8824
+         lda   #$19
+         jmp   $880A
+
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $B23       ; patch - don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $DD3
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
