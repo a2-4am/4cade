@@ -5,6 +5,7 @@
 ### Games added in v5.2
 
 - AntiAir
+- Fido
 - Hopman
 - Pick 'n' Pile
 - The Rocky Horror Show
