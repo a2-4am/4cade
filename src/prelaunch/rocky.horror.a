@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         inc   $3F4       ; force reboot
          lda   #$60
          sta   $41A6
          jsr   $4000      ; decompress
