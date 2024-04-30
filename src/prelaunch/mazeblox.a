@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<hook1
-         sta   $A19+1
+         sta   $A18+1
          lda   #>hook1
-         sta   $A1A+2
+         sta   $A18+2
          jmp   $800       ; decompress1
 
 hook1    lda   #<hook2
