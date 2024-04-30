@@ -46,7 +46,10 @@
          sta   $3F2
          sta   $FFFC
          lda   #>reset
+         sta   $3F3
          sta   $FFFD
+         lda   #$A6
+         sta   $3F4
          lda   #$4C
          sta   $BFE5
          jmp   $404A
