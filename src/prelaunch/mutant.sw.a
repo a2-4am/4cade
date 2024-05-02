@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/MUTANT.SW",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4C98
+         jsr   $800       ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $87B6      ; patch - don't decrease lives
+         sta   $717A      ; patch - don't increase energy
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $8B7F
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
