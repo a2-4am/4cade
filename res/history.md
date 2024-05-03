@@ -7,9 +7,15 @@
 - AntiAir
 - Fido
 - Hopman
+- Mutant (Steve Waldo)
 - Pick 'n' Pile
 - The Rocky Horror Show
 - Yewdow
+
+### Enhancements & bug fixes in v5.2
+
+- Fix launch issues in Mazeblox, Pegasus II, Super Zaxxon, The Space Ark (issues [567](https://github.com/a2-4am/4cade/issues/567), [568](https://github.com/a2-4am/4cade/issues/568), [565](https://github.com/a2-4am/4cade/issues/565), [572](https://github.com/a2-4am/4cade/issues/572))
+- Fix reset issues in Rescue Raiders, Starglider (issues [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
 
 ## Revision 5.1 / serial number 20240216
 
