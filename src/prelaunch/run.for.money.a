@@ -1,0 +1,20 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/RUN.FOR.MONEY",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $897
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+
+         jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
