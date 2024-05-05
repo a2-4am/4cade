@@ -5,11 +5,14 @@
 ### Games added in v5.2
 
 - AntiAir
+- Colorix
 - Fido
 - Hopman
 - Mutant (Steve Waldo)
 - Pick 'n' Pile
+- Run For The Money
 - The Rocky Horror Show
+- Tron
 - Yewdow
 
 ### Enhancements & bug fixes in v5.2

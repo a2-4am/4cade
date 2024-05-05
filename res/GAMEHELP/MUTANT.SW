@@ -1,8 +1,6 @@
-   Eat the dots, avoid the monsters,
 
- eat the energy pods, eat the monsters,
 
- activate shields, shoot the monsters,
+   Eat the dots, shoot the monsters,
 
    don't get trapped by moving walls!
 
