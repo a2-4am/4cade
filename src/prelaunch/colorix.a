@@ -15,6 +15,8 @@
          stx   $2539
          inx
          stx   $253A      ; allow quit
+         lda   #$96
+         sta   $74        ; Basic hook
          +DISABLE_ACCEL
 
          jmp   $800
