@@ -12,7 +12,7 @@
          sta   $484D
          jsr   $4800      ; decompress
 
-         +NEW_RESET_VECTOR $110
+         +NEW_RESET_VECTOR $3E86
 
          +DISABLE_ACCEL
          jmp   $D566
