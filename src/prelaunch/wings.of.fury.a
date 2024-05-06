@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<callback
-         sta   $2129
+         sta   $212C
          lda   #>callback
-         sta   $212A
+         sta   $212D
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -21,9 +21,9 @@
          dey
          bpl   -
          iny
-         sty   $8274
+         sty   $8276
          lda   #2
-         sta   $8275
+         sta   $8277
 +
          jmp   $800       ; decompress
 
