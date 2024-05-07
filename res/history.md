@@ -11,6 +11,7 @@
 - Mutant (Steve Waldo)
 - Pick 'n' Pile
 - Run For The Money
+- SnakeBYTE Remix
 - The Rocky Horror Show
 - Tron
 - Yewdow
@@ -19,6 +20,8 @@
 
 - Fix launch issues in Mazeblox, Pegasus II, Super Zaxxon, The Space Ark (issues [567](https://github.com/a2-4am/4cade/issues/567), [568](https://github.com/a2-4am/4cade/issues/568), [565](https://github.com/a2-4am/4cade/issues/565), [572](https://github.com/a2-4am/4cade/issues/572))
 - Fix reset issues in Rescue Raiders, Starglider (issues [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
+- Fix keyboard handling in Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
+- Fix compatibility issue in H.E.R.O which assumed that a card in slot 4 of a //c must be a mouse
 
 ## Revision 5.1 / serial number 20240216
 
