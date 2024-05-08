@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/AERONAUTS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2086
+         jsr   $2000      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$a5
+         sta   $4105      ; patch - don't decrease lives
+         sta   $588B      ; patch - don't increase lives
+         sta   $5D40      ; patch - don't increase lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+
+         jmp   $4000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}

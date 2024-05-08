@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by qkumba
+;(c) 2024 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BERZAP",plain
@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #<callback1
-         sta   $871
+         sta   $879
          lda   #>callback1
-         sta   $872
+         sta   $87a
          jmp   $800       ; decompress
 
 callback1
