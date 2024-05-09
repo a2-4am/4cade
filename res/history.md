@@ -10,6 +10,7 @@
 - Fido
 - Hopman
 - Mutant (Steve Waldo)
+- Panic Button
 - Pick 'n' Pile
 - Run For The Money
 - SnakeBYTE Remix
