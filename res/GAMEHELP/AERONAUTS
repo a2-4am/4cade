@@ -1,16 +1,14 @@
 
-          destroy barracks
+       destroy barracks, trucks,
 
-               trucks
+      saucer launchers, & saucers
 
-          saucer launchers
-
-              saucers
+  avoid missiles & bullets, they hurt
 
 
-           avoid missiles
 
-            and bullets
+             joystick only
+
 
 
 Space* * * * * * * * * * * * * * * pause
