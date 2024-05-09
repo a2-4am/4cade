@@ -4,6 +4,7 @@
 
 ### Games added in v5.2
 
+- Aeronauts
 - AntiAir
 - Colorix
 - Fido
