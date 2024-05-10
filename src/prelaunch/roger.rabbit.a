@@ -64,7 +64,7 @@
          jmp   $1000
 
 @path    !byte @path_e-@path_b
-@path_b  !text "/GAME/X"  ; the 'X' is a dummy character
+@path_b  !text "/GAMR/X"  ; the 'X' is a dummy character
 @path_e
 !if * > $1C0 {
   !error "code is too large, ends at ", *
