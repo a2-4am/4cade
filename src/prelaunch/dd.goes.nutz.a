@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022, 2024 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DD.GOES.NUTZ",plain
@@ -7,6 +7,9 @@
 
          !source "src/prelaunch/common.a"
 
+         lda   #$60
+         sta   $336
+         jsr   $300
          +ENABLE_ACCEL
 
          lda   #$60
