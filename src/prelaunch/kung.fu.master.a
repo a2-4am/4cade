@@ -7,6 +7,9 @@
 
     !source "src/prelaunch/common.a"
 
+         lda   #$60
+         sta   $336
+         jsr   $300
          +ENABLE_ACCEL
          lda   #$60
          sta   $9A0
