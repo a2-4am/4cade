@@ -44,7 +44,7 @@ patch2   !byte $4C,$97,$0A
 pieman   !byte pieman_e-pieman_b
 pieman_b
 pieman_dir_b
-         !text "X/PM"
+         !text "X"
 pieman_dir_e
          !text "/PM"
 pieman_e

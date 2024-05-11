@@ -44,7 +44,7 @@ aquatron
          !byte aquatron_e-aquatron_b
 aquatron_b
 aquatron_dir_b
-         !text "X/AQUATRON"
+         !text "X"
 aquatron_dir_e
          !text "/AQUATRON"
 aquatron_e

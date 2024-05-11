@@ -42,7 +42,7 @@ patch2   !byte $4C,$00,$01
 borg     !byte borg_e-borg_b
 borg_b
 borg_dir_b
-         !text "X/BORG"
+         !text "X"
 borg_dir_e
          !text "/BORG"
 borg_e

@@ -58,7 +58,7 @@ the_goonies
          !byte the_goonies_e-the_goonies_b
 the_goonies_b
 the_goonies_dir_b
-         !text "X/THE.GOONIES"
+         !text "X"
 the_goonies_dir_e
          !text "/THE.GOONIES"
 the_goonies_e

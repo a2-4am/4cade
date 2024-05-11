@@ -39,9 +39,12 @@ callback1
          sta   $A572
          lda   #>callback2
          sta   $A573
+         ldx   #0
+         stx   $A473
+         stx   $A476
+         stx   $A47A      ; start demo immediately
          lda   #$4C
          sta   $A484
-         ldx   #0
          stx   $A485
          inx
          stx   $A486
@@ -65,8 +68,7 @@ stellar_7
          !byte stellar_7_e-stellar_7_b
 stellar_7_b
 stellar_7_dir_b
-         !text "X/STELLAR.7"
+         !text "X/STEL.DIR"
 stellar_7_dir_e
-         !text "/"
-         !text "STELLAR.7"
+         !text "/STELLAR.7"
 stellar_7_e

@@ -38,7 +38,7 @@ champ_lode
          !byte champ_lode_e-champ_lode_b
 champ_lode_b
 champ_lode_dir_b
-         !text "X/CL"
+         !text "X"
 champ_lode_dir_e
          !text "/CL"
 champ_lode_e

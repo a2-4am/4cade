@@ -158,49 +158,15 @@ PlayGameInAY
          jmp   Launch
 
 @loadFromSubdirectory
-         ; we start by placing the subdirectory name at gPathname+kGameDirectoryLen
-         ; to leave room for the GameDirectory name as the parent
-
-         lda   #kGameDirectoryLen
-         sta   gPathname
          +LD16 SAVE
-         jsr   AddToPath
+         +ST16 @p
 
-         ; attach the separator
-
-         inc   gPathname
-         lda   #'/'
-         sta   gPathname+1,x
-
-         ; then we save the length of the resulting string without the count byte
-
-         dex
-         txa
-         pha
-
-         ; then attach the game name
-
-         +LD16 SAVE
-         jsr   AddToPath
-
-         ; don't look while I do this
-         ; we "place" a string at gPathname+kGameDirectoryLen
-         ; whose length is the subdirectory name and game name
-         ; then we load it
-         ; the load sets the path to the GameDirectory
-         ; and then finds the subdirectory name and game name right after it
-         ; and attaches it to the path by overwriting the count byte
-
-         ;;sec ; carry set by AddToPath
-         lda   gPathname
-         sbc   #kGameDirectoryLen
-         sta   gPathname+kGameDirectoryLen
          jsr   LoadFile              ; load the game startup file
          !word kGameDirectory
-         !word gPathname+kGameDirectoryLen
+@p       !word $FDFD
          !word 0                     ; use file's default address
 
-         pla
+         lda   #1
          sta   ProDOS_prefix         ; set 'root' directory to the path part
                                      ; of the game startup file we just loaded
                                      ; so games can load other files without

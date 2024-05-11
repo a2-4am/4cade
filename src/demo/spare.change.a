@@ -38,7 +38,7 @@ spare_change
          !byte spare_change_e-spare_change_b
 spare_change_b
 spare_change_dir_b
-         !text "X/SPARE.CHANGE"
+         !text "X"
 spare_change_dir_e
          !text "/SPARE.CHANGE"
 spare_change_e

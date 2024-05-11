@@ -92,7 +92,7 @@ karateka
          !byte karateka_e-karateka_b
 karateka_b
 karateka_dir_b
-         !text "X/KARATEKA"
+         !text "X"
 karateka_dir_e
          !text "/KARATEKA"
 karateka_e

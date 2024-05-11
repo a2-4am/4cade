@@ -44,7 +44,7 @@
 patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
-x_b      !text "X/FIREBUG/FIREBUG"
+x_b      !text "X/FIREBUG"
 x_e
 
 !if * > $3F0 {

@@ -42,7 +42,7 @@ lode_runner
          !byte lode_runner_e-lode_runner_b
 lode_runner_b
 lode_runner_dir_b
-         !text "X/LODE.RUNNER"
+         !text "X"
 lode_runner_dir_e
          !text "/LODE.RUNNER"
 lode_runner_e

@@ -41,7 +41,7 @@ short_circuit
          !byte short_circuit_e-short_circuit_b
 short_circuit_b
 short_circuit_dir_b
-         !text "X/SHORT.CIRCUIT"
+         !text "X"
 short_circuit_dir_e
          !text "/SHORT.CIRCUIT"
 short_circuit_e

@@ -40,7 +40,7 @@ nightmare
          !byte nightmare_e-nightmare_b
 nightmare_b
 nightmare_dir_b
-         !text "X/NI"
+         !text "X"
 nightmare_dir_e
          !text "/NI"
 nightmare_e

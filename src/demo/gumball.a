@@ -68,7 +68,7 @@ patch5   !byte $4C,<callback2,>callback2
 gumball  !byte gumball_e-gumball_b
 gumball_b
 gumball_dir_b
-         !text "X/GUMBALL"
+         !text "X"
 gumball_dir_e
          !text "/GUMBALL"
 gumball_e

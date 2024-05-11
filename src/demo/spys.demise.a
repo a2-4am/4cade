@@ -38,7 +38,7 @@ sd
          !byte sd_e-sd_b
 sd_b
 sd_dir_b
-         !text "X/SD"
+         !text "X"
 sd_dir_e
          !text "/SD"
 sd_e

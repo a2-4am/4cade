@@ -55,7 +55,7 @@ patch    !byte $4C,$00,$01
 kamungas !byte kamungas_e-kamungas_b
 kamungas_b
 kamungas_dir_b
-         !text "X/BK"
+         !text "X"
 kamungas_dir_e
          !text "/BK"
 kamungas_e

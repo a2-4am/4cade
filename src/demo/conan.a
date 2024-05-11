@@ -59,7 +59,7 @@ conan
          !byte conan_e-conan_b
 conan_b
 conan_dir_b
-         !text "X/CONAN"
+         !text "X"
 conan_dir_e
          !text "/CONAN"
 conan_e

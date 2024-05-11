@@ -51,7 +51,7 @@ jungle_hunt
          !byte jungle_hunt_e-jungle_hunt_b
 jungle_hunt_b
 jungle_hunt_dir_b
-         !text "X/JUNGLE.HUNT"
+         !text "X"
 jungle_hunt_dir_e
          !text "/JUNGLE.HUNT"
 jungle_hunt_e

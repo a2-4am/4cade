@@ -34,7 +34,7 @@ dino_eggs
          !byte dino_eggs_e-dino_eggs_b
 dino_eggs_b
 dino_eggs_dir_b
-         !text "X/DINO.EGGS"
+         !text "X"
 dino_eggs_dir_e
          !text "/DINO.EGGS"
 dino_eggs_e

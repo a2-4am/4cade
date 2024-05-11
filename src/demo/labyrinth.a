@@ -43,7 +43,7 @@ labyrinth
          !byte labyrinth_e-labyrinth_b
 labyrinth_b
 labyrinth_dir_b
-         !text "X/LABYRINTH"
+         !text "X"
 labyrinth_dir_e
          !text "/LABYRINTH"
 labyrinth_e

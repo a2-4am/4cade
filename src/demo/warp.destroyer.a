@@ -59,7 +59,7 @@ warp_destoyer
          !byte warp_destoyer_e-warp_destoyer_b
 warp_destoyer_b
 warp_destoyer_dir_b
-         !text "X/WARP.DESTROYER"
+         !text "X"
 warp_destoyer_dir_e
          !text "/WARP.DESTROYER"
 warp_destoyer_e

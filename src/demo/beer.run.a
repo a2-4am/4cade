@@ -48,7 +48,7 @@ beer_run
          !byte beer_run_e-beer_run_b
 beer_run_b
 beer_run_dir_b
-         !text "X/BEER.RUN"
+         !text "X"
 beer_run_dir_e
          !text "/BEER.RUN"
 beer_run_e

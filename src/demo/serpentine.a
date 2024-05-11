@@ -52,7 +52,7 @@ serpentine
          !byte serpentine_e-serpentine_b
 serpentine_b
 serpentine_dir_b
-         !text "X/SERPENTINE"
+         !text "X"
 serpentine_dir_e
          !text "/SERPENTINE"
 serpentine_e

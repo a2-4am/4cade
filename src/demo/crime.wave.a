@@ -31,7 +31,7 @@ crime_wave
          !byte crime_wave_e-crime_wave_b
 crime_wave_b
 crime_wave_dir_b
-         !text "X/CRIME.WAVE"
+         !text "X"
 crime_wave_dir_e
          !text "/CRIME.WAVE"
 crime_wave_e

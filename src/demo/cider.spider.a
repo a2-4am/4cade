@@ -37,7 +37,7 @@ cider_spider
          !byte cider_spider_e-cider_spider_b
 cider_spider_b
 cider_spider_dir_b
-         !text "X/AC"
+         !text "X"
 cider_spider_dir_e
          !text "/AC"
 cider_spider_e

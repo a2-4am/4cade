@@ -48,7 +48,7 @@ vindicator
          !byte vindicator_e-vindicator_b
 vindicator_b
 vindicator_dir_b
-         !text "X/VINDICATOR"
+         !text "X"
 vindicator_dir_e
          !text "/VINDICATOR"
 vindicator_e

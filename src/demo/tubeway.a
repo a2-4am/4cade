@@ -47,7 +47,7 @@
 patch    !byte $4C,$00,$01
 
 title    !byte x_e-x_b
-x_b      !text "X/TB/TB"
+x_b      !text "X/TB"
 x_e
 
 !if * > $3F0 {

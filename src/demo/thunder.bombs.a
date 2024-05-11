@@ -73,7 +73,7 @@ thunder_bombs
          !byte thunder_bombs_e-thunder_bombs_b
 thunder_bombs_b
 thunder_bombs_dir_b
-         !text "X/THUNDER.BOMBS"
+         !text "X"
 thunder_bombs_dir_e
          !text "/THUNDER.BOMBS"
 thunder_bombs_e

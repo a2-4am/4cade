@@ -53,7 +53,7 @@ sammy_lightfoot
          !byte sammy_lightfoot_e-sammy_lightfoot_b
 sammy_lightfoot_b
 sammy_lightfoot_dir_b
-         !text "X/SAMMY.LIGHTFOOT"
+         !text "X"
 sammy_lightfoot_dir_e
          !text "/SAMMY.LIGHTFOOT"
 sammy_lightfoot_e

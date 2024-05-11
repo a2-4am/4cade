@@ -38,7 +38,7 @@ patch2   !byte $4C,$00,$01
 repton   !byte repton_e-repton_b
 repton_b
 repton_dir_b
-         !text "X/REPTON"
+         !text "X"
 repton_dir_e
          !text "/REPTON"
 repton_e
