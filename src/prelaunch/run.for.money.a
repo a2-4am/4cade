@@ -11,10 +11,7 @@
          lda   #$60
          sta   $897
          jsr   $800       ; decompress
-         ldx   #0
-         stx   $43B3
-         inx
-         stx   $43B8      ; reset vector
+         inc   $43BD      ; reboot
          +DISABLE_ACCEL
 
          jmp   $4000
