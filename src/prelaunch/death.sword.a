@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
            +ENABLE_ACCEL
+           +NEW_RESET_VECTOR $300
            lda   #$8b
            sta   $bf0e      ; disable ROM mapping
            lda   #$60
