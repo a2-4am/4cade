@@ -2,7 +2,7 @@
 ;(c) 2022, 2024 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH.INDEXED/SC",plain
+!to "build/PRELAUNCH.INDEXED/SL",plain
 *=$106
 
     !source "src/prelaunch/common.a"
