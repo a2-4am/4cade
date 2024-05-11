@@ -59,11 +59,11 @@ dsk: index asmproboot asmlauncher extract
 		res/TITLE.ANIMATED \
 		res/ICONS \
 		build/FX \
-		build/PRELAUNCH; do \
+		build/PRELAUNCH \
+		build/X; do \
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>build/log; \
         done
-	$(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/X" "build/X" -C >>build/log; \
 	bin/changebootloader.sh build/"$(DISK)" build/proboothd
 
 gamesconf: preconditions md
