@@ -14,6 +14,7 @@
          ldx   #0
          stx   $2539
          inx
+         stx   $1821      ; reset vector
          stx   $253A      ; allow quit
          lda   #$96
          sta   $74        ; Basic hook
