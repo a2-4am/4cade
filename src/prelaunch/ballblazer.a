@@ -1,9 +1,12 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019, 2024 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BALLBLAZER",plain
 *=$106
+
+         lda   $4E
+         pha              ; save for later
 
     !source "src/prelaunch/common.a"
 
@@ -20,6 +23,12 @@
          lda   #1
          sta   $415       ; gets patched to LC reset vector
 
+         lda   #$A9
+         sta   $488
+         pla
+         sta   $489
+         lda   #$EA
+         sta   $48A       ; seed RNG
          jmp   $400
 
 !if * > $1C0 {
