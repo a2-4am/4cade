@@ -25,8 +25,8 @@
          jmp   $800
 
 newpath
-         !byte 20
-         !text "X/INFILTRATOR.2/GAME"
+         !byte 6
+         !text "X/GAME"
 
 reset    +READ_ROM_NO_WRITE
          jmp   $FAA6
