@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/I2",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $7863
+         jsr   $5FF8      ; decompress
+
+         lda   $C083
+         jsr   DisableAccelerator
+         lda   $C08B
+         jsr   $D000      ; title
+         jsr   $6028      ; music
+
+         lda   $C083
+         jsr   EnableAccelerator
+         lda   $C08B
+         lda   #<callback
+         sta   $7ABB
+         lda   #>callback
+         sta   $7ABC
+         jmp   $7869
+
+callback
+         jsr   DisableAccelerator
+         jsr   $7B5D      ; decompress
+         lda   #$60
+         sta   $7AC8
+         jsr   $7ABD      ; decompress
+         inc   $3F4       ; reboot
+         jmp   $7ACB
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
