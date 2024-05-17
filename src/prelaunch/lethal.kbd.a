@@ -1,0 +1,72 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/LETHAL.KBD",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         lda   #$60
+         sta   $9EA
+         jsr   $800        ; find and load "DOS"
+         lda   #<callback1
+         sta   $B748
+         lda   #>callback1
+         sta   $B749
+         jmp   $B700
+
+callback1
+         lda   #$10
+         sta   $9E52
+         lda   #1
+         sta   $9E53
+
+         lda   #<callback2
+         sta   $BD07
+         lda   #>callback2
+         sta   $BD08
+
+         +DISABLE_ACCEL
+         jmp   $9D84
+
+callback2
+         pla
+         pla
+         jsr   $BD58
+         jsr   $BD09
+         lda   $B7EC
+         cmp   #6
+         bne   ++
+         cmp   $B7ED
+         bne   +
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $9643      ; patch - don't decrease lives
+         dec   $967B      ; patch - don't increase lives
++        clc
+         rts
+
+++       cmp   #3
+         bne   +
+         lda   #<callback3
+         sta   $38
+         lda   #<callback3
+         sta   $39
++        clc
+         rts
+
+callback3
+         lda   #$81
+         sta   $38
+         lda   #$9E
+         sta   $39
+         +READ_RAM2_NO_WRITE
+         bit   MachineStatus
+         +READ_ROM_NO_WRITE
+         lda   #'E'
+         bvs   +
+         lda   #'+'
++        rts

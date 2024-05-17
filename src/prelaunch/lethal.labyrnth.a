@@ -7,50 +7,16 @@
 
     !source "src/prelaunch/common.a"
 
-         +ENABLE_ACCEL
-         +NEW_RESET_VECTOR $110
-         lda   #$60
-         sta   $9EA
-         jsr   $800        ; find and load "DOS"
-         lda   #<callback1
-         sta   $B748
-         lda   #>callback1
-         sta   $B749
-         jmp   $B700
-
-callback1
-         ldx   #$00
-         stx   $9E52
-         inx
-         stx   $9E53
-
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #<callback2
-         sta   $BD07
-         lda   #>callback2
-         sta   $BD08
-+
-         jsr   DisableAccelerator
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_AT lethal_kbd, $300
          +READ_ROM_NO_WRITE
-         jmp   $9D84
+         +NEW_RESET_VECTOR $110
+         jmp   $300
 
-callback2
-         pla
-         pla
-         jsr   $BD58
-         jsr   $BD09
-         lda   #6
-         cmp   $B7EC
-         bne   +
-         cmp   $B7ED
-         bne   +
-         dec   $9643      ; patch - don't decrease lives
-         dec   $967B      ; patch - don't increase lives
-+        clc
-         rts
+lethal_kbd
+         !byte 20
+         !text "PRELAUNCH/LETHAL.KBD"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
