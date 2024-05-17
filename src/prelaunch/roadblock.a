@@ -21,7 +21,7 @@
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 
-         jmp   $80D
+         jmp   $810
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
