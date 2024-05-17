@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2020 by 4am
+;(c) 2018-2024 by 4am
 ;
 !cpu 6502
 !to "build/LAUNCHER.SYSTEM",plain
@@ -63,12 +63,20 @@ Reenter
          stx   $3F2                  ; page 3 reset vector to ($100)
          sei
          stx   $3FE                  ; page 3 IRQ vector to ($100)
+         lda   #<Ignore
+         sta   $FFFE
          inx
          stx   $3FF
+         lda   #>Ignore
+         sta   $FFFF
          cli
          stx   $3F3
          ldx   #$A4
          stx   $3F4
+         lda   #<Reenter
+         sta   $FFFC
+         lda   #>Reenter
+         sta   $FFFD
 RestoreStackNextTime
          bne   SearchMode            ; (SMC) not an unconditional branch because code
                                      ; might change the branch target to the next opcode
