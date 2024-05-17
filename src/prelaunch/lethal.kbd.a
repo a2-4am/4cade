@@ -51,17 +51,16 @@ callback2
 
 ++       cmp   #3
          bne   +
+         sta   $39
          lda   #<callback3
          sta   $38
-         lda   #<callback3
-         sta   $39
 +        clc
          rts
 
 callback3
-         lda   #$81
+         lda   #$1B
          sta   $38
-         lda   #$9E
+         lda   #$FD
          sta   $39
          +READ_RAM2_NO_WRITE
          bit   MachineStatus
