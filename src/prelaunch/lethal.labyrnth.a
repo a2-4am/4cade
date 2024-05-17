@@ -8,6 +8,7 @@
     !source "src/prelaunch/common.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $110
          lda   #$60
          sta   $9EA
          jsr   $800        ; find and load "DOS"
