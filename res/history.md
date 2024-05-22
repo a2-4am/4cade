@@ -24,6 +24,7 @@
 - Fix reset issues in Rescue Raiders, Starglider (issues [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
 - Fix keyboard handling in Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
 - Fix compatibility issue in H.E.R.O which assumed that a card in slot 4 of a //c must be a mouse
+- Renamed "A City Dies" to "Night Falls" to match original packaging
 
 ## Revision 5.1 / serial number 20240216
 
