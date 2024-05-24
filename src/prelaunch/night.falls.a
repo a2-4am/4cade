@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/NIGHT.FALLS",plain
+*=$106
+
+    !source "src/prelaunch/common.a"
+
+         jmp   ++
+
+callback2
+         pha
+         lda   $6D8
+         cmp   #$C3       ; the (C) message on exit
+         bne   +
+         jmp   $280       ; end
++        pla
+         jmp   $FDF0
+
+++
+         +ENABLE_ACCEL
+
+         ldx   #5
+-        lda   $100,x
+         sta   $280,x
+         dex
+         bpl   -
+
+         lda   #<callback1
+         sta   $49F9
+         lda   #>callback1
+         sta   $49FE
+         jmp   $4800      ; decompress
+
+callback1
+         lda   #$8E
+         sta   $A35F
+         lda   #<callback2
+         sta   $36
+         lda   #>callback2
+         sta   $37
+         jsr   $8E55
+
+         +DISABLE_ACCEL
+
+         rts
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
