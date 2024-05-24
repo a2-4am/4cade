@@ -6,5 +6,3 @@
 HORIZON.V=C
 HORIZON.V2=A
 HORIZON.V=A
-
-[eof]

@@ -75,9 +75,6 @@ cat res/GAMES.CONF |
             echo "ARTWORK.SHR/POP.END=C" >> /tmp/g
         fi
 
-        # add eof
-        echo -e "\n[eof]" >> /tmp/g
-
         cat /tmp/g > res/ATTRACT/"$game"
 
         # clean up

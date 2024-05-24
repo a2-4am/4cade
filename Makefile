@@ -264,7 +264,7 @@ cache: preconditions md gamesconf
 	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache00.a' \
 	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache01.a' \
 	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache10.a' \
-	    'awk -F= '"'"'!/^$$|^#|^\[/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache11.a'
+	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache11.a'
 	$(PARALLEL) ::: \
 	    '$(ACME) -o res/CACHE00.IDX build/cache00.a' \
 	    '$(ACME) -o res/CACHE01.IDX build/cache01.a' \

@@ -4,5 +4,3 @@
 #
 
 FIRE.AND.ICE=A
-
-[eof]

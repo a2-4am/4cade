@@ -4,5 +4,3 @@
 #
 
 APPLE.ZAP=A
-
-[eof]
