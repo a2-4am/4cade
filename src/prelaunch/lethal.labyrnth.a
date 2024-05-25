@@ -15,8 +15,7 @@
          jmp   $300
 
 lethal_kbd
-         !byte 20
-         !text "PRELAUNCH/LETHAL.KBD"
+         +PSTRING "PRELAUNCH/LETHAL.KBD"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -14,9 +14,7 @@
          jmp   $250
 
 space_spiker
-         !byte x_e-x_b
-x_b      !text "PRELAUNCH/SPIKES.CHEAT"
-x_e
+         +PSTRING "PRELAUNCH/SPIKES.CHEAT"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

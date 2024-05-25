@@ -14,10 +14,7 @@
          jmp   $300
 
 goodnight_cheat
-         !byte goodnight_cheat_e-goodnight_cheat_b
-goodnight_cheat_b
-         !text "PRELAUNCH/CG.CHEAT"
-goodnight_cheat_e
+         +PSTRING "PRELAUNCH/CG.CHEAT"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -37,8 +37,7 @@
          jmp   $2000
 
 flapple_mac
-         !byte 21
-         !text "PRELAUNCH/FLAPPLE.MAC"
+         +PSTRING "PRELAUNCH/FLAPPLE.MAC"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

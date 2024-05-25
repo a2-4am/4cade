@@ -34,8 +34,7 @@ callback2
          jmp   $200
 
 berzap_mb
-         !byte 19
-         !text "PRELAUNCH/BERZAP.MB"
+         +PSTRING "PRELAUNCH/BERZAP.MB"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

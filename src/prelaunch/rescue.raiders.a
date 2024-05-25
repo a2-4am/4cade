@@ -14,8 +14,7 @@
          jmp   $300
 
 rraiders_mb
-         !byte 25
-         !text "PRELAUNCH/RESQ.RAIDERS.MB"
+         +PSTRING "PRELAUNCH/RESQ.RAIDERS.MB"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

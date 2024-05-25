@@ -14,8 +14,7 @@
          jmp   $200
 
 kamungas_mb
-         !byte 21
-         !text "PRELAUNCH/KAMUNGAS.MB"
+         +PSTRING "PRELAUNCH/KAMUNGAS.MB"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -15,4 +15,4 @@ Start
          +FX_PRECOMPUTED_3BIT_DITHER Coordinates3Bit, EndCoordinates3Bit
 
 CoordinatesFile
-         !text 9,"BOLT.DATA"
+         +PSTRING "BOLT.DATA"

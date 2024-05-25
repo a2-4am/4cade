@@ -14,10 +14,7 @@
          jmp   $200
 
 cavrn_cheat
-         !byte cavrn_cheat_e-cavrn_cheat_b
-cavrn_cheat_b
-         !text "PRELAUNCH/CAVRN.CHEAT"
-cavrn_cheat_e
+         +PSTRING "PRELAUNCH/CAVRN.CHEAT"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

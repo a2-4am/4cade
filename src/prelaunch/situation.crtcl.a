@@ -21,10 +21,7 @@
          jmp   $800      ; decompress
 
 sitcrit_cheat
-         !byte sitcrit_cheat_e-sitcrit_cheat_b
-sitcrit_cheat_b
-         !text "PRELAUNCH/SITCRIT.CHEAT"
-sitcrit_cheat_e
+         +PSTRING "PRELAUNCH/SITCRIT.CHEAT"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

@@ -18,8 +18,7 @@
          jmp   $200
 
 flak_mb
-         !byte 17
-         !text "PRELAUNCH/FLAK.MB"
+         +PSTRING "PRELAUNCH/FLAK.MB"
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
