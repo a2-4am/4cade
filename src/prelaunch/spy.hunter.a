@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/SPY.HUNTER",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
          lda   #<callback
          sta   $4013

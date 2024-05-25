@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/SS3",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          +LC_REBOOT

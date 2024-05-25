@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/APPLE.INVADER",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          lda   $7fe
          pha

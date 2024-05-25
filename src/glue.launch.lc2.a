@@ -19,9 +19,50 @@ LaunchInternal
          stx   RestoreStackNextTime + 1
                                      ; tell |Reenter| to restore the stack and stack pointer
 
+         ldx   #(PrelaunchInitInternal_e-PrelaunchInitInternal+1)
+-        lda   PrelaunchInitInternal-1, x
+         sta   PrelaunchInit-1, x
+         dex
+         bne   -
+         ;X=0
          txa
          ldy   #$18
 -        sta   $bf57,y
          dey
          bne   -
-         jmp   $106                  ; jump to pre-launch code
+         jmp   PrelaunchInit
+
+PrelaunchInitInternal
+!pseudopc PrelaunchInit {
+         ldx   #RNDSEED-1            ; wipe lower part of zero page
+         txa
+-        sta   $00,x
+         dex
+         bpl   -
+
+         lda   #$65                  ; Initialize 'random' seed. These are
+         sta   RNDSEED               ; arbitrary values. Some games like Pooyan
+         lda   #$02                  ; require these to be non-zero. Ask me
+         sta   RNDSEED+1             ; how long that one took to debug.
+
+         +READ_ROM_NO_WRITE
+
+         jsr   ROM_IN0               ; Initialize machine like a cold boot.
+         jsr   ROM_PR0               ; Many games assume a 'clean slate' and
+         jsr   ROM_NORMAL            ; rely on zero page values set by these
+         sta   STOREOFF              ; ROM routines,
+         sta   READMAINMEM           ; e.g. Wavy Navy just prints out text via
+         sta   WRITEMAINMEM          ; $FDED and expects it to work. Having it
+         sta   CLR80VID              ; print all null characters is amusing, in
+         sta   PRIMARYCHARSET        ; a quiet way, but not really helpful.
+         jsr   ROM_TEXT
+         jsr   ROM_HOME
+
+         bit   CLEARKBD
+         sei
+         bvc   $106                  ; unconditional jump to game-specific pre-launch code
+!if * != $100 {
+         !serious "adjust PrelaunchInit to ",PrelaunchInit+$100-*
+}
+}
+PrelaunchInitInternal_e

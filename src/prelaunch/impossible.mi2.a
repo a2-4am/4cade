@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/I2",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
 

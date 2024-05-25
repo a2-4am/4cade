@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/STARBLASTER",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          ;+ENABLE_ACCEL   ; can't - shows title right away
          lda   #$60       ; hook

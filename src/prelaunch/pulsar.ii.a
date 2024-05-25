@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/PULSAR.II",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
 callback0
          +ENABLE_ACCEL

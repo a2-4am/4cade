@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/POLLYWOG",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +USES_TEXT_PAGE_2
          +ENABLE_ACCEL

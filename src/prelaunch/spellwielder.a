@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/SPELLWIELDER",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED

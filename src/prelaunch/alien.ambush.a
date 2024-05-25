@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/ALIEN.AMBUSH",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle

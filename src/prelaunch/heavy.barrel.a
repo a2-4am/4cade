@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/HEAVY.BARREL",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          lda   #$60
          sta   $33C

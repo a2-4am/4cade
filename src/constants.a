@@ -237,5 +237,7 @@ ldrhi2         = $65                 ; constant
 
 ; Columns and Dangerous Dave also call (de)accelerator functions directly
 
+PrelaunchInit  = $C9
+
 _CONSTANTS_=*
 }

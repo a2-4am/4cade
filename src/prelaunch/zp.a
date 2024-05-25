@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/ZP",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
          +NEW_RESET_VECTOR $180
 

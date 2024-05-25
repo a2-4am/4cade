@@ -7,7 +7,7 @@
 
 my_vbl   
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +READ_RAM1_NO_WRITE
          lda   WaitForVBL

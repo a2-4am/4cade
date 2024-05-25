@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/BLACK.MAGIC",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
                           ; acceleration has problems with Fastchip
                           ; let's remove it

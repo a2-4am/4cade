@@ -19,7 +19,7 @@ cheat
 +        rts
 
 ++
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          dec   $11a6

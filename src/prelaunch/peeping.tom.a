@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/PEEPING.TOM",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          ;+ENABLE_ACCEL   ; shows title right away
 

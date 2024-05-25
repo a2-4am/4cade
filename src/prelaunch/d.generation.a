@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/DG",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          inc   $3F4       ; force reboot

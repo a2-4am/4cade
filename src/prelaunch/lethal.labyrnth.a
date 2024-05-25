@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/LL",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator

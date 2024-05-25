@@ -5,14 +5,14 @@
 !to "build/PRELAUNCH.INDEXED/A.E",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
          +ENABLE_ACCEL
          lda   #$60
          sta   $4CFC
          sta   $4D23
          bne   +
-         !fill $12
+*=$15A
 +        jsr   $BD5       ; decompress title
          +DISABLE_ACCEL
          jsr   $800

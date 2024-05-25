@@ -5,8 +5,6 @@
 !to "build/DEMO/KARATEKA#060200",plain
 *=$200
 
-    !source "src/prelaunch/common.a"
-
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 

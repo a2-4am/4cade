@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/UD",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
          lda   #$03       ; reset vector to $103
          sta   $2D4E

@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/MD",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +USES_TEXT_PAGE_2
          inc   $3F4       ; reboot on reset

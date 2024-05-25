@@ -28,7 +28,7 @@ callback
          jmp   $8974
 
 ++
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          lda   #<callback

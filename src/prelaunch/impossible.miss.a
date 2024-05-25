@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/I1",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
                           ; reboot on reset during title
          +READ_RAM2_WRITE_RAM2

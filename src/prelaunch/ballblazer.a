@@ -8,7 +8,7 @@
          lda   $4E
          pha              ; save for later
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          lda   #$60

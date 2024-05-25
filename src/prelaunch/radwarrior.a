@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/RADWARRIOR",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +RESET_VECTOR $FAA6
          +GET_MACHINE_STATUS

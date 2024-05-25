@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/SL",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          lda   #$60
          sta   $336

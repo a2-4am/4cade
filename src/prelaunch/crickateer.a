@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/CRICKATEER",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
 reset
          +ENABLE_ACCEL

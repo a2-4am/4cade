@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/LADY.TUT",plain
 *=$106
 
-         !source "src/prelaunch/common.a"
+         !source "src/macros.a"
 
          ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
 -        lda   patch,x

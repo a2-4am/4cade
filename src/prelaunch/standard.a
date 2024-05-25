@@ -7,15 +7,7 @@
 
          !source "src/constants.a"
 
-         lda   ldrhi2                ; set up game entry point in stack page
-         pha
-         lda   ldrlo2                ; last ProRWTS load address
-         pha
-
-         !source "src/prelaunch/common.a"
-
-         php
-         rti                         ; Jump to game entry point via stack pop.
+         jmp   (ldrlo2)              ; last ProRWTS load address
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

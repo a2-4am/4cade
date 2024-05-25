@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/INFILTRATOR",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +READ_RAM1_WRITE_RAM1
          +LC_REBOOT

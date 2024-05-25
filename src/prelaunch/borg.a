@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/BORG",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          ;+ENABLE_ACCEL   ; can't because of animation
          lda   #$60

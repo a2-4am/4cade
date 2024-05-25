@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/DANGEROUS.DAVE",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          ; the game calls the Applesoft RND function in ROM
          ; so we need to copy the seed into ZP, otherwise it

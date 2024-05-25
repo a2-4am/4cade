@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/TUNNEL.TERROR",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          lda   #1        ; reset vector fix
          sta   $6E13     ; to $3F3

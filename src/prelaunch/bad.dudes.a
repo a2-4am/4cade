@@ -19,7 +19,7 @@ cheat
 +        rts
 
 ++
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          lda   #$60
          sta   $336

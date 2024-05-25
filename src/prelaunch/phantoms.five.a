@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/PHANTOMS.FIVE",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +NEW_RESET_VECTOR $340
          +GET_MACHINE_STATUS

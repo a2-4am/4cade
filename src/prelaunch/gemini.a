@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/GEMINI",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          +ENABLE_ACCEL
          lda   #$60

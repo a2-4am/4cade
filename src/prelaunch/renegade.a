@@ -5,7 +5,7 @@
 !to "build/PRELAUNCH.INDEXED/RENEGADE",plain
 *=$106
 
-    !source "src/prelaunch/common.a"
+    !source "src/macros.a"
 
          inc   $3F4       ; force reboot
          +GET_MACHINE_STATUS
