@@ -293,32 +293,23 @@ NOIRQ    rti
          !src  "src/4cade.version.a"
 
 Loading64K
-         !byte 3
-         !text "64K"
+         +PSTRING "64K"
 Loading128K
-         !byte 4
-         !text "128K"
+         +PSTRING "128K"
 LoadingIIgs
-         !byte 4
-         !text "IIgs"
+         +PSTRING "IIgs"
 LoadingJoystick
-         !byte 9
-         !text $8D,"joystick"
+         +PSTRING "\rjoystick"
 LoadingVidHD
-         !byte 6
-         !text $8D,"VidHD"
+         +PSTRING "\rVidHD"
 LoadingMockingboard
-         !byte 22
-         !text $8D,"Mockingboard in slot "
+         +PSTRING "\rMockingboard in slot "
 LoadingMockingboardStereo
-         !byte 7
-         !text $8D,"Stereo"
+         +PSTRING "\rStereo"
 LoadingMockingboardMono
-         !byte 5
-         !text $8D,"Mono"
+         +PSTRING "\rMono"
 LoadingMockingboardSpeech
-         !byte 16
-         !text "...and it talks!"
+         +PSTRING "...and it talks!"
 
 !ifndef RELEASE {
 PrintAsDecimal
