@@ -59,6 +59,5 @@ copymasks
          !byte %10000001
          !byte %10000000
 
-         !source "src/wait.a"
          +HGR_COPY_MASK_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES

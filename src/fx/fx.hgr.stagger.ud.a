@@ -41,5 +41,4 @@ row2 = $ff
          bpl   @loop1
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES

@@ -41,5 +41,4 @@ row = $FF
          bpl   @outerloop
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

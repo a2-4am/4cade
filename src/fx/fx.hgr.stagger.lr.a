@@ -41,5 +41,4 @@ col2 = $ff
          bpl   @outerloop
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_HALF_BLOCK_COPY_ROUTINES

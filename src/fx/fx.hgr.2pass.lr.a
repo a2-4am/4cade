@@ -59,5 +59,4 @@ row = $FF
          bne   @outerloop2
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

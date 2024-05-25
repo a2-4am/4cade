@@ -104,5 +104,3 @@ copymask_even
          !byte %11010101
 copymask_odd
          !byte %10101010
-
-         !source "src/wait.a"

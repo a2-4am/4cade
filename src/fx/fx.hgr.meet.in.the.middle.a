@@ -94,5 +94,4 @@ copymasks2
          !byte %11100000
          !byte %11000000
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

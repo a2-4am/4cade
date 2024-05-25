@@ -158,5 +158,4 @@ masks
          !byte %11111111
          !byte %11111111
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

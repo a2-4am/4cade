@@ -53,7 +53,5 @@ dst      sta   $FDFD ,y              ; SMC
          lda   <startx
          beq   loop
 exit     rts
-
-         !source "src/wait.a"
 }
 end

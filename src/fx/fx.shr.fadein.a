@@ -183,5 +183,3 @@ copy2    lda   $4500, y              ; SMC
          dex
          bpl   copyloop
 exit     jmp   UnwaitForVBL
-
-         !source "src/wait.a"

@@ -72,8 +72,6 @@ nextcolumn
          bne   frameloop
 exit     rts
 
-         !source "src/wait.a"
-
 initial_rowcounts
          !byte $01,$01,$00,$00,$FF,$FF,$FE,$FE,$FD,$FD
          !byte $FC,$FC,$FB,$FB,$FA,$FA,$F9,$F9,$F8,$F8

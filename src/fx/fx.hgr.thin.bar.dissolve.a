@@ -62,7 +62,6 @@ dst  = $26
          bne   @loop
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES
 
 mask1    !byte %10110011

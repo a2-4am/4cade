@@ -65,5 +65,4 @@ mask4    !byte %10011001
          !byte %10110011
          !byte %11100110
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

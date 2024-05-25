@@ -141,7 +141,6 @@
          !byte $05, $AF, $A5, $05, $AF, $05, $AF, $FA, $50, $FA, $50, $5A, $50, $5A, $F0, $5A
          !byte $F0, $0F, $A5, $0F, $A5, $05, $05, $AF, $05, $AF, $06, $90, $FA, $50, $FA, $50
 
-         !source "src/wait.a"
          +HGR_WHITE_ROUTINES
          +HGR_BLOCK_COPY_ROUTINES
 !if * and 1 {

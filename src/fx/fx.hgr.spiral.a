@@ -77,5 +77,4 @@
          bne   @outerloop            ; always branches
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_BLOCK_COPY_ROUTINES

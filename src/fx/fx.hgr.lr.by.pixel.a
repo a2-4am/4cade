@@ -111,5 +111,4 @@ clearmasks
          !byte $80,$81,$83,$87,$8F,$9F,$BF
 copymasks
          !byte $FF,$BF,$9F,$8F,$87,$83,$81
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

@@ -122,6 +122,5 @@ row2 = $FF
          jmp   @outerloop
 @exit    jmp   UnwaitForVBL
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES
          +HGR_WHITE_ROUTINES

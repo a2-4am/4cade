@@ -97,5 +97,4 @@ CopyLine
          bpl   -
          rts
 
-         !source "src/wait.a"
          +HGR_CALC_ROUTINES

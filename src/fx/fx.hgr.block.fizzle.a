@@ -33,5 +33,4 @@
 +        bne   @loop2
 @exit    rts
 
-         !source "src/wait.a"
          +HGR_BLOCK_COPY_ROUTINES

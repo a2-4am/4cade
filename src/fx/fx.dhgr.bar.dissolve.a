@@ -72,7 +72,5 @@ exit     rts
 toaux    sta   $C003
          sta   $C005
          rts
-
-         !source "src/wait.a"
 }
 end

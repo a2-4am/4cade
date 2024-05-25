@@ -127,7 +127,6 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/glue.decompress.a"
          !source "src/textrank.a"
          !source "src/okvs.a"
-         !source "src/wait.a"
 
          ; add new files above here
          !source "src/hw.vbl.a"
@@ -156,6 +155,21 @@ SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
          !source "src/prodos.path.a" ; paths end up on the same page
+
+; WaitForKeyWithTimeout (label is in constants.a)
+; in:    A = timeout length (like standard $FCA8 wait routine)
+; out:   A clobbered
+;        X/Y preserved
+         sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         bit   $C000
+         bmi   @exit
+         sbc   #1
+         bne   @wait1
+@exit    rts
 
 ; iLoadFXDATA (label is in constants.a)
          jmp   LoadFXDATA            ; no direct calling - target can move
