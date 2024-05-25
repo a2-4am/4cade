@@ -3,9 +3,9 @@
 
              joystick moves
 
- button 0 fires * 1 for disruptor bomb
+button 0 to fire, button 1 for disruptor
 
-          Shoot          Move
+          shoot          move
 
             E              I
           S   F          J   L
@@ -13,7 +13,7 @@
 
         Space for disruptor bomb
 
-Return (in menu) * * * keyboard/joystick
+Return (in menu) * * keyboard / joystick
 
 Arrows (in menu) * * * * * *select level
 

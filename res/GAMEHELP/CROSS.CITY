@@ -4,21 +4,21 @@
      Collect red tanks to shoot cars
 
 
-      I or button 0+up: large jump
+    I or button 0+up for large jump
 
-        K or button 0: small jump
+      K or button 0 for small jump
 
             J < keyboard > L
 
-        space or button 1: fire
+       space or button 1 to fire
 
 
-Ctrl-K* * * * * * * * * * * * * keyboard
+Ctrl-K * * * * * * * * * * * * *keyboard
 
-Ctrl-J* * * * * * * * * * * * * joystick
+Ctrl-J * * * * * * * * * * * * *joystick
 
-Ctrl-S* * * * * * * * * * * toggle sound
+Ctrl-S * * * * * * * * * * * * * * sound
 
-Ctrl-R* * * * * * * * * * * restart game
+Ctrl-R * * * * * * * * * * *restart game
 
 Esc* * * * * * * * * * * * * * * * pause

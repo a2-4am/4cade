@@ -1,16 +1,19 @@
+
+
+
            Rescue the princess
 
         ;                     A
-move  <   >  move     shoot S   D  shoot
+move  <   >  move    shoot  S   D  shoot
         /                     Z
 
 
 Choose customised keyboard for full list
 
-Space * * * change size (get item first)
+Space* * * *change size (get item first)
 
-ESC* * * * * * * * * * * * * * * * pause
+Esc* * * * * * * * * * * * * * * * pause
 
 Q* * * * * * * * * * * * * * * * * sound
 
-T * * * * * * * * * * * * * time / score
+T* * * * * * * * * * * * *  time / score

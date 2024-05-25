@@ -11,14 +11,14 @@
 
 Q* * * * * * * * * * * * * * * * * *quit
 
-B * * * * * * * * * * * * * * cycle bird
+B* * * * * * * * * * * * * * *cycle bird
 
-T * * * * * * * * * * * * * *view target
+T* * * * * * * * * * * * * * view target
 
-S * * * * * * * * * * * * * * * * *sound
+S* * * * * * * * * * * * * * * * * sound
 
-R * * * * * * * * * * * * * replay level
+R* * * * * * * * * * * * * *replay level
 
-L * * * * * * * * * * * * * * * level up
+L* * * * * * * * * * * * * * * *level up
 
-J * * * * * * * * * * * * * * level down
+J* * * * * * * * * * * * * * *level down

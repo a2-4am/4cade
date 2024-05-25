@@ -12,6 +12,6 @@
            move  <   >  move
 
 
-S * * * * * * * * * * * * * toggle sound
+S* * * * * * * * * * * * * * * * * sound
 
 Esc* * * * * * * * * * * * * * * * start

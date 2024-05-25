@@ -3,22 +3,22 @@
          Land on base to refuel
 
 
-J * start joystick   K * *start keyboard
+J* *start joystick   K * *start keyboard
 
-< * * *rotate left   > * * *rotate right
+<* * * rotate left   > * * *rotate right
 
-A * * * * * thrust   Space * * * * *fire
-
-
-X * * * smart bomb   / * * * * * * *warp
-
-Z * * *auto thrust   C * * * * auto fire
-
-P * * * * left 180   Return* * right 180
+A* * * * * *thrust   Space * * * * *fire
 
 
-Ctrl-S* * * *sound   Ctrl-R* * * restart
+X* * * *smart bomb   / * * * * * * *warp
 
-Escape* * * *pause   F * *toggle joy 1/2
+Z* * * auto thrust   C * * * * auto fire
 
-H *flip joy H axis   V * flip joy V axis
+P* * * * *left 180   Return* * right 180
+
+
+Ctrl-S * * * sound   Ctrl-R* * * restart
+
+Esc* * * * * pause   F * *toggle joy 1/2
+
+H* flip joy H axis   V * flip joy V axis
