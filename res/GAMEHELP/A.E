@@ -21,4 +21,3 @@ Ctrl-R * * * * * * * * * * * * * restart
 
 
          (space bar skips intro)
-[eof]

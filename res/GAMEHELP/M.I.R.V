@@ -15,4 +15,3 @@
 S * * * * * * * * * * * * * toggle sound
 
 Esc* * * * * * * * * * * * * * * * start
-[eof]
