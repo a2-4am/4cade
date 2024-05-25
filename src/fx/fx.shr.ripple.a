@@ -32,5 +32,4 @@ endzp
 }
 
 CoordinatesFile
-         !byte 18
-         !text "FX/SHR.RIPPLE.DATA"
+         +PSTRING "SHR.RIPPLE.DATA"

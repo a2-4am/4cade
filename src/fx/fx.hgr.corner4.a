@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_1BIT Coordinates1Bit
 
 CoordinatesFile
-         !byte 15
-         !text "FX/CORNER4.DATA"
+         +PSTRING "CORNER4.DATA"

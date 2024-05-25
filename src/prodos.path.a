@@ -88,6 +88,9 @@ kDFXIndexRecord
 kSFXIndexRecord
          !source "src/index/sfx.idx.a"
 
+kFXDataIndexRecord
+         !source "src/index/fxdata.idx.a"
+
 kGameHelpIndexRecord
          !source "src/index/gamehelp.idx.a"
 

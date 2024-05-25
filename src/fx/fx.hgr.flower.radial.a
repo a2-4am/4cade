@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_3BIT Coordinates3Bit
 
 CoordinatesFile
-         !byte 18
-         !text "FX/FLOWER.RAD.DATA"
+         +PSTRING "FLOWER.RAD.DATA"

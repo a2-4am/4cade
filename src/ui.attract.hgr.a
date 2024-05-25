@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2021 by 4am & qkumba
+;(c) 2018-2024 by 4am & qkumba
 ;
 ; HGR title and action slideshows
 ;
@@ -7,6 +7,7 @@
 ; - HGRTitleSlideshow
 ; - HGRActionSlideshow
 ; - HGRSingle
+; - LoadFXDATA
 ;
 
 ;------------------------------------------------------------------------------
@@ -53,6 +54,38 @@ HGRSingle
          jsr   DecompressHGR
          jsr   LoadHGRTransition     ; load transition effect code at $6000
          jmp   ExecuteTransitionAt6000AndWait
+
+;------------------------------------------------------------------------------
+; LoadFXDATA
+; called indirectly (via iLoadFXDATA) by graphic effects modules
+; to load large datafiles from the FXDATA index in TOTAL.DATA
+
+; in:    A/Y contains address of filename
+;        X = high byte of load address
+; out:   all registers and flags clobbered
+;------------------------------------------------------------------------------
+LoadFXDATA
+         +ST16 @filename
+         stx   @okvsAddress+1
+         stx   @dataAddress+1
+
+         jsr   LoadIndexedFile       ; load FXDATA list
+@okvsAddress
+         !word $FD00                 ; SMC high byte
+         !word kFXDataIndexRecord
+
+         jsr   okvs_find             ; find index record of this file in
+         !word @okvsAddress          ; FXDATA list, by filename (passed in)
+@filename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load actual data file
+@dataAddress
+         !word $FD00                 ; SMC high byte
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+         rts
 
 ;------------------------------------------------------------------------------
 ; LoadHGRTransition [private]

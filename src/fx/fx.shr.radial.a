@@ -122,5 +122,4 @@ endzp
 }
 
 CoordinatesFile
-         !byte 18
-         !text "FX/SHR.RADIAL.DATA"
+         +PSTRING "SHR.RADIAL.DATA"

@@ -124,9 +124,11 @@ InitOnce
          bit   .Start
          lda   #$4C
          sta   InitOnce
-         +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT .CoordinatesFile, Coordinates3Bit
-         +READ_RAM1_WRITE_RAM1
+
+         +LDADDR .CoordinatesFile
+         ldx   #>Coordinates3Bit
+         jsr   iLoadFXDATA
+
          sec
          ror   Coordinates3Bit + $5000
 }

@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_1BIT_DHGR_DITHER Coordinates1Bit, EndCoordinates1Bit
 
 CoordinatesFile
-         !byte 17
-         !text "FX/SNOWFLAKE.DATA"
+         +PSTRING "SNOWFLAKE.DATA"

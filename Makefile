@@ -43,7 +43,6 @@ dsk: index asmproboot asmlauncher extract
 # create _FileInformation.txt files for subdirectories
 #
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
-	bin/buildfileinfo.sh build/FX "06" "6000"
 	cp src/prelaunch/_FileInformation.txt build/PRELAUNCH/
 #
 # add everything to the disk
@@ -58,7 +57,6 @@ dsk: index asmproboot asmlauncher extract
 	for f in \
 		res/TITLE.ANIMATED \
 		res/ICONS \
-		build/FX \
 		build/PRELAUNCH \
 		build/X; do \
             rm -f "$$f"/.DS_Store; \
@@ -137,6 +135,7 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/SFX.CONF > build/SFX.IDX)
+	[ -f build/index ] || ((for f in build/FX/*.DATA; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX > build/FXDATA.IDX)
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -199,6 +198,7 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 	[ -f build/index ] || bin/addfile.sh build/FX.IDX build/TOTAL.DATA > src/index/fx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/DFX.IDX build/TOTAL.DATA > src/index/dfx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SFX.IDX build/TOTAL.DATA > src/index/sfx.idx.a
+	[ -f build/index ] || bin/addfile.sh build/FXDATA.IDX build/TOTAL.DATA > src/index/fxdata.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
 	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT0.IDX build/TOTAL.DATA > src/index/miniattract0.idx.a

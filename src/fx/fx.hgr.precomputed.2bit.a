@@ -75,9 +75,11 @@ InitOnce
          bit   .Start
          lda   #$4C
          sta   InitOnce
-         +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT .CoordinatesFile, Coordinates2Bit
-         +READ_RAM1_WRITE_RAM1
+
+         +LDADDR .CoordinatesFile
+         ldx   #>Coordinates2Bit
+         jsr   iLoadFXDATA
+
          lda   #$00
          sta   EndCoordinates2Bit
 }

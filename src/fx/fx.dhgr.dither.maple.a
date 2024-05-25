@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_2BIT_DHGR_DITHER Coordinates2Bit, EndCoordinates2Bit
 
 CoordinatesFile
-         !byte 13
-         !text "FX/MAPLE.DATA"
+         +PSTRING "MAPLE.DATA"

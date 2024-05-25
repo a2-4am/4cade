@@ -14,7 +14,6 @@ Start
          !source "src/fx/fx.dhgr.dither.radial.common.a"
 
 CoordinatesFile
-         !byte 14
-         !text "FX/RADIAL.DATA"
+         +PSTRING "RADIAL.DATA"
 Coordinates=Coordinates1Bit
 EndCoordinates=EndCoordinates1Bit

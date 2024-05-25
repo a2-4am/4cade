@@ -15,5 +15,4 @@ Start
          +FX_PRECOMPUTED_3BIT_DITHER Coordinates3Bit, EndCoordinates3Bit
 
 CoordinatesFile
-         !byte 12
-         !text "FX/BOLT.DATA"
+         !text 9,"BOLT.DATA"

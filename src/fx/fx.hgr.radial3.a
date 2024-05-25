@@ -86,5 +86,4 @@ Loop     ldy   #0
 ++       rts
 
 CoordinatesFile
-         !byte 14
-         !text "FX/RADIAL.DATA"
+         +PSTRING "RADIAL.DATA"

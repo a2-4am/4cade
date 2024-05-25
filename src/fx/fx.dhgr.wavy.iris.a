@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
 
 CoordinatesFile
-         !byte 17
-         !text "FX/WAVY.IRIS.DATA"
+         +PSTRING "WAVY.IRIS.DATA"

@@ -33,5 +33,4 @@ endzp
 }
 
 CoordinatesFile
-         !byte 18
-         !text "FX/SHR.SFIRIS.DATA"
+         +PSTRING "SHR.SFIRIS.DATA"

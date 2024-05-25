@@ -13,5 +13,4 @@ Start
          +FX_PRECOMPUTED_3BIT Coordinates3Bit
 
 CoordinatesFile
-         !byte 13
-         !text "FX/APPLE.DATA"
+         +PSTRING "APPLE.DATA"

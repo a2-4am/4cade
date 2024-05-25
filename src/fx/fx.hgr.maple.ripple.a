@@ -13,5 +13,4 @@ Start
          +FX_PRECOMPUTED_2BIT Coordinates2Bit
 
 CoordinatesFile
-         !byte 13
-         !text "FX/MAPLE.DATA"
+         +PSTRING "MAPLE.DATA"

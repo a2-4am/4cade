@@ -13,5 +13,4 @@ Start
          +FX_PRECOMPUTED_1BIT Coordinates1Bit
 
 CoordinatesFile
-         !byte 17
-         !text "FX/SNOWFLAKE.DATA"
+         +PSTRING "SNOWFLAKE.DATA"

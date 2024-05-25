@@ -13,5 +13,4 @@ Start
          +FX_PRECOMPUTED_1BIT Coordinates1Bit
 
 CoordinatesFile
-         !byte 15
-         !text "FX/BUBBLES.DATA"
+         +PSTRING "BUBBLES.DATA"

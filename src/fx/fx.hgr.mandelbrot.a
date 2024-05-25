@@ -12,5 +12,4 @@ Start
          +FX_PRECOMPUTED_3BIT Coordinates3Bit
 
 CoordinatesFile
-         !byte 18
-         !text "FX/MANDELBROT.DATA"
+         +PSTRING "MANDELBROT.DATA"

@@ -32,5 +32,4 @@ endzp
 }
 
 CoordinatesFile
-         !byte 16
-         !text "FX/SHR.IRIS.DATA"
+         +PSTRING "SHR.IRIS.DATA"
