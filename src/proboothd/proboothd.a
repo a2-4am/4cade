@@ -353,11 +353,7 @@ put_pixel:
 }
 copy_seasons_e
 
-filename
-         !byte filename_e - filename_b
-filename_b
-         !text "LAUNCHER.SYSTEM" ;your start-up file, file is max 40kb
-filename_e
+filename +PSTRING "LAUNCHER.SYSTEM"
 
          !src  "src/4cade.branding.a"
 
