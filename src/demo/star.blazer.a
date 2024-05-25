@@ -41,9 +41,7 @@ count    !byte $03
 patch    !byte $4C,$00,$01
 patch2   !byte $4C,<(count + 1),>(count + 1)
 
-title    !byte x_e-x_b
-x_b      !text "STAR.BLAZER"
-x_e
+title    +PSTRING "STAR.BLAZER"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

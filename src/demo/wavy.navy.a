@@ -35,9 +35,7 @@
 
          jmp   $800
 
-title    !byte x_e-x_b
-x_b      !text "WAVY.NAVY"
-x_e
+title    +PSTRING "WAVY.NAVY"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

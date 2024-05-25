@@ -38,9 +38,7 @@ callback ldx   #6-1
 
 patch    !byte $4C,$42,$45
 
-title    !byte x_e-x_b
-x_b      !text "ROBOTRON.2084"
-x_e
+title    +PSTRING "ROBOTRON.2084"
 
 !if * > $C000 {
   !error "code is too large, ends at ", *

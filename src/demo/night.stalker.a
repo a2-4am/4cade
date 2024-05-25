@@ -95,6 +95,4 @@ patch2   !byte $4C,$00,$01,$60,$AD,$6F,$03,$05,$EA,$60,$8D,$6F,$03,$A2,$FF,$60
 }
 x_e
 
-title    !byte xx_e-xx_b
-xx_b     !text "NIGHT.STALKER"
-xx_e
+title    +PSTRING "NIGHT.STALKER"

@@ -77,9 +77,7 @@
 
          jmp   $5F00
 
-title    !byte x_e-x_b
-x_b      !text "APPLE.INVADER"
-x_e
+title    +PSTRING "APPLE.INVADER"
 
 !if * > $300 {
   !error "code is too large, ends at ", *

@@ -57,9 +57,7 @@
 patch    !byte $4C,$00,$01
 patch2   !byte $A9,$01,$EA
 
-title    !byte x_e-x_b
-x_b      !text "LOST.TOMB"
-x_e
+title    +PSTRING "LOST.TOMB"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

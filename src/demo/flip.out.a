@@ -54,9 +54,7 @@
 
          jmp   $8F63
 
-title    !byte x_e-x_b
-x_b      !text "FLIP.OUT"
-x_e
+title    +PSTRING "FLIP.OUT"
 
 patch1   !byte $B0,$08,$AD,$00,$C0,$10,$1F,$4C,$00,$01,$20,$69,$8B
 patch2   !byte $10,$03

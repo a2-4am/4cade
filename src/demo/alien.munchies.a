@@ -51,9 +51,7 @@ patch3   !byte $4C,$00,$01
 
 patch2   !byte $10,$0A
 
-title    !byte x_e-x_b
-x_b      !text "ALIEN.MUNCHIES"
-x_e
+title    +PSTRING "ALIEN.MUNCHIES"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

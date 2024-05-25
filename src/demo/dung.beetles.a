@@ -48,9 +48,7 @@
 patch    !byte $A9,$01,$EA,$EA,$EA,$EA
 patch2   !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "DUNG.BEETLES"
-x_e
+title    +PSTRING "DUNG.BEETLES"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

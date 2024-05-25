@@ -27,9 +27,7 @@
 
 patch    !byte $4C,$E0,$03
 
-title    !byte x_e-x_b
-x_b      !text "ALIEN.AMBUSH"
-x_e
+title    +PSTRING "ALIEN.AMBUSH"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

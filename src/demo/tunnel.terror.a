@@ -58,9 +58,7 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "TUNNEL.TERROR"
-x_e
+title    +PSTRING "TUNNEL.TERROR"
 
 !if * > $BFD0 {
   !error "code is too large, ends at ", *

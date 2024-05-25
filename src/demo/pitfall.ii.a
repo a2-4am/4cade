@@ -48,9 +48,7 @@ p1       lda   $100, x
          sta   $6299      ; don't lose keypress on return
          jmp   $ADE0
 
-title    !byte x_e-x_b
-x_b      !text "PITFALL.II"
-x_e
+title    +PSTRING "PITFALL.II"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

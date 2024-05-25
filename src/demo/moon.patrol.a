@@ -44,9 +44,7 @@
 
          jmp   $919
 
-title    !byte x_e-x_b
-x_b      !text "MOON.PATROL"
-x_e
+title    +PSTRING "MOON.PATROL"
 
 patch    !byte $20,$B8,$0A,$2C,$10,$C0,$A2,$41,$A9,$FF,$20,$A8,$FC,$AD,$00,$C0,$10,$05
 patch2   !byte $4C,$00,$01,$EA,$EA,$CA,$D0,$EE

@@ -55,9 +55,7 @@ count    !byte $3D        ; number of 0.16395694 second WAIT cycles
                           ; 163,956.94 usec = 0.16395694 seconds
                           ; 61 cycles (hex $3D) of A=256 WAIT = 10 seconds
 
-title    !byte x_e-x_b
-x_b      !text "AO"
-x_e
+title    +PSTRING "AO"
 
 !if * > $BDFF {
   !error "code is too large, ends at ", *

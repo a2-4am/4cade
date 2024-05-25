@@ -29,9 +29,7 @@
 
          jmp   $9e00
 
-title    !byte x_e-x_b
-x_b      !text "SNEAKERS"
-x_e
+title    +PSTRING "SNEAKERS"
 
 patch    !byte $10,$03,$4C,$00,$01,$EA,$EA,$A9,$00
 

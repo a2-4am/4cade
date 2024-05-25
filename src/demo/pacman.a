@@ -48,9 +48,7 @@ patch2   !byte $4C,$CD,$48
 patch    !byte $4C,$00,$01
 patch3   !byte $30,$06,$EA
 
-title    !byte x_e-x_b
-x_b      !text "PACMAN"
-x_e
+title    +PSTRING "PACMAN"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

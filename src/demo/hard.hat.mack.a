@@ -51,9 +51,7 @@ patcher  rts
          pha
          rts
 
-title    !byte x_e-x_b
-x_b      !text "HARD.HAT.MACK"
-x_e
+title    +PSTRING "HARD.HAT.MACK"
 
 patch    !byte $8D,$10,$72,$8D,$13,$72,$8D,$14,$72,$EE,$14,$72,$60
 patch2   !byte $4C,$00,$01

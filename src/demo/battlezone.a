@@ -58,9 +58,7 @@
 patch    !byte $4C,$00,$01
 patch2   !byte $C9,$FF,$F0,$16
 
-title    !byte x_e-x_b
-x_b      !text "BATTLEZONE"
-x_e
+title    +PSTRING "BATTLEZONE"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

@@ -63,9 +63,7 @@ callback
 patch    !byte $4C,$00,$01
 patch2   !byte $20,<callback,>callback
 
-title    !byte x_e-x_b
-x_b      !text "SPIDER.RAID"
-x_e
+title    +PSTRING "SPIDER.RAID"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

@@ -49,9 +49,7 @@ patch    !byte $CE,$FF,$4B,$10,$03
 patch3   !byte $4C,$00,$01,$4C,$B0,$4B
 patch2   !byte $AD,$00,$C0
 
-title    !byte x_e-x_b
-x_b      !text "SPACE.EGGS"
-x_e
+title    +PSTRING "SPACE.EGGS"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

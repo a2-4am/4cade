@@ -39,9 +39,7 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "AGENT.U.S.A"
-x_e
+title    +PSTRING "AGENT.U.S.A"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

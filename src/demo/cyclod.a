@@ -35,9 +35,7 @@
 
          jmp   $8EA6
 
-title    !byte x_e-x_b
-x_b      !text "CYCLOD"
-x_e
+title    +PSTRING "CYCLOD"
 
 patch    !byte $10,$03
 patch2   !byte $4C,$00,$01,$EA

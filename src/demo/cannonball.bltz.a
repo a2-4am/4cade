@@ -36,9 +36,7 @@
 
 patch    !byte $CE,$98,$A0,$10,$93,$4C,$00,$01,$02
 
-title    !byte x_e-x_b
-x_b      !text "CB"
-x_e
+title    +PSTRING "CB"
 
 !if * > $300 {
   !error "code is too large, ends at ", *

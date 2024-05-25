@@ -34,9 +34,7 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "CEILING.ZERO"
-x_e
+title    +PSTRING "CEILING.ZERO"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

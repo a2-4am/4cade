@@ -28,6 +28,4 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "FALCONS"
-x_e
+title    +PSTRING "FALCONS"

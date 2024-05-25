@@ -34,9 +34,7 @@
 
          jmp   $20A
 
-title    !byte x_e-x_b
-x_b      !text "SPACE.QUARKS"
-x_e
+title    +PSTRING "SPACE.QUARKS"
 
 patch    !byte $F0,$08,$AD,$00,$C0,$10,$0D
 patch2   !byte $4C,$00,$01,$CE,$24,$02,$F0,$F8,$68,$68

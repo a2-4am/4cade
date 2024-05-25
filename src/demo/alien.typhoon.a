@@ -45,9 +45,7 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "ALIEN.TYPHOON"
-x_e
+title    +PSTRING "ALIEN.TYPHOON"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

@@ -37,9 +37,7 @@
 
          jmp   $4003
 
-title    !byte x_e-x_b
-x_b      !text "PEST.PATROL"
-x_e
+title    +PSTRING "PEST.PATROL"
 
 patch    !byte $4C,$00,$01,$AD,$00,$C0,$30,$F8,$4C,$90,$B3
 patch2   !byte $4C,$BD,$47

@@ -34,6 +34,4 @@
 
 patch    !byte $4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "GAMMA.GOBLINS"
-x_e
+title    +PSTRING "GAMMA.GOBLINS"

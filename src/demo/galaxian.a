@@ -56,9 +56,7 @@ patch1   !byte $10,$05,$4C,$00,$01
 
 patch2   !byte $10,$49,$4C,$00,$01
 
-title    !byte x_e-x_b
-x_b      !text "GALAXIAN"
-x_e
+title    +PSTRING "GALAXIAN"
 
 !if * > $3F0 {
   !error "code is too large, ends at ", *

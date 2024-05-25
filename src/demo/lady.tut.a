@@ -50,6 +50,4 @@ callback
 
 patch    !byte $4C,$70,$00
 
-title    !byte x_e-x_b
-x_b      !text "X/LADY.TUT"
-x_e
+title    +PSTRING "X/LADY.TUT"

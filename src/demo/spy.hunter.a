@@ -54,6 +54,4 @@ callback
 
          jmp   $0451
 
-title    !byte x_e-x_b
-x_b      !text "SPY.HUNTER"
-x_e
+title    +PSTRING "SPY.HUNTER"
