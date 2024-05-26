@@ -20,15 +20,15 @@
 ; LC RAM BANK 2
 ; D000..D5FF - ProRWTS data
 ; D600..D8BD - ProRWTS code
-; D8BE..DC76 - ProRWTS glue code
-; DC77..DC7C - backup of stack (during gameplay and self-running demos)
-; DC7D..DC82 - okvs cache (attract state saved across self-running demo)
+; D8BE..DCB7 - ProRWTS glue code
+; DCB8..DCBD - backup of stack (during gameplay and self-running demos)
+; DCBE..DCC2 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
 ; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
-; 6000..9FFF - search index (489 games = $3AEB/$4000)
-; A000..BCFF - search cache (489 games = $1957/$1D00)
+; 6000..9FFF - search index (499 games = $3C3C/$4000)
+; A000..BCFF - search cache (499 games = $1837/$1D00)
 ; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;
@@ -237,7 +237,7 @@ ldrhi2         = $65                 ; constant
 
 ; Columns and Dangerous Dave also call (de)accelerator functions directly
 
-PrelaunchInit  = $C9
+PrelaunchInit  = $EB
 
 _CONSTANTS_=*
 }

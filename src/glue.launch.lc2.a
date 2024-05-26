@@ -30,10 +30,7 @@ LaunchInternal
 -        sta   $bf57,y
          dey
          bne   -
-         jmp   PrelaunchInit
 
-PrelaunchInitInternal
-!pseudopc PrelaunchInit {
          ldx   #RNDSEED-1            ; wipe lower part of zero page
          txa
 -        sta   $00,x
@@ -45,20 +42,22 @@ PrelaunchInitInternal
          lda   #$02                  ; require these to be non-zero. Ask me
          sta   RNDSEED+1             ; how long that one took to debug.
 
-         +READ_ROM_NO_WRITE
+         sta   STOREOFF
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
+         sta   CLR80VID
+         sta   PRIMARYCHARSET
+         bit   CLEARKBD
+         jmp   PrelaunchInit
 
+PrelaunchInitInternal
+!pseudopc PrelaunchInit {
+         +READ_ROM_NO_WRITE
          jsr   ROM_IN0               ; Initialize machine like a cold boot.
          jsr   ROM_PR0               ; Many games assume a 'clean slate' and
          jsr   ROM_NORMAL            ; rely on zero page values set by these
-         sta   STOREOFF              ; ROM routines,
-         sta   READMAINMEM           ; e.g. Wavy Navy just prints out text via
-         sta   WRITEMAINMEM          ; $FDED and expects it to work. Having it
-         sta   CLR80VID              ; print all null characters is amusing, in
-         sta   PRIMARYCHARSET        ; a quiet way, but not really helpful.
-         jsr   ROM_TEXT
-         jsr   ROM_HOME
-
-         bit   CLEARKBD
+         jsr   ROM_TEXT              ; ROM routines, e.g. Wavy Navy prints text
+         jsr   ROM_HOME              ; via $FDED and expects it to work.
          sei
          bvc   $106                  ; unconditional jump to game-specific pre-launch code
 !if * != $100 {
