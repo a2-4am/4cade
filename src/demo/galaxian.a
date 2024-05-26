@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2023 by Frank M., qkumba
+;(c) 2021-2024 by Frank M., qkumba
 
 !cpu 6502
 !to "build/DEMO/GALAXIAN#060320",plain
@@ -19,6 +19,8 @@
          stx   $83F
          inx
          stx   $847       ; reset vector fix
+
+         stx   $1890      ; sound fix
 
          lda   #$A9
          sta   $1909
