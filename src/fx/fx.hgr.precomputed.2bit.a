@@ -1,17 +1,16 @@
 ;license:MIT
 ;(c) 2019-2022 by 4am
 ;
-hgrlo          = $0201    ; $C0 bytes
+
+;hgrlo          = $0201    ; $C0 bytes (defined in constants.a)
 mirror_cols    = $02C1    ; $28 bytes
-hgr1hi         = $0301    ; $C0 bytes
+;hgr1hi         = $0301    ; $C0 bytes (defined in constants.a)
 dithermasks    = $BDAA    ; $58 bytes
 evenrow_masks  = dithermasks
 oddrow_masks   = dithermasks+2
 no_masks       = dithermasks+44
 copymasks      = $BE00    ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00, $20, $40, $60, $80
 mirror_copymasks = copymasks+1
-Coordinates2Bit= $8100    ; $3C01 bytes ($3C00 on disk + 1 byte as EOF)
-EndCoordinates2Bit = Coordinates2Bit + $3C00
 
          !source "src/fx/macros.a"
 
@@ -82,174 +81,8 @@ InitOnce
          sta   EndCoordinates2Bit
 }
 
-!macro FX_REVERSE_2BIT {
-         ldy   #0                    ; <Coordinates2Bit
-         sty   $f0
-         lda   #>Coordinates2Bit
-         sta   $f1
-         lda   #<(EndCoordinates2Bit - 2)
-         sta   $f2
-         lda   #>(EndCoordinates2Bit - 2)
-         sta   $f3
-
-         ldx   #$1E                  ; #$3C/2
-         clc
-         !byte $24
--        sec
---       lda   ($f0), y
-         pha
-         lda   ($f2), y
-         sta   ($f0), y
-         pla
-         sta   ($f2), y
-         iny
-         bcc   -
-         ldy   #0
-         !byte $24
--        clc
-         inc   $f0
-         bne   +
-         inc   $f1
-         dex
-         beq   ++
-+        lda   $f2
-         bne   +
-         dec   $f3
-+        dec   $f2
-         bcs   -
-         bcc   --                    ; always branches
-++
-}
-
-!macro FX_RIPPLE_2BIT {
-         ldy   #0
-
-         ldx   #$33
--        lda   ptrtbl, x
-         sta   $c0, x
-         dex
-         bpl   -
-
-         lda   #$9b
-         sta   $fe
-         iny
-         sty   $ff
-
-         ldx   #6
--        lda   Coordinates2Bit + 1, x
-         sta   $7f, x
-         lda   Coordinates2Bit + 9, x
-         sta   $85, x
-         lda   Coordinates2Bit + 17, x
-         sta   $8b, x
-         lda   Coordinates2Bit + 65, x
-         sta   $9b, x
-         dex
-         bne   -
-         lda   Coordinates2Bit + 28
-         sta   $92
-         lda   Coordinates2Bit + 29
-         sta   $93
-         ldx   #4
--        lda   Coordinates2Bit + 33, x
-         sta   $93, x
-         lda   Coordinates2Bit + 41, x
-         sta   $97, x
-         lda   Coordinates2Bit + 83, x
-         sta   $a1, x
-         dex
-         bne   -
-         ldx   #2
--        lda   Coordinates2Bit + 125, x
-         sta   $a5, x
-         lda   Coordinates2Bit + 131, x
-         sta   $a7, x
-         lda   Coordinates2Bit + 139, x
-         sta   $a9, x
-         lda   Coordinates2Bit + 169, x
-         sta   $ab, x
-         lda   Coordinates2Bit + 237, x
-         sta   $ad, x
-         lda   Coordinates2Bit + 2193, x
-         sta   $af, x
-         lda   Coordinates2Bit + 6581, x
-         sta   $b1, x
-         dex
-         bne   -
-
----      ldx   #$34
---       lda   $be, x
-         tay
-         ora   $bf, x
-         beq   +
-         lda   $bf, x
-         jsr   aslmod
-         sty   $be, x
-         sta   $bf, x
-         sty   $fc
-         clc
-         adc   #>Coordinates2Bit
-         sta   $fd
-         ldy   #0
-         !byte $24
--        sec
-         lda   ($fc), y
-         pha
-         lda   $7e, x
-         sta   ($fc), y
-         pla
-         sta   $7e, x
-         inx
-         iny
-         bcc   -
-         dex
-         dex
-+        dex
-         dex
-         bne   --
-         ldy   #1
-         lda   $fe
-         eor   #<(411 - 2)
-         beq   +
-         ldy   #9
-         eor   #<(411 - 2) xor <(411 - 136)
-         bne   ++
-+
--        ldx   zerotbl, y
-         sta   $0, x
-         sta   $1, x
-         dey
-         bpl   -
-++       dec   $fe
-         bne   ---
-         dec   $ff
-         bpl   ---
-         bmi   ++                    ; always branches
-aslmod
-         jsr   +
-+        cmp   #$1E
-         bcc   +
-         iny
-+        pha
-         tya
-         asl
-         tay
-         pla
-         rol
-         cmp   #$3C
-         bcc   +
-         sbc   #$3C
-+        rts
-ptrtbl   !word 2, 4, 6, 10, 12, 14, 18, 20
-         !word 22, 28, 34, 36, 42, 44, 66, 68
-         !word 70, 84, 86, 126, 132, 140, 170, 238
-         !word 2194, 6582
-zerotbl  !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
-++
-}
-
 !macro FX_PRECOMPUTED_2BIT .coords {
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
          +COPY_TO_0 start, end
@@ -302,7 +135,7 @@ end
 
 !macro FX_PRECOMPUTED_2BIT_DITHER .coords, .endcoords {
          +BUILD_DITHER_MASKS dithermasks
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
 

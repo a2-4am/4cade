@@ -6,14 +6,14 @@
 *=$6000
 
 rowcount = $FF                       ; [byte]
-hgrlo = $201                         ; [$C0 bytes]
+;hgrlo = $201                         ; [$C0 bytes] defined in constants.a
 startrows_by_column = $2C1           ; [$28 bytes]
-hgrhi = $301                         ; [$C0 bytes]
+;hgrhi = $301                         ; [$C0 bytes] defined in constants.a
 rowcounts_by_column = $3C1           ; [$28 bytes]
 
          !source "src/fx/macros.a"
 
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
 
          ldy   #$27
 -        lda   #$00
@@ -65,7 +65,7 @@ nextcolumn
 ++       dey
          bpl   -
          lda   #$48
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   exit
          lda   rowcounts_by_column+$27
          cmp   #$80

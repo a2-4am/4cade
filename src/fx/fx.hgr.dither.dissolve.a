@@ -43,7 +43,7 @@ dst  = $26
          dey
          bpl   -
          lda   #$28
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   row1
          dec   row2

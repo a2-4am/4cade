@@ -39,7 +39,7 @@
          ldy   $FF
          jsr   HGRHalfBlockCopy
          lda   #$28
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          ldx   $F9
          bne   @a

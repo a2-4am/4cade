@@ -41,7 +41,7 @@ counter = $ff
          dec   row
          bpl   @rowloop
          lda   #64
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          dec   col
          dec   counter

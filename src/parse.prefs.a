@@ -19,20 +19,15 @@ kGlobalPrefsBuffer = $BD00           ; [512 bytes] must be page-aligned
 
 ; valid pref keys
 kNextAttract
-         !byte 11
-         !raw  "NEXTATTRACT"
+         +PSTRING "NEXTATTRACT"
 kNextFX
-         !byte 6
-         !raw  "NEXTFX"
+         +PSTRING "NEXTFX"
 kNextDFX
-         !byte 7
-         !raw  "NEXTDFX"
+         +PSTRING "NEXTDFX"
 kNextSFX
-         !byte 7
-         !raw  "NEXTSFX"
+         +PSTRING "NEXTSFX"
 kCheat
-         !byte 5
-         !raw  "CHEAT"
+         +PSTRING "CHEAT"
 
 .kEquals !byte 1
          !raw  "="

@@ -8,7 +8,7 @@
          !source "src/fx/fx.dhgr.precomputed.2bit.a"
 
          +FX_INITONCE_2BIT CoordinatesFile, Start
-         +FX_RIPPLE_2BIT
+         jsr   iRippleCoordinates2Bit
 Start
          +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
 

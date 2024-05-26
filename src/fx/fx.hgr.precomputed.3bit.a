@@ -2,8 +2,8 @@
 ;(c) 2019-2022 by 4am
 ;
 
-tmplo          = $0201    ; $C0 bytes
-tmphi          = $0301    ; $C0 bytes
+tmplo          = hgrlo    ; $C0 bytes (hgrlo=$0201, defined in constants.a)
+tmphi          = hgrhi    ; $C0 bytes (hgrhi=$0301,  defined in constants.a)
 copymasks      = $BB01    ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00, $20, $40...
 extra_cols     = $BBF8    ; $08 bytes
 hgrlo3a        = $BC00    ; $80 bytes
@@ -19,11 +19,6 @@ dithermasks    = $6A80    ; $58 bytes
 evenrow_masks  = dithermasks
 oddrow_masks   = dithermasks+2
 no_masks       = dithermasks+44
-Coordinates3Bit= $6B00    ; pixel data is $5001 bytes ($5000 on disk + 1 byte as EOF marker)
-                          ; and for optimization we only support loading external files page-aligned
-                          ; and $BC00+ is used by the 3bit macros for data tables
-                          ; so we load at $6B00 and waste $FF bytes at $BB01+ but it's okay
-EndCoordinates3Bit = Coordinates3Bit + $5000
 
          !source "src/fx/macros.a"
 
@@ -66,7 +61,7 @@ EndCoordinates3Bit = Coordinates3Bit + $5000
 }
 
 !macro BUILD_3BIT_HGR_LOOKUP_TABLES {
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          ldx   #$BF
          ldy   #$3F
 -        lda   tmplo, x
@@ -130,108 +125,7 @@ InitOnce
          jsr   iLoadFXDATA
 
          sec
-         ror   Coordinates3Bit + $5000
-}
-
-!macro FX_REVERSE_3BIT {
-         ldy   #0                    ; <Coordinates3Bit
-         sty   $f0
-         lda   #>Coordinates3Bit
-         sta   $f1
-         lda   #<(Coordinates3Bit + $5000 - 2)
-         sta   $f2
-         lda   #>(Coordinates3Bit + $5000 - 2)
-         sta   $f3
-
-         ldx   #$28                  ; #$50/2
-         clc
-         !byte $24
--        sec
---       lda   ($f0), y
-         pha
-         lda   ($f2), y
-         sta   ($f0), y
-         pla
-         sta   ($f2), y
-         iny
-         bcc   -
-         ldy   #0
-         !byte $24
--        clc
-         inc   $f0
-         bne   +
-         inc   $f1
-         dex
-         beq   ++
-+        lda   $f2
-         bne   +
-         dec   $f3
-+        dec   $f2
-         bcs   -
-         bcc   --                    ; always branches
-++
-}
-
-!macro FX_RIPPLE_3BIT {
-         ldx   #$1B
--        lda   ripplezp, x
-         sta   $e0, x
-         dex
-         bpl   -
-
----      ldx   #$0c
---       ldy   $ee, x
-         lda   $ef, x
-         jsr   aslmod
-         sty   $ee, x
-         sta   $ef, x
-         sty   $ec
-         clc
-         adc   #>Coordinates3Bit
-         sta   $ed
-         ldy   #0
-         !byte $24
--        sec
-         lda   ($ec), y
-         pha
-         lda   $de, x
-         sta   ($ec), y
-         pla
-         sta   $de, x
-         inx
-         iny
-         bcc   -
-         dex
-         dex
-         dex
-         dex
-         bne   --
-         dec   $ee
-         bne   ---
-         dec   $ef
-         bpl   ---
-         bmi   ++                    ; always branches
-aslmod
-         jsr   +
-+        cmp   #$28
-         bcc   +
-         iny
-+        pha
-         tya
-         asl
-         tay
-         pla
-         rol
-         cmp   #$50
-         bcc   +
-         sbc   #$50
-+        rts
-ripplezp
-         !byte $1F,$F3,$20,$F3,$20,$14,$20,$D3
-         !byte $1E,$F3,$1F,$54,$00,$00,$AA,$06
-         !byte $02,$00,$04,$00,$06,$00,$0C,$00
-         !byte $16,$00,$1A,$00
-++
+         ror   EndCoordinates3Bit
 }
 
 !macro FX_PRECOMPUTED_3BIT .coords {

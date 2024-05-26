@@ -50,7 +50,7 @@ col = $ff
          dec   row
          bpl   @clearrowloop
          lda   #8
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          dec   maskindex
          bpl   @clearmaskloop
@@ -98,7 +98,7 @@ col = $ff
          dec   row
          bpl   @rowloop
          lda   #8
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          dec   maskindex
          bpl   @maskloop

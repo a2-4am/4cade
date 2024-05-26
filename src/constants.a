@@ -9,7 +9,7 @@
 ; D000       - reserved
 ; D001..D06E - gGlobalPrefsStore
 ; ...unused...
-; E000..E3FF - HGR font data
+; D100..D4FF - HGR font data
 ; ...unused...
 ; E6C9..FFEB - main program code
 ; FFEC..FFF9 - API functions and global constants available for main program
@@ -156,28 +156,39 @@ BestMatchScore = $FC      ; byte
 ; main memory
 gStackSize   = 6          ; seems like only six are needed
 gPathname    = $BFD0      ; used by SetPath/AddToPath
-gKeyLen      = $1F00
-gKey         = $1F01
-UILine1      = $1FB0
-UILine2      = $1FD8
-UI_ToPlay    = $1FF7
-ProBootEntry = $2025
+gKeyLen      = $1F00      ; used by ParseKeyValueList
+gKey         = $1F01      ; ""
+gValLen      = $1F80      ; ""
+gVal         = $1F81      ; ""
+UILine1      = $1FB0      ; used by DrawUI
+UILine2      = $1FD8      ; ""
+UI_ToPlay    = $1FF7      ; ""
+ProBootEntry = $2025      ; used by ProBoot
 
-gValLen      = $1F80
-gVal         = $1F81
 
 gSearchIndex = $6000
 gSearchCache = $A000
 
 ; LC RAM 1 & 2
-BuildHGRTables     = $FFAF
-WaitForKeyWithTimeout = $FFD5
-iLoadFXDATA        = $FFE6
-iLoadXSingle       = $FFE9
-iAddToPath         = $FFEC
-iLoadFileDirect    = $FFEF  ; note: you really want LC RAM 2 banked in before calling this
-WaitForVBL         = $FFF2
-UnwaitForVBL       = $FFF5
+; these are defined here because they are also called by other targets
+; that are assembled separately, e.g. prelaunchers, demo launchers, and graphic effects
+iRippleCoordinates3Bit = $FFBE
+iReverseCoordinates3Bit = $FFC1
+iRippleCoordinates2Bit = $FFC4
+iReverseCoordinates2Bit = $FFC7
+iRippleCoordinates1Bit4 = $FFCA
+iRippleCoordinates1Bit3 = $FFCD
+iRippleCoordinates1Bit2 = $FFD0
+iRippleCoordinates1Bit = $FFD3
+iReverseCoordinates1Bit = $FFD6
+iWaitForKeyWithTimeout = $FFD9
+iBuildHGRTables    = $FFDC
+iLoadFXDATA        = $FFDF
+iLoadXSingle       = $FFE2
+iAddToPath         = $FFE5
+iLoadFileDirect    = $FFE8  ; note: you really want LC RAM 2 banked in before calling this
+WaitForVBL         = $FFEB
+UnwaitForVBL       = $FFEE
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")
@@ -239,6 +250,17 @@ ldrhi2         = $65                 ; constant
 ; Columns and Dangerous Dave also call (de)accelerator functions directly
 
 PrelaunchInit  = $EB
+
+; addresses used by graphic effects
+hgrlo          = $0201               ; $C0 bytes
+hgrhi          = $0301               ; $C0 bytes
+hgr1hi         = hgrhi
+Coordinates1Bit= $8600               ; $3481 bytes ($3480 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates1Bit = Coordinates1Bit + $3480
+Coordinates2Bit= $8100               ; $3C01 bytes ($3C00 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates2Bit = Coordinates2Bit + $3C00
+Coordinates3Bit= $6B00               ; $5001 bytes ($5000 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates3Bit = Coordinates3Bit + $5000
 
 _CONSTANTS_=*
 }

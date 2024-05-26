@@ -43,7 +43,7 @@ dst  = $26
          dey
          bpl   -
          lda   #$30
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
 !if 0 {
          ldx   mask1

@@ -10,13 +10,13 @@ row = $fd
 col = $fe
 counter = $ff
 
-hgrlo    = $0201
-hgr1hi   = $0301
+;hgrlo    = $0201 (defined in constants.a)
+;hgr1hi   = $0301 (defined in constants.a)
 
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
 
          lda   #(40+12+1)
          sta   counter

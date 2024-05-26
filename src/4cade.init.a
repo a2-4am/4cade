@@ -190,9 +190,9 @@
          dey
          bne   @LM
 
+         +READ_RAM1_WRITE_RAM1
          ldy   #4
-@ELM     lda   FONTSRC,x
-                                     ; relocate font data to $E000
+@ELM     lda   FONTSRC,x             ; relocate font data to $D100/LC1
          sta   FONTDST,x
          inx
          bne   @ELM

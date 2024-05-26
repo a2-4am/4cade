@@ -6721,8 +6721,3 @@
          !byte $04,%11010011
          !byte $02,%11010011
          !byte $00,%11010011
-         !byte $80
-
-         !source "src/fx/fx.hgr.precomputed.1bit.a"
-         +FX_RIPPLE_1BIT aslmod2
-         rts

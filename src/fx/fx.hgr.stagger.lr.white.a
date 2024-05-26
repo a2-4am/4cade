@@ -32,7 +32,7 @@ col2 = $ff
          dec   row
          bpl   @loop1
          lda   #$40
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   col1
          inc   col1
@@ -61,7 +61,7 @@ col2 = $ff
          dec   row
          bpl   @loop2
          lda   #$40
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   col1
          inc   col1

@@ -87,7 +87,7 @@
          lda   ($fe),y
          bpl   @copy
          lda   #$10
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          bpl   @next                 ; always branches
 @copy

@@ -81,8 +81,8 @@ tmpy     = $05                       ; [byte] used by drawing routines
 box      = $0E                       ; [byte] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
 auxsrc_hgrhi = $BD01                 ; [$C0 bytes] HGR base addresses (hi) starting at $9000
-hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses (lo) starting at $2000
-hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000
+;hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses (lo) starting at $2000 (defined in constants.a)
+;hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000 (defined in constants.a)
 BoxesX   = $BE90                     ; [$30 bytes] starting row for each box
 BoxesY   = $BEC0                     ; [$30 bytes] starting byte offset for each box
 
@@ -322,7 +322,7 @@ GenerateBoxes
          bne   -
          ; X=0 here
 
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          ; X=$C0 here
 
 -        lda   hgrhi-1, x

@@ -4,12 +4,10 @@
 
 !ifndef RELEASE {
 LoadingVersion
-         !byte 8
-         !text "  build "
+         +PSTRING "  build "
 LoadingBuild
          !word BUILDNUMBER
 } else {
 LoadingVersion
-         !byte 12
-         !text "        v5.1"
+         +PSTRING "        v5.1"
 }

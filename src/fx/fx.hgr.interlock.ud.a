@@ -33,7 +33,7 @@ row2 = $ff
          dey
          bpl   -
          lda   #$30
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   row1
          dec   row2

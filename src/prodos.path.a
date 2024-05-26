@@ -159,25 +159,20 @@ kXSingleRecord
          !source "src/index/xsingle.idx.a"
 
 kTotalDataFile
-         !byte 10
-         !raw  "TOTAL.DATA"
+         +PSTRING "TOTAL.DATA"
 
 kAnimatedTitleDirectory
-         !byte 15
-         !raw  "TITLE.ANIMATED/"
+         +PSTRING "TITLE.ANIMATED/"
 
 kGameDirectory
-         !byte 2
-         !raw  "X/"
+         +PSTRING "X/"
 kGameDirectoryLen = 3 ; we need this elsewhere
 
 kFXDirectory
-         !byte 3
-         !raw  "FX/"
+         +PSTRING "FX/"
 
 kGlobalPrefsFilename
-         !byte 10
-         !raw  "PREFS.CONF"
+         +PSTRING "PREFS.CONF"
 
 kStandardPrelaunchRecord
          !source "src/index/standard.prelaunch.a"

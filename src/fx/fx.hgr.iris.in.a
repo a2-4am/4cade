@@ -8,7 +8,7 @@
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
-         +FX_REVERSE_1BIT
+         jsr   iReverseCoordinates1Bit
 Start
          +FX_PRECOMPUTED_1BIT Coordinates1Bit
 

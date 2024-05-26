@@ -22,7 +22,7 @@
          txa
          jsr   HGRBlockCopy
          lda   #$0C
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   coord
          bne   +

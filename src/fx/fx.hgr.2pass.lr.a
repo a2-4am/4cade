@@ -27,7 +27,7 @@ row = $FF
          bne   @loop1
 
          lda   #$10
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
 
          inc   @h1
@@ -50,7 +50,7 @@ row = $FF
          bne   @loop2
 
          lda   #$10
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
 
          inc   @h2

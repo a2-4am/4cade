@@ -34,7 +34,7 @@ row2 = $ff
          jsr   DrawBlackLine
 +
          lda   #$30
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   row1
          dec   row2
@@ -60,7 +60,7 @@ row2 = $ff
          txa
          jsr   CopyLine
          lda   #$30
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   row1
          dec   row2

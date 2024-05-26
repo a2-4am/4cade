@@ -5,11 +5,11 @@
 !to "build/FX.INDEXED/CHECKERB.FIZZLE",plain
 *=$6000
 
+;hgrlo     = $0201                    ; [$C0 bytes, should not cross page boundary] (defined in constants.a)
+;hgrhi     = $0301                    ; [$C0 bytes, should not cross page boundary] (defined in constants.a)
 addrs     = $6100                    ; [256 bytes, page-aligned]
 copymasks = $6200                    ; [128 bytes, should not cross page boundary]
 shapemaskaddrs = $6300               ; [256 bytes, page-aligned]
-hgrlo     = $6400                    ; [$C0 bytes, should not cross page boundary]
-hgrhi     = $6500                    ; [$C0 bytes, should not cross page boundary]
 shapemask = $8000                    ; [$2000 bytes, page-aligned]
 
          !source "src/fx/macros.a"

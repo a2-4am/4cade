@@ -5,14 +5,14 @@
 !to "build/FX.INDEXED/DHGR.R.BY.PIXEL",plain
 *=$6000
 
-hgrlo    =     $0201                 ; [$C0 bytes, main memory only, offset by 1 because lookups will be based on $0200,x]
-hgr1hi   =     $0301                 ; [$C0 bytes, main memory only]
+;hgrlo    =     $0201                 ; [$C0 bytes, main memory only] defined in constants.a
 copymasks=     $02C1                 ; [$07 bytes, different values in main and auxmem]
+;hgr1hi   =     $0301                 ; [$C0 bytes, main memory only] defined in constants.a
 
          !source "src/fx/macros.a"
 
          +COPY_TO_0 start, end
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
 
          ldy   #7                    ; copy copymask arrays into place in main and auxmem
 -        lda   copymasks_main-1, y

@@ -20,6 +20,8 @@ RELBASE=$2000
 
 FirstMover
 !pseudopc RELBASE {
+         !source "src/fx.lib.a"
+
 ;------------------------------------------------------------------------------
 ; Reenter
 ; This is the primary entry point for returning to the launcher from anywhere.
@@ -106,7 +108,6 @@ ResetVector                          ; 6 bytes, copied to $100
          ; these routines will only be called after relocating to language card
          !source "src/ui.search.mode.a"         ; \__ execution falls through
          !source "src/ui.animation.a"           ; /
-
          !source "src/ui.browse.mode.a"
          !source "src/ui.attract.mode.a"
          !source "src/ui.attract.hgr.a"
@@ -152,108 +153,70 @@ gGlobalPrefsStore
                                      ; flips out if it has certain values (it will
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates3Bit) { !serious "iRippleCoordinates3Bit=",*,", fix constants.a" }
+         jmp   RippleCoordinates3Bit
+
+         !if (RELBASE != $2000) and (* != iReverseCoordinates3Bit) { !serious "iReverseCoordinates3Bit=",*,", fix constants.a" }
+         jmp   ReverseCoordinates3Bit
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates2Bit) { !serious "iRippleCoordinates2Bit=",*,", fix constants.a" }
+         jmp   RippleCoordinates2Bit
+
+         !if (RELBASE != $2000) and (* != iReverseCoordinates2Bit) { !serious "iReverseCoordinates2Bit=",*,", fix constants.a" }
+         jmp   ReverseCoordinates2Bit
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit4) { !serious "iRippleCoordinates1Bit4=",*,", fix constants.a" }
+         jmp   RippleCoordinates1Bit4
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit3) { !serious "iRippleCoordinates1Bit3=",*,", fix constants.a" }
+         jmp   RippleCoordinates1Bit3
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit2) { !serious "iRippleCoordinates1Bit2=",*,", fix constants.a" }
+         jmp   RippleCoordinates1Bit2
+
+         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit) { !serious "iRippleCoordinates1Bit=",*,", fix constants.a" }
+         jmp   RippleCoordinates1Bit
+
+         !if (RELBASE != $2000) and (* != iReverseCoordinates1Bit) { !serious "iReverseCoordinates1Bit=",*,", fix constants.a" }
+         jmp   ReverseCoordinates1Bit
+
+         !if (RELBASE != $2000) and (* != iWaitForKeyWithTimeout) { !serious "iWaitForKeyWithTimeout=",*,", fix constants.a" }
+         jmp   WaitForKeyWithTimeout
+
+         !if (RELBASE != $2000) and (* != iBuildHGRTables) { !serious "iBuildHGRTables=",*,", fix constants.a" }
+         jmp   BuildHGRTables
+
+         !if (RELBASE != $2000) and (* != iLoadFXDATA) { !serious "iLoadFXDATA=",*,", fix constants.a" }
+         jmp   LoadFXDATA
+
+         !if (RELBASE != $2000) and (* != iLoadXSingle) { !serious "iLoadXSingle=",*,", fix constants.a" }
+         jmp   LoadXSingle
+
+         !if (RELBASE != $2000) and (* != iAddToPath) { !serious "iAddToPath=",*,", fix constants.a" }
+         jmp   AddToPath
+
+         !if (RELBASE != $2000) and (* != iLoadFileDirect) { !serious "iLoadFileDirect=",*,", fix constants.a" }
+         jmp   LoadFileDirect
+
+         !if (RELBASE != $2000) and (* != WaitForVBL) { !serious "WaitForVBL=",*,", fix constants.a" }
+         jmp   WaitForVBL_iie        ; SMC to RTS on a II+
+
+         !if (RELBASE != $2000) and (* != UnwaitForVBL) { !serious "UnwaitForVBL=",*,", fix constants.a" }
+         rts                         ; SMC to JMP on a IIc
+         !word iUnwaitForVBL
+
 SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
 
-; BuildHGRTables (label is on constants.a)
-!if (RELBASE != $2000) and (* != BuildHGRTables) {
-  !serious "BuildHGRTables=",*,", fix constants.a"
-}
-; out:   A clobbered
-;        X=$C0
-;        Z=1
-;        Y preserved
-         ldx   #0
--        txa
-         and   #$F8
-         bpl   +
-         ora   #5
-+        asl
-         bpl   +
-         ora   #5
-+        asl
-         asl
-         sta   $0201, x
-         txa
-         and   #7
-         rol
-         asl   $0201, x
-         rol
-         ora   #$20
-         sta   $0301, x
-         inx
-         cpx   #$C0
-         bne   -
-         rts
-
-; WaitForKeyWithTimeout (label is in constants.a)
-!if (RELBASE != $2000) and (* != WaitForKeyWithTimeout) {
-  !serious "WaitForKeyWithTimeout=",*,", fix constants.a"
-}
-; in:    A = timeout length (like standard $FCA8 wait routine)
-; out:   A clobbered
-;        X/Y preserved
-         sec
-@wait1   pha
-@wait2   sbc   #1
-         bne   @wait2
-         pla
-         bit   $C000
-         bmi   @exit
-         sbc   #1
-         bne   @wait1
-@exit    rts
-
-; iLoadFXDATA (label is in constants.a)
-!if (RELBASE != $2000) and (* != iLoadFXDATA) {
-  !serious "iLoadFXDATA=",*,", fix constants.a"
-}
-         jmp   LoadFXDATA            ; no direct calling - target can move
-
-; iLoadXSingle (label is in constants.a)
-!if (RELBASE != $2000) and (* != iLoadXSingle) {
-  !serious "iLoadXSingle=",*,", fix constants.a"
-}
-         jmp   LoadXSingle           ; no direct calling - target can move
-
-; iAddToPath (label is in constants.a)
-!if (RELBASE != $2000) and (* != iAddToPath) {
-  !serious "iAddToPath=",*,", fix constants.a"
-}
-         jmp   AddToPath             ; no direct calling - target can move
-
-; iLoadFileDirect (label is in constants.a)
-!if (RELBASE != $2000) and (* != iLoadFileDirect) {
-  !serious "iLoadFileDirect=",*,", fix constants.a"
-}
-         jmp   LoadFileDirect        ; no direct calling - target can move
-
-; WaitForVBL (label is in constants.a)
-!if (RELBASE != $2000) and (* != WaitForVBL) {
-  !serious "WaitForVBL=",*,", fix constants.a"
-}
-         jmp   WaitForVBL_iie        ; SMC to RTS on a II+
-
-; UnwaitForVBL (label is in constants.a)
-!if (RELBASE != $2000) and (* != UnwaitForVBL) {
-  !serious "UnwaitForVBL=",*,", fix constants.a"
-}
-         rts                         ; SMC to JMP on a IIc
-         !word iUnwaitForVBL
-
 ; MockingboardStuff (label is in constants.a)
-!if (RELBASE != $2000) and (* != MockingboardStuff) {
-  !serious "MockingboardStuff=",*,", fix constants.a"
-}
 ;      slot number where Mockingboard was detected and type of board
 ;      #$00 if no Mockingboard detected
-         !byte $FD                   ; MockingboardStuff ($FFF8)
+         !if (RELBASE != $2000) and (* != MockingboardStuff) { !serious "MockingboardStuff=",*,", fix constants.a" }
+         !byte $FD
 
-; MachineStatus (label is in constants.a so prelaunchers can use it)
-!if (RELBASE != $2000) and (* != MachineStatus) {
-  !serious "MachineStatus=",*,", fix constants.a"
-}
+; MachineStatus (label is in constants.a)
 ;      7 6 5 4 3 2 1 0
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
@@ -264,10 +227,10 @@ SwitchToBank2
 ;      | +------------- bit 6 = 1 if 128K
 ;      +--------------- bit 7 = 1 if joystick
 ; Use the bit masks defined in constants.a
-         !byte $FD                   ; MachineStatus ($FFF9)
-!if (RELBASE != $2000) and (* != $FFFA) {
-  !serious "Expected LC vectors to start at $FFFA, found ",*
-}
+         !if (RELBASE != $2000) and (* != MachineStatus) { !serious "MachineStatus=",*,", fix constants.a" }
+         !byte $FD
+
+         !if (RELBASE != $2000) and (* != $FFFA) { !serious "Expected LC vectors to start at $FFFA, found ",* }
          !word Reenter               ; NMI vector ($FFFA-B)
          !word Reenter               ; reset vector ($FFFC-D)
          !word Ignore                ; IRQ vector ($FFFE-F)
@@ -286,7 +249,7 @@ COPYSRC = *
   !if LCRAM2_END >= DisableAccelerator {
     !error "code is too large: ends at ", LCRAM2_END
   }
-  FONTDST = $E000
+  FONTDST = $D100
 }
 EvenLasterMover
   FONTSRC = *

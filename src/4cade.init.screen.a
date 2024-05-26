@@ -2,7 +2,7 @@
 ;(c) 2023 by 4am
 ;
 ; initialize and clear screen
-; assumes zero page is completely trashed other than |zpCharMask|
+; assumes zero page is completely trashed
 ; assumes ROM is banked in on entry
 ;
 ; note: this file is included by both the launcher and proboothd

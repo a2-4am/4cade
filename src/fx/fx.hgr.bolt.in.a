@@ -11,7 +11,7 @@
          !source "src/fx/fx.hgr.precomputed.3bit.a"
 
          +FX_INITONCE_3BIT CoordinatesFile, Start
-         +FX_REVERSE_3BIT
+         jsr   iReverseCoordinates3Bit
 Start
          +FX_PRECOMPUTED_3BIT Coordinates3Bit
 

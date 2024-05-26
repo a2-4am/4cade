@@ -34,7 +34,7 @@ row = $FF
          cmp   #$FF
          bne   @loop
          lda   #$20
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          inc   @h1
          dec   @h2

@@ -8,7 +8,7 @@
          !source "src/fx/fx.dhgr.precomputed.1bit.a"
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
-         jsr EndCoordinates1Bit+1
+         jsr   iRippleCoordinates1Bit2
 
 Start
          !source "src/fx/fx.dhgr.dither.radial.common.a"

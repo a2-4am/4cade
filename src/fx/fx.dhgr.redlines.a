@@ -9,13 +9,13 @@
 ; mainmem alternate #$11/#$44
 ; auxmem  alternate #$08/#$22
 
-hgrlo    =     $0201                 ; [$C0 bytes, main memory only]
-hgr1hi   =     $0301                 ; [$C0 bytes, main memory only]
+;hgrlo    =     $0201                 ; [$C0 bytes, main memory only] defined in constants.a
+;hgr1hi   =     $0301                 ; [$C0 bytes, main memory only] defined in constants.a
 
          !source "src/fx/macros.a"
 
          +COPY_TO_0 start, end
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          jmp   loop
 
 start

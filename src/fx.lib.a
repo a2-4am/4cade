@@ -1,0 +1,457 @@
+;license:MIT
+;(c) 2024 by 4am
+;
+; common routines used by graphic effects
+;
+; Note: launcher code can call these routines directly. However,
+; graphic effects are assembled as separate targets and must call
+; these routines indirectly via the vectors defined in constants.a,
+; e.g. iBuildHGRTables instead of BuildHGRTables.
+;
+
+; based on routine by John Brooks
+; posted on comp.sys.apple2 on 2018-07-11
+; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
+BuildHGRTables
+; out:   populates tables at $0201 (hgrlo) and $0301 (hgrhi)
+;        A clobbered
+;        X=$C0 (important! some callers rely on this)
+;        Z=1
+;        Y preserved
+         ldx   #0
+-        txa
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   hgrlo, x
+         txa
+         and   #7
+         rol
+         asl   hgrlo, x
+         rol
+         ora   #$20
+         sta   hgrhi, x
+         inx
+         cpx   #$C0
+         bne   -
+         rts
+
+WaitForKeyWithTimeout
+; in:    A = timeout length (like standard $FCA8 wait routine)
+; out:   A clobbered (not always 0 if key is pressed, but also not the key pressed)
+;        X/Y preserved
+         sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         bit   KBD
+         bmi   @exit
+         sbc   #1
+         bne   @wait1
+@exit    rts
+
+ReverseCoordinates1Bit
+         ldy   #0                    ; <Coordinates1Bit
+         sty   $f0
+         lda   #>Coordinates1Bit
+         sta   $f1
+         lda   #<(EndCoordinates1Bit - 2)
+         sta   $f2
+         lda   #>(EndCoordinates1Bit - 2)
+         sta   $f3
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
++        lda   $f1
+         eor   #>(Coordinates1Bit + $1A40)
+         bne   +
+         lda   $f0
+         eor   #<(Coordinates1Bit + $1A40)
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always
+++       rts
+
+!zone {
+RippleCoordinates1Bit4
+         lda   #<aslmod4
+         +HIDE_NEXT_2_BYTES
+RippleCoordinates1Bit3
+         lda   #<aslmod3
+         +HIDE_NEXT_2_BYTES
+RippleCoordinates1Bit2
+         lda   #<aslmod2
+         +HIDE_NEXT_2_BYTES
+RippleCoordinates1Bit
+         lda   #<aslmod
+         sta   @jsr+1
+         lda   #2                    ; <(Coordinates1Bit + 2)
+         sta   $f0
+         ldy   #0
+         sty   $f1
+         lda   #$16                  ; <(Coordinates1Bit + 22)
+         sta   $f2
+         sty   $f3
+
+         lda   #$1f
+         sta   $ee
+         lda   #$0d
+         sta   $ef
+
+         lda   Coordinates1Bit + 2
+         sta   $e0
+         lda   Coordinates1Bit + 3
+         sta   $e1
+         lda   Coordinates1Bit + 22
+         sta   $e2
+         lda   Coordinates1Bit + 23
+         sta   $e3
+
+---      ldx   #4
+--       ldy   $ee, x
+         lda   $ef, x
+@jsr     jsr   aslmod                ; SMC on entry
+         sty   $ee, x
+         sta   $ef, x
+         sty   $ec
+         clc
+         adc   #>Coordinates1Bit
+         sta   $ed
+         ldy   #0
+         !byte $24
+-        sec
+         lda   ($ec), y
+         pha
+         lda   $de, x
+         sta   ($ec), y
+         pla
+         sta   $de, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
+         dex
+         dex
+         bne   --
+         dec   $ee
+         bne   ---
+         dec   $ef
+         bpl   ---
+         bmi   exit                 ; always branches
+aslmod4  jsr   aslmod
+aslmod3  jsr   aslmod
+aslmod2  jsr   aslmod
+aslmod   cmp   #$1A
+!if (>aslmod != >aslmod4) {
+         !serious "aslmod entry points are not on the same page"
+}
+         bcc   +
+         bne   ++
+         cpy   #$40
+         bcc   +
+++       iny
++        pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         cmp   #$34
+         bcc   exit
+         bne   ++
+         cpy   #$80
+         bcc   exit
+++       pha
+         tya
+         sbc   #$80
+         tay
+         pla
+         sbc   #$34
+exit     rts
+}
+
+ReverseCoordinates2Bit
+         ldy   #0                    ; <Coordinates2Bit
+         sty   $f0
+         lda   #>Coordinates2Bit
+         sta   $f1
+         lda   #<(EndCoordinates2Bit - 2)
+         sta   $f2
+         lda   #>(EndCoordinates2Bit - 2)
+         sta   $f3
+
+         ldx   #$1E                  ; #$3C/2
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
+         dex
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always branches
+++       rts
+
+RippleCoordinates2Bit
+         ldy   #0
+
+         ldx   #$33
+-        lda   @ptrtbl, x
+         sta   $c0, x
+         dex
+         bpl   -
+
+         lda   #$9b
+         sta   $fe
+         iny
+         sty   $ff
+
+         ldx   #6
+-        lda   Coordinates2Bit + 1, x
+         sta   $7f, x
+         lda   Coordinates2Bit + 9, x
+         sta   $85, x
+         lda   Coordinates2Bit + 17, x
+         sta   $8b, x
+         lda   Coordinates2Bit + 65, x
+         sta   $9b, x
+         dex
+         bne   -
+         lda   Coordinates2Bit + 28
+         sta   $92
+         lda   Coordinates2Bit + 29
+         sta   $93
+         ldx   #4
+-        lda   Coordinates2Bit + 33, x
+         sta   $93, x
+         lda   Coordinates2Bit + 41, x
+         sta   $97, x
+         lda   Coordinates2Bit + 83, x
+         sta   $a1, x
+         dex
+         bne   -
+         ldx   #2
+-        lda   Coordinates2Bit + 125, x
+         sta   $a5, x
+         lda   Coordinates2Bit + 131, x
+         sta   $a7, x
+         lda   Coordinates2Bit + 139, x
+         sta   $a9, x
+         lda   Coordinates2Bit + 169, x
+         sta   $ab, x
+         lda   Coordinates2Bit + 237, x
+         sta   $ad, x
+         lda   Coordinates2Bit + 2193, x
+         sta   $af, x
+         lda   Coordinates2Bit + 6581, x
+         sta   $b1, x
+         dex
+         bne   -
+
+---      ldx   #$34
+--       lda   $be, x
+         tay
+         ora   $bf, x
+         beq   +
+         lda   $bf, x
+         jsr   @aslmod
+         sty   $be, x
+         sta   $bf, x
+         sty   $fc
+         clc
+         adc   #>Coordinates2Bit
+         sta   $fd
+         ldy   #0
+         !byte $24
+-        sec
+         lda   ($fc), y
+         pha
+         lda   $7e, x
+         sta   ($fc), y
+         pla
+         sta   $7e, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
++        dex
+         dex
+         bne   --
+         ldy   #1
+         lda   $fe
+         eor   #<(411 - 2)
+         beq   +
+         ldy   #9
+         eor   #<(411 - 2) xor <(411 - 136)
+         bne   ++
++
+-        ldx   @zerotbl, y
+         sta   $0, x
+         sta   $1, x
+         dey
+         bpl   -
+++       dec   $fe
+         bne   ---
+         dec   $ff
+         bpl   ---
+         bmi   @exit                  ; always branches
+@aslmod  jsr   +
++        cmp   #$1E
+         bcc   +
+         iny
++        pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         cmp   #$3C
+         bcc   @exit
+         sbc   #$3C
+@exit    rts
+@ptrtbl  !word 2, 4, 6, 10, 12, 14, 18, 20
+         !word 22, 28, 34, 36, 42, 44, 66, 68
+         !word 70, 84, 86, 126, 132, 140, 170, 238
+         !word 2194, 6582
+@zerotbl !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
+
+;!macro FX_REVERSE_3BIT {
+ReverseCoordinates3Bit
+         ldy   #0                    ; <Coordinates3Bit
+         sty   $f0
+         lda   #>Coordinates3Bit
+         sta   $f1
+         lda   #<(EndCoordinates3Bit - 2)
+         sta   $f2
+         lda   #>(EndCoordinates3Bit - 2)
+         sta   $f3
+
+         ldx   #$28                  ; #$50/2
+         clc
+         !byte $24
+-        sec
+--       lda   ($f0), y
+         pha
+         lda   ($f2), y
+         sta   ($f0), y
+         pla
+         sta   ($f2), y
+         iny
+         bcc   -
+         ldy   #0
+         !byte $24
+-        clc
+         inc   $f0
+         bne   +
+         inc   $f1
+         dex
+         beq   ++
++        lda   $f2
+         bne   +
+         dec   $f3
++        dec   $f2
+         bcs   -
+         bcc   --                    ; always branches
+++       rts
+
+;!macro FX_RIPPLE_3BIT {
+RippleCoordinates3Bit
+         ldx   #$1B
+-        lda   @ripplezp, x
+         sta   $e0, x
+         dex
+         bpl   -
+
+---      ldx   #$0c
+--       ldy   $ee, x
+         lda   $ef, x
+         jsr   @aslmod
+         sty   $ee, x
+         sta   $ef, x
+         sty   $ec
+         clc
+         adc   #>Coordinates3Bit
+         sta   $ed
+         ldy   #0
+         !byte $24
+-        sec
+         lda   ($ec), y
+         pha
+         lda   $de, x
+         sta   ($ec), y
+         pla
+         sta   $de, x
+         inx
+         iny
+         bcc   -
+         dex
+         dex
+         dex
+         dex
+         bne   --
+         dec   $ee
+         bne   ---
+         dec   $ef
+         bpl   ---
+         bmi   @exit                 ; always branches
+@aslmod  jsr   +
++        cmp   #$28
+         bcc   +
+         iny
++        pha
+         tya
+         asl
+         tay
+         pla
+         rol
+         cmp   #$50
+         bcc   @exit
+         sbc   #$50
+@exit    rts
+@ripplezp
+         !byte $1F,$F3,$20,$F3,$20,$14,$20,$D3
+         !byte $1E,$F3,$1F,$54,$00,$00,$AA,$06
+         !byte $02,$00,$04,$00,$06,$00,$0C,$00
+         !byte $16,$00,$1A,$00

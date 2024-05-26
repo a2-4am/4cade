@@ -176,7 +176,7 @@ copy2    lda   $4500, y              ; SMC
          inc   copy2+2
          inc   copy2+2
          lda   incv
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   exit
          dec   incv
          dec   incv

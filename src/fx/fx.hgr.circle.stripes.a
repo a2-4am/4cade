@@ -5,8 +5,8 @@
 !to "build/FX.INDEXED/CIRCLE.STRIPES",plain
 *=$6000
 
-hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses
-hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses
+;hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses (defined in constants.a)
+;hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses (defined in constants.a)
 
 src      = $F0
 dst      = $F2
@@ -18,7 +18,7 @@ mask2    = $F7
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
 
          lda   #$00
          sta   row1

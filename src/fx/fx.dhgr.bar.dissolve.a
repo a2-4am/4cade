@@ -5,14 +5,14 @@
 !to "build/FX.INDEXED/DHGR.BAR.DISSLV",plain
 *=$6000
 
-hgrlo    =     $0201                 ; [$C0 bytes, main memory only]
-hgr1hi   =     $0301                 ; [$C0 bytes, main memory only]
+;hgrlo    =     $0201                 ; [$C0 bytes, main memory only] defined in constants.a
+;hgr1hi   =     $0301                 ; [$C0 bytes, main memory only] defined in constants.a
 
          !source "src/fx/macros.a"
 
          +COPY_TO_0 start, end
          ;X=0
-         jsr   BuildHGRTables
+         jsr   iBuildHGRTables
          jmp   loop
 
 start
@@ -61,7 +61,7 @@ dst2     sta   $FDFD, y              ; SMC
          bcc   -
          jsr   tomain
          lda   #$30
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   exit
          dec   row2
          inc   row1

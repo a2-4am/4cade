@@ -67,7 +67,7 @@ col2 = $ff
          bpl   @rowloop
 
          lda   #1
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          dec   maskindex
          bpl   @maskloop

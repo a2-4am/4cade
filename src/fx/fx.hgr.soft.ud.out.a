@@ -36,7 +36,7 @@ row = $fd
          bpl   @maskloop
 
          lda   #40
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
 
          dec   row

@@ -31,7 +31,7 @@ row2 = $ff
          cpy   #$28
          bne   @loop2
          lda   #$40
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
          dey                         ; Y -> #$27
          inc   row1

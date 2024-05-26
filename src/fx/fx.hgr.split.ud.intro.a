@@ -23,7 +23,7 @@ col2 = $FF
          ldy   col2
          jsr   HGRHalfBlockToWhite
          lda   #$40
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bpl   +
          jmp   @exit
 +
@@ -109,7 +109,7 @@ row2 = $FF
          bne   @bottomcopy
 
          lda   #$28
-         jsr   WaitForKeyWithTimeout
+         jsr   iWaitForKeyWithTimeout
          bmi   @exit
 
          dec   row1
