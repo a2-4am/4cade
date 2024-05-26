@@ -10,7 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +LOAD_FILE_AT title, $2000
 
          lda   #$2C
          sta   $2070      ; don't load "RECORD" (demo doesn't show high scores)

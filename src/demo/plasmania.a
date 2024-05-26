@@ -9,7 +9,7 @@
          !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT title, $00
+         +LOAD_FILE_AT title, $0800
 
          lda   #>(callback-1)
          sta   $84E

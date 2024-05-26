@@ -11,7 +11,7 @@
          +GAME_REQUIRES_JOYSTICK
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +LOAD_FILE_AT title, $4EC6
          lda   #$4C
          sta   $6BA8
          sta   $6C2D

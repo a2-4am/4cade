@@ -10,7 +10,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT title, $00
+         +LOAD_FILE_AT title, $0800
          ldx   #5
 -        lda   $100,x
          sta   $70,x

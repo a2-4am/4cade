@@ -9,7 +9,7 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +LOAD_FILE_AT cavrn_cheat, 0
+         +LOAD_FILE_AT cavrn_cheat, $0200
          +READ_ROM_NO_WRITE
          jmp   $200
 
