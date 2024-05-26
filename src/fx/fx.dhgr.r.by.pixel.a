@@ -12,8 +12,7 @@ copymasks=     $02C1                 ; [$07 bytes, different values in main and 
          !source "src/fx/macros.a"
 
          +COPY_TO_0 start, end
-         ;X=0
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jsr   BuildHGRTables
 
          ldy   #7                    ; copy copymask arrays into place in main and auxmem
 -        lda   copymasks_main-1, y

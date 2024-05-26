@@ -10,13 +10,13 @@ row = $fd
 col = $fe
 counter = $ff
 
-hgrlo = $8000
-hgr1hi = $80C0
+hgrlo    = $0201
+hgr1hi   = $0301
 
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         jsr   BuildHGRTables
 
          lda   #(40+12+1)
          sta   counter

@@ -5,9 +5,9 @@
 !to "build/FX.INDEXED/DHGR.FLICK",plain
 *=$6000
 
-hgrlo = $200                         ; [$C0 bytes, main memory only]
-startrows_by_column = $2C0           ; [$28 bytes, main memory only]
-hgr1hi = $300                        ; [$C0 bytes, main memory only]
+hgrlo = $201                         ; [$C0 bytes, main memory only]
+startrows_by_column = $2C1           ; [$28 bytes, main memory only]
+hgr1hi = $301                        ; [$C0 bytes, main memory only]
 
          !source "src/fx/macros.a"
 
@@ -18,9 +18,7 @@ hgr1hi = $300                        ; [$C0 bytes, main memory only]
          sta   startrows_by_column-1, x
          dex
          bne   -
-         ;X=0
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
-
+         jsr   BuildHGRTables
          jmp   loop
 
 start

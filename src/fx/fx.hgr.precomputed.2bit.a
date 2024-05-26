@@ -1,17 +1,15 @@
 ;license:MIT
 ;(c) 2019-2022 by 4am
 ;
-copymasks      = $0200    ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00, $20, $40, $60, $80
-mirror_copymasks = $0201
-hgrlo          = $0301    ; $C0 bytes
-hgrlomirror    = $BD40    ; $C0 bytes
-mirror_cols    = $BE00    ; $28 bytes
-hgr1hi         = $BE40    ; $C0 bytes
-hgr1himirror   = $BF40    ; $C0 bytes
-dithermasks    = $8000    ; $58 bytes
+hgrlo          = $0201    ; $C0 bytes
+mirror_cols    = $02C1    ; $28 bytes
+hgr1hi         = $0301    ; $C0 bytes
+dithermasks    = $BDAA    ; $58 bytes
 evenrow_masks  = dithermasks
 oddrow_masks   = dithermasks+2
 no_masks       = dithermasks+44
+copymasks      = $BE00    ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00, $20, $40, $60, $80
+mirror_copymasks = copymasks+1
 Coordinates2Bit= $8100    ; $3C01 bytes ($3C00 on disk + 1 byte as EOF)
 EndCoordinates2Bit = Coordinates2Bit + $3C00
 
@@ -251,7 +249,7 @@ zerotbl  !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
 }
 
 !macro FX_PRECOMPUTED_2BIT .coords {
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         jsr   BuildHGRTables
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
          +COPY_TO_0 start, end
@@ -304,7 +302,7 @@ end
 
 !macro FX_PRECOMPUTED_2BIT_DITHER .coords, .endcoords {
          +BUILD_DITHER_MASKS dithermasks
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         jsr   BuildHGRTables
          +BUILD_MIRROR_COLS mirror_cols
          +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
 

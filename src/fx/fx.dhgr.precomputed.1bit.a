@@ -51,7 +51,7 @@
 
 !macro FX_PRECOMPUTED_1BIT_DHGR .coords {
          +BUILD_SPARSE_BITMASKS_1BIT_DHGR copymasks, mirror_copymasks
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jsr   BuildHGRTables
          +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
          +BUILD_MIRROR_COLS_DHGR mirror_cols
          +COPY_TO_0 start, end
@@ -143,7 +143,7 @@ end
 !macro FX_PRECOMPUTED_1BIT_DHGR_DITHER .coords, .endcoords {
          +BUILD_DITHER_MASKS_DHGR dithermasks
          +BUILD_SPARSE_BITMASKS_1BIT_DHGR copymasks, mirror_copymasks
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jsr   BuildHGRTables
          +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
          +BUILD_MIRROR_COLS_DHGR mirror_cols
 

@@ -170,6 +170,7 @@ gSearchIndex = $6000
 gSearchCache = $A000
 
 ; LC RAM 1 & 2
+BuildHGRTables     = $FFAF
 WaitForKeyWithTimeout = $FFD5
 iLoadFXDATA        = $FFE6
 iLoadXSingle       = $FFE9

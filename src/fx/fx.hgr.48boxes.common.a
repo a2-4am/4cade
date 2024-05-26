@@ -76,8 +76,8 @@
 src      = $00                       ; [word][must be at $00] used by drawing routines
 dst      = $02                       ; [word] used by drawing routines
 rowcount = $04                       ; [byte] used by drawing routines
-hgrhi    = $200                      ; [$C0 bytes] HGR base addresses
-hgrlo    = $300                      ; [$C0 bytes] HGR base addresses
+hgrlo    = $201                      ; [$C0 bytes] HGR base addresses
+hgrhi    = $301                      ; [$C0 bytes] HGR base addresses
 BoxesX   = $90                       ; [$30 bytes] starting row for each box
 BoxesY   = $C0                       ; [$30 bytes] starting byte offset for each box
 
@@ -164,8 +164,7 @@ k_right_mask              = 17
          inx
          bne   -
 
-         ; X=0 here
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
+         jsr   BuildHGRTables
 
 ; Generate |BoxesX| and |BoxesY| arrays
 ; BoxesX (starting row for each box)

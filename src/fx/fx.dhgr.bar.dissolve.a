@@ -5,14 +5,14 @@
 !to "build/FX.INDEXED/DHGR.BAR.DISSLV",plain
 *=$6000
 
-hgrlo    =     $0200                 ; [$C0 bytes, main memory only]
-hgr1hi   =     $0300                 ; [$C0 bytes, main memory only]
+hgrlo    =     $0201                 ; [$C0 bytes, main memory only]
+hgr1hi   =     $0301                 ; [$C0 bytes, main memory only]
 
          !source "src/fx/macros.a"
 
          +COPY_TO_0 start, end
          ;X=0
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgr1hi
+         jsr   BuildHGRTables
          jmp   loop
 
 start

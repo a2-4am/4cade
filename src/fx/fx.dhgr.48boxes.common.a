@@ -80,10 +80,10 @@ rowcount = $04                       ; [byte] used by drawing routines
 tmpy     = $05                       ; [byte] used by drawing routines
 box      = $0E                       ; [byte] counter in main loop
 BoxStages = $10                      ; [$30 bytes] current stage for each box
-auxsrc_hgrhi = $BC00                 ; [$C0 bytes] HGR base addresses (hi) starting at $9000
-hgrhi    = $BD00                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000
-hgrlo    = $BE00                     ; [$C0 bytes] HGR base addresses (lo) starting at $2000
-BoxesX   = $BDC0                     ; [$30 bytes] starting row for each box
+auxsrc_hgrhi = $BD01                 ; [$C0 bytes] HGR base addresses (hi) starting at $9000
+hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses (lo) starting at $2000
+hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses (hi) starting at $2000
+BoxesX   = $BE90                     ; [$30 bytes] starting row for each box
 BoxesY   = $BEC0                     ; [$30 bytes] starting byte offset for each box
 
 ; High bytes of drawing routines for each stage (actual routines will be page-aligned).
@@ -167,6 +167,122 @@ k_bitcopy                 = 30       ; must be last token
 
          !source "src/fx/macros.a"
 
+         jmp   GenerateBoxes
+
+; All template p-code must be on the same page
+;!align 255,0
+; Template for 'stage 0' routine (copy00), which copies the innermost
+; part of the box (labeled '0' in diagram above).
+STAGE0
+         !byte k_set_first_row
+         !byte k_iny2
+         !byte k_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for 'stage 1' routine (copy01), which copies the pixels
+; around the innermost box (labeled '1' in diagram above).
+STAGE1
+         !byte k_set_first_row
+         !byte k_iny2
+         !byte k_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
+         !byte k_switch_to_main
+         !byte k_inx_and_recalc
+         !byte k_byte_copy
+         !byte k_switch_to_aux_and_byte_copy
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 2-8 (copy02..copy08)
+MIDDLE_STAGE
+         !byte k_set_row_count
+         !byte k_set_first_row
+         !byte k_iny
+         !byte k_save_y
+         !byte k_middle_jsr, k_current_page
+         ;-
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_iny2
+         !byte k_bitcopy, k_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_right_mask_aux
+         !byte k_restore_y
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_middle_branch
+         ;+
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_edge_left_mask_main
+         !byte k_iny
+         !byte k_byte_copy_and_iny
+         !byte k_bitcopy, k_edge_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_edge_right_mask_aux
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_bitcopy, k_edge_left_mask_aux
+         !byte k_rts                 ; also serves as an end-of-template marker
+
+; Template for stages 9-15 (copy09..copy0F)
+OUTER_STAGE
+         !byte k_set_row_count
+         !byte k_set_first_row
+         !byte k_save_y
+         !byte k_outer_jsr, k_current_page
+         ;-
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_left_mask_main
+         !byte k_iny2
+         !byte k_iny2
+         !byte k_bitcopy, k_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_right_mask_aux
+         !byte k_restore_y
+         !byte k_bitcopy, k_left_mask_aux
+         !byte k_switch_to_main
+         !byte k_outer_branch
+         ;+
+         !byte k_inx_and_recalc
+         !byte k_bitcopy, k_edge_left_mask_main
+         !byte k_iny
+         !byte k_byte_copy_and_iny
+         !byte k_byte_copy_and_iny
+         !byte k_byte_copy_and_iny
+         !byte k_bitcopy, k_edge_right_mask_main
+         !byte k_switch_to_aux
+         !byte k_bitcopy, k_edge_right_mask_aux
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_byte_copy
+         !byte k_dey
+         !byte k_bitcopy, k_edge_left_mask_aux
+         !byte k_rts                 ; also serves as an end-of-template marker
+!if >* != >STAGE0 {
+         !error "Templates are not all on same page"
+}
+
+GenerateBoxes
 ; generate |BoxesX| and |BoxesY| arrays
          ldx   #48
          ldy   #$A0
@@ -206,7 +322,7 @@ k_bitcopy                 = 30       ; must be last token
          bne   -
          ; X=0 here
 
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 hgrlo, hgrhi
+         jsr   BuildHGRTables
          ; X=$C0 here
 
 -        lda   hgrhi-1, x
@@ -638,116 +754,4 @@ BuildStage1And0
          lda   #<STAGE0
          jmp   BuildDrawingRoutineFrom
 
-; All template p-code must be on the same page
-;!align 255,0
-; Template for 'stage 0' routine (copy00), which copies the innermost
-; part of the box (labeled '0' in diagram above).
-STAGE0
-         !byte k_set_first_row
-         !byte k_iny2
-         !byte k_recalc
-         !byte k_bitcopy, k_left_mask_main
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_left_mask_main
-         !byte k_switch_to_main
-         !byte k_inx_and_recalc
-         !byte k_bitcopy, k_left_mask_aux
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_left_mask_aux
-         !byte k_rts                 ; also serves as an end-of-template marker
-
-; Template for 'stage 1' routine (copy01), which copies the pixels
-; around the innermost box (labeled '1' in diagram above).
-STAGE1
-         !byte k_set_first_row
-         !byte k_iny2
-         !byte k_recalc
-         !byte k_byte_copy
-         !byte k_switch_to_aux_and_byte_copy
-         !byte k_switch_to_main
-         !byte k_inx_and_recalc
-         !byte k_byte_copy
-         !byte k_switch_to_aux_and_byte_copy
-         !byte k_switch_to_main
-         !byte k_inx_and_recalc
-         !byte k_byte_copy
-         !byte k_switch_to_aux_and_byte_copy
-         !byte k_switch_to_main
-         !byte k_inx_and_recalc
-         !byte k_byte_copy
-         !byte k_switch_to_aux_and_byte_copy
-         !byte k_rts                 ; also serves as an end-of-template marker
-
-; Template for stages 2-8 (copy02..copy08)
-MIDDLE_STAGE
-         !byte k_set_row_count
-         !byte k_set_first_row
-         !byte k_iny
-         !byte k_save_y
-         !byte k_middle_jsr, k_current_page
-         ;-
-         !byte k_inx_and_recalc
-         !byte k_bitcopy, k_left_mask_main
-         !byte k_iny2
-         !byte k_bitcopy, k_right_mask_main
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_right_mask_aux
-         !byte k_restore_y
-         !byte k_bitcopy, k_left_mask_aux
-         !byte k_switch_to_main
-         !byte k_middle_branch
-         ;+
-         !byte k_inx_and_recalc
-         !byte k_bitcopy, k_edge_left_mask_main
-         !byte k_iny
-         !byte k_byte_copy_and_iny
-         !byte k_bitcopy, k_edge_right_mask_main
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_edge_right_mask_aux
-         !byte k_dey
-         !byte k_byte_copy
-         !byte k_dey
-         !byte k_bitcopy, k_edge_left_mask_aux
-         !byte k_rts                 ; also serves as an end-of-template marker
-
-; Template for stages 9-15 (copy09..copy0F)
-OUTER_STAGE
-         !byte k_set_row_count
-         !byte k_set_first_row
-         !byte k_save_y
-         !byte k_outer_jsr, k_current_page
-         ;-
-         !byte k_inx_and_recalc
-         !byte k_bitcopy, k_left_mask_main
-         !byte k_iny2
-         !byte k_iny2
-         !byte k_bitcopy, k_right_mask_main
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_right_mask_aux
-         !byte k_restore_y
-         !byte k_bitcopy, k_left_mask_aux
-         !byte k_switch_to_main
-         !byte k_outer_branch
-         ;+
-         !byte k_inx_and_recalc
-         !byte k_bitcopy, k_edge_left_mask_main
-         !byte k_iny
-         !byte k_byte_copy_and_iny
-         !byte k_byte_copy_and_iny
-         !byte k_byte_copy_and_iny
-         !byte k_bitcopy, k_edge_right_mask_main
-         !byte k_switch_to_aux
-         !byte k_bitcopy, k_edge_right_mask_aux
-         !byte k_dey
-         !byte k_byte_copy
-         !byte k_dey
-         !byte k_byte_copy
-         !byte k_dey
-         !byte k_byte_copy
-         !byte k_dey
-         !byte k_bitcopy, k_edge_left_mask_aux
-         !byte k_rts                 ; also serves as an end-of-template marker
-!if >* != >STAGE0 {
-         !error "Templates are not all on same page"
-}
 BoxInitialStages

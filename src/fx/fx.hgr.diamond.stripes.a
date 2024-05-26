@@ -5,8 +5,8 @@
 !to "build/FX.INDEXED/DIAMOND.STRIPES",plain
 *=$6000
 
-hgrhi    = $BE01                     ; [$C0 bytes] HGR base addresses
-hgrlo    = $BD01                     ; [$C0 bytes] HGR base addresses
+hgrlo    = $0201                     ; [$C0 bytes] HGR base addresses
+hgrhi    = $0301                     ; [$C0 bytes] HGR base addresses
 
 src      = $F0
 dst      = $F2
@@ -18,7 +18,7 @@ mask2    = $F7
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgrhi
+         jsr   BuildHGRTables
 
          lda   #$00
          sta   row1

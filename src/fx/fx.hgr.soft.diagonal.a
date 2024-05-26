@@ -10,8 +10,8 @@ row = $fd
 col = $fe
 counter = $ff
 
-hgrlo    =     $0200                 ; [$C0 bytes]
-hgr1hi   =     $0300                 ; [$C0 bytes]
+hgrlo    =     $0201                 ; [$C0 bytes]
+hgr1hi   =     $0301                 ; [$C0 bytes]
 
          !source "src/fx/macros.a"
 
@@ -24,7 +24,7 @@ hgr1hi   =     $0300                 ; [$C0 bytes]
          sta   $3d
 }
 
-         +BUILD_HGR_LOOKUP_TABLES hgrlo, hgr1hi
+         jsr   BuildHGRTables
 
          lda   #(40+24+7-1) ; columns + rows + blocks per row - 1
          sta   counter

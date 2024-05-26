@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          lda   #$60
-         sta   $336
+         sta   $33C
          jsr   $300
          +USES_TEXT_PAGE_2
          +ENABLE_ACCEL

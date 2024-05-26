@@ -358,6 +358,7 @@
          +READ_ROM_NO_WRITE
 }
 
+; ROM must be banked in!
 !macro   USES_TEXT_PAGE_2 {          ; If we know we are going into a game one-time
          lda   ROM_MACHINEID         ; only we can just blindly turn on TEXT2COPY, as
          cmp   #$06                  ; Alternate Display Mode turns off on reset or reboot.
@@ -370,6 +371,7 @@
 +
 }
 
+; ROM must be banked in!
 !macro   TEST_TEXT_PAGE_2 {          ; On a ROM3 IIgs we can test if Alternate Display Mode
          lda   ROM_MACHINEID         ; is already on. ROM0 and ROM1 versions of ADM use
          cmp   #$06                  ; interrupts and can cause hangs, so safer to just

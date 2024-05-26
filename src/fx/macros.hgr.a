@@ -4,41 +4,6 @@
 
 !ifndef _FX_MACROS_HGR_ {
 
-; .hgrlo, .hgr1hi will each be filled with $C0 bytes
-; based on routine by John Brooks
-; posted on comp.sys.apple2 on 2018-07-11
-; https://groups.google.com/d/msg/comp.sys.apple2/v2HOfHOmeNQ/zD76fJg_BAAJ
-!macro BUILD_HGR_LOOKUP_TABLES .hgrlo, .hgr1hi {
-; preserves Y
-         ldx   #0
-         +BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi
-}
-
-; use this macro instead if you know X is already 0 on entry, to save 2 bytes
-!macro BUILD_HGR_LOOKUP_TABLES_X_IS_ALREADY_0 .hgrlo, .hgr1hi {
-; preserves Y
--        txa
-         and   #$F8
-         bpl   +
-         ora   #5
-+        asl
-         bpl   +
-         ora   #5
-+        asl
-         asl
-         sta   .hgrlo,x
-         txa
-         and   #7
-         rol
-         asl   .hgrlo,x
-         rol
-         ora   #$20
-         sta   .hgr1hi,x
-         inx
-         cpx   #$C0
-         bne   -
-}
-
 ; .hgrlomirror, .hgr1himirror will each be filled with $C0 bytes
 !macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror {
          ldx   #$C0
