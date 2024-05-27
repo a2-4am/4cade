@@ -11,11 +11,11 @@ shrhi    = $300           ; $C8 bytes
 coords   = $9F00          ; $1F41 bytes
 last_coords = coords+$1F3E
 CoordinatesFileCopy = $BE42; $11 bytes
-mirror_cols = $BE60       ; $A0 bytes but clobbers $27 previous bytes during construction
+shr_mirror_cols = $BE60   ; $A0 bytes but clobbers $27 previous bytes during construction
 
          !source "src/fx/macros.a"
 
-         +SHR_STAGE_1 shrlo, shrhi, mirror_rows, mirror_cols
+         +SHR_STAGE_1 shrlo, shrhi, mirror_rows, shr_mirror_cols
          jmp   stage2
 
 !pseudopc *-$300 {
@@ -42,7 +42,7 @@ input    ldx   coords                ; SMC
          ; bottom-right quadrant (opposite row, opposite column, original input order)
          lda   mirror_rows, x
          tax
-         lda   mirror_cols, y
+         lda   shr_mirror_cols, y
          tay
          jsr   copy
 
@@ -59,7 +59,7 @@ reverse_input
          ; top-right quadrant (original row, opposite column, reverse input order)
          lda   mirror_rows, x        ; mirror of the mirror
          tax
-         lda   mirror_cols, y
+         lda   shr_mirror_cols, y
          tay
          jsr   copy
 

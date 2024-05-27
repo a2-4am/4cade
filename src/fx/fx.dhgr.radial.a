@@ -22,9 +22,9 @@ input          = $FE      ; word
          sta   Coordinates1Bit-2
 
 Start
-         +BUILD_SPARSE_BITMASKS_1BIT_DHGR copymasks, mirror_copymasks
+         jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
-         +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
+         jsr   iBuildHGRMirrorTables
          +BUILD_MIRROR_COLS_DHGR mirror_cols
          +COPY_TO_AUXMEM $60, 4
          +LDADDR EndCoordinates1Bit-2
@@ -39,10 +39,10 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
          lda   (input),y
          +HIGH_3_LOW_5 input
          clc
--        lda   copymasks, x
+-        lda   copymasks1bit, x
          beq   +
-         +COPY_BIT mirror_src1, mirror_dest1, copymasks
-         +COPY_BIT mirror_src2, mirror_dest2, copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks1bit
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks1bit
 +        bcs   +
          sta   $C003
          sta   $C005
@@ -65,10 +65,10 @@ LoopTL                               ; top-left quadrant
          lda   (input),y
          +HIGH_3_LOW_5 input
          clc
--        lda   copymasks, x
+-        lda   copymasks1bit, x
          beq   +
-         +COPY_BIT src1, dest1, copymasks
-         +COPY_BIT src2, dest2, copymasks
+         +COPY_BIT src1, dest1, copymasks1bit
+         +COPY_BIT src2, dest2, copymasks1bit
 +        bcs   +
          sta   $C003
          sta   $C005
@@ -93,10 +93,10 @@ LoopTR                               ; top-right quadrant (same row, opposite co
          lda   mirror_cols,y
          tay
          clc
--        lda   mirror_copymasks, x
+-        lda   mirror_copymasks1bit, x
          beq   +
-         +COPY_BIT src1, dest1, mirror_copymasks
-         +COPY_BIT src2, dest2, mirror_copymasks
+         +COPY_BIT src1, dest1, mirror_copymasks1bit
+         +COPY_BIT src2, dest2, mirror_copymasks1bit
 +        bcs   +
          sta   $C003
          sta   $C005
@@ -121,10 +121,10 @@ LoopBR                               ; bottom-right quadrant (opposite row, oppo
          lda   mirror_cols,y
          tay
          clc
--        lda   mirror_copymasks, x
+-        lda   mirror_copymasks1bit, x
          beq   +
-         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks
-         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks
+         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks1bit
+         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks1bit
 +        bcs   +
          sta   $C003
          sta   $C005

@@ -154,54 +154,30 @@ gGlobalPrefsStore
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
 
-         !if (RELBASE != $2000) and (* != iRippleCoordinates3Bit) { !serious "iRippleCoordinates3Bit=",*,", fix constants.a" }
-         jmp   RippleCoordinates3Bit
-
-         !if (RELBASE != $2000) and (* != iReverseCoordinates3Bit) { !serious "iReverseCoordinates3Bit=",*,", fix constants.a" }
-         jmp   ReverseCoordinates3Bit
-
-         !if (RELBASE != $2000) and (* != iRippleCoordinates2Bit) { !serious "iRippleCoordinates2Bit=",*,", fix constants.a" }
-         jmp   RippleCoordinates2Bit
-
-         !if (RELBASE != $2000) and (* != iReverseCoordinates2Bit) { !serious "iReverseCoordinates2Bit=",*,", fix constants.a" }
-         jmp   ReverseCoordinates2Bit
-
-         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit4) { !serious "iRippleCoordinates1Bit4=",*,", fix constants.a" }
-         jmp   RippleCoordinates1Bit4
-
-         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit3) { !serious "iRippleCoordinates1Bit3=",*,", fix constants.a" }
-         jmp   RippleCoordinates1Bit3
-
-         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit2) { !serious "iRippleCoordinates1Bit2=",*,", fix constants.a" }
-         jmp   RippleCoordinates1Bit2
-
-         !if (RELBASE != $2000) and (* != iRippleCoordinates1Bit) { !serious "iRippleCoordinates1Bit=",*,", fix constants.a" }
-         jmp   RippleCoordinates1Bit
-
-         !if (RELBASE != $2000) and (* != iReverseCoordinates1Bit) { !serious "iReverseCoordinates1Bit=",*,", fix constants.a" }
-         jmp   ReverseCoordinates1Bit
-
-         !if (RELBASE != $2000) and (* != iWaitForKeyWithTimeout) { !serious "iWaitForKeyWithTimeout=",*,", fix constants.a" }
-         jmp   WaitForKeyWithTimeout
-
-         !if (RELBASE != $2000) and (* != iBuildHGRTables) { !serious "iBuildHGRTables=",*,", fix constants.a" }
-         jmp   BuildHGRTables
-
-         !if (RELBASE != $2000) and (* != iLoadFXDATA) { !serious "iLoadFXDATA=",*,", fix constants.a" }
-         jmp   LoadFXDATA
-
-         !if (RELBASE != $2000) and (* != iLoadXSingle) { !serious "iLoadXSingle=",*,", fix constants.a" }
-         jmp   LoadXSingle
-
-         !if (RELBASE != $2000) and (* != iAddToPath) { !serious "iAddToPath=",*,", fix constants.a" }
-         jmp   AddToPath
-
-         !if (RELBASE != $2000) and (* != iLoadFileDirect) { !serious "iLoadFileDirect=",*,", fix constants.a" }
-         jmp   LoadFileDirect
-
-         !if (RELBASE != $2000) and (* != WaitForVBL) { !serious "WaitForVBL=",*,", fix constants.a" }
-         jmp   WaitForVBL_iie        ; SMC to RTS on a II+
-
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,   RippleCoordinates3Bit
+         +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,  ReverseCoordinates3Bit
+         +DEFINE_INDIRECT_VECTOR iSetupPrecomputed3Bit,    SetupPrecomputed3Bit
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates2Bit,   RippleCoordinates2Bit
+         +DEFINE_INDIRECT_VECTOR iReverseCoordinates2Bit,  ReverseCoordinates2Bit
+         +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks2Bit, BuildHGRSparseBitmasks2Bit
+         +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks1Bit, BuildDHGRSparseBitmasks1Bit
+         +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks1Bit, BuildHGRSparseBitmasks1Bit
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates1Bit4,  RippleCoordinates1Bit4
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates1Bit3,  RippleCoordinates1Bit3
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates1Bit2,  RippleCoordinates1Bit2
+         +DEFINE_INDIRECT_VECTOR iRippleCoordinates1Bit,   RippleCoordinates1Bit
+         +DEFINE_INDIRECT_VECTOR iReverseCoordinates1Bit,  ReverseCoordinates1Bit
+         +DEFINE_INDIRECT_VECTOR iWaitForKeyWithTimeout,   WaitForKeyWithTimeout
+         +DEFINE_INDIRECT_VECTOR iBuildHGRDitherMasks,     BuildHGRDitherMasks
+         +DEFINE_INDIRECT_VECTOR iBuildHGRMirrorCols,      BuildHGRMirrorCols
+         +DEFINE_INDIRECT_VECTOR iBuildHGRMirrorTables,    BuildHGRMirrorTables
+         +DEFINE_INDIRECT_VECTOR iBuildHGRTables,          BuildHGRTables
+         +DEFINE_INDIRECT_VECTOR iLoadFXDATA,              LoadFXDATA
+         +DEFINE_INDIRECT_VECTOR iLoadXSingle,             LoadXSingle
+         +DEFINE_INDIRECT_VECTOR iAddToPath,               AddToPath
+         +DEFINE_INDIRECT_VECTOR iLoadFileDirect,          LoadFileDirect
+         ; SMC to RTS on a II+
+         +DEFINE_INDIRECT_VECTOR WaitForVBL,               WaitForVBL_iie
          !if (RELBASE != $2000) and (* != UnwaitForVBL) { !serious "UnwaitForVBL=",*,", fix constants.a" }
          rts                         ; SMC to JMP on a IIc
          !word iUnwaitForVBL

@@ -8,6 +8,43 @@
 ; these routines indirectly via the vectors defined in constants.a,
 ; e.g. iBuildHGRTables instead of BuildHGRTables.
 ;
+; Public functions:
+; - WaitForKeyWithTimeout
+; - BuildHGRTables
+; - BuildHGRMirrorTables
+; - BuildHGRMirrorCols
+; - BuildHGRDitherMasks
+
+; - BuildHGRSparseBitmasks1Bit
+; - BuildDHGRSparseBitmasks1Bit
+; - ReverseCoordinates1Bit
+; - RippleCoordinates1Bit
+; - RippleCoordinates1Bit2
+; - RippleCoordinates1Bit3
+; - RippleCoordinates1Bit4
+
+; - BuildHGRSparseBitmasks2Bit
+; - ReverseCoordinates2Bit
+; - RippleCoordinates2Bit
+
+; - SetupPrecomputed3Bit
+; - ReverseCoordinates3Bit
+; - RippleCoordinates3Bit
+
+WaitForKeyWithTimeout
+; in:    A = timeout length (like standard $FCA8 wait routine)
+; out:   A clobbered (not always 0 if key is pressed, but also not the key pressed)
+;        X/Y preserved
+         sec
+@wait1   pha
+@wait2   sbc   #1
+         bne   @wait2
+         pla
+         bit   KBD
+         bmi   @exit
+         sbc   #1
+         bne   @wait1
+@exit    rts
 
 ; based on routine by John Brooks
 ; posted on comp.sys.apple2 on 2018-07-11
@@ -41,20 +78,140 @@ BuildHGRTables
          bne   -
          rts
 
-WaitForKeyWithTimeout
-; in:    A = timeout length (like standard $FCA8 wait routine)
-; out:   A clobbered (not always 0 if key is pressed, but also not the key pressed)
-;        X/Y preserved
-         sec
-@wait1   pha
-@wait2   sbc   #1
-         bne   @wait2
-         pla
-         bit   KBD
-         bmi   @exit
-         sbc   #1
-         bne   @wait1
-@exit    rts
+BuildHGRMirrorTables
+         ldx   #$C0
+         ldy   #0
+-        tya
+         and   #$F8
+         bpl   +
+         ora   #5
++        asl
+         bpl   +
+         ora   #5
++        asl
+         asl
+         sta   hgrlomirror-1, x
+         tya
+         and   #7
+         rol
+         asl   hgrlomirror-1, x
+         rol
+         ora   #$20
+         sta   hgr1himirror-1, x
+         iny
+         dex
+         bne   -
+         rts
+
+BuildHGRMirrorCols
+; in:    none
+; out:   mirror_cols populated with lookup table to get $27-y for y in $00..$27
+;        all registers and flags clobbered
+         ldx   #$27
+         ldy   #$00
+-        tya
+         sta   mirror_cols, x
+         iny
+         dex
+         bpl   -
+         rts
+
+BuildHGRDitherMasks
+         ldy   #40
+-        lda   #%10110011
+         sta   dithermasks, y
+         lda   #%11100110
+         sta   dithermasks+1, y
+         lda   #%11001100
+         sta   dithermasks+2, y
+         lda   #%10011001
+         sta   dithermasks+3, y
+         dey
+         dey
+         dey
+         dey
+         bpl   -
+         ldy   #43
+         lda   #$FF
+-        sta   no_masks, y
+         dey
+         bpl   -
+         rts
+
+BuildHGRSparseBitmasks1Bit
+         lda   #%10000001
+         sta   copymasks1bit
+         sta   mirror_copymasks1bit+$C0
+
+         lda   #%10000010
+         sta   copymasks1bit+$20
+         sta   mirror_copymasks1bit+$A0
+
+         lda   #%10000100
+         sta   copymasks1bit+$40
+         sta   mirror_copymasks1bit+$80
+
+         lda   #%10001000
+         sta   copymasks1bit+$60
+         sta   mirror_copymasks1bit+$60
+
+         lda   #%10010000
+         sta   copymasks1bit+$80
+         sta   mirror_copymasks1bit+$40
+
+         lda   #%10100000
+         sta   copymasks1bit+$A0
+         sta   mirror_copymasks1bit+$20
+
+         lda   #%11000000
+         sta   copymasks1bit+$C0
+         sta   mirror_copymasks1bit
+         rts
+
+BuildDHGRSparseBitmasks1Bit
+; out:   X=0
+         ldx   #$00
+         txa
+-        sta   copymasks1bit, x
+         sta   $C005
+         sta   copymasks1bit, x
+         sta   $C004
+         inx
+         bne   -
+         ; X=0
+
+         lda   #%00000111
+         sta   copymasks1bit+$80
+         sta   mirror_copymasks1bit+$40
+
+         lda   #%00011000
+         sta   copymasks1bit+$A0
+         sta   mirror_copymasks1bit+$20
+
+         lda   #%01100000
+         sta   copymasks1bit+$C0
+         sta   mirror_copymasks1bit
+
+         sta   $C005
+
+         lda   #%10000011
+         sta   copymasks1bit
+         sta   mirror_copymasks1bit+$C0
+
+         lda   #%10001100
+         sta   copymasks1bit+$20
+         sta   mirror_copymasks1bit+$A0
+
+         lda   #%10110000
+         sta   copymasks1bit+$40
+         sta   mirror_copymasks1bit+$80
+
+         lda   #%11000000
+         sta   copymasks1bit+$60
+         sta   mirror_copymasks1bit+$60
+
+         sta   $C004
+         rts
 
 ReverseCoordinates1Bit
          ldy   #0                    ; <Coordinates1Bit
@@ -194,6 +351,40 @@ aslmod   cmp   #$1A
          sbc   #$34
 exit     rts
 }
+
+BuildHGRSparseBitmasks2Bit
+         lda   #%10000011
+         sta   copymasks2bit
+         sta   mirror_copymasks2bit+$E0
+
+         lda   #%10001100
+         sta   copymasks2bit+$20
+         sta   mirror_copymasks2bit+$C0
+
+         lda   #%10110000
+         sta   copymasks2bit+$40
+         sta   mirror_copymasks2bit+$A0
+
+         lda   #%11000000
+         sta   copymasks2bit+$60
+         sta   mirror_copymasks2bit+$80
+
+         lda   #%10000001
+         sta   copymasks2bit+$80
+         sta   mirror_copymasks2bit+$60
+
+         lda   #%10000110
+         sta   copymasks2bit+$A0
+         sta   mirror_copymasks2bit+$40
+
+         lda   #%10011000
+         sta   copymasks2bit+$C0
+         sta   mirror_copymasks2bit+$20
+
+         lda   #%11100000
+         sta   copymasks2bit+$E0
+         sta   mirror_copymasks2bit
+         rts
 
 ReverseCoordinates2Bit
          ldy   #0                    ; <Coordinates2Bit
@@ -357,7 +548,70 @@ RippleCoordinates2Bit
          !word 2194, 6582
 @zerotbl !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
 
-;!macro FX_REVERSE_3BIT {
+SetupPrecomputed3Bit
+         ; build regular HGR lookup tables, then split them
+         jsr   BuildHGRTables
+         ldx   #$BF
+         ldy   #$3F
+-        lda   hgrlo, x
+         sta   hgrlo3c, y
+         sta   hgrlo3c+$40, y
+         lda   hgrhi, x
+         sta   hgrhi3c, y
+         sta   hgrhi3c+$40, y
+         dex
+         lda   hgrlo, x
+         sta   hgrlo3b, y
+         sta   hgrlo3b+$40, y
+         lda   hgrhi, x
+         sta   hgrhi3b, y
+         sta   hgrhi3b+$40, y
+         dex
+         lda   hgrlo, x
+         sta   hgrlo3a, y
+         sta   hgrlo3a+$40, y
+         lda   hgrhi, x
+         sta   hgrhi3a, y
+         sta   hgrhi3a+$40, y
+         dex
+         dey
+         bpl   -
+
+         ; build lookup table to get $20+y for y in $00..$07
+         ldx   #$07
+         ldy   #$27
+-        tya
+         sta   extra_cols-$20, y
+         dey
+         dex
+         bpl   -
+
+         ; build sparse lookup tables for bitmasks
+         lda   #%10000011
+         sta   copymasks3bit
+
+         lda   #%10001100
+         sta   copymasks3bit+$20
+
+         lda   #%10110000
+         sta   copymasks3bit+$40
+
+         lda   #%11000000
+         sta   copymasks3bit+$60
+
+         lda   #%10000001
+         sta   copymasks3bit+$80
+
+         lda   #%10000110
+         sta   copymasks3bit+$A0
+
+         lda   #%10011000
+         sta   copymasks3bit+$C0
+
+         lda   #%11100000
+         sta   copymasks3bit+$E0
+         rts
+
 ReverseCoordinates3Bit
          ldy   #0                    ; <Coordinates3Bit
          sty   $f0
@@ -396,7 +650,6 @@ ReverseCoordinates3Bit
          bcc   --                    ; always branches
 ++       rts
 
-;!macro FX_RIPPLE_3BIT {
 RippleCoordinates3Bit
          ldx   #$1B
 -        lda   @ripplezp, x

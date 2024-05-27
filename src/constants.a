@@ -56,7 +56,7 @@
 ; MAIN MEMORY DURING GAME LAUNCH
 ; 0100..0105 - re-entry code
 ; 0106..01BF - prelaunch code
-; 0400..7FFF - text screen cleared
+; 0400..07FF - text screen cleared
 ; 2000..5FFF - hi-res screens cleared
 ; A000..     - prelaunch index file
 ;
@@ -172,23 +172,30 @@ gSearchCache = $A000
 ; LC RAM 1 & 2
 ; these are defined here because they are also called by other targets
 ; that are assembled separately, e.g. prelaunchers, demo launchers, and graphic effects
-iRippleCoordinates3Bit = $FFBE
-iReverseCoordinates3Bit = $FFC1
-iRippleCoordinates2Bit = $FFC4
-iReverseCoordinates2Bit = $FFC7
-iRippleCoordinates1Bit4 = $FFCA
-iRippleCoordinates1Bit3 = $FFCD
-iRippleCoordinates1Bit2 = $FFD0
-iRippleCoordinates1Bit = $FFD3
-iReverseCoordinates1Bit = $FFD6
-iWaitForKeyWithTimeout = $FFD9
-iBuildHGRTables    = $FFDC
-iLoadFXDATA        = $FFDF
-iLoadXSingle       = $FFE2
-iAddToPath         = $FFE5
-iLoadFileDirect    = $FFE8  ; note: you really want LC RAM 2 banked in before calling this
-WaitForVBL         = $FFEB
-UnwaitForVBL       = $FFEE
+UnwaitForVBL              = $FFEE
+WaitForVBL                = UnwaitForVBL-3
+iLoadFileDirect           = WaitForVBL-3  ; note: you really want LC RAM 2 banked in before calling this
+iAddToPath                = iLoadFileDirect-3
+iLoadXSingle              = iAddToPath-3
+iLoadFXDATA               = iLoadXSingle-3
+iBuildHGRTables           = iLoadFXDATA-3
+iBuildHGRMirrorTables     = iBuildHGRTables-3
+iBuildHGRMirrorCols       = iBuildHGRMirrorTables-3
+iBuildHGRDitherMasks      = iBuildHGRMirrorCols-3
+iWaitForKeyWithTimeout    = iBuildHGRDitherMasks-3
+iReverseCoordinates1Bit   = iWaitForKeyWithTimeout-3
+iRippleCoordinates1Bit    = iReverseCoordinates1Bit-3
+iRippleCoordinates1Bit2   = iRippleCoordinates1Bit-3
+iRippleCoordinates1Bit3   = iRippleCoordinates1Bit2-3
+iRippleCoordinates1Bit4   = iRippleCoordinates1Bit3-3
+iBuildHGRSparseBitmasks1Bit  = iRippleCoordinates1Bit4-3
+iBuildDHGRSparseBitmasks1Bit = iBuildHGRSparseBitmasks1Bit-3
+iBuildHGRSparseBitmasks2Bit  = iBuildDHGRSparseBitmasks1Bit-3
+iReverseCoordinates2Bit   = iBuildHGRSparseBitmasks2Bit-3
+iRippleCoordinates2Bit    = iReverseCoordinates2Bit-3
+iSetupPrecomputed3Bit     = iRippleCoordinates2Bit-3
+iReverseCoordinates3Bit   = iSetupPrecomputed3Bit-3
+iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")
@@ -253,14 +260,38 @@ PrelaunchInit  = $EB
 
 ; addresses used by graphic effects
 hgrlo          = $0201               ; $C0 bytes
+mirror_cols    = $02C1               ; $28 bytes
 hgrhi          = $0301               ; $C0 bytes
 hgr1hi         = hgrhi
+
 Coordinates1Bit= $8600               ; $3481 bytes ($3480 on disk + 1 byte EOF marker added at runtime)
 EndCoordinates1Bit = Coordinates1Bit + $3480
+
 Coordinates2Bit= $8100               ; $3C01 bytes ($3C00 on disk + 1 byte EOF marker added at runtime)
 EndCoordinates2Bit = Coordinates2Bit + $3C00
-Coordinates3Bit= $6B00               ; $5001 bytes ($5000 on disk + 1 byte EOF marker added at runtime)
+
+Coordinates3Bit= $6D00               ; $5001 bytes ($5000 on disk + 1 byte EOF marker added at runtime)
 EndCoordinates3Bit = Coordinates3Bit + $5000
+
+hgrlomirror    = $BB01               ; $C0 bytes
+hgr1himirror   = $BC01               ; $C0 bytes
+dithermasks    = $BDA8               ; $58 bytes
+evenrow_masks  = dithermasks
+oddrow_masks   = dithermasks+2
+no_masks       = dithermasks+44
+copymasks1bit  = $BE00               ; $100 bytes but sparse, index is 0..6 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0
+copymasks2bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00,$20,$40,$60,$80
+copymasks3bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0,$E0
+mirror_copymasks1bit = copymasks1bit+1
+mirror_copymasks2bit = copymasks2bit+1
+hgrlo3a        = $6A00               ; $80 bytes
+hgrlo3b        = $6A80               ; $80 bytes
+hgrlo3c        = $6B00               ; $80 bytes
+hgrhi3a        = $6B80               ; $80 bytes
+hgrhi3b        = $6C00               ; $80 bytes
+hgrhi3c        = $BD01               ; $80 bytes
+extra_cols     = $BEF8               ; $08 bytes
+
 
 _CONSTANTS_=*
 }

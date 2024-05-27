@@ -4,45 +4,6 @@
 
 !ifndef _FX_MACROS_HGR_ {
 
-; .hgrlomirror, .hgr1himirror will each be filled with $C0 bytes
-!macro BUILD_HGR_MIRROR_LOOKUP_TABLES .hgrlomirror, .hgr1himirror {
-         ldx   #$C0
-         ldy   #0
--        tya
-         and   #$F8
-         bpl   +
-         ora   #5
-+        asl
-         bpl   +
-         ora   #5
-+        asl
-         asl
-         sta   .hgrlomirror-1,x
-         tya
-         and   #7
-         rol
-         asl   .hgrlomirror-1,x
-         rol
-         ora   #$20
-         sta   .hgr1himirror-1,x
-         iny
-         dex
-         bne   -
-}
-
-!macro BUILD_MIRROR_COLS .mirror_cols {
-; in:    none
-; out:   .mirror_cols populated with lookup table to get $27-y for y in $00..$27
-;        all registers and flags clobbered
-         ldx   #$27
-         ldy   #$00
--        tya
-         sta   .mirror_cols, x
-         iny
-         dex
-         bpl   -
-}
-
 !macro HGR_CALC {
 ; in:    A = HGR row (0x00..0xBF)
 ; out:   A/X clobbered

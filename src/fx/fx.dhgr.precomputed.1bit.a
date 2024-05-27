@@ -4,55 +4,10 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-!macro BUILD_SPARSE_BITMASKS_1BIT_DHGR .copymasks, .mirror_copymasks {
-         ; build sparse lookup tables for bitmasks
-         ldx   #$00
-         txa
--        sta   .copymasks, x
-         sta   $C005
-         sta   .copymasks, x
-         sta   $C004
-         inx
-         bne   -
-
-         lda   #%00000111
-         sta   .copymasks+$80
-         sta   .mirror_copymasks+$40
-
-         lda   #%00011000
-         sta   .copymasks+$A0
-         sta   .mirror_copymasks+$20
-
-         lda   #%01100000
-         sta   .copymasks+$C0
-         sta   .mirror_copymasks
-
-         sta   $C005
-
-         lda   #%10000011
-         sta   .copymasks
-         sta   .mirror_copymasks+$C0
-
-         lda   #%10001100
-         sta   .copymasks+$20
-         sta   .mirror_copymasks+$A0
-
-         lda   #%10110000
-         sta   .copymasks+$40
-         sta   .mirror_copymasks+$80
-
-         lda   #%11000000
-         sta   .copymasks+$60
-         sta   .mirror_copymasks+$60
-
-         sta   $C004
-; X=0
-}
-
 !macro FX_PRECOMPUTED_1BIT_DHGR .coords {
-         +BUILD_SPARSE_BITMASKS_1BIT_DHGR copymasks, mirror_copymasks
+         jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
-         +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
+         jsr   iBuildHGRMirrorTables
          +BUILD_MIRROR_COLS_DHGR mirror_cols
          +COPY_TO_0 start, end
          jmp   InputLoop
@@ -73,7 +28,7 @@ input=*+1
          sty   <y
          clc
 bankloop
-         lda   copymasks, x
+         lda   copymasks1bit, x
          beq   +
          sta   <copymask
 
@@ -99,7 +54,7 @@ dest2=*+1
          +COPY_BIT_ZP mirror_src2, mirror_dest2, copymask
 
 +
-         lda   mirror_copymasks, x              ; exists at the same address in mainmem and auxmem but each is different
+         lda   mirror_copymasks1bit, x              ; exists at the same address in mainmem and auxmem but each is different
          beq   +
          sta   <mirror_copymask
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
@@ -142,9 +97,9 @@ end
 
 !macro FX_PRECOMPUTED_1BIT_DHGR_DITHER .coords, .endcoords {
          +BUILD_DITHER_MASKS_DHGR dithermasks
-         +BUILD_SPARSE_BITMASKS_1BIT_DHGR copymasks, mirror_copymasks
+         jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
-         +BUILD_HGR_MIRROR_LOOKUP_TABLES hgrlomirror, hgr1himirror
+         jsr   iBuildHGRMirrorTables
          +BUILD_MIRROR_COLS_DHGR mirror_cols
 
          ; phase 1 - in reverse, with additional masking
@@ -201,7 +156,7 @@ input=*+1
          sty   <y
          clc
 bankloop
-         lda   copymasks, x
+         lda   copymasks1bit, x
          beq   +
          sta   <copymask
 
@@ -229,7 +184,7 @@ dest2=*+1
          +COPY_BIT_ZP_DITHER mirror_src2, mirror_dest2, copymask, evenrow_ptr
 
 +
-         lda   mirror_copymasks, x
+         lda   mirror_copymasks1bit, x
          beq   +
          sta   <mirror_copymask
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)

@@ -1,53 +1,24 @@
 ;license:MIT
-;(c) 2019-2022 by 4am
+;(c) 2019-2024 by 4am
 ;
 
-;hgrlo          = $0201    ; $C0 bytes (defined in constants.a)
-mirror_cols    = $02C1    ; $28 bytes
-;hgr1hi         = $0301    ; $C0 bytes (defined in constants.a)
-dithermasks    = $BDA8    ; $58 bytes
-evenrow_masks  = dithermasks
-oddrow_masks   = dithermasks+2
-no_masks       = dithermasks+44
-copymasks      = $BE00    ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00, $20, $40, $60, $80
-mirror_copymasks = copymasks+1
+;------------------------------------------------------------------------------
+; YE OLDE GRAND UNIFIED MEMORY MAP
+;
+; 0201..02C0 - hgrlo
+; 02C1..02E8 - mirror_cols
+; 02E9..0300
+; 0301..03C0 - hgrhi
+; 03C1..03EE
+; 6000..     - module code (length varies)
+; 8100..BD00 - Coordinates2Bit
+; BD01..BDA9
+; BDA8..BDFF - dithermasks
+; BE00..BEFF - copymasks2bit
+; BF00..BFFF - ProRWTS glue
+;
 
          !source "src/fx/macros.a"
-
-!macro BUILD_SPARSE_BITMASKS_2BIT .copymasks, .mirror_copymasks {
-         ; build sparse lookup tables for bitmasks
-         lda   #%10000011
-         sta   .copymasks
-         sta   .mirror_copymasks+$E0
-
-         lda   #%10001100
-         sta   .copymasks+$20
-         sta   .mirror_copymasks+$C0
-
-         lda   #%10110000
-         sta   .copymasks+$40
-         sta   .mirror_copymasks+$A0
-
-         lda   #%11000000
-         sta   .copymasks+$60
-         sta   .mirror_copymasks+$80
-
-         lda   #%10000001
-         sta   .copymasks+$80
-         sta   .mirror_copymasks+$60
-
-         lda   #%10000110
-         sta   .copymasks+$A0
-         sta   .mirror_copymasks+$40
-
-         lda   #%10011000
-         sta   .copymasks+$C0
-         sta   .mirror_copymasks+$20
-
-         lda   #%11100000
-         sta   .copymasks+$E0
-         sta   .mirror_copymasks
-}
 
 !macro ROW_X_TO_2BIT_BASE_ADDRESSES {
          ; X = $01..$C0, mapping to row 0..191
@@ -83,8 +54,8 @@ InitOnce
 
 !macro FX_PRECOMPUTED_2BIT .coords {
          jsr   iBuildHGRTables
-         +BUILD_MIRROR_COLS mirror_cols
-         +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
+         jsr   iBuildHGRMirrorCols
+         jsr   iBuildHGRSparseBitmasks2Bit
          +COPY_TO_0 start, end
          jmp   InputLoop
 start
@@ -105,14 +76,14 @@ input=*+1
 src1=*+1
          lda   $FDFD, y
          eor   (<dest1), y
-         and   copymasks, x
+         and   copymasks2bit, x
          eor   (<dest1), y
 dest1=*+1
          sta   $FDFD, y
 src2=*+1
          lda   $FDFD, y
          eor   (<dest2), y
-         and   copymasks, x
+         and   copymasks2bit, x
          eor   (<dest2), y
 dest2=*+1
          sta   $FDFD, y
@@ -120,8 +91,8 @@ dest2=*+1
          ; corresponding 2x2 block in right half (same row, opposite column)
          lda   mirror_cols, y
          tay
-         +COPY_BIT src1, dest1, mirror_copymasks
-         +COPY_BIT src2, dest2, mirror_copymasks
+         +COPY_BIT src1, dest1, mirror_copymasks2bit
+         +COPY_BIT src2, dest2, mirror_copymasks2bit
 
          inc   <input
          bne   InputLoop
@@ -134,10 +105,10 @@ end
 }
 
 !macro FX_PRECOMPUTED_2BIT_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS dithermasks
+         jsr   iBuildHGRDitherMasks
          jsr   iBuildHGRTables
-         +BUILD_MIRROR_COLS mirror_cols
-         +BUILD_SPARSE_BITMASKS_2BIT copymasks, mirror_copymasks
+         jsr   iBuildHGRMirrorCols
+         jsr   iBuildHGRSparseBitmasks2Bit
 
          ; phase 1 - in reverse, with additional masking (dithering)
          jsr   copytozp
@@ -197,7 +168,7 @@ input=*+1
 src1=*+1
          lda   $FDFD, y
          eor   (<dest1), y
-         and   copymasks, x
+         and   copymasks2bit, x
          and   (<evenrow_ptr), y
          eor   (<dest1), y
 dest1=*+1
@@ -205,7 +176,7 @@ dest1=*+1
 src2=*+1
          lda   $FDFD, y
          eor   (<dest2), y
-         and   copymasks, x
+         and   copymasks2bit, x
          and   (<oddrow_ptr), y
          eor   (<dest2), y
 dest2=*+1
@@ -216,14 +187,14 @@ dest2=*+1
          tay
          lda   (src1), y
          eor   (dest1), y
-         and   mirror_copymasks, x
+         and   mirror_copymasks2bit, x
          and   (<evenrow_ptr), y
          eor   (dest1), y
          sta   (dest1), y
 
          lda   (src2), y
          eor   (dest2), y
-         and   mirror_copymasks, x
+         and   mirror_copymasks2bit, x
          and   (<oddrow_ptr), y
          eor   (dest2), y
          sta   (dest2), y

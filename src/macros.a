@@ -13,6 +13,11 @@
 +
 }
 
+!macro   DEFINE_INDIRECT_VECTOR .name, .target {
+         !if (RELBASE != $2000) and (* != .name) { !serious .name,"!=",*,", fix constants.a" }
+         jmp   .target
+}
+
 ; for functions that take parameters on the stack
 ; set (PARAM) to point to the parameters and
 ; move the stack pointer to the first byte after the parameters

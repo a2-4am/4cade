@@ -1,93 +1,32 @@
 ;license:MIT
-;(c) 2019-2022 by 4am
+;(c) 2019-2024 by 4am
 ;
 
-tmplo          = hgrlo    ; $C0 bytes (hgrlo=$0201, defined in constants.a)
-tmphi          = hgrhi    ; $C0 bytes (hgrhi=$0301,  defined in constants.a)
-copymasks      = $BB01    ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00, $20, $40...
-extra_cols     = $BBF8    ; $08 bytes
-hgrlo3a        = $BC00    ; $80 bytes
-hgrlo3b        = $BC80    ; $80 bytes
-hgrlo3c        = $BD00    ; $80 bytes
-hgrhi3a        = $BD80    ; $80 bytes
-hgrhi3b        = $BE00    ; $80 bytes
-hgrhi3c        = $BE80    ; $80 bytes
-dither1_lo     = $6900    ; $80 bytes
-dither2_lo     = $6980    ; $80 bytes
-dither3_lo     = $6A00    ; $80 bytes
-dithermasks    = $6A80    ; $58 bytes
-evenrow_masks  = dithermasks
-oddrow_masks   = dithermasks+2
-no_masks       = dithermasks+44
+;------------------------------------------------------------------------------
+; YE OLDE GRAND UNIFIED MEMORY MAP
+;
+; 0201..02C0 - hgrlo
+; 02C1..02E8 - mirror_cols
+; 02E9..0300
+; 0301..03C0 - hgrhi
+; 03C1..03EE
+; 6000..     - module code (length varies)
+; 6880..6C7F - dither123_lo, hgrlo3abc, hgrhi3ab
+; 6C80..6CFD
+; 6CFE..BD00 - Coordinates3Bit (dither variants clobber Coordinates3Bit-2)
+; BD01..BD80 - hgrhi3c
+; BD81..BDA9
+; BDA8..BDFF - dithermasks
+; BE00..BEE0 - copymasks3bit
+; BEF8..BEFF - extra_cols
+; BF00..BFFF - ProRWTS glue
+;
+
+dither1_lo     = $6880    ; $80 bytes
+dither2_lo     = $6900    ; $80 bytes
+dither3_lo     = $6980    ; $80 bytes
 
          !source "src/fx/macros.a"
-
-!macro BUILD_EXTRA_COLS {
-         ; build lookup table to get $20+y for y in $00..$07
-         ldx   #$07
-         ldy   #$27
--        tya
-         sta   extra_cols-$20, y
-         dey
-         dex
-         bpl   -
-}
-
-!macro BUILD_SPARSE_BITMASKS_3BIT {
-         ; build sparse lookup tables for bitmasks
-         lda   #%10000011
-         sta   copymasks
-
-         lda   #%10001100
-         sta   copymasks+$20
-
-         lda   #%10110000
-         sta   copymasks+$40
-
-         lda   #%11000000
-         sta   copymasks+$60
-
-         lda   #%10000001
-         sta   copymasks+$80
-
-         lda   #%10000110
-         sta   copymasks+$A0
-
-         lda   #%10011000
-         sta   copymasks+$C0
-
-         lda   #%11100000
-         sta   copymasks+$E0
-}
-
-!macro BUILD_3BIT_HGR_LOOKUP_TABLES {
-         jsr   iBuildHGRTables
-         ldx   #$BF
-         ldy   #$3F
--        lda   tmplo, x
-         sta   hgrlo3c, y
-         sta   hgrlo3c+$40, y
-         lda   tmphi, x
-         sta   hgrhi3c, y
-         sta   hgrhi3c+$40, y
-         dex
-         lda   tmplo, x
-         sta   hgrlo3b, y
-         sta   hgrlo3b+$40, y
-         lda   tmphi, x
-         sta   hgrhi3b, y
-         sta   hgrhi3b+$40, y
-         dex
-         lda   tmplo, x
-         sta   hgrlo3a, y
-         sta   hgrlo3a+$40, y
-         lda   tmphi, x
-         sta   hgrhi3a, y
-         sta   hgrhi3a+$40, y
-         dex
-         dey
-         bpl   -
-}
 
 !macro ROW_X_TO_3BIT_BASE_ADDRESSES {
          ; X = $00..$3F, mapping to row 0, 3, 6, 9, 12, ... 189
@@ -129,9 +68,7 @@ InitOnce
 }
 
 !macro FX_PRECOMPUTED_3BIT .coords {
-         +BUILD_3BIT_HGR_LOOKUP_TABLES
-         +BUILD_EXTRA_COLS
-         +BUILD_SPARSE_BITMASKS_3BIT
+         jsr   iSetupPrecomputed3Bit
          +COPY_TO_0 start, end
          jmp   InputLoop
 start
@@ -162,21 +99,21 @@ input=*+1
 src1=*+1
          lda   $FDFD, y
          eor   (<dest1), y
-         and   copymasks, x
+         and   copymasks3bit, x
          eor   (<dest1), y
 dest1=*+1
          sta   $FDFD, y
 src2=*+1
          lda   $FDFD, y
          eor   (<dest2), y
-         and   copymasks, x
+         and   copymasks3bit, x
          eor   (<dest2), y
 dest2=*+1
          sta   $FDFD, y
 src3=*+1
          lda   $FDFD, y
          eor   (<dest3), y
-         and   copymasks, x
+         and   copymasks3bit, x
          eor   (<dest3), y
 dest3=*+1
          sta   $FDFD, y
@@ -192,10 +129,8 @@ end
 }
 
 !macro FX_PRECOMPUTED_3BIT_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS dithermasks
-         +BUILD_3BIT_HGR_LOOKUP_TABLES
-         +BUILD_EXTRA_COLS
-         +BUILD_SPARSE_BITMASKS_3BIT
+         jsr   iBuildHGRDitherMasks
+         jsr   iSetupPrecomputed3Bit
 
          ; phase 1 - in reverse, with additional masking
          +COPY_TO_0 start, end
@@ -286,7 +221,7 @@ input=*+1
 src1=*+1
          lda   $FDFD, y
          eor   (<dest1), y
-         and   copymasks, x
+         and   copymasks3bit, x
          and   (dither1_ptr), y
          eor   (<dest1), y
 dest1=*+1
@@ -294,7 +229,7 @@ dest1=*+1
 src2=*+1
          lda   $FDFD, y
          eor   (<dest2), y
-         and   copymasks, x
+         and   copymasks3bit, x
          and   (dither2_ptr), y
          eor   (<dest2), y
 dest2=*+1
@@ -302,7 +237,7 @@ dest2=*+1
 src3=*+1
          lda   $FDFD, y
          eor   (<dest3), y
-         and   copymasks, x
+         and   copymasks3bit, x
          and   (dither3_ptr), y
          eor   (<dest3), y
 dest3=*+1
