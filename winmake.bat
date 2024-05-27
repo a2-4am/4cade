@@ -14,7 +14,7 @@ set VOLUME=TOTAL.REPLAY
 rem third-party tools required to build (must be in path)
 
 rem https://sourceforge.net/projects/acme-crossass/
-rem version 0.96.3 or later
+rem version 0.97 or later
 set ACME=acme
 
 rem https://github.com/mach-kernel/cadius
@@ -43,7 +43,6 @@ if "%2". equ "". (
   rem create _FileInformation.txt files for subdirectories
   rem
   cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
-  cscript /nologo bin\buildfileinfo.js build\FX "06" "6000" >>build/log
   1>nul copy /y src\prelaunch\_FileInformation.txt build\PRELAUNCH >>build/log
   rem
   rem add everything to the disk
@@ -52,13 +51,11 @@ if "%2". equ "". (
 echo|set/p="adding files..."
 %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\TOTAL.DATA" -C >>build\log
 if "%2". equ "". (
-  for %%q in (build\PREFS.CONF res\Finder.Data res\Finder.Root) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "build\%%~nxq" -C >>build\log
-  for %%q in (res\TITLE.ANIMATED res\ICONS build\FX build\PRELAUNCH) do (
+  for %%q in (build\PREFS.CONF res\Finder.Data res\Finder.Root) do %CADIUS% ADDFILE "build\%DISK%" "/%VOLUME%/" "%%q" -C >>build\log
+  for %%q in (res\TITLE.ANIMATED res\ICONS build\PRELAUNCH build\X) do (
     1>nul 2>nul del /s "%%q\.DS_Store"
     %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/%%~nxq" %%q -C >>build\log
   )
-  %CADIUS% CREATEFOLDER "build\%DISK%" "/%VOLUME%/X/" -C >>build\log
-  %CADIUS% ADDFOLDER "build\%DISK%" "/%VOLUME%/X" "build\X" -C >>build\log
   cscript /nologo bin\changebootloader.js "build\%DISK%" build\proboothd
 )
 echo done
@@ -172,6 +169,8 @@ echo|set/p="indexing fx..."
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\SFX.CONF build\SFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
+dir /b build\fx\*.DATA >build\fx.lst
+cscript /nologo bin\buildfx.js build\fx.lst build\FXDATA.IDX build\TOTAL.DATA build\FX >>build\log
 echo done
 rem
 rem precompute indexed files for HGR & DHGR action screenshots
@@ -235,10 +234,11 @@ rem note: these can be padded because they are loaded at a time when all of main
 rem
 echo|set/p="indexing single-loaders..."
 for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
-1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM*
+1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM* build\X\_FileInformation.txt
 1>nul copy /y nul build\XSINGLE.IDX
 cscript /nologo bin\buildsingle.js build\X.INDEXED build\XSINGLE.IDX build\TOTAL.DATA pad >>build\log
 cscript /nologo bin\addfile.js build\XSINGLE.IDX src\index\xsingle.idx.a
+cscript /nologo bin\flatten.js
 echo done
 rem
 rem create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
@@ -268,6 +268,7 @@ cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
 cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
 cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\SFX.IDX src\index\sfx.idx.a
+cscript /nologo bin\addfile.js build\FXDATA.IDX src\index\fxdata.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
 cscript /nologo bin\addfile.js build\MINIATTRACT0.IDX src\index\miniattract0.idx.a
@@ -317,9 +318,9 @@ goto :EOF
 :asmlauncher
 2>nul 1>build\buildnum.log %GIT% rev-list --count HEAD
 if errorlevel 1 (set _build=0) else for /f "tokens=*" %%q in (build\buildnum.log) do set _build=%%q
-2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src\4cade.a
+2>build\relbase.log %ACME% -DBUILDNUMBER=%_build% src/4cade.a
 for /f "tokens=*" %%q in (build\relbase.log) do set _make=%%q
-%ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build\4cade.lst src\4cade.a
+%ACME% -DBUILDNUMBER=%_build% -DRELBASE=$!_make:~-5,4! -r build/4cade.lst src/4cade.a
 goto :EOF
 
 :asmdemo
@@ -353,7 +354,7 @@ echo done
 goto :EOF
 
 :asmproboot
-%ACME% -r build\proboothd.lst src\proboothd\proboothd.a >> build\log
+%ACME% -r build/proboothd.lst src/proboothd/proboothd.a >> build\log
 goto :EOF
 
 :compress

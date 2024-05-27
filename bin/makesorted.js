@@ -13,13 +13,6 @@ while (!b.atendofstream)
     d = d.substr(0, e)
   }
 
-  e = d.indexOf("[eof]")
-
-  if (e > -1)
-  {
-    break
-  }
-
   e = d.indexOf("=")
 
   if (e == -1)
@@ -35,5 +28,4 @@ while (!b.atendofstream)
   }
 }
 
-q.write(d + "\n")
 a.createtextfile("build\\GAMES.SORTED").write(c.sort().toString().replace(/,/g, "\n"))
