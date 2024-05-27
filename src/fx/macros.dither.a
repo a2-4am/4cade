@@ -19,7 +19,7 @@
          dey
          dey
          bpl   -
-         ldy   #39
+         ldy   #43
          lda   #$FF
 -        sta   .dithermasks+44, y
          dey
@@ -41,7 +41,7 @@
          dey
          dey
          bpl   -
-         ldy   #39
+         ldy   #43
 -        lda   #$FF
          sta   .dithermasks+44, y
          dey
@@ -61,11 +61,11 @@
          dey
          dey
          bpl   -
-         ldy   #39
+         ldy   #43
 -        lda   #$FF
          sta   .dithermasks+44, y
          dey
-         bne   -
+         bpl   -
          sta   $C004
 }
 

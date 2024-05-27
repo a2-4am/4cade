@@ -5,7 +5,7 @@
 ;hgrlo          = $0201    ; $C0 bytes (defined in constants.a)
 mirror_cols    = $02C1    ; $28 bytes
 ;hgr1hi         = $0301    ; $C0 bytes (defined in constants.a)
-dithermasks    = $BBAA    ; $58 bytes
+dithermasks    = $BBA8    ; $58 bytes
 evenrow_masks  = dithermasks
 oddrow_masks   = dithermasks+2
 no_masks       = dithermasks+44
