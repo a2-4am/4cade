@@ -3,58 +3,10 @@
 ;
          !source "src/fx/fx.hgr.precomputed.2bit.a"
 
-!macro BUILD_SPARSE_BITMASKS_2BIT_DHGR .copymasks2bit, .mirror_copymasks2bit {
-         ; build sparse lookup tables for bitmasks
-         ldx   #$00
-         txa
--        sta   .copymasks2bit, x
-         sta   $C005
-         sta   .copymasks2bit, x
-         sta   $C004
-         inx
-         bne   -
-
-         lda   #%10011111
-         sta   .copymasks2bit+$40
-         sta   .mirror_copymasks2bit+$A0
-
-         lda   #%11100000
-         sta   .copymasks2bit+$60
-         sta   .mirror_copymasks2bit+$80
-
-         lda   #%10000111
-         sta   .copymasks2bit+$C0
-         sta   .mirror_copymasks2bit+$20
-
-         lda   #%11111000
-         sta   .copymasks2bit+$E0
-         sta   .mirror_copymasks2bit
-
-         sta   $C005
-
-         lda   #%10001111
-         sta   .copymasks2bit
-         sta   .mirror_copymasks2bit+$E0
-
-         lda   #%11110000
-         sta   .copymasks2bit+$20
-         sta   .mirror_copymasks2bit+$C0
-
-         lda   #%10000011
-         sta   .copymasks2bit+$80
-         sta   .mirror_copymasks2bit+$60
-
-         lda   #%11111100
-         sta   .copymasks2bit+$A0
-         sta   .mirror_copymasks2bit+$40
-
-         sta   $C004
-}
-
 !macro FX_PRECOMPUTED_2BIT_DHGR .coords {
-         +BUILD_SPARSE_BITMASKS_2BIT_DHGR copymasks2bit, mirror_copymasks2bit
+         jsr   iBuildDHGRSparseBitmasks2Bit
          jsr   iBuildHGRTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
          +COPY_TO_0 start, end
          jmp   InputLoop
 
@@ -126,10 +78,10 @@ end
 }
 
 !macro FX_PRECOMPUTED_2BIT_DHGR_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS_DHGR dithermasks
-         +BUILD_SPARSE_BITMASKS_2BIT_DHGR copymasks2bit, mirror_copymasks2bit
+         jsr   iBuildDHGRDitherMasks
+         jsr   iBuildDHGRSparseBitmasks2Bit
          jsr   iBuildHGRTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
 
          ; phase 1 - in reverse, with additional masking (dithering)
          jsr   copytozp

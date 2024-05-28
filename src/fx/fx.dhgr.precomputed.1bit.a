@@ -8,7 +8,7 @@
          jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
          +COPY_TO_0 start, end
          jmp   InputLoop
 start
@@ -96,11 +96,11 @@ end
 }
 
 !macro FX_PRECOMPUTED_1BIT_DHGR_DITHER .coords, .endcoords {
-         +BUILD_DITHER_MASKS_DHGR dithermasks
+         jsr   iBuildDHGRDitherMasks
          jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
 
          ; phase 1 - in reverse, with additional masking
          +COPY_TO_0 start, end

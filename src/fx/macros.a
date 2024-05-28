@@ -8,7 +8,6 @@
          !source "src/fx/macros.dhgr.a"
          !source "src/fx/macros.shr.a"
          !source "src/fx/macros.copybit.a"
-         !source "src/fx/macros.dither.a"
          !source "src/fx/macros.misc.a"
 
 _FX_MACROS_=*

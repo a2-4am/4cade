@@ -13,7 +13,9 @@
 ; - BuildHGRTables
 ; - BuildHGRMirrorTables
 ; - BuildHGRMirrorCols
+; - BuildDHGRMirrorCols
 ; - BuildHGRDitherMasks
+; - BuildDHGRDitherMasks
 
 ; - BuildHGRSparseBitmasks1Bit
 ; - BuildDHGRSparseBitmasks1Bit
@@ -24,6 +26,7 @@
 ; - RippleCoordinates1Bit4
 
 ; - BuildHGRSparseBitmasks2Bit
+; - BuildDHGRSparseBitmasks2Bit
 ; - ReverseCoordinates2Bit
 ; - RippleCoordinates2Bit
 
@@ -116,6 +119,23 @@ BuildHGRMirrorCols
          bpl   -
          rts
 
+BuildDHGRMirrorCols
+; out:   mirror_cols populated with lookup table to get $27-y for y in $00..$27
+;        duplicated in both mainmem and auxmem
+;        X=0
+;        Z=1
+         ldx   #$28
+         ldy   #$00
+-        tya
+         sta   mirror_cols-1, x
+         sta   $C005
+         sta   mirror_cols-1, x
+         sta   $C004
+         iny
+         dex
+         bne   -
+         rts
+
 BuildHGRDitherMasks
          ldy   #40
 -        lda   #%10110011
@@ -136,6 +156,49 @@ BuildHGRDitherMasks
 -        sta   no_masks, y
          dey
          bpl   -
+         rts
+
+BuildDHGRDitherMasks
+         ldy   #40
+-        lda   #%10011110
+         sta   dithermasks, y
+         lda   #%11111000
+         sta   dithermasks+1, y
+         lda   #%11100001
+         sta   dithermasks+2, y
+         lda   #%10000111
+         sta   dithermasks+3, y
+         dey
+         dey
+         dey
+         dey
+         bpl   -
+         ldy   #43
+-        lda   #$FF
+         sta   no_masks, y
+         dey
+         bpl   -
+         sta   $C005
+         ldy   #40
+-        lda   #%10001111
+         sta   dithermasks, y
+         lda   #%10111100
+         sta   dithermasks+1, y
+         lda   #%11110000
+         sta   dithermasks+2, y
+         lda   #%11000011
+         sta   dithermasks+3, y
+         dey
+         dey
+         dey
+         dey
+         bpl   -
+         ldy   #43
+-        lda   #$FF
+         sta   no_masks, y
+         dey
+         bpl   -
+         sta   $C004
          rts
 
 BuildHGRSparseBitmasks1Bit
@@ -384,6 +447,53 @@ BuildHGRSparseBitmasks2Bit
          lda   #%11100000
          sta   copymasks2bit+$E0
          sta   mirror_copymasks2bit
+         rts
+
+BuildDHGRSparseBitmasks2Bit
+         ldx   #$00
+         txa
+-        sta   copymasks2bit, x
+         sta   $C005
+         sta   copymasks2bit, x
+         sta   $C004
+         inx
+         bne   -
+
+         lda   #%10011111
+         sta   copymasks2bit+$40
+         sta   mirror_copymasks2bit+$A0
+
+         lda   #%11100000
+         sta   copymasks2bit+$60
+         sta   mirror_copymasks2bit+$80
+
+         lda   #%10000111
+         sta   copymasks2bit+$C0
+         sta   mirror_copymasks2bit+$20
+
+         lda   #%11111000
+         sta   copymasks2bit+$E0
+         sta   mirror_copymasks2bit
+
+         sta   $C005
+
+         lda   #%10001111
+         sta   copymasks2bit
+         sta   mirror_copymasks2bit+$E0
+
+         lda   #%11110000
+         sta   copymasks2bit+$20
+         sta   mirror_copymasks2bit+$C0
+
+         lda   #%10000011
+         sta   copymasks2bit+$80
+         sta   mirror_copymasks2bit+$60
+
+         lda   #%11111100
+         sta   copymasks2bit+$A0
+         sta   mirror_copymasks2bit+$40
+
+         sta   $C004
          rts
 
 ReverseCoordinates2Bit

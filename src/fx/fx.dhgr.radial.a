@@ -25,7 +25,7 @@ Start
          jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
          +COPY_TO_AUXMEM $60, 4
          +LDADDR EndCoordinates1Bit-2
          +ST16 input

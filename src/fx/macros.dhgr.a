@@ -22,21 +22,5 @@
          sta   $C004
 }
 
-!macro BUILD_MIRROR_COLS_DHGR .mirror_cols {
-         ; build lookup table to get $27-y for y in $00..$27
-         ; duplicate in both mainmem and auxmem
-         ldx   #$28
-         ldy   #$00
--        tya
-         sta   .mirror_cols-1, x
-         sta   $C005
-         sta   .mirror_cols-1, x
-         sta   $C004
-         iny
-         dex
-         bne   -
-; X=0
-}
-
 _FX_MACROS_DHGR_=*
 }

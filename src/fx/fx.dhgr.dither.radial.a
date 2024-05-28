@@ -24,11 +24,11 @@ input          = $FE      ; word
          sta   Coordinates1Bit-2
 
 Start
-         +BUILD_DITHER_MASKS_DHGR dithermasks
+         jsr   iBuildDHGRDitherMasks
          jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
-         +BUILD_MIRROR_COLS_DHGR mirror_cols
+         jsr   iBuildDHGRMirrorCols
          +COPY_TO_AUXMEM $60, 4
 
          +LDADDR evenrow_masks
