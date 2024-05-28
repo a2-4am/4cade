@@ -104,17 +104,12 @@
          bne   -
 }
 
-!macro LOAD_SHR_COORDINATES_AT .coords, .filename, .scratch {
+!macro LOAD_SHR_COORDINATES_AT .coords, .filename {
 ; out:   WRITEMAINMEM active
 ;        LC RAM2 active and read/write
-         ldx   .filename             ; LOAD_FILE_AT macro destroys pathname
--        lda   .filename, x          ; so we need to make a copy
-         sta   .scratch, x
-         dex
-         bpl   -
-
-         +READ_RAM2_WRITE_RAM2
-         +LOAD_FILE_AT .scratch, .coords
+         +LDADDR .filename
+         ldx   #>.coords
+         jsr   iLoadFXDATA
 }
 
 !macro SHR_STAGE_1 .shrlo, .shrhi, .mirror_rows, .mirror_cols {

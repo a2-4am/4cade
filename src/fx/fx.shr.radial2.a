@@ -10,7 +10,6 @@ shrlo    = $200           ; $C8 bytes
 shrhi    = $300           ; $C8 bytes
 coords   = $9F00          ; $1F41 bytes
 last_coords = coords+$1F3E
-CoordinatesFileCopy = $BE42; $11 bytes
 shr_mirror_cols = $BE60   ; $A0 bytes but clobbers $27 previous bytes during construction
 
          !source "src/fx/macros.a"
@@ -20,7 +19,7 @@ shr_mirror_cols = $BE60   ; $A0 bytes but clobbers $27 previous bytes during con
 
 !pseudopc *-$300 {
 stage2
-         +LOAD_SHR_COORDINATES_AT coords, CoordinatesFile, CoordinatesFileCopy
+         +LOAD_SHR_COORDINATES_AT coords, CoordinatesFile
          ;WRITEMAINMEM active
 
          lda   #$80

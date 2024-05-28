@@ -135,7 +135,11 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/SFX.CONF > build/SFX.IDX)
-	[ -f build/index ] || ((for f in build/FX/*.DATA; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX > build/FXDATA.IDX)
+#
+# precompute indexed files for coordinates files loaded by graphic effects
+# note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
+#
+	[ -f build/index ] || ((for f in build/FX/*.DATA; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/FX > build/FXDATA.IDX)
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
