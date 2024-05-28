@@ -7,9 +7,7 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, Start
-Start
-         +FX_PRECOMPUTED_1BIT Coordinates1Bit
+         +FX_INITONCE_1BIT CoordinatesFile, iHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "SLOW.STAR.DATA"

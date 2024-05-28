@@ -11,7 +11,7 @@
          jsr   iRippleCoordinates1Bit2
 
 Start
-         +FX_PRECOMPUTED_1BIT Coordinates1Bit
+         jmp   iHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "IRIS.DATA"
