@@ -18,7 +18,7 @@ InputLoop
 input=*+1
          ldx   .coords               ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
-         +ROW_X_TO_2BIT_BASE_ADDRESSES
+         +ROW_X_TO_2BIT_BASE_ADDRESSES src1, src2, dest1, dest2
 
          inc   <input
          lda   (<input), y
@@ -131,7 +131,7 @@ InputLoop
 input=*+1
          ldx   .coords               ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
-         +ROW_X_TO_2BIT_BASE_ADDRESSES
+         +ROW_X_TO_2BIT_BASE_ADDRESSES src1, src2, dest1, dest2
 
          iny
          lda   (<input), y

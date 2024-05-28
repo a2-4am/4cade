@@ -10,7 +10,7 @@
          +FX_INITONCE_2BIT CoordinatesFile, Start
          jsr   iRippleCoordinates2Bit
 Start
-         +FX_PRECOMPUTED_2BIT Coordinates2Bit
+         jmp   iHGRPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "BUTTERFLY.DATA"

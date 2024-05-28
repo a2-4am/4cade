@@ -142,7 +142,7 @@ zc_enable       =    $C05B
 iobase          =    $C000   ; easily confused with kbd
 
 BuildAcceleratorFunction
-; in:    none
+; in:    ROM banked in for reading
 ; out:   A/Y points to lo/hi address of code block
 ;        X contains length of code block
 

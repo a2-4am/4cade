@@ -2,7 +2,7 @@
 ; HasJoystick
 ; Checks whether computer has joystick connected
 ;
-; in:    none
+; in:    ROM banked in for reading
 ; out:   C set if joystick found
 ;        C clear if no joystick found
 ;        other flags clobbered
@@ -16,14 +16,14 @@
 ; Fastchip firmware 0.4b-compatibility fix by Frank M. (0.5b seems unaffected)
 ;------------------------------------------------------------------------------
 HasJoystick
-         lda   $FBB3
+         lda   ROM_MACHINEID         ; requires ROM read
          cmp   #$06
          bne   ++
          lda   $FBC0
          cmp   #$E0
-         beq   +             ; test for Fastchip on enhanced //e
+         beq   +                     ; test for Fastchip on enhanced //e
          cmp   #$EA
-         beq   +             ; test for Fastchip on non-enhanced //e
+         beq   +                     ; test for Fastchip on non-enhanced //e
          jmp   ++
 
 +        ; FASTChip
@@ -31,12 +31,12 @@ fc_lock         =    $C06A
 fc_enable       =    $C06B
 fc_config       =    $C06E
 fc_data         =    $C06F
-FC_UNLOCK       =    $6A     ; write 4 times
+FC_UNLOCK       =    $6A             ; write 4 times
 FC_LOCK         =    $A6
-FC_SPKR         =    2       ; speaker delay register
-FC_HIFI         =    4       ; set to 'HIFI'
-FC_JOY          =    3       ; joystick delay register
-FC_LONG         =    2       ; set to 'LONG'
+FC_SPKR         =    2               ; speaker delay register
+FC_HIFI         =    4               ; set to 'HIFI'
+FC_JOY          =    3               ; joystick delay register
+FC_LONG         =    2               ; set to 'LONG'
 
          lda   #FC_UNLOCK
          sta   fc_lock

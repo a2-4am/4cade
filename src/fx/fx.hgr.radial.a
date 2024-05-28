@@ -34,13 +34,13 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
          lda   (input),y
          bmi   DoneBL
          tax
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
          iny
          lda   (input),y
          +HIGH_3_LOW_5 input
          +COPY_BIT mirror_src1, mirror_dest1, copymasks1bit
          +COPY_BIT mirror_src2, mirror_dest2, copymasks1bit
-         +DEC_INPUT_AND_LOOP LoopBL
+         +DEC_INPUT_AND_LOOP input, LoopBL
 DoneBL
 
          +LDADDR Coordinates1Bit
@@ -50,13 +50,13 @@ LoopTL                               ; top-left quadrant
          lda   (input),y
          bmi   DoneTL
          tax
-         +ROW_X_TO_BASE_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
          inc   input
          lda   (input),y
          +HIGH_3_LOW_5 input
          +COPY_BIT src1, dest1, copymasks1bit
          +COPY_BIT src2, dest2, copymasks1bit
-         +INC_INPUT_AND_LOOP LoopTL
+         +INC_INPUT_AND_LOOP input, LoopTL
 DoneTL
 
          +LDADDR EndCoordinates1Bit-2
@@ -66,7 +66,7 @@ LoopTR                               ; top-right quadrant (same row, opposite co
          lda   (input),y
          bmi   DoneTR
          tax
-         +ROW_X_TO_BASE_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
          iny
          lda   (input),y
          +HIGH_3_LOW_5 input
@@ -74,7 +74,7 @@ LoopTR                               ; top-right quadrant (same row, opposite co
          tay
          +COPY_BIT src1, dest1, mirror_copymasks1bit
          +COPY_BIT src2, dest2, mirror_copymasks1bit
-         +DEC_INPUT_AND_LOOP LoopTR
+         +DEC_INPUT_AND_LOOP input, LoopTR
 DoneTR
 
          +LDADDR Coordinates1Bit
@@ -84,7 +84,7 @@ LoopBR                               ; bottom-right quadrant (opposite row, oppo
          lda   (input),y
          bmi   DoneBR
          tax
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
          inc   input
          lda   (input),y
          +HIGH_3_LOW_5 input
@@ -92,7 +92,7 @@ LoopBR                               ; bottom-right quadrant (opposite row, oppo
          tay
          +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks1bit
          +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks1bit
-         +INC_INPUT_AND_LOOP LoopBR
+         +INC_INPUT_AND_LOOP input, LoopBR
 DoneBR
          rts
 

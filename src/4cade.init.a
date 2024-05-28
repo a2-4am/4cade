@@ -7,7 +7,7 @@
 ; .SYSTEM file is loaded
 ;
 
-         !src  "src/4cade.init.machine.a"
+         !src  "src/4cade.init.machine.a"       ; exits with ROM read, no write
          !src  "src/4cade.init.screen.a"
 
          ; print text title in same place as graphical title will appear
@@ -21,7 +21,8 @@
          }
 
          jsr   Has64K                ; check for 64K (required)
-         bcc   +
+                                     ; exits with ROM read, no write
+         bcc   @enough_mem
 
          ldy   #@no64Klen
 -        lda   @s_no64K,y
@@ -32,26 +33,30 @@
 @s_no64K !scrxor $80,"REQUIRES 64K"
 @no64Klen=(*-@s_no64K)-1
 
-+
+@enough_mem
          lda   #0
          sta   zpMachineStatus
          sta   SETC3ROM
          jsr   HasVidHDCard          ; check for VidHD card (allows super hi-res artwork even on non-IIgs machines)
+                                     ; does not rely on ROM
          sta   CLRC3ROM
          ror   zpMachineStatus
-         lda   ROM_MACHINEID
+         lda   ROM_MACHINEID         ; requires ROM read
          cmp   #$06
          bne   @NotGS
          sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
+                                     ; requires ROM read
          bcs   @NotGS
          sec
          +HIDE_NEXT_BYTE
 @NotGS   clc
          ror   zpMachineStatus
          jsr   Has128K               ; check for 128K (allows DHGR slideshows and 128K games)
+                                     ; exits with ROM read, no write
          ror   zpMachineStatus
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
+                                     ; requires ROM read
          ror   zpMachineStatus
                                      ; now bit 4 = 1 if VidHD
                                      ;     bit 5 = 1 if IIgs
@@ -83,7 +88,7 @@
 +
 
          ; accommodate uppercase-only machines (64K ][ and ][+ are supported)
-         lda   ROM_MACHINEID
+         lda   ROM_MACHINEID         ; requires ROM read
          cmp   #$A0
          beq   +                     ; Spectrum ED
          cmp   #$06
@@ -98,14 +103,14 @@
          ; print version or build number in lower right corner
          ldx   #28
          ldy   #23
-         jsr   SetCursorPosition
+         jsr   SetCursorPosition     ; requires ROM read
          +LDADDR LoadingVersion
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 !ifndef RELEASE {
          lda   LoadingBuild
          ldx   LoadingBuild+1
          ldy   #0
-         jsr   PrintAsDecimal
+         jsr   PrintAsDecimal        ; requires ROM read
 }
 
          ; set up text window so it only covers lower left corner
@@ -117,7 +122,7 @@
          ; print machine configuration in lower left corner
          ldx   #0
          ldy   #23
-         jsr   SetCursorPosition
+         jsr   SetCursorPosition     ; requires ROM read
 
          ; if zpMachineStatus AND IS_IIGS then print 'IIgs'
          ; else if zpMachineStatus AND HAS_128K then print '128K'
@@ -135,21 +140,21 @@
 +
          +LDADDR Loading64K
 @printMem
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 
          ; if zpMachineStatus AND HAS_JOYSTICK then CR & print 'joystick'
          lda   zpMachineStatus
          and   #HAS_JOYSTICK
          beq   +
          +LDADDR LoadingJoystick
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 +
          ; if zpMachineStatus AND HAS_VIDHD then CR & print 'VidHD'
          lda   zpMachineStatus
          and   #HAS_VIDHD
          beq   +
          +LDADDR LoadingVidHD
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 +
 
 @Relocate
@@ -159,30 +164,24 @@
          and   #IS_IIGS
          beq   +
          jsr   HackThaCFFA
-
 +
+         ; initialize and relocate ProRWTS2 to $D400 in LC RAM bank 2
          +READ_ROM_WRITE_RAM2
-         jsr   init                  ; initialize and relocate ProRWTS2 to $D400 in RAM bank 2
-                                     ; ProRWTS2 disk-data live at $D000-D3FF
-         sei                         ; we're about to overwrite ProDOS's IRQ handler
+         jsr   init                  ; requires RAM2 write
+
+         ; overwrite ProDOS IRQ handler
+         sei
          lda   #<NOIRQ
          sta   $3FE
-         lda   #>NOIRQ               ; in case another routine re-enables them
+         lda   #>NOIRQ
          sta   $3FF
          cli
-         ldx   #$00                  ; relocate program code to top of language card
-                                     ; since we end at $0000 now, adjust low offset to avoid destroying zpage
-@FM      lda   FirstMover - (RELBASE & $FF),x
-         sta   RELBASE & $FF00,x
-         inx
-         bne   @FM
-         inc   @FM+2
-         inc   @FM+5
-         bne   @FM
 
+         ; relocate pseudo-ProDOS to LC RAM bank 2
+         ldx   #$00
          ldy   #>(255 + EvenLasterMover - LastMover)
-@LM      lda   COPYSRC,x             ; relocate pseudo-ProDOS to RAM bank 2
-         sta   COPYDST,x
+@LM      lda   COPYSRC, x
+         sta   COPYDST, x            ; requires RAM2 write
          inx
          bne   @LM
          inc   @LM+2
@@ -190,10 +189,35 @@
          dey
          bne   @LM
 
-         +READ_RAM1_WRITE_RAM1
+         jsr   BuildAcceleratorFunction ; requires ROM read
+         +ST16 @accelSrc
+         dex
+-
+@accelSrc=*+1
+         lda   $FDFD,x               ; copy (de)acceleration functions to LC RAM bank 2
+         sta   DisableAccelerator,x  ; requires RAM2 write
+         dex
+         bpl   -
+         ; X=FF
+
+         ; relocate program code to LC RAM bank 1
+         ; since we end at $0000 now, we adjust low offset to avoid destroying zpage
+         +READ_ROM_WRITE_RAM1
+         inx
+         ;X=0
+@FM      lda   FirstMover - (RELBASE & $FF), x
+         sta   RELBASE & $FF00, x    ; requires RAM1 write
+         inx
+         bne   @FM
+         inc   @FM+2
+         inc   @FM+5
+         bne   @FM
+         ;X=0
+
+         ; relocate font data to LC RAM bank 1
          ldy   #4
-@ELM     lda   FONTSRC,x             ; relocate font data to $D100/LC1
-         sta   FONTDST,x
+@ELM     lda   FONTSRC, x
+         sta   FONTDST, x            ; requires RAM1 write
          inx
          bne   @ELM
          inc   @ELM+2
@@ -201,30 +225,19 @@
          dey
          bne   @ELM
 
-         +READ_ROM_NO_WRITE
-         jsr   BuildAcceleratorFunction
-         +READ_RAM2_WRITE_RAM2
-         +ST16 @accelSrc
-         dex
--
-@accelSrc=*+1
-         lda   $FDFD,x               ; copy (de)acceleration functions to RAM bank 2
-         sta   DisableAccelerator,x
-         dex
-         bpl   -
-
-         +READ_ROM_WRITE_RAM2
-         jsr   BuildVBLFunction
          +DISABLE_ACCEL              ; cycle counting in Mockingboard detection requires 1MHz
-
+                                     ; /!\ macro exits with ROM read, no write
          +LDADDR FoundMockingboardCallback
-         jsr   GetMockingboardStuff
-         +READ_RAM2_WRITE_RAM2
-         stx   MockingboardStuff     ; save mockingboard slot and type in LC RAM
-         +READ_ROM_NO_WRITE
+         jsr   GetMockingboardStuff  ; requires ROM read
+                                     ; /!\ exits with ROM read, no write
+         +READ_ROM_WRITE_RAM1
+         stx   MockingboardStuff     ; save mockingboard slot and type
+                                     ; requires RAM1 write
+
+         jsr   BuildVBLFunction      ; requires ROM read, RAM1 write
 
          txa
-         beq   +
+         beq   @done_with_mb
          and   #HAS_STEREO
          beq   @mb_mono
          +LDADDR LoadingMockingboardStereo
@@ -232,18 +245,18 @@
 @mb_mono
          +LDADDR LoadingMockingboardStereo
 @mb_print
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 
          ; if Mockingboard AND HAS_SPEECH then print CR & '...and it talks!'
          txa
          and   #HAS_SPEECH
-         beq   +
+         beq   @done_with_mb
          +LDADDR LoadingMockingboardSpeech
-         jsr   LoadingPrint
+         jsr   LoadingPrint          ; requires ROM read
 
-+
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+@done_with_mb
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator     ; requires RAM2 read
          jmp   OneTimeSetup
 
          ; ProRWTS2 has its own function to relocate itself
@@ -347,8 +360,10 @@ PrintAsDecimal
          !source "src/parse.common.a"
 
 OneTimeSetup
+         +READ_ROM_WRITE_RAM1
          lda   zpMachineStatus
-         sta   MachineStatus         ; save machine status in LC RAM
+         sta   MachineStatus         ; save machine status
+                                     ; requires RAM1 write
          and   #IS_IIGS
          beq   @NotGSOS
 !cpu 65816
@@ -358,33 +373,39 @@ OneTimeSetup
          jsr   PrepareGSOS
 @NotGSOS
 
+         ; initialize ProDOS shim
+         +READ_RAM2_WRITE_RAM2
          ldy   #$0b
-CopyDevs
-         lda   $BF13,y
-         sta   promote + $13,y
+-        lda   $BF13, y
+         sta   promote + $13, y      ; requires RAM2 write
          dey
-         bpl   CopyDevs
-
+         bpl   -
+         ; save unit in LC bank 2 while overriding !pseudopc
          lda   $BF30
-         sta   promote + ProDOS_unit - $bf00
-                                     ; save unit in LC bank 2 while overriding !pseudopc
+         sta   promote + ProDOS_unit - $bf00 ; requires RAM2 write
 
-         lda   hddopendir+1          ; save current directory as 'root'
-         ldy   hddopendir+3
-         sta   gRootDirectory+1
-         sty   gRootDirectory+3
-         jsr   SwitchToBank1
+         ; save current directory as 'root'
+         lda   hddopendir+1          ; requires RAM2 read
+         ldy   hddopendir+3          ; requires RAM2 read
+         sta   gRootDirectory+1      ; requires RAM2 write
+         sty   gRootDirectory+3      ; requires RAM2 write
 
-         jsr   LoadFile              ; load preferences file into $8000
+         ; load raw preferences file into $8000
+         +READ_RAM1_WRITE_RAM1
+         jsr   LoadFile              ; requires RAM1 read
+                                     ; exits with RAM1 read/write
          !word kRootDirectory
          !word kGlobalPrefsFilename
 -        !word $8000
-         jsr   ParseKeyValueList     ; parse contents into OKVS data structure into LC RAM bank
+
+         ; parse raw preferences file into OKVS data structure
+         jsr   ParseKeyValueList     ; requires RAM1 write because that's where gGlobalPrefsStore is
          !word gGlobalPrefsStore
          !word -
          !byte 16
 
-         jsr   pref_get              ; see if cheats are enabled by default
+         ; see if cheats are enabled by default
+         jsr   pref_get              ; requires RAM1 read
                                      ; sets PTR -> cheat pref value as length-prefixed string '1' or '0'
          !word kCheat
          !word 0
@@ -394,8 +415,9 @@ CopyDevs
          asl
          asl
          asl                         ; A = #$08 or #$00
-         ora   MachineStatus
+         ora   MachineStatus         ; requires RAM1 read
          sta   MachineStatus         ; set bit 3 of MachineStatus
+                                     ; requires RAM1 write
 
          rol
          rol
@@ -405,9 +427,10 @@ CopyDevs
          tax                         ; X in (0,2,4,6)
          ldy   kGameCounts, x
          sty   GameCount             ; store total game count based on based on (has-joystick) X (has-128K)
+                                     ; requires RAM1 write
          sty   SAVE
          ldy   kGameCounts+1, x
-         sty   GameCount+1
+         sty   GameCount+1           ; requires RAM1 write
          sty   SAVE+1
          lsr
          tax                         ; X in (0,1,2,3)
@@ -422,10 +445,10 @@ CopyDevs
          ldy   #5
 @searchIndexSrc
          lda   $FDFD, y              ; SMC
-         sta   kSearchIndexRecord, y
+         sta   kSearchIndexRecord, y ; requires RAM1 write
 @searchCacheSrc
          lda   $FDFD, y
-         sta   kSearchCacheRecord, y
+         sta   kSearchCacheRecord, y ; requires RAM1 write
          dey
          bpl   @searchIndexSrc
 
@@ -453,13 +476,13 @@ CopyDevs
          sta   SAVE
          pla
          ora   #$30
-         sta   VisibleGameCount,y
+         sta   VisibleGameCount,y    ; requires RAM1 write
          iny
          cpy   #$03
          bcc   @outer
 
          bit   CLEARKBD
-         jmp   Reenter
+         jmp   Reenter               ; requires RAM1 or RAM2 read
 
 @kPowersOfTen
          !byte 100

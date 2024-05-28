@@ -53,25 +53,25 @@
          bne   -
 }
 
-!macro INC_INPUT_AND_LOOP .loop {
-         inc   <input
+!macro INC_INPUT_AND_LOOP .input, .loop {
+         inc   <.input
          beq   +
          jmp   .loop
 +        bit   KBD
          bmi   +
-         inc   <input+1
+         inc   <.input+1
          jmp   .loop
 +        rts
 }
 
-!macro DEC_INPUT_AND_LOOP .loop {
-         lda   input
+!macro DEC_INPUT_AND_LOOP .input, .loop {
+         lda   .input
          php
-         dec   input
-         dec   input
+         dec   .input
+         dec   .input
          plp
          bne   +
-         dec   input+1
+         dec   .input+1
          bit   KBD
          bpl   .loop
          bmi   ++

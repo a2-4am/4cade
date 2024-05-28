@@ -19,8 +19,8 @@ InputLoop
 input=*+1
          ldx   .coords               ; first value: HGR row (only 0..95 will be in input array)
          bmi   Exit1Bit              ; if > 127 then we're done
-         +ROW_X_TO_BASE_ADDRESSES
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
 
          inc   input
          lda   (input), y
@@ -90,7 +90,7 @@ y=*+1
 +        sta   $C002
          sta   $C004
 
-         +INC_INPUT_AND_LOOP InputLoop
+         +INC_INPUT_AND_LOOP input, InputLoop
 }
 end
 }
@@ -147,8 +147,8 @@ InputLoop
 input=*+1
          ldx   .coords               ; first value: HGR row (only 0..95 will be in input array)
          bmi   Exit1Bit              ; if > 127 then we're done
-         +ROW_X_TO_BASE_ADDRESSES
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
 
          iny
          lda   (input), y

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019-2024 by 4am/qkumba
 ;
 !cpu 6502
 !to "build/FX.INDEXED/STAR.BLOOM",plain
@@ -7,11 +7,9 @@
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"
 
-         +FX_PRECOMPUTED_2BIT Coordinates
+         +FX_INITONCE_2BIT CoordinatesFile, Start
+Start
+         jmp   iHGRPrecomputed2Bit
 
-!if * and 1 {
-         !byte 0
-}
-Coordinates
-         !source "src/fx/fx.hgr.star.bloom.data.a"
-         !byte $00
+CoordinatesFile
+         +PSTRING "STAR.BLOOM.DATA"

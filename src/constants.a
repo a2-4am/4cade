@@ -197,7 +197,8 @@ iBuildHGRSparseBitmasks2Bit  = iHGRPrecomputed1Bit-3
 iBuildDHGRSparseBitmasks2Bit = iBuildHGRSparseBitmasks2Bit-3
 iReverseCoordinates2Bit   = iBuildDHGRSparseBitmasks2Bit-3
 iRippleCoordinates2Bit    = iReverseCoordinates2Bit-3
-iSetupPrecomputed3Bit     = iRippleCoordinates2Bit-3
+iHGRPrecomputed2Bit       = iRippleCoordinates2Bit-3
+iSetupPrecomputed3Bit     = iHGRPrecomputed2Bit-3
 iReverseCoordinates3Bit   = iSetupPrecomputed3Bit-3
 iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
 

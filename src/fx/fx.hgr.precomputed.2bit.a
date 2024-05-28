@@ -20,24 +20,6 @@
 
          !source "src/fx/macros.a"
 
-!macro ROW_X_TO_2BIT_BASE_ADDRESSES {
-         ; X = $01..$C0, mapping to row 0..191
-         lda   hgrlo-1, x
-         sta   <dest1
-         sta   <src1
-         lda   hgr1hi-1, x
-         sta   <dest1+1
-         eor   #$60
-         sta   <src1+1
-         lda   hgrlo, x
-         sta   <dest2
-         sta   <src2
-         lda   hgr1hi, x
-         sta   <dest2+1
-         eor   #$60
-         sta   <src2+1
-}
-
 !macro FX_INITONCE_2BIT .CoordinatesFile, .Start {
 InitOnce
          bit   .Start
@@ -50,58 +32,6 @@ InitOnce
 
          lda   #$00
          sta   EndCoordinates2Bit
-}
-
-!macro FX_PRECOMPUTED_2BIT .coords {
-         jsr   iBuildHGRTables
-         jsr   iBuildHGRMirrorCols
-         jsr   iBuildHGRSparseBitmasks2Bit
-         +COPY_TO_0 start, end
-         jmp   InputLoop
-start
-!pseudopc 0 {
-Exit2Bit rts
-InputLoop
-         ldy   #0
-input=*+1
-         ldx   .coords               ; first value: HGR row + 1
-         beq   Exit2Bit              ; if 0 then we're done
-         +ROW_X_TO_2BIT_BASE_ADDRESSES
-
-         inc   <input
-         lda   (<input), y
-         +HIGH_3_LOW_5 input
-
-         ; main 2x2 block in left half
-src1=*+1
-         lda   $FDFD, y
-         eor   (<dest1), y
-         and   copymasks2bit, x
-         eor   (<dest1), y
-dest1=*+1
-         sta   $FDFD, y
-src2=*+1
-         lda   $FDFD, y
-         eor   (<dest2), y
-         and   copymasks2bit, x
-         eor   (<dest2), y
-dest2=*+1
-         sta   $FDFD, y
-
-         ; corresponding 2x2 block in right half (same row, opposite column)
-         lda   mirror_cols, y
-         tay
-         +COPY_BIT src1, dest1, mirror_copymasks2bit
-         +COPY_BIT src2, dest2, mirror_copymasks2bit
-
-         inc   <input
-         bne   InputLoop
-         bit   KBD
-         bmi   Exit2Bit
-         inc   <input+1
-         bne   InputLoop             ; always branches
-}
-end
 }
 
 !macro FX_PRECOMPUTED_2BIT_DITHER .coords, .endcoords {
@@ -158,7 +88,7 @@ InputLoop
 input=*+1
          ldx   .coords               ; first value: HGR row + 1
          beq   Exit2Bit              ; if 0 then we're done
-         +ROW_X_TO_2BIT_BASE_ADDRESSES
+         +ROW_X_TO_2BIT_BASE_ADDRESSES src1, src2, dest1, dest2
 
          iny
          lda   (<input), y

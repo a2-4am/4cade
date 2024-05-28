@@ -29,8 +29,8 @@ Loop     ldy   #0
          lda   (input),y
          bmi   Exit
          tax
-         +ROW_X_TO_BASE_ADDRESSES
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
          inc   input
          lda   (input),y
          +HIGH_3_LOW_5 input
@@ -68,8 +68,8 @@ Loop     ldy   #0
          ldy   #0
          lda   (reverse_input),y
          tax
-         +ROW_X_TO_BASE_ADDRESSES
-         +ROW_X_TO_MIRROR_ADDRESSES
+         +ROW_X_TO_BASE_ADDRESSES src1, src2, dest1, dest2
+         +ROW_X_TO_MIRROR_ADDRESSES mirror_src1, mirror_src2, mirror_dest1, mirror_dest2
          iny
          lda   (reverse_input),y
          +HIGH_3_LOW_5 reverse_input

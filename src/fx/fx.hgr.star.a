@@ -9,7 +9,7 @@
 
          +FX_INITONCE_2BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_2BIT Coordinates2Bit
+         jmp   iHGRPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "STAR.DATA"

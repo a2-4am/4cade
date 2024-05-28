@@ -17,6 +17,7 @@
 ;          (this will be called before the speech detection routine, and
 ;          (zp$81 will contain the slot in form $Cx)
 ;        /!\ ALL ACCELERATORS MUST BE OFF OR SET TO 1 MHZ
+;        ROM must be banked in for reading
 ; out:   if card was found, X = #$?n where n is the slot number of the card, otherwise #$00
 ;                           and    bit 5 = 0 if Mockingboard Sound I found
 ;                               or bit 5 = 1 if Mockingboard Sound II or "A"-"D" found
@@ -25,6 +26,7 @@
 ;        flags clobbered
 ;        zp $80-$82 clobbered
 ;        A/Y clobbered
+;        ROM banked in, no write
 ;------------------------------------------------------------------------------
 
 MAGIC_Z80_LOCATION=$FFD

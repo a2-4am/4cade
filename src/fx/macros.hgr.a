@@ -67,38 +67,56 @@
          sta   CopyMaskAddr+1
 }
 
-!macro ROW_X_TO_BASE_ADDRESSES {
+!macro ROW_X_TO_BASE_ADDRESSES .src1, .src2, .dest1, .dest2 {
          lda   hgrlo, x
-         sta   <dest1
-         sta   <src1
+         sta   <.dest1
+         sta   <.src1
          lda   hgr1hi, x
-         sta   <dest1+1
+         sta   <.dest1+1
          eor   #$60
-         sta   <src1+1
+         sta   <.src1+1
          lda   hgrlo+1, x
-         sta   <dest2
-         sta   <src2
+         sta   <.dest2
+         sta   <.src2
          lda   hgr1hi+1, x
-         sta   <dest2+1
+         sta   <.dest2+1
          eor   #$60
-         sta   <src2+1
+         sta   <.src2+1
 }
 
-!macro ROW_X_TO_MIRROR_ADDRESSES {
+!macro ROW_X_TO_MIRROR_ADDRESSES .mirror_src1, .mirror_src2, .mirror_dest1, .mirror_dest2 {
          lda   hgrlomirror, x
-         sta   <mirror_dest1
-         sta   <mirror_src1
+         sta   <.mirror_dest1
+         sta   <.mirror_src1
          lda   hgr1himirror, x
-         sta   <mirror_dest1+1
+         sta   <.mirror_dest1+1
          eor   #$60
-         sta   <mirror_src1+1
+         sta   <.mirror_src1+1
          lda   hgrlomirror+1, x
-         sta   <mirror_dest2
-         sta   <mirror_src2
+         sta   <.mirror_dest2
+         sta   <.mirror_src2
          lda   hgr1himirror+1, x
-         sta   <mirror_dest2+1
+         sta   <.mirror_dest2+1
          eor   #$60
-         sta   <mirror_src2+1
+         sta   <.mirror_src2+1
+}
+
+!macro ROW_X_TO_2BIT_BASE_ADDRESSES .src1, .src2, .dest1, .dest2 {
+         ; X = $01..$C0, mapping to row 0..191
+         lda   hgrlo-1, x
+         sta   <.dest1
+         sta   <.src1
+         lda   hgr1hi-1, x
+         sta   <.dest1+1
+         eor   #$60
+         sta   <.src1+1
+         lda   hgrlo, x
+         sta   <.dest2
+         sta   <.src2
+         lda   hgr1hi, x
+         sta   <.dest2+1
+         eor   #$60
+         sta   <.src2+1
 }
 
 !macro HGR_CALC_ROUTINES {

@@ -15,6 +15,7 @@ ROMID_IIECARD   =    2
 idroutine       =    $FE1F   ; SEC, JSR $FE1F, BCS notgs
 
 BuildVBLFunction
+; in:    ROM must be banked in for reading
          ldx   romid
          cpx   #ROMID_IIECOMPAT
          bne   @build_none           ; not a //e
@@ -22,7 +23,7 @@ BuildVBLFunction
          beq   @build_iic            ; //c family
          lda   romid_mac
          cmp   #ROMID_IIECARD
-	 beq   @build_iiecard        ; Mac Apple IIe card
+         beq   @build_iiecard        ; Mac Apple IIe card
          sec
          jsr   idroutine             ; check for IIgs
          bcs   @NotGS

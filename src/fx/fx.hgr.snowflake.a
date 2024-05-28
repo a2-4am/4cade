@@ -7,7 +7,9 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, iHGRPrecomputed1Bit
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+Start
+         jmp   iHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "SNOWFLAKE.DATA"

@@ -30,6 +30,7 @@
 ; - BuildDHGRSparseBitmasks2Bit
 ; - ReverseCoordinates2Bit
 ; - RippleCoordinates2Bit
+; - HGRPrecomputed2Bit
 
 ; - SetupPrecomputed3Bit
 ; - ReverseCoordinates3Bit
@@ -428,70 +429,70 @@ HGRPrecomputed1Bit
          jsr   BuildHGRMirrorTables
          jsr   BuildHGRMirrorCols
          jsr   BuildHGRSparseBitmasks1Bit
-         +COPY_TO_0 start, end
-         jmp   InputLoop
-start
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+.start
 !pseudopc 0 {
-Exit1Bit rts
-InputLoop
+.Exit1Bit rts
+.InputLoop
          ldy   #0
-input=*+1
+.input=*+1
          ldx   Coordinates1Bit       ; first value: HGR row (only 0..95 will be in input array)
-         bmi   Exit1Bit              ; if > 127 then we're done
-         +ROW_X_TO_BASE_ADDRESSES
-         +ROW_X_TO_MIRROR_ADDRESSES
+         bmi   .Exit1Bit             ; if > 127 then we're done
+         +ROW_X_TO_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+         +ROW_X_TO_MIRROR_ADDRESSES .mirror_src1, .mirror_src2, .mirror_dest1, .mirror_dest2
 
-         inc   input
-         lda   (input), y
-         +HIGH_3_LOW_5 input
+         inc   .input
+         lda   (.input), y
+         +HIGH_3_LOW_5 .input
 
          ; main 1x2 block in top-left quadrant
-src1=*+1
+.src1=*+1
          lda   $FDFD, y
-         eor   (<dest1), y
+         eor   (<.dest1), y
          and   copymasks1bit, x
-         eor   (<dest1), y
-dest1=*+1
+         eor   (<.dest1), y
+.dest1=*+1
          sta   $FDFD, y
-src2=*+1
+.src2=*+1
          lda   $FDFD, y
-         eor   (<dest2), y
+         eor   (<.dest2), y
          and   copymasks1bit, x
-         eor   (<dest2), y
-dest2=*+1
+         eor   (<.dest2), y
+.dest2=*+1
          sta   $FDFD, y
 
          ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
          lda   mirror_cols, y
          tay
-         +COPY_BIT src1, dest1, mirror_copymasks1bit
-         +COPY_BIT src2, dest2, mirror_copymasks1bit
+         +COPY_BIT .src1, .dest1, mirror_copymasks1bit
+         +COPY_BIT .src2, .dest2, mirror_copymasks1bit
 
          ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
-mirror_src1=*+1
+.mirror_src1=*+1
          lda   $FDFD, y
-         eor   (<mirror_dest1), y
+         eor   (<.mirror_dest1), y
          and   mirror_copymasks1bit, x
-         eor   (<mirror_dest1), y
-mirror_dest1=*+1
+         eor   (<.mirror_dest1), y
+.mirror_dest1=*+1
          sta   $FDFD, y
-mirror_src2=*+1
+.mirror_src2=*+1
          lda   $FDFD, y
-         eor   (<mirror_dest2), y
+         eor   (<.mirror_dest2), y
          and   mirror_copymasks1bit, x
-         eor   (<mirror_dest2), y
-mirror_dest2=*+1
+         eor   (<.mirror_dest2), y
+.mirror_dest2=*+1
          sta   $FDFD, y
 
          ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
          lda   mirror_cols, y
          tay
-         +COPY_BIT mirror_src1, mirror_dest1, copymasks1bit
-         +COPY_BIT mirror_src2, mirror_dest2, copymasks1bit
+         +COPY_BIT .mirror_src1, .mirror_dest1, copymasks1bit
+         +COPY_BIT .mirror_src2, .mirror_dest2, copymasks1bit
 
-         +INC_INPUT_AND_LOOP InputLoop
+         +INC_INPUT_AND_LOOP .input, .InputLoop
 }
-end
+.end
 }
 
 BuildHGRSparseBitmasks2Bit
@@ -736,6 +737,59 @@ RippleCoordinates2Bit
          !word 70, 84, 86, 126, 132, 140, 170, 238
          !word 2194, 6582
 @zerotbl !byte $f0, $f2, $ca, $d2, $d8, $e0, $e2, $e6, $ea, $ee
+
+!zone {
+HGRPrecomputed2Bit
+         jsr   BuildHGRTables
+         jsr   BuildHGRMirrorCols
+         jsr   BuildHGRSparseBitmasks2Bit
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+.start
+!pseudopc 0 {
+.Exit2Bit rts
+.InputLoop
+         ldy   #0
+.input=*+1
+         ldx   Coordinates2Bit       ; first value: HGR row + 1
+         beq   .Exit2Bit             ; if 0 then we're done
+         +ROW_X_TO_2BIT_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+
+         inc   <.input
+         lda   (<.input), y
+         +HIGH_3_LOW_5 .input
+
+         ; main 2x2 block in left half
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+         and   copymasks2bit, x
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   copymasks2bit, x
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
+
+         ; corresponding 2x2 block in right half (same row, opposite column)
+         lda   mirror_cols, y
+         tay
+         +COPY_BIT .src1, .dest1, mirror_copymasks2bit
+         +COPY_BIT .src2, .dest2, mirror_copymasks2bit
+
+         inc   <.input
+         bne   .InputLoop
+         bit   KBD
+         bmi   .Exit2Bit
+         inc   <.input+1
+         bne   .InputLoop            ; always branches
+}
+.end
+}
 
 SetupPrecomputed3Bit
          ; build regular HGR lookup tables, then split them
