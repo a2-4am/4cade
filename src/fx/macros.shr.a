@@ -105,8 +105,6 @@
 }
 
 !macro LOAD_SHR_COORDINATES_AT .coords, .filename {
-; out:   WRITEMAINMEM active
-;        LC RAM2 active and read/write
          +LDADDR .filename
          ldx   #>.coords
          jsr   iLoadFXDATA
