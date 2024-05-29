@@ -159,6 +159,7 @@ gGlobalPrefsStore
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
 
+         +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed3Bit,    HGRDitherPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed3Bit,          HGRPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,       RippleCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,      ReverseCoordinates3Bit

@@ -9,7 +9,7 @@
 
          +FX_INITONCE_3BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_3BIT_DITHER Coordinates3Bit, EndCoordinates3Bit
+         jmp   iHGRDitherPrecomputed3Bit
 
 CoordinatesFile
          +PSTRING "APPLE.DATA"

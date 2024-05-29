@@ -42,6 +42,7 @@
 ; - ReverseCoordinates3Bit
 ; - RippleCoordinates3Bit
 ; - HGRPrecomputed3Bit
+; - HGRDitherPrecomputed3Bit
 
          !source "src/fx/macros.hgr.a"
          !source "src/fx/macros.dhgr.a"
@@ -1738,4 +1739,149 @@ HGRPrecomputed3Bit
          bne   .InputLoop            ; always branches
 }
 .end
+}
+
+!zone {
+HGRDitherPrecomputed3Bit
+         jsr   BuildHGRDitherMasks
+         jsr   SetupPrecomputed3Bit
+
+         ; phase 1 - in reverse, with additional masking
+         +COPY_TO_0 .start, .end
+
+         ; set up starting coordinate for reading coordinates in reverse order
+         +LDADDR EndCoordinates3Bit-2
+         sta   <.input
+         sty   <.input+1
+
+         ; set up EOF marker to stop reading coordinates in reverse order
+         lda   #$80
+         sta   Coordinates3Bit-2
+
+         ; set up logic to advance to next coordinates in reverse order
+         ldx   #(.next2_end-.next2_start-1)
+-        lda   .next2_start, x
+         sta   <.next, x
+         dex
+         bpl   -
+
+         ; set up pointers to dither mask pointers so even rows do even-row dithering and odd rows do odd-row dithering
+         ldx   #$7F
+-        lda   #<evenrow_masks
+         sta   dither1_lo, x
+         sta   dither2_lo-1, x
+         sta   dither3_lo, x
+         lda   #<oddrow_masks
+         sta   dither1_lo-1, x
+         sta   dither2_lo, x
+         sta   dither3_lo-1, x
+         dex
+         dex
+         bpl   -
+         jsr   .InputLoop
+
+         bit   KBD
+         bmi   .start
+
+         ; phase 2 - in order, without additional masking
+         +COPY_TO_0 .start, .end
+
+         ; set up pointers to dither mask pointers so all rows do no dithering
+         ldx   #$7F
+-        lda   #<no_masks
+         sta   dither1_lo, x
+         sta   dither2_lo, x
+         sta   dither3_lo, x
+         dex
+         bpl   -
+         jmp   .InputLoop
+.start
+!pseudopc 0 {
+.Exit3Bit rts
+.dither1_ptr
+         !word evenrow_masks
+.dither2_ptr
+         !word oddrow_masks
+.dither3_ptr
+         !word evenrow_masks
+.InputLoop
+         ldy   #0
+.input=*+1
+         lda   Coordinates3Bit
+         bmi   .Exit3Bit             ; if high bit is 1 then we're done
+         cmp   #$40
+         php
+         tax
+         lda   dither1_lo, x
+         sta   .dither1_ptr
+         lda   dither2_lo, x
+         sta   .dither2_ptr
+         lda   dither3_lo, x
+         sta   .dither3_ptr
+         +ROW_X_TO_3BIT_BASE_ADDRESSES .src1, .src2, .src3, .dest1, .dest2, .dest3
+
+         iny
+         lda   (<.input), y
+         and   #%11100000
+         tax
+         eor   (<.input), y
+         plp
+         bcc   +
+         tay
+         lda   extra_cols, y
++        tay
+
+         ; 2x3 block
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+         and   copymasks3bit, x
+         and   (<.dither1_ptr), y
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   copymasks3bit, x
+         and   (<.dither2_ptr), y
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
+.src3=*+1
+         lda   $FDFD, y
+         eor   (<.dest3), y
+         and   copymasks3bit, x
+         and   (<.dither3_ptr), y
+         eor   (<.dest3), y
+.dest3=*+1
+         sta   $FDFD, y
+
+.next
+         inc   <.input
+         inc   <.input
+         bne   +
+         bit   KBD
+         bmi   ++
+         inc   <.input+1
++        jmp   .InputLoop
+++       rts
+}
+.end
+
+.next2_start
+!pseudopc .next {
+         lda   <.input
+         php
+         dec   <.input
+         dec   <.input
+         plp
+         bne   +
+         dec   <.input+1
+         bit   KBD
+         bmi   ++
++        jmp   .InputLoop
+++       rts
+}
+.next2_end
 }

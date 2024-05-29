@@ -116,7 +116,7 @@ ROM_NORMAL =   $FE84      ; NORMAL text (instead of INVERSE or FLASH)
 ROM_IN0 =      $FE89      ; SETKBD
 ROM_PR0 =      $FE93      ; SETVID
 
-; zero page during init ONLY
+; zero page addresses during init ONLY
 zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; bit 6 = 1 if machine has 128K
                           ; bit 5 = 1 if machine has a VidHD card
@@ -124,7 +124,7 @@ zpMachineStatus= $F0      ; bit 7 = 1 if machine has joystick
                           ; only used during init, then copied to MachineStatus in LC RAM
 zpCharMask   = $F1        ; only used during init, then clobbered
 
-; zero page
+; zero page addresses
 PARAM        = $00        ; word (used by PARAMS_ON_STACK macro, so basically everywhere)
 PTR          = $02        ; word
 SRC          = $04        ; word
@@ -135,6 +135,7 @@ WCOUNT       = $0C        ; word
 HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
+PrelaunchInit= $EB
 ; textrank
 BestMatchIndex = $E5      ; word
 tmpx         = $E7        ; byte
@@ -153,9 +154,7 @@ firstletter=   $FA        ; byte
 MatchCount =   $FB        ; byte
 BestMatchScore = $FC      ; byte
 
-; main memory
-gStackSize   = 6          ; seems like only six are needed
-gPathname    = $BFD0      ; used by SetPath/AddToPath
+; main memory addresses
 gKeyLen      = $1F00      ; used by ParseKeyValueList
 gKey         = $1F01      ; ""
 gValLen      = $1F80      ; ""
@@ -164,12 +163,48 @@ UILine1      = $1FB0      ; used by DrawUI
 UILine2      = $1FD8      ; ""
 UI_ToPlay    = $1FF7      ; ""
 ProBootEntry = $2025      ; used by ProBoot
-
-
 gSearchIndex = $6000
 gSearchCache = $A000
+gPathname    = $BFD0      ; used by SetPath/AddToPath
 
-; LC RAM 1 & 2
+; main memory addresses used by graphic effects
+hgrlo          = $0201               ; $C0 bytes
+mirror_cols    = $02C1               ; $28 bytes
+hgrhi          = $0301               ; $C0 bytes
+hgr1hi         = hgrhi
+
+Coordinates1Bit= $8600               ; $3481 bytes ($3480 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates1Bit = Coordinates1Bit + $3480
+
+Coordinates2Bit= $8100               ; $3C01 bytes ($3C00 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates2Bit = Coordinates2Bit + $3C00
+
+Coordinates3Bit= $6D00               ; $5001 bytes ($5000 on disk + 1 byte EOF marker added at runtime)
+EndCoordinates3Bit = Coordinates3Bit + $5000
+
+hgrlomirror    = $BB01               ; $C0 bytes
+hgr1himirror   = $BC01               ; $C0 bytes
+dithermasks    = $BDA8               ; $58 bytes, must not cross page boundary
+evenrow_masks  = dithermasks
+oddrow_masks   = dithermasks+2
+no_masks       = dithermasks+44
+copymasks1bit  = $BE00               ; $100 bytes but sparse, index is 0..6 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0
+copymasks2bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00,$20,$40,$60,$80
+copymasks3bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0,$E0
+mirror_copymasks1bit = copymasks1bit+1
+mirror_copymasks2bit = copymasks2bit+1
+hgrlo3a        = $6A00               ; $80 bytes
+hgrlo3b        = $6A80               ; $80 bytes
+hgrlo3c        = $6B00               ; $80 bytes
+hgrhi3a        = $6B80               ; $80 bytes
+dither1_lo     = $6880               ; $80 bytes
+dither2_lo     = $6900               ; $80 bytes
+dither3_lo     = $6980               ; $80 bytes
+hgrhi3b        = $6C00               ; $80 bytes
+hgrhi3c        = $BD01               ; $80 bytes
+extra_cols     = $BEF8               ; $08 bytes
+
+; LC RAM 1 & 2 addresses
 ; these are defined here because they are also called by other targets
 ; that are assembled separately, e.g. prelaunchers, demo launchers, and graphic effects
 UnwaitForVBL              = $FFEE
@@ -208,6 +243,7 @@ iSetupPrecomputed3Bit     = iDHGRDitherPrecomputed2Bit-3
 iReverseCoordinates3Bit   = iSetupPrecomputed3Bit-3
 iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
 iHGRPrecomputed3Bit       = iRippleCoordinates3Bit-3
+iHGRDitherPrecomputed3Bit = iHGRPrecomputed3Bit-3
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")
@@ -217,9 +253,13 @@ MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bits 0-3: slot number
 MachineStatus      = $FFF9
 
-; LC RAM 2
+; LC RAM 2 addresses
 DisableAccelerator = $DFB4
 EnableAccelerator  = DisableAccelerator+3
+
+; application constants
+gStackSize   = 6          ; seems like only six are needed
+PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be determined at build-time
 
 ; AND masks for MockingboardStuff
 MOCKINGBOARD_SLOT = %00001111
@@ -251,8 +291,6 @@ ATTRACT_SHR         = %00100000
 ATTRACT_GR          = %01000000
 ATTRACT_DGR         = %10000000
 
-PRELAUNCH_STANDARD_SIZE = 61         ; LoadStandardPrelaunch, eventually to be determined at build-time
-
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
@@ -267,43 +305,6 @@ ldrlo2         = $64                 ; constant
 ldrhi2         = $65                 ; constant
 
 ; Columns and Dangerous Dave also call (de)accelerator functions directly
-
-PrelaunchInit  = $EB
-
-; addresses used by graphic effects
-hgrlo          = $0201               ; $C0 bytes
-mirror_cols    = $02C1               ; $28 bytes
-hgrhi          = $0301               ; $C0 bytes
-hgr1hi         = hgrhi
-
-Coordinates1Bit= $8600               ; $3481 bytes ($3480 on disk + 1 byte EOF marker added at runtime)
-EndCoordinates1Bit = Coordinates1Bit + $3480
-
-Coordinates2Bit= $8100               ; $3C01 bytes ($3C00 on disk + 1 byte EOF marker added at runtime)
-EndCoordinates2Bit = Coordinates2Bit + $3C00
-
-Coordinates3Bit= $6D00               ; $5001 bytes ($5000 on disk + 1 byte EOF marker added at runtime)
-EndCoordinates3Bit = Coordinates3Bit + $5000
-
-hgrlomirror    = $BB01               ; $C0 bytes
-hgr1himirror   = $BC01               ; $C0 bytes
-dithermasks    = $BDA8               ; $58 bytes, must not cross page boundary
-evenrow_masks  = dithermasks
-oddrow_masks   = dithermasks+2
-no_masks       = dithermasks+44
-copymasks1bit  = $BE00               ; $100 bytes but sparse, index is 0..6 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0
-copymasks2bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..4 but in high 3 bits, so $00,$20,$40,$60,$80
-copymasks3bit  = copymasks1bit       ; $100 bytes but sparse, index is 0..7 but in high 3 bits, so $00,$20,$40,$60,$80,$A0,$C0,$E0
-mirror_copymasks1bit = copymasks1bit+1
-mirror_copymasks2bit = copymasks2bit+1
-hgrlo3a        = $6A00               ; $80 bytes
-hgrlo3b        = $6A80               ; $80 bytes
-hgrlo3c        = $6B00               ; $80 bytes
-hgrhi3a        = $6B80               ; $80 bytes
-hgrhi3b        = $6C00               ; $80 bytes
-hgrhi3c        = $BD01               ; $80 bytes
-extra_cols     = $BEF8               ; $08 bytes
-
 
 _CONSTANTS_=*
 }
