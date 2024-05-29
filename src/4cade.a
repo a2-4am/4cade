@@ -163,7 +163,6 @@ gGlobalPrefsStore
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed3Bit,          HGRPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,       RippleCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,      ReverseCoordinates3Bit
-         +DEFINE_INDIRECT_VECTOR iSetupPrecomputed3Bit,        SetupPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iDHGRDitherPrecomputed2Bit,   DHGRDitherPrecomputed2Bit
          +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed2Bit,         DHGRPrecomputed2Bit
          +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed2Bit,    HGRDitherPrecomputed2Bit
@@ -174,6 +173,7 @@ gGlobalPrefsStore
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks2Bit,  BuildHGRSparseBitmasks2Bit
          +DEFINE_INDIRECT_VECTOR iDHGRDitherPrecomputed1Bit,   DHGRDitherPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed1Bit,         DHGRPrecomputed1Bit
+         +DEFINE_INDIRECT_VECTOR iHGRRadialPrecomputed1Bit,    HGRRadialPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed1Bit,    HGRDitherPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed1Bit,          HGRPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks1Bit, BuildDHGRSparseBitmasks1Bit

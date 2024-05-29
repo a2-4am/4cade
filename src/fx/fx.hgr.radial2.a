@@ -11,9 +11,7 @@
          jsr   iRippleCoordinates1Bit
 
 Start
-         !source "src/fx/fx.hgr.radial.common.a"
+         jmp   iHGRRadialPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "RADIAL.DATA"
-Coordinates=Coordinates1Bit
-EndCoordinates=EndCoordinates1Bit

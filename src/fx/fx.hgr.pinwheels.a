@@ -6,12 +6,10 @@
 *=$6000
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
-         !source "src/fx/fx.hgr.radial.common.a"
 
-!if * and 1 {
-         !byte 0
-}
-Coordinates
-         !source "src/fx/fx.hgr.pinwheels.data.a"
-EndCoordinates
-         !byte $80
+         +FX_INITONCE_1BIT CoordinatesFile, Start
+Start
+         jmp   iHGRRadialPrecomputed1Bit
+
+CoordinatesFile
+         +PSTRING "PINWHEELS.DATA"

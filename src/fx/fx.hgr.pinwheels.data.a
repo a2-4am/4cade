@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/PINWHEELS.DATA",plain
+*=$8600
          !byte $0C,%11000100
          !byte $24,%11010011
          !byte $5E,%01110001

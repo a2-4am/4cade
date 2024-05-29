@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/RADBUBBLES.DATA",plain
+*=$8600
          !byte $16,%11000100
          !byte $18,%00000101
          !byte $18,%00001111

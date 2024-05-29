@@ -1,3 +1,6 @@
+!cpu 6502
+!to "build/FX/FULL.STARS.DATA",plain
+*=$8600
          !byte $18,%00000101
          !byte $0E,%11010011
          !byte $48,%11001110
