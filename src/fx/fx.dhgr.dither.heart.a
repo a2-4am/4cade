@@ -9,7 +9,7 @@
 
          +FX_INITONCE_2BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_2BIT_DHGR_DITHER Coordinates2Bit, EndCoordinates2Bit
+         jmp   iDHGRDitherPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "HEART.DATA"

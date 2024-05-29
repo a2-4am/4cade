@@ -9,7 +9,7 @@
 
          +FX_INITONCE_2BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_2BIT_DITHER Coordinates2Bit, EndCoordinates2Bit
+         jmp   iHGRDitherPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "MAPLE.DATA"
