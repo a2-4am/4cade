@@ -15,7 +15,7 @@
 ; 6C80..6CFD
 ; 6CFE..BD00 - Coordinates3Bit (dither variants clobber Coordinates3Bit-2)
 ; BD01..BD80 - hgrhi3c
-; BD81..BDA9
+; BD81..BDA7
 ; BDA8..BDFF - dithermasks
 ; BE00..BEE0 - copymasks3bit
 ; BEF8..BEFF - extra_cols

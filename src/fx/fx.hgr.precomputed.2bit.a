@@ -12,7 +12,7 @@
 ; 03C1..03EE
 ; 6000..     - module code (length varies)
 ; 8100..BD00 - Coordinates2Bit
-; BD01..BDA9
+; BD01..BDA7
 ; BDA8..BDFF - dithermasks
 ; BE00..BEFF - copymasks2bit
 ; BF00..BFFF - ProRWTS glue

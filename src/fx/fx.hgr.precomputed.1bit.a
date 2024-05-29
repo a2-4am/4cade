@@ -16,7 +16,7 @@
 ; BB01..BBC0 - hgrlomirror
 ; BBC1..BC00
 ; BC01..BCC0 - hgr1himirror
-; BCC1..BDA9
+; BCC1..BDA7
 ; BDA8..BDFF - dithermasks
 ; BE00..BEFF - copymasks1bit
 ; BF00..BFFF - ProRWTS glue
