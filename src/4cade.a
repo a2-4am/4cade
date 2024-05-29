@@ -169,7 +169,9 @@ gGlobalPrefsStore
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates2Bit,  ReverseCoordinates2Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks2Bit, BuildDHGRSparseBitmasks2Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks2Bit, BuildHGRSparseBitmasks2Bit
+         +DEFINE_INDIRECT_VECTOR iDHGRDitherPrecomputed1Bit, DHGRDitherPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed1Bit,     DHGRPrecomputed1Bit
+         +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed1Bit, HGRDitherPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed1Bit,      HGRPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks1Bit, BuildDHGRSparseBitmasks1Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks1Bit, BuildHGRSparseBitmasks1Bit

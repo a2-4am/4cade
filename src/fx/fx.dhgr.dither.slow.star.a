@@ -9,7 +9,7 @@
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_1BIT_DHGR_DITHER Coordinates1Bit, EndCoordinates1Bit
+         jmp   iDHGRDitherPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "SLOW.STAR.DATA"
