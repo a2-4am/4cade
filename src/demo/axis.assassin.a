@@ -15,7 +15,7 @@
 
          lda   #$84
          sta   $3ECC
-         lda   #$70
+         lda   #$71
          sta   $3ED0
          lda   #$17
          sta   $3EDC
