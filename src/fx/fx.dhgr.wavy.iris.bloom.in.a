@@ -10,7 +10,7 @@
          +FX_INITONCE_2BIT CoordinatesFile, Start
          jsr   iReverseCoordinates2Bit
 Start
-         +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
+         jmp   iDHGRPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "W.IR.BLOOM.DATA"

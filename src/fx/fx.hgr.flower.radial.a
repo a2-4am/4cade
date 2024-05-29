@@ -9,7 +9,7 @@
 
          +FX_INITONCE_3BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_3BIT Coordinates3Bit
+         jmp   iHGRPrecomputed3Bit
 
 CoordinatesFile
          +PSTRING "FLOWER.RAD.DATA"

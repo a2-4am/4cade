@@ -28,31 +28,6 @@ dither3_lo     = $6980    ; $80 bytes
 
          !source "src/fx/macros.a"
 
-!macro ROW_X_TO_3BIT_BASE_ADDRESSES {
-         ; X = $00..$3F, mapping to row 0, 3, 6, 9, 12, ... 189
-         lda   hgrlo3a, x
-         sta   <dest1
-         sta   <src1
-         lda   hgrhi3a, x
-         sta   <dest1+1
-         eor   #$60
-         sta   <src1+1
-         lda   hgrlo3b, x
-         sta   <dest2
-         sta   <src2
-         lda   hgrhi3b, x
-         sta   <dest2+1
-         eor   #$60
-         sta   <src2+1
-         lda   hgrlo3c, x
-         sta   <dest3
-         sta   <src3
-         lda   hgrhi3c, x
-         sta   <dest3+1
-         eor   #$60
-         sta   <src3+1
-}
-
 !macro FX_INITONCE_3BIT .CoordinatesFile, .Start {
 InitOnce
          bit   .Start
@@ -65,67 +40,6 @@ InitOnce
 
          sec
          ror   EndCoordinates3Bit
-}
-
-!macro FX_PRECOMPUTED_3BIT .coords {
-         jsr   iSetupPrecomputed3Bit
-         +COPY_TO_0 start, end
-         jmp   InputLoop
-start
-!pseudopc 0 {
-Exit3Bit rts
-InputLoop
-         ldy   #0
-input=*+1
-         lda   .coords
-         bmi   Exit3Bit              ; if high bit is 1 then we're done
-         cmp   #$40
-         php
-         tax
-         +ROW_X_TO_3BIT_BASE_ADDRESSES
-
-         inc   <input
-         lda   (<input), y
-         and   #%11100000
-         tax
-         eor   (<input), y
-         plp
-         bcc   +
-         tay
-         lda   extra_cols, y
-+        tay
-
-         ; 2x3 block
-src1=*+1
-         lda   $FDFD, y
-         eor   (<dest1), y
-         and   copymasks3bit, x
-         eor   (<dest1), y
-dest1=*+1
-         sta   $FDFD, y
-src2=*+1
-         lda   $FDFD, y
-         eor   (<dest2), y
-         and   copymasks3bit, x
-         eor   (<dest2), y
-dest2=*+1
-         sta   $FDFD, y
-src3=*+1
-         lda   $FDFD, y
-         eor   (<dest3), y
-         and   copymasks3bit, x
-         eor   (<dest3), y
-dest3=*+1
-         sta   $FDFD, y
-
-         inc   <input
-         bne   InputLoop
-         bit   KBD
-         bmi   Exit3Bit
-         inc   <input+1
-         bne   InputLoop             ; always branches
-}
-end
 }
 
 !macro FX_PRECOMPUTED_3BIT_DITHER .coords, .endcoords {
@@ -204,7 +118,7 @@ input=*+1
          sta   dither2_ptr
          lda   dither3_lo, x
          sta   dither3_ptr
-         +ROW_X_TO_3BIT_BASE_ADDRESSES
+         +ROW_X_TO_3BIT_BASE_ADDRESSES src1, src2, src3, dest1, dest2, dest3
 
          iny
          lda   (<input), y

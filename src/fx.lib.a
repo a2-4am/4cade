@@ -25,16 +25,19 @@
 ; - RippleCoordinates1Bit3
 ; - RippleCoordinates1Bit4
 ; - HGRPrecomputed1Bit
+; - DHGRPrecomputed1Bit
 
 ; - BuildHGRSparseBitmasks2Bit
 ; - BuildDHGRSparseBitmasks2Bit
 ; - ReverseCoordinates2Bit
 ; - RippleCoordinates2Bit
 ; - HGRPrecomputed2Bit
+; - DHGRPrecomputed2Bit
 
 ; - SetupPrecomputed3Bit
 ; - ReverseCoordinates3Bit
 ; - RippleCoordinates3Bit
+; - HGRPrecomputed3Bit
 
          !source "src/fx/macros.hgr.a"
          !source "src/fx/macros.dhgr.a"
@@ -495,6 +498,98 @@ HGRPrecomputed1Bit
 .end
 }
 
+!zone {
+DHGRPrecomputed1Bit
+         jsr   BuildDHGRSparseBitmasks1Bit
+         jsr   BuildHGRTables
+         jsr   BuildHGRMirrorTables
+         jsr   BuildDHGRMirrorCols
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+.start
+!pseudopc 0 {
+.Exit1Bit rts
+.InputLoop
+         ldy   #0
+.input=*+1
+         ldx   Coordinates1Bit       ; first value: HGR row (only 0..95 will be in input array)
+         bmi   .Exit1Bit             ; if > 127 then we're done
+         +ROW_X_TO_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+         +ROW_X_TO_MIRROR_ADDRESSES .mirror_src1, .mirror_src2, .mirror_dest1, .mirror_dest2
+
+         inc   .input
+         lda   (.input), y
+         +HIGH_3_LOW_5 .input
+         sty   <.y
+         clc
+.bankloop
+         lda   copymasks1bit, x
+         beq   +
+         sta   <.copymask
+
+         ; main 1x2 block in top-left quadrant
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+.copymask=*+1
+         and   #$FD                  ; SMC
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   <.copymask
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
+
+         ; corresponding 1x2 block in bottom-left quadrant (opposite row, original column)
+         +COPY_BIT_ZP .mirror_src1, .mirror_dest1, .copymask
+         +COPY_BIT_ZP .mirror_src2, .mirror_dest2, .copymask
+
++
+         lda   mirror_copymasks1bit, x              ; exists at the same address in mainmem and auxmem but each is different
+         beq   +
+         sta   <.mirror_copymask
+         ; corresponding 1x2 block in bottom-right quadrant (opposite row, opposite column)
+         lda   mirror_cols, y                   ; duplicated in mainmem and auxmem
+         tay
+.mirror_src1=*+1
+         lda   $FDFD, y
+         eor   (<.mirror_dest1), y
+.mirror_copymask=*+1
+         and   #$FD                             ; SMC
+         eor   (<.mirror_dest1), y
+.mirror_dest1=*+1
+         sta   $FDFD, y
+.mirror_src2=*+1
+         lda   $FDFD, y
+         eor   (<.mirror_dest2), y
+         and   <.mirror_copymask
+         eor   (<.mirror_dest2), y
+.mirror_dest2=*+1
+         sta   $FDFD, y
+
+         ; corresponding 1x2 block in top-right quadrant (same row, opposite column)
+         +COPY_BIT_ZP .src1, .dest1, .mirror_copymask
+         +COPY_BIT_ZP .src2, .dest2, .mirror_copymask
++
+         bcs   +
+         sta   $C003
+         sta   $C005
+.y=*+1
+         ldy   #$FD
+         sec
+         bcs   .bankloop
++        sta   $C002
+         sta   $C004
+
+         +INC_INPUT_AND_LOOP .input, .InputLoop
+}
+.end
+}
+
 BuildHGRSparseBitmasks2Bit
          lda   #%10000011
          sta   copymasks2bit
@@ -791,6 +886,81 @@ HGRPrecomputed2Bit
 .end
 }
 
+!zone {
+DHGRPrecomputed2Bit
+         jsr   BuildDHGRSparseBitmasks2Bit
+         jsr   BuildHGRTables
+         jsr   BuildDHGRMirrorCols
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+
+.start
+!pseudopc 0 {
+.Exit2Bit rts
+.InputLoop
+         ldy   #0
+.input=*+1
+         ldx   Coordinates2Bit       ; first value: HGR row + 1
+         beq   .Exit2Bit             ; if 0 then we're done
+         +ROW_X_TO_2BIT_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+
+         inc   <.input
+         lda   (<.input), y
+         +HIGH_3_LOW_5 .input
+
+         ; main 2x2 block in left half
+         clc
+-        lda   copymasks2bit, x
+         beq   +
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+         and   copymasks2bit, x
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   copymasks2bit, x
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+         ; corresponding 2x2 block in right half (same row, opposite column)
+         lda   mirror_cols, y
+         tay
+         clc
+-        lda   mirror_copymasks2bit, x
+         beq   +
+         +COPY_BIT .src1, .dest1, mirror_copymasks2bit
+         +COPY_BIT .src2, .dest2, mirror_copymasks2bit
++        bcs   +
+         sta   $C003
+         sta   $C005
+         sec
+         bcs   -
++        sta   $C002
+         sta   $C004
+
+         inc   <.input
+         +LBNE .InputLoop
+         bit   $c000
+         bmi   +
+         inc   <.input+1
+         jmp   .InputLoop
++        rts
+}
+.end
+}
+
 SetupPrecomputed3Bit
          ; build regular HGR lookup tables, then split them
          jsr   BuildHGRTables
@@ -951,3 +1121,65 @@ RippleCoordinates3Bit
          !byte $1E,$F3,$1F,$54,$00,$00,$AA,$06
          !byte $02,$00,$04,$00,$06,$00,$0C,$00
          !byte $16,$00,$1A,$00
+
+!zone {
+HGRPrecomputed3Bit
+         jsr   SetupPrecomputed3Bit
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+.start
+!pseudopc 0 {
+.Exit3Bit rts
+.InputLoop
+         ldy   #0
+.input=*+1
+         lda   Coordinates3Bit
+         bmi   .Exit3Bit             ; if high bit is 1 then we're done
+         cmp   #$40
+         php
+         tax
+         +ROW_X_TO_3BIT_BASE_ADDRESSES .src1, .src2, .src3, .dest1, .dest2, .dest3
+
+         inc   <.input
+         lda   (<.input), y
+         and   #%11100000
+         tax
+         eor   (<.input), y
+         plp
+         bcc   +
+         tay
+         lda   extra_cols, y
++        tay
+
+         ; 2x3 block
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+         and   copymasks3bit, x
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   copymasks3bit, x
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
+.src3=*+1
+         lda   $FDFD, y
+         eor   (<.dest3), y
+         and   copymasks3bit, x
+         eor   (<.dest3), y
+.dest3=*+1
+         sta   $FDFD, y
+
+         inc   <.input
+         bne   .InputLoop
+         bit   KBD
+         bmi   .Exit3Bit
+         inc   <.input+1
+         bne   .InputLoop            ; always branches
+}
+.end
+}

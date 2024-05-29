@@ -11,7 +11,7 @@
          jsr   iRippleCoordinates1Bit2
 
 Start
-         +FX_PRECOMPUTED_1BIT_DHGR Coordinates1Bit
+         jmp   iDHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "SLOW.STAR.DATA"

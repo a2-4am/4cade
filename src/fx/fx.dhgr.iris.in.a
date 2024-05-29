@@ -10,7 +10,7 @@
          +FX_INITONCE_1BIT CoordinatesFile, Start
          jsr   iReverseCoordinates1Bit
 Start
-         +FX_PRECOMPUTED_1BIT_DHGR Coordinates1Bit
+         jmp   iDHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "IRIS.DATA"

@@ -10,7 +10,7 @@
          +FX_INITONCE_2BIT CoordinatesFile, Start
          jsr   iRippleCoordinates2Bit
 Start
-         +FX_PRECOMPUTED_2BIT_DHGR Coordinates2Bit
+         jmp   iDHGRPrecomputed2Bit
 
 CoordinatesFile
          +PSTRING "STAR7.DATA"

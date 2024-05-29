@@ -159,14 +159,17 @@ gGlobalPrefsStore
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
 
+         +DEFINE_INDIRECT_VECTOR iHGRPrecomputed3Bit,      HGRPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,   RippleCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,  ReverseCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iSetupPrecomputed3Bit,    SetupPrecomputed3Bit
+         +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed2Bit,     DHGRPrecomputed2Bit
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed2Bit,      HGRPrecomputed2Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates2Bit,   RippleCoordinates2Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates2Bit,  ReverseCoordinates2Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks2Bit, BuildDHGRSparseBitmasks2Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks2Bit, BuildHGRSparseBitmasks2Bit
+         +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed1Bit,     DHGRPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iHGRPrecomputed1Bit,      HGRPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks1Bit, BuildDHGRSparseBitmasks1Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks1Bit, BuildHGRSparseBitmasks1Bit
@@ -251,5 +254,8 @@ EvenLasterMover
     !warn "OKVS CACHE at ", OKVS_CACHE
     !warn "LCRAM2 ends at ", LCRAM2_END
     !warn "RELBASE = ", $10000 - (LastMover - FirstMover)
+    !if ($10000 - (LastMover - FirstMover) < $D500) { ; end of font data
+      !serious "code is too large, RELBASE overlaps with font data"
+    }
   }
 }

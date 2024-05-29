@@ -193,14 +193,17 @@ iRippleCoordinates1Bit4   = iRippleCoordinates1Bit3-3
 iBuildHGRSparseBitmasks1Bit  = iRippleCoordinates1Bit4-3
 iBuildDHGRSparseBitmasks1Bit = iBuildHGRSparseBitmasks1Bit-3
 iHGRPrecomputed1Bit       = iBuildDHGRSparseBitmasks1Bit-3
-iBuildHGRSparseBitmasks2Bit  = iHGRPrecomputed1Bit-3
+iDHGRPrecomputed1Bit      = iHGRPrecomputed1Bit-3
+iBuildHGRSparseBitmasks2Bit  = iDHGRPrecomputed1Bit-3
 iBuildDHGRSparseBitmasks2Bit = iBuildHGRSparseBitmasks2Bit-3
 iReverseCoordinates2Bit   = iBuildDHGRSparseBitmasks2Bit-3
 iRippleCoordinates2Bit    = iReverseCoordinates2Bit-3
 iHGRPrecomputed2Bit       = iRippleCoordinates2Bit-3
-iSetupPrecomputed3Bit     = iHGRPrecomputed2Bit-3
+iDHGRPrecomputed2Bit      = iHGRPrecomputed2Bit-3
+iSetupPrecomputed3Bit     = iDHGRPrecomputed2Bit-3
 iReverseCoordinates3Bit   = iSetupPrecomputed3Bit-3
 iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
+iHGRPrecomputed3Bit       = iRippleCoordinates3Bit-3
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")

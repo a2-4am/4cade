@@ -10,7 +10,7 @@
          +FX_INITONCE_3BIT CoordinatesFile, Start
          jsr   iRippleCoordinates3Bit
 Start
-         +FX_PRECOMPUTED_3BIT Coordinates3Bit
+         jmp   iHGRPrecomputed3Bit
 
 CoordinatesFile
          +PSTRING "APPLE.DATA"

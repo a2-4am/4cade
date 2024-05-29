@@ -9,7 +9,7 @@
 
          +FX_INITONCE_1BIT CoordinatesFile, Start
 Start
-         +FX_PRECOMPUTED_1BIT_DHGR Coordinates1Bit
+         jmp   iDHGRPrecomputed1Bit
 
 CoordinatesFile
          +PSTRING "CORNER4.DATA"

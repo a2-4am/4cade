@@ -119,6 +119,31 @@
          sta   <.src2+1
 }
 
+!macro ROW_X_TO_3BIT_BASE_ADDRESSES .src1, .src2, .src3, .dest1, .dest2, .dest3 {
+         ; X = $00..$3F, mapping to row 0, 3, 6, 9, 12, ... 189
+         lda   hgrlo3a, x
+         sta   <.dest1
+         sta   <.src1
+         lda   hgrhi3a, x
+         sta   <.dest1+1
+         eor   #$60
+         sta   <.src1+1
+         lda   hgrlo3b, x
+         sta   <.dest2
+         sta   <.src2
+         lda   hgrhi3b, x
+         sta   <.dest2+1
+         eor   #$60
+         sta   <.src2+1
+         lda   hgrlo3c, x
+         sta   <.dest3
+         sta   <.src3
+         lda   hgrhi3c, x
+         sta   <.dest3+1
+         eor   #$60
+         sta   <.src3+1
+}
+
 !macro HGR_CALC_ROUTINES {
 HGRCalc
 ; in:    A = HGR row (0x00..0xBF)
