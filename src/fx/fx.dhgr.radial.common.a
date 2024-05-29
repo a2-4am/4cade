@@ -42,12 +42,12 @@ Loop     ldy   #0
          +COPY_BIT src1, dest1, copymasks1bit
          +COPY_BIT src2, dest2, copymasks1bit
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ; bottom-right quadrant (opposite row, opposite column, original input order)
          lda   mirror_cols,y
@@ -58,12 +58,12 @@ Loop     ldy   #0
          +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks1bit
          +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks1bit
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ldy   #0
          lda   (reverse_input),y
@@ -81,12 +81,12 @@ Loop     ldy   #0
          +COPY_BIT mirror_src1, mirror_dest1, copymasks1bit
          +COPY_BIT mirror_src2, mirror_dest2, copymasks1bit
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ; top-right quadrant (same row, opposite column, reverse input order)
          lda   mirror_cols,y
@@ -97,12 +97,12 @@ Loop     ldy   #0
          +COPY_BIT src1, dest1, mirror_copymasks1bit
          +COPY_BIT src2, dest2, mirror_copymasks1bit
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          inc   input
          bne   +

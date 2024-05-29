@@ -36,7 +36,7 @@ loop2    txa
          tay
          bcc   loop2
          bne   loop
-         bit   $C000
+         bit   KBD
          bmi   exit
          txa
          bne   loop1

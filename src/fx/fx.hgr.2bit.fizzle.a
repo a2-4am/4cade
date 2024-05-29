@@ -60,7 +60,7 @@ dst      sta   $FD00, y              ; write the result
          tay
          bcc   loop2                 ; C modified by ror
          bne   loop                  ; Z modified by tay
-         bit   $C000
+         bit   KBD
          bmi   exit
          txa
          bne   loop1

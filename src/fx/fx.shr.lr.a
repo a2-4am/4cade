@@ -32,7 +32,7 @@ loop2    lda   shrlo-1, x
 dst      sta   $0000, y              ; SMC
          dex
          bne   loop2
-         lda   $C000
+         lda   KBD
          bmi   @exit
          iny
          cpy   #$A0

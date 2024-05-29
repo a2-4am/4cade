@@ -73,7 +73,7 @@ reverse_input
          plp
          bne   +
          dec   <reverse_input+2
-+        bit   $C000
++        bit   KBD
          bpl   input
 copy
          lda   shrlo, x

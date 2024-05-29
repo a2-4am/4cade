@@ -61,12 +61,12 @@ LoopBL                               ; bottom-left quadrant (opposite row, origi
          +COPY_BIT_DITHER mirror_src1, mirror_dest1, copymasks1bit, oddrow_ptr
          +COPY_BIT_DITHER mirror_src2, mirror_dest2, copymasks1bit, evenrow_ptr
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
          +DEC_INPUT_AND_LOOP input, LoopBL
 DoneBL
 
@@ -87,12 +87,12 @@ LoopTL                               ; top-left quadrant
          +COPY_BIT_DITHER src1, dest1, copymasks1bit, evenrow_ptr
          +COPY_BIT_DITHER src2, dest2, copymasks1bit, oddrow_ptr
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
          +INC_INPUT_AND_LOOP input, LoopTL
 DoneTL
 
@@ -115,12 +115,12 @@ LoopTR                               ; top-right quadrant (same row, opposite co
          +COPY_BIT_DITHER src1, dest1, mirror_copymasks1bit, evenrow_ptr
          +COPY_BIT_DITHER src2, dest2, mirror_copymasks1bit, oddrow_ptr
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
          +DEC_INPUT_AND_LOOP input, LoopTR
 DoneTR
 
@@ -143,12 +143,12 @@ LoopBR                               ; bottom-right quadrant (opposite row, oppo
          +COPY_BIT_DITHER mirror_src1, mirror_dest1, mirror_copymasks1bit, oddrow_ptr
          +COPY_BIT_DITHER mirror_src2, mirror_dest2, mirror_copymasks1bit, evenrow_ptr
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
          +INC_INPUT_AND_LOOP input, LoopBR
 DoneBR
          rts

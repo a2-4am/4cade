@@ -33,7 +33,7 @@ callback1
          jsr   $9503
          +DISABLE_ACCEL
          jsr   $BC6C
-         sta   $C010
+         sta   CLEARKBD
 
 callback2
          +READ_RAM2_NO_WRITE

@@ -549,7 +549,7 @@ NextBox  dex
          bpl   <BoxLoop
          lda   <j+2
          bpl   +                     ; if we didn't draw anything in any box, we're done
-         lda   $C000
+         lda   KBD
          sta   <j+2
          bpl   <MainLoop
 +        rts

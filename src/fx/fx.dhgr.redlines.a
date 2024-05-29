@@ -37,7 +37,7 @@ row2=*+1
          beq   +
          jsr   DrawBlackLine
 +
-         lda   $C000
+         lda   KBD
          bmi   exit
          inc   row1
          dec   row2
@@ -59,7 +59,7 @@ loop2    jsr   WaitForVBL
          ldx   row2
          inx
          jsr   CopyLine
-         lda   $C000
+         lda   KBD
          bmi   exit
          inc   row1
          dec   row2
@@ -81,14 +81,14 @@ DrawRedLine
 reddst1  sta   $FDFD, y              ; SMC
          dey
          bpl   -
-         sta   $C005
+         sta   WRITEAUXMEM
          ldy   #$27
          lda   #$08
 -        eor   #$2A
 reddst2  sta   $FDFD, y              ; SMC
          dey
          bpl   -
-         sta   $C004
+         sta   WRITEMAINMEM
          rts
 
 DrawBlackLine
@@ -104,9 +104,9 @@ DrawBlackLine
 blackdst sta   $FDFD, y              ; SMC
          dey
          bpl   blackdst
-         sta   $C005
+         sta   WRITEAUXMEM
          bcc   --
-         sta   $C004
+         sta   WRITEMAINMEM
          rts
 
 CopyLine
@@ -125,11 +125,11 @@ copysrc  lda   $FDFD, y              ; SMC
 copydst  sta   $FDFD, y              ; SMC
          dey
          bpl   copysrc
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          bcc   -
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          rts
 }
 end

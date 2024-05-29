@@ -34,11 +34,11 @@ rowloop
 -        sec
 src      lda   $FDFD, y              ; SMC
 dst      sta   $FDFD ,y              ; SMC
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          bcc   -
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          inx
          inx
          cpx   #$C0

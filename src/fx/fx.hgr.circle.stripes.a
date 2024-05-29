@@ -100,7 +100,7 @@ RowLoop
          lda   #13
          sta   mask2
 +
-         bit   $C000
+         bit   KBD
          bmi   Exit
          inc   row1
          dec   row2

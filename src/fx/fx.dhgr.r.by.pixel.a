@@ -18,9 +18,9 @@ copymasks=     $02C1                 ; [$07 bytes, different values in main and 
 -        lda   copymasks_main-1, y
          sta   copymasks-1, y
          lda   copymasks_aux-1, y
-         sta   $C005
+         sta   WRITEAUXMEM
          sta   copymasks-1, y
-         sta   $C004
+         sta   WRITEMAINMEM
          dey
          bne   -
 
@@ -77,16 +77,16 @@ src      eor   $FDFD, y              ; SMC
          and   copymasks, x          ; bank-specific copymasks are at the same address in main and auxmem, which is neat
          eor   (<dst+1), y
 dst      sta   $FDFD, y              ; SMC
-+        sta   $C003
-         sta   $C005
++        sta   READAUXMEM
+         sta   WRITEAUXMEM
          bcc   -
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          dec   <rowindex
          bne   rowloop
          dec   <maskindex
          bpl   maskloop
-         bit   $C000
+         bit   KBD
          bmi   exit
          iny
          cpy   #$28

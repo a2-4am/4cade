@@ -27,7 +27,7 @@ addrs=$BF                            ; [$40 bytes]
 start
 !pseudopc 0 {
 ;Y=0 on entry to copyaux
-copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
+copyaux  sta   READAUXMEM                 ; copy $4000/aux to $8000/main
          ldx   #$20
 a        lda   $4000, y
 b        sta   $8000, y
@@ -37,7 +37,7 @@ b        sta   $8000, y
          inc   b+2
          dex
          bne   a
-         sta   $C002
+         sta   READMAINMEM
          sta   $C001                 ; 80STORE mode
 ;X,Y=0 on entry to LFSR
 loop     txa
@@ -59,7 +59,7 @@ dst      sta   $FD00, y
          tay
          bcc   loop2
          bne   loop
-         bit   $C000
+         bit   KBD
          bmi   exit
          txa
          bne   loop1
@@ -81,7 +81,7 @@ auxdst   sta   $FD00, y
          tay
          bcc   loop2
          bne   loop
-         lda   $C000
+         lda   KBD
          bmi   exit
          txa
          bne   loop1

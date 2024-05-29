@@ -28,9 +28,9 @@
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 
--        lda   $C000
+-        lda   KBD
          bpl   -
-         lda   $C010
+         lda   CLEARKBD
          jmp   $8A60
 
 callback

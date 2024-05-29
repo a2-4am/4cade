@@ -29,9 +29,9 @@ loop2    txa
          clc
          adc   #$7C
          sta   <src+2
-         sta   $C004
+         sta   WRITEMAINMEM
          bmi   +
-         sta   $C005
+         sta   WRITEAUXMEM
 +        jsr   src
          txa
          lsr
@@ -41,7 +41,7 @@ loop2    txa
          tay
          bcc   loop2
          bne   loop
-         bit   $C000
+         bit   KBD
          bmi   exit
          txa
          bne   loop1

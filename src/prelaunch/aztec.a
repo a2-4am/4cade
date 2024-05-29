@@ -32,7 +32,7 @@
          jmp   $1B00
 
 keypress
-         lda   $C000
+         lda   KBD
          bpl   keypress
          cmp   #$8D
          bne   keypress

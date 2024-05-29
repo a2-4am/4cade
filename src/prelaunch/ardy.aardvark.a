@@ -16,7 +16,7 @@
          jmp   $27BF      ; decompress
 
 callback1
-         lda   $C000
+         lda   KBD
          bpl   callback1
          ldy   #(callback2_e - callback2) - 1
 -        lda   callback2, y

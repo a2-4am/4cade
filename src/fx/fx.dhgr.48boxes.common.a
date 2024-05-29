@@ -350,7 +350,7 @@ NextBox  dex
          lda   j+2
          beq   +                     ; if we didn't draw anything in any box, we're done
          stx   j+2                   ; X=0 here
-         bit   $C000                 ; check for key
+         bit   KBD                 ; check for key
          bpl   MainLoop
 +        sta   $C000                 ; 80STORE off
          ; execution falls through here
@@ -605,7 +605,7 @@ codegen_maskindex
 
 CopyAuxDHGRToMain
 ; X=0
-         sta   $C003                 ; copy $4000-5FFF/aux to $9000-AFFF/main
+         sta   READAUXMEM                 ; copy $4000-5FFF/aux to $9000-AFFF/main
          ldy   #$20
 @a       lda   $4000, x
 @b       sta   $9000, x
@@ -615,7 +615,7 @@ CopyAuxDHGRToMain
          inc   <@b+2
          dey
          bne   @a
-         sta   $C002
+         sta   READMAINMEM
 ; X=0,Y=0
          rts
 }

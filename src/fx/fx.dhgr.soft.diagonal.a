@@ -127,8 +127,8 @@ RowLoop
          +COPY_BYTE 6
          +COPY_BYTE 7
 @switchtoaux
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          +BRANCH_IF_Y_IS_OFFSCREEN @block6_aux
          +COPY_BYTE 0
          +COPY_BYTE 1
@@ -187,8 +187,8 @@ RowLoop
          +COPY_WITH_OFFSET_AND_MASK 3, %11000000
          +COPY_WITH_OFFSET_AND_MASK 4, %11000000
 @switchtomain
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          iny
          jmp   RowLoop
 

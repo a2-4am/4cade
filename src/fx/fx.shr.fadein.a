@@ -15,7 +15,7 @@ palettes = $BC00                     ; $200 bytes
 
          !source "src/fx/macros.a"
 
-         sta   $C005
+         sta   WRITEAUXMEM
          ldy   #0                    ; copy pixel data
          sty   src
          sty   dst
@@ -36,22 +36,22 @@ palettes = $BC00                     ; $200 bytes
          iny
          bne   -
 
-         sta   $C004
+         sta   WRITEMAINMEM
 -        lda   $9E00, y              ; Back up palettes to alternate location in main memory.
-         sta   palettes, y           ; The CPU in a 64K Apple ][+/][e w/VidHD ignores STA $C004/5
+         sta   palettes, y           ; The CPU in a 64K Apple ][+/][e w/VidHD ignores STA WRITEMAINMEM/5
          lda   $9F00, y              ; but VidHD respects them, so we can't clear the palettes
          sta   palettes+$100, y      ; in auxmem until we copy them in mainmem. Whee.
          iny
          bne   -
 
-         sta   $C005
+         sta   WRITEAUXMEM
          lda   #0
 -        sta   $9E00, y              ; now clear the palettes
          sta   $9F00, y
          iny
          bne   -
 
-         sta   $C004
+         sta   WRITEMAINMEM
          lda   #>palettes
          sta   src+1
          ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)
@@ -163,14 +163,14 @@ g_step_loop
          ldx   #$1D
          ldy   #$00
 copyloop jsr   WaitForVBL
-         sta   $C005
+         sta   WRITEAUXMEM
 copy1    lda   $4400, y              ; SMC
          sta   $9E00, y
 copy2    lda   $4500, y              ; SMC
          sta   $9F00, y
          iny
          bne   copy1
-         sta   $C004
+         sta   WRITEMAINMEM
          inc   copy1+2
          inc   copy1+2
          inc   copy2+2

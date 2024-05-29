@@ -66,11 +66,11 @@ dst2     sta   $FDFD, y              ; SMC
          dec   row2
          inc   row1
          bne   loop
-tomain   sta   $C002
-         sta   $C004
+tomain   sta   READMAINMEM
+         sta   WRITEMAINMEM
 exit     rts
-toaux    sta   $C003
-         sta   $C005
+toaux    sta   READAUXMEM
+         sta   WRITEAUXMEM
          rts
 }
 end

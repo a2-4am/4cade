@@ -32,7 +32,7 @@ dst      sta   $0000, y              ; SMC
          inx
          cpx   #$C8
          bcc   loop3
-         lda   $C000
+         lda   KBD
          bmi   @exit
          iny
          cpy   #$A0

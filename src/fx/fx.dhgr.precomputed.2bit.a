@@ -84,12 +84,12 @@ src2=*+1
 dest2=*+1
          sta   $FDFD, y
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ; corresponding 2x2 block in right half (same row, opposite column)
          lda   mirror_cols, y
@@ -100,12 +100,12 @@ dest2=*+1
          +COPY_BIT_DITHER src1, dest1, mirror_copymasks2bit, evenrow_ptr
          +COPY_BIT_DITHER src2, dest2, mirror_copymasks2bit, oddrow_ptr
 +        bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          sec
          bcs   -
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
 next
          inc   <input

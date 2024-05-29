@@ -49,7 +49,7 @@ dst      sta   $FD00, y              ; SMC high byte
          tay
          bcc   loop2
          bne   loop
-         lda   $C000
+         lda   KBD
          bmi   exit
          txa
          bne   loop1

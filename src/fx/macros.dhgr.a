@@ -11,7 +11,7 @@
          lda   #$00
          sta   $FE
          tay
-         sta   $C005
+         sta   WRITEAUXMEM
 -        lda   ($FE),y
          sta   ($FE),y
          iny
@@ -19,7 +19,7 @@
          inc   $FF
          dex
          bne   -
-         sta   $C004
+         sta   WRITEMAINMEM
 }
 
 _FX_MACROS_DHGR_=*

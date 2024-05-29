@@ -148,7 +148,7 @@ NextBox  dex
          lda   <stage+1
          beq   exit                  ; if we didn't draw anything in any box, we're done
          stx   <stage+1              ; X=0 here
-         bit   $C000
+         bit   KBD
          bpl   MainLoop
 exit
 setV     rts

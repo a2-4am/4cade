@@ -122,14 +122,14 @@ mirror_dest2=*+1
          +COPY_BIT_ZP_DITHER src2, dest2, mirror_copymask, oddrow_ptr
 +
          bcs   +
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
 y=*+1
          ldy   #$FD
          sec
          jmp   bankloop
-+        sta   $C002
-         sta   $C004
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
 next
          inc   <input

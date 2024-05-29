@@ -16,9 +16,9 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
 --       ldy   #$40                  ; create identical copymask tables in main and aux memory
          ora   #%10000000
 -        sta   copymasks, x
-         sta   $C005
+         sta   WRITEAUXMEM
          sta   copymasks, x
-         sta   $C004
+         sta   WRITEMAINMEM
          inx
          dey
          bne   -
@@ -29,14 +29,14 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
 --       ldy   #$20                  ; create identical address tables in main and aux memory
          tya
 -        sta   addrs, x
-         sta   $C005
+         sta   WRITEAUXMEM
          sta   addrs, x
-         sta   $C004
+         sta   WRITEMAINMEM
          eor   #$A0
          sta   addrs+1, x
-         sta   $C005
+         sta   WRITEAUXMEM
          sta   addrs+1, x
-         sta   $C004
+         sta   WRITEMAINMEM
          eor   #$A0
          adc   #1
          inx
@@ -51,7 +51,7 @@ start
 !pseudopc 0 {
          !byte %00000011
 ;Y=0 on entry to copyaux
-copyaux  sta   $C003                 ; copy $4000/aux to $8000/main
+copyaux  sta   READAUXMEM                 ; copy $4000/aux to $8000/main
          ldx   #$20
 a        lda   $4000, y
 b        sta   $8000, y
@@ -61,7 +61,7 @@ b        sta   $8000, y
          inc   b+2
          dex
          bne   a
-         sta   $C002
+         sta   READMAINMEM
          sta   $C001                 ; 80STORE mode
 ; X,Y=0 on entry to LFSR
 loop     txa
@@ -86,7 +86,7 @@ dst      sta   $FD00, y              ; write the result
          tay
          bcc   loop2                 ; C modified by ror
          bne   loop                  ; Z modified by tay
-         lda   $C000
+         lda   KBD
          bmi   exit
          txa
          bne   loop1
@@ -112,7 +112,7 @@ auxdst   sta   $FD00, y
          tay
          bcc   loop2
          bne   loop
-         lda   $C000
+         lda   KBD
          bmi   exit
          txa
          bne   loop1

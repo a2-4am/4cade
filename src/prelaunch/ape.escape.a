@@ -22,7 +22,7 @@
 
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         bit   $C010
+         bit   CLEARKBD
          jsr   $94E4      ; decompress game
 
          lda   MockingboardStuff

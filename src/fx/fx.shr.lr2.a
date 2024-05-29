@@ -30,7 +30,7 @@ loop3    lda   shrlo-1, x
 dst      sta   $0000, y              ; SMC
          dex
          bne   loop3
-         lda   $C000
+         lda   KBD
          bmi   @exit
          iny
          iny

@@ -19,9 +19,9 @@ copymasks=     $02C1                 ; [$08 bytes, different values in main and 
 -        lda   copymasks_main-1, y
          sta   copymasks-1, y
          lda   copymasks_aux-1, y
-         sta   $C005
+         sta   WRITEAUXMEM
          sta   copymasks-1, y
-         sta   $C004
+         sta   WRITEMAINMEM
          dey
          bne   -
 
@@ -76,7 +76,7 @@ rowloop  lda   <row
          jsr   DHGRBlockCopy
 +        dec   <row
          bpl   rowloop
-         lda   $C000
+         lda   KBD
          bmi   exit
          dec   <col
          dec   <counter
@@ -111,12 +111,12 @@ dst      sta   $FDFD, y
          sta   <src+2
          eor   #$60
          sta   <dst+2
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          dec   <pass
          bne   --
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          rts
 
 DHGRBlockCopy
@@ -137,8 +137,8 @@ DHGRBlockCopy
          sta   <src+2
          eor   #$60
          sta   <dst+2
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          ldx   #7
          clc
 -        lda   (<src+1), y
@@ -150,8 +150,8 @@ DHGRBlockCopy
          sta   <dst+2
          dex
          bpl   -
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          rts
 
 row      !byte 23

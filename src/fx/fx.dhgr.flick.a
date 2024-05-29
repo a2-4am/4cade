@@ -45,11 +45,11 @@ rowloop  lda   hgrlo, x
 bankloop sec
 src      lda   $FDFD, y
 dst      sta   $FDFD, y
-         sta   $C003
-         sta   $C005
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
          bcc   bankloop
-         sta   $C002
-         sta   $C004
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          inx
          dec   <rowcount
          bne   rowloop
@@ -73,7 +73,7 @@ nextcolumn
          sta   <rowcounts_by_column, y
 ++       dey
          bpl   -
-         lda   $C000
+         lda   KBD
          bmi   exit
          lda   <rowcounts_by_column+$27
          cmp   #$80

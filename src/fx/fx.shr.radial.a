@@ -46,7 +46,7 @@ LoopBL   ldx   last_coords           ; SMC
          plp
          bne   LoopBL
          dec   <LoopBL+2
-         bit   $C000
+         bit   KBD
          bpl   LoopBL
          rts
 
@@ -61,7 +61,7 @@ LoopTL   ldx   coords                ; SMC
          inc   <LoopTL+1
          bne   LoopTL
          inc   <LoopTL+2
-         bit   $C000
+         bit   KBD
          bpl   LoopTL
          rts
 
@@ -81,7 +81,7 @@ LoopTR   ldx   last_coords           ; SMC
          plp
          bne   LoopTR
          dec   <LoopTR+2
-         bit   $C000
+         bit   KBD
          bpl   LoopTR
          rts
 
@@ -100,7 +100,7 @@ LoopBR   ldx   coords                ; SMC
          inc   <LoopBR+1
          bne   LoopBR
          inc   <LoopBR+2
-         bit   $C000
+         bit   KBD
          bpl   LoopBR
 copy
          lda   shrlo, x
