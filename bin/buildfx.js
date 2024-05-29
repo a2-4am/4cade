@@ -41,9 +41,7 @@ for (i = 0; i < entries.length; i++)
 {
   groups += "!byte " + (1 + 1 + entries[i].length + 5).toString() + "\n" + "!byte " + entries[i].length.toString() + "\n" + "!text \"" + entries[i] + "\"\n" + "!be24 " + fx_off.toString() + "\n"
   size = a.getfile(WScript.Arguments(3) + "\\" + entries[i]).size
-  // if offset+size does not cross a block boundary, use the size
-  // otherwise adjust size until it ends at the next block boundary to avoid a partial copy on the last block
-  groups += "!le16 " + ((Math.floor(fx_off / 512) == Math.floor((fx_off + size) / 512)) ? size : (((fx_off + size + 511) & -512) - fx_off)).toString()  + "\n"
+  groups += "!le16 " + size + "\n"
   fx_off += size
 }
 
