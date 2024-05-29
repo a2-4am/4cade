@@ -37,6 +37,7 @@
          sta   $5DF4,x
          sta   $5CD8,x
          sta   $5E09,x
+         stx   $EF        ; fix uninitialised value
          dex
          bpl   -
 
