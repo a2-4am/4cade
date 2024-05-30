@@ -16,6 +16,7 @@
 
 callback1
          lda   #$4c
+         sta   $C9        ; fix RNG issue
          sta   $b4d6
          lda   #<callback2
          sta   $b4d7
