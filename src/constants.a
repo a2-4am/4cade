@@ -173,6 +173,7 @@ mirror_cols    = $02C1               ; $28 bytes
 hgrhi          = $0301               ; $C0 bytes
 hgr1hi         = hgrhi
 
+FXCode         = $6200
 Coordinates1Bit= $8600               ; $3481 bytes ($3480 on disk + 1 byte EOF marker added at runtime)
 EndCoordinates1Bit = Coordinates1Bit + $3480
 
@@ -212,7 +213,8 @@ WaitForVBL                = UnwaitForVBL-3
 iLoadFileDirect           = WaitForVBL-3  ; note: you really want LC RAM 2 banked in before calling this
 iAddToPath                = iLoadFileDirect-3
 iLoadXSingle              = iAddToPath-3
-iLoadFXDATA               = iLoadXSingle-3
+iLoadFXCODE               = iLoadXSingle-3
+iLoadFXDATA               = iLoadFXCODE-3
 iBuildHGRTables           = iLoadFXDATA-3
 iBuildHGRMirrorTables     = iBuildHGRTables-3
 iBuildHGRMirrorCols       = iBuildHGRMirrorTables-3
@@ -227,23 +229,13 @@ iRippleCoordinates1Bit3   = iRippleCoordinates1Bit2-3
 iRippleCoordinates1Bit4   = iRippleCoordinates1Bit3-3
 iBuildHGRSparseBitmasks1Bit  = iRippleCoordinates1Bit4-3
 iBuildDHGRSparseBitmasks1Bit = iBuildHGRSparseBitmasks1Bit-3
-iHGRPrecomputed1Bit       = iBuildDHGRSparseBitmasks1Bit-3
-iHGRDitherPrecomputed1Bit = iHGRPrecomputed1Bit-3
-iHGRRadialPrecomputed1Bit = iHGRDitherPrecomputed1Bit-3
-iDHGRPrecomputed1Bit      = iHGRRadialPrecomputed1Bit-3
-iDHGRDitherPrecomputed1Bit = iDHGRPrecomputed1Bit-3
-iBuildHGRSparseBitmasks2Bit  = iDHGRDitherPrecomputed1Bit-3
+iBuildHGRSparseBitmasks2Bit  = iBuildDHGRSparseBitmasks1Bit-3
 iBuildDHGRSparseBitmasks2Bit = iBuildHGRSparseBitmasks2Bit-3
 iReverseCoordinates2Bit   = iBuildDHGRSparseBitmasks2Bit-3
 iRippleCoordinates2Bit    = iReverseCoordinates2Bit-3
-iHGRPrecomputed2Bit       = iRippleCoordinates2Bit-3
-iHGRDitherPrecomputed2Bit = iHGRPrecomputed2Bit-3
-iDHGRPrecomputed2Bit      = iHGRDitherPrecomputed2Bit-3
-iDHGRDitherPrecomputed2Bit = iDHGRPrecomputed2Bit-3
-iReverseCoordinates3Bit   = iDHGRDitherPrecomputed2Bit-3
+iReverseCoordinates3Bit   = iRippleCoordinates2Bit-3
 iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
-iHGRPrecomputed3Bit       = iRippleCoordinates3Bit-3
-iHGRDitherPrecomputed3Bit = iHGRPrecomputed3Bit-3
+iSetupPrecomputed3Bit     = iRippleCoordinates3Bit-3
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")

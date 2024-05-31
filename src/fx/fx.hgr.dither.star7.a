@@ -7,9 +7,11 @@
 
          !source "src/fx/fx.hgr.precomputed.2bit.a"
 
-         +FX_INITONCE_2BIT CoordinatesFile, Start
+         +FX_INITONCE_2BIT FXCodeFile, CoordinatesFile, Start
 Start
-         jmp   iHGRDitherPrecomputed2Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "HGRDITHER2"
 CoordinatesFile
          +PSTRING "STAR7.DATA"

@@ -7,9 +7,11 @@
 
          !source "src/fx/fx.dhgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_INITONCE_1BIT FXCodeFile, CoordinatesFile, Start
 Start
-         jmp   iDHGRDitherPrecomputed1Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "DHGRDITHER1"
 CoordinatesFile
          +PSTRING "SNOWFLAKE.DATA"

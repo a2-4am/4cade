@@ -56,6 +56,38 @@ HGRSingle
          jmp   ExecuteTransitionAt6000AndWait
 
 ;------------------------------------------------------------------------------
+; LoadFXCODE
+; called indirectly (via iLoadFXCODE) by graphic effects modules
+; to load shared code modules from the FXCODE index in TOTAL.DATA
+
+; in:    A/Y contains address of filename
+;        X = high byte of load address
+; out:   all registers and flags clobbered
+;------------------------------------------------------------------------------
+LoadFXCODE
+         +ST16 @filename
+         stx   @okvsAddress+1
+         stx   @dataAddress+1
+
+         jsr   LoadIndexedFile       ; load FXCODE list
+@okvsAddress
+         !word $FD00                 ; SMC high byte
+         !word kFXCodeIndexRecord
+
+         jsr   okvs_find             ; find index record of this file in
+         !word @okvsAddress          ; FXCODE list, by filename (passed in)
+@filename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         jsr   LoadIndexedFile       ; load actual data file
+@dataAddress
+         !word $FD00                 ; SMC high byte
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+         rts
+
+;------------------------------------------------------------------------------
 ; LoadFXDATA
 ; called indirectly (via iLoadFXDATA) by graphic effects modules
 ; to load large datafiles from the FXDATA index in TOTAL.DATA

@@ -135,11 +135,12 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
 	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/SFX.CONF > build/SFX.IDX)
+	[ -f build/index ] || ((for f in build/FXCODE/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FXCODE > build/FXCODE.IDX)
 #
 # precompute indexed files for coordinates files loaded by graphic effects
 # note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
 #
-	[ -f build/index ] || ((for f in build/FX/*.DATA; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/FX > build/FXDATA.IDX)
+	[ -f build/index ] || ((for f in build/FXDATA/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/FXDATA > build/FXDATA.IDX)
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -202,6 +203,7 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 	[ -f build/index ] || bin/addfile.sh build/FX.IDX build/TOTAL.DATA > src/index/fx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/DFX.IDX build/TOTAL.DATA > src/index/dfx.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SFX.IDX build/TOTAL.DATA > src/index/sfx.idx.a
+	[ -f build/index ] || bin/addfile.sh build/FXCODE.IDX build/TOTAL.DATA > src/index/fxcode.idx.a
 	[ -f build/index ] || bin/addfile.sh build/FXDATA.IDX build/TOTAL.DATA > src/index/fxdata.idx.a
 	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
 	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
@@ -279,7 +281,7 @@ mount: dsk
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
 
 md:
-	mkdir -p build/X build/X.INDEXED build/FX build/FX.INDEXED build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP build/DEMO
+	mkdir -p build/X build/X.INDEXED build/FX.INDEXED build/FXDATA build/FXCODE build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP build/DEMO
 	touch build/log
 
 clean:

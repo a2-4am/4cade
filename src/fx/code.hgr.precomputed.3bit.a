@@ -1,0 +1,65 @@
+!cpu 6502
+!to "build/FXCODE/HGR3",plain
+*=$6200
+
+         !source "src/fx/macros.a"
+
+;HGRPrecomputed3Bit
+         jsr   iSetupPrecomputed3Bit
+         +COPY_TO_0 .start, .end
+         jmp   .InputLoop
+.start
+!pseudopc 0 {
+.Exit3Bit rts
+.InputLoop
+         ldy   #0
+.input=*+1
+         lda   Coordinates3Bit
+         bmi   .Exit3Bit             ; if high bit is 1 then we're done
+         cmp   #$40
+         php
+         tax
+         +ROW_X_TO_3BIT_BASE_ADDRESSES .src1, .src2, .src3, .dest1, .dest2, .dest3
+
+         inc   <.input
+         lda   (<.input), y
+         and   #%11100000
+         tax
+         eor   (<.input), y
+         plp
+         bcc   +
+         tay
+         lda   extra_cols, y
++        tay
+
+         ; 2x3 block
+.src1=*+1
+         lda   $FDFD, y
+         eor   (<.dest1), y
+         and   copymasks3bit, x
+         eor   (<.dest1), y
+.dest1=*+1
+         sta   $FDFD, y
+.src2=*+1
+         lda   $FDFD, y
+         eor   (<.dest2), y
+         and   copymasks3bit, x
+         eor   (<.dest2), y
+.dest2=*+1
+         sta   $FDFD, y
+.src3=*+1
+         lda   $FDFD, y
+         eor   (<.dest3), y
+         and   copymasks3bit, x
+         eor   (<.dest3), y
+.dest3=*+1
+         sta   $FDFD, y
+
+         inc   <.input
+         bne   .InputLoop
+         bit   KBD
+         bmi   .Exit3Bit
+         inc   <.input+1
+         bne   .InputLoop            ; always branches
+}
+.end

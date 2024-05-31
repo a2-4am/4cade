@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FX/SHR.RADIAL.DATA",plain
+!to "build/FXDATA/SHR.RADIAL.DATA",plain
 *=$9F00
          !byte 98,0
          !byte 98,1

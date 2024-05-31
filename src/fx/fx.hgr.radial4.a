@@ -7,11 +7,13 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_INITONCE_1BIT FXCodeFile, CoordinatesFile, Start
          jsr   iRippleCoordinates1Bit2
 
 Start
-         jmp   iHGRRadialPrecomputed1Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "HGRRADIAL"
 CoordinatesFile
          +PSTRING "RADIAL.DATA"

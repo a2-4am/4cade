@@ -7,10 +7,12 @@
 
          !source "src/fx/fx.dhgr.precomputed.2bit.a"
 
-         +FX_INITONCE_2BIT CoordinatesFile, Start
+         +FX_INITONCE_2BIT FXCodeFile, CoordinatesFile, Start
          jsr   iReverseCoordinates2Bit
 Start
-         jmp   iDHGRPrecomputed2Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "DHGR2"
 CoordinatesFile
          +PSTRING "SOFT.IRIS.DATA"

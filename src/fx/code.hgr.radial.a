@@ -1,0 +1,82 @@
+!cpu 6502
+!to "build/FXCODE/HGRRADIAL",plain
+*=$6200
+
+         !source "src/fx/macros.a"
+
+;HGRRadialPrecomputed1Bit
+.mirror_src1    = $E8      ; word
+.mirror_dest1   = $EA      ; word
+.mirror_src2    = $EC      ; word
+.mirror_dest2   = $EE      ; word
+.src1           = $F0      ; word
+.dest1          = $F2      ; word
+.src2           = $F4      ; word
+.dest2          = $F6      ; word
+.reverse_input  = $FC      ; word
+.input          = $FE      ; word
+
+         jsr   iBuildHGRMirrorCols
+         jsr   iBuildHGRTables
+         jsr   iBuildHGRMirrorTables
+         jsr   iBuildHGRSparseBitmasks1Bit
+
+         +LDADDR Coordinates1Bit
+         +ST16 .input
+         +LDADDR EndCoordinates1Bit-2
+         +ST16 .reverse_input
+         +HIDE_NEXT_BYTE
+.Exit    rts
+.Loop    ldy   #0
+         lda   (.input),y
+         bmi   .Exit
+         tax
+         +ROW_X_TO_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+         +ROW_X_TO_MIRROR_ADDRESSES .mirror_src1, .mirror_src2, .mirror_dest1, .mirror_dest2
+         inc   .input
+         lda   (.input),y
+         +HIGH_3_LOW_5 .input
+
+         ; top-left quadrant (original row, original column, original input order)
+         +COPY_BIT .src1, .dest1, copymasks1bit
+         +COPY_BIT .src2, .dest2, copymasks1bit
+
+         ; bottom-right quadrant (opposite row, opposite column, original input order)
+         lda   mirror_cols,y
+         tay
+         +COPY_BIT .mirror_src1, .mirror_dest1, mirror_copymasks1bit
+         +COPY_BIT .mirror_src2, .mirror_dest2, mirror_copymasks1bit
+
+         ldy   #0
+         lda   (.reverse_input),y
+         tax
+         +ROW_X_TO_BASE_ADDRESSES .src1, .src2, .dest1, .dest2
+         +ROW_X_TO_MIRROR_ADDRESSES .mirror_src1, .mirror_src2, .mirror_dest1, .mirror_dest2
+         iny
+         lda   (.reverse_input),y
+         +HIGH_3_LOW_5 .reverse_input
+
+         ; bottom-left quadrant (opposite row, original column, reverse input order)
+         +COPY_BIT .mirror_src1, .mirror_dest1, copymasks1bit
+         +COPY_BIT .mirror_src2, .mirror_dest2, copymasks1bit
+
+         ; top-right quadrant (same row, opposite column, reverse input order)
+         lda   mirror_cols,y
+         tay
+         +COPY_BIT .src1, .dest1, mirror_copymasks1bit
+         +COPY_BIT .src2, .dest2, mirror_copymasks1bit
+
+         inc   .input
+         bne   +
+         inc   .input+1
++        lda   .reverse_input
+         php
+         dec   .reverse_input
+         dec   .reverse_input
+         plp
+         bne   +
+         dec   .reverse_input+1
+         bit   KBD
+         bmi   ++
++        jmp   .Loop
+++       rts

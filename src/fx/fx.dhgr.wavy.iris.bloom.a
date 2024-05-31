@@ -7,9 +7,11 @@
 
          !source "src/fx/fx.dhgr.precomputed.2bit.a"
 
-         +FX_INITONCE_2BIT CoordinatesFile, Start
+         +FX_INITONCE_2BIT FXCodeFile, CoordinatesFile, Start
 Start
-         jmp   iDHGRPrecomputed2Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "DHGR2"
 CoordinatesFile
          +PSTRING "W.IR.BLOOM.DATA"

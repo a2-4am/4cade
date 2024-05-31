@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FX/APPLE.DATA",plain
+!to "build/FXDATA/APPLE.DATA",plain
 *=$6B00
          !byte $1F,%00010100
          !byte $1F,%11110011

@@ -7,9 +7,11 @@
 
          !source "src/fx/fx.hgr.precomputed.3bit.a"
 
-         +FX_INITONCE_3BIT CoordinatesFile, Start
+         +FX_INITONCE_3BIT FXCodeFile, CoordinatesFile, Start
 Start
-         jmp   iHGRDitherPrecomputed3Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "HGRDITHER3"
 CoordinatesFile
          +PSTRING "MANDELBROT.DATA"

@@ -159,23 +159,13 @@ gGlobalPrefsStore
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
 
-         +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed3Bit,    HGRDitherPrecomputed3Bit
-         +DEFINE_INDIRECT_VECTOR iHGRPrecomputed3Bit,          HGRPrecomputed3Bit
+         +DEFINE_INDIRECT_VECTOR iSetupPrecomputed3Bit,        SetupPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,       RippleCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,      ReverseCoordinates3Bit
-         +DEFINE_INDIRECT_VECTOR iDHGRDitherPrecomputed2Bit,   DHGRDitherPrecomputed2Bit
-         +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed2Bit,         DHGRPrecomputed2Bit
-         +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed2Bit,    HGRDitherPrecomputed2Bit
-         +DEFINE_INDIRECT_VECTOR iHGRPrecomputed2Bit,          HGRPrecomputed2Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates2Bit,       RippleCoordinates2Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates2Bit,      ReverseCoordinates2Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks2Bit, BuildDHGRSparseBitmasks2Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks2Bit,  BuildHGRSparseBitmasks2Bit
-         +DEFINE_INDIRECT_VECTOR iDHGRDitherPrecomputed1Bit,   DHGRDitherPrecomputed1Bit
-         +DEFINE_INDIRECT_VECTOR iDHGRPrecomputed1Bit,         DHGRPrecomputed1Bit
-         +DEFINE_INDIRECT_VECTOR iHGRRadialPrecomputed1Bit,    HGRRadialPrecomputed1Bit
-         +DEFINE_INDIRECT_VECTOR iHGRDitherPrecomputed1Bit,    HGRDitherPrecomputed1Bit
-         +DEFINE_INDIRECT_VECTOR iHGRPrecomputed1Bit,          HGRPrecomputed1Bit
          +DEFINE_INDIRECT_VECTOR iBuildDHGRSparseBitmasks1Bit, BuildDHGRSparseBitmasks1Bit
          +DEFINE_INDIRECT_VECTOR iBuildHGRSparseBitmasks1Bit,  BuildHGRSparseBitmasks1Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates1Bit4,      RippleCoordinates1Bit4
@@ -191,6 +181,7 @@ gGlobalPrefsStore
          +DEFINE_INDIRECT_VECTOR iBuildHGRMirrorTables,        BuildHGRMirrorTables
          +DEFINE_INDIRECT_VECTOR iBuildHGRTables,              BuildHGRTables
          +DEFINE_INDIRECT_VECTOR iLoadFXDATA,                  LoadFXDATA
+         +DEFINE_INDIRECT_VECTOR iLoadFXCODE,                  LoadFXCODE
          +DEFINE_INDIRECT_VECTOR iLoadXSingle,                 LoadXSingle
          +DEFINE_INDIRECT_VECTOR iAddToPath,                   AddToPath
          +DEFINE_INDIRECT_VECTOR iLoadFileDirect,              LoadFileDirect

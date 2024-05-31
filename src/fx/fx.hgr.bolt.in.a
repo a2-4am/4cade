@@ -10,10 +10,12 @@
 
          !source "src/fx/fx.hgr.precomputed.3bit.a"
 
-         +FX_INITONCE_3BIT CoordinatesFile, Start
+         +FX_INITONCE_3BIT FXCodeFile, CoordinatesFile, Start
          jsr   iReverseCoordinates3Bit
 Start
-         jmp   iHGRPrecomputed3Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "HGR3"
 CoordinatesFile
          +PSTRING "BOLT.DATA"

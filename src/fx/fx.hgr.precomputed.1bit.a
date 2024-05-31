@@ -10,8 +10,9 @@
 ; 02E9..0300
 ; 0301..03C0 - hgrhi
 ; 03C1..03EE
-; 6000..     - module code (length varies)
-; 85FE..B880 - Coordinates1Bit
+; 6000..61FF - module-specific code ($200 max)
+; 6200..     - shared FX code (loaded once by module-specific code)
+; 85FE..B880 - Coordinates1Bit (8600 but dither variants clobber Coordinates1Bit-2)
 ; B881..BB00
 ; BB01..BBC0 - hgrlomirror
 ; BBC1..BC00
@@ -34,6 +35,25 @@ InitOnce
          ldx   #>Coordinates1Bit
          jsr   iLoadFXDATA
 
-         lda   #$80
-         sta   EndCoordinates1Bit
+         sec
+         ror   EndCoordinates1Bit
+}
+
+; same but also loading an FXCode file
+!macro FX_INITONCE_1BIT .FXCodeFile, .CoordinatesFile, .Start {
+InitOnce
+         bit   .Start
+         lda   #$4C
+         sta   InitOnce
+
+         +LDADDR .FXCodeFile
+         ldx   #>FXCode
+         jsr   iLoadFXCODE
+
+         +LDADDR .CoordinatesFile
+         ldx   #>Coordinates1Bit
+         jsr   iLoadFXDATA
+
+         sec
+         ror   EndCoordinates1Bit
 }

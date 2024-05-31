@@ -10,8 +10,9 @@
 ; 02E9..0300
 ; 0301..03C0 - hgrhi
 ; 03C1..03EE
-; 6000..     - module code (length varies)
-; 8100..BD00 - Coordinates2Bit
+; 6000..61FF - module-specific code ($200 max)
+; 6200..     - shared FX code (loaded once by module-specific code)
+; 80FE..BD00 - Coordinates2Bit (8100 but dither variants clobber Coordinates2Bit-2)
 ; BD01..BDA7
 ; BDA8..BDFF - dithermasks
 ; BE00..BEFF - copymasks2bit
@@ -20,11 +21,15 @@
 
          !source "src/fx/macros.a"
 
-!macro FX_INITONCE_2BIT .CoordinatesFile, .Start {
+!macro FX_INITONCE_2BIT .FXCodeFile, .CoordinatesFile, .Start {
 InitOnce
          bit   .Start
          lda   #$4C
          sta   InitOnce
+
+         +LDADDR .FXCodeFile
+         ldx   #>FXCode
+         jsr   iLoadFXCODE
 
          +LDADDR .CoordinatesFile
          ldx   #>Coordinates2Bit

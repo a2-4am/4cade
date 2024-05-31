@@ -7,9 +7,11 @@
 
          !source "src/fx/fx.dhgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_INITONCE_1BIT FXCodeFile, CoordinatesFile, Start
 Start
-         jmp   iDHGRPrecomputed1Bit
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "DHGR1"
 CoordinatesFile
          +PSTRING "SLOW.STAR.DATA"

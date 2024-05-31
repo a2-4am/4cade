@@ -88,6 +88,9 @@ kDFXIndexRecord
 kSFXIndexRecord
          !source "src/index/sfx.idx.a"
 
+kFXCodeIndexRecord
+         !source "src/index/fxcode.idx.a"
+
 kFXDataIndexRecord
          !source "src/index/fxdata.idx.a"
 

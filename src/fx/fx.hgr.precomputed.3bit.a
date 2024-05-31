@@ -10,10 +10,11 @@
 ; 02E9..0300
 ; 0301..03C0 - hgrhi
 ; 03C1..03EE
-; 6000..     - module code (length varies)
+; 6000..61FF - module-specific code ($200 max)
+; 6200..     - shared FX code (loaded once by module-specific code)
 ; 6880..6C7F - dither123_lo, hgrlo3abc, hgrhi3ab
 ; 6C80..6CFD
-; 6CFE..BD00 - Coordinates3Bit (dither variants clobber Coordinates3Bit-2)
+; 6CFE..BD00 - Coordinates3Bit (6D00 but dither variants clobber Coordinates3Bit-2)
 ; BD01..BD80 - hgrhi3c
 ; BD81..BDA7
 ; BDA8..BDFF - dithermasks
@@ -24,11 +25,15 @@
 
          !source "src/fx/macros.a"
 
-!macro FX_INITONCE_3BIT .CoordinatesFile, .Start {
+!macro FX_INITONCE_3BIT .FXCodeFile, .CoordinatesFile, .Start {
 InitOnce
          bit   .Start
          lda   #$4C
          sta   InitOnce
+
+         +LDADDR .FXCodeFile
+         ldx   #>FXCode
+         jsr   iLoadFXCODE
 
          +LDADDR .CoordinatesFile
          ldx   #>Coordinates3Bit
