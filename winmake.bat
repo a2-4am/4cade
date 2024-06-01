@@ -169,8 +169,14 @@ echo|set/p="indexing fx..."
 cscript /nologo bin\buildfx.js res\FX.CONF build\FX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\DFX.CONF build\DFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
 cscript /nologo bin\buildfx.js res\SFX.CONF build\SFX.IDX build\TOTAL.DATA build\FX.INDEXED >>build\log
-dir /b build\fx\*.DATA >build\fx.lst
-cscript /nologo bin\buildfx.js build\fx.lst build\FXDATA.IDX build\TOTAL.DATA build\FX >>build\log
+dir /b build\FXCODE >build\fxcode.lst
+cscript /nologo bin\buildfx.js build\fxcode.lst build\FXCODE.IDX build\TOTAL.DATA build\FXCODE >>build\log
+rem
+rem precompute indexed files for coordinates files loaded by graphic effects
+rem note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
+rem
+dir /b build\FXDATA >build\fxdata.lst
+cscript /nologo bin\buildfx.js build\fxdata.lst build\FXDATA.IDX build\TOTAL.DATA build\FXDATA >>build\log
 echo done
 rem
 rem precompute indexed files for HGR & DHGR action screenshots
@@ -268,6 +274,7 @@ cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
 cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
 cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\SFX.IDX src\index\sfx.idx.a
+cscript /nologo bin\addfile.js build\FXCODE.IDX src\index\fxcode.idx.a
 cscript /nologo bin\addfile.js build\FXDATA.IDX src\index\fxdata.idx.a
 cscript /nologo bin\addfile.js build\GAMEHELP.IDX src\index\gamehelp.idx.a
 cscript /nologo bin\addfile.js build\SLIDESHOW.IDX src\index\slideshow.idx.a
@@ -305,6 +312,8 @@ goto :EOF
 2>nul md build\X.INDEXED
 2>nul md build\FX
 2>nul md build\FX.INDEXED
+2>nul md build\FXCODE
+2>nul md build\FXDATA
 2>nul md build\PRELAUNCH
 2>nul md build\PRELAUNCH.INDEXED
 2>nul md build\ATTRACT0
