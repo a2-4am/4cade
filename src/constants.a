@@ -205,6 +205,52 @@ hgrhi3b        = $6C00               ; $80 bytes
 hgrhi3c        = $BD01               ; $80 bytes
 extra_cols     = $BEF8               ; $08 bytes
 
+; hgr.48boxes constants
+StageDrawingRoutines = $7F00
+; High bytes of drawing routines for each stage (actual routines will be page-aligned).
+; To minimize code size, we build drawing routines in this order:
+; - copy01 (STAGE1 template)
+; - copy00 (STAGE0 template)
+; - copy0F..copy09 (OUTER_STAGE template)
+; - copy08..copy02 (MIDDLE_STAGE template)
+; - change some opcodes to turn the 'copy' routines into 'clear' routines
+; - clear0F..clear08 (OUTER_STAGE)
+; - clear07..clear02 (MIDDLE_STAGE)
+; - clear01 (STAGE1)
+; - clear00 (STAGE0)
+clear00  = $80
+clear01  = $81
+clear02  = $82
+clear03  = $83
+clear04  = $84
+clear05  = $85
+clear06  = $86
+clear07  = $87
+clear08  = $88
+clear09  = $89
+clear0A  = $8A
+clear0B  = $8B
+clear0C  = $8C
+clear0D  = $8D
+clear0E  = $8E
+clear0F  = $8F
+copy02   = $90
+copy03   = $91
+copy04   = $92
+copy05   = $93
+copy06   = $94
+copy07   = $95
+copy08   = $96
+copy09   = $97
+copy0A   = $98
+copy0B   = $99
+copy0C   = $9A
+copy0D   = $9B
+copy0E   = $9C
+copy0F   = $9D
+copy00   = $9E
+copy01   = $9F
+
 ; LC RAM 1 & 2 addresses
 ; these are defined here because they are also called by other targets
 ; that are assembled separately, e.g. prelaunchers, demo launchers, and graphic effects

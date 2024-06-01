@@ -2,6 +2,13 @@
 ;(c) 2019-2022 by 4am
 ;
 
+!cpu 6502
+!to "build/FXCODE/DHGRDITHRAD",plain
+*=$6200
+
+         !source "src/fx/macros.a"
+
+;DHGRDitherRadialPrecomputed1Bit
 evenrow_ptr    = $E4      ; word
 oddrow_ptr     = $E6      ; word
 mirror_src1    = $E8      ; word
@@ -20,7 +27,7 @@ input          = $FE      ; word
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
          jsr   iBuildDHGRMirrorCols
-         +COPY_TO_AUXMEM $60, 4
+         +COPY_TO_AUXMEM $62, 4
 
          +LDADDR evenrow_masks
          +ST16 evenrow_ptr
@@ -34,9 +41,9 @@ input          = $FE      ; word
          sta   <oddrow_ptr
          ; /!\ execution falls through here
 FullRadial
-         +LDADDR Coordinates
+         +LDADDR Coordinates1Bit
          +ST16 input
-         +LDADDR EndCoordinates-2
+         +LDADDR EndCoordinates1Bit-2
          +ST16 reverse_input
          +HIDE_NEXT_BYTE
 Exit     rts

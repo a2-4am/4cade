@@ -2,8 +2,12 @@
 ;(c) 2019-2022 by 4am
 ;
 
-evenrow_ptr    = $E4      ; word
-oddrow_ptr     = $E6      ; word
+!cpu 6502
+!to "build/FXCODE/DHGRRADIAL",plain
+*=$6200
+
+         !source "src/fx/macros.a"
+
 mirror_src1    = $E8      ; word
 mirror_dest1   = $EA      ; word
 mirror_src2    = $EC      ; word
@@ -15,29 +19,18 @@ dest2          = $F6      ; word
 reverse_input  = $FC      ; word
 input          = $FE      ; word
 
-         jsr   iBuildHGRDitherMasks
-         jsr   iBuildHGRMirrorCols
+;DHGRRadialPrecomputed1Bit
+         jsr   iBuildDHGRSparseBitmasks1Bit
          jsr   iBuildHGRTables
          jsr   iBuildHGRMirrorTables
-         jsr   iBuildHGRSparseBitmasks1Bit
+         jsr   iBuildDHGRMirrorCols
+         +COPY_TO_AUXMEM $62, 4
 
-         +LDADDR evenrow_masks
-         +ST16 evenrow_ptr
-         +LDADDR oddrow_masks
-         +ST16 oddrow_ptr
-         jsr   FullRadial
-         bit   KBD
-         bmi   Exit
-         lda   #<no_masks
-         sta   <evenrow_ptr
-         sta   <oddrow_ptr
-         ; /!\ execution falls through here
-FullRadial
-         +LDADDR Coordinates
+         +LDADDR Coordinates1Bit
          +ST16 input
-         +LDADDR EndCoordinates-2
+         +LDADDR EndCoordinates1Bit-2
          +ST16 reverse_input
-         +HIDE_NEXT_BYTE
+         jmp   Loop
 Exit     rts
 Loop     ldy   #0
          lda   (input),y
@@ -50,14 +43,34 @@ Loop     ldy   #0
          +HIGH_3_LOW_5 input
 
          ; top-left quadrant (original row, original column, original input order)
-         +COPY_BIT_DITHER src1, dest1, copymasks1bit, evenrow_ptr
-         +COPY_BIT_DITHER src2, dest2, copymasks1bit, oddrow_ptr
+         clc
+-        lda   copymasks1bit, x
+         beq   +
+         +COPY_BIT src1, dest1, copymasks1bit
+         +COPY_BIT src2, dest2, copymasks1bit
++        bcs   +
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
+         sec
+         bcs   -
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ; bottom-right quadrant (opposite row, opposite column, original input order)
          lda   mirror_cols,y
          tay
-         +COPY_BIT_DITHER mirror_src1, mirror_dest1, mirror_copymasks1bit, oddrow_ptr
-         +COPY_BIT_DITHER mirror_src2, mirror_dest2, mirror_copymasks1bit, evenrow_ptr
+         clc
+-        lda   mirror_copymasks1bit, x
+         beq   +
+         +COPY_BIT mirror_src1, mirror_dest1, mirror_copymasks1bit
+         +COPY_BIT mirror_src2, mirror_dest2, mirror_copymasks1bit
++        bcs   +
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
+         sec
+         bcs   -
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ldy   #0
          lda   (reverse_input),y
@@ -69,14 +82,34 @@ Loop     ldy   #0
          +HIGH_3_LOW_5 reverse_input
 
          ; bottom-left quadrant (opposite row, original column, reverse input order)
-         +COPY_BIT_DITHER mirror_src1, mirror_dest1, copymasks1bit, oddrow_ptr
-         +COPY_BIT_DITHER mirror_src2, mirror_dest2, copymasks1bit, evenrow_ptr
+         clc
+-        lda   copymasks1bit, x
+         beq   +
+         +COPY_BIT mirror_src1, mirror_dest1, copymasks1bit
+         +COPY_BIT mirror_src2, mirror_dest2, copymasks1bit
++        bcs   +
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
+         sec
+         bcs   -
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          ; top-right quadrant (same row, opposite column, reverse input order)
          lda   mirror_cols,y
          tay
-         +COPY_BIT_DITHER src1, dest1, mirror_copymasks1bit, evenrow_ptr
-         +COPY_BIT_DITHER src2, dest2, mirror_copymasks1bit, oddrow_ptr
+         clc
+-        lda   mirror_copymasks1bit, x
+         beq   +
+         +COPY_BIT src1, dest1, mirror_copymasks1bit
+         +COPY_BIT src2, dest2, mirror_copymasks1bit
++        bcs   +
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
+         sec
+         bcs   -
++        sta   READMAINMEM
+         sta   WRITEMAINMEM
 
          inc   input
          bne   +

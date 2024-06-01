@@ -17,20 +17,20 @@ USES_CLEAR = 0
          !byte $D2,$D4,$D6,$D8,$FA,$FC,$FE,$00
 
 StagesHi ; high bytes of address of drawing routine for each stage
-         !byte copy0F
-         !byte copy0E
-         !byte copy0D
-         !byte copy0C
-         !byte copy0B
-         !byte copy0A
-         !byte copy09
-         !byte copy08
-         !byte copy07
-         !byte copy06
-         !byte copy05
-         !byte copy04
-         !byte copy03
-         !byte copy02
-         !byte copy01
-         !byte copy00
+         !byte dhgr_copy0F
+         !byte dhgr_copy0E
+         !byte dhgr_copy0D
+         !byte dhgr_copy0C
+         !byte dhgr_copy0B
+         !byte dhgr_copy0A
+         !byte dhgr_copy09
+         !byte dhgr_copy08
+         !byte dhgr_copy07
+         !byte dhgr_copy06
+         !byte dhgr_copy05
+         !byte dhgr_copy04
+         !byte dhgr_copy03
+         !byte dhgr_copy02
+         !byte dhgr_copy01
+         !byte dhgr_copy00
 EndStagesHi

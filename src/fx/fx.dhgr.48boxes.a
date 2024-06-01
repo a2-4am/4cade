@@ -15,38 +15,38 @@
          !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4
 
 StagesHi ; high bytes of address of drawing routine for each stage
-         !byte clear00
-         !byte clear01
-         !byte clear02
-         !byte clear03
-         !byte clear04
-         !byte clear05
-         !byte clear06
-         !byte clear07
-         !byte clear08
-         !byte clear09
-         !byte clear0A
-         !byte clear0B
-         !byte clear0C
-         !byte clear0D
-         !byte clear0E
-         !byte clear0F
+         !byte dhgr_clear00
+         !byte dhgr_clear01
+         !byte dhgr_clear02
+         !byte dhgr_clear03
+         !byte dhgr_clear04
+         !byte dhgr_clear05
+         !byte dhgr_clear06
+         !byte dhgr_clear07
+         !byte dhgr_clear08
+         !byte dhgr_clear09
+         !byte dhgr_clear0A
+         !byte dhgr_clear0B
+         !byte dhgr_clear0C
+         !byte dhgr_clear0D
+         !byte dhgr_clear0E
+         !byte dhgr_clear0F
          !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
          !byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-         !byte copy0F
-         !byte copy0E
-         !byte copy0D
-         !byte copy0C
-         !byte copy0B
-         !byte copy0A
-         !byte copy09
-         !byte copy08
-         !byte copy07
-         !byte copy06
-         !byte copy05
-         !byte copy04
-         !byte copy03
-         !byte copy02
-         !byte copy01
-         !byte copy00
+         !byte dhgr_copy0F
+         !byte dhgr_copy0E
+         !byte dhgr_copy0D
+         !byte dhgr_copy0C
+         !byte dhgr_copy0B
+         !byte dhgr_copy0A
+         !byte dhgr_copy09
+         !byte dhgr_copy08
+         !byte dhgr_copy07
+         !byte dhgr_copy06
+         !byte dhgr_copy05
+         !byte dhgr_copy04
+         !byte dhgr_copy03
+         !byte dhgr_copy02
+         !byte dhgr_copy01
+         !byte dhgr_copy00
 EndStagesHi

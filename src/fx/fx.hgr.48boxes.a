@@ -7,6 +7,7 @@
 
          !source "src/fx/fx.hgr.48boxes.common.a"
 
+BoxInitialStages
          !byte $EC,$E8,$E4,$E0,$DC,$D8,$D4,$D0
          !byte $F0,$EC,$E8,$E4,$E0,$DC,$D8,$D4
          !byte $F4,$F0,$EC,$E8,$E4,$E0,$DC,$D8

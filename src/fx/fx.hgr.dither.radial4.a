@@ -7,13 +7,13 @@
 
          !source "src/fx/fx.hgr.precomputed.1bit.a"
 
-         +FX_INITONCE_1BIT CoordinatesFile, Start
+         +FX_INITONCE_1BIT FXCodeFile, CoordinatesFile, Start
          jsr   iRippleCoordinates1Bit2
 
 Start
-         !source "src/fx/fx.hgr.dither.radial.common.a"
+         jmp   FXCode
 
+FXCodeFile
+         +PSTRING "HGRDITHERRADIAL"
 CoordinatesFile
          +PSTRING "RADIAL.DATA"
-Coordinates=Coordinates1Bit
-EndCoordinates=EndCoordinates1Bit
