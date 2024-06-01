@@ -206,7 +206,7 @@ hgrhi3c        = $BD01               ; $80 bytes
 extra_cols     = $BEF8               ; $08 bytes
 
 ; hgr.48boxes constants
-StageDrawingRoutines = $7F00
+HGR48StageDrawingRoutines = $7F00    ; $100 bytes
 ; High bytes of drawing routines for each stage (actual routines will be page-aligned).
 ; To minimize code size, we build drawing routines in this order:
 ; - copy01 (STAGE1 template)
@@ -250,6 +250,53 @@ copy0E   = $9C
 copy0F   = $9D
 copy00   = $9E
 copy01   = $9F
+
+; dhgr.48boxes constants
+DHGR48BoxStages = $10                ; $30 bytes, current stage for each box
+DHGR48StageDrawingRoutines = $6F00   ; $100 bytes
+; High bytes of drawing routines for each stage (actual routines will be page-aligned).
+; To minimize code size, we build drawing routines in this order:
+; - copy01 (STAGE1 template)
+; - copy00 (STAGE0 template)
+; - copy0F..copy09 (OUTER_STAGE template)
+; - copy08..copy02 (MIDDLE_STAGE template)
+; - change some opcodes to turn the 'copy' routines into 'clear' routines
+; - clear0F..clear08 (OUTER_STAGE)
+; - clear07..clear02 (MIDDLE_STAGE)
+; - clear01 (STAGE1)
+; - clear00 (STAGE0)
+dhgr_clear00  = $70
+dhgr_clear01  = $71
+dhgr_clear02  = $72
+dhgr_clear03  = $73
+dhgr_clear04  = $74
+dhgr_clear05  = $75
+dhgr_clear06  = $76
+dhgr_clear07  = $77
+dhgr_clear08  = $78
+dhgr_clear09  = $79
+dhgr_clear0A  = $7A
+dhgr_clear0B  = $7B
+dhgr_clear0C  = $7C
+dhgr_clear0D  = $7D
+dhgr_clear0E  = $7E
+dhgr_clear0F  = $7F
+dhgr_copy02   = $80
+dhgr_copy03   = $81
+dhgr_copy04   = $82
+dhgr_copy05   = $83
+dhgr_copy06   = $84
+dhgr_copy07   = $85
+dhgr_copy08   = $86
+dhgr_copy09   = $87
+dhgr_copy0A   = $88
+dhgr_copy0B   = $89
+dhgr_copy0C   = $8A
+dhgr_copy0D   = $8B
+dhgr_copy0E   = $8C
+dhgr_copy0F   = $8D
+dhgr_copy00   = $8E
+dhgr_copy01   = $8F
 
 ; LC RAM 1 & 2 addresses
 ; these are defined here because they are also called by other targets

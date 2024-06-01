@@ -5,8 +5,6 @@
 !to "build/FX.INDEXED/DHGR.48.ARROW",plain
 *=$6000
 
-USES_CLEAR = 0
-
          !source "src/fx/fx.dhgr.48boxes.common.a"
 
          !byte $FA,$F6,$F4,$F0,$EE,$EA,$E8,$E4

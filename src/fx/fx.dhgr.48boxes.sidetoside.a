@@ -5,8 +5,6 @@
 !to "build/FX.INDEXED/DHGR.48.SIDES",plain
 *=$6000
 
-USES_CLEAR = 0
-
          !source "src/fx/fx.dhgr.48boxes.common.a"
 
          !byte $00,$FC,$F8,$F4,$F0,$EC,$E8,$E4

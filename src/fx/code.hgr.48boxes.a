@@ -473,7 +473,7 @@ start
 MainLoop ldx   #47
 BoxLoop  ldy   <BoxStages, x         ; for each box, get its current stage
          inc   <BoxStages, x         ; increment every box's stage every time through the loop
-         lda   StageDrawingRoutines, y
+         lda   HGR48StageDrawingRoutines, y
          beq   <NextBox              ; if stage's drawing routine is 0, nothing to do
          sta   <j+2
          lda   <BoxesX, x            ; A = starting HGR row for this box

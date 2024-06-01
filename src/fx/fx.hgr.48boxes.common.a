@@ -6,8 +6,8 @@
 
 InitOnce
          bit   .Start
-         ldx   #$4C
-         stx   InitOnce
+         lda   #$4C
+         sta   InitOnce
          +LDADDR .FXCodeFile
          ldx   #>FXCode
          jsr   iLoadFXCODE
@@ -19,7 +19,7 @@ InitOnce
          inx
          bne   -
 -        lda   StagesHi, x
-         sta   StageDrawingRoutines, x
+         sta   HGR48StageDrawingRoutines, x
          inx
          bne   -
          beq   .Start                ; always branches

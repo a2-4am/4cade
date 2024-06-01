@@ -5,8 +5,6 @@
 !to "build/FX.INDEXED/BOXES48.2SNAKES",plain
 *=$6000
 
-USES_CLEAR = 0
-
          !source "src/fx/fx.hgr.48boxes.common.a"
 
          !byte $00,$FE,$FC,$FA,$D8,$D6,$D4,$D2

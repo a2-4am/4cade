@@ -5,8 +5,6 @@
 !to "build/FX.INDEXED/DHGR.48.SNAKE",plain
 *=$6000
 
-USES_CLEAR = 0
-
          !source "src/fx/fx.dhgr.48boxes.common.a"
 
          !byte $00,$FF,$FE,$FD,$FC,$FB,$FA,$F9
