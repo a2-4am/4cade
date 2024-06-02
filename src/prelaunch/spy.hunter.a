@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by 4am/xot
+;(c) 2021, 2024 by 4am/xot/qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SPY.HUNTER",plain
@@ -12,6 +12,7 @@
          lda   #>callback
          sta   $4010
          jmp   $4000
+*=$12e                    ; game sets stack pointer to here
 callback nop
          +RESET_AND_IRQ_VECTOR $100
          ldy   #0

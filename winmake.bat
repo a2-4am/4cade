@@ -310,10 +310,9 @@ goto :EOF
 2>nul md build
 2>nul md build\X
 2>nul md build\X.INDEXED
-2>nul md build\FX
 2>nul md build\FX.INDEXED
-2>nul md build\FXCODE
 2>nul md build\FXDATA
+2>nul md build\FXCODE
 2>nul md build\PRELAUNCH
 2>nul md build\PRELAUNCH.INDEXED
 2>nul md build\ATTRACT0
