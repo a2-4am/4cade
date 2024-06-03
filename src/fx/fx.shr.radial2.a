@@ -28,6 +28,9 @@ stage2
          +SHR_STAGE_2 startzp, endzp
          rts
 
+CoordinatesFile
+         +PSTRING "SHR.RADIAL.DATA"
+
 startzp
 !pseudopc 0 {
          ; top-left quadrant (original row, original column, original input order)
@@ -91,7 +94,5 @@ src2     lda   $FD00, y              ; SMC high byte
 exit     rts
 }
 endzp
+!if (* - stage2 > $200) { !serious "Stage2 code is too large" }
 }
-
-CoordinatesFile
-         +PSTRING "SHR.RADIAL.DATA"

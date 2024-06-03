@@ -23,13 +23,14 @@ stage2
          +SHR_STAGE_2 startzp, endzp
          rts
 
+CoordinatesFile
+         +PSTRING "SHR.IRIS.DATA"
+
 startzp
 !pseudopc 0 {
 stage3
          +SHR_STAGE_3 coords, shrlo, shrhi, mirror_rows, shr_mirror_cols
 }
 endzp
+!if (* - stage2 > $200) { !serious "Stage2 code is too large" }
 }
-
-CoordinatesFile
-         +PSTRING "SHR.IRIS.DATA"
