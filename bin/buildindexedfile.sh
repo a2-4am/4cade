@@ -51,9 +51,8 @@ tr -d "\r" | awk '!/^$|^#/' > "$records"
 source=$(mktemp)
 (echo "*=0"                              # dummy program counter for assembler
  echo "!le16 $(wc -l <"$records"), 0"    # OKVS header
- while IFS="=" read -r filename dummy; do
-     key=$(echo "$filename" | awk -F'#' '{ print $1 }')
-     addr=$(echo "$filename" | awk -F'#' '{ print $2 }')
+ while IFS="=" read -r filename dummy; do echo "$filename" | {
+     IFS="#" read -r key addr
      if [ "${#addr}" -ne "0" ]; then     # if filename is in the form 'NAME#06ADDR' then create extended index record
          addr=$(echo "$addr" | cut -c3-) # trim '06' so we get just the starting address
          echo "!byte ${#key}+9"          # OKVS record length
@@ -83,7 +82,7 @@ source=$(mktemp)
      echo "!le16 $size"
      [ "${#addr}" -ne "0" ] && echo '!le16 $'"$addr"
      [ "${#3}" -ne "0" ] && echo "$key,$offset,$size" >> "$3"
- done < "$records") > "$source"
+ } done < "$records") > "$source"
 
 # assemble temp source file into binary OKVS data structure, then output that
 out=$(mktemp)
