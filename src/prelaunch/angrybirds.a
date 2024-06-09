@@ -9,8 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $2606
+         sta   $2608
          jsr   $248C      ; decompress
+         +NEW_RESET_VECTOR $110
          +DISABLE_ACCEL
          jmp   $D566
 
