@@ -10,8 +10,9 @@
          +ENABLE_ACCEL
 
          lda   #$60
-         sta   $5EC0
+         sta   $5EC2
          jsr   $36C0      ; decompress
+         +NEW_RESET_VECTOR $110
 
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
