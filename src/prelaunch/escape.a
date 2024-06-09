@@ -11,10 +11,10 @@
          +NEW_RESET_VECTOR $BFF0
 
          lda   #<callback
-         sta   $6037
+         sta   $603B
          lda   #>callback
-         sta   $6038
-         jmp   $523E      ; decompress
+         sta   $603C
+         jmp   $523D      ; decompress
 
 callback
          +READ_RAM2_NO_WRITE
