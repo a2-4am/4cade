@@ -9,6 +9,7 @@
 
          jmp   +
 
+*=$110
 callback
          cmp   #$DD
          beq   callback_e
@@ -18,7 +19,7 @@ callback_e
 +        +ENABLE_ACCEL
 
          lda   #$60
-         sta   $409E
+         sta   $40A0
          jsr   $4000      ; decompress
 
          ldy   #5
