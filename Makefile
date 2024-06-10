@@ -176,10 +176,10 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
 	[ -f build/index ] || $(PARALLEL) ::: \
-	    '(grep "^00" < build/GAMES.CONF | bin/buildsearch.sh src/index/count00.a build/HGR.TITLES.LOG /dev/null > build/SEARCH00.IDX)' \
-	    '(grep "^0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)' \
-	    '(grep "^.0" < build/GAMES.CONF | bin/buildsearch.sh src/index/count10.a build/HGR.TITLES.LOG /dev/null > build/SEARCH10.IDX)' \
-	    '(bin/buildsearch.sh src/index/count11.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG < build/GAMES.CONF > build/SEARCH11.IDX)'
+	    '(grep "^00" < build/GAMES.CONF | bin/buildsearch.py src/index/count00.a build/HGR.TITLES.LOG "" > build/SEARCH00.IDX)' \
+	    '(grep "^0" < build/GAMES.CONF | bin/buildsearch.py src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)' \
+	    '(grep "^.0" < build/GAMES.CONF | bin/buildsearch.py src/index/count10.a build/HGR.TITLES.LOG "" > build/SEARCH10.IDX)' \
+	    '(bin/buildsearch.py src/index/count11.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG < build/GAMES.CONF > build/SEARCH11.IDX)'
 #
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
