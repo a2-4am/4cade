@@ -84,7 +84,6 @@ extract: preconditions md gamesconf
 		done; \
 		rmdir "$$d"; \
 	done
-	(for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA build/X.INDEXED > build/XSINGLE.IDX
 
 index: preconditions md asmfx asmprelaunch asmdemo compress extract
 #
@@ -103,14 +102,14 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 # note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
 #
-	[ -f build/index ] || (bin/buildindexedfile.sh build/TOTAL.DATA build/PRELAUNCH.INDEXED < build/GAMES.SORTED > build/PRELAUNCH.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.py build/TOTAL.DATA build/PRELAUNCH.INDEXED "" < build/GAMES.SORTED > build/PRELAUNCH.IDX)
 #
 # precompute indexed files for HGR & DHGR titles
 # note: these are not padded because they are all an exact block-multiple anyway
 #
 	[ -f build/index ] || bin/padto.sh build/TOTAL.DATA
-	[ -f build/index ] || ((for f in res/TITLE.HGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/TITLE.HGR build/HGR.TITLES.LOG > build/TITLE.IDX)
-	[ -f build/index ] || ((for f in res/TITLE.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/TITLE.DHGR build/DHGR.TITLES.LOG > build/DTITLE.IDX)
+	[ -f build/index ] || ((for f in res/TITLE.HGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/TITLE.HGR build/HGR.TITLES.LOG > build/TITLE.IDX)
+	[ -f build/index ] || ((for f in res/TITLE.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/TITLE.DHGR build/DHGR.TITLES.LOG > build/DTITLE.IDX)
 	[ -f build/index ] || bin/addfile.sh res/COVER build/TOTAL.DATA > src/index/res.cover.idx.a
 	[ -f build/index ] || bin/addfile.sh res/TITLE build/TOTAL.DATA > src/index/res.title.idx.a
 	[ -f build/index ] || bin/addfile.sh res/HELP build/TOTAL.DATA > src/index/res.help.idx.a
@@ -118,64 +117,64 @@ index: preconditions md asmfx asmprelaunch asmdemo compress extract
 # precompute indexed files for game help
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/GAMEHELP < build/GAMES.SORTED > build/GAMEHELP.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/GAMEHELP "" < build/GAMES.SORTED > build/GAMEHELP.IDX)
 #
 # precompute indexed files for slideshows
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
 	[ -f build/index ] || $(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d build/GAMES.CONF < "{}" > "build/SS/{/}" || bin/buildslideshow.sh build/GAMES.CONF < "{}" > "build/SS/{/}"' ::: res/SS/*
-	[ -f build/index ] || ((for f in build/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/SS > build/SLIDESHOW.IDX)
+	[ -f build/index ] || ((for f in build/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/SS "" > build/SLIDESHOW.IDX)
 	[ -f build/index ] || $(PARALLEL) 'bin/buildokvs.sh < "{}" > "build/ATTRACT/{/}"' ::: res/ATTRACT/*
-	[ -f build/index ] || ((for f in build/ATTRACT/[ABCDEFGHIJKLMNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT0.IDX)
-	[ -f build/index ] || ((for f in build/ATTRACT/[QRSTUVWXYZ]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/ATTRACT > build/MINIATTRACT1.IDX)
+	[ -f build/index ] || ((for f in build/ATTRACT/[ABCDEFGHIJKLMNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/ATTRACT "" > build/MINIATTRACT0.IDX)
+	[ -f build/index ] || ((for f in build/ATTRACT/[QRSTUVWXYZ]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/ATTRACT "" > build/MINIATTRACT1.IDX)
 #
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
 #
-	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/FX.CONF > build/FX.IDX)
-	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/DFX.CONF > build/DFX.IDX)
-	[ -f build/index ] || (bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FX.INDEXED < res/SFX.CONF > build/SFX.IDX)
-	[ -f build/index ] || ((for f in build/FXCODE/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -p -a build/TOTAL.DATA build/FXCODE > build/FXCODE.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/FX.CONF > build/FX.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/DFX.CONF > build/DFX.IDX)
+	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/SFX.CONF > build/SFX.IDX)
+	[ -f build/index ] || ((for f in build/FXCODE/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FXCODE "" > build/FXCODE.IDX)
 #
 # precompute indexed files for coordinates files loaded by graphic effects
 # note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
 #
-	[ -f build/index ] || ((for f in build/FXDATA/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/FXDATA > build/FXDATA.IDX)
+	[ -f build/index ] || ((for f in build/FXDATA/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA build/FXDATA "" > build/FXDATA.IDX)
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR0.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR1.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR2.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR3.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR4.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR5.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.HGR > build/HGR6.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ACTION.DHGR > build/DHGR.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR0.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR1.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR2.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR3.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR4.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR5.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR6.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.DHGR "" > build/DHGR.IDX)
 #
 # precompute indexed files for GR and DGR action screenshots
 # note: these can be padded because they are not compressed
 #
-	[ -f build/index ] || ((for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA res/ACTION.GR > build/GR.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.DGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA res/ACTION.DGR > build/DGR.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA res/ACTION.GR "" > build/GR.IDX)
+	[ -f build/index ] || ((for f in res/ACTION.DGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA res/ACTION.DGR "" > build/DGR.IDX)
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA res/ARTWORK.SHR > build/ARTWORK.IDX)
+	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ARTWORK.SHR "" > build/ARTWORK.IDX)
 #
 # precompute indexed files for demo launchers
 # note: these can not be padded because some of them are loaded too close to $C000
 #
-	[ -f build/index ] || ((for f in build/DEMO/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a build/TOTAL.DATA build/DEMO > build/DEMO.IDX)
+	[ -f build/index ] || ((for f in build/DEMO/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA build/DEMO "" > build/DEMO.IDX)
 	[ -f build/index ] || bin/addfile.sh build/DEMO.IDX build/TOTAL.DATA > src/index/demo.idx.a
 
 #
 # precompute indexed files for single-load game binaries
 # note: these can be padded because they are loaded at a time when all of main memory is clobber-able
 #
-	[ -f build/index ] || ((for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.sh -a -p build/TOTAL.DATA build/X.INDEXED > build/XSINGLE.IDX)
+	[ -f build/index ] || ((for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA build/X.INDEXED "" > build/XSINGLE.IDX)
 	[ -f build/index ] || bin/addfile.sh build/XSINGLE.IDX build/TOTAL.DATA > src/index/xsingle.idx.a
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
