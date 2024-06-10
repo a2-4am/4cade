@@ -48,7 +48,7 @@ LaunchInternal
          sta   CLR80VID
          sta   PRIMARYCHARSET
          bit   CLEARKBD
-         jmp   PrelaunchInit
+         jmp   iPrelaunchInit
 
 PrelaunchInitInternal
 !pseudopc PrelaunchInit {
@@ -58,8 +58,9 @@ PrelaunchInitInternal
          jsr   ROM_NORMAL            ; rely on zero page values set by these
          jsr   ROM_TEXT              ; ROM routines, e.g. Wavy Navy prints text
          jsr   ROM_HOME              ; via $FDED and expects it to work.
+AnimationPrelaunchInit
          sei
-         bvc   $106                  ; unconditional jump to game-specific pre-launch code
+         jmp   $106
 !if * != $100 {
          !serious "adjust PrelaunchInit to ",PrelaunchInit+$100-*
 }

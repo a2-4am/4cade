@@ -61,6 +61,8 @@ Reenter
          sta   $bf00,x
          dex
          bpl   -
+         lda   #<PrelaunchInit       ; reset prelaunch vector (animated titles change it)
+         sta   iPrelaunchInit+1
          ldx   #5
 -        lda   ResetVector,x         ; copy reentry wrapper to bottom of stack
          sta   $100,x                ; (used as reset vector because //e always
@@ -159,6 +161,7 @@ gGlobalPrefsStore
                                      ; be set to $55 as part of the 64K memory test,
                                      ; which is apparently one of the acceptable values)
 
+         +DEFINE_INDIRECT_VECTOR iPrelaunchInit,               PrelaunchInit
          +DEFINE_INDIRECT_VECTOR iSetupPrecomputed3Bit,        SetupPrecomputed3Bit
          +DEFINE_INDIRECT_VECTOR iRippleCoordinates3Bit,       RippleCoordinates3Bit
          +DEFINE_INDIRECT_VECTOR iReverseCoordinates3Bit,      ReverseCoordinates3Bit

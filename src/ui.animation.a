@@ -41,8 +41,15 @@ MaybeAnimateTitle
                                      ; file -- this area part of a 'screen
                                      ; hole' and is not displayed on screen)
          bne   @exit                 ; if not, we're done here
+         iny
+         lda   (DEST), y
+         sta   @titleAnimJmp
+         iny
+         lda   (DEST), y
+         sta   @titleAnimJmp+1
          txa
          jsr   CopyHGR
+         jsr   HGRMode
 
          ; load the animation routine, which is stored in a subdirectory by filename
          jsr   GetGameToLaunch
@@ -58,8 +65,10 @@ MaybeAnimateTitle
          dex
          bpl   -
 
-         bit   $c050                 ; turn on graphics mode (Home set text mode)
+         lda   #<AnimationPrelaunchInit
+         sta   iPrelaunchInit+1      ; |Reenter| will restore this
          jsr   Launch                ; execute the animation
+         jsr   HGRMode
 
          jsr   ReloadSearchIndex
          jsr   ResyncPage            ; we don't know which HGR page is showing
@@ -72,4 +81,5 @@ MaybeAnimateTitle
 
 @titleAnimPrelaunch                  ; this is executed from $106/main by |Launch|
          bit   $C082
-         jmp   (DEST)
+@titleAnimJmp=*+1
+         jmp   $FDFD                 ; SMC
