@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $484D
+         sta   $4841
          jsr   $4800      ; decompress
 
          +NEW_RESET_VECTOR $3E86
