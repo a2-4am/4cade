@@ -58,6 +58,7 @@ CREDITS=$(BUILDDIR)/CREDITS
 GAMEHELP=$(BUILDDIR)/GAMEHELP
 GAMES.CONF=$(BUILDDIR)/GAMES.CONF
 GAMES.SORTED=$(BUILDDIR)/GAMES.SORTED
+PREFS.CONF=$(BUILDDIR)/PREFS.CONF
 SS=$(BUILDDIR)/SS
 SS.LIST=$(BUILDDIR)/ss.list
 ACTION.DGR.LIST=$(BUILDDIR)/action.dgr.list
@@ -84,16 +85,16 @@ ARTWORK.SHR.SOURCES=$(wildcard res/ARTWORK.SHR/*)
 ATTRACT.SOURCES=$(wildcard res/ATTRACT/*)
 GAMEHELP.SOURCES=$(wildcard res/GAMEHELP/*)
 SS.SOURCES=$(wildcard res/SS/*)
-TITLE.ANIMATED=$(wildcard res/TITLE.ANIMATED/*)
+TITLE.ANIMATED.SOURCES=$(wildcard res/TITLE.ANIMATED/*)
 TITLE.DHGR.SOURCES=$(wildcard res/TITLE.DHGR/*)
 TITLE.HGR.SOURCES=$(wildcard res/TITLE.HGR/*)
-CACHE.IDX=$(wildcard res/CACHE*.IDX)
+CACHE.SOURCES=$(wildcard res/CACHE*.IDX)
 ICONS=$(wildcard res/ICONS/*)
 ATTRACT.CONF=res/ATTRACT.CONF
 DFX.CONF=res/DFX.CONF
 FX.CONF=res/FX.CONF
 SFX.CONF=res/SFX.CONF
-PREFS.CONF=res/PREFS.CONF
+PREFS.CONF.SOURCE=res/PREFS.CONF
 COVER=res/COVER
 DECRUNCH=res/DECRUNCH
 FINDER.DATA=res/Finder.Data
@@ -104,37 +105,24 @@ TITLE=res/TITLE
 
 .PHONY: preconditions compress attract cache clean mount all al
 
-$(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT)
+$(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED.SOURCES) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT) $(PREFS.CONF)
 	cp res/blank.hdv "$@"
 	cp res/_FileInformation.txt "$(BUILDDIR)"/
 	$(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$(BUILDDIR)"/LAUNCHER.SYSTEM -C >>"$(BUILDDIR)"/log
-	cp res/PREFS.CONF "$(BUILDDIR)"/PREFS.CONF
-	bin/padto.sh "$(BUILDDIR)"/PREFS.CONF
-#
-# create _FileInformation.txt files for subdirectories
-#
-	bin/buildfileinfo.sh res/ICONS "CA" "0000"
-	cp src/prelaunch/_FileInformation.txt "$(BUILDDIR)"/PRELAUNCH/
-#
-# add everything to the disk
-#
-	for f in \
-		"$(TOTAL.DATA)" \
-		"$(BUILDDIR)"/PREFS.CONF \
-		"$(FINDER.DATA)" \
-		"$(FINDER.ROOT)"; do \
+	for f in "$(TOTAL.DATA)" "$(PREFS.CONF)" "$(FINDER.DATA)" "$(FINDER.ROOT)"; do \
 	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >>"$(BUILDDIR)"/log; \
 	done
-	for f in \
-		res/TITLE.ANIMATED \
-		res/ICONS \
-		"$(PRELAUNCH)" \
-		"$(X)"; do \
+	cp src/prelaunch/_FileInformation.txt "$(BUILDDIR)"/PRELAUNCH/
+	for f in res/TITLE.ANIMATED res/ICONS "$(PRELAUNCH)" "$(X)"; do \
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>"$(BUILDDIR)"/log; \
         done
 	bin/changebootloader.sh "$@" $(PROBOOTHD)
 	@touch "$@"
+
+$(PREFS.CONF): $(PREFS.CONF.SOURCE) | $(MD)
+	cp "$(PREFS.CONF.SOURCE)" "$@"
+	bin/padto.sh "$@"
 
 # create a version of GAMES.CONF without comments or blank lines or anything after display titles
 $(GAMES.CONF): $(MD)
@@ -220,7 +208,7 @@ $(TITLE.HGR.LIST): $(TITLE.HGR.SOURCES) | $(MD)
 $(TITLE.DHGR.LIST): $(TITLE.DHGR.SOURCES) | $(MD)
 	(cd res/TITLE.DHGR/ && for f in *; do echo "$$f"; done) > "$@"
 
-$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.IDX) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(PREFS.CONF) $(COVER) $(DECRUNCH) $(HELP) $(JOYSTICK) $(TITLE)
+$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(DECRUNCH) $(HELP) $(JOYSTICK) $(TITLE)
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
@@ -253,9 +241,9 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
 #
-	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < res/FX.CONF > "$(BUILDDIR)"/FX.IDX
-	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < res/DFX.CONF > "$(BUILDDIR)"/DFX.IDX
-	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < res/SFX.CONF > "$(BUILDDIR)"/SFX.IDX
+	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < "$(FX.CONF)" > "$(BUILDDIR)"/FX.IDX
+	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < "$(DFX.CONF)" > "$(BUILDDIR)"/DFX.IDX
+	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FX.INDEXED "" < "$(SFX.CONF)" > "$(BUILDDIR)"/SFX.IDX
 	bin/buildindexedfile.py -p -a "$(TOTAL.DATA)" "$(BUILDDIR)"/FXCODE "" < "$(FXCODE.LIST)" > "$(BUILDDIR)"/FXCODE.IDX
 #
 # precompute indexed files for coordinates files loaded by graphic effects
