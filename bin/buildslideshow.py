@@ -8,7 +8,7 @@
 
 import argparse
 import os.path
-import struct
+from struct import pack
 import sys
 
 # indexes into |flags| as string
@@ -25,35 +25,31 @@ def build(records, args):
     games_list = [x.replace('=',',').split(',')
                   for x in games_list
                   if x and x[0] not in ('#', '[')]
-    games_cache = {}
     if os.path.basename(args.slideshow_file).startswith('ACT'):
-        for flags, key, displayname in games_list:
-            games_cache[key] = (flags, displayname)
+        games_cache = dict([(key, (flags, displayname)) for flags, key, displayname in games_list])
     else:
-        for flags, key, dummy in games_list:
-            games_cache[key] = (flags, "")
+        games_cache = dict([(key, (flags, '')) for flags, key, displayname in games_list])
     
     # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
-    yield struct.pack('<2H', len(records), 0)
+    yield pack('<2H', len(records), 0)
 
     for key, dummy, value in records:
-        filename = value or key
-        flags, displayname = games_cache[filename]
+        flags, displayname = games_cache[value or key]
 
         # yield record length (1 byte)
-        yield struct.pack('B', len(key) + len(value) + len(displayname) + 5)
+        yield pack('B', len(key) + len(value) + len(displayname) + 5)
 
         # yield key (Pascal-style string)
-        yield struct.pack(f'{len(key)+1}p', key.encode('ascii'))
+        yield pack(f'{len(key)+1}p', key.encode('ascii'))
 
         # yield value (Pascal-style string)
-        yield struct.pack(f'{len(value)+1}p', value.encode('ascii'))
+        yield pack(f'{len(value)+1}p', value.encode('ascii'))
 
         # yield display name (Pascal-style string)
-        yield struct.pack(f'{len(displayname)+1}p', displayname.encode('ascii'))
+        yield pack(f'{len(displayname)+1}p', displayname.encode('ascii'))
 
         # yield flags
-        yield struct.pack('B', kNeedsJoystick[flags[iNeedsJoystick]] + \
+        yield pack('B', kNeedsJoystick[flags[iNeedsJoystick]] + \
                           kNeeds128K[flags[iNeeds128K]])
 
 if __name__ == "__main__":

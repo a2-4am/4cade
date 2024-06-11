@@ -9,7 +9,7 @@
 
 import argparse
 import pprint
-import struct
+from struct import pack
 import sys
 
 gSearchIndex = 0x6000 # must match gSearchIndex in src/constants.a
@@ -24,13 +24,12 @@ kHasDHGRTitle =  {'0': 0, '1': 128}
 kSingleLoad =    {'0': 0, '1': 64}
 
 def parse_log_file(filename):
-    rv = {}
-    if filename:
-        with open(filename, 'r') as f:
-            lines = [x.strip().split(',') for x in f.readlines()]
-        for title, offset, size in lines:
-            rv[title] = (int(offset), int(size))
-    return rv
+    if not filename:
+        return {}
+    with open(filename, 'r') as f:
+        lines = [x.strip().split(',') for x in f.readlines()]
+    lines = [(title, (int(offset), int(size))) for title, offset, size in lines]
+    return dict(lines)
 
 def build(records, args):
     # records is [(flags, key, value), (flags, key, value) ...]
@@ -55,7 +54,7 @@ def build(records, args):
     total_record_size = len("".join([x for xs in records for x in xs[1:]])) + 10*record_count
 
     # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
-    yield struct.pack('<2H', record_count, total_record_size + gSearchIndex + 4)
+    yield pack('<2H', record_count, total_record_size + gSearchIndex + 4)
 
     rec_key_address = gSearchIndex + 5
     key_addresses = []
@@ -65,35 +64,35 @@ def build(records, args):
         rec_key_address += rec_length
 
         # yield record length (1 byte)
-        yield struct.pack('B', rec_length)
+        yield pack('B', rec_length)
 
         # yield key (Pascal-style string)
-        yield struct.pack(f'{len(key)+1}p', key.encode('ascii'))
+        yield pack(f'{len(key)+1}p', key.encode('ascii'))
 
         # yield value (Pascal-style string)
-        yield struct.pack(f'{len(value)+1}p', value.encode('ascii'))
+        yield pack(f'{len(value)+1}p', value.encode('ascii'))
 
-        yield struct.pack('B', 1)
+        yield pack('B', 1)
 
         # yield flags
         has_dhgr_title = dhgr_cache and flags[iDHGRTitle] or '0'
-        yield struct.pack('B', kHasDHGRTitle[has_dhgr_title] + \
+        yield pack('B', kHasDHGRTitle[has_dhgr_title] + \
                           kSingleLoad[flags[iSingleLoad]] + \
                           int(flags[iCheatCategory]))
 
         rec_offset, rec_size = cache_ptr[has_dhgr_title][key]
 
         # yield record offset (3 bytes, big-endian, unsigned long)
-        yield struct.pack('>L', rec_offset)[1:]
+        yield pack('>L', rec_offset)[1:]
 
         # yield record size (2 bytes, little-endian, unsigned short)
-        yield struct.pack('<H', rec_size)
+        yield pack('<H', rec_size)
 
     # yield lookup table
-    yield struct.pack(f'<{record_count}H', *key_addresses)
+    yield pack(f'<{record_count}H', *key_addresses)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Build indexed OKVS structure for search cache")
+    parser = argparse.ArgumentParser(description="Build indexed OKVS structure for search index")
     parser.add_argument("output_game_count_file")
     parser.add_argument("input_hgr_log_file")
     parser.add_argument("input_dhgr_log_file")

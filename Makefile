@@ -35,6 +35,7 @@ EXOMIZER=exomizer mem -q -P23 -lnone
 
 BUILDDIR=build
 MD=$(BUILDDIR)/make.touch
+CADIUS.LOG=$(BUILDDIR)/log
 DEMO.SOURCES=$(wildcard src/demo/*.a)
 FX.SOURCES=$(wildcard src/fx/*.a)
 PRELAUNCH.SOURCES=$(wildcard src/prelaunch/*.a)
@@ -109,14 +110,14 @@ TITLE=res/TITLE
 $(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED.SOURCES) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT) $(PREFS.CONF)
 	cp res/blank.hdv "$@"
 	cp res/_FileInformation.txt "$(BUILDDIR)"/
-	$(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$(LAUNCHER.SYSTEM)" -C >>"$(BUILDDIR)"/log
+	$(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$(LAUNCHER.SYSTEM)" -C >> "$(CADIUS.LOG)"
 	for f in "$(TOTAL.DATA)" "$(PREFS.CONF)" "$(FINDER.DATA)" "$(FINDER.ROOT)"; do \
-	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >>"$(BUILDDIR)"/log; \
+	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >> "$(CADIUS.LOG)"; \
 	done
 	cp src/prelaunch/_FileInformation.txt "$(PRELAUNCH)"/
 	for f in res/TITLE.ANIMATED res/ICONS "$(PRELAUNCH)" "$(X)"; do \
             rm -f "$$f"/.DS_Store; \
-            $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>"$(BUILDDIR)"/log; \
+            $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >> "$(CADIUS.LOG)"; \
         done
 	bin/changebootloader.sh "$@" $(PROBOOTHD)
 	@touch "$@"
@@ -131,13 +132,13 @@ $(GAMES.CONF): $(MD)
 	awk '!/^$$|^#/' < res/GAMES.CONF | awk -F'/' '{ print $$1 }' > "$@"
 
 # create a list of all game filenames, without metadata or display names, sorted by game filename
-$(GAMES.SORTED): $(GAMES.CONF)
+$(GAMES.SORTED): | $(MD) $(GAMES.CONF)
 	awk -F, '/,/ { print $$2 }' < "$(GAMES.CONF)" | awk -F= '{ print $$1 }' | sort > "$@"
 
 # extract files from original disk images and move them to their final directories
-$(X): $(GAMES.CONF)
+$(X): | $(MD) $(GAMES.CONF)
 	mkdir -p "$@" "$(BUILDDIR)"/X.INDEXED
-	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} "$@"/ >>"$(BUILDDIR)"/log' ::: res/dsk/*.po
+	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} "$@"/ >> "$(CADIUS.LOG)"' ::: res/dsk/*.po
 	rm -f "$@"/**/.DS_Store "$@"/**/PRODOS* "$@"/**/LOADER.SYSTEM* "$@"/**/_FileInformation.txt
 	for f in $$(grep '^....1' "$(GAMES.CONF)" | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$f"/"$$f"* "$(BUILDDIR)"/X.INDEXED/; rm -rf "$@"/"$$f"; done
 	(cd "$(BUILDDIR)"/X.INDEXED/ && for f in *; do echo "$$f"; done) > "$(XSINGLE.LIST)"
@@ -163,7 +164,7 @@ $(GAMEHELP): $(GAMEHELP.SOURCES) | $(MD)
 	@touch "$@"
 
 # precompute binary data structures for slideshow configuration files
-$(SS): $(SS.SOURCES) | $(MD)
+$(SS): $(SS.SOURCES) | $(MD) $(GAMES.CONF)
 	mkdir -p "$@"
 	$(PARALLEL) 'bin/buildslideshow.py "{}" "$(GAMES.CONF)" < "{}" > "$@/{/}"' ::: res/SS/*
 	(cd "$(SS)"/ && for f in *; do echo "$$f"; done) > "$(SS.LIST)"
@@ -355,7 +356,7 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 	@touch "$@"
 
 # assemble main program
-$(LAUNCHER.SYSTEM): $(LAUNCHER.SOURCES) | $(MD)
+$(LAUNCHER.SYSTEM): $(LAUNCHER.SOURCES) | $(MD) $(TOTAL.DATA)
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>"$(BUILDDIR)"/relbase.log
 	$(ACME) -r "$(BUILDDIR)"/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat "$(BUILDDIR)"/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 	@touch "$@"
@@ -432,7 +433,7 @@ $(MD):
 	@$(PARALLEL) --version | grep -q "GNU" || (echo "GNU Parallel is not installed" && exit 1)
 	@$(PYTHON) --version | grep -q "Python 3" || (echo "Python 3 is not installed" && exit 1)
 	mkdir -p "$(BUILDDIR)"
-	touch "$(BUILDDIR)"/log
+	touch "$(CADIUS.LOG)"
 	@touch "$@"
 
 clean:

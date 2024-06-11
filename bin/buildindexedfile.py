@@ -13,7 +13,7 @@
 import argparse
 import os
 import os.path
-import struct
+from struct import pack
 import sys
 
 kStandardFilename = 'STANDARD'
@@ -31,7 +31,7 @@ def build(records, args):
             output_file_size += standard_size
 
         # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
-        yield struct.pack('<2H', len(records), 0)
+        yield pack('<2H', len(records), 0)
 
         for rec in records:
             filename, dummy, dummy = rec.partition('=')
@@ -44,14 +44,14 @@ def build(records, args):
             # yield record length (1 byte, unsigned byte)
             if addr:
                 # if filename is in the form 'NAME#06ADDR' then create extended index record
-                yield struct.pack('B', key_length+9)
+                yield pack('B', key_length+9)
                 # trim '06' so we get just the starting address
                 addr = addr[2:]
             else:
-                yield struct.pack('B', key_length+7)
+                yield pack('B', key_length+7)
 
             # yield key (Pascal-style string)
-            yield struct.pack(f'{key_length+1}p', key.encode('ascii'))
+            yield pack(f'{key_length+1}p', key.encode('ascii'))
 
             if os.path.exists(filename):
                 rec_offset = output_file_size
@@ -68,10 +68,10 @@ def build(records, args):
                     output_file_handle.write(input_file_handle.read())
 
             # yield record offset (3 bytes, big-endian, unsigned long)
-            yield struct.pack('>L', rec_offset)[1:]
+            yield pack('>L', rec_offset)[1:]
 
             # yield record size (2 bytes, little-endian, unsigned short)
-            yield struct.pack('<H', rec_size)
+            yield pack('<H', rec_size)
 
             if addr:
                 # for extended index record, yield load address (2 bytes, little-endian, unsigned short)
