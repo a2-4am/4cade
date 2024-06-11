@@ -163,7 +163,7 @@ $(GAMEHELP): $(GAMEHELP.SOURCES) | $(MD)
 # precompute binary data structures for slideshow configuration files
 $(SS): $(SS.SOURCES) | $(MD)
 	mkdir -p "$@"
-	$(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.py -d "$(GAMES.CONF)" < "{}" > "$@/{/}" || bin/buildslideshow.py "$(GAMES.CONF)" < "{}" > "$@/{/}"' ::: res/SS/*
+	$(PARALLEL) 'bin/buildslideshow.py "{}" "$(GAMES.CONF)" < "{}" > "$@/{/}"' ::: res/SS/*
 	(cd "$(BUILDDIR)"/SS/ && for f in *; do echo "$$f"; done) > "$(SS.LIST)"
 	@touch "$@"
 

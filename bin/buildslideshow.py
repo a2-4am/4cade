@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
-# flags
-# -d  include game display name (default off = display name will be 0-length string)
-
 # parameters
 # stdin - input containing slideshow (e.g. some file in res/SS/)
 # stdout - binary OKVS data structure
-# 1 - list of games with metadata (e.g. build/GAMES.CONF)
+# 1 - name of slideshow file (used to decide whether if this is an action slideshow)
+# 2 - name of file containing list of games with metadata (e.g. build/GAMES.CONF)
 
 import argparse
+import os.path
 import struct
 import sys
 
@@ -27,8 +26,12 @@ def build(records, args):
                   for x in games_list
                   if x and x[0] not in ('#', '[')]
     games_cache = {}
-    for flags, key, displayname in games_list:
-        games_cache[key] = (flags, args.displayname and displayname or "")
+    if os.path.basename(args.slideshow_file).startswith('ACT'):
+        for flags, key, displayname in games_list:
+            games_cache[key] = (flags, displayname)
+    else:
+        for flags, key, dummy in games_list:
+            games_cache[key] = (flags, "")
     record_count = len(records)
     
     # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
@@ -56,8 +59,8 @@ def build(records, args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build indexed OKVS structure from slideshow configuration file")
+    parser.add_argument("slideshow_file")
     parser.add_argument("games_file")
-    parser.add_argument("-d", "--displayname", action="store_true", default=False, help="include game display name (default off = display name will be 0-length string)")
     args = parser.parse_args()
     records = [x.strip() for x in sys.stdin.readlines()]
     records = [x.partition('=') for x in records if x and x[0] not in ('#', '[')]
