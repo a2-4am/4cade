@@ -103,7 +103,7 @@ HELP=res/HELP
 JOYSTICK=res/JOYSTICK
 TITLE=res/TITLE
 
-.PHONY: preconditions compress attract cache clean mount all al
+.PHONY: compress attract cache clean mount all al
 
 $(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED.SOURCES) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT) $(PREFS.CONF)
 	cp res/blank.hdv "$@"
@@ -132,11 +132,12 @@ $(GAMES.CONF): $(MD)
 $(GAMES.SORTED): $(GAMES.CONF)
 	awk -F, '/,/ { print $$2 }' < "$(GAMES.CONF)" | awk -F= '{ print $$1 }' | sort > "$@"
 
+# extract files from original disk images and move them to their final directories
 $(X): $(GAMES.CONF)
 	mkdir -p "$@" "$(BUILDDIR)"/X.INDEXED
 	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} "$@"/ >>"$(BUILDDIR)"/log' ::: res/dsk/*.po
 	rm -f "$@"/**/.DS_Store "$@"/**/PRODOS* "$@"/**/LOADER.SYSTEM* "$@"/**/_FileInformation.txt
-	for f in $$(grep '^....1' "$(GAMES.CONF)" | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$(basename $$f)"/"$$(basename $$f)"* "$(BUILDDIR)"/X.INDEXED/; rm -rf "$@"/"$$(basename $$f)"; done
+	for f in $$(grep '^....1' "$(GAMES.CONF)" | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$f"/"$$f"* "$(BUILDDIR)"/X.INDEXED/; rm -rf "$@"/"$$f"; done
 	(cd "$(BUILDDIR)"/X.INDEXED/ && for f in *; do echo "$$f"; done) > "$(XSINGLE.LIST)"
 	for d in "$@"/*; do mv "$$d"/* "$@"/; rmdir "$$d"; done
 	@touch "$@"
@@ -145,23 +146,28 @@ $(X): $(GAMES.CONF)
 $(ATTRACT.IDX): $(MD)
 	bin/buildokvs.sh < res/ATTRACT.CONF > "$@"
 
+# precompute binary data structure and substitute special characters in global help
 $(HELPTEXT): $(MD)
 	bin/converthelp.sh res/HELPTEXT "$@"
 
+# precompute binary data structure and substitute special characters in credits
 $(CREDITS): $(MD)
 	bin/converthelp.sh res/CREDITS "$@"
 
+# precompute binary data structures and substitute special characters for each game's help
 $(GAMEHELP): $(GAMEHELP.SOURCES) | $(MD)
 	mkdir -p "$@"
 	$(PARALLEL) 'bin/converthelp.sh "{}" "$@/{/}"' ::: res/GAMEHELP/*
 	@touch "$@"
 
+# precompute binary data structures for slideshow configuration files
 $(SS): $(SS.SOURCES) | $(MD)
 	mkdir -p "$@"
-	$(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d "$(GAMES.CONF)" < "{}" > "$@/{/}" || bin/buildslideshow.sh "$(GAMES.CONF)" < "{}" > "$@/{/}"' ::: res/SS/*
+	$(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.py -d "$(GAMES.CONF)" < "{}" > "$@/{/}" || bin/buildslideshow.py "$(GAMES.CONF)" < "{}" > "$@/{/}"' ::: res/SS/*
 	(cd "$(BUILDDIR)"/SS/ && for f in *; do echo "$$f"; done) > "$(SS.LIST)"
 	@touch "$@"
 
+# precompute binary data structures for each game's mini-attract configuration file
 $(ATTRACT): $(ATTRACT.SOURCES) | $(MD)
 	mkdir -p "$@"
 	$(PARALLEL) 'bin/buildokvs.sh < "{}" > "$@/{/}"' ::: res/ATTRACT/*
@@ -169,6 +175,7 @@ $(ATTRACT): $(ATTRACT.SOURCES) | $(MD)
 	(cd "$(ATTRACT)"/ && for f in [QRSTUVWXYZ]*; do echo "$$f"; done) > "$(MINI.ATTRACT1.LIST)"
 	@touch "$@"
 
+# create lists of specific files used to build data structures later
 $(ACTION.HGR0.LIST): $(ACTION.HGR.SOURCES) | $(MD)
 	(cd res/ACTION.HGR/ && for f in [ABCD]*; do echo "$$f"; done) > "$@"
 
@@ -343,17 +350,20 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 	bin/addfile.sh "$(JOYSTICK)" "$(TOTAL.DATA)" > src/index/joystick.idx.a
 	@touch "$@"
 
+# assemble main program
 $(LAUNCHER.SYSTEM): $(LAUNCHER.SOURCES) | $(MD)
 	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>"$(BUILDDIR)"/relbase.log
 	$(ACME) -r "$(BUILDDIR)"/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat "$(BUILDDIR)"/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
 	@touch "$@"
 
+# assemble launchers for self-running demos
 $(DEMO): $(DEMO.SOURCES) | $(MD)
 	mkdir -p "$@"
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/demo/*.a
 	(cd "$(DEMO)"/ && for f in *; do echo "$$f"; done) > "$(DEMO.LIST)"
 	@touch "$@"
 
+# assemble graphic effects
 $(FX): $(FX.SOURCES) | $(MD)
 	mkdir -p "$@" "$(BUILDDIR)"/FX.INDEXED "$(BUILDDIR)"/FXDATA "$(BUILDDIR)"/FXCODE
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/fx/*.a
@@ -361,11 +371,13 @@ $(FX): $(FX.SOURCES) | $(MD)
 	(cd "$(BUILDDIR)"/FXDATA/ && for f in *; do echo "$$f"; done) > "$(FXDATA.LIST)"
 	@touch "$@"
 
+# assemble launchers for games
 $(PRELAUNCH): $(PRELAUNCH.SOURCES) | $(MD)
 	mkdir -p "$@" "$(BUILDDIR)"/PRELAUNCH.INDEXED
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/prelaunch/*.a
 	@touch "$@"
 
+# assemble bootloader
 $(PROBOOTHD): $(PROBOOT.SOURCES) | $(MD)
 	$(ACME) -r "$(BUILDDIR)"/proboothd.lst src/proboothd/proboothd.a
 	@touch "$@"

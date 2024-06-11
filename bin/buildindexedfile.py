@@ -36,12 +36,12 @@ def build(records, args):
             output_file_size += standard_size
 
         # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
-        yield struct.pack('<H', len(records))
-        yield struct.pack('<H', 0)
+        yield struct.pack('<2H', len(records), 0)
 
         for rec in records:
             filename, dummy, dummy = rec.partition('=')
             key, dummy, addr = filename.partition('#')
+            key_length = len(key)
             filename = os.path.join(args.input_directory, filename)
             rec_offset = standard_offset
             rec_size = standard_size
@@ -49,14 +49,14 @@ def build(records, args):
             # yield record length (1 byte, unsigned byte)
             if addr:
                 # if filename is in the form 'NAME#06ADDR' then create extended index record
-                yield struct.pack('B', len(key)+9)
+                yield struct.pack('B', key_length+9)
                 # trim '06' so we get just the starting address
                 addr = addr[2:]
             else:
-                yield struct.pack('B', len(key)+7)
+                yield struct.pack('B', key_length+7)
 
             # yield key (Pascal-style string)
-            yield struct.pack(f'{len(key)+1}p', key.encode('ascii'))
+            yield struct.pack(f'{key_length+1}p', key.encode('ascii'))
 
             if os.path.exists(filename):
                 rec_offset = output_file_size
