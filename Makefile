@@ -33,218 +33,279 @@ PYTHON=python3
 # version 3.1.0 or later
 EXOMIZER=exomizer mem -q -P23 -lnone
 
-dsk: index asmproboot asmlauncher extract
-	cp res/blank.hdv build/"$(DISK)"
-	cp res/_FileInformation.txt build/
-	$(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" build/LAUNCHER.SYSTEM -C >>build/log
-	cp res/PREFS.CONF build/PREFS.CONF
-	bin/padto.sh build/PREFS.CONF
+BUILDDIR=build
+MD=$(BUILDDIR)/make.touch
+DEMO.SOURCES=$(wildcard src/demo/*.a)
+FX.SOURCES=$(wildcard src/fx/*.a)
+PRELAUNCH.SOURCES=$(wildcard src/prelaunch/*.a)
+PROBOOT.SOURCES=$(wildcard src/proboot/*.a)
+LAUNCHER.SOURCES=$(wildcard src/*.a)
+HDV=$(BUILDDIR)/$(DISK)
+PROBOOTHD=$(BUILDDIR)/proboothd
+DEMO=$(BUILDDIR)/demo.touch
+FX=$(BUILDDIR)/fx.touch
+PRELAUNCH=$(BUILDDIR)/prelaunch.touch
+LAUNCHER.SYSTEM=$(BUILDDIR)/LAUNCHER.SYSTEM
+ATTRACT.IDX=$(BUILDDIR)/ATTRACT.IDX
+HELPTEXT=$(BUILDDIR)/HELPTEXT
+CREDITS=$(BUILDDIR)/CREDITS
+GAMEHELP=$(BUILDDIR)/GAMEHELP
+GAMES.CONF=$(BUILDDIR)/GAMES.CONF
+GAMES.SORTED=$(BUILDDIR)/GAMES.SORTED
+X=$(BUILDDIR)/X
+TOTAL.DATA=$(BUILDDIR)/TOTAL.DATA
+ACTION.DGR=$(wildcard res/ACTION.DGR/*)
+ACTION.DHGR=$(wildcard res/ACTION.DHGR/*)
+ACTION.GR=$(wildcard res/ACTION.GR/*)
+ACTION.HGR=$(wildcard res/ACTION.HGR/*)
+ARTWORK.SHR=$(wildcard res/ARTWORK.SHR/*)
+ATTRACT=$(wildcard res/ATTRACT/*)
+SS=$(wildcard res/SS/*)
+TITLE.ANIMATED=$(wildcard res/TITLE.ANIMATED/*)
+TITLE.DHGR=$(wildcard res/TITLE.DHGR/*)
+TITLE.HGR=$(wildcard res/TITLE.HGR/*)
+CACHE.IDX=$(wildcard res/CACHE*.IDX)
+ICONS=$(wildcard res/ICONS/*)
+ATTRACT.CONF=res/ATTRACT.CONF
+DFX.CONF=res/DFX.CONF
+FX.CONF=res/FX.CONF
+SFX.CONF=res/SFX.CONF
+PREFS.CONF=res/PREFS.CONF
+COVER=res/COVER
+DECRUNCH=res/DECRUNCH
+FINDER.DATA=res/Finder.Data
+FINDER.ROOT=res/Finder.Root
+HELP=res/HELP
+JOYSTICK=res/JOYSTICK
+TITLE=res/TITLE
+
+.PHONY: preconditions compress attract cache clean mount all al
+
+$(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT)
+	cp res/blank.hdv "$@"
+	cp res/_FileInformation.txt $(BUILDDIR)/
+	$(CADIUS) ADDFILE "$@" "/$(VOLUME)/" $(BUILDDIR)/LAUNCHER.SYSTEM -C >>$(BUILDDIR)/log
+	cp res/PREFS.CONF $(BUILDDIR)/PREFS.CONF
+	bin/padto.sh $(BUILDDIR)/PREFS.CONF
 #
 # create _FileInformation.txt files for subdirectories
 #
 	bin/buildfileinfo.sh res/ICONS "CA" "0000"
-	cp src/prelaunch/_FileInformation.txt build/PRELAUNCH/
+	cp src/prelaunch/_FileInformation.txt $(BUILDDIR)/PRELAUNCH/
 #
 # add everything to the disk
 #
 	for f in \
-		build/TOTAL.DATA \
-		build/PREFS.CONF \
-		res/Finder.Data \
-		res/Finder.Root; do \
-	    $(CADIUS) ADDFILE build/"$(DISK)" "/$(VOLUME)/" "$$f" -C >>build/log; \
+		$(TOTAL.DATA) \
+		$(BUILDDIR)/PREFS.CONF \
+		$(FINDER.DATA) \
+		$(FINDER.ROOT); do \
+	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >>$(BUILDDIR)/log; \
 	done
 	for f in \
 		res/TITLE.ANIMATED \
 		res/ICONS \
-		build/PRELAUNCH \
-		build/X; do \
+		$(BUILDDIR)/PRELAUNCH \
+		$(X); do \
             rm -f "$$f"/.DS_Store; \
-            $(CADIUS) ADDFOLDER build/"$(DISK)" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>build/log; \
+            $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >>$(BUILDDIR)/log; \
         done
-	bin/changebootloader.sh build/"$(DISK)" build/proboothd
+	bin/changebootloader.sh "$@" $(PROBOOTHD)
+	@touch "$@"
 
-gamesconf: preconditions md
-#
 # create a version of GAMES.CONF without comments or blank lines or anything after display titles
-#
-	[ -f build/index ] || (awk '!/^$$|^#/' < res/GAMES.CONF | awk -F'/' '{ print $$1 }' > build/GAMES.CONF)
-#
+$(GAMES.CONF): $(MD)
+	awk '!/^$$|^#/' < res/GAMES.CONF | awk -F'/' '{ print $$1 }' > "$@"
+
 # create a list of all game filenames, without metadata or display names, sorted by game filename
-#
-	[ -f build/index ] || (awk -F, '/,/ { print $$2 }' < build/GAMES.CONF | awk -F= '{ print $$1 }' | sort > build/GAMES.SORTED)
+$(GAMES.SORTED): $(GAMES.CONF)
+	awk -F, '/,/ { print $$2 }' < $(BUILDDIR)/GAMES.CONF | awk -F= '{ print $$1 }' | sort > "$@"
 
-extract: preconditions md gamesconf
-	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} build/X/ >>build/log' ::: res/dsk/*.po
-	rm -f build/X/**/.DS_Store build/X/**/PRODOS* build/X/**/LOADER.SYSTEM* build/X/**/_FileInformation.txt
-	for f in $$(grep '^....1' build/GAMES.CONF | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv build/X/"$$(basename $$f)"/"$$(basename $$f)"* build/X.INDEXED/; rm -rf build/X/"$$(basename $$f)"; done
-	for d in build/X/*; do mv "$$d"/* build/X/; rmdir "$$d"; done
+$(X): $(GAMES.CONF)
+	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} "$@"/ >>$(BUILDDIR)/log' ::: res/dsk/*.po
+	rm -f "$@"/**/.DS_Store "$@"/**/PRODOS* "$@"/**/LOADER.SYSTEM* "$@"/**/_FileInformation.txt
+	for f in $$(grep '^....1' $(BUILDDIR)/GAMES.CONF | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$(basename $$f)"/"$$(basename $$f)"* $(BUILDDIR)/X.INDEXED/; rm -rf "$@"/"$$(basename $$f)"; done
+	for d in "$@"/*; do mv "$$d"/* "$@"/; rmdir "$$d"; done
+	@touch "$@"
 
-index: preconditions md asmfx asmprelaunch asmdemo extract
-#
 # precompute binary data structure for mega-attract mode configuration file
-#
-	[ -f build/index ] || (bin/buildokvs.sh < res/ATTRACT.CONF > build/ATTRACT.IDX)
-#
-# precompute binary data structure and substitute special characters
-# in game help and other all-text pages
-#
-	[ -f build/index ] || (bin/converthelp.sh res/HELPTEXT build/HELPTEXT)
-	[ -f build/index ] || (bin/converthelp.sh res/CREDITS build/CREDITS)
-	[ -f build/index ] || $(PARALLEL) 'bin/converthelp.sh "{}" "build/GAMEHELP/{/}"' ::: res/GAMEHELP/*
+$(ATTRACT.IDX): $(MD)
+	bin/buildokvs.sh < res/ATTRACT.CONF > "$@"
+
+$(HELPTEXT): $(MD)
+	bin/converthelp.sh res/HELPTEXT "$@"
+
+$(CREDITS): $(MD)
+	bin/converthelp.sh res/CREDITS "$@"
+
+$(GAMEHELP): $(MD)
+	$(PARALLEL) 'bin/converthelp.sh "{}" "$@/{/}"' ::: res/GAMEHELP/*
+	@touch "$@"
+
+$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(X) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.DGR) $(ACTION.DHGR) $(ACTION.GR) $(ACTION.HGR) $(ARTWORK.SHR) $(ATTRACT) $(SS) $(TITLE.DHGR) $(TITLE.HGR) $(CACHE.IDX) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(PREFS.CONF) $(COVER) $(DECRUNCH) $(HELP) $(JOYSTICK) $(TITLE)
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
 # note 2: these can not be padded because they are loaded at $0106 and padding would clobber the stack
 #
-	[ -f build/index ] || (bin/buildindexedfile.py build/TOTAL.DATA build/PRELAUNCH.INDEXED "" < build/GAMES.SORTED > build/PRELAUNCH.IDX)
+	bin/buildindexedfile.py $(TOTAL.DATA) $(BUILDDIR)/PRELAUNCH.INDEXED "" < $(BUILDDIR)/GAMES.SORTED > $(BUILDDIR)/PRELAUNCH.IDX
 #
 # precompute indexed files for HGR & DHGR titles
 # note: these are not padded because they are all an exact block-multiple anyway
 #
-	[ -f build/index ] || bin/padto.sh build/TOTAL.DATA
-	[ -f build/index ] || ((for f in res/TITLE.HGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/TITLE.HGR build/HGR.TITLES.LOG > build/TITLE.IDX)
-	[ -f build/index ] || ((for f in res/TITLE.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/TITLE.DHGR build/DHGR.TITLES.LOG > build/DTITLE.IDX)
-	[ -f build/index ] || bin/addfile.sh res/COVER build/TOTAL.DATA > src/index/res.cover.idx.a
-	[ -f build/index ] || bin/addfile.sh res/TITLE build/TOTAL.DATA > src/index/res.title.idx.a
-	[ -f build/index ] || bin/addfile.sh res/HELP build/TOTAL.DATA > src/index/res.help.idx.a
+	bin/padto.sh $(TOTAL.DATA)
+	(for f in res/TITLE.HGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/TITLE.HGR $(BUILDDIR)/HGR.TITLES.LOG > $(BUILDDIR)/TITLE.IDX
+	(for f in res/TITLE.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/TITLE.DHGR $(BUILDDIR)/DHGR.TITLES.LOG > $(BUILDDIR)/DTITLE.IDX
+	bin/addfile.sh res/COVER $(TOTAL.DATA) > src/index/res.cover.idx.a
+	bin/addfile.sh res/TITLE $(TOTAL.DATA) > src/index/res.title.idx.a
+	bin/addfile.sh res/HELP $(TOTAL.DATA) > src/index/res.help.idx.a
 #
 # precompute indexed files for game help
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/GAMEHELP "" < build/GAMES.SORTED > build/GAMEHELP.IDX)
+	bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/GAMEHELP "" < $(BUILDDIR)/GAMES.SORTED > $(BUILDDIR)/GAMEHELP.IDX
 #
 # precompute indexed files for slideshows
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	[ -f build/index ] || $(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d build/GAMES.CONF < "{}" > "build/SS/{/}" || bin/buildslideshow.sh build/GAMES.CONF < "{}" > "build/SS/{/}"' ::: res/SS/*
-	[ -f build/index ] || ((for f in build/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/SS "" > build/SLIDESHOW.IDX)
-	[ -f build/index ] || $(PARALLEL) 'bin/buildokvs.sh < "{}" > "build/ATTRACT/{/}"' ::: res/ATTRACT/*
-	[ -f build/index ] || ((for f in build/ATTRACT/[ABCDEFGHIJKLMNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/ATTRACT "" > build/MINIATTRACT0.IDX)
-	[ -f build/index ] || ((for f in build/ATTRACT/[QRSTUVWXYZ]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/ATTRACT "" > build/MINIATTRACT1.IDX)
+	$(PARALLEL) '[ $$(echo "{/}" | cut -c-3) = "ACT" ] && bin/buildslideshow.sh -d $(BUILDDIR)/GAMES.CONF < "{}" > "$(BUILDDIR)/SS/{/}" || bin/buildslideshow.sh $(BUILDDIR)/GAMES.CONF < "{}" > "$(BUILDDIR)/SS/{/}"' ::: res/SS/*
+	(for f in $(BUILDDIR)/SS/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/SS "" > $(BUILDDIR)/SLIDESHOW.IDX
+	$(PARALLEL) 'bin/buildokvs.sh < "{}" > "$(BUILDDIR)/ATTRACT/{/}"' ::: res/ATTRACT/*
+	(for f in $(BUILDDIR)/ATTRACT/[ABCDEFGHIJKLMNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/ATTRACT "" > $(BUILDDIR)/MINIATTRACT0.IDX
+	(for f in $(BUILDDIR)/ATTRACT/[QRSTUVWXYZ]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/ATTRACT "" > $(BUILDDIR)/MINIATTRACT1.IDX
 #
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
 #
-	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/FX.CONF > build/FX.IDX)
-	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/DFX.CONF > build/DFX.IDX)
-	[ -f build/index ] || (bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FX.INDEXED "" < res/SFX.CONF > build/SFX.IDX)
-	[ -f build/index ] || ((for f in build/FXCODE/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a build/TOTAL.DATA build/FXCODE "" > build/FXCODE.IDX)
+	bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/FX.INDEXED "" < res/FX.CONF > $(BUILDDIR)/FX.IDX
+	bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/FX.INDEXED "" < res/DFX.CONF > $(BUILDDIR)/DFX.IDX
+	bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/FX.INDEXED "" < res/SFX.CONF > $(BUILDDIR)/SFX.IDX
+	(for f in $(BUILDDIR)/FXCODE/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -p -a $(TOTAL.DATA) $(BUILDDIR)/FXCODE "" > $(BUILDDIR)/FXCODE.IDX
 #
 # precompute indexed files for coordinates files loaded by graphic effects
 # note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
 #
-	[ -f build/index ] || ((for f in build/FXDATA/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA build/FXDATA "" > build/FXDATA.IDX)
+	(for f in $(BUILDDIR)/FXDATA/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) $(BUILDDIR)/FXDATA "" > $(BUILDDIR)/FXDATA.IDX
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR0.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR1.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR2.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR3.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR4.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR5.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.HGR "" > build/HGR6.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ACTION.DHGR "" > build/DHGR.IDX)
+	(for f in res/ACTION.HGR/[ABCD]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR0.IDX
+	(for f in res/ACTION.HGR/[EFGH]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR1.IDX
+	(for f in res/ACTION.HGR/[IJKL]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR2.IDX
+	(for f in res/ACTION.HGR/[MNOP]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR3.IDX
+	(for f in res/ACTION.HGR/[QRST]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR4.IDX
+	(for f in res/ACTION.HGR/[UVWX]*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR5.IDX
+	(for f in res/ACTION.HGR/[YZ]*;   do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.HGR "" > $(BUILDDIR)/HGR6.IDX
+	(for f in res/ACTION.DHGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ACTION.DHGR "" > $(BUILDDIR)/DHGR.IDX
 #
 # precompute indexed files for GR and DGR action screenshots
 # note: these can be padded because they are not compressed
 #
-	[ -f build/index ] || ((for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA res/ACTION.GR "" > build/GR.IDX)
-	[ -f build/index ] || ((for f in res/ACTION.DGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA res/ACTION.DGR "" > build/DGR.IDX)
+	(for f in res/ACTION.GR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p $(TOTAL.DATA) res/ACTION.GR "" > $(BUILDDIR)/GR.IDX
+	(for f in res/ACTION.DGR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p $(TOTAL.DATA) res/ACTION.DGR "" > $(BUILDDIR)/DGR.IDX
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	[ -f build/index ] || ((for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA res/ARTWORK.SHR "" > build/ARTWORK.IDX)
+	(for f in res/ARTWORK.SHR/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) res/ARTWORK.SHR "" > $(BUILDDIR)/ARTWORK.IDX
 #
 # precompute indexed files for demo launchers
 # note: these can not be padded because some of them are loaded too close to $C000
 #
-	[ -f build/index ] || ((for f in build/DEMO/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a build/TOTAL.DATA build/DEMO "" > build/DEMO.IDX)
-	[ -f build/index ] || bin/addfile.sh build/DEMO.IDX build/TOTAL.DATA > src/index/demo.idx.a
+	(for f in $(BUILDDIR)/DEMO/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a $(TOTAL.DATA) $(BUILDDIR)/DEMO "" > $(BUILDDIR)/DEMO.IDX
+	bin/addfile.sh $(BUILDDIR)/DEMO.IDX $(TOTAL.DATA) > src/index/demo.idx.a
 
 #
 # precompute indexed files for single-load game binaries
 # note: these can be padded because they are loaded at a time when all of main memory is clobber-able
 #
-	[ -f build/index ] || ((for f in build/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p build/TOTAL.DATA build/X.INDEXED "" > build/XSINGLE.IDX)
-	[ -f build/index ] || bin/addfile.sh build/XSINGLE.IDX build/TOTAL.DATA > src/index/xsingle.idx.a
+	(for f in $(BUILDDIR)/X.INDEXED/*; do echo "$$(basename $$f)"; done) | bin/buildindexedfile.py -a -p $(TOTAL.DATA) $(BUILDDIR)/X.INDEXED "" > $(BUILDDIR)/XSINGLE.IDX
+	bin/addfile.sh $(BUILDDIR)/XSINGLE.IDX $(TOTAL.DATA) > src/index/xsingle.idx.a
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
-	[ -f build/index ] || $(PARALLEL) ::: \
-	    '(grep "^00" < build/GAMES.CONF | bin/buildsearch.py src/index/count00.a build/HGR.TITLES.LOG "" > build/SEARCH00.IDX)' \
-	    '(grep "^0" < build/GAMES.CONF | bin/buildsearch.py src/index/count01.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG > build/SEARCH01.IDX)' \
-	    '(grep "^.0" < build/GAMES.CONF | bin/buildsearch.py src/index/count10.a build/HGR.TITLES.LOG "" > build/SEARCH10.IDX)' \
-	    '(bin/buildsearch.py src/index/count11.a build/HGR.TITLES.LOG build/DHGR.TITLES.LOG < build/GAMES.CONF > build/SEARCH11.IDX)'
+	$(PARALLEL) ::: \
+	    '(grep "^00" < $(BUILDDIR)/GAMES.CONF | bin/buildsearch.py src/index/count00.a $(BUILDDIR)/HGR.TITLES.LOG "" > $(BUILDDIR)/SEARCH00.IDX)' \
+	    '(grep "^0" < $(BUILDDIR)/GAMES.CONF | bin/buildsearch.py src/index/count01.a $(BUILDDIR)/HGR.TITLES.LOG $(BUILDDIR)/DHGR.TITLES.LOG > $(BUILDDIR)/SEARCH01.IDX)' \
+	    '(grep "^.0" < $(BUILDDIR)/GAMES.CONF | bin/buildsearch.py src/index/count10.a $(BUILDDIR)/HGR.TITLES.LOG "" > $(BUILDDIR)/SEARCH10.IDX)' \
+	    '(bin/buildsearch.py src/index/count11.a $(BUILDDIR)/HGR.TITLES.LOG $(BUILDDIR)/DHGR.TITLES.LOG < $(BUILDDIR)/GAMES.CONF > $(BUILDDIR)/SEARCH11.IDX)'
 #
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
 #
-	[ -f build/index ] || bin/addfile.sh build/SEARCH00.IDX build/TOTAL.DATA > src/index/search00.idx.a
-	[ -f build/index ] || bin/addfile.sh res/CACHE00.IDX build/TOTAL.DATA > src/index/cache00.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SEARCH01.IDX build/TOTAL.DATA > src/index/search01.idx.a
-	[ -f build/index ] || bin/addfile.sh res/CACHE01.IDX build/TOTAL.DATA > src/index/cache01.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SEARCH10.IDX build/TOTAL.DATA > src/index/search10.idx.a
-	[ -f build/index ] || bin/addfile.sh res/CACHE10.IDX build/TOTAL.DATA > src/index/cache10.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SEARCH11.IDX build/TOTAL.DATA > src/index/search11.idx.a
-	[ -f build/index ] || bin/addfile.sh res/CACHE11.IDX build/TOTAL.DATA > src/index/cache11.idx.a
-	[ -f build/index ] || bin/addfile.sh build/PRELAUNCH.IDX build/TOTAL.DATA > src/index/prelaunch.idx.a
-	[ -f build/index ] || bin/addfile.sh build/ATTRACT.IDX build/TOTAL.DATA > src/index/attract.idx.a
-	[ -f build/index ] || bin/addfile.sh build/FX.IDX build/TOTAL.DATA > src/index/fx.idx.a
-	[ -f build/index ] || bin/addfile.sh build/DFX.IDX build/TOTAL.DATA > src/index/dfx.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SFX.IDX build/TOTAL.DATA > src/index/sfx.idx.a
-	[ -f build/index ] || bin/addfile.sh build/FXCODE.IDX build/TOTAL.DATA > src/index/fxcode.idx.a
-	[ -f build/index ] || bin/addfile.sh build/FXDATA.IDX build/TOTAL.DATA > src/index/fxdata.idx.a
-	[ -f build/index ] || bin/addfile.sh build/GAMEHELP.IDX build/TOTAL.DATA > src/index/gamehelp.idx.a
-	[ -f build/index ] || bin/addfile.sh build/SLIDESHOW.IDX build/TOTAL.DATA > src/index/slideshow.idx.a
-	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT0.IDX build/TOTAL.DATA > src/index/miniattract0.idx.a
-	[ -f build/index ] || bin/addfile.sh build/MINIATTRACT1.IDX build/TOTAL.DATA > src/index/miniattract1.idx.a
-	[ -f build/index ] || bin/addfile.sh build/TITLE.IDX build/TOTAL.DATA > src/index/title.idx.a
-	[ -f build/index ] || bin/addfile.sh build/DTITLE.IDX build/TOTAL.DATA > src/index/dtitle.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR0.IDX build/TOTAL.DATA > src/index/hgr0.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR1.IDX build/TOTAL.DATA > src/index/hgr1.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR2.IDX build/TOTAL.DATA > src/index/hgr2.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR3.IDX build/TOTAL.DATA > src/index/hgr3.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR4.IDX build/TOTAL.DATA > src/index/hgr4.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR5.IDX build/TOTAL.DATA > src/index/hgr5.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HGR6.IDX build/TOTAL.DATA > src/index/hgr6.idx.a
-	[ -f build/index ] || bin/addfile.sh build/DHGR.IDX build/TOTAL.DATA > src/index/dhgr.idx.a
-	[ -f build/index ] || bin/addfile.sh build/GR.IDX build/TOTAL.DATA > src/index/gr.idx.a
-	[ -f build/index ] || bin/addfile.sh build/DGR.IDX build/TOTAL.DATA > src/index/dgr.idx.a
-	[ -f build/index ] || bin/addfile.sh build/ARTWORK.IDX build/TOTAL.DATA > src/index/artwork.idx.a
+	bin/addfile.sh $(BUILDDIR)/SEARCH00.IDX $(TOTAL.DATA) > src/index/search00.idx.a
+	bin/addfile.sh res/CACHE00.IDX $(TOTAL.DATA) > src/index/cache00.idx.a
+	bin/addfile.sh $(BUILDDIR)/SEARCH01.IDX $(TOTAL.DATA) > src/index/search01.idx.a
+	bin/addfile.sh res/CACHE01.IDX $(TOTAL.DATA) > src/index/cache01.idx.a
+	bin/addfile.sh $(BUILDDIR)/SEARCH10.IDX $(TOTAL.DATA) > src/index/search10.idx.a
+	bin/addfile.sh res/CACHE10.IDX $(TOTAL.DATA) > src/index/cache10.idx.a
+	bin/addfile.sh $(BUILDDIR)/SEARCH11.IDX $(TOTAL.DATA) > src/index/search11.idx.a
+	bin/addfile.sh res/CACHE11.IDX $(TOTAL.DATA) > src/index/cache11.idx.a
+	bin/addfile.sh $(BUILDDIR)/PRELAUNCH.IDX $(TOTAL.DATA) > src/index/prelaunch.idx.a
+	bin/addfile.sh $(BUILDDIR)/ATTRACT.IDX $(TOTAL.DATA) > src/index/attract.idx.a
+	bin/addfile.sh $(BUILDDIR)/FX.IDX $(TOTAL.DATA) > src/index/fx.idx.a
+	bin/addfile.sh $(BUILDDIR)/DFX.IDX $(TOTAL.DATA) > src/index/dfx.idx.a
+	bin/addfile.sh $(BUILDDIR)/SFX.IDX $(TOTAL.DATA) > src/index/sfx.idx.a
+	bin/addfile.sh $(BUILDDIR)/FXCODE.IDX $(TOTAL.DATA) > src/index/fxcode.idx.a
+	bin/addfile.sh $(BUILDDIR)/FXDATA.IDX $(TOTAL.DATA) > src/index/fxdata.idx.a
+	bin/addfile.sh $(BUILDDIR)/GAMEHELP.IDX $(TOTAL.DATA) > src/index/gamehelp.idx.a
+	bin/addfile.sh $(BUILDDIR)/SLIDESHOW.IDX $(TOTAL.DATA) > src/index/slideshow.idx.a
+	bin/addfile.sh $(BUILDDIR)/MINIATTRACT0.IDX $(TOTAL.DATA) > src/index/miniattract0.idx.a
+	bin/addfile.sh $(BUILDDIR)/MINIATTRACT1.IDX $(TOTAL.DATA) > src/index/miniattract1.idx.a
+	bin/addfile.sh $(BUILDDIR)/TITLE.IDX $(TOTAL.DATA) > src/index/title.idx.a
+	bin/addfile.sh $(BUILDDIR)/DTITLE.IDX $(TOTAL.DATA) > src/index/dtitle.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR0.IDX $(TOTAL.DATA) > src/index/hgr0.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR1.IDX $(TOTAL.DATA) > src/index/hgr1.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR2.IDX $(TOTAL.DATA) > src/index/hgr2.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR3.IDX $(TOTAL.DATA) > src/index/hgr3.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR4.IDX $(TOTAL.DATA) > src/index/hgr4.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR5.IDX $(TOTAL.DATA) > src/index/hgr5.idx.a
+	bin/addfile.sh $(BUILDDIR)/HGR6.IDX $(TOTAL.DATA) > src/index/hgr6.idx.a
+	bin/addfile.sh $(BUILDDIR)/DHGR.IDX $(TOTAL.DATA) > src/index/dhgr.idx.a
+	bin/addfile.sh $(BUILDDIR)/GR.IDX $(TOTAL.DATA) > src/index/gr.idx.a
+	bin/addfile.sh $(BUILDDIR)/DGR.IDX $(TOTAL.DATA) > src/index/dgr.idx.a
+	bin/addfile.sh $(BUILDDIR)/ARTWORK.IDX $(TOTAL.DATA) > src/index/artwork.idx.a
 #
 # add additional miscellaneous files
 #
-	[ -f build/index ] || bin/addfile.sh build/COVERFADE build/TOTAL.DATA > src/index/coverfade.idx.a
-	[ -f build/index ] || bin/addfile.sh build/GR.FIZZLE build/TOTAL.DATA > src/index/gr.fizzle.idx.a
-	[ -f build/index ] || bin/addfile.sh build/DGR.FIZZLE build/TOTAL.DATA > src/index/dgr.fizzle.idx.a
-	[ -f build/index ] || bin/addfile.sh build/HELPTEXT build/TOTAL.DATA > src/index/helptext.idx.a
-	[ -f build/index ] || bin/addfile.sh build/CREDITS build/TOTAL.DATA > src/index/credits.idx.a
-	[ -f build/index ] || bin/addfile.sh res/DECRUNCH build/TOTAL.DATA > src/index/decrunch.idx.a
-	[ -f build/index ] || bin/addfile.sh res/JOYSTICK build/TOTAL.DATA > src/index/joystick.idx.a
-	touch build/index
+	bin/addfile.sh $(BUILDDIR)/COVERFADE $(TOTAL.DATA) > src/index/coverfade.idx.a
+	bin/addfile.sh $(BUILDDIR)/GR.FIZZLE $(TOTAL.DATA) > src/index/gr.fizzle.idx.a
+	bin/addfile.sh $(BUILDDIR)/DGR.FIZZLE $(TOTAL.DATA) > src/index/dgr.fizzle.idx.a
+	bin/addfile.sh $(BUILDDIR)/HELPTEXT $(TOTAL.DATA) > src/index/helptext.idx.a
+	bin/addfile.sh $(BUILDDIR)/CREDITS $(TOTAL.DATA) > src/index/credits.idx.a
+	bin/addfile.sh res/DECRUNCH $(TOTAL.DATA) > src/index/decrunch.idx.a
+	bin/addfile.sh res/JOYSTICK $(TOTAL.DATA) > src/index/joystick.idx.a
+	@touch "$@"
 
-asmlauncher: preconditions md
-	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>build/relbase.log
-	$(ACME) -r build/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat build/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
+$(LAUNCHER.SYSTEM): $(LAUNCHER.SOURCES) | $(MD)
+	$(ACME) -DBUILDNUMBER=`git rev-list --count HEAD` src/4cade.a 2>$(BUILDDIR)/relbase.log
+	$(ACME) -r $(BUILDDIR)/4cade.lst -DBUILDNUMBER=`git rev-list --count HEAD` -DRELBASE=`cat $(BUILDDIR)/relbase.log | grep "RELBASE =" | cut -d"=" -f2 | cut -d"(" -f2 | cut -d")" -f1` src/4cade.a
+	@touch "$@"
 
-asmdemo: preconditions md
+$(DEMO): $(DEMO.SOURCES) | $(MD)
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/demo/*.a
+	@touch "$@"
 
-asmfx: preconditions md
+$(FX): $(FX.SOURCES) | $(MD)
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/fx/*.a
+	@touch "$@"
 
-asmprelaunch: preconditions md
+$(PRELAUNCH): $(PRELAUNCH.SOURCES) | $(MD)
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/prelaunch/*.a
+	@touch "$@"
 
-asmproboot: md
-	$(ACME) -r build/proboothd.lst src/proboothd/proboothd.a
+$(PROBOOTHD): $(PROBOOT.SOURCES) | $(MD)
+	$(ACME) -r $(BUILDDIR)/proboothd.lst src/proboothd/proboothd.a
+	@touch "$@"
 
-compress: preconditions md
+#
+# |compress| must be called separately because it is slow and
+# only needs to be run when a new graphic file is added.
+# It create files in the repository which can then be checked in.
+#
+compress: $(MD)
 	$(PARALLEL) '[ -f "res/ACTION.HGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.HGR/{/}"' ::: res/ACTION.HGR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.DHGR/{/}"' ::: res/ACTION.DHGR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || ${EXOMIZER} "{}"@0x2000 -o "res/ARTWORK.SHR/{/}"' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
@@ -259,27 +320,33 @@ attract: compress
 	bin/check-attract-mode.sh
 	bin/generate-mini-attract-mode.sh
 
-cache: preconditions md gamesconf
+#
+# |cache| must be called separately because it is slow and
+# only needs to be run when a new game is added.
+# It create files in the repository which can then be checked in.
+#
+cache: $(GAMES.CONF)
 	$(PARALLEL) ::: \
-	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache00.a' \
-	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache01.a' \
-	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache10.a' \
-	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < build/GAMES.CONF | bin/buildcache.py > build/cache11.a'
+	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < $(BUILDDIR)/GAMES.CONF | bin/buildcache.py > $(BUILDDIR)/cache00.a' \
+	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < $(BUILDDIR)/GAMES.CONF | bin/buildcache.py > $(BUILDDIR)/cache01.a' \
+	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < $(BUILDDIR)/GAMES.CONF | bin/buildcache.py > $(BUILDDIR)/cache10.a' \
+	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < $(BUILDDIR)/GAMES.CONF | bin/buildcache.py > $(BUILDDIR)/cache11.a'
 	$(PARALLEL) ::: \
-	    '$(ACME) -o res/CACHE00.IDX build/cache00.a' \
-	    '$(ACME) -o res/CACHE01.IDX build/cache01.a' \
-	    '$(ACME) -o res/CACHE10.IDX build/cache10.a' \
-	    '$(ACME) -o res/CACHE11.IDX build/cache11.a'
+	    '$(ACME) -o res/CACHE00.IDX $(BUILDDIR)/cache00.a' \
+	    '$(ACME) -o res/CACHE01.IDX $(BUILDDIR)/cache01.a' \
+	    '$(ACME) -o res/CACHE10.IDX $(BUILDDIR)/cache10.a' \
+	    '$(ACME) -o res/CACHE11.IDX $(BUILDDIR)/cache11.a'
 
-mount: dsk
-	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii build/"$(DISK)"
+mount: $(HDV)
+	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii "$(HDV)"
 
-md:
-	mkdir -p build/X build/X.INDEXED build/FX.INDEXED build/FXDATA build/FXCODE build/PRELAUNCH build/PRELAUNCH.INDEXED build/ATTRACT build/SS build/GAMEHELP build/DEMO
-	touch build/log
+$(MD):
+	mkdir -p "$(BUILDDIR)"/X "$(BUILDDIR)"/X.INDEXED "$(BUILDDIR)"/FX.INDEXED "$(BUILDDIR)"/FXDATA "$(BUILDDIR)"/FXCODE "$(BUILDDIR)"/PRELAUNCH "$(BUILDDIR)"/PRELAUNCH.INDEXED "$(BUILDDIR)"/ATTRACT "$(BUILDDIR)"/SS "$(BUILDDIR)"/GAMEHELP "$(BUILDDIR)"/DEMO
+	touch "$(BUILDDIR)"/log
+	@touch "$@"
 
 clean:
-	rm -rf build/ || rm -rf build
+	rm -rf $(BUILDDIR)/ || rm -rf $(BUILDDIR)
 
 preconditions:
 	@$(ACME) --version | grep -q "ACME, release" || (echo "ACME is not installed" && exit 1)
@@ -290,3 +357,5 @@ preconditions:
 all: clean dsk mount
 
 al: all
+
+.NOTPARALLEL:
