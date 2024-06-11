@@ -42,7 +42,6 @@ if "%2". equ "". (
   rem
   rem create _FileInformation.txt files for subdirectories
   rem
-  cscript /nologo bin\buildfileinfo.js res\ICONS "CA" "0000" >>build/log
   1>nul copy /y src\prelaunch\_FileInformation.txt build\PRELAUNCH >>build/log
   rem
   rem add everything to the disk
