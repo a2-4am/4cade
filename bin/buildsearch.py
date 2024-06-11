@@ -49,15 +49,13 @@ def build(records, args):
 !word {record_count:>8}
 """)
 
-    # yield OKVS record count (2 bytes, unsigned int, little-endian)
-    yield struct.pack('<H', record_count)
-
-    # yield OKVS lookup table address (2 bytes, unsigned int, little-endian)
     # lookup table is stored after all record data, so first calculate total record size
     # record_count * (length-prefixed key + length-prefixed value + 8 other bytes)
     # then lookup table address is that + gSearchIndex + 4 bytes for the OKVS header
     total_record_size = len("".join([x for xs in records for x in xs[1:]])) + 10*record_count
-    yield struct.pack('<H', total_record_size + gSearchIndex + 4)
+
+    # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
+    yield struct.pack('<2H', record_count, total_record_size + gSearchIndex + 4)
 
     rec_key_address = gSearchIndex + 5
     key_addresses = []

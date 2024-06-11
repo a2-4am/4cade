@@ -144,7 +144,7 @@ $(X): $(GAMES.CONF)
 
 # precompute binary data structure for mega-attract mode configuration file
 $(ATTRACT.IDX): $(MD)
-	bin/buildokvs.sh < res/ATTRACT.CONF > "$@"
+	bin/buildokvs.py < res/ATTRACT.CONF > "$@"
 
 # precompute binary data structure and substitute special characters in global help
 $(HELPTEXT): $(MD)
@@ -170,7 +170,7 @@ $(SS): $(SS.SOURCES) | $(MD)
 # precompute binary data structures for each game's mini-attract configuration file
 $(ATTRACT): $(ATTRACT.SOURCES) | $(MD)
 	mkdir -p "$@"
-	$(PARALLEL) 'bin/buildokvs.sh < "{}" > "$@/{/}"' ::: res/ATTRACT/*
+	$(PARALLEL) 'bin/buildokvs.py < "{}" > "$@/{/}"' ::: res/ATTRACT/*
 	(cd "$(ATTRACT)"/ && for f in [ABCDEFGHIJKLMNOP]*; do echo "$$f"; done) > "$(MINI.ATTRACT0.LIST)"
 	(cd "$(ATTRACT)"/ && for f in [QRSTUVWXYZ]*; do echo "$$f"; done) > "$(MINI.ATTRACT1.LIST)"
 	@touch "$@"

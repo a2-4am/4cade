@@ -32,10 +32,9 @@ def build(records, args):
     else:
         for flags, key, dummy in games_list:
             games_cache[key] = (flags, "")
-    record_count = len(records)
     
     # yield OKVS header (2 x 2 bytes, unsigned int, little-endian)
-    yield struct.pack('<2H', record_count, 0)
+    yield struct.pack('<2H', len(records), 0)
 
     for key, dummy, value in records:
         filename = value or key
