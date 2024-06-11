@@ -80,7 +80,7 @@ extract: preconditions md gamesconf
 	for f in $$(grep '^....1' build/GAMES.CONF | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv build/X/"$$(basename $$f)"/"$$(basename $$f)"* build/X.INDEXED/; rm -rf build/X/"$$(basename $$f)"; done
 	for d in build/X/*; do mv "$$d"/* build/X/; rmdir "$$d"; done
 
-index: preconditions md asmfx asmprelaunch asmdemo compress extract
+index: preconditions md asmfx asmprelaunch asmdemo extract
 #
 # precompute binary data structure for mega-attract mode configuration file
 #
