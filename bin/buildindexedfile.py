@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # flags
-# -a  append to data file (default off = truncate)
 # -p  pad sizes within data file to next block size (default off)
 
 # parameters
@@ -18,16 +17,12 @@ import struct
 import sys
 
 kStandardFilename = 'STANDARD'
-kFileMode = {False: 'wb', True: 'ab'}
 
 def build(records, args):
-    if args.append:
-        output_file_size = os.path.getsize(args.output_file)
-    else:
-        output_file_size = 0
+    output_file_size = os.path.getsize(args.output_file)
     standard_offset = standard_size = 0
     standard_filename = os.path.join(args.input_directory, kStandardFilename)
-    with open(args.output_file, kFileMode[args.append]) as output_file_handle:
+    with open(args.output_file, 'ab') as output_file_handle:
         if os.path.exists(standard_filename):
             standard_offset = output_file_size
             standard_size = os.path.getsize(standard_filename)
@@ -92,7 +87,6 @@ if __name__ == "__main__":
     parser.add_argument("input_directory")
     parser.add_argument("log_file")
     parser.add_argument("-p", "--pad", action="store_true", default=False, help="pad file sizes to multiples of 512 (default: use exact size)")
-    parser.add_argument("-a", "--append", action="store_true", default=False, help="append to output file (default: overwrite)")
     args = parser.parse_args()
     records = [x.strip() for x in sys.stdin.readlines()]
     records = [x for x in records if x and x[0] not in ('#', '[')]
