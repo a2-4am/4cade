@@ -20,13 +20,15 @@
 
 ### Enhancements & bug fixes in v5.2
 
-- Fix launch issues in Mazeblox, Pegasus II, Super Zaxxon, The Space Ark (issues [567](https://github.com/a2-4am/4cade/issues/567), [568](https://github.com/a2-4am/4cade/issues/568), [565](https://github.com/a2-4am/4cade/issues/565), [572](https://github.com/a2-4am/4cade/issues/572))
-- Fix reset issues in Agent USA, Impossible Mission II, Lethal Labyrinth, Pegasus II, Rescue Raiders, Starglider (issues [577](https://github.com/a2-4am/4cade/issues/577), [579](https://github.com/a2-4am/4cade/issues/579), [582](https://github.com/a2-4am/4cade/issues/582), [584](https://github.com/a2-4am/4cade/issues/584), [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
+- Fix launch issues in Angry Birds, Mazeblox, Pegasus II, Spy Hunter, Super Zaxxon, The Space Ark (issues [567](https://github.com/a2-4am/4cade/issues/567), [568](https://github.com/a2-4am/4cade/issues/568), [565](https://github.com/a2-4am/4cade/issues/565), [572](https://github.com/a2-4am/4cade/issues/572))
+- Fix reset issues in Agent USA, Death Sword, Impossible Mission II, Lethal Labyrinth, Pegasus II, Rescue Raiders, Starglider, Time Pilot (issues [577](https://github.com/a2-4am/4cade/issues/577), [575](https://github.com/a2-4am/4cade/issues/575), [579](https://github.com/a2-4am/4cade/issues/579), [582](https://github.com/a2-4am/4cade/issues/582), [584](https://github.com/a2-4am/4cade/issues/584), [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
 - Properly restore language card reset and IRQ vectors on re-entry (fixes multiple long-standing issues, including reset issues in Bejeweled)
+- Properly reset zero page and stack after some 128K games that use the ones in auxiliary memory
 - Fix keyboard handling in Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
 - Fix compatibility issue in H.E.R.O which assumed that a card in slot 4 of a //c must be a mouse
 - Fix latent floppy drive access in Axis Assassin, Ballblazer, Galatic Attack, Roadblock, Situation Critical, Spellweilder (issues [578](https://github.com/a2-4am/4cade/issues/578), [585](https://github.com/a2-4am/4cade/issues/585), [586](https://github.com/a2-4am/4cade/issues/586), [587](https://github.com/a2-4am/4cade/issues/587))
 - Renamed "A City Dies" to "Night Falls" to match original packaging
+- Add more game help
 
 ## Revision 5.1 / serial number 20240216
 
