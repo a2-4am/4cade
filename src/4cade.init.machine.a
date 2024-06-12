@@ -13,3 +13,4 @@
          sta   STOREOFF
          sta   READMAINMEM
          sta   WRITEMAINMEM
+         sta   SETSTDZP
