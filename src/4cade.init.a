@@ -232,11 +232,10 @@
                                      ; /!\ exits with ROM read, no write
          +READ_ROM_WRITE_RAM1
          stx   MockingboardStuff     ; save mockingboard slot and type
-                                     ; requires RAM1 write
-
+         txa                         ; requires RAM1 write
+         php
          jsr   BuildVBLFunction      ; requires ROM read, RAM1 write
-
-         txa
+         plp
          beq   @done_with_mb
          and   #HAS_STEREO
          beq   @mb_mono
