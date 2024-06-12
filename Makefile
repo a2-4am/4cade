@@ -234,9 +234,9 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 	bin/padto.sh "$@"
 	bin/buildindexedfile.py "$@" res/TITLE.HGR "$(BUILDDIR)"/HGR.TITLES.LOG < "$(TITLE.HGR.LIST)" > "$(BUILDDIR)"/TITLE.IDX
 	bin/buildindexedfile.py "$@" res/TITLE.DHGR "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(TITLE.DHGR.LIST)" > "$(BUILDDIR)"/DTITLE.IDX
-	bin/addfile.sh "$(COVER)" "$@" > src/index/res.cover.idx.a
-	bin/addfile.sh "$(TITLE)" "$@" > src/index/res.title.idx.a
-	bin/addfile.sh "$(HELP)" "$@" > src/index/res.help.idx.a
+	bin/addfile.py "$(COVER)" "$@" > src/index/res.cover.idx.a
+	bin/addfile.py "$(TITLE)" "$@" > src/index/res.title.idx.a
+	bin/addfile.py "$(HELP)" "$@" > src/index/res.help.idx.a
 #
 # precompute indexed files for game help
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
@@ -290,14 +290,14 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 # note: these can not be padded because some of them are loaded too close to $C000
 #
 	bin/buildindexedfile.py "$@" "$(DEMO)" "" < "$(DEMO.LIST)" > "$(BUILDDIR)"/DEMO.IDX
-	bin/addfile.sh "$(BUILDDIR)"/DEMO.IDX "$@" > src/index/demo.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DEMO.IDX "$@" > src/index/demo.idx.a
 
 #
 # precompute indexed files for single-load game binaries
 # note: these can be padded because they are loaded at a time when all of main memory is clobber-able
 #
 	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/X.INDEXED "" < "$(XSINGLE.LIST)" > "$(BUILDDIR)"/XSINGLE.IDX
-	bin/addfile.sh "$(BUILDDIR)"/XSINGLE.IDX "$@" > src/index/xsingle.idx.a
+	bin/addfile.py "$(BUILDDIR)"/XSINGLE.IDX "$@" > src/index/xsingle.idx.a
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
@@ -311,48 +311,48 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them
 #
-	bin/addfile.sh "$(BUILDDIR)"/SEARCH00.IDX "$@" > src/index/search00.idx.a
-	bin/addfile.sh res/CACHE00.IDX "$@" > src/index/cache00.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/SEARCH01.IDX "$@" > src/index/search01.idx.a
-	bin/addfile.sh res/CACHE01.IDX "$@" > src/index/cache01.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/SEARCH10.IDX "$@" > src/index/search10.idx.a
-	bin/addfile.sh res/CACHE10.IDX "$@" > src/index/cache10.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/SEARCH11.IDX "$@" > src/index/search11.idx.a
-	bin/addfile.sh res/CACHE11.IDX "$@" > src/index/cache11.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/PRELAUNCH.IDX "$@" > src/index/prelaunch.idx.a
-	bin/addfile.sh "$(ATTRACT.IDX)" "$@" > src/index/attract.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/FX.IDX "$@" > src/index/fx.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/DFX.IDX "$@" > src/index/dfx.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/SFX.IDX "$@" > src/index/sfx.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/FXCODE.IDX "$@" > src/index/fxcode.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/FXDATA.IDX "$@" > src/index/fxdata.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/GAMEHELP.IDX "$@" > src/index/gamehelp.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/SLIDESHOW.IDX "$@" > src/index/slideshow.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/MINIATTRACT0.IDX "$@" > src/index/miniattract0.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/MINIATTRACT1.IDX "$@" > src/index/miniattract1.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/TITLE.IDX "$@" > src/index/title.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/DTITLE.IDX "$@" > src/index/dtitle.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR0.IDX "$@" > src/index/hgr0.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR1.IDX "$@" > src/index/hgr1.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR2.IDX "$@" > src/index/hgr2.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR3.IDX "$@" > src/index/hgr3.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR4.IDX "$@" > src/index/hgr4.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR5.IDX "$@" > src/index/hgr5.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/HGR6.IDX "$@" > src/index/hgr6.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/DHGR.IDX "$@" > src/index/dhgr.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/GR.IDX "$@" > src/index/gr.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/DGR.IDX "$@" > src/index/dgr.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/ARTWORK.IDX "$@" > src/index/artwork.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SEARCH00.IDX "$@" > src/index/search00.idx.a
+	bin/addfile.py res/CACHE00.IDX "$@" > src/index/cache00.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SEARCH01.IDX "$@" > src/index/search01.idx.a
+	bin/addfile.py res/CACHE01.IDX "$@" > src/index/cache01.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SEARCH10.IDX "$@" > src/index/search10.idx.a
+	bin/addfile.py res/CACHE10.IDX "$@" > src/index/cache10.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SEARCH11.IDX "$@" > src/index/search11.idx.a
+	bin/addfile.py res/CACHE11.IDX "$@" > src/index/cache11.idx.a
+	bin/addfile.py "$(BUILDDIR)"/PRELAUNCH.IDX "$@" > src/index/prelaunch.idx.a
+	bin/addfile.py "$(ATTRACT.IDX)" "$@" > src/index/attract.idx.a
+	bin/addfile.py "$(BUILDDIR)"/FX.IDX "$@" > src/index/fx.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DFX.IDX "$@" > src/index/dfx.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SFX.IDX "$@" > src/index/sfx.idx.a
+	bin/addfile.py "$(BUILDDIR)"/FXCODE.IDX "$@" > src/index/fxcode.idx.a
+	bin/addfile.py "$(BUILDDIR)"/FXDATA.IDX "$@" > src/index/fxdata.idx.a
+	bin/addfile.py "$(BUILDDIR)"/GAMEHELP.IDX "$@" > src/index/gamehelp.idx.a
+	bin/addfile.py "$(BUILDDIR)"/SLIDESHOW.IDX "$@" > src/index/slideshow.idx.a
+	bin/addfile.py "$(BUILDDIR)"/MINIATTRACT0.IDX "$@" > src/index/miniattract0.idx.a
+	bin/addfile.py "$(BUILDDIR)"/MINIATTRACT1.IDX "$@" > src/index/miniattract1.idx.a
+	bin/addfile.py "$(BUILDDIR)"/TITLE.IDX "$@" > src/index/title.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DTITLE.IDX "$@" > src/index/dtitle.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR0.IDX "$@" > src/index/hgr0.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR1.IDX "$@" > src/index/hgr1.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR2.IDX "$@" > src/index/hgr2.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR3.IDX "$@" > src/index/hgr3.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR4.IDX "$@" > src/index/hgr4.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR5.IDX "$@" > src/index/hgr5.idx.a
+	bin/addfile.py "$(BUILDDIR)"/HGR6.IDX "$@" > src/index/hgr6.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DHGR.IDX "$@" > src/index/dhgr.idx.a
+	bin/addfile.py "$(BUILDDIR)"/GR.IDX "$@" > src/index/gr.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DGR.IDX "$@" > src/index/dgr.idx.a
+	bin/addfile.py "$(BUILDDIR)"/ARTWORK.IDX "$@" > src/index/artwork.idx.a
 #
 # add additional miscellaneous files
 #
-	bin/addfile.sh "$(BUILDDIR)"/COVERFADE "$@" > src/index/coverfade.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/GR.FIZZLE "$@" > src/index/gr.fizzle.idx.a
-	bin/addfile.sh "$(BUILDDIR)"/DGR.FIZZLE "$@" > src/index/dgr.fizzle.idx.a
-	bin/addfile.sh "$(HELPTEXT)" "$@" > src/index/helptext.idx.a
-	bin/addfile.sh "$(CREDITS)" "$@" > src/index/credits.idx.a
-	bin/addfile.sh "$(DECRUNCH)" "$@" > src/index/decrunch.idx.a
-	bin/addfile.sh "$(JOYSTICK)" "$@" > src/index/joystick.idx.a
+	bin/addfile.py "$(BUILDDIR)"/COVERFADE "$@" > src/index/coverfade.idx.a
+	bin/addfile.py "$(BUILDDIR)"/GR.FIZZLE "$@" > src/index/gr.fizzle.idx.a
+	bin/addfile.py "$(BUILDDIR)"/DGR.FIZZLE "$@" > src/index/dgr.fizzle.idx.a
+	bin/addfile.py "$(HELPTEXT)" "$@" > src/index/helptext.idx.a
+	bin/addfile.py "$(CREDITS)" "$@" > src/index/credits.idx.a
+	bin/addfile.py "$(DECRUNCH)" "$@" > src/index/decrunch.idx.a
+	bin/addfile.py "$(JOYSTICK)" "$@" > src/index/joystick.idx.a
 	@touch "$@"
 
 # assemble main program
