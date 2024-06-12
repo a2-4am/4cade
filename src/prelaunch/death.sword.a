@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba
+;(c) 2024 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DEATH.SWORD",plain
@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
            +ENABLE_ACCEL
-           +NEW_RESET_VECTOR $300
+           +NEW_RESET_VECTOR_64K $300
            lda   #$8b
            sta   $bf0e      ; disable ROM mapping
            lda   #$60
