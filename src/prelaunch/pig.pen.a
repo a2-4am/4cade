@@ -17,8 +17,7 @@
          jsr   $9340      ; show title screen
          +ENABLE_ACCEL
          jsr   $9396      ; decompress more
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
