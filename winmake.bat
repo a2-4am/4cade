@@ -231,7 +231,6 @@ rem note: these can not be padded because some of them are loaded too close to $
 rem
 echo|set/p="indexing demos..."
 cscript /nologo bin\buildss.js build\DEMO build\DEMO.IDX nul build\TOTAL.DATA nul >>build\log
-cscript /nologo bin\addfile.js build\DEMO.IDX src\index\demo.idx.a
 echo done
 rem
 rem precompute indexed files for single-load game binaries
@@ -242,7 +241,6 @@ for %%q in (res\dsk\*.po) do %CADIUS% EXTRACTVOLUME "%%q" build\X\ >>build\log
 1>nul 2>nul del /s build\X\.DS_Store build\X\PRODOS* build\X\LOADER.SYSTEM* build\X\_FileInformation.txt
 1>nul copy /y nul build\XSINGLE.IDX
 cscript /nologo bin\buildsingle.js build\X.INDEXED build\XSINGLE.IDX build\TOTAL.DATA pad >>build\log
-cscript /nologo bin\addfile.js build\XSINGLE.IDX src\index\xsingle.idx.a
 cscript /nologo bin\flatten.js
 echo done
 rem
@@ -270,6 +268,8 @@ cscript /nologo bin\addfile.js build\SEARCH11.IDX src\index\search11.idx.a
 cscript /nologo bin\addfile.js res\CACHE11.IDX src\index\cache11.idx.a
 cscript /nologo bin\addfile.js build\PRELAUNCH.IDX src\index\prelaunch.idx.a
 cscript /nologo bin\addfile.js build\ATTRACT.IDX src\index\attract.idx.a
+cscript /nologo bin\addfile.js build\DEMO.IDX src\index\demo.idx.a
+cscript /nologo bin\addfile.js build\XSINGLE.IDX src\index\xsingle.idx.a
 cscript /nologo bin\addfile.js build\FX.IDX src\index\fx.idx.a
 cscript /nologo bin\addfile.js build\DFX.IDX src\index\dfx.idx.a
 cscript /nologo bin\addfile.js build\SFX.IDX src\index\sfx.idx.a
