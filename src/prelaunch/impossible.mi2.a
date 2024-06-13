@@ -31,7 +31,7 @@
 callback
          jsr   DisableAccelerator
          jsr   $7B5D      ; decompress
-         lda   #$60
+         lda   #$4C
          sta   $7AC8
          jsr   $7ABD      ; decompress
          inc   $3F4       ; reboot
