@@ -226,7 +226,7 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 #
 	rm -f "$@"
 	touch "$@"
-	bin/buildindexedfile.py "$@" "$(BUILDDIR)"/PRELAUNCH.INDEXED "" < "$(GAMES.SORTED)" > "$(BUILDDIR)"/PRELAUNCH.IDX
+	bin/buildindexedfile.py "$@" "$(BUILDDIR)"/PRELAUNCH.INDEXED < "$(GAMES.SORTED)" > "$(BUILDDIR)"/PRELAUNCH.IDX
 #
 # precompute indexed files for HGR & DHGR titles
 # note: these are not padded because they are all an exact block-multiple anyway
@@ -242,61 +242,61 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 # precompute indexed files for game help
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	bin/buildindexedfile.py -p "$@" "$(GAMEHELP)" "" < "$(GAMES.SORTED)" > "$(BUILDDIR)"/GAMEHELP.IDX
+	bin/buildindexedfile.py -p "$@" "$(GAMEHELP)" < "$(GAMES.SORTED)" > "$(BUILDDIR)"/GAMEHELP.IDX
 #
 # precompute indexed files for slideshows
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
 #
-	bin/buildindexedfile.py -p "$@" "$(SS)" "" < "$(SS.LIST)" > "$(BUILDDIR)"/SLIDESHOW.IDX
-	bin/buildindexedfile.py -p "$@" "$(ATTRACT)" "" < "$(MINI.ATTRACT0.LIST)" > "$(BUILDDIR)"/MINIATTRACT0.IDX
-	bin/buildindexedfile.py -p "$@" "$(ATTRACT)" "" < "$(MINI.ATTRACT1.LIST)" > "$(BUILDDIR)"/MINIATTRACT1.IDX
+	bin/buildindexedfile.py -p "$@" "$(SS)" < "$(SS.LIST)" > "$(BUILDDIR)"/SLIDESHOW.IDX
+	bin/buildindexedfile.py -p "$@" "$(ATTRACT)" < "$(MINI.ATTRACT0.LIST)" > "$(BUILDDIR)"/MINIATTRACT0.IDX
+	bin/buildindexedfile.py -p "$@" "$(ATTRACT)" < "$(MINI.ATTRACT1.LIST)" > "$(BUILDDIR)"/MINIATTRACT1.IDX
 #
 # precompute indexed files for graphic effects
 # note: these can be padded because they're loaded into $6000 at a time when $6000..$BEFF is clobber-able
 #
-	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED "" < "$(FX.CONF)" > "$(BUILDDIR)"/FX.IDX
-	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED "" < "$(DFX.CONF)" > "$(BUILDDIR)"/DFX.IDX
-	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED "" < "$(SFX.CONF)" > "$(BUILDDIR)"/SFX.IDX
-	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FXCODE "" < "$(FXCODE.LIST)" > "$(BUILDDIR)"/FXCODE.IDX
+	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED < "$(FX.CONF)" > "$(BUILDDIR)"/FX.IDX
+	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED < "$(DFX.CONF)" > "$(BUILDDIR)"/DFX.IDX
+	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FX.INDEXED < "$(SFX.CONF)" > "$(BUILDDIR)"/SFX.IDX
+	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/FXCODE < "$(FXCODE.LIST)" > "$(BUILDDIR)"/FXCODE.IDX
 #
 # precompute indexed files for coordinates files loaded by graphic effects
 # note: these can not be padded because some of them are loaded into tight spaces near the unclobberable top of main memory
 #
-	bin/buildindexedfile.py "$@" "$(BUILDDIR)"/FXDATA "" < "$(FXDATA.LIST)" > "$(BUILDDIR)"/FXDATA.IDX
+	bin/buildindexedfile.py "$@" "$(BUILDDIR)"/FXDATA < "$(FXDATA.LIST)" > "$(BUILDDIR)"/FXDATA.IDX
 #
 # precompute indexed files for HGR & DHGR action screenshots
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR0.LIST)" > "$(BUILDDIR)"/HGR0.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR1.LIST)" > "$(BUILDDIR)"/HGR1.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR2.LIST)" > "$(BUILDDIR)"/HGR2.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR3.LIST)" > "$(BUILDDIR)"/HGR3.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR4.LIST)" > "$(BUILDDIR)"/HGR4.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR5.LIST)" > "$(BUILDDIR)"/HGR5.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.HGR "" < "$(ACTION.HGR6.LIST)" > "$(BUILDDIR)"/HGR6.IDX
-	bin/buildindexedfile.py "$@" res/ACTION.DHGR "" < "$(ACTION.DHGR.LIST)" > "$(BUILDDIR)"/DHGR.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR0.LIST)" > "$(BUILDDIR)"/HGR0.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR1.LIST)" > "$(BUILDDIR)"/HGR1.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR2.LIST)" > "$(BUILDDIR)"/HGR2.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR3.LIST)" > "$(BUILDDIR)"/HGR3.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR4.LIST)" > "$(BUILDDIR)"/HGR4.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR5.LIST)" > "$(BUILDDIR)"/HGR5.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.HGR < "$(ACTION.HGR6.LIST)" > "$(BUILDDIR)"/HGR6.IDX
+	bin/buildindexedfile.py "$@" res/ACTION.DHGR < "$(ACTION.DHGR.LIST)" > "$(BUILDDIR)"/DHGR.IDX
 #
 # precompute indexed files for GR and DGR action screenshots
 # note: these can be padded because they are not compressed
 #
-	bin/buildindexedfile.py -p "$@" res/ACTION.GR "" < "$(ACTION.GR.LIST)" > "$(BUILDDIR)"/GR.IDX
-	bin/buildindexedfile.py -p "$@" res/ACTION.DGR "" < "$(ACTION.DGR.LIST)" > "$(BUILDDIR)"/DGR.IDX
+	bin/buildindexedfile.py -p "$@" res/ACTION.GR < "$(ACTION.GR.LIST)" > "$(BUILDDIR)"/GR.IDX
+	bin/buildindexedfile.py -p "$@" res/ACTION.DGR < "$(ACTION.DGR.LIST)" > "$(BUILDDIR)"/DGR.IDX
 #
 # precompute indexed files for SHR artwork
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	bin/buildindexedfile.py "$@" res/ARTWORK.SHR "" < "$(ARTWORK.SHR.LIST)" > "$(BUILDDIR)"/ARTWORK.IDX
+	bin/buildindexedfile.py "$@" res/ARTWORK.SHR < "$(ARTWORK.SHR.LIST)" > "$(BUILDDIR)"/ARTWORK.IDX
 #
 # precompute indexed files for demo launchers
 # note: these can not be padded because some of them are loaded too close to $C000
 #
-	bin/buildindexedfile.py "$@" "$(DEMO)" "" < "$(DEMO.LIST)" > "$(BUILDDIR)"/DEMO.IDX
+	bin/buildindexedfile.py "$@" "$(DEMO)" < "$(DEMO.LIST)" > "$(BUILDDIR)"/DEMO.IDX
 
 #
 # precompute indexed files for single-load game binaries
 # note: these can be padded because they are loaded at a time when all of main memory is clobber-able
 #
-	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/X.INDEXED "" < "$(XSINGLE.LIST)" > "$(BUILDDIR)"/XSINGLE.IDX
+	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/X.INDEXED < "$(XSINGLE.LIST)" > "$(BUILDDIR)"/XSINGLE.IDX
 #
 # create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files

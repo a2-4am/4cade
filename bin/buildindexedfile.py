@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build indexed OKVS structure with links to data stored in TOTAL.DATA file")
     parser.add_argument("output_file")
     parser.add_argument("input_directory")
-    parser.add_argument("log_file")
+    parser.add_argument("log_file", nargs='?', default=None)
     parser.add_argument("-p", "--pad", action="store_true", default=False, help="pad file sizes to multiples of 512 (default: use exact size)")
     args = parser.parse_args()
     records = [x.strip() for x in sys.stdin.readlines()]
