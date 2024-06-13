@@ -8,6 +8,7 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $BFF0
          lda   #$4C
          sta   $933D
          jsr   $6500      ; decompress
