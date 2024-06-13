@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022, 2024 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PIG.PEN",plain
@@ -14,10 +14,10 @@
          lda   #$60
          sta   $936D
          +DISABLE_ACCEL
-         jsr   $9340
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
+         jsr   $9340      ; show title screen
+         +ENABLE_ACCEL
          jsr   $9396      ; decompress more
+         +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -26,9 +26,7 @@
          lda   #0
          sta   $7336      ; patch - don't update draw position
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
-
+         +DISABLE_ACCEL
          jmp   $6000
 
 !if * > $1C0 {
