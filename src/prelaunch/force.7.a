@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/FORCE.7",plain
@@ -8,18 +8,18 @@
          !source "src/macros.a"
 
          +ENABLE_ACCEL
+         inc   $3F4        ; 128k - must reboot
          lda   #<callback
          sta   $556B
          lda   #>callback
          sta   $556C
          lda   #$4C
          sta   $5581
-         jsr   $2A55
+         jsr   $2A55       ; show title screen
          lda   #<reset
          sta   $121A
          lda   #>reset
          sta   $121F
-         inc   $3F4        ; 128k - must reboot
          jmp   $1000
 
 reset
