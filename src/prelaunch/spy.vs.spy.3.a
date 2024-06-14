@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021, 2024 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SS3",plain
@@ -13,8 +13,10 @@
          sta   $20BB
          sta   $2217
          jsr   $2000      ; decompress
+         lda   #0
+         sta   $C0D       ; check for keypress on title screen
          +DISABLE_ACCEL
-         jsr   $12FD
+         jsr   $12FD      ; show Maxx Out & title screen animation
          +ENABLE_ACCEL
          jsr   $90FD      ; decompress
          jsr   DisableAccelerator
