@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022, 2024 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TERITORY",plain
@@ -12,6 +12,8 @@
          sta   $6065
          lda   #>callback1
          sta   $6066
+         lda   #$2C
+         sta   $6199      ; remove activity indicator
          jmp   $6000      ; decompress
 
 callback1
@@ -30,6 +32,7 @@ callback1
          +READ_ROM_NO_WRITE
 
          lda   #0
+         sta   $2000      ; clear activity monitor
 jmp60
          jmp   $60
 

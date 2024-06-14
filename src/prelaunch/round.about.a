@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2020, 2024 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ROUND.ABOUT",plain
@@ -24,6 +24,9 @@
          sta   $9093
          sta   $9098
          sta   $909D      ; reset vector patch
+
+         lda   #$2A
+         sta   $4000      ; remove activity indicator
       
          +DISABLE_ACCEL
          jmp   $7000
