@@ -36,8 +36,8 @@ novbl1
 callback0
          lda   #0
          sta   $2000      ; remove activity indicator
-         lda   $C000      ; and wait for keypress
-         bpl   callback0
+-        lda   $C000      ; and wait for keypress
+         bpl   -
          jmp   $8F3
 
 callback1
