@@ -7,17 +7,20 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         jmp   +
+
+callback
+         +DISABLE_ACCEL
+         jmp   $0918
+
++
+        +ENABLE_ACCEL
          +NEW_RESET_VECTOR $BFF0
          lda   #>callback
          sta   $2076
          lda   #<callback
          sta   $2075
          jmp   $2000      ; decompress
-
-callback
-         +DISABLE_ACCEL
-         jmp   $0918
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
