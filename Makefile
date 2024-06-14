@@ -439,7 +439,7 @@ $(MD):
 clean:
 	rm -rf "$(BUILDDIR)"/ || rm -rf "$(BUILDDIR)"
 
-all: clean dsk mount
+all: clean $(HDV) mount
 
 al: all
 
