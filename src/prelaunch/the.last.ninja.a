@@ -11,6 +11,8 @@
          lda   #$60
          sta   $9F7
          jsr   $800       ; load DOS
+         inx
+         stx   $FA        ; fix sound
          lda   #$60
          sta   $9B5A
          jsr   $9B05
