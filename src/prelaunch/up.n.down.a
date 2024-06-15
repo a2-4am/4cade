@@ -1,11 +1,13 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2019, 2024 by 4am/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/UD",plain
 *=$106
 
          !source "src/macros.a"
+
+         inc   $3F4       ; reboot during title screen
 
          lda   #$03       ; reset vector to $103
          sta   $2D4E
