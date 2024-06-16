@@ -22,11 +22,11 @@
 
          ldx   #5
 -        lda   reset,x
-         sta   $120,x
+         sta   $110,x
          dex
          bpl   -
 
-         lda   #$20
+         lda   #$10
          sta   $7323
          lda   #1
          sta   $732B
