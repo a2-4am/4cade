@@ -24,6 +24,11 @@ callback1
          lda   #$60
          sta   $E0BC
          jsr   $E083
+         ldx   #(callback2_e-callback2_b)-1
+-        lda   callback2_b,x
+         sta   callback2,x
+         dex
+         bpl   -
          lda   #>callback2
          sta   $D402
          lda   #<callback2
@@ -31,8 +36,8 @@ callback1
          lda   #$00
          ldx   #$0F
          jmp   $D000
-         nop              ; move out of overwritten range
 
+callback2_b !pseudopc $174 {
 callback2
          jsr   $D432
          ldy   $DFD4
@@ -59,6 +64,8 @@ checksec
 nottrack
          clc
          jmp   $D403
+}
+callback2_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
