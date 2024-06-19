@@ -18,8 +18,10 @@
          jsr   $2A55       ; show title screen
          lda   #<reset
          sta   $121A
-         lda   #>reset
-         sta   $121F
+         lda   #$A6
+         sta   $1190
+         lda   #$FA
+         sta   $1191
          jmp   $1000
 
 reset
