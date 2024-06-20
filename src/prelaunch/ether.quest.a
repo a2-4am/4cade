@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/ETHER.QUEST",plain
+*=$106
+
+    !source "src/macros.a"
+
+         lda   #$60
+         sta   $1FBF
+         jsr   $1EC0      ; decompress
+         lda   #$8D
+         sta   $1FBF
+         bit   $c083
+         jsr   DisableAccelerator
+         jmp   $1FBF
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
