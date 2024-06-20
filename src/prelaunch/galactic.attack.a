@@ -1,0 +1,42 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/GALACTIC.ATTACK",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $D95
+         lda   #<callback1
+         sta   $D96
+         lda   #>callback1
+         sta   $D97
+         jmp   $800       ; load Pascal
+
+callback1
+         ldy   #(callback2_e - callback2_b) - 1
+-        lda   callback2_b, y
+         sta   callback2, y
+         dey
+         bpl   -
+         lda   #<callback2
+         sta   $B75E
+         lda   #>callback2
+         sta   $B75F
+         jmp   $B69E      ; init system
+
+callback2_b !pseudopc $BE40 {
+callback2 
+         lda   #2
+         sta   $BF2D      ; fake floppy
+         +DISABLE_ACCEL
+         jmp   $922D
+}
+callback2_e
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
