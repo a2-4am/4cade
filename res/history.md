@@ -7,6 +7,7 @@
 - Aeronaut
 - AntiAir
 - Colorix
+- Ether Quest
 - Fido
 - Hopman
 - Mutant (Steve Waldo)
@@ -24,9 +25,9 @@
 - Fix reset issues in Agent USA, Death Sword, Impossible Mission II, Lethal Labyrinth, Pegasus II, Rescue Raiders, Starglider, Time Pilot (issues [577](https://github.com/a2-4am/4cade/issues/577), [575](https://github.com/a2-4am/4cade/issues/575), [579](https://github.com/a2-4am/4cade/issues/579), [582](https://github.com/a2-4am/4cade/issues/582), [584](https://github.com/a2-4am/4cade/issues/584), [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
 - Properly restore language card reset and IRQ vectors on re-entry (fixes multiple long-standing issues, including reset issues in Bejeweled)
 - Properly reset zero page and stack after some 128K games that use the ones in auxiliary memory
-- Fix keyboard handling in Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
+- Fix keyboard handling in Red Alert (issue [617](https://github.com/a2-4am/4cade/issues/617)) and Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
 - Fix compatibility issue in H.E.R.O which assumed that a card in slot 4 of a //c must be a mouse
-- Fix latent floppy drive access in Axis Assassin, Ballblazer, Galatic Attack, Roadblock, Situation Critical, Spellweilder (issues [578](https://github.com/a2-4am/4cade/issues/578), [585](https://github.com/a2-4am/4cade/issues/585), [586](https://github.com/a2-4am/4cade/issues/586), [587](https://github.com/a2-4am/4cade/issues/587))
+- Fix latent floppy drive access in Axis Assassin, Ballblazer, Force 7, Galactic Attack, Roadblock, Situation Critical, Spellweilder (issues [618](https://github.com/a2-4am/4cade/issues/618), [578](https://github.com/a2-4am/4cade/issues/578), [585](https://github.com/a2-4am/4cade/issues/585), [586](https://github.com/a2-4am/4cade/issues/586), [587](https://github.com/a2-4am/4cade/issues/587))
 - Renamed "A City Dies" to "Night Falls" to match original packaging
 - Add more game help
 
