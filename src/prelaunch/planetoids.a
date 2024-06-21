@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021, 2024 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PLANETOIDS",plain
@@ -18,8 +18,16 @@
          lda   #$A9
          sta   $1570
 +
+         lda   #<callback
+         sta   $81C
+         lda   #>callback
+         sta   $81D
          +DISABLE_ACCEL
          jmp   $800
+
+callback
+         jsr   $FC58
+         jmp   $96B
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
