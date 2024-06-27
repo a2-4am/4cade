@@ -1,0 +1,39 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/DEMO/CREEPY.CRRIDORS#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $1D21
+         jsr   $1D00      ; decompress
+         sta   $805       ; allow demo to finish level
+         sta   $9C5
+         sty   $9C6       ; exit on level complete
+         sta   $A36
+         sty   $A37       ; exit on keypress
+         sty   $1507      ; no sound
+         sty   $151C      ; no sound
+         sty   $1747      ; no sound
+         sty   $17B0      ; no sound
+         sty   $17B8      ; no sound
+         sty   $732E      ; no sound
+         sty   $7342      ; no sound
+         sta   $739F      ; no sound
+
+         +DISABLE_ACCEL
+
+         jmp   $800
+
+title    +PSTRING "CREEPY.CRRIDORS"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
