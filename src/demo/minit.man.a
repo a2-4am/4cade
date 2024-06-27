@@ -1,0 +1,104 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/DEMO/MINIT.MAN#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+skip_cb
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR minit_man, minit_man_dir_e-minit_man_dir_b
+         +READ_ROM_NO_WRITE
+         lda   #$60
+         sta   $9FD
+         jsr   $800       ; decompress
+         lda   #<callback1
+         sta   $B748
+         lda   #>callback1
+         sta   $B749
+         jmp   $B700
+
+callback1
+         ldx   #(callback2_e-callback2_b)-1
+-        lda   callback2_b,x
+         sta   callback2,x
+         dex
+         bpl   -
+         lda   #<callback2
+         sta   $A17E
+         lda   #>callback2
+         sta   $A17F
+         jmp   $9D84
+
+callback2_b !pseudopc $106 {
+callback2
+         +DISABLE_ACCEL
+         jsr   check_ts
+         jmp   $9F83
+
+check_ts
+         ldy   #0
+         ldx   $B7EC
+         lda   $B7ED
+         bne   ++
+         cpx   #$13
+         bne   +
+         ldx   #5
+-        lda   patch,x
+         sta   $5363,x
+         dex
+         bpl   -
++
+-        rts
+++       cpx   #$16
+         bne   +
+         cmp   #8
+         bne   -
+         sty   $290B
+         iny
+         sty   $290C      ; keypress exit
+         rts
++        cpx   #4
+         bne   +
+         cmp   #6
+         bne   -
+         lda   #$4C
+         sta   $435B
+         sty   $435C
+         iny
+         sty   $435D      ; keypress exit
+         sty   $438E
+         sty   $4393      ; skip instructions
+         rts
++        cpx   #$18
+         bne   -
+         cmp   #$0A
+         bne   -
+         lda   #$4C
+         sta   $81E6
+         sty   $81E7
+         iny
+         sty   $81E8      ; keypress exit
+         sty   $801F      ; one title cycle
+         rts
+
+patch    !byte $80,$90,$0a,$4c,0,1
+}
+callback2_e
+
+minit_man
+         !byte minit_man_e-minit_man_b
+minit_man_b
+minit_man_dir_b
+         !text "X"
+minit_man_dir_e
+         !text "/MINIT.MAN"
+minit_man_e
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
