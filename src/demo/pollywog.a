@@ -1,0 +1,34 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/DEMO/POLLYWOG#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         +USES_TEXT_PAGE_2
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $5A0D
+         jsr   $800       ; decompress
+         jsr   $BE06
+         ldx   #4
+-        lda   patch,x
+         sta   $7981,x
+         dex
+         bpl   -
+         +DISABLE_ACCEL
+         jmp   $792E
+
+patch    !byte $83, $79, $4c, 0, 1
+
+title    +PSTRING "POLLYWOG"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
