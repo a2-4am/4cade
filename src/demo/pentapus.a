@@ -1,0 +1,79 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/DEMO/PENTAPUS#06BE00",plain
+*=$BE00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR pentapus, pentapus_dir_e-pentapus_dir_b
+         lda   #<callback1
+         sta   $5412
+         lda   #>callback1
+         sta   $5413
+         jmp   $800       ; decompress
+
+callback1
+         jsr   $200
+         lda   #<callback2
+         sta   $A0CF
+         lda   #>callback2
+         sta   $A0D0
+         ldx   #$20
+         stx   $7C84
+         stx   $7D06
+         stx   $7D16
+         ldx   #5
+         stx   $7D10
+         ldx   #<callback3
+         stx   $7D07
+         sta   $7D08
+         ldx   #0
+         stx   $7C85
+         stx   $7D17
+         inx
+         stx   $7C86
+         stx   $7D18
+         ldx   #<exit
+         stx   $AA20
+         sta   $AA21
+         +DISABLE_ACCEL
+         jmp   $800
+
+callback2
+         lda   $BF
+         cmp   #$A7
+         bne   +
+         lda   $BE
+         cmp   #$C6
+         bne   +
+         dec   counter
+         beq   ++
++        jmp   $B6
+
+callback3
+         lda   $C000
+         bmi   ++
+         rts
+++
+exit=*+1
+         jmp   $100
+
+counter  !byte 2
+
+pentapus
+         !byte pentapus_e-pentapus_b
+pentapus_b
+pentapus_dir_b
+         !text "X"
+pentapus_dir_e
+         !text "/PENTAPUS"
+pentapus_e
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}
