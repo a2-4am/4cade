@@ -24,6 +24,8 @@
          sta   $7981,x
          dex
          bpl   -
+         jsr   $778D      ; silence
+         sta   $77E3
          +DISABLE_ACCEL
          jmp   $792E
 
