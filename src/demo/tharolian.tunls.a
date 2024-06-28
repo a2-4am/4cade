@@ -1,0 +1,53 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/DEMO/TU#06BE00",plain
+*=$be00
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         +LOAD_FILE_KEEP_DIR tharolian_tunnels, tharolian_tunnels_dir_e-tharolian_tunnels_dir_b
+         +READ_ROM_NO_WRITE
+
+         dec   $60B3
+         lda   #0
+         sta   $6122      ; silence
+         lda   #$60
+         sta   $60A4
+         sta   $611D
+         jsr   $6000      ; decompress
+         lda   #$60
+         sta   $95D7
+         jsr   $95B0      ; level select
+         ldx   #$4C
+         stx   $AA9
+         stx   $95D7
+         ldy   #1
+         sty   $AAB
+         sta   $AC3
+         stx   $7FC5
+         sty   $7FC7
+         stx   $8E64
+         sty   $8E66
+         sty   $95D9
+         +DISABLE_ACCEL
+         jmp   $A00
+
+tharolian_tunnels
+         !byte tharolian_tunnels_e-tharolian_tunnels_b
+tharolian_tunnels_b
+tharolian_tunnels_dir_b
+         !text "X"
+tharolian_tunnels_dir_e
+         !text "/TU"
+tharolian_tunnels_e
+
+!if * > $BEFF {
+  !error "code is too large, ends at ", *
+}
