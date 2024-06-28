@@ -2,8 +2,8 @@
 ;(c) 2024 by qkumba
 
 !cpu 6502
-!to "build/DEMO/MINIT.MAN#060300",plain
-*=$300
+!to "build/DEMO/MINIT.MAN#069000",plain
+*=$9000
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
@@ -23,11 +23,11 @@ skip_cb
          jmp   $B700
 
 callback1
-         ldx   #(callback2_e-callback2_b)-1
+         ldx   #0
 -        lda   callback2_b,x
          sta   callback2,x
-         dex
-         bpl   -
+         inx
+         bne   -
          lda   #<callback2
          sta   $A17E
          lda   #>callback2
@@ -61,6 +61,9 @@ check_ts
          sty   $290B
          iny
          sty   $290C      ; keypress exit
+         lda   #$2C
+         sta   $2BA1      ; silence
+         sta   $2BC7      ; silence
          rts
 +        cpx   #4
          bne   +
@@ -75,15 +78,29 @@ check_ts
          sty   $4393      ; skip instructions
          rts
 +        cpx   #$18
-         bne   -
+         bne   +
          cmp   #$0A
-         bne   -
+         bne   +
          lda   #$4C
          sta   $81E6
          sty   $81E7
+         sty   $831F      ; silence
+         sty   $8322      ; silence
+         sty   $8325      ; silence
          iny
          sty   $81E8      ; keypress exit
          sty   $801F      ; one title cycle
+         rts
++        cpx   #$1E
+         bne   -
+         cmp   #3
+         bne   -
+-        lda   $377D,x
+         eor   #$30
+         bne   +
+         sta   $377D,x    ; silence
++        inx
+         bne   -
          rts
 
 patch    !byte $80,$90,$0a,$4c,0,1
@@ -98,7 +115,3 @@ minit_man_dir_b
 minit_man_dir_e
          !text "/MINIT.MAN"
 minit_man_e
-
-!if * > $3F0 {
-  !error "code is too large, ends at ", *
-}
