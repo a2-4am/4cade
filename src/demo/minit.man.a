@@ -8,7 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-skip_cb
+         +GAME_REQUIRES_JOYSTICK
+
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_KEEP_DIR minit_man, minit_man_dir_e-minit_man_dir_b
