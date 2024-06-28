@@ -34,7 +34,9 @@ callback1
          ldx   #<callback3
          stx   $7D07
          sta   $7D08
-         ldx   #0
+         jsr   $70F5
+         tax
+         stx   $70FA      ; silence
          stx   $7C85
          stx   $7D17
          inx
