@@ -19,6 +19,7 @@
          sta   $5A0D
          jsr   $800       ; decompress
          jsr   $BE06
+         sta   $8E1       ; disable pause
          ldx   #4
 -        lda   patch,x
          sta   $7981,x
