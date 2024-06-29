@@ -10,11 +10,10 @@
          +USES_TEXT_PAGE_2
          +ENABLE_ACCEL
          lda   #$60       ; RTS instead of JMP
-         sta   $5A0D
+         sta   $82C
          jsr   $800       ; decompress
-         jsr   $BE06
          +DISABLE_ACCEL
-         jmp   $792E
+         jmp   $7957
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

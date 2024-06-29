@@ -16,21 +16,19 @@
          +USES_TEXT_PAGE_2
          +ENABLE_ACCEL
          lda   #$60
-         sta   $5A0D
+         sta   $82C
          jsr   $800       ; decompress
-         jsr   $BE06
-         sta   $8E1       ; disable pause
-         ldx   #4
--        lda   patch,x
-         sta   $7981,x
-         dex
-         bpl   -
-         jsr   $778D      ; silence
-         sta   $77E3
+         sta   $20E1      ; disable pause
+         sta   $8272
+         lda   #$4C
+         sta   $798B
+         lda   #1
+         sta   $798D
+         sta   $8273
+         jsr   $7791      ; silence
+         sta   $77EF
          +DISABLE_ACCEL
-         jmp   $792E
-
-patch    !byte $83, $79, $4c, 0, 1
+         jmp   $7957
 
 title    +PSTRING "POLLYWOG"
 
