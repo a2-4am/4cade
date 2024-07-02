@@ -9,9 +9,35 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         +TEST_TEXT_PAGE_2           ; will look wonky on ROM0/1 Apple //gs
-                                     ; due to lores page flipping
-         +ENABLE_ACCEL_LC
+         
+         lda   ROM_MACHINEID         ; is already on. ROM0 and ROM1 versions of ADM use
+         cmp   #$06                  ; interrupts and can cause hangs, so safer to just
+         bne   ++                    ; leave it turned off, especially in ATTRACT/DEMO mode.
+         sec
+         jsr   $FE1F                 ; check for IIgs
+         bcs   +++
+         tya                         ; GS ID routine returns with ROM version in Y
+         cmp   #0                    ; ROM 0?
+         beq   ++
+         cmp   #1                    ; ROM 1?
+         beq   ++
+         lda   #$20
+         sta   $0800                 ; check if Alternate Display Mode is already on
+         lda   #$FF
+         jsr   ROM_WAIT              ; skip a VBL cycle
+!cpu 65816
+         lda   $E00800               ; did we shadow copy data to bank $E0?
+         cmp   #$20
+         beq   +                     ; only call TEXT2COPY if we know it's off
+!cpu 6502              ; https://archive.org/details/develop-04_9010_October_1990/page/n51/mode/1up
+         jsr   ROM_TEXT2COPY         ; set alternate display mode on IIgs (required for some games)
++        cli                         ; enable VBL interrupts
+         jmp   +++
+
+++       jmp   $100       ; can't play demo on ROM0 or ROM1 Apple IIgs
+                          ; due to extensive use of page 2 throughout
+
++++      +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          +READ_ROM_NO_WRITE
 
