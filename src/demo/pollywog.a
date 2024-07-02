@@ -19,16 +19,29 @@
          sta   $82C
          jsr   $800       ; decompress
          sta   $20E1      ; disable pause
+         sta   $6035
+         sta   $79CF
          sta   $8272
          lda   #$4C
+         sta   $6034
          sta   $798B
+         sta   $79CE
          lda   #1
+         sta   $6036
          sta   $798D
+         sta   $79D0
          sta   $8273
          jsr   $7791      ; silence
          sta   $77EF
+         ldx   #3
+-        lda   patch,x
+         sta   $20D5,x
+         dex
+         bpl   -
          +DISABLE_ACCEL
          jmp   $7957
+
+patch    !byte 0, $ea, $ea, $10
 
 title    +PSTRING "POLLYWOG"
 
