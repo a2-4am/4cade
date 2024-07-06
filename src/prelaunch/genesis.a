@@ -22,6 +22,9 @@ callback
          sta   $1527      ; patch - don't decrease lives
          sta   $820F      ; patch - don't increase lives
 +
+         lda   #1
+         sta   $A6E       ; exit to TR on 'R'
+
          +DISABLE_ACCEL
          jmp   $900
 
