@@ -18,6 +18,10 @@
          lda   #$ad
          sta   $72AF      ; patch - don't decrease lives
 +
+         ldx   #0
+         stx   $82DA
+         inx
+         stx   $82DB
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 
