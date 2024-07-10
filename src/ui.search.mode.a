@@ -132,12 +132,11 @@ SearchMode
 .SearchModeInputLoop
          jsr   WaitForKeyFor30Seconds
 
-         ; Don't clear keyboard strobe yet. If the user pressed an arrow key,
-         ; we want to switch to Browse Mode with the keyboard still hot so
-         ; that mode finds and dispatches the arrow key.
+         ; Don't clear keyboard strobe yet. Certain keys switch to Browse Mode
+         ; with the keyboard still hot so that mode dispatches it
 
          ldx   #kInputBrowse
-         jsr   IsUpDownOrRightArrow
+         jsr   IsKeyThatSwitchesToBrowseMode
          beq   .InputDispatch
          bit   CLEARKBD
 

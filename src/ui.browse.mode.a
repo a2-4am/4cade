@@ -37,6 +37,7 @@ kSoftBell       = 9 ; must match kInputError
 kBrowseJoystick = 10
 kBrowseQuit     = 11
 kBrowseSHR      = 12
+kBrowseRandom   = 13
 
          ldy   #kNumBrowseKeys
 -        dey
@@ -94,6 +95,18 @@ notLastGame
          +STX16 gGameToLaunch
          jmp   OnBrowseChanged
 
+OnBrowseRandom
+         bit   $ff58
+         +LD16 RNDSEED
+         +ST16 .rnd
+         jsr   n_mod_m
+.rnd     !word 0
+GameCount
+         !word 0
+         stx   gGameToLaunch
+         sta   gGameToLaunch+1
+         jmp   OnBrowseChanged
+
 ReloadIndexAndLaunch
          jsr   ReloadSearchIndex
 OnBrowseLaunch
@@ -144,6 +157,7 @@ BrowseDispatchTableLo
          !byte <Joystick
          !byte <OnQuit
          !byte <AllSHRSlideshow
+         !byte <OnBrowseRandom
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -158,8 +172,9 @@ BrowseDispatchTableHi
          !byte >Joystick
          !byte >OnQuit
          !byte >AllSHRSlideshow
+         !byte >OnBrowseRandom
 
-kNumBrowseKeys = 15
+kNumBrowseKeys = 16
                                      ; number of entries in next 2 tables (each)
 BrowseKeys
          !byte $80                   ; Ctrl-@ = SHR-only slideshow
@@ -177,6 +192,7 @@ BrowseKeys
          !byte $8A                   ; down arrow = next
          !byte $88                   ; left arrow = previous
          !byte $95                   ; right arrow = next
+         !byte $AA                   ; '*' = select random
 BrowseKeyDispatch
          !byte kBrowseSHR
          !byte kBrowseCheat
@@ -193,6 +209,61 @@ BrowseKeyDispatch
          !byte kBrowseNext
          !byte kBrowsePrevious
          !byte kBrowseNext
+         !byte kBrowseRandom
 
-GameCount
-         !word 0
+;------------------------------------------------------------------------------
+; n_mod_m
+; Calculate remainder of dividing two 16-bit numbers (often written in modern
+; programming languages as 'n % m')
+;
+; in:    stack contains 4 bytes of parameters:
+;          +1 [word] n
+;          +3 [word] m
+; out:   16-bit value returned in X (high) and A (lo)
+;        clobbers Y
+;        clobbers zp$00..$05
+;------------------------------------------------------------------------------
+;out: X (low), A (high)
+;trashes Y, and $0-5
+n_mod_m
+         pla
+         tay
+         pla
+         tax
+         iny
+         bne   +
+         inx
++        sty   $0
+         stx   $1
+         ldy   #3
+         clc
+         tya
+         adc   $0
+         sta   $2
+         bcc   +
+         inx
++        txa
+         pha
+         lda   $2
+         pha
+-        lda   ($0),y
+         sta   $2,y
+         dey
+         bpl   -
+         sec
+-        lda   $2
+         sbc   $4
+         tax
+         lda   $3
+         sbc   $5
+         bcc   +
+         stx   $2
+         sta   $3
+         bcs   -                     ; always branches
++        tay
+         txa
+         adc   $4
+         tax
+         tya
+         adc   $5
+         rts

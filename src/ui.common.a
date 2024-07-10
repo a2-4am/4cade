@@ -8,7 +8,7 @@
 ; - BlankDHGR
 ; - DHGRMode
 ; - IsSearchKey
-; - IsUpDownOrRightArrow
+; - IsKeyThatSwitchesToBrowseMode
 ;
 
 ;------------------------------------------------------------------------------
@@ -137,19 +137,21 @@ IsSearchKey
          rts
 
 ;------------------------------------------------------------------------------
-; IsUpDownOrRightArrow
-; test whether accumulator contains ASCII code for up, down, or right arrow
-; search
+; IsKeyThatSwitchesToBrowseMode
+; test whether accumulator contains ASCII code for up, down, or right arrow,
+; or asterisk
 ;
 ; in:    A = key
 ; out:   all registers preserved
-;        Z = 1 if accumulator was one of those 3 keys
+;        Z = 1 if accumulator was one of those keys
 ;        Z = 0 otherwise
 ;------------------------------------------------------------------------------
-IsUpDownOrRightArrow
+IsKeyThatSwitchesToBrowseMode
          cmp   #$8B                  ; up arrow
          beq   @done
          cmp   #$95                  ; right arrow
          beq   @done
          cmp   #$8A                  ; down arrow
+         beq   @done
+         cmp   #$AA                  ; '*'
 @done    rts
