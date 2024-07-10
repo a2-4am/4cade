@@ -30,6 +30,7 @@
 
 ### Enhancements & bug fixes in v5.2
 
+- Press asterisk to select a random game (closes [226](https://github.com/a2-4am/4cade/issues/226))
 - Update Pollywog to release version
 - Fix launch issues in Angry Birds, Mazeblox, Pegasus II, Spy Hunter, Super Zaxxon, The Space Ark (issues [567](https://github.com/a2-4am/4cade/issues/567), [568](https://github.com/a2-4am/4cade/issues/568), [565](https://github.com/a2-4am/4cade/issues/565), [572](https://github.com/a2-4am/4cade/issues/572))
 - Fix reset issues in Agent USA, Death Sword, Impossible Mission II, Lethal Labyrinth, Pegasus II, Rescue Raiders, Starglider, Time Pilot (issues [577](https://github.com/a2-4am/4cade/issues/577), [575](https://github.com/a2-4am/4cade/issues/575), [579](https://github.com/a2-4am/4cade/issues/579), [582](https://github.com/a2-4am/4cade/issues/582), [584](https://github.com/a2-4am/4cade/issues/584), [569](https://github.com/a2-4am/4cade/issues/569), [570](https://github.com/a2-4am/4cade/issues/570))
