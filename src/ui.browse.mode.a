@@ -219,7 +219,7 @@ BrowseKeyDispatch
 ; in:    stack contains 4 bytes of parameters:
 ;          +1 [word] n
 ;          +3 [word] m
-; out:   16-bit value returned in X (high) and A (lo)
+; out:   16-bit value returned in X (lo) and A (high)
 ;        clobbers Y
 ;        clobbers zp$00..$05
 ;------------------------------------------------------------------------------
