@@ -29,6 +29,8 @@
          sta   $AF8D
          lda   #>callback2
          sta   $AF8E
+         lda   #1
+         sta   $1300      ; allow exit to TR
          +DISABLE_ACCEL
          jmp   $3FFD
 
