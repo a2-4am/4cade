@@ -10,7 +10,7 @@
          +USES_TEXT_PAGE_2
          +ENABLE_ACCEL
          lda   #$60       ; RTS instead of JMP
-         sta   $82C
+         sta   $846
          jsr   $800       ; decompress
          +DISABLE_ACCEL
          jmp   $7957
