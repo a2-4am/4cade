@@ -20,7 +20,8 @@
          sta   $4097      ; patch - don't decrease lives
          sta   $4080      ; patch - don't decrease time
 +
-
+         lda   #$80
+         sta   $6dd5      ; fix joystick down
          +DISABLE_ACCEL
          jmp   $4000
 
