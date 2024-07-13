@@ -11,6 +11,8 @@
          lda   #$60
          sta   $1F4E
          jsr   $1F00      ; decompress
+         dec   $6AD1
+         inc   $6ADA      ; swap buttons
          +DISABLE_ACCEL
          jmp   $9050
 
