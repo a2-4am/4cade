@@ -44,19 +44,20 @@
          lda   #$60
          sta   $846
          jsr   $800       ; decompress
-         sta   $20E1      ; disable pause
-         sta   $6035
-         sta   $79CF
-         sta   $8272
+         iny
+         sty   $20E1      ; disable pause
+         sty   $6035
+         sty   $79CF
+         sty   $8272
          lda   #$4C
          sta   $6034
          sta   $798B
          sta   $79CE
-         lda   #1
-         sta   $6036
-         sta   $798D
-         sta   $79D0
-         sta   $8273
+         iny
+         sty   $6036
+         sty   $798D
+         sty   $79D0
+         sty   $8273
          jsr   $7791      ; silence
          sta   $77EF
          ldx   #3
