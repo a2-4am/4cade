@@ -32,6 +32,13 @@
          +LC_REBOOT
          +DISABLE_ACCEL
          inc   $9d        ; game relies on it
+         lda   #$52
+         sta   $cc        ; game relies on it
+         lda   #0
+         sta   $cb        ; game relies on it
+         sta   $ca        ; game relies on it
+         lda   #$80
+         sta   $c9        ; game relies on it
          jmp   $95E5
 
 callback1
