@@ -56,18 +56,8 @@ GetMockingboardStuff
          sta   MAGIC_Z80_LOCATION, x
          dex
          bpl   -
-
-         lda   $C405
-         cmp   #$38
-         bne   not_mouse
-         lda   $C407
-         cmp   #$18
-         beq   +                     ; looks like the mouse
-         stx   $C403                 ; enable Mockingboard 4C support in slot 4
+         stx   $C403                 ; enable Mockingboard 4C support
          stx   $C404
-         bne   @not_iic              ; always
-+        stx   $C503                 ; try enable Mockingboard 4C support in slot 5 instead
-         stx   $C504
 
 @not_iic
          lda   #$00
