@@ -11,6 +11,7 @@
 - Fido
 - Hopman
 - Mutant (Steve Waldo)
+- Osotos
 - Panic Button
 - Pick 'n' Pile
 - Run For The Money
