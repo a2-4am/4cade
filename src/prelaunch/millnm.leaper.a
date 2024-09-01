@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/MILLNM.LEAPER",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $836
+         jsr   $800       ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #0
+         sta   $95F0      ; patch - don't increase lives
+         sta   $9985      ; patch - don't decrease lives
+         sta   $8549      ; patch - don't decrease time
++
+         +DISABLE_ACCEL
+         jmp   $9000
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
