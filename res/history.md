@@ -10,6 +10,7 @@
 - Ether Quest
 - Fido
 - Hopman
+- Millennium Leaper
 - Mutant (Steve Waldo)
 - Osotos
 - Panic Button
