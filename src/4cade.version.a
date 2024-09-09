@@ -9,5 +9,5 @@ LoadingBuild
          !word BUILDNUMBER
 } else {
 LoadingVersion
-         +PSTRING "        v5.1"
+         +PSTRING "        v5.2"
 }

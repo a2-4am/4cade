@@ -1,6 +1,6 @@
 # Total Replay changelog
 
-## Revision 5.2 / unreleased
+## Revision 5.2 / serial number 20240909
 
 ### Games added in v5.2
 
@@ -41,7 +41,7 @@
 - Fix keyboard handling in Red Alert (issue [617](https://github.com/a2-4am/4cade/issues/617)) and Wings of Fury (issue [564](https://github.com/a2-4am/4cade/issues/564), thanks xotmatrix)
 - Fix compatibility issue in H.E.R.O which assumed that a card in slot 4 of a //c must be a mouse
 - Fix latent floppy drive access in Axis Assassin, Ballblazer, Force 7, Galactic Attack, Roadblock, Situation Critical, Spellweilder (issues [618](https://github.com/a2-4am/4cade/issues/618), [578](https://github.com/a2-4am/4cade/issues/578), [585](https://github.com/a2-4am/4cade/issues/585), [586](https://github.com/a2-4am/4cade/issues/586), [587](https://github.com/a2-4am/4cade/issues/587))
-- Renamed "A City Dies" to "Night Falls" to match original packaging
+- Rename "A City Dies" to "Night Falls" to match original packaging
 - Add more game help
 
 ## Revision 5.1 / serial number 20240216
