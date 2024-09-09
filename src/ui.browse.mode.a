@@ -96,7 +96,6 @@ notLastGame
          jmp   OnBrowseChanged
 
 OnBrowseRandom
-         bit   $ff58
          +LD16 RNDSEED
          +ST16 .rnd
          jsr   n_mod_m
