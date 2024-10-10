@@ -10,56 +10,43 @@
                           ; acceleration has problems with Fastchip
                           ; let's remove it
 
-         lda   #<reset    ; fix reset during title
-         sta   $9AE
-         sta   $80FC
+         ldx   #5
+-        lda   reset, x
+         sta   $163, x
+         dex
+         bpl   -
 
          lda   #$60
          sta   $9C2
          jsr   $800       ; decompress
 
          lda   #$60
-         sta   $1B2D
          sta   $D6E6
          jsr   $1B00
-         lda   #<callback1
-         sta   $D7E9
-         lda   #>callback1
-         sta   $D7EA
-         jsr   $D000
-         lda   #<callback2
+         lda   #<callback
          sta   $8D5
-         lda   #>callback2
+         lda   #>callback
          sta   $8D6
          jmp   $800
 
-callback1
-         lda   #<reset
-         sta   $5029      ; fix tamper check
-         sta   $80FC      ; re-cloned to $FFFC
-         jmp   $5000
-
-callback2
+callback
          lda   #$4C
          sta   $D6EB
          jsr   $D003
          ldx   #5
--        lda   reset, x
-         sta   $4182, x
+-        lda   $163, x
+         sta   $4163, x
          dex
          bpl   -
          lda   #$20
          sta   $D6EB
-         lda   #$63       ; back to original vector
-         sta   $3F2
-         sta   $FFFC
          +READ_RAM2_WRITE_RAM2      ; fix on //c+
          jmp   $D6EE
 
 reset
          +READ_ROM_NO_WRITE
          jmp   $FAA6
-         
+
 !if * > $1C0 {
   !error "code is too large, ends at ", *
 }
