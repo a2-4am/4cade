@@ -1,5 +1,16 @@
 # Total Replay changelog
 
+## Revision 5.3 / unreleased
+
+### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
+
+- Video Vegas
+
+### Enhancements & bug fixes in v5.3
+
+- Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
+- Fix crash in Black Magic on Apple //c+ (closes [633](https://github.com/a2-4am/4cade/issues/633))
+
 ## Revision 5.2 / serial number 20240909
 
 ### Games added in v5.2
