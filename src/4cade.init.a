@@ -20,6 +20,11 @@
                   !serious "ProBootEntry is wrong, should be ", *
          }
 
+         BIT   $FACA
+         BIT   $FACA
+         BIT   $FAFE
+         BIT   $F82C
+         BIT   $F851                 ; work around a ROMx+BOOTi on II+ issue
          jsr   Has64K                ; check for 64K (required)
                                      ; exits with ROM read, no write
          bcc   @enough_mem
