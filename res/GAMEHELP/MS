@@ -1,6 +1,4 @@
 
-
-
 To play: Pick up flags and jump
          over goats and snowmen.
 
@@ -13,8 +11,12 @@ D * * * * * * * * * * * * * *Difficult
 
 Movement: Joystick or Keyboard
 
-            A              
-          <   >    or    <   >
-            Z                           
+     I            A            
+   J   K   or   <   >   or   <   >
+     M            Z            
+
+Up/Down jump up and down ledges, but
+the jump button is for jumping enemies
 
 Space or Button 0 * * * * * * * * Jump
+ESC * * * * * * * * * * * * * * *Pause
