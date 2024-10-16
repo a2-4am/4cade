@@ -8,42 +8,13 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL
-         jmp   skip
-
-!pseudopc $200+*-$100 {
-callback
-         pla
-         pha
-         cmp   #$5f
-         beq   +
-         dec   $512B
-+        jmp   $50C0
-}
-
-skip
-         ldy   #0
--        lda   $100,y
-         sta   $200,y
-         iny
-         bne   -
-         +RESET_VECTOR_HALF $200
+         +NEW_RESET_VECTOR $200
          lda   #$60
          sta   $950B
          jsr   $6C17       ; decompress
+         dey
+         sty   $4DE8       ; disable debug key
          +READ_RAM2_NO_WRITE
-         lda   MachineStatus
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$ad
-         sta   $4276       ; patch - don't increase lives
-         sta   $4B75       ; patch - don't decrease lives
-         lda   #$4C
-         sta   $50BD
-         lda   #<callback
-         sta   $50BE
-         lda   #>callback
-         sta   $50BF
-+
          lda   MockingboardStuff
          beq   no_mb
          and   #7
