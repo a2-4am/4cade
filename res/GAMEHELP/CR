@@ -1,10 +1,11 @@
-   Navigate the maze, find the key to
 
-   unlock the coffins, avoid mummies,
+Avoid ghosts and mummies.  Open coffins
+  with keys.  Use killer stones to kill
+     mummies.  Rings chase them away.
 
-    take jewels & vase to vault room
-
-
+   Return jewels and vase to the vault
+ room.  You must collect 4 jewels before
+          vase door will open.
 
                    A
            move  <   >  move
@@ -13,11 +14,9 @@
     Space to pick up or drop object
 
 
-
 Esc* * * * * * * * * * * * * * * * pause
-
 Ctrl-C * * * * * * * * * * * change keys
-
 Ctrl-R * * * * * * * * * * * * * restart
-
 0-7* * * * * * * * * * * * * *game speed
+Z * * * * * * * * * * * * * * * *Suicide
+R * * * * "Reincarnates" you and mummies
