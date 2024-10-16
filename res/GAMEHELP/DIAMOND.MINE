@@ -1,0 +1,23 @@
+Collect diamonds and bring them to your
+base.  Once all have been collected,
+take them from your base and exit the
+level.  Avoid or shoot enemies trying
+to steal them from you!
+
+         I                   W
+  P1   J   K               A   D P2
+  Move   L                   S   Move
+
+Ctrl-B * * * * Restart with new options
+
+Ctrl-R * * * * * * * * * * * * *Restart
+
+Ctrl-C * * * * * * * * *Change controls
+
+Ctrl-J * * * * * * * * * * * * Joystick
+
+Ctrl-K * * * * * * * * * * * * Keyboard
+
+Ctrl-S * * * * * * * * * * Toggle Sound
+
+ESC * * * * * * * * * * * * * * * Pause
