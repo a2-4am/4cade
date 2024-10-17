@@ -18,6 +18,6 @@ ctrl-r * * * * * * * * * * * * *restart
                                         
 ctrl-c * * * * * * * * * * *change keys
                                         
-ctrl-j * * joystick  ctrl-K * * * *keys
+ctrl-j * * joystick  ctrl-K* * * * keys
                                         
-ctrl-s * * sound     esc* * * * * Pause
+ctrl-s * * sound     esc * * * * *Pause
