@@ -1,14 +1,14 @@
 
          Shoot down bombers and
 
-        bases to win each level.
+        bases to win each level
 
-     Avoid or destroy interceptors.
+     Avoid or destroy interceptors
 
 
  Accelerating to full speed at the top
 
- of the screen will engage hyperdrive.
+  of the screen will engage hyperdrive
 
  Activate joystick with B0 during play
 
@@ -16,8 +16,8 @@
            move  J   L   move
                    K
 
-f / B0 * * * * * * * * * * * machine guns
+f / B0 * * * * * machine guns (unlimited)
 
-d / B1 * * * * * * * * * * * * * missiles
+d / B1 * * * * * *missiles (limited ammo)
 
 esc * * * * * * * * * * * * * * * * pause
