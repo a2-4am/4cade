@@ -1,11 +1,11 @@
 
-Avoid ghosts and mummies.  Open coffins
-  with keys.  Use killer stones to kill
-     mummies.  Rings chase them away.
+        Avoid ghosts and mummies
 
-   Return jewels and vase to the vault
- room.  You must collect 4 jewels before
-          vase door will open.
+         Open coffins with keys
+
+   Stones and rings help with mummies
+
+ Bring 4 jewels and then vase to vault
 
                    A
            move  <   >  move
@@ -14,9 +14,8 @@ Avoid ghosts and mummies.  Open coffins
     Space to pick up or drop object
 
 
-Esc* * * * * * * * * * * * * * * * pause
-Ctrl-C * * * * * * * * * * * change keys
-Ctrl-R * * * * * * * * * * * * * restart
-0-7* * * * * * * * * * * * * *game speed
-Z * * * * * * * * * * * * * * * *Suicide
-R * * * * "Reincarnates" you and mummies
+Esc* * * * *pause   0-7* * * *game speed
+
+Ctrl-C * * config   Ctrl-R * * * restart
+
+Z * * * * Suicide   R* * * Reincarnation
