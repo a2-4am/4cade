@@ -1,23 +1,23 @@
-Drop Ship: Follow provided instructions
-  and navigate ship to center of pipe
-       when in DCS Ranging mode.
+ Drop Ship: Land in the center of pipe
 
- During rescue missions, watch your men
-  Their screens indicate their status.
 
-1, 2, 3, 4 * * * * * * * *Switch Marine
-Joystick * * * * * * * * * * * Movement
-Button * * * * * * * * * * * * * * Fire
- When there are two or more marines on
-screen at one time, they should be safe
-from attack or able to free each other.
+ Rescue Missions: get marines to safety
 
-  Operations room rampage: Use fire to
- push the aliens back until you escape.
+  Look at screns to tell their status
 
-  Maze: Press fire to blow up marine.
+ 2 or more on screen rescue each other
 
-  Each mission will provide a continue
- (status) code so best write them down.
-Return * * * * * *Advance to next level
-CTRL+Q then Space * * * * *Replay level
+1-4* * *Player   Joystick* * *Move/Fire
+
+
+ Ops room: Keep aliens back long enough
+
+
+ Maze: Get out, save as many as you can
+
+
+             End of level:
+
+   Return * * * * * * * * *Next Level
+
+   Ctrl-Q, Space * * * * Replay level
