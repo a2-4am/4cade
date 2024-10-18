@@ -21,4 +21,4 @@
 
   ctrl-r * * * * * * * * Restart Level
 
-  esc * * * Pause    ctrl-s* * * Sound
+  esc* * * *Pause    ctrl-s* * * Sound
