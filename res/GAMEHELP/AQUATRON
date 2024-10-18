@@ -18,6 +18,6 @@
 
 f / B0 * * * * * machine guns (unlimited)
 
-d / B1 * * * * * *missiles (limited ammo)
+d / B1 * * * * * * * * missiles (limited)
 
-esc * * * * * * * * * * * * * * * * pause
+esc* * * * * * * * * * * * * * * * *pause
