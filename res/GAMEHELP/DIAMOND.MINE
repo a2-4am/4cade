@@ -1,23 +1,23 @@
-      Bring diamonds to your base      
-                                        
-       then take them to the exit       
-                                        
-     Avoid or shoot enemies trying     
-                                        
-        to steal them from you!        
-                                        
-    P1   I                   W   P2    
-       J   K               A   D       
-  Move   L                   S   Move  
-                                        
- Shoot  Space                1   Shoot 
-                                        
+      Bring diamonds to your base
+
+       then take them to the exit
+
+     Avoid or shoot enemies trying
+
+        to steal them from you!
+
+    P1   I                   W   P2
+       J   K               A   D
+  Move   L                   S   Move
+
+ Shoot  Space                1   Shoot
+
 ctrl-b * * * * restart with new options
-                                        
+
 ctrl-r * * * * * * * * * * * * *restart
-                                        
+
 ctrl-c * * * * * * * * * * *change keys
-                                        
-ctrl-j * * joystick  ctrl-K* * * * keys
-                                        
+
+ctrl-j * * joystick  ctrl-k* * * * keys
+
 ctrl-s * * sound     esc * * * * *Pause
