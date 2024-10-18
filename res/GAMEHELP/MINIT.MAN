@@ -1,0 +1,24 @@
+
+   Rebuild the bridge, Shoot Robots
+   
+      Launch 3 missiles in time
+
+
+           joystick to move
+
+           button 0 to fire
+
+     button 1 to rotate helicopter
+
+    both buttons drop bridge piece
+
+           button 1 to jump
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+S* * * * * * * * * * * * * * * * * sound
+
+Ctrl-R * * * * * * * * * * * * * restart
+
+ Control elevator with diagonal movement
