@@ -14,8 +14,8 @@
     Space to pick up or drop object
 
 
-Esc* * * * *pause   0-7* * * *game speed
+esc * * * * pause   0-7 * * * game speed
 
-Ctrl-C * * config   Ctrl-R * * * restart
+ctrl-c* * *config   ctrl-r* * * *restart
 
-Z * * * * Suicide   R* * * Reincarnation
+z * * * * suicide   R * * *reincarnation
