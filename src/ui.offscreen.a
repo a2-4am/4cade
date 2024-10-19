@@ -237,7 +237,7 @@ CopyHGR
 +        sty   PageFrom
          sta   PageTo+2
 ClearToBlack
-         lda   #$00
+         lda   #$80                  ; clear to BLACK2
 ClearGR
          ldy   #0
 PageFrom lda   $FD00,y               ; SMC address high byte, also SMC opcode (might be BIT)
