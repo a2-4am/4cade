@@ -8,9 +8,9 @@
 
     P1   I                   W   P2
        J   K               A   D
-  Move   L                   S   Move
+  move   L                   S   move
 
- Shoot  Space                1   Shoot
+ shoot  Space                1   shoot
 
 Ctrl-B * * * * restart with new options
 
@@ -18,6 +18,6 @@ Ctrl-R * * * * * * * * * * * * *restart
 
 Ctrl-C * * * * * * * * * * *change keys
 
-Ctrl-J * * joystick  Ctrl-k* * * * keys
+Ctrl-J * * joystick  Ctrl-K* * * * keys
 
-Ctrl-S * * sound     Esc * * * * *Pause
+Ctrl-S * * sound     Esc * * * * *pause
