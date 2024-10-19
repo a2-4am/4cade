@@ -1,10 +1,11 @@
-   Navigate the maze, find the key to
 
-   unlock the coffins, avoid mummies,
+        Avoid ghosts and mummies
 
-    take jewels & vase to vault room
+         Open coffins with keys
 
+   Stones and rings help with mummies
 
+ Bring 4 jewels and then vase to vault
 
                    A
            move  <   >  move
@@ -13,11 +14,8 @@
     Space to pick up or drop object
 
 
+Esc * * * * pause   0-7 * * * game speed
 
-Esc* * * * * * * * * * * * * * * * pause
+Ctrl-C* * *config   Ctrl-R* * * *restart
 
-Ctrl-C * * * * * * * * * * * change keys
-
-Ctrl-R * * * * * * * * * * * * * restart
-
-0-7* * * * * * * * * * * * * *game speed
+Z * * * * suicide   R * * *reincarnation
