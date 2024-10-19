@@ -17,8 +17,8 @@
            J   K   or   <   >
              M            Z
 
-space / B0 * * * * * * * * * Force Field
+Space / B0 * * * * * * * * * force field
 
-ctrl-r * * * * * * * * * * Restart Level
+Ctrl-R * * * * * * * * * * restart level
 
-esc* * * *Pause        ctrl-s* * * Sound
+Esc* * * *pause        Ctrl-S* * * sound
