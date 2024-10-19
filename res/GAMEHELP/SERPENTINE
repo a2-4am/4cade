@@ -15,10 +15,10 @@
           move   <   >   move
                    Z
 
-c* * * * * * * * * * change key mappings
+C* * * * * * * * * * change key mappings
 
-return * * * * * * view high score table
+Return * * * * * * view high score table
 
-esc* * * * * * * * * * * * * * * * pause
+Esc* * * * * * * * * * * * * * * * pause
 
  ! and dollar while paused adds lives!
