@@ -12,12 +12,12 @@
 
  Shoot  Space                1   Shoot
 
-ctrl-b * * * * restart with new options
+Ctrl-B * * * * restart with new options
 
-ctrl-r * * * * * * * * * * * * *restart
+Ctrl-R * * * * * * * * * * * * *restart
 
-ctrl-c * * * * * * * * * * *change keys
+Ctrl-C * * * * * * * * * * *change keys
 
-ctrl-j * * joystick  ctrl-k* * * * keys
+Ctrl-J * * joystick  Ctrl-k* * * * keys
 
-ctrl-s * * sound     esc * * * * *Pause
+Ctrl-S * * sound     Esc * * * * *Pause
