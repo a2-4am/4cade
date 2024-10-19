@@ -15,8 +15,8 @@
           move   J   K   move
                    M
 
-Return/B0 * *Jump   Space/B1* * * *Fire
+Return/B0 * *jump   Space/B1* * * *fire
 
-Ctrl-J* *Joystick   Esc * * *Next Level
+Ctrl-J* *joystick   Esc * * *next level
 
-Z * * * * Suicide   P * * * * * * Pause
+Z * * * * suicide   P * * * * * * pause
