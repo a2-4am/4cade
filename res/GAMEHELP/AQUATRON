@@ -16,8 +16,8 @@
            move  J   L   move
                    K
 
-f / B0 * * * * * machine guns (unlimited)
+F / B0 * * * * * machine guns (unlimited)
 
-d / B1 * * * * * * * * missiles (limited)
+D / B1 * * * * * * * * missiles (limited)
 
-esc* * * * * * * * * * * * * * * * *pause
+Esc* * * * * * * * * * * * * * * * *pause
