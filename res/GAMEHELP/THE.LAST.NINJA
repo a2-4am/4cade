@@ -6,19 +6,19 @@ Esc * * * * * * * * * * * * * * * *pause
 
 Space* * * * * *sheathe/unsheathe weapon
 
-Hold B0, ↑ ↓ < >* * * * * * * punch/kick
+Hold B0,   < >* * * * * * * punch/kick
 
 Hold B0 + diagonals* * * * pick up items
 
+Arrow keys * * * * * * * cycle inventory
+
 Press B0 while moving * * * * * * * jump
 
- Desert and water screens will let you
+ Some screens require a lot of jumping
 
-    control jumps using diagonal or
+    Use diagonals+B0 for short jumps
 
-    cardinal for short or long jumps
-
-      instead of fighting controls
+     and <> + B0  for long jumps
 
 
     https://a2.click/lastninjaguide
