@@ -1,20 +1,23 @@
 
+  Move your cloudship up and down and
+
+      take out the enemy ships and
+
+              replinishers
+
+          Keyboard or joystick
 
 
-       Shoot anything that moves
+         A      < B1      > B0
+
+         Z      fire      fire
+
+       move     left      right
 
 
 
-          joystick or keyboard
+V * * * * * * * * * * * view high scores
 
- A
+Esc * * * * * * * * * * * * * * * *pause
 
-move           <  shoot (directional)  >
-
- Z
-
-
-
-Esc* * * * * * * * * * * * * * * * pause
-
-Ctrl-S * * * * * * * * * configure sound
+Ctrl-S* * * * * * * * * * * toggle sound
