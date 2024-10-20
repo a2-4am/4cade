@@ -1,20 +1,21 @@
-
-
 Shot cretins, avoid skulls and buzzards.
 
        Find keys to unlock doors
 
              Joystick only
 
+
 B0 * * * * * * * * * * * * * * * * start
 
-Joy <, > * * * * * * * * * * * * * *move
+<, > * * * * * * * * * * * * * * * *move
+
+B0 + <, >* * * * * * * jump left / right
 
 ↓ + B0 * * * * * * * * * * * * * * *fire
 
 ↓* * * * * * * * * * * * * * * * *reload
 
-↑* * * * * * * * * * * * * * * * * *jump
+↑* * * * * * * * * * * * * * * * jump up
 
 Ctrl-R * * * * * * * * * * * * * restart
 
