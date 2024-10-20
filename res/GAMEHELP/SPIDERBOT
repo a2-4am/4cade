@@ -1,4 +1,3 @@
-
    Collect parts to become spiderbot.
 
 Collect creatures to give you abilities.
@@ -14,10 +13,10 @@ Collect creatures to give you abilities.
 
 B0, $, or %* * * * * * * * * *launch net
 
-hold to launch further, up to go faster
+hold to launch further,  to go faster
 
-Down, then Up* * * * * * * * * * * *jump
+, then * * * * * * * * * * * * * *jump
 
-B0, $ or % while holding Down* * * *menu
+B0, $ or % while holding  * * * * *menu
 
-Select from menu with left/right/button
+Select from menu with <, >, B0 / $ / %
