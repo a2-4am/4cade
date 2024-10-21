@@ -1,0 +1,24 @@
+Infiltrate a lab, discover its secrets.
+
+     Supports joystick and keyboard
+
+
+             U I O   7 8 9
+
+      move   J   L   4   6   move
+
+             M , .   1 2 3
+
+Space / B0* * * * * * * * * * * * *shoot
+
+T / B1* * * * * * * * * * throw grenades
+
+Esc * * * * * * * * * * * * * * * *pause
+
+Return* * * * * * * * * * show inventory
+
+Ctrl-A* * * *restart level (lose a life)
+
+Ctrl-E* * * * * * * * * * * *game editor
+
+Ctrl-R* * * * * * * * * * *redraw screen
