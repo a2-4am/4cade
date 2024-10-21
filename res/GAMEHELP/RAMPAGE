@@ -1,0 +1,24 @@
+   Destroy the town and avoid taking
+
+   damage from bullets, shocks, falls
+
+           or other players.
+
+    Only one player can use joystick
+
+
+George-ape   Lizzie-lizard    Ralph-wolf
+
+    W              Y              P
+  A   D   move   G   J   move   L   '
+    X              N              /
+
+    S     stop     H     stop     ;
+
+    Q     jump     T     jump     O
+
+    E     punch    U    punch     [
+
+Esc * * * * * pause  Q * * * * * * quit
+
+S * * *toggle sound  Space * * * resume
