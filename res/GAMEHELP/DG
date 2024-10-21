@@ -1,24 +1,23 @@
-Infiltrate a lab, discover its secrets.
+   Free the hostages in the building.
 
-     Supports joystick and keyboard
+joystick U I O    7 8 9  shoot  grenade
 
+  or     J   L or 4   6   B0      B1
 
-             U I O   7 8 9
+keyboard M , .    1 2 3  Space    T
 
-      move   J   L   4   6   move
+Return* * * *status  Esc* * * * * *pause
 
-             M , .   1 2 3
-
-Space / B0* * * * * * * * * * * * *shoot
-
-Return* * * * * * * * * * show inventory
-
-T / B1* * * * * * * * * * throw grenades
-
-Esc * * * * * * * * * * * * * * * *pause
-
-Ctrl-A* * * *restart level (lose a life)
+Ctrl-A* * abort/die  Ctrl-S * * * *sound
 
 Ctrl-E* * * editor   Ctrl-R* * * *redraw
 
-Ctrl-L* * *room 30   Ctrl-N* *see room #
+Ctrl-L* * * * *load  Ctrl-G* * * * *save
+
+Ctrl-N* * *location  Ctrl-E* * * *editor
+
+Ctrl-C* * * * * * * cheat, and then use:
+
+    K)ill all L)ife G)renades W)gun
+
+ S)ecurity key D)isplay pic N)ext level
