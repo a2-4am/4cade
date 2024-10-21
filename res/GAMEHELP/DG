@@ -11,14 +11,14 @@ Infiltrate a lab, discover its secrets.
 
 Space / B0* * * * * * * * * * * * *shoot
 
+Return* * * * * * * * * * show inventory
+
 T / B1* * * * * * * * * * throw grenades
 
 Esc * * * * * * * * * * * * * * * *pause
 
-Return* * * * * * * * * * show inventory
-
 Ctrl-A* * * *restart level (lose a life)
 
-Ctrl-E* * * * * * * * * * * *game editor
+Ctrl-E* * * editor   Ctrl-R* * * *redraw
 
-Ctrl-R* * * * * * * * * * *redraw screen
+Ctrl-L* * *room 30   Ctrl-N* *see room #
