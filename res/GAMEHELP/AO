@@ -1,0 +1,20 @@
+
+
+
+
+ Avoid the asteroids, shoot everyhing
+
+        Uses paddle + keyboard
+
+
+
+
+S* * * * * * * * * * * * * * * * * start
+
+Paddle 0 (/) * * * * * * * * * *rotate
+
+B0* * * * * * * * * * * * * * *thrusters
+
+0-9 * * * * * * * * * * * * * * * *shoot
+
+Any other key * * * * * * * * * teleport
