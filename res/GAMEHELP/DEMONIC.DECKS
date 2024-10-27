@@ -1,0 +1,22 @@
+
+  Shoot running enemies and jump over
+
+   snakes.  Collect all the items and
+
+         avoid the trap doors.
+
+          Keyboard or joystick
+
+
+
+B0 / Q * * * * * * * * * * * * * * *jump
+
+B1 / Space * * * * * * * * * * * * shoot
+
+Ctrl-K * * * * * * * *switch to keyboard
+
+Ctrl-J * * * * * * * *switch to joystick
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * *toggle sound
