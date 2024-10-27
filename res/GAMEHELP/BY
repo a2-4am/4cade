@@ -1,0 +1,23 @@
+
+Collect bats and get them to the belfry
+
+            Avoid spiders
+
+        Keyboard or joystick
+
+  Asks you to configure keys on start
+
+
+<, >* * * * * * * * * * * * * * * * move
+
+, * * * * * * * * * * * * climb stairs
+
+B0* * * * * * * * * * * * * * * * * jump
+
+B1* * * * * * * * * * * * * * * * * swat
+
+Esc * * * * * * * * * * * * * * * *pause
+
+Ctrl-S* * * * * * * * * * * toggle sound
+
+Ctrl-R* * * * * * * * * * * * * *restart
