@@ -1,0 +1,33 @@
+;license:MIT
+;(c) 2024 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/KABOOM",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $82A
+         jsr   $800       ; decompress
+         lda   #$4C
+         sta   $7AE1
+         lda   #<callback
+         sta   $7AE2
+         lda   #>callback
+         sta   $7AE3
+         +DISABLE_ACCEL
+         jmp   $4000
+
+callback
+         sec
+         sbc   #$F8
+         cmp   #2
+         bcc   +
+         jmp   $7AEA
++        jmp   $7AE5
+
+!if * > $1C0 {
+  !error "code is too large, ends at ", *
+}
