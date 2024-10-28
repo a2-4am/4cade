@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba
+;(c) 2024 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/KABOOM",plain
@@ -17,6 +17,11 @@
          sta   $7AE2
          lda   #>callback
          sta   $7AE3
+
+         lda   #$2C       ; reset fix
+         sta   $42FF
+         sta   $4302
+
          +DISABLE_ACCEL
          jmp   $4000
 
