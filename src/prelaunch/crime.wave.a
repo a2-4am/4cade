@@ -12,13 +12,6 @@
          sta   $244B
          jsr   $2400      ; decompress
          +READ_RAM2_NO_WRITE
-         lda   MachineStatus
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$A5
-         sta   $9D89      ; patch - don't decrease lives
-         sta   $9DF4      ; patch - don't increase lives
-+
                           ; reset vector in high score file
                           ; gets loaded directly to $300
          lda   MockingboardStuff
