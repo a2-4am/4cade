@@ -119,6 +119,7 @@ GetMockingboardStuff
          sta   @mb_smc20 + 2
          sta   @mb_smc21 + 2
          sta   @mb_smc22 + 2
+         sta   @mb_smc23 + 2
 
          ; detect speech - SSI263
 
@@ -184,6 +185,10 @@ GetMockingboardStuff
          lda   #$3f                  ; stop
 @mb_smc19
          sta   $c400                 ; orb, write phoneme & pitch
+         lda   #$10
+@mb_smc23
+         bit   $c40d                 ; ifr, check for cb1 interrupt flag
+         bne   @got_irq              ; work around A2FPGA bug that does not clear cb1
 
          ldx   #$D0                  ; wait ~120ms, stop takes 47ms
 -        lda   #$10
