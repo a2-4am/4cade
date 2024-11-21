@@ -239,6 +239,15 @@
          stx   MockingboardStuff     ; save mockingboard slot and type
          txa                         ; requires RAM1 write
          php
+         bmi   @mb_speech
+         asl
+         bpl   @no_speech
+         lsr
+@mb_speech
+         and   #7
+         ora   #$C0
+         sta   SilenceIsGolden + 2
+@no_speech
          jsr   BuildVBLFunction      ; requires ROM read, RAM1 write
          plp
          beq   @done_with_mb
