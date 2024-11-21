@@ -12,11 +12,6 @@
          sta   $6068
          jsr   $6000      ; decompress
          +NEW_RESET_VECTOR $280
-         ldx   #(patch_e - patch_b) - 1
--        lda   patch_b, x
-         sta   $9AD4, x
-         dex
-         bpl   -
          ldx   #(callback_e - callback) - 1
 -        lda   callback, x
          sta   $200, x    ; stack leak overwrites prelaunch eventually
@@ -49,10 +44,14 @@ callback !pseudopc $200 {
          sta   $FB3       ; patch - don't decrease lives
          bne   ++
 +        stx   $9A35      ; patch - don't decrease lives
-++       +DISABLE_ACCEL
+++
+         ldx   #(patch_e - patch_b) - 1
+-        lda   patch_b, x
+         sta   $9AD4, x
+         dex
+         bpl   -
+         +DISABLE_ACCEL
          jmp   ($B04E)
-}
-callback_e
 
 patch_b
          ldx   #0
@@ -65,6 +64,9 @@ patch_b
          tax
          rts
 patch_e
+}
+callback_e
+
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *
