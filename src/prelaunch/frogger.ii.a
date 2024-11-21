@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020, 2024 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/FROGGER.II",plain
@@ -11,16 +11,27 @@
          lda   #$60
          sta   $6068
          jsr   $6000      ; decompress
+         +NEW_RESET_VECTOR $280
+         ldx   #(patch_e - patch_b) - 1
+-        lda   patch_b, x
+         sta   $9AD4, x
+         dex
+         bpl   -
+         ldx   #(callback_e - callback) - 1
+-        lda   callback, x
+         sta   $200, x    ; stack leak overwrites prelaunch eventually
+         dex
+         bpl   -
          lda   #$4C
          sta   $B04A
-         lda   #<callback
-         sta   $B04B
-         lda   #>callback
+         inx
+         stx   $B04B
+         lda   #2
          sta   $B04C
          +DISABLE_ACCEL
          jmp   $800
 
-callback
+callback !pseudopc $200 {
          +ENABLE_ACCEL
          jsr   $B050
          +GET_MACHINE_STATUS
@@ -40,6 +51,20 @@ callback
 +        stx   $9A35      ; patch - don't decrease lives
 ++       +DISABLE_ACCEL
          jmp   ($B04E)
+}
+callback_e
+
+patch_b
+         ldx   #0
+         jsr   $FB1E
+         tya
+         pha
+         inx
+         jsr   $FB1E
+         pla
+         tax
+         rts
+patch_e
 
 !if * > $1C0 {
   !error "code is too large, ends at ", *

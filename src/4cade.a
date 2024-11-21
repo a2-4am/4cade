@@ -52,10 +52,10 @@ Reenter
          sta   $C000                 ; Turn 80STORE switch off
          ldx   #$ff
          txs                         ; so that we never trash the reset vector
-         lda   #$c0                  ; duration=11 phoneme=000000 (pause)
+         inx                         ; phoneme=000000 (pause)
 
 SilenceIsGolden
-         sta   $bf40                 ; C = SSI reg 0, S/S I or A = 6522#1 port b data
+         stx   $bf40                 ; C = SSI reg 0, S/S I or A = 6522#1 port b data
                                      ; SMC to MB slot by init code, if appropriate
          jsr   SwitchToBank2
          jsr   DisableAccelerator    ; back to 1 MHz (especially important on IIgs
