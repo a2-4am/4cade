@@ -120,6 +120,7 @@ GetMockingboardStuff
          sta   @mb_smc21 + 2
          sta   @mb_smc22 + 2
          sta   @mb_smc23 + 2
+         sta   @mb_smc24 + 2
 
          ; detect speech - SSI263
 
@@ -153,6 +154,8 @@ GetMockingboardStuff
          lda   #$82                  ; enable CA1 interrupt
 @mb_smc5
          sta   $c48e                 ; interrupt enable register 6522#2
+@mb_smc24
+         sta   $c48d                 ; interrupt flag register 6522#2
 
          ldx   #$80                  ; 0= ~650ms, 80 = ~325ms
          ldy   #0
