@@ -17,6 +17,13 @@
 - Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
 - Properly reset Mockingboard speech chip on Ctrl-Reset (closes [660](https://github.com/a2-4am/4cade/issues/660))
 - Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
+- Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645))
+- Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't
+- Mark Mapple and Crime Wave as having in-game cheats
+- Remove debugging code from Mapple
+- Fix Angry Birds quit
+- Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
+- Add more game help (thanks Brendan R., Andrew R.)
 
 ## Revision 5.2 / serial number 20240909
 
