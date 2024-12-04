@@ -12,8 +12,11 @@
 
 ### Enhancements & bug fixes in v5.3
 
-- Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
 - Fix crash in Black Magic on Apple //c+ (closes [633](https://github.com/a2-4am/4cade/issues/633))
+- Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
+- Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
+- Properly reset Mockingboard speech chip on Ctrl-Reset (closes [660](https://github.com/a2-4am/4cade/issues/660))
+- Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
 
 ## Revision 5.2 / serial number 20240909
 
