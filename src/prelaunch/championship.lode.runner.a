@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019, 2024 by 4am and qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/CL",plain
@@ -11,6 +11,10 @@
          lda   #$60
          sta   $1F74
          jsr   $1F00      ; decompress
+         inc   $760F
+         dec   $7618
+         dec   $7621
+         inc   $762A      ; swap buttons
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
