@@ -251,17 +251,22 @@
          jsr   BuildVBLFunction      ; requires ROM read, RAM1 write
          plp
          beq   @done_with_mb
+         +READ_RAM1_NO_WRITE
+         lda   MockingboardStuff     ; requires RAM1 read
+         +READ_ROM_NO_WRITE
          and   #HAS_STEREO
          beq   @mb_mono
          +LDADDR LoadingMockingboardStereo
-         bne   @mb_print
+         bne   @mb_print             ; always branches
 @mb_mono
-         +LDADDR LoadingMockingboardStereo
+         +LDADDR LoadingMockingboardMono
 @mb_print
          jsr   LoadingPrint          ; requires ROM read
 
          ; if Mockingboard AND HAS_SPEECH then print CR & '...and it talks!'
-         txa
+         +READ_RAM1_NO_WRITE
+         lda   MockingboardStuff     ; requires RAM1 read
+         +READ_ROM_NO_WRITE
          and   #HAS_SPEECH
          beq   @done_with_mb
          +LDADDR LoadingMockingboardSpeech
