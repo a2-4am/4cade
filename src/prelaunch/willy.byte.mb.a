@@ -1,0 +1,211 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH/WILLY.BYTE.MB",plain
+*=$D000
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+callback3
+         jsr   $BD80      ; decompress
+         lda   MockingboardStuff
+         bne   is_mock
+         rts
+
+is_mock
+         and   #7
+         ora   #$C0
+         ldx   #0
+         ldy   $BE96
+         cpy   #$41
+         bne   not_a04f
+         ldy   $BE98
+         cpy   #$34
+         bne   skip_a04f
+         ldy   $3
+         cpy   #$60
+         bne   skip_a04f
+-        ldy   $76BF, x
+         cpy   #$C4
+         bne   +
+         sta   $76BF, x
++        ldy   $7842, x
+         cpy   #$C4
+         bne   +
+         sta   $7842, x
++        ldy   $9FCC, x
+         cpy   #$C4
+         bne   +
+         sta   $9FCC, x
++        ldy   $A0F6, x
+         cpy   #$C4
+         bne   +
+         sta   $A0F6, x
++        inx
+         bne   -
+         sta   $9EB6
+
+skip_a04f
+         rts
+
+not_a04f
+         ldy   $BE98
+         cpy   #$30
+         bne   not_ba06
+         ldy   $3
+         cpy   #$A0
+         bne   skip_ba06_a
+-        ldy   $A05E, x
+         cpy   #$C4
+         bne   +
+         sta   $A05E, x
++        inx
+         bne   -
+         rts
+
+skip_ba06_a
+         cpy   #$60
+         bne   skip_ba06_b
+-        ldy   $9228, x
+         cpy   #$C4
+         bne   +
+         sta   $9228, x
++        inx
+         bne   -
+
+skip_ba06_b
+         rts
+
+not_ba06
+         cpy   #$32
+         bne   not_b22f
+-        ldy   $6909, x
+         cpy   #$C4
+         bne   +
+         sta   $6909, x
++        inx
+         bne   -
+         rts
+
+not_b22f
+         cpy   #$34
+         bne   not_bx4y
+         ldy   $be99
+         cpy   #$41
+         ldy   $3
+         bcc   not_b04a
+         cpy   #$60
+         bne   skip_b04a
+-        ldy   $7CFB, x
+         cpy   #$C4
+         bne   +
+         sta   $7CFB, x
++        ldy   $8EF6, x
+         cpy   #$C4
+         bne   +
+         sta   $8EF6, x
++        ldy   $92FB, x
+         cpy   #$C4
+         bne   +
+         sta   $92FB, x
++        inx
+         bne   -
+
+skip_b04a
+         rts
+
+not_b04a
+         cpy   #$60
+         bne   skip_b142
+-        ldy   $705E, x
+         cpy   #$C4
+         bne   +
+         sta   $705E, x
++        ldy   $82E6, x
+         cpy   #$C4
+         bne   +
+         sta   $82E6, x
++        inx
+         bne   -
+
+skip_b142
+         rts
+
+not_bx4y
+         cpy   #$39
+         bne   not_b193
+         ldy   $3
+         cpy   #$60
+         bne   skip_b193
+-        ldy   $92A8, x
+         cpy   #$C4
+         bne   +
+         sta   $92A8, x
++        inx
+         bne   -
+
+skip_b193
+         rts
+
+not_b193
+         cpy   #$43
+         bne   not_bxcy
+         ldy   $be99
+         cpy   #$32
+         ldy   $3
+         bcs   not_b0c1
+         cpy   #$60
+         bne   skip_b0c1
+-        ldy   $927B, x
+         cpy   #$C4
+         bne   +
+         sta   $927B, x
++        inx
+         bne   -
+
+skip_b0c1
+         rts
+
+not_b0c1
+         cpy   #$60
+         bne   skip_b0c6
+-        ldy   $72EB, x
+         cpy   #$C4
+         bne   +
+         sta   $72EB, x
++        ldy   $832A, x
+         cpy   #$C4
+         bne   +
+         sta   $832A, x
++        inx
+         bne   -
+
+skip_b0c6
+         rts
+
+not_bxcy
+         cpy   #$46
+         bne   not_b1f4
+         ldy   $3
+         cpy   #$60
+         bne   skip_b1f4
+-        ldy   $78CB, x
+         cpy   #$C4
+         bne   +
+         sta   $78CB, x
++        inx
+         bne   -
+         sta   $77B6
+         sta   $79F5
+         sta   $79F8
+         sta   $79FB
+
+skip_b1f4
+not_b1f4
+         rts
+
+!if * > $D1FF {
+  !error "code is too large, ends at ", *
+}
