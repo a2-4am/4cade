@@ -14,9 +14,9 @@ DECRUNCH = $0314                     ; decrunch entry point
 ;------------------------------------------------------------------------------
 ; DecompressSHR
 ;
-; in:    compressed SHR loaded to $1FF8+
+; in:    compressed SHR loaded to $1FF8+/main
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
-; out:   decompressed SHR at $2000..$9FFF
+; out:   decompressed SHR at $2000..$9FFF/main
 ;        $00A7..$00A8 clobbered by decompressor
 ;        $00AE..$00AF clobbered by decompressor
 ;        $00FC..$00FF clobbered by decompressor
@@ -30,9 +30,9 @@ DecompressSHR
 ;------------------------------------------------------------------------------
 ; DecompressHGR
 ;
-; in:    compressed HGR loaded to $3FF8+
+; in:    compressed HGR loaded to $3FF8+/main
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
-; out:   decompressed HGR at $4000..$5FFF
+; out:   decompressed HGR at $4000..$5FFF/main
 ;        $00A7..$00A8 clobbered by decompressor
 ;        $00AE..$00AF clobbered by decompressor
 ;        $00FC..$00FF clobbered by decompressor
@@ -68,7 +68,7 @@ DecompressHGR
 ;------------------------------------------------------------------------------
 ; DecompressDHGR
 ;
-; in:    compressed DHGR loaded to aux $3FF8+
+; in:    compressed DHGR loaded to $3FF8+/aux
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
 ; out:   decompressed HGR at $4000..$5FFF/main and $4000..$5FFF/aux
 ;        $6000..$7FFF/aux clobbered by decompressor
