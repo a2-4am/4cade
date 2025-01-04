@@ -96,6 +96,7 @@ DFX.CONF=res/DFX.CONF
 FX.CONF=res/FX.CONF
 SFX.CONF=res/SFX.CONF
 PREFS.CONF.SOURCE=res/PREFS.CONF
+GAMES.CONF.SOURCE=res/GAMES.CONF
 COVER=res/COVER
 DECRUNCH=res/DECRUNCH
 FINDER.DATA=res/Finder.Data
@@ -128,8 +129,8 @@ $(PREFS.CONF): $(PREFS.CONF.SOURCE) | $(MD)
 	bin/padto.sh "$@"
 
 # create a version of GAMES.CONF without comments or blank lines or anything after display titles
-$(GAMES.CONF): $(MD)
-	awk '!/^$$|^#/' < res/GAMES.CONF | awk -F'/' '{ print $$1 }' > "$@"
+$(GAMES.CONF): $(MD) $(GAMES.CONF.SOURCE)
+	awk '!/^$$|^#/' < "$(GAMES.CONF.SOURCE)" | awk -F'/' '{ print $$1 }' > "$@"
 
 # create a list of all game filenames, without metadata or display names, sorted by game filename
 $(GAMES.SORTED): | $(MD) $(GAMES.CONF)
