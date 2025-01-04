@@ -190,10 +190,12 @@ BlankSHR
 ; we instead balance the speaker access with a second write to the same speaker-
 ; aliased softswitch. Do not remove.
          stx   SHADOW
-
+         stx   ClearColor            ; clear SHR screen to black, not green
          lsr                         ; clear $2000..$9FFF in auxmem
          ldx   #$80
          jsr   ClearMem
+         lda   #$80
+         sta   ClearColor
 
          sta   WRITEMAINMEM          ; writes go to main memory
 

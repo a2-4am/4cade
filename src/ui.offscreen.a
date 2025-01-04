@@ -198,8 +198,8 @@ OFFSCREENRTS
 ClearScreens
          jsr   Home
          lda   #$20                  ; clear both hi-res pages
-         ldx   #$40                  ; to flash previous bits of the launcher UI)
-         bne   ClearMem              ; always
+         ldx   #$40                  ; $2000..$5FFF
+         bne   ClearMem              ; always branches
 
 ;------------------------------------------------------------------------------
 ; ClearOffscreen
@@ -222,7 +222,7 @@ ClearHGR1
          ldx   #$20
 ClearMem
          ldy   #$2C                  ; BIT
-         bne   +                     ; always
+         bne   +                     ; always branches
 
 ;------------------------------------------------------------------------------
 ; CopyHGR
@@ -237,7 +237,8 @@ CopyHGR
 +        sty   PageFrom
          sta   PageTo+2
 ClearToBlack
-         lda   #$80                  ; clear to BLACK2
+ClearColor=*+1
+         lda   #$80                  ; clear to BLACK2 (SMC by BlankSHR)
 ClearGR
          ldy   #0
 PageFrom lda   $FD00,y               ; SMC address high byte, also SMC opcode (might be BIT)
