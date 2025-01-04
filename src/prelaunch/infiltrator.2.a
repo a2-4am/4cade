@@ -22,6 +22,7 @@
          sta   $FFFD
          lda   #$30
          sta   $FFFC      ; LC reset vector fix
+         jsr   HideLaunchArtwork
          jmp   $800
 
 newpath
@@ -31,6 +32,6 @@ newpath
 reset    +READ_ROM_NO_WRITE
          jmp   $FAA6
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

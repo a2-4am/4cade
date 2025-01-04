@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          ;+ENABLE_ACCEL   ; can't - shows title right away
          lda   #$60       ; hook
          sta   $9318
@@ -25,6 +26,6 @@
 +
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

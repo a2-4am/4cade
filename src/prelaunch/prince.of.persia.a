@@ -22,6 +22,7 @@
          lda   #$60
          sta   $13B8
          jsr   $1200      ; decompress
+         jsr   HideLaunchArtwork
 
          lda   #<callback1
          sta   $FE06
@@ -65,6 +66,6 @@ callback3
          sta   $4ED       ; then disable VBL in game
          jmp   $F924
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

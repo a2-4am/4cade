@@ -31,6 +31,7 @@
          lda   #$FB
          sta   $FA87
 +        jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          jmp   $F800
 
 cheat_b
@@ -62,6 +63,6 @@ cheat_done
 
 cheat_e
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          ldx   #(callback_e-callback_b)+1
 -        lda   callback_b-1,x
@@ -35,6 +36,6 @@ callback
 }
 callback_e
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

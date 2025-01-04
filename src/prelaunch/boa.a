@@ -19,8 +19,9 @@
          lda   #$0A
          sta   $F2
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   ($6000)
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

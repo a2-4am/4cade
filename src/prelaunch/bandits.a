@@ -17,6 +17,7 @@
          sta   $482
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $8F40
 
 callback
@@ -43,6 +44,6 @@ callback
          lda   #0
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

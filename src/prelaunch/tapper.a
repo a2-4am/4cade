@@ -15,6 +15,7 @@
          sta   $851
          jsr   $800
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          lda   #<cheat
          sta   $248
          lda   #>cheat
@@ -30,6 +31,6 @@ cheat
 +
          jmp   $d00
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

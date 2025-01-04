@@ -32,6 +32,6 @@ callback
          sta   $5FF0      ; patch - don't increase lives
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

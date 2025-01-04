@@ -22,10 +22,13 @@ DECRUNCH = $0314                     ; decrunch entry point
 ;        $00FC..$00FF clobbered by decompressor
 ;        $0200..$03CB clobbered by decompressor
 ;------------------------------------------------------------------------------
+DecompressAuxSHR
+         bit   SHRRTS
+         !byte $A9
 DecompressSHR
+         clv
          lda   #$1F
-         +HIDE_NEXT_2_BYTES
-         ; /!\ execution falls through here
+         bne   DecompressInternal    ; alwyas branches
 
 ;------------------------------------------------------------------------------
 ; DecompressHGR
@@ -40,29 +43,41 @@ DecompressSHR
 ;------------------------------------------------------------------------------
 DecompressHGR
          lda   #$3F
+         clv
+         ; execution falls through here
+
+DecompressInternal
          pha
+         php
          jsr   SwitchToBank2
          jsr   EnableAccelerator
+         plp
+         ldx   #0
+         bvc   +
+         inx
++        stx   auxreq
          lda   sizehi2
          pha
          lda   sizelo2
          pha
-         lda   #>(@loaddecrunch - 1)
+         lda   #>(@params - 1)
          pha
-         lda   #<(@loaddecrunch - 1)
+         lda   #<(@params - 1)
          pha
-         lda   auxreq
-         bne   +
+         bvs   +
          jmp   LoadIndexedFile       ; load decompression code to $200
 +        jmp   LoadAuxIndexedFile    ; load decompression code to $200/aux
-@loaddecrunch
-         !word $200
+@params  !word $200
          !word kDecrunchRecord
          ldx   auxreq
          sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
          sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
          jsr   DECRUNCH              ; loaded from separate file
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
          jsr   SwitchToBank2
+         lda   #0
+         sta   auxreq
          jmp   DisableAcceleratorAndSwitchToBank1
 
 ;------------------------------------------------------------------------------

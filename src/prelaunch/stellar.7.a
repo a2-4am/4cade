@@ -34,6 +34,7 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $AE27
 
 callback
@@ -43,6 +44,6 @@ callback
          sta   $8095      ; patch - don't increase damage
          jmp   $A440
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

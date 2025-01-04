@@ -125,6 +125,7 @@ PlayGameInAY
          +ST16 SAVE
          +ST16 @pfile
          +ST16 xfile
+         +ST16 IndexedSHRFilename
          jsr   okvs_next_field
          jsr   okvs_next_field_PTR_is_already_set
                                      ; (PTR) -> length-prefixed game info bitfield
@@ -132,11 +133,40 @@ PlayGameInAY
          iny                         ; Y = 1
          lda   (PTR), y              ; A = game info bitfield
          and   #IS_SINGLE_LOAD
-         php
-
+         php                         ; Z=0 if game is single-load (stored in TOTAL.DATA)
+;
+; possibly show box art before launch
+;
+         lda   MachineStatus         ; only show SHR on IIgs or if we have a VidHD card
+         and   #SUPPORTS_SHR
+         beq   @noLaunchArtwork
+         lda   (PTR), y              ; A = game info bitfield
+         and   #HAS_LAUNCH_ARTWORK
+         bne   @showLaunchArtwork    ; Z=0 if game has artwork to display during launch
+@noLaunchArtwork
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
                                      ; (clobbers $106, must do now before loading prelaunch code)
-
+                                     ; don't have to do this if we're displaying launch artwork
+                                     ; since SHR video mode will be active instead of HGR
+         beq   @postArtwork          ; always branches because Z=1 coming out of ClearScreens
+@showLaunchArtwork
+         jsr   Home
+         lda   MachineStatus
+         and   #HAS_128K
+         bne   @showLaunchArtwork128K
+         jsr   LoadIndexedSHRFile    ; requires IndexedSHRFilename (set earlier)
+         jsr   DecompressSHR
+         jsr   PreSHRMode
+         jsr   CopySHR
+         jsr   SHRMode
+         jsr   ReloadSearchIndexOnly
+         jmp   @postArtwork
+@showLaunchArtwork128K
+         jsr   LoadAuxIndexedSHRFile
+         jsr   PreSHRMode
+         jsr   DecompressAuxSHR
+         jsr   SHRMode
+@postArtwork
          jsr   LoadIndexedFile       ; load prelaunch index file
 -        !word gSearchCache          ; clobber gSearchCache which we no longer need
          !word kPrelaunchIndexRecord
@@ -151,7 +181,7 @@ PlayGameInAY
 @prelaunchIndexRecordPtr
          !word $FDFD                 ; SMC
 
-         plp
+         plp                         ; Z=0 if game is single-load (stored in TOTAL.DATA)
          beq   @loadFromSubdirectory
 
          jsr   LoadXSingle_NameIsAlreadySet

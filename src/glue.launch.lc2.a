@@ -24,6 +24,11 @@ LaunchInternal
          sta   PrelaunchInit-1, x
          dex
          bne   -
+         ldx   #(HideLaunchArtworkInternal_e-HideLaunchArtworkInternal+1)
+-        lda   HideLaunchArtworkInternal-1, x
+         sta   HideLaunchArtwork-1, x
+         dex
+         bne   -
          ;X=0
          txa
          ldy   #$18
@@ -48,7 +53,12 @@ LaunchInternal
          sta   CLR80VID
          sta   PRIMARYCHARSET
          bit   CLEARKBD
-         jmp   iPrelaunchInit
+         lda   MachineStatus
+         and   #SUPPORTS_SHR
+         bne   +
+         lda   #$60
+         sta   HideLaunchArtwork
++        jmp   iPrelaunchInit
 
 PrelaunchInitInternal
 !pseudopc PrelaunchInit {
@@ -66,3 +76,11 @@ AnimationPrelaunchInit
 }
 }
 PrelaunchInitInternal_e
+
+HideLaunchArtworkInternal
+!pseudopc HideLaunchArtwork {
+         lda   #1
+         sta   NEWVIDEO
+         rts
+}
+HideLaunchArtworkInternal_e

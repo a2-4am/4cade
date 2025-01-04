@@ -17,8 +17,9 @@
 callback
          +NEW_RESET_VECTOR $110
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $8340
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

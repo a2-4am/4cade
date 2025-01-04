@@ -31,8 +31,9 @@
          sta   $3261      ; which is copied from $3255
          sta   $FFFD      ; LC reset vector fix
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $3000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

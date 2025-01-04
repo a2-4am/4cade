@@ -45,6 +45,7 @@
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
+         jsr   HideLaunchArtwork
          jmp   $D400
 
 callback1
@@ -57,6 +58,6 @@ callback2
          sta   $14B5      ; patch - don't decrease lives
          jmp   $1100
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

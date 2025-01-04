@@ -18,11 +18,12 @@
          sta   $8BF
          lda   #$BC
          sta   $8C0
+         jsr   HideLaunchArtwork
          jmp   $800      ; decompress
 
 sitcrit_cheat
          +PSTRING "PRELAUNCH/SITCRIT.CHEAT"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

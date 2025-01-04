@@ -15,6 +15,7 @@
 *=$15A
 +        jsr   $BD5       ; decompress title
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $800
          +ENABLE_ACCEL
          jsr   $535       ; decompress game
@@ -33,6 +34,6 @@
          +READ_ROM_NO_WRITE
          jmp   $68E
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -33,6 +33,6 @@ callback
          jmp   $7AEA
 +        jmp   $7AE5
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

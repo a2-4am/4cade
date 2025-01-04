@@ -58,6 +58,6 @@ callback2
          jmp   $D7E2
 +        jmp   $D7D9
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

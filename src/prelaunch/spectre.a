@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          lda   #>(callback-1)
          sta   $5F08
@@ -25,6 +26,6 @@ callback
          +DISABLE_ACCEL
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

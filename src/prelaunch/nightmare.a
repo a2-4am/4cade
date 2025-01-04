@@ -13,6 +13,7 @@
          lda   #$60
          sta   $404B
          jsr   $4000      ; decompress
+         jsr   HideLaunchArtwork
 
          ldx   #(callback_e-callback)-1
 -        lda   callback,x
@@ -56,6 +57,6 @@ wait3    sbc   #$01
          rts
 callback_e
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

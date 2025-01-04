@@ -24,9 +24,10 @@ callback
          dec   $9FA7      ; don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          +READ_ROM_NO_WRITE
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

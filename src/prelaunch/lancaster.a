@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          lda   #<cheat
          sta   $10da
          lda   #>cheat
@@ -51,6 +52,6 @@ mbslot
 skipmb
          jmp   $1000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

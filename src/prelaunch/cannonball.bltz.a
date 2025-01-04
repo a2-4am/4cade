@@ -25,8 +25,9 @@
          sta   $A0DA      ; reset fix
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $a000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

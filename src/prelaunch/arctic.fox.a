@@ -38,8 +38,9 @@ callback1
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
          sta   $C05F      ; fix //c and //c+ HGR color
+         jsr   HideLaunchArtwork
          jmp   $1170
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

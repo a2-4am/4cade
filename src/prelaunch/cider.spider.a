@@ -33,12 +33,13 @@
          sta   $10B1      ; reset vector patch
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $1000
 
 callback
 mbslot   lda   #$D1       ; SMC
          jmp   $963D
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

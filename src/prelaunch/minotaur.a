@@ -19,8 +19,9 @@
          sta   $180       ; patch - enable cheat mode
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $FF8
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

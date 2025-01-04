@@ -19,11 +19,12 @@
          lda   $C083
          +LC_REBOOT
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          lda   #$53
          jsr   $F800      ; now load that bit
          lda   $C08B
          jmp   $0400
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

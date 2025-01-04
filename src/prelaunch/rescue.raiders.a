@@ -11,11 +11,12 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT rraiders_mb, $300
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $300
 
 rraiders_mb
          +PSTRING "PRELAUNCH/RESQ.RAIDERS.MB"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

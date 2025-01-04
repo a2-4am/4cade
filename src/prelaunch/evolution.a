@@ -41,8 +41,9 @@ cheat_hi !byte $0A, $0A, $0B, $0A, $0B, $0B
          sta   $BA03
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

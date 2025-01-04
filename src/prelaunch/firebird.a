@@ -18,8 +18,9 @@
          sta   $ae53      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $b000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

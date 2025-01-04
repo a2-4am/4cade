@@ -22,6 +22,6 @@ seed
          !byte   $80, $4F, $C7, $52, $FF
 
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

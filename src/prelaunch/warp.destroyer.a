@@ -34,9 +34,11 @@
          sta   $64AC      ; patch - don't increase damage
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          +READ_ROM_NO_WRITE
          lda   #0
          jmp   $896
-!if * > $1C0 {
+
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

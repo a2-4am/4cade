@@ -14,6 +14,7 @@
          lda   #$60
          sta   $A2C
          jsr   $800       ; load "DOS"
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $B7A7
          jsr   $B700      ; decompress
@@ -25,6 +26,6 @@
 
 reset
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

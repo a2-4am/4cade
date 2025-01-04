@@ -11,6 +11,7 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT willybyte_mb, $D000
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          ldx   #(accel_e - accel)
 -        lda   accel, x
          sta   callback1, x
@@ -61,6 +62,6 @@ accel_e
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

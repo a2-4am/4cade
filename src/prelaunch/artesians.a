@@ -43,8 +43,9 @@ hook     +RESET_VECTOR $100
          bit   $C057      ; enable hires
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $B31B
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

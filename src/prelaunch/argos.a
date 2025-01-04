@@ -39,4 +39,5 @@ callback
 ++
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          rts

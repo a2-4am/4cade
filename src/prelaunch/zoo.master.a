@@ -25,6 +25,7 @@
          sta   $48A1
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          lda   MockingboardStuff
          +READ_ROM_NO_WRITE
          bmi   +
@@ -52,6 +53,6 @@ callback
          bne   -
          jmp   $8C8
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

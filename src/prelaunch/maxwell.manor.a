@@ -18,8 +18,9 @@ callback
          +LC_REBOOT
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          jmp   $21CD
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

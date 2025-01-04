@@ -12,7 +12,7 @@
 brunpatch
          lda   $AA76      ; check second character of filename
          cmp   #$C9       ; = I, filename = @INIT
-         bne   +         
+         bne   +
 
          ldx   #$00       ; Patch it to return to TR
          stx   $0DB4      ; instead of exiting to BASIC
@@ -58,9 +58,10 @@ callback
          sta   $A396
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $9D84
 
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

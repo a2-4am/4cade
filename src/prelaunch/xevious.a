@@ -31,6 +31,7 @@ reset
          
 patch1
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          lda   #<patch2
          sta   $ACE8
          lda   #>patch2
@@ -48,6 +49,6 @@ patch2
 +
          jmp   $0600      ; play demo/start game
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

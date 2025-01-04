@@ -19,6 +19,7 @@ callback2
          jmp   $FDF0
 
 ++
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
 
          ldx   #5
@@ -46,6 +47,6 @@ callback1
 
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

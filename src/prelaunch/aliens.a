@@ -15,8 +15,9 @@
          sta   $2429
          jsr   $22AA      ; decrypt
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $1FA0
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

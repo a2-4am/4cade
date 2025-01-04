@@ -41,8 +41,9 @@ skipmb
          jsr   $8FB5      ; init MB
 +
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

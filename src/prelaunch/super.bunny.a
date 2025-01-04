@@ -20,6 +20,7 @@
          sta   $BD27
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $B700
 
 callback
@@ -34,6 +35,6 @@ callback
          sta   $BB01      ; patch - don't decrease lives
 +        rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

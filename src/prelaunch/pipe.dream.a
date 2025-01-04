@@ -9,6 +9,7 @@ my_vbl
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +READ_RAM1_NO_WRITE
          lda   WaitForVBL
          cmp   #$60
@@ -54,6 +55,6 @@ callback
          sta   $A453      ; patch - don't decrease time
          jmp   $B679
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

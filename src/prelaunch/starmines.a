@@ -16,8 +16,9 @@
          inx
          stx   $1FCE      ; reset fix
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

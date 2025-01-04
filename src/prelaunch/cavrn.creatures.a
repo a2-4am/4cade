@@ -11,11 +11,12 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT cavrn_cheat, $0200
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $200
 
 cavrn_cheat
          +PSTRING "PRELAUNCH/CAVRN.CHEAT"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

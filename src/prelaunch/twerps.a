@@ -7,6 +7,7 @@
 
          !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch+1
@@ -32,6 +33,6 @@ patch
          jmp   $0400
 end_patch
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

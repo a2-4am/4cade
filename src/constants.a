@@ -139,6 +139,7 @@ HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
 PrelaunchInit= $EA
+HideLaunchArtwork  = $1BA
 ; textrank
 BestMatchIndex = $E5      ; word
 tmpx         = $E7        ; byte
@@ -358,9 +359,10 @@ HAS_SPEECH        = %11000000
 ; AND masks for game info bitfield (after game display name in gSearchStore)
 HAS_DHGR_TITLE    = %10000000        ; this one is hard-coded via BMI instead of AND/BNE
 IS_SINGLE_LOAD    = %01000000
+HAS_LAUNCH_ARTWORK= %00100000
 CHEAT_CATEGORY    = %00001111
-;                      ^^
-;                      ++-- your bits here!
+;                       ^
+;                       +-- your bit here! last one!
 
 ; AND masks for MachineStatus
 HAS_JOYSTICK   = %10000000

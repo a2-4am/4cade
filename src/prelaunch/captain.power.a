@@ -8,8 +8,9 @@
     !source "src/macros.a"
 
          +LC_REBOOT
+         jsr   HideLaunchArtwork
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

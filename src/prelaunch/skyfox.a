@@ -35,6 +35,7 @@ nopatch
          rts
 
 +
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          inc   $80        ; requires a non-zero value for the RNG
          lda   #$60
@@ -71,6 +72,6 @@ nopatch
          +READ_ROM_NO_WRITE
          jmp   $67BD
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

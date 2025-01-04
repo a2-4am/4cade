@@ -11,11 +11,12 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT kamungas_mb, $200
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $200
 
 kamungas_mb
          +PSTRING "PRELAUNCH/KAMUNGAS.MB"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

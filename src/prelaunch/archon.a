@@ -48,8 +48,9 @@ callback
          lda   #$FA
          sta   $105       ; update reset hook to reboot
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $5FF8
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

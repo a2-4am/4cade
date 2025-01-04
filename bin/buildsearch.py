@@ -18,10 +18,12 @@ gSearchIndex = 0x6000 # must match gSearchIndex in src/constants.a
 iDHGRTitle = 2
 iCheatCategory = 3
 iSingleLoad = 4
+iLaunchArtwork = 5
 
 # maps of flag raw string value -> value in final flags byte
 kHasDHGRTitle =  {'0': 0, '1': 128}
 kSingleLoad =    {'0': 0, '1': 64}
+kLaunchArtwork = {'0': 0, '1': 32}
 
 def parse_log_file(filename):
     if not filename:
@@ -78,6 +80,7 @@ def build(records, args):
         has_dhgr_title = dhgr_cache and flags[iDHGRTitle] or '0'
         yield pack('B', kHasDHGRTitle[has_dhgr_title] + \
                           kSingleLoad[flags[iSingleLoad]] + \
+                          kLaunchArtwork[flags[iLaunchArtwork]] + \
                           int(flags[iCheatCategory]))
 
         rec_offset, rec_size = cache_ptr[has_dhgr_title][key]

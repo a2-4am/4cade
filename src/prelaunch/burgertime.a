@@ -13,6 +13,7 @@
          sta   $3f09
          jsr   $3e97
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          lda   #$b1
          sta   $646b
          jsr   $6400
@@ -35,6 +36,6 @@
          +DISABLE_ACCEL
          jmp   $a300
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

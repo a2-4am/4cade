@@ -24,6 +24,7 @@
          lda   #2
          sta   $B04C
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $800
 
 callback !pseudopc $200 {
@@ -68,6 +69,6 @@ patch_e
 callback_e
 
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

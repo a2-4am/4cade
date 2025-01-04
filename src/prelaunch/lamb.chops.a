@@ -13,6 +13,7 @@
          sta   $896
          jsr   $800       ; decompress
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $300
          +ENABLE_ACCEL
          jsr   $87F
@@ -28,6 +29,6 @@
 
          jmp   $8000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

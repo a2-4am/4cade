@@ -28,8 +28,9 @@ hook     lda   #0
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $7000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

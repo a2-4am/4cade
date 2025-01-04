@@ -21,8 +21,9 @@
          sta   $F1C       ; patch - don't erase sprite
          sta   $1105      ; patch - don't increase lives
 +        +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $50E0
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

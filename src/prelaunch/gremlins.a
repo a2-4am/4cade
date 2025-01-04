@@ -13,6 +13,7 @@
          sta   $0863
          jsr   $0800      ; decompress
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $211       ; music
          jsr   $83C       ; check key
          +GET_MACHINE_STATUS
@@ -28,6 +29,6 @@
 +
          jmp   $4000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

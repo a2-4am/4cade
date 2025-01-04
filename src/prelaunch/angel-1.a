@@ -29,6 +29,6 @@
          +READ_ROM_NO_WRITE
          jmp   $B00D
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

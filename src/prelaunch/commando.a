@@ -24,6 +24,7 @@ cheat
          +ENABLE_ACCEL
          dec   $11a6
          jsr   $1000      ; decompress
+         jsr   HideLaunchArtwork
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -35,6 +36,6 @@ cheat
          jsr   DisableAccelerator
          jmp   $803
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

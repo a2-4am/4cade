@@ -24,6 +24,7 @@
          lda   #$60
          sta   $8EB
          jsr   $800       ; decompress
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $ADC3
          jsr   $A827      ; decompress more
@@ -47,6 +48,6 @@ callback
          sta   $E7B7      ; patch - don't increase lives
          jmp   $A922
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

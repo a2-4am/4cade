@@ -26,8 +26,9 @@ cheat
          sta   $7a4e      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -11,11 +11,12 @@
          jsr   EnableAccelerator
          +LOAD_FILE_AT goodnight_cheat, $0300
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $300
 
 goodnight_cheat
          +PSTRING "PRELAUNCH/CG.CHEAT"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

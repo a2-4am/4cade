@@ -23,8 +23,9 @@ callback
          sta   $48B0      ; patch - don't decrease lives
          sta   $48CD      ; patch - don't erase sprite
 +        +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

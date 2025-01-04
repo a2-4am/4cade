@@ -26,7 +26,7 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-
+         jsr   HideLaunchArtwork
          jmp   $6000
 
 callback
@@ -36,6 +36,6 @@ callback
          dec   $7DA4      ; patch - don't decrease fuel
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

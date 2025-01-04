@@ -56,6 +56,6 @@ callback2
 call1    jmp   callback1
 call2    jmp   callback2
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

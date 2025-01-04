@@ -22,7 +22,7 @@
          sta   $86D
          jsr   $800       ; decompress
          +DISABLE_ACCEL
-
+         jsr   HideLaunchArtwork
          jmp   $BA03
 
 callback
@@ -30,6 +30,6 @@ callback
          sta   $19D7      ; patch - don't decrease lives
          jmp   $868C
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -48,6 +48,6 @@ callback
          sta   $8595      ; don't decrease lives
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

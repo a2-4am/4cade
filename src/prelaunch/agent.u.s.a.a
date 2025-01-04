@@ -21,8 +21,9 @@
          inc   $3F3       ; point to $280 instead
          jsr   $FB6F
 
+         jsr   HideLaunchArtwork
          jmp   $837
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

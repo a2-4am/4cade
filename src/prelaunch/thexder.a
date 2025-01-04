@@ -49,8 +49,9 @@ reset
          dec   $410C      ; don't decrease energy
 ++
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $1800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -23,8 +23,9 @@
          lda   #1
          sta   $5B30      ; reset vector patch
 
+         jsr   HideLaunchArtwork
          jmp   $5c00
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

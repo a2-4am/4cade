@@ -31,8 +31,9 @@ callback
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $78fb
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

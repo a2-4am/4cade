@@ -13,6 +13,7 @@
          sta   $3EF2
          jsr   $3DE9      ; phase 1
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $4C00
          +ENABLE_ACCEL
          ldy   #0
@@ -27,6 +28,6 @@
 +
          jmp   ($0020)
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

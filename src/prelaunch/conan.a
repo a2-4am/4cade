@@ -24,6 +24,7 @@
          sta   $7C02     ; to $3F4 - reset ($3F2 doesn't change)
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $5ff8     ; decompress, run intro
 
          +ENABLE_ACCEL
@@ -45,6 +46,6 @@
          +DISABLE_ACCEL
          jmp   $6ba5
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

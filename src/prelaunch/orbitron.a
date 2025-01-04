@@ -7,9 +7,10 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +USES_TEXT_PAGE_2
          jmp   $2000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

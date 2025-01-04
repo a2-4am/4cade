@@ -7,14 +7,15 @@
 
     !source "src/macros.a"
 
-
+           jsr   HideLaunchArtwork
            +GET_MACHINE_STATUS
            and   #CHEATS_ENABLED
            beq   +
            lda   #$2C
            sta   $5255      ; do not decrement lives
-+          jmp   $2000
++
+           jmp   $2000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

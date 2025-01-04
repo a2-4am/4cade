@@ -17,6 +17,7 @@
          jsr   $1000      ; decompress
          dex
          jsr   $D300      ; decompress
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $901
          jsr   $800       ; decompress
@@ -40,6 +41,6 @@ callback
          sta   $FC65
          jmp   $AB18
          
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

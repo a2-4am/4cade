@@ -23,8 +23,9 @@ callback
          inc   $45FA      ; patch - don't decrease energy
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          jmp   $BE77
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

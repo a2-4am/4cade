@@ -28,12 +28,13 @@
          eor   #$A5
          sta   $3F4
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $6000
 
 reset
          +READ_ROM_NO_WRITE
          jmp   $FAA6
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

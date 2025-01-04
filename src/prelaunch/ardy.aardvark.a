@@ -16,8 +16,9 @@
          jmp   $27BF      ; decompress
 
 callback1
-         lda   KBD
-         bpl   callback1
+         jsr   HideLaunchArtwork
+-        lda   KBD
+         bpl   -
          ldy   #(callback2_e - callback2) - 1
 -        lda   callback2, y
          sta   $200, y
@@ -38,6 +39,6 @@ callback2
          jmp   $401E
 callback2_e
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

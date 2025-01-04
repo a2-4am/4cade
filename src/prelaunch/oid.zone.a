@@ -49,6 +49,6 @@ callback2
          bcs   -
          jmp   $AF90
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

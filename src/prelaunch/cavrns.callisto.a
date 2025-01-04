@@ -15,6 +15,7 @@
          jmp   $800       ; decompress
 
 callback
+         jsr   HideLaunchArtwork
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -28,6 +29,6 @@ callback
          +DISABLE_ACCEL
          rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

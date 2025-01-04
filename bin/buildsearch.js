@@ -31,6 +31,7 @@ for (i = 0; i < entries.length; i++)
 
   cheat = entries[i].substr(3, 1)
   sng = entries[i].substr(4, 1)
+  art = entries[i].substr(5, 1)
   eq = entries[i].indexOf("=")
   key = ((eq >= 0) ? entries[i].substr(bits + 1, eq - bits - 1) : entries[i])
   value = ((eq >= 0) ? entries[i].substr(eq + 1) : "")
@@ -41,7 +42,7 @@ for (i = 0; i < entries.length; i++)
   source.writeline("!byte " + value.length)
   source.writeline("!text \"" + value + "\"")
   source.writeline("!byte 1")
-  source.writeline("!byte " + ((dhgr * 128) + (sng * 64) + Number(cheat)))
+  source.writeline("!byte " + ((dhgr * 128) + (sng * 64) + (art * 32) + Number(cheat)))
 
   if (dhgr != 0)
   {

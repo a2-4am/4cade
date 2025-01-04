@@ -13,6 +13,7 @@
          sta   $4739
          jsr   $4710
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $6000
          +ENABLE_ACCEL
          jsr   $806
@@ -30,6 +31,6 @@
          +DISABLE_ACCEL
          jmp   $2001
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -12,6 +12,7 @@
          sta   $82E
          jsr   $800       ; decompress
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
 
          jsr   $BD1C      ; title screen
 
@@ -31,6 +32,6 @@
 +
          jmp   $7E00
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

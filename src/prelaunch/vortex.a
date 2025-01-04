@@ -23,8 +23,9 @@ hook     +NEW_RESET_VECTOR $BFF0
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $D566
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

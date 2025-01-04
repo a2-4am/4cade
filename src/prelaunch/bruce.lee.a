@@ -34,6 +34,7 @@
          sta   <(lcpatch + 1)
 +
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $900
 
 callback
@@ -58,6 +59,6 @@ lcpatch
 }
 cheat_e
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

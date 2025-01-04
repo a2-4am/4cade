@@ -16,9 +16,9 @@
          +NEW_RESET_VECTOR_64K $300
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-
+         jsr   HideLaunchArtwork
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

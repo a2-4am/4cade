@@ -37,6 +37,6 @@ callback2
 berzap_mb
          +PSTRING "PRELAUNCH/BERZAP.MB"
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

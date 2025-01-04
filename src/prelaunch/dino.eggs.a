@@ -16,8 +16,9 @@
          lda   #$ad
          sta   $1895      ; patch - don't decrease lives
 +
+         jsr   HideLaunchArtwork
          jmp   $A892
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

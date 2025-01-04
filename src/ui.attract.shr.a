@@ -7,6 +7,10 @@
 ; - AllSHRSlideshow
 ; - SHRSlideshow
 ; - SHRSingle
+; - DisplaySHR
+; - DisplayAuxSHR
+; - LoadIndexedSHRFile
+; - LoadAuxIndexedSHRFile
 ;
 
 ;------------------------------------------------------------------------------
@@ -69,12 +73,77 @@ SHRSingle
          and   #SUPPORTS_SHR
          beq   SHRRTS
          jsr   BlankSHR
-         jsr   LoadIndexedSHRFile
+         jsr   LoadIndexedSHRFile    ; requires IndexedSHRFilename (set earlier)
          jsr   DecompressSHR
          jsr   LoadSHRTransition
          jsr   ExecuteTransitionAtA000AndWait
 jmpblank
          jmp   BlankHGR
+
+;------------------------------------------------------------------------------
+; LoadAuxIndexedSHRFile/LoadIndexedSHRFile
+; load compressed SHR data from disk
+;
+; in:    caller has populated IndexedSHRFilename
+; out:   all flags & registers clobbered
+;        $2000+ clobbered
+;------------------------------------------------------------------------------
+LoadAuxIndexedSHRFile
+         bit   SHRRTS
+         !byte $A9
+LoadIndexedSHRFile
+         clv
+         php
+         jsr   LoadIndexedFile       ; load index file into $2000
+-        !word $2000
+         !word kSHRArtworkIndexRecord
+
+         jsr   okvs_find
+         !word -
+IndexedSHRFilename
+         !word $FDFD                 ; SMC
+         +ST16 @indexRecordPtr
+
+         plp                         ; V=1 if loading into auxmem, 0 if mainmem
+
+         lda   #>(@params - 1)
+         pha
+         lda   #<(@params - 1)
+         pha
+
+         bvs   +
+         jmp   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main
++        jmp   LoadAuxIndexedFile    ; load compressed SHR artwork at $1FF8/aux
+@params
+         !word $1FF8
+@indexRecordPtr
+         !word $FDFD                 ; SMC
+SHRRTS   rts
+
+;------------------------------------------------------------------------------
+; CopySHR
+; copy $8000 bytes from $2000/main to $2000/aux
+;
+; in:    none
+; out:   all flags & registers clobbered
+;        SRC clobbered
+;------------------------------------------------------------------------------
+CopySHR
+         sta   WRITEAUXMEM           ; $0200..$BFFF only, does not affect zero page
+         lda   #$20
+         sta   SRC+1
+         ldy   #$00
+         sty   SRC
+         ldx   #$80
+@loop    lda   (SRC), y
+         sta   (SRC), y
+         iny
+         bne   @loop
+         inc   SRC+1
+         dex
+         bne   @loop
+         sta   WRITEMAINMEM
+         rts
 
 ;------------------------------------------------------------------------------
 ; LoadSHRTransition [private]
@@ -107,7 +176,7 @@ LoadSHRTransition
          !word $A000                 ; load actual transition effect code into $A000
 @indexRecordPtr
          !word $FDFD                 ; SMC
-SHRRTS   rts
+         rts
 
 ;------------------------------------------------------------------------------
 ; SHRArtworkCallback [private]
@@ -135,28 +204,9 @@ SHRArtworkCallback
          bcs   SHRRTS
 
          jsr   BlankSHR
-         jsr   LoadIndexedSHRFile
+         jsr   LoadIndexedSHRFile    ; requires IndexedSHRFilename (set earlier)
          jsr   DecompressSHR
          jmp   ExecuteTransitionAtA000AndWait
-
-LoadIndexedSHRFile
-; in:    caller has populated IndexedSHRFilename
-; out:   all flags & registers clobbered
-         jsr   LoadIndexedFile       ; load index file into $2000
--        !word $2000
-         !word kSHRArtworkIndexRecord
-
-         jsr   okvs_find
-         !word -
-IndexedSHRFilename
-         !word $FDFD                 ; SMC
-         +ST16 @indexRecordPtr
-
-         jsr   LoadIndexedFile       ; load compressed SHR artwork at $1FF8/main (not aux)
-         !word $1FF8
-@indexRecordPtr
-         !word $FDFD                 ; SMC
-         rts
 
 ;------------------------------------------------------------------------------
 ; BlankSHR [private]
@@ -172,15 +222,26 @@ IndexedSHRFilename
 ;------------------------------------------------------------------------------
 BlankSHR
          jsr   Home
-
-         lda   #%01000001             ; set GS NEWVIDEO mode to turn on linearize
-         sta   NEWVIDEO
-
+         jsr   PreSHRMode
+         ;A=0
+         sta   ClearColor            ; clear SHR screen to black, not green
+         lda   #$20                  ; clear $2000..$9FFF in auxmem
+         ldx   #$80
          sta   WRITEAUXMEM           ; writes go to auxmem
+         jsr   ClearMem
+         sta   WRITEMAINMEM          ; writes go to main memory
+         lda   #$80
+         sta   ClearColor
+SHRMode
+         lda   #%11000001            ; set GS NEWVIDEO mode to turn on SHR mode
+         sta   NEWVIDEO
+         rts
 
-         ldx   #$00                  ; enable auxmem-to-bank-E1 shadowing on IIgs
-         stx   SHADOW
-
+PreSHRMode
+         lda   #%01000001            ; set GS NEWVIDEO mode to turn on linearize
+         sta   NEWVIDEO              ; (see notes in Home)
+         lda   #$00                  ; enable auxmem-to-bank-E1 shadowing on IIgs
+         sta   SHADOW
 ; VIDHD-SPECIFIC HACK HERE!
 ; On the II/II+/IIe, all $C03x addresses are aliases for $C030, i.e. the speaker.
 ; Any single access of the speaker register requires a second access within a short
@@ -189,17 +250,5 @@ BlankSHR
 ; 8-bit machines, which VidHD interprets as invalid graphic modes and crashes hard),
 ; we instead balance the speaker access with a second write to the same speaker-
 ; aliased softswitch. Do not remove.
-         stx   SHADOW
-         stx   ClearColor            ; clear SHR screen to black, not green
-         lsr                         ; clear $2000..$9FFF in auxmem
-         ldx   #$80
-         jsr   ClearMem
-         lda   #$80
-         sta   ClearColor
-
-         sta   WRITEMAINMEM          ; writes go to main memory
-
-         lda   #%11000001            ; set GS NEWVIDEO mode to turn on SHR mode
-         sta   NEWVIDEO
-
+         sta   SHADOW
          rts

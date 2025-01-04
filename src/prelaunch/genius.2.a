@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $336
          jsr   $300
@@ -58,6 +59,6 @@ callback2
          jmp   $D7E2
 +        jmp   $D7D9
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

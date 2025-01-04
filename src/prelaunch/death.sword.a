@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+           jsr   HideLaunchArtwork
            +ENABLE_ACCEL
            +NEW_RESET_VECTOR_64K $300
            lda   #$8b
@@ -19,6 +20,6 @@
            lda   $c08b
            jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -22,10 +22,11 @@
 +
          +RESET_AND_IRQ_VECTOR $100
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          lda   #$00
          tay
          jmp   $2035
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

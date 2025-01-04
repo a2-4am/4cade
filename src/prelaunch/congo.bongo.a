@@ -25,8 +25,9 @@
          +NEW_RESET_VECTOR $330
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $c00
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

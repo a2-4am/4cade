@@ -15,6 +15,7 @@
          sta   $556C
          lda   #$4C
          sta   $5581
+         jsr   HideLaunchArtwork
          jsr   $2A55       ; show title screen
          lda   #<reset
          sta   $121A
@@ -42,6 +43,6 @@ callback
          sta   $E95B
 +        rts
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

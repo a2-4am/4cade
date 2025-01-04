@@ -17,6 +17,7 @@
 
          +DISABLE_ACCEL
 
+         jsr   HideLaunchArtwork
          lda   $C050
          jsr   $94CA      ; title animation
 
@@ -60,6 +61,6 @@ no_speech
          +READ_ROM_NO_WRITE
          jmp   $6200
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

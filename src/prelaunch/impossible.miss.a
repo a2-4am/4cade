@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
                           ; reboot on reset during title
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
@@ -37,6 +38,6 @@
 
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

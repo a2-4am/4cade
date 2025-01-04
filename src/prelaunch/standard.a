@@ -7,8 +7,9 @@
 
          !source "src/constants.a"
 
+         jsr   HideLaunchArtwork
          jmp   (ldrlo2)              ; last ProRWTS load address
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

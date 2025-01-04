@@ -62,6 +62,6 @@ callback1
          +DISABLE_ACCEL
          jmp   $9D84
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

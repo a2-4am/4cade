@@ -23,6 +23,7 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          lda   #0
          jmp   $55C
 
@@ -31,6 +32,6 @@ callback
          sta   $9F1       ; patch - don't decrease lives
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -13,9 +13,10 @@
          jsr   $800       ; load DOS
 
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          ldx   #$60
          jmp   $B700
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -15,6 +15,6 @@
          lda   #0
          jmp   $A2A7
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

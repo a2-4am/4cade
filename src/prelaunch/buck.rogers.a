@@ -16,8 +16,9 @@
          +DISABLE_ACCEL
          pla
          sta   $7fe       ; overwritten by GS acceleration
+         jsr   HideLaunchArtwork
          jmp   $400
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

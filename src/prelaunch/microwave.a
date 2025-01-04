@@ -30,6 +30,7 @@ callback
 ++
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          lda   #<callback
          sta   $40A3
@@ -37,6 +38,6 @@ callback
          sta   $40A4
          jmp   $4000      ; decompress
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

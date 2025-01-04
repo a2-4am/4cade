@@ -25,8 +25,9 @@
          sta   $61AB      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $6000
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

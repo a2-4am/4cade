@@ -26,6 +26,7 @@ hook2    lda   #<hook3
          lda   #>hook3
          sta   $9A7A+2
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $800       ; show title
 
 hook3    lda   #0
@@ -37,6 +38,6 @@ hook3    lda   #0
 
          jmp   $1200
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

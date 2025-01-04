@@ -14,8 +14,9 @@
          dec   $6AD1
          inc   $6ADA      ; swap buttons
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $9050
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

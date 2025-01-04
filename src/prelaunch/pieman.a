@@ -12,6 +12,7 @@
          sta   $3EA9
          jsr   $3E88      ; decompress
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
 
          lda   #$60       ; hook2
          sta   $A050
@@ -36,6 +37,6 @@
 +
          jmp   $950
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

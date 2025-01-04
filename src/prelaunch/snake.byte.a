@@ -29,8 +29,9 @@
          inx
          stx   $7a19
          inc   $7A26
+         jsr   HideLaunchArtwork
          jmp   $7680
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -18,6 +18,7 @@
          jsr   $800       ; decompress
 
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          jsr   $BA7B
 
          ldx   #5
@@ -49,6 +50,6 @@
 reset    lda   $C089
          jmp   $FAA6
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

@@ -11,6 +11,7 @@
 
 callback
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $0918
 
 +
@@ -22,6 +23,6 @@ callback
          sta   $2075
          jmp   $2000      ; decompress
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

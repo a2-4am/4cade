@@ -27,8 +27,9 @@
          sta   $211
          sta   $21C
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $B7A1
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

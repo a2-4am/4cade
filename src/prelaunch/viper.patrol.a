@@ -56,6 +56,6 @@ callback3
          dec   $101A      ; patch - don't decrease lives
 +        jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }

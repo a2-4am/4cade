@@ -12,6 +12,7 @@
          lda   #$60
          sta   $864
          jsr   $800       ; decompress
+         jsr   HideLaunchArtwork
 
          +NEW_RESET_VECTOR $3B0
          lda   #$2C
@@ -49,6 +50,6 @@ callback2
          sta   $8644      ; patch - don't decrease lives
          jmp   $800
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large for reset vector hook, ends at ", *
 }

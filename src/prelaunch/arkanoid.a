@@ -30,8 +30,9 @@
          sta   $600
          sta   $603       ; BIT changing reset
 
+         jsr   HideLaunchArtwork
          jmp   $981
 
-!if * > $1C0 {
+!if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
 }
