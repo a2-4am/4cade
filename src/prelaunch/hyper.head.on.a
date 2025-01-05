@@ -27,7 +27,7 @@
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          ldx   #$10
-         jmp   $7fd
+         jmp   $7d0       ; original is $7FD but GS accelerator overwrites it
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
