@@ -27,6 +27,11 @@ is_mock
          ldy   $3
          cpy   #$60
          bne   skip_a04f
+         ldy   MockingboardStuff
+         cpy   #$40
+         bcs   +
+         lsr   $7889      ; no speech
++
 -        ldy   $76BF, x
          cpy   #$C4
          bne   +
