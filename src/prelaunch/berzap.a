@@ -12,6 +12,7 @@
          sta   $879
          lda   #>callback1
          sta   $87a
+         dec   $ff
          jmp   $800       ; decompress
 
 callback1
