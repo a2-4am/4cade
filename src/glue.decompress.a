@@ -99,8 +99,10 @@ DecompressInternal
 ;        $0200..$03CB clobbered by decompressor
 ;------------------------------------------------------------------------------
 DecompressDHGR
-         jsr   DecompressHGR
-         sta   WRITEMAINMEM
+         lda   #$3F
+         bit   SHRRTS
+         jsr   DecompressInternal
+         sta   READAUXMEM
          lda   #$60
          sta   PageFrom+2
          lda   #$40
