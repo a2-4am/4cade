@@ -24,6 +24,7 @@
 ; DCB8..DCBD - backup of stack (during gameplay and self-running demos)
 ; DCBE..DCC2 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
+; DFAE..DFB3 - HideLaunchArtwork function
 ; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
@@ -140,6 +141,7 @@ VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
 PrelaunchInit= $EA
 HideLaunchArtwork  = $1BA
+HideLaunchArtworkLC2 = $DFAE
 ; textrank
 BestMatchIndex = $E5      ; word
 tmpx         = $E7        ; byte
