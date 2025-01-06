@@ -9,7 +9,10 @@
 ; - DecompressSHR
 ;
 
-DECRUNCH = $0314                     ; decrunch entry point
+; these are maintained by hand and must remain in sync with
+; labels in exodecrunch.a, which is assembled separately
+DECRUNCH_EXIT_ON_KEYPRESS = $025c    ; set to 'RTS' to exit decrunch on keypress
+DECRUNCH = $031a                     ; decrunch entry point
 
 ;------------------------------------------------------------------------------
 ; DecompressSHR
@@ -65,14 +68,17 @@ DecompressInternal
          lda   #<(@params - 1)
          pha
          bvs   +
-         jmp   LoadIndexedFile       ; load decompression code to $200
+         jmp   LoadIndexedFile       ; load decompression code to $200/main
 +        jmp   LoadAuxIndexedFile    ; load decompression code to $200/aux
 @params  !word $200
          !word kDecrunchRecord
          ldx   auxreq
          sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
          sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
-         jsr   DECRUNCH              ; loaded from separate file
+         beq   +
+         lda   #$60
+         sta   DECRUNCH_EXIT_ON_KEYPRESS
++        jsr   DECRUNCH
          sta   READMAINMEM
          sta   WRITEMAINMEM
          jsr   SwitchToBank2

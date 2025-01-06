@@ -51,11 +51,15 @@ WAITRTS  rts
 ;        otherwise exits via MegaAttractMode and everything is clobbered
 ;------------------------------------------------------------------------------
 WaitForKeyFor30Seconds
-         lda   #$16                  ; initialize timeout counters
+         lda   #$00                  ; initialize timeout counters
          sta   Timeout
          sta   Timeout+1
+         lda   #$15
          sta   Timeout+2
-@loop
+         bne   WFKF30SLoop           ; always branches
+OnIdle
+         jsr   LoadLaunchArtworkInBackground
+WFKF30SLoop
          lda   KBD
          bmi   WAITRTS
 
@@ -64,11 +68,11 @@ WaitForKeyFor30Seconds
          inc   RNDSEED               ; seed)
 +
          dec   Timeout
-         bne   @loop
+         bne   WFKF30SLoop
          dec   Timeout+1
-         bne   @loop
+         bne   WFKF30SLoop
          dec   Timeout+2
-         bne   @loop
+         bne   OnIdle
          ; /!\ execution falls through here to CoverFade
 ;------------------------------------------------------------------------------
 ; CoverFade

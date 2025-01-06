@@ -13,6 +13,9 @@
 ; - LoadAuxIndexedSHRFile
 ;
 
+gLaunchArtworkPreloaded
+         !byte 0
+
 ;------------------------------------------------------------------------------
 ; AllSHRSlideshow
 ; execute mega-attract mode of all super hi-res artwork (and nothing else)
@@ -94,12 +97,15 @@ LoadAuxIndexedSHRFile
 LoadIndexedSHRFile
          clv
          php
-         jsr   LoadIndexedFile       ; load index file into $2000
--        !word $2000
+         jsr   GetOffscreenAddress
+         sta   IndexedSHRAddr+1
+         jsr   LoadIndexedFile       ; load index file into offscreen HGR page
+IndexedSHRAddr
+         !word $FD00                 ; SMC high byte
          !word kSHRArtworkIndexRecord
 
          jsr   okvs_find
-         !word -
+         !word IndexedSHRAddr
 IndexedSHRFilename
          !word $FDFD                 ; SMC
          +ST16 @indexRecordPtr
@@ -252,3 +258,42 @@ PreSHRMode
 ; aliased softswitch. Do not remove.
          sta   SHADOW
          rts
+
+LoadLaunchArtworkInBackground
+         lda   KBD
+         bmi   @exit                 ; keypress pending -> done
+         lda   MachineStatus
+         and   #SUPPORTS_SHR
+         beq   @exit                 ; no SHR -> done
+         lda   MachineStatus
+         and   #HAS_128K
+         beq   @exit                 ; no 128K -> done (want to do this all in auxmem)
+         lda   gLaunchArtworkPreloaded
+         bmi   @exit                 ; already preloaded -> done
+         jsr   GetGameToLaunch
+         bcs   @exit                 ; no game -> done (this should never happen but okay)
+         +ST16 IndexedSHRFilename
+         jsr   okvs_next_field
+         ;Y=0
+         jsr   okvs_next_field_PTR_is_already_set
+         ;Y=0
+         iny                         ; Y = 1
+         lda   (PTR), y              ; A = game info bitfield
+         and   #HAS_LAUNCH_ARTWORK
+         beq   @exit                 ; currently selected game has no launch artwork -> done
+         lda   (PTR), y
+         and   #HAS_DHGR_TITLE
+         bne   @exit                 ; game has dhgr title -> done (title is using part of auxmem, load would cause visible artifacts)
+         jsr   LoadAuxIndexedSHRFile
+         lda   KBD
+         bmi   @exit
+         jsr   PreSHRMode
+         jsr   DecompressAuxSHR
+         lda   KBD
+         bmi   @turnOffLinearizeAndExit
+         lda   #$FF
+         sta   gLaunchArtworkPreloaded
+@turnOffLinearizeAndExit
+         lda   #%00000001
+         sta   NEWVIDEO
+@exit    rts

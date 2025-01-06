@@ -178,6 +178,8 @@ HGRTitleCallback
 
          +LD16 WINDEX                ; save game index in case user hits RETURN
          +ST16 gGameToLaunch         ; while it's visible (we'll launch it)
+         lda   #0
+         sta   gLaunchArtworkPreloaded
 
          jsr   LoadIndexedFile       ; load index file into $4000
 -        !word $4000

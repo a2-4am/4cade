@@ -118,9 +118,11 @@ SearchMode
          stx   gGameToLaunch         ; $FFFF = no game selected
          stx   gGameToLaunch+1
          stx   gMegaAttractModeFilter ; $FF = all module types
+         inx
+         stx   gLaunchArtworkPreloaded
+         stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   ReloadSearchIndex
          jsr   Home                  ; clear screen (switches to text mode)
-         stx   OffscreenPage         ; don't show text page 2 by accident
          jsr   OnInputChanged        ; draw UI offscreen
          jsr   HGRMode               ; show HGR screen
          jsr   ResyncPage
@@ -198,6 +200,8 @@ OnInputChanged
          dex
          stx   gGameToLaunch         ; $FFFF = no game selected
          stx   gGameToLaunch+1
+         inx
+         stx   gLaunchArtworkPreloaded
          jsr   LoadTitleOffscreen
          jmp   DrawUIWithoutDots
 
@@ -264,6 +268,7 @@ SoftBell
          +ST16 gGameToLaunch
          jsr   LoadGameTitleOffscreen
          lda   #0
+         sta   gLaunchArtworkPreloaded
 @noload
          sta   gDrawingOnscreen      ; will minimize flicker in case we're
          jsr   DrawUI                ; drawing directly onscreen

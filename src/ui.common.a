@@ -109,9 +109,8 @@ DHGRMode
 ; in:    A = key
 ; out:   A &= 0x7F
 ;        Y preserved
-;        X clobbered
-;        Z = 1 and C = 0 if this is a search key
-;        Z = 0 if this is not a search key
+;        Z = 1 and C = 0 and X = 0 if this is a search key
+;        Z = 0 and X = #kInputError if this is not a search key
 ;------------------------------------------------------------------------------
 IsSearchKey
          and   #$7F                  ; strip high bit for search characters

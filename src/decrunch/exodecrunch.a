@@ -207,6 +207,11 @@ literal_start1:
         tya
         bne no_hi_decr
         dec zp_dest_hi
+        bit $c000
+        bpl no_hi_decr
+exit_on_keypress:
+!warn "exit_on_keypress=",*
+        nop
 no_hi_decr:
         dey
         jsr get_crunched_byte

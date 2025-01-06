@@ -387,9 +387,6 @@ okvs_iter_values
          bne   @loop
 @exit    rts
 
-;------------------------------------------------------------------------------
-; internal functions
-
 okvs_next_field
 ; out:   Y = 0
          +ST16 PTR
@@ -408,6 +405,9 @@ incptr
          bne   +
          inc   PTR+1
 +        rts
+
+;------------------------------------------------------------------------------
+; internal functions
 
 GetStoreAddressFromAY
          +ST16 PTR
