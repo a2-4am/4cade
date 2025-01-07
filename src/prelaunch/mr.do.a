@@ -34,10 +34,8 @@ cheat3
          sta   $83f
          jsr   $800
 
-         +READ_RAM2_NO_WRITE
          jsr   HideLaunchArtwork
-         lda   MachineStatus
-         +READ_ROM_NO_WRITE
+         +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          pha
 
