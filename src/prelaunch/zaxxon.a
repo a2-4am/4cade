@@ -7,7 +7,6 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          lda   MachineStatus
