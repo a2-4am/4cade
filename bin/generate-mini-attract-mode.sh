@@ -71,10 +71,6 @@ cat res/GAMES.CONF |
             echo "SPCARTOON.6.=0" >> /tmp/g
         fi
 
-        if [ "$game" == "PRINCEUNP" ]; then
-            echo "ARTWORK.SHR/POP.END=C" >> /tmp/g
-        fi
-
         cat /tmp/g > res/ATTRACT/"$game"
 
         # clean up
