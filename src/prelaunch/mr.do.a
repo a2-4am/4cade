@@ -7,7 +7,6 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +USES_TEXT_PAGE_2
          inc   $3F4       ; reboot on reset
          clc
@@ -35,7 +34,10 @@ cheat3
          sta   $83f
          jsr   $800
 
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtwork
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          pha
 
