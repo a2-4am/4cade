@@ -7,7 +7,6 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          lda   #<callback
          sta   $4013
          lda   #>callback
@@ -21,7 +20,10 @@ callback nop
          iny
          sty   $0D93
          
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
