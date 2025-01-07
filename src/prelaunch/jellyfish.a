@@ -7,7 +7,6 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
 
          ldx   #<reset_e
@@ -37,6 +36,7 @@ reset    ldx   #5
          sta   $97BA      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $B800
 }
