@@ -7,7 +7,6 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          inc   $3F4       ; reboot during title screen
 
          lda   #$03       ; reset vector to $103
@@ -19,7 +18,7 @@
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          sta   patch+1
-         ldx   #$2A-1     ; copy patch code to zero page
+         ldx   #$2D-1     ; copy patch code to zero page
 -        lda   patch,x    ; (stack will be destroyed by the time we need to patch)
          sta   $80,x
          dex
@@ -49,6 +48,7 @@ patch
          lda   #$FA
          sta   $108
 
+         jsr   HideLaunchArtwork
          jmp   $200       ; continue to game
 
 !if * > HideLaunchArtwork {
