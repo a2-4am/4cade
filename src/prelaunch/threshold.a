@@ -7,7 +7,6 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          +NEW_RESET_VECTOR $BFF0
 
@@ -32,7 +31,10 @@ patch
          sta   $45B0      ; patch - don't decrease lives
          sta   $7ECD      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
          jmp   $6B00
 end_patch
 
