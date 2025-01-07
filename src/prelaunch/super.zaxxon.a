@@ -7,7 +7,6 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          lda   MachineStatus
@@ -23,7 +22,19 @@
          sta   $7100, y
          dey
          bpl   -
-+        jmp   $2000      ; decompress
++
+         ldx   #(hide_callback_e-hide_callback)
+-        lda   hide_callback, x
+         sta   $106, x
+         lda   HideLaunchArtwork, x
+         sta   HideArtworkCallback, x
+         dex
+         bpl   -
+         lda   #$06
+         sta   $21CE
+         lda   #$01
+         sta   $21CF
+         jmp   $2000      ; decompress
 
 callback !pseudopc $7100 {
          jsr   $415
@@ -32,6 +43,15 @@ callback !pseudopc $7100 {
          rts
 }
 callback_e
+
+hide_callback !pseudopc $106 {
+         ldx   #$0D
+         jsr   $193
+         jsr   HideArtworkCallback
+         jmp   $56C4
+HideArtworkCallback
+}
+hide_callback_e
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
