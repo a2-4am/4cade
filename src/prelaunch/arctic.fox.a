@@ -12,7 +12,8 @@
          sta   $4280
          lda   #<(callback1-1)
          sta   $4283
-         jmp   $3FFD      ; decompress
+         jsr   HideLaunchArtwork
+         jmp   $3FFD      ; decompress & show EA title
 
 callback2
          lda   $BD09
@@ -38,7 +39,6 @@ callback1
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
          sta   $C05F      ; fix //c and //c+ HGR color
-         jsr   HideLaunchArtwork
          jmp   $1170
 
 !if * > HideLaunchArtwork {
