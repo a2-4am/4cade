@@ -2,7 +2,6 @@
 ; the Exomizer homepage.
 ; It contains modifications made by qkumba to work with ACME assembler.
 !cpu 6502
-!to "DECRUNCH",plain
 *=$200
 
 ;
@@ -66,17 +65,7 @@ EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE = 1
 ; -------------------------------------------------------------------
 ; zero page addresses used
 ; -------------------------------------------------------------------
-zp_len_lo = $a7
-zp_len_hi = $a8
-
-zp_src_lo  = $ae
-zp_src_hi  = zp_src_lo + 1
-
-zp_bits_hi = $fc
-
-zp_bitbuf  = $fd
-zp_dest_lo = zp_bitbuf + 1      ; dest addr lo
-zp_dest_hi = zp_bitbuf + 2      ; dest addr hi
+         !src  "src/decrunch/constants.a"
 
 !IFDEF EXTRA_TABLE_ENTRY_FOR_LENGTH_THREE {
 encoded_entries = 68

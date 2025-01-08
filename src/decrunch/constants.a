@@ -1,0 +1,13 @@
+!ifndef _EXO_CONSTANTS_ {
+
+zp_len_lo  = $a0
+zp_len_hi  = $a1
+zp_src_lo  = $a2
+zp_src_hi  = $a3
+zp_bits_hi = $a4
+zp_bitbuf  = $a5
+zp_dest_lo = $a6          ; dest addr lo
+zp_dest_hi = $a7          ; dest addr hi
+
+_EXO_CONSTANTS_=*
+}
