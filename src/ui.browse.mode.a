@@ -94,7 +94,7 @@ OnBrowseNext
 notLastGame
          +STX16 gGameToLaunch
          lda   #0
-         sta   gLaunchArtworkPreloaded
+         sta   gPreloadStatus
          jmp   OnBrowseChanged
 
 OnBrowseRandom
@@ -107,7 +107,7 @@ GameCount
          stx   gGameToLaunch
          sta   gGameToLaunch+1
          lda   #0
-         sta   gLaunchArtworkPreloaded
+         sta   gPreloadStatus
          jmp   OnBrowseChanged
 
 ReloadIndexAndLaunch

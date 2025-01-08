@@ -8,6 +8,8 @@ zp_bits_hi = $a4
 zp_bitbuf  = $a5
 zp_dest_lo = $a6          ; dest addr lo
 zp_dest_hi = $a7          ; dest addr hi
+exo_save_x = $a8
+exo_save_y = $a9
 
 _EXO_CONSTANTS_=*
 }

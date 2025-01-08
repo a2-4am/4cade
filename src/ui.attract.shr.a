@@ -13,9 +13,6 @@
 ; - LoadAuxIndexedSHRFile
 ;
 
-gLaunchArtworkPreloaded
-         !byte 0
-
 ;------------------------------------------------------------------------------
 ; AllSHRSlideshow
 ; execute mega-attract mode of all super hi-res artwork (and nothing else)
@@ -268,7 +265,7 @@ LoadLaunchArtworkInBackground
          lda   MachineStatus
          and   #HAS_128K
          beq   @exit                 ; no 128K -> done (want to do this all in auxmem)
-         lda   gLaunchArtworkPreloaded
+         lda   gPreloadStatus
          bmi   @exit                 ; already preloaded -> done
          jsr   GetGameToLaunch
          bcs   @exit                 ; no game -> done (this should never happen but okay)
@@ -287,12 +284,14 @@ LoadLaunchArtworkInBackground
          jsr   LoadAuxIndexedSHRFile
          lda   KBD
          bmi   @exit
+         lda   #%00000001
+         sta   gPreloadStatus
          jsr   PreSHRMode
          jsr   DecompressAuxSHR
          lda   KBD
          bmi   @turnOffLinearizeAndExit
-         lda   #$FF
-         sta   gLaunchArtworkPreloaded
+         lda   #%11111111
+         sta   gPreloadStatus
 @turnOffLinearizeAndExit
          lda   #%00000001
          sta   NEWVIDEO

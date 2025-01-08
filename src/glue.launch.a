@@ -150,7 +150,7 @@ PlayGameInAY
                                      ; since SHR video mode will be active instead of HGR
          beq   @postArtwork          ; always branches because Z=1 coming out of ClearScreens
 @loadLaunchArtwork
-         lda   gLaunchArtworkPreloaded
+         lda   gPreloadStatus
          bmi   @showLaunchArtwork128K
          jsr   Home
          lda   MachineStatus
@@ -164,9 +164,17 @@ PlayGameInAY
          jsr   ReloadSearchIndexOnly
          jmp   @postArtwork
 @loadLaunchArtwork128K
-         jsr   LoadAuxIndexedSHRFile
+         lda   gPreloadStatus
+         bne   @resumeBackgroundDecompression
++        jsr   LoadAuxIndexedSHRFile
          jsr   PreSHRMode
          jsr   DecompressAuxSHR
+         jmp   @showLaunchArtwork128K
+@resumeBackgroundDecompression
+         jsr   PreSHRMode
+         jsr   ResumeAuxDecompress
+         lda   #%11111111
+         sta   gPreloadStatus
 @showLaunchArtwork128K
          jsr   SHRMode
 @postArtwork

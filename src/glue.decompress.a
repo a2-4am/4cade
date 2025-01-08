@@ -79,12 +79,26 @@ DecompressInternal
          lda   #$60
          sta   DECRUNCH_EXIT_ON_KEYPRESS
 +        jsr   DECRUNCH
+-        stx   exo_save_x
+         sty   exo_save_y
          sta   READMAINMEM
          sta   WRITEMAINMEM
          jsr   SwitchToBank2
          lda   #0
          sta   auxreq
          jmp   DisableAcceleratorAndSwitchToBank1
+
+ResumeAuxDecompress
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
+         sta   READAUXMEM
+         sta   WRITEAUXMEM
+         lda   #$EA
+         sta   DECRUNCH_EXIT_ON_KEYPRESS
+         ldx   exo_save_x
+         ldy   exo_save_y
+         jsr   DECRUNCH_EXIT_ON_KEYPRESS+1
+         jmp   -
 
 ;------------------------------------------------------------------------------
 ; DecompressDHGR

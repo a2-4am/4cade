@@ -139,6 +139,9 @@ WCOUNT       = $0C        ; word
 HTAB         = $24        ; byte
 VTAB         = $25        ; byte
 RNDSEED      = $4E        ; word
+
+         !src "src/decrunch/constants.a"
+
 PrelaunchInit= $EA
 HideLaunchArtwork  = $1BA
 HideLaunchArtworkLC2 = $DFAE

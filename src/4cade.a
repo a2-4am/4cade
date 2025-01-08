@@ -146,6 +146,9 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/hw.vbl.a"
          !source "src/ui.wait.a"
 
+gPreloadStatus
+         !byte %00000000
+
 gMegaAttractModeFilter    ; module types to include in mega-attract mode
          !byte %11111111
 ;               |||||||+- bit 0 include self-running demos
