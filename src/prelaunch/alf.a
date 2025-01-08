@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ALF",plain
@@ -16,17 +16,17 @@
          sta   $8A0
          jsr   $800       ; decompress
          jsr   HideLaunchArtwork
-;ran out of space
-;;         +DISABLE_ACCEL
-         jsr   $8AA5
-;;         +ENABLE_ACCEL
-         jsr   $882       ; decompress
          +DISABLE_ACCEL
-         jsr   $7150
+         jsr   $8AA5      ; show Box Office animation
+;ran out of space
+;;         +ENABLE_ACCEL
+         jsr   $882       ; small decompress
+;;         +DISABLE_ACCEL
+         jsr   $7150      ; show ALF title
          +ENABLE_ACCEL
          jsr   $88B       ; decompress
          +DISABLE_ACCEL
-         jsr   $4000
+         jsr   $4000      ; show scrolling text screen
          +ENABLE_ACCEL
          jsr   $895       ; decompress
          ldy   #$60

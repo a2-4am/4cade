@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by qkumba
+;(c) 2021-2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/APE.ESCAPE",plain
@@ -13,13 +13,13 @@
          sta   $94C7
          sta   $94E1
          sta   $94F2
-         jsr   $4000      ; decompress title
+         jsr   HideLaunchArtwork
+         jsr   $4000      ; decompress & show SAMS logo
 
          +DISABLE_ACCEL
 
-         jsr   HideLaunchArtwork
          lda   $C050
-         jsr   $94CA      ; title animation
+         jsr   $94CA      ; show title animation
 
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator

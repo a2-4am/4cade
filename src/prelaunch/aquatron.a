@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/AQUATRON",plain
@@ -12,7 +12,8 @@
          sta   $5FC3
          lda   #<(callback - 1)
          sta   $5FC6
-         jmp   $59C2      ; decompress
+         jsr   HideLaunchArtwork
+         jmp   $59C2      ; decompress & show title
 
 callback
          +GET_MACHINE_STATUS
@@ -22,7 +23,6 @@ callback
          sta   $7696      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $400
 
 !if * > HideLaunchArtwork {

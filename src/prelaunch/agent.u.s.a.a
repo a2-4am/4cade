@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/AGENT.U.S.A",plain
@@ -9,7 +9,8 @@
 
          lda   #$60
          sta   $36D3
-         jsr   $366D      ; decompress
+         jsr   HideLaunchArtwork
+         jsr   $366D      ; decompress & show title
 
          ldx   #5
 -        lda   $100,x
@@ -19,10 +20,9 @@
          sec
          ror   $3F2
          inc   $3F3       ; point to $280 instead
-         jsr   $FB6F
+         jsr   $FB6F      ; show title screen
 
-         jsr   HideLaunchArtwork
-         jmp   $837
+         jmp   $837       ; run demo
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *

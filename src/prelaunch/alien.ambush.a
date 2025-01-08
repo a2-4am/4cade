@@ -11,7 +11,8 @@
          +NEW_RESET_VECTOR $3E0      ; overwrites $101 at end of demo cycle
          lda   #$60
          sta   $81c
-         jsr   $800       ; decompress
+         jsr   HideLaunchArtwork
+         jsr   $800       ; decompress & show title
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -19,7 +20,6 @@
          dec   $608b
 +
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $4000
 
 !if * > HideLaunchArtwork {

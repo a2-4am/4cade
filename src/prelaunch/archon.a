@@ -12,7 +12,8 @@
          sta   $5EC0
          lda   #<(callback-1)
          sta   $5EC3
-         jmp   $3FF8      ; decompress
+         jsr   HideLaunchArtwork
+         jmp   $3FF8      ; decompress & show EA title
 
 hookreset
          sta   $BD01
@@ -48,7 +49,6 @@ callback
          lda   #$FA
          sta   $105       ; update reset hook to reboot
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $5FF8
 
 !if * > HideLaunchArtwork {
