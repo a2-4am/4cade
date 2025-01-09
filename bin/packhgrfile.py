@@ -17,11 +17,10 @@ if(len(filedata) >= 8192 and filedata[8189] == 0x4c):
   outdata = bytearray(filedata[0:8192])
 else:
   outdata = bytearray(filedata[0:7680])
-
-for h in range(60):
-  oh = h*128+120
-  ih = h*8+7680+(int(h/15)*8)
-  outdata[oh:oh+8] = filedata[ih:ih+8]
+  for h in range(60):
+    oh = h*128+120
+    ih = h*8+7680+(int(h/15)*8)
+    outdata[oh:oh+8] = filedata[ih:ih+8]
 
 with open(outfile,"wb") as o:
   o.write(outdata)
