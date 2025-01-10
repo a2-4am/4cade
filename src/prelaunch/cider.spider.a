@@ -28,7 +28,7 @@
          sta   $1C1E
 +
          lda   #0
-         sta   $306
+         sta   $306       ; uninitialized value in original game
          sta   $10AC
          lda   #1
          sta   $10B1      ; reset vector patch

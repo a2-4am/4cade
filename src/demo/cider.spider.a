@@ -23,6 +23,7 @@
          bpl   -
 
          inx
+         stx   $306       ; uninitialized value in original game
          stx   $10AC
          inx
          stx   $10B1      ; reset vector patch
