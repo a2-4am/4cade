@@ -13,14 +13,20 @@
 
 ### Enhancements & bug fixes in v5.3
 
+- Show game's super hi-res artwork on launch (requires IIgs or other supported hardware)
+- Remove visible instructions from title screens shown in search and browse modes, to reduce confusion before game launch (e.g. Mario Bros title says "Press space to start" but that's not true until you launch it). Actual in-game title screens are not affected by this change.
 - Fix crash in Black Magic on Apple //c+ (closes [633](https://github.com/a2-4am/4cade/issues/633))
+- Fix crash in Hyper Head On on Apple IIgs (closes [667](https://github.com/a2-4am/4cade/issues/667))
 - Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
 - Fix uninitialized value in Apple Cider Spider and its self-running demo
+- Swap buttons by default in Lode Runner and Championship Lode Runner (closes [663](https://github.com/a2-4am/4cade/issues/663))
 - Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
+- Fix Mockingboard issues in Willy Byte (closes [665](https://github.com/a2-4am/4cade/issues/665), [666](https://github.com/a2-4am/4cade/issues/666))
 - Properly reset Mockingboard speech chip on Ctrl-Reset (closes [660](https://github.com/a2-4am/4cade/issues/660))
 - Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
+- Improve Mockingboard mono/stereo detection
+- Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't (closes [664](https://github.com/a2-4am/4cade/issues/664))
 - Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645))
-- Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't
 - Mark Mapple and Crime Wave as having in-game cheats
 - Remove debugging code from Mapple
 - Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
