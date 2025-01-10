@@ -90,6 +90,7 @@ goto :EOF
 
 :index
 call :md
+call :decrunch
 call :asmfx
 call :asmprelaunch
 call :asmdemo
@@ -300,7 +301,7 @@ cscript /nologo bin\addfile.js build\GR.FIZZLE src\index\gr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\DGR.FIZZLE src\index\dgr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\HELPTEXT src\index\helptext.idx.a
 cscript /nologo bin\addfile.js build\CREDITS src\index\credits.idx.a
-cscript /nologo bin\addfile.js res\DECRUNCH src\index\decrunch.idx.a
+cscript /nologo bin\addfile.js build\DECRUNCH src\index\decrunch.idx.a
 cscript /nologo bin\addfile.js res\JOYSTICK src\index\joystick.idx.a
 echo done
 goto :EOF
@@ -320,6 +321,10 @@ goto :EOF
 2>nul md build\GAMEHELP
 2>nul md build\DEMO
 1>nul copy nul build\log
+goto :EOF
+
+:decrunch
+%ACME% -o build/decrunch src/decrunch/exodecrunch.a
 goto :EOF
 
 :asmlauncher
