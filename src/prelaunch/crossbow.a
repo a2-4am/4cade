@@ -14,13 +14,13 @@
          lda   #$60
          sta   $9A1
          jsr   $800       ; decompress
+         jsr   HideLaunchArtwork
          stx   $827F
          inx
          stx   $828A      ; reset vector
          lda   #$4C
          sta   $7144
          jsr   $68FD
-         jsr   HideLaunchArtwork
          +DISABLE_ACCEL
          jmp   $7147
 
