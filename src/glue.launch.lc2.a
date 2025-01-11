@@ -56,11 +56,16 @@ LaunchInternal
          bit   CLEARKBD
          lda   MachineStatus
          and   #SUPPORTS_SHR
-         bne   +
+         bne   @turnOffSHRShadow
          lda   #$60
          sta   HideLaunchArtwork
          sta   HideLaunchArtworkLC2
-+        jmp   iPrelaunchInit
+         bne   @jmp                  ; always branches
+@turnOffSHRShadow
+         lda   #%00001000
+         sta   SHADOW
+         sta   SHADOW
+@jmp     jmp   iPrelaunchInit
 
 PrelaunchInitInternal
 !pseudopc PrelaunchInit {
