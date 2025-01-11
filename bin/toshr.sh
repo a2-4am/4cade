@@ -8,7 +8,7 @@
 # 1 - input file (PNG, must be properly sized and named)
 
 # Python 3
-PYTHON="python"
+PYTHON="python3.9"
 
 # https://github.com/KrisKennaway/ii-pix/
 CONVERT_PY="$HOME/Documents/a2/ii-pix/convert.py"
