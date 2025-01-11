@@ -4,6 +4,6 @@
 #
 
 N.O.R.A.D=C
-N.O.R.A.D2=A
 N.O.R.A.D=A
+N.O.R.A.D2=A
 N.O.R.A.D=0
