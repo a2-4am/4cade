@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2025 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/CAPTAIN.POWER",plain
@@ -7,9 +7,18 @@
 
     !source "src/macros.a"
 
+         +ENABLE_ACCEL
          +LC_REBOOT
+         lda   #$60
+         sta   $980
+         jsr   $800       ; decompress
+         lda   #$60
+         sta   $BA19
+         jsr   $BA00
          jsr   HideLaunchArtwork
-         jmp   $800
+         +DISABLE_ACCEL
+         jsr   $5FFD
+         jmp   $BA1C
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
