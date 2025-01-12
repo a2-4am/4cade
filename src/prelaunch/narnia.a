@@ -12,6 +12,7 @@
          sta   $86AD
          jsr   $3FF8       ; decompress
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $81E
 
 !if * > HideLaunchArtwork {

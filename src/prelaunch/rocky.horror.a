@@ -28,6 +28,7 @@
          sta   $8A0
          stx   $8A1
 +        +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
          jmp   $800
 
 callback
