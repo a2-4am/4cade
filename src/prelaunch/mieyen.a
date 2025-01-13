@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2025 by 4am
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/MIEYEN",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$4C
+         sta   $5FEE
+         jsr   $43E4
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > HideLaunchArtwork {
+  !error "code is too large, ends at ", *
+}
