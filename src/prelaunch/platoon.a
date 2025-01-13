@@ -10,7 +10,6 @@
          lda   #$60
          sta   $33C
          jsr   $300
-         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          inc   $3F4       ; force reboot
          lda   #$60
@@ -18,6 +17,7 @@
          jsr   $1000
          dex
          jsr   $D300
+         jsr   HideLaunchArtwork
          lda   #$4C
          sta   $852
          jsr   $800
