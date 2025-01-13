@@ -15,7 +15,6 @@
          lda   #$60
          sta   $11A7
          jsr   $1000      ; load "DOS"
-         jsr   HideLaunchArtwork
          dex
          jsr   $D300      ; decompress
          lda   #$60
@@ -36,6 +35,7 @@
          lda   #>callback
          sta   $E0DA
          jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
          jmp   $E000
 
 callback
