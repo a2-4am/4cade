@@ -5,6 +5,7 @@
 ### Games added in v5.3
 
 - Crossbow
+- Deathbounce
 - Kaboom!
 - Mieyen
 
