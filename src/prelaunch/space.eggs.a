@@ -14,8 +14,15 @@
          sta   $2056
          jsr   $2000      ; decompress
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         dec   $1BBA      ; don't decrease lives
++
+         jsr   DisableAccelerator
          jsr   HideLaunchArtwork
+         +READ_ROM_NO_WRITE
          jmp   $4880      ; run it
 
 !if * > HideLaunchArtwork {
