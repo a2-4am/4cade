@@ -7,10 +7,11 @@
 
     !source "src/macros.a"
 
+         +ENABLE_ACCEL
          lda   #$60
-         sta   $36D3
+         sta   $3F4E
          jsr   HideLaunchArtwork
-         jsr   $366D      ; decompress & show title
+         jsr   $3EFD      ; decompress & show title
 
          ldx   #5
 -        lda   $100,x
@@ -21,6 +22,7 @@
          ror   $3F2
          inc   $3F3       ; point to $280 instead
          jsr   $FB6F      ; show title screen
+         +DISABLE_ACCEL
 
          jmp   $837       ; run demo
 
