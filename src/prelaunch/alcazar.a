@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $4035
+         sta   $403F
          jsr   $1ffd      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
