@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BOLO",plain
@@ -10,6 +10,7 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $8034
+         jsr   HideLaunchArtwork
          jsr   $4ab0      ; decompress and show title
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
@@ -19,7 +20,6 @@
          sta   $11ae
 +
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $1100
 
 !if * > HideLaunchArtwork {

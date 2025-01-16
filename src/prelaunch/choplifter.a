@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021 by qkumba
+;(c) 2021 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/CHOPLIFTER",plain
@@ -10,8 +10,8 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $403F
-         jsr   $4000      ; decompress
-         +DISABLE_ACCEL
          jsr   HideLaunchArtwork
+         jsr   $4000      ; decompress & show title
+         +DISABLE_ACCEL
          ldy   #0
          jmp   $400

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BOULDER.DASH.II",plain
@@ -11,7 +11,8 @@
          jsr   EnableAccelerator
          lda   #$60
          sta   $4044
-         jsr   $4000      ; decompress
+         jsr   HideLaunchArtwork
+         jsr   $4000      ; decompress & show EA title
 
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -21,7 +22,6 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $800
 
 !if * > HideLaunchArtwork {
