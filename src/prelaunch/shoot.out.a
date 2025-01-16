@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2025 qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SHOOT.OUT",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $202E
+         jsr   $2000      ; decompress
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$A9
+         sta   $8C3       ; don't decrease lives
++
+         jsr   DisableAccelerator
+         jsr   HideLaunchArtwork
+         +READ_ROM_NO_WRITE
+         jmp   $800
+
+!if * > HideLaunchArtwork {
+  !error "code is too large, ends at ", *
+}
