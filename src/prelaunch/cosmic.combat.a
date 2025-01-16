@@ -11,7 +11,8 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $1A86
-         jsr   $1A00      ; decompress
+         jsr   HideLaunchArtwork
+         jsr   $1A00      ; decompress & show title
 
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
@@ -23,7 +24,6 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $D566
 
 !if * > HideLaunchArtwork {

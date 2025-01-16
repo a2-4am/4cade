@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2020 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BOULDER.DASH",plain
@@ -10,7 +10,8 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $404A
-         jsr   $4000      ; decompress
+         jsr   HideLaunchArtwork
+         jsr   $4000      ; decompress & show EA screen
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
@@ -19,7 +20,6 @@
          sta   $181A      ; patch - don't decrease lives
 +
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $800
 
 !if * > HideLaunchArtwork {
