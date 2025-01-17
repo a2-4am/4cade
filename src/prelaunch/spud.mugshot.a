@@ -1,0 +1,69 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SPUD.MUGSHOT",plain
+*=$106
+
+    !source "src/macros.a"
+
+         jmp   main
+
+callback1
+         clc
+         !byte $24
+callback2
+         sec
+         php
+         +ENABLE_ACCEL
+         lda   #$60
+         plp
+         php
+         bcs   +
+         sta   $242D
+         bcc   ++
++        sta   $2439
+++       jsr   $23F8      ; decompress
+         ldx   #0
+         stx   $3F2
+         inx
+         stx   $3F3
+         stx   $BCFD      ; hook exit
+         jsr   $FB6F      ; reset vector
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         plp
+         php
+         bcs   ++
+         dec   $ACFD      ; don't decrease ammunition
+         bcc   +
+++       lda   #$AD
+         sta   $981F      ; don't decrease lives
++        jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         plp
+         bcs   +
+         jmp   $23A9
++        jmp   $212F
+
+main
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4059
+         jsr   $3FF8      ; decompress
+         lda   #<callback1
+         sta   $97CA
+         lda   #<callback2
+         sta   $9848
+         lda   #>callback1
+         sta   $97CB
+         sta   $9849
+         +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
+         jmp   $9052
+
+!if * > HideLaunchArtwork {
+  !error "code is too large, ends at ", *
+}
