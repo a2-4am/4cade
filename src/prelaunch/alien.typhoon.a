@@ -9,22 +9,21 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $472f
-         sta   $4739
-         jsr   $4710
+         sta   $48DC
+         sta   $48E6
+         jsr   $48B8      ; decompress
          +DISABLE_ACCEL
          jsr   HideLaunchArtwork
          jsr   $6000
          +ENABLE_ACCEL
-         jsr   $806
+         jsr   $80B       ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
          dec   $7270
          dec   $7b53
 +
-         lda   #0
-         sta   $2067
+         asl   $2067
          lda   #1
          sta   $206C      ; reset vector patch
 

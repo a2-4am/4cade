@@ -9,12 +9,12 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $86E
+         sta   $3739
          jsr   $800        ; decompress
          ldx   #0
          stx   $B265
          inx
-         stx   $B26A
+         stx   $B26A       ; reset vector
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED

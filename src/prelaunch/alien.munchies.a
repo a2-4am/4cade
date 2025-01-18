@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $1638
+         sta   $1634
          jsr   $1610      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
