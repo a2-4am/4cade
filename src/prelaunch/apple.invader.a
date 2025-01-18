@@ -7,15 +7,11 @@
 
     !source "src/macros.a"
 
-         lda   $7fe
-         pha
          +ENABLE_ACCEL
-         pla
-         sta   $7fe       ; overwritten by GS acceleration
 
          lda   #$60
-         sta   $6020
-         jsr   $6002      ; decompress
+         sta   $6027
+         jsr   $6000      ; decompress
 
          lda   #$30       ; fix sound on //gs
          sta   $1A35      ; enemy destruct
@@ -55,12 +51,8 @@
          sta   $1997      ; patch - don't increase lives
          sta   $1E33      ; patch - don't decrease lives
 +
-         lda   $7fe
-         pha
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         pla
-         sta   $7fe       ; overwritten by GS acceleration
          jmp   $5F00
 
 !if * > $1C1 {
