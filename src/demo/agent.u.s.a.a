@@ -11,8 +11,8 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $36D3
-         jsr   $366D      ; decompress
+         sta   $3F4E
+         jsr   $3EFD      ; decompress & show title
 
          ldx   #5
 -        lda   $100,x

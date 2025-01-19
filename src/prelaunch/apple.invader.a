@@ -19,29 +19,40 @@
          sta   $1C36      ; bonus ship
          sta   $1CCB      ; kill bonus ship
 
-         lda   #$D8       ; move location from $3F2 to $3D8
-         sta   $1113      ; (program uses reset vector for storage)
-         sta   $1245
-         sta   $4A2C
-         sta   $4A34
-         sta   $4A41
-         sta   $5A9C
-         sta   $5AA4
-         sta   $5AB1
-         sta   $5A9C
+         ldx   #$D8       ; move location from $3F2 to $3D8
+         stx   $1113      ; (program uses reset vector for storage)
+         stx   $1245
+         stx   $4A2C
+         stx   $4A34
+         stx   $4A41
+         stx   $5A9C
+         stx   $5AA4
+         stx   $5AB1
+         stx   $5A9C
+         inx              ; move location from $3F3 to $3D9
+         stx   $1FA0
+         stx   $4A31
+         stx   $4F4D
+         stx   $5AA1
+         inx              ; move location from $3F4 to $3DA
+         stx   $11AF
+         stx   $1824
+         stx   $19DF
+         stx   $1DE8
+         stx   $1E5A
 
-         lda   #$D9       ; move location from $3F3 to $3D9
-         sta   $1FA0
-         sta   $4A31
-         sta   $4F4D
-         sta   $5AA1
-
-         lda   #$DA       ; move location from $3F4 to $3DA
-         sta   $11AF
-         sta   $1824
-         sta   $19DF
-         sta   $1DE8
-         sta   $1E5A
+         inx              ; move location from $3FE to $3DB
+         stx   $4AF9      ; (program uses IRQ vector for storage)
+         stx   $4B0F
+         stx   $5B69
+         stx   $5B7F
+         inx              ; move location from $3FF to $3DC
+         stx   $4B02
+         stx   $4B07
+         stx   $4B14
+         stx   $5B72
+         stx   $5B77
+         stx   $5B84      ; IRQ vector fix
 
          +READ_RAM2_NO_WRITE
          lda   MachineStatus

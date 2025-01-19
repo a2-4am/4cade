@@ -12,36 +12,31 @@
          +LOAD_XSINGLE title
 
          lda   #$61
-         sta   $471C
-         lda   #$7E
-         sta   $4720
+         sta   $48C4
+         lda   #4
+         sta   $48C8
          lda   #$12
-         sta   $4724
+         sta   $48CC
          lda   #$60
-         sta   $472F
-         jsr   $4710      ; decompress
+         sta   $48DC
+         jsr   $48B8      ; decompress
 
-         ldx   #0
-         stx   $2067
-         inx
-         stx   $206C      ; reset vector patch
-
-         lda   #$60
-         sta   $2075
-         jsr   $2001      ; unpack
+         asl   $2067
+         lda   #1
+         sta   $206C      ; reset vector patch
 
          ldx   #3-1
 -        lda   patch,x
-         sta   $9D58,x
-         sta   $8FD6,x
-         sta   $8FEF,x
-         sta   $92B1,x    ; set exits
+         sta   $7D58,x
+         sta   $6FD6,x
+         sta   $6FEF,x
+         sta   $72B1,x    ; set exits
          dex
          bpl   -
 
          +DISABLE_ACCEL
 
-         jmp   $8F98
+         jmp   $2001
 
 patch    !byte $4C,$00,$01
 
