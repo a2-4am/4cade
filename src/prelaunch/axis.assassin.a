@@ -7,10 +7,16 @@
 
     !source "src/macros.a"
 
+         +ENABLE_ACCEL
          lda   #$60
-         sta   $3f06
+         sta   $3f32
+         sta   $3f4e
          jsr   HideLaunchArtwork
-         jsr   $3eb1      ; decompress & show title
+         jsr   $3efc      ; decompress & show title
+         +DISABLE_ACCEL
+         jsr   $F00
+         +ENABLE_ACCEL
+         jsr   $be12      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -19,11 +25,12 @@
 +
          lda   #$4C
          sta   $5B2E
-         lda   #0
-         sta   $5B2F
-         lda   #1
-         sta   $5B30      ; reset vector patch
+         ldx   #0
+         stx   $5B2F
+         inx
+         stx   $5B30      ; reset vector patch
 
+         +DISABLE_ACCEL
          jmp   $5c00
 
 !if * > HideLaunchArtwork {

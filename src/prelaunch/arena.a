@@ -8,8 +8,8 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL
-         lda   #$60
-         sta   $9490
+         lda   #$4C
+         sta   $90D9
          jsr   $6000      ; decompress
          +READ_RAM2_NO_WRITE
          lda   MachineStatus

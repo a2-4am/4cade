@@ -13,16 +13,16 @@
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
 
-         lda   #$84
-         sta   $3ECC
-         lda   #$71
-         sta   $3ED0
-         lda   #$17
-         sta   $3EDC
+         lda   #$81
+         sta   $3F11
+         lda   #$E3
+         sta   $3F15
+         lda   #$12
+         sta   $3F21
 
-         lda   #$60
-         sta   $3f06
-         jsr   $3eb1      ; decompress
+         lda   #$4C
+         sta   $3F4B
+         jsr   $3EFC      ; decompress
 
          ldx   #3-1
 -        lda   patch,x
