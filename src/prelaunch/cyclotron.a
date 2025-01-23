@@ -21,6 +21,7 @@
          sta   $1645       ; patch - don't increase lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $1C25
 
