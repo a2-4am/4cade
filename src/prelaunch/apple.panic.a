@@ -9,14 +9,14 @@
 
          +ENABLE_ACCEL
          lda   #$4C
-         sta   $7115
-         sta   $7137
+         sta   $6EC5
+         sta   $6EE7
          jsr   $3FF8      ; decompress
          +DISABLE_ACCEL
          jsr   HideLaunchArtwork
          jsr   $1000      ; title sequence
          +ENABLE_ACCEL
-         jsr   $711B      ; decompress
+         jsr   $6ECB      ; decompress
 
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
