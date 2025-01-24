@@ -24,8 +24,9 @@
          lda   #>callback
          sta   $BFD
 +
-         +DISABLE_ACCEL
-         jmp   $822
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         jmp   cont
 
 *=$17e
 callback
@@ -38,6 +39,10 @@ callback
          sta   $1271      ; patch - don't decrease lives
          +DISABLE_ACCEL
          jmp   $808
+cont
+         +READ_ROM_NO_WRITE
+         jsr   HideLaunchArtwork
+         jmp   $822
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
