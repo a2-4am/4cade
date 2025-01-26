@@ -12,7 +12,6 @@
          sta   $2027
          jsr   $2000      ; decompress
 
-         tax
          +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
          bvs   +
          stx   $868
@@ -24,7 +23,7 @@
          lda   #$a5
          sta   $A22       ; patch - don't decrease lives
 +
-         iny
+         ldy   #2
 -        lda   call1, y
          sta   $8FFF, y
          lda   call2, y

@@ -12,14 +12,14 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $5FEB
-         jsr   $5FCC      ; decompress1
+         sta   $603B
+         sta   $6056
+         jsr   $601C      ; decompress1
          jsr   HideLaunchArtwork
-
-         lda   #$60
-         sta   $BE20
          +DISABLE_ACCEL
-         jsr   $BE00      ; decompress2/title
+         jsr   $6000
+         +ENABLE_ACCEL
+         jsr   $BE06      ; decompress2/title
 
          lda   #1
          sta   $415       ; gets patched to LC reset vector
@@ -30,6 +30,7 @@
          sta   $489
          lda   #$EA
          sta   $48A       ; seed RNG
+         +DISABLE_ACCEL
          jmp   $400
 
 !if * > HideLaunchArtwork {
