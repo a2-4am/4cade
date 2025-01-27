@@ -90,7 +90,6 @@ goto :EOF
 
 :index
 call :md
-call :decrunch
 call :asmfx
 call :asmprelaunch
 call :asmdemo
@@ -106,6 +105,7 @@ cscript /nologo bin\converthelp.js res\HELPTEXT build\HELPTEXT >>build\log
 cscript /nologo bin\converthelp.js res\CREDITS build\CREDITS >>build\log
 echo|set/p="converting gamehelp..."
 for %%q in (res\GAMEHELP\*) do cscript /nologo bin\converthelp.js %%q build\GAMEHELP\%%~nxq >>build\log
+for %%q in (build\GAMEHELP\*) do %EXOMIZER% %%q@0x900 -o build\GAMEHELP.COMPRESSED\%%~nxq
 echo done
 rem
 rem create a list of all game filenames, without metadata or display names, sorted by game filename
@@ -135,11 +135,11 @@ cscript /nologo bin\addfile.js res\HELP src\index\res.help.idx.a
 echo done
 rem
 rem precompute indexed files for game help
-rem note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
+rem note: these can not be padded because they are compressed and the decompressor needs the exact size
 rem
 echo|set/p="indexing gamehelp..."
 cscript /nologo bin\makesorted.js
-cscript /nologo bin\buildpre.js build\GAMEHELP build\GAMEHELP.IDX build\TOTAL.DATA pad >>build\log
+cscript /nologo bin\buildpre.js build\GAMEHELP.COMPRESSED build\GAMEHELP.IDX build\TOTAL.DATA pad >>build\log
 echo done
 rem
 rem precompute indexed files for slideshows
@@ -301,7 +301,6 @@ cscript /nologo bin\addfile.js build\GR.FIZZLE src\index\gr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\DGR.FIZZLE src\index\dgr.fizzle.idx.a
 cscript /nologo bin\addfile.js build\HELPTEXT src\index\helptext.idx.a
 cscript /nologo bin\addfile.js build\CREDITS src\index\credits.idx.a
-cscript /nologo bin\addfile.js build\DECRUNCH src\index\decrunch.idx.a
 cscript /nologo bin\addfile.js res\JOYSTICK src\index\joystick.idx.a
 echo done
 goto :EOF
@@ -319,12 +318,9 @@ goto :EOF
 2>nul md build\ATTRACT1
 2>nul md build\SS
 2>nul md build\GAMEHELP
+2>nul md build\GAMEHELP.COMPRESSED
 2>nul md build\DEMO
 1>nul copy nul build\log
-goto :EOF
-
-:decrunch
-%ACME% -o build/decrunch src/decrunch/exodecrunch.a
 goto :EOF
 
 :asmlauncher
