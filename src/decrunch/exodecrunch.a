@@ -111,26 +111,6 @@ skip:
 }
 }
 
-ExoDecompress:
-        pla
-        tay
-        pla
-        tax
-        clc
-        pla
-        adc #$F8
-        sta _byte_lo
-        pla
-        sta zp_bitbuf
-        pla
-        adc zp_bitbuf
-        sta _byte_hi
-        txa
-        pha
-        tya
-        pha
-        ;/!\ execution falls through to decrunch
-
 ; -------------------------------------------------------------------
 ; no code below this comment has to be modified in order to generate
 ; a working decruncher of this source file.
