@@ -4,68 +4,121 @@
 ; Exomizer glue functions
 ;
 ; Public functions
+; - DecompressAuxSHR
+; - DecompressSHR
 ; - DecompressHGR
 ; - DecompressDHGR
-; - DecompressSHR
+; - DecompressAfterLoad
+; - ResumeAuxDecompress
 ;
+
+kDecompressInMainMem = 0
+kDecompressInAuxMem  = 1
 
 ;------------------------------------------------------------------------------
 ; DecompressSHR
 ;
-; in:    compressed SHR loaded to $1FF8+/main
+; in:    compressed SHR data at $1FF8/main
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
-; out:   decompressed SHR at $2000..$9FFF/main
-;        $00A7..$00A8 clobbered by decompressor
-;        $00AE..$00AF clobbered by decompressor
-;        $00FC..$00FF clobbered by decompressor
-;        $0200..$03CB clobbered by decompressor
+; out:   decompressed SHR data at $2000..$9FFF/main
+;        also see notes in DecompressAfterLoad
+;------------------------------------------------------------------------------
+DecompressSHR
+         clv                         ; V=0 -> always complete decompression
+         ldx   #kDecompressInMainMem ; data is in mainmem
+         lda   #$1F                  ; target address (hi) -1
+         bne   DecompressAfterLoad   ; always branches
+
+;------------------------------------------------------------------------------
+; DecompressAuxSHR
+;
+; in:    compressed SHR data at $1FF8/aux
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed SHR data at $2000..$9FFF/aux
+;        also see notes in DecompressAfterLoad
 ;------------------------------------------------------------------------------
 DecompressAuxSHR
-         bit   SHRRTS
-         !byte $A9
-DecompressSHR
-         clv
-         lda   #$1F
-         bne   DecompressInternal    ; alwyas branches
+         bit   SHRRTS                ; V=1 -> allow early exit on keypress
+         ldx   #kDecompressInAuxMem  ; data is in auxmem
+         lda   #$1F                  ; target address (hi) -1
+         bne   DecompressAfterLoad   ; always branches
+
+;------------------------------------------------------------------------------
+; DecompressDHGR
+;
+; in:    compressed DHGR data at $3FF8+/aux
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed DHGR data at $4000..$5FFF/main and $4000..$5FFF/aux
+;        $6000..$7FFF/aux clobbered by decompressor
+;        also see notes in DecompressAfterLoad
+;------------------------------------------------------------------------------
+DecompressDHGR
+         clv                         ; V=0 -> always complete decompression
+         ldx   #kDecompressInAuxMem  ; data is in auxmem
+         lda   #$3F                  ; target address (hi) -1
+         jsr   DecompressAfterLoad
+         ; mainmem R/W after DecompressAfterLoad
+         sta   READAUXMEM
+         lda   #$60
+         sta   PageFrom+2
+         lda   #$40
+         jmp   CopyHGR               ; switches back to READMAINMEM on exit
 
 ;------------------------------------------------------------------------------
 ; DecompressHGR
 ;
-; in:    compressed HGR loaded to $3FF8+/main
+; in:    compressed HGR data at $3FF8/main
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
-; out:   decompressed HGR at $4000..$5FFF/main
-;        $00A7..$00A8 clobbered by decompressor
-;        $00AE..$00AF clobbered by decompressor
-;        $00FC..$00FF clobbered by decompressor
-;        $0200..$03CB clobbered by decompressor
+; out:   decompressed HGR data at $4000..$5FFF/main
+;        also see notes in DecompressAfterLoad
 ;------------------------------------------------------------------------------
 DecompressHGR
-         lda   #$3F
-         clv
-         ; execution falls through here
+         clv                         ; V=0 -> always complete decompression
+         ldx   #kDecompressInMainMem ; data is in mainmem
+         lda   #$3F                  ; target address (hi) -1
+         ; /!\ execution falls through here
 
-DecompressInternal
-         pha                         ; push target address (hi) for decompressor
-         php
-         jsr   SwitchToBank2
-         jsr   EnableAccelerator
-         plp
-         ldx   #0
-         bvc   +
-         inx
-+        lda   sizehi2
-         pha                         ; push length (hi) for decompressor
-         lda   sizelo2
-         pha                         ; push length (lo) for decompressor
-         sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
-         sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
+;------------------------------------------------------------------------------
+; DecompressAfterLoad
+;
+; in:    A = target address (hi) minus 1
+;        X = 0 if data is in mainmem
+;        X = 1 if data is in auxmem
+;        V = 1 if decompression should exit early on keypress (even if incomplete)
+;        V = 0 if decompression should always run to completion (ignoring keypresses)
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed data at target address
+;        /!\ 8 bytes before target address will be clobbered because compressed
+;            data is loaded there
+;        $00A0..$00A9 clobbered by decompressor
+;        $0200..$02CD clobbered by decompressor
+;        mainmem R/W (always, even if data was in auxmem)
+;------------------------------------------------------------------------------
+DecompressAfterLoad
+         sta   READMAINMEM, x        ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
+         sta   WRITEMAINMEM, x       ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
+                                     ; remember these don't affect zero page or stack
+                                     ; we always use mainmem zp and mainmem stack
+
+         pha                         ; push target address (hi) -1 for decompressor
+
          bvc   +
          lda   #$60                  ; if V=1, set up returning from decompressor on keypress
          +HIDE_NEXT_2_BYTES
 +        lda   #$EA                  ; if V=0, ignore keypresses within decompressor
          sta   DECRUNCH_EXIT_ON_KEYPRESS
+
+         jsr   SwitchToBank2
+         jsr   EnableAccelerator
+
+         lda   sizehi2
+         pha                         ; push compressed data length (hi) for decompressor
+         lda   sizelo2
+         pha                         ; push compressed data length (lo) for decompressor
+
          jsr   ExoDecompress
--        stx   exo_save_x
+.postDecompress
+         stx   exo_save_x
          sty   exo_save_y
          sta   READMAINMEM
          sta   WRITEMAINMEM
@@ -81,26 +134,4 @@ ResumeAuxDecompress
          ldx   exo_save_x
          ldy   exo_save_y
          jsr   DECRUNCH_EXIT_ON_KEYPRESS+1
-         jmp   -
-
-;------------------------------------------------------------------------------
-; DecompressDHGR
-;
-; in:    compressed DHGR loaded to $3FF8+/aux
-;        file size in sizelo2/sizehi2 as set by ProRWTS2
-; out:   decompressed HGR at $4000..$5FFF/main and $4000..$5FFF/aux
-;        $6000..$7FFF/aux clobbered by decompressor
-;        $00A7..$00A8 clobbered by decompressor
-;        $00AE..$00AF clobbered by decompressor
-;        $00FC..$00FF clobbered by decompressor
-;        $0200..$03CB clobbered by decompressor
-;------------------------------------------------------------------------------
-DecompressDHGR
-         lda   #$3F
-         bit   SHRRTS
-         jsr   DecompressInternal
-         sta   READAUXMEM
-         lda   #$60
-         sta   PageFrom+2
-         lda   #$40
-         jmp   CopyHGR               ; switches back to READMAINMEM on exit
+         jmp   .postDecompress
