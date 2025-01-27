@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba, Frank M.
+;(c) 2025 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PP",plain
@@ -13,58 +13,43 @@
          jsr   EnableAccelerator
          lda   MachineStatus
          and   #CHEATS_ENABLED
-         sta   cheat_smc1+1
-         sta   cheat_smc2+1
+         php
          lda   WaitForVBL
          cmp   #$60
          php
          +READ_ROM_NO_WRITE
-         lda   #$60
-         sta   $13B8
-         jsr   $1200      ; decompress
-         jsr   HideLaunchArtwork
+         lda   #<callback
+         sta   $75A8
+         lda   #>callback
+         sta   $75A9
+         jmp   $800       ; decompress
 
-         lda   #<callback1
-         sta   $FE06
-         lda   #<callback2
-         sta   $FD26
-         lda   #>callback1
-         sta   $FE07
-         sta   $FD27
+callback
+         jsr   $D213
+         pla
+         pla
          plp
          bne   @good_vbl
-         ldx   #<callback3
-         stx   $FD6A
-         sta   $FD6B
+         lda   #$60       ; if VBL disabled in TR
+         sta   $c005
+         sta   $4ED       ; then disable VBL in game
+         sta   $c004
 
 @good_vbl
-         jmp   $EE00
-
-callback1
-cheat_smc1
-         lda   #0
+         plp
          beq   +
          dec   $2D0E      ; patch - don't decrease time
+         lda   #$a5
+         sta   $c005
+         sta   $2619      ; patch - don't decrease lives
+         sta   $c004
 +
+         jsr   HideLaunchArtwork
+
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
-         jmp   $4906
-
-callback2
-         jsr   $FF24
-cheat_smc2
-         lda   #0
-         beq   +
-         lda   #$a5
-         sta   $2612      ; patch - don't decrease lives
-+
-         rts
-
-callback3
-         lda   #$60       ; if VBL disabled in TR
-         sta   $4ED       ; then disable VBL in game
-         jmp   $F924
+         jmp   $EE00
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
