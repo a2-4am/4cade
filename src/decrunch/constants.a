@@ -10,6 +10,7 @@ zp_dest_lo = $a6          ; dest addr lo
 zp_dest_hi = $a7          ; dest addr hi
 exo_save_x = $a8
 exo_save_y = $a9
+decrunch_table = $0200    ; 0xCE bytes
 
 _EXO_CONSTANTS_=*
 }

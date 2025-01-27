@@ -141,6 +141,7 @@ ResetVector                          ; 6 bytes, copied to $100
          !source "src/textrank.a"
          !source "src/okvs.a"
          !source "src/prodos.path.a"
+         !source "src/decrunch/exodecrunch.a"
 
          ; add new files above here
          !source "src/hw.vbl.a"

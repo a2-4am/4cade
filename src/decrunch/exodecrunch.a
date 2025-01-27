@@ -2,7 +2,6 @@
 ; the Exomizer homepage.
 ; It contains modifications made by qkumba to work with ACME assembler.
 !cpu 6502
-*=$200
 
 ;
 ; Copyright (c) 2002 - 2018 Magnus Lind.
@@ -112,6 +111,26 @@ skip:
 }
 }
 
+ExoDecompress:
+        pla
+        tay
+        pla
+        tax
+        clc
+        pla
+        adc #$F8
+        sta _byte_lo
+        pla
+        sta zp_bitbuf
+        pla
+        adc zp_bitbuf
+        sta _byte_hi
+        txa
+        pha
+        tya
+        pha
+        ;/!\ execution falls through to decrunch
+
 ; -------------------------------------------------------------------
 ; no code below this comment has to be modified in order to generate
 ; a working decruncher of this source file.
@@ -198,8 +217,7 @@ literal_start1:
         dec zp_dest_hi
         bit $c000
         bpl no_hi_decr
-exit_on_keypress:
-!warn "exit_on_keypress=",*
+DECRUNCH_EXIT_ON_KEYPRESS:
         nop
 no_hi_decr:
         dey
@@ -406,27 +424,7 @@ _byte_hi = * + 2
 ; this 156 (204) byte table area may be relocated. It may also be
 ; clobbered by other data between decrunches.
 ; -------------------------------------------------------------------
-decrunch_table:
-!warn "entry=",*
-        pla
-        tay
-        pla
-        tax
-        clc
-        pla
-        adc #$F8
-        sta _byte_lo
-        pla
-        sta zp_bitbuf
-        pla
-        adc zp_bitbuf
-        sta _byte_hi
-        txa
-        pha
-        tya
-        pha
-        jmp decrunch
-
+;;decrunch_table:
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 ;;        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

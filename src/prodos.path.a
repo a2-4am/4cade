@@ -152,9 +152,6 @@ kCreditsRecord
 kHelpTextRecord
          !source "src/index/helptext.idx.a"
 
-kDecrunchRecord
-         !source "src/index/decrunch.idx.a"
-
 kJoystickRecord
          !source "src/index/joystick.idx.a"
 

@@ -11,8 +11,8 @@
 ; ...unused...
 ; D100..D4FF - HGR font data
 ; ...unused...
-; E6C9..FFEB - main program code
-; FFEC..FFF9 - API functions and global constants available for main program
+; DEE6..FF91 - main program code
+; FF92..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
 ; FFFA..FFFF - NMI, reset, IRQ vectors

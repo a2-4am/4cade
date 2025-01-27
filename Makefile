@@ -98,7 +98,6 @@ SFX.CONF=res/SFX.CONF
 PREFS.CONF.SOURCE=res/PREFS.CONF
 GAMES.CONF.SOURCE=res/GAMES.CONF
 COVER=res/COVER
-DECRUNCH=build/DECRUNCH
 FINDER.DATA=res/Finder.Data
 FINDER.ROOT=res/Finder.Root
 HELP=res/HELP
@@ -219,7 +218,7 @@ $(TITLE.HGR.LIST): $(TITLE.HGR.SOURCES) | $(MD)
 $(TITLE.DHGR.LIST): $(TITLE.DHGR.SOURCES) | $(MD)
 	(cd res/TITLE.DHGR/ && for f in *; do echo "$$f"; done) > "$@"
 
-$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(DECRUNCH) $(HELP) $(JOYSTICK) $(TITLE)
+$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(HELP) $(JOYSTICK) $(TITLE)
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
@@ -352,7 +351,6 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 		"$(BUILDDIR)"/DGR.FIZZLE src/index/dgr.fizzle.idx.a \
 		"$(HELPTEXT)" src/index/helptext.idx.a \
 		"$(CREDITS)" src/index/credits.idx.a \
-		"$(DECRUNCH)" src/index/decrunch.idx.a \
 		"$(JOYSTICK)" src/index/joystick.idx.a
 	@touch "$@"
 
@@ -436,9 +434,6 @@ $(MD):
 	mkdir -p "$(BUILDDIR)"
 	touch "$(CADIUS.LOG)"
 	@touch "$@"
-
-$(DECRUNCH): $(MD)
-	$(ACME) -o $(DECRUNCH) src/decrunch/exodecrunch.a
 
 clean:
 	rm -rf "$(BUILDDIR)"/ || rm -rf "$(BUILDDIR)"

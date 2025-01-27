@@ -9,11 +9,6 @@
 ; - DecompressSHR
 ;
 
-; these are maintained by hand and must remain in sync with
-; labels in exodecrunch.a, which is assembled separately
-DECRUNCH_EXIT_ON_KEYPRESS = $025c    ; set to 'RTS' to exit decrunch on keypress
-DECRUNCH = $031a                     ; decrunch entry point
-
 ;------------------------------------------------------------------------------
 ; DecompressSHR
 ;
@@ -50,7 +45,7 @@ DecompressHGR
          ; execution falls through here
 
 DecompressInternal
-         pha
+         pha                         ; push target address (hi) for decompressor
          php
          jsr   SwitchToBank2
          jsr   EnableAccelerator
@@ -58,34 +53,22 @@ DecompressInternal
          ldx   #0
          bvc   +
          inx
-+        stx   auxreq
-         lda   sizehi2
-         pha
++        lda   sizehi2
+         pha                         ; push length (hi) for decompressor
          lda   sizelo2
-         pha
-         lda   #>(@params - 1)
-         pha
-         lda   #<(@params - 1)
-         pha
-         bvs   +
-         jmp   LoadIndexedFile       ; load decompression code to $200/main
-+        jmp   LoadAuxIndexedFile    ; load decompression code to $200/aux
-@params  !word $200
-         !word kDecrunchRecord
-         ldx   auxreq
+         pha                         ; push length (lo) for decompressor
          sta   READMAINMEM,x         ; X = 0 or 1, so this will be READMAINMEM or READAUXMEM
          sta   WRITEMAINMEM,x        ; X = 0 or 1, so this will be WRITEMAINMEM or WRITEAUXMEM
-         beq   +
-         lda   #$60
+         bvc   +
+         lda   #$60                  ; if V=1, set up returning from decompressor on keypress
+         +HIDE_NEXT_2_BYTES
++        lda   #$EA                  ; if V=0, ignore keypresses within decompressor
          sta   DECRUNCH_EXIT_ON_KEYPRESS
-+        jsr   DECRUNCH
+         jsr   ExoDecompress
 -        stx   exo_save_x
          sty   exo_save_y
          sta   READMAINMEM
          sta   WRITEMAINMEM
-         jsr   SwitchToBank2
-         lda   #0
-         sta   auxreq
          jmp   DisableAcceleratorAndSwitchToBank1
 
 ResumeAuxDecompress
