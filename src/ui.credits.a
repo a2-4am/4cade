@@ -30,15 +30,15 @@ Help
          +ST16 @indexRecordPtr
 
          jsr   LoadIndexedFile
-         !word $800
+         !word $8F8
 @indexRecordPtr
          !word $FDFD                 ; SMC
 
-         clc
-         bcc   .clearAndDisplayHelp  ; always branches
+         jsr   DecompressGameHelp
+         jmp   .clearAndDisplayHelp
 
-@global  jsr   LoadIndexedFile       ; load help text into $800
-         !word $800
+@global  jsr   LoadIndexedFile       ; load help text into $900
+         !word $900
          !word kHelpTextRecord
 
          jsr   LoadHelpOffscreen     ; load fancy backdrop
@@ -54,8 +54,8 @@ Help
 ;        all other flags and registers clobbered
 ;------------------------------------------------------------------------------
 Credits
-         jsr   LoadIndexedFile       ; load credits text into $800
-         !word $800
+         jsr   LoadIndexedFile       ; load credits text into $900
+         !word $900
          !word kCreditsRecord
 .clearAndDisplayHelp
          jsr   ForceHGRMode
@@ -63,8 +63,8 @@ Credits
          ldx   #0                    ; left margin (0 for credits, different for global help)
 .displayHelp
          lda   OffscreenPage
-         ror                         ; draw on offscreen page
-         +LDADDR $800
+         ror                         ; set C to draw on offscreen page
+         +LDADDR $900
          +ST16 PTR
 ;DrawPage inlined here
 ;

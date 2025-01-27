@@ -4,16 +4,31 @@
 ; Exomizer glue functions
 ;
 ; Public functions
-; - DecompressAuxSHR
+; - DecompressGameHelp
 ; - DecompressSHR
-; - DecompressHGR
+; - DecompressAuxSHR
 ; - DecompressDHGR
+; - DecompressHGR
 ; - DecompressAfterLoad
 ; - ResumeAuxDecompress
 ;
 
 kDecompressInMainMem = 0
 kDecompressInAuxMem  = 1
+
+;------------------------------------------------------------------------------
+; DecompressGameHelp
+;
+; in:    compressed game help data at $08F8/main
+;        file size in sizelo2/sizehi2 as set by ProRWTS2
+; out:   decompressed game help data at $0900+/main
+;        also see notes in DecompressAfterLoad
+;------------------------------------------------------------------------------
+DecompressGameHelp
+         clv                         ; V=0 -> always complete decompression
+         ldx   #kDecompressInMainMem ; data is in mainmem
+         lda   #$08                  ; target address (hi) -1
+         bne   DecompressAfterLoad   ; always branches
 
 ;------------------------------------------------------------------------------
 ; DecompressSHR
@@ -84,8 +99,8 @@ DecompressHGR
 ; in:    A = target address (hi) minus 1
 ;        X = 0 if data is in mainmem
 ;        X = 1 if data is in auxmem
-;        V = 1 if decompression should exit early on keypress (even if incomplete)
 ;        V = 0 if decompression should always run to completion (ignoring keypresses)
+;        V = 1 if decompression should exit early on keypress (even if incomplete)
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
 ; out:   decompressed data at target address
 ;        /!\ 8 bytes before target address will be clobbered because compressed

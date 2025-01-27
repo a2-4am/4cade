@@ -57,6 +57,7 @@ ATTRACT.IDX=$(BUILDDIR)/ATTRACT.IDX
 HELPTEXT=$(BUILDDIR)/HELPTEXT
 CREDITS=$(BUILDDIR)/CREDITS
 GAMEHELP=$(BUILDDIR)/GAMEHELP
+GAMEHELP.COMPRESSED=$(BUILDDIR)/GAMEHELP.COMPRESSED
 GAMES.CONF=$(BUILDDIR)/GAMES.CONF
 GAMES.SORTED=$(BUILDDIR)/GAMES.SORTED
 PREFS.CONF=$(BUILDDIR)/PREFS.CONF
@@ -163,6 +164,11 @@ $(GAMEHELP): $(GAMEHELP.SOURCES) | $(MD)
 	$(PARALLEL) 'bin/converthelp.sh "{}" "$@/{/}"' ::: res/GAMEHELP/*
 	@touch "$@"
 
+$(GAMEHELP.COMPRESSED): $(GAMEHELP) | $(MD)
+	mkdir -p "$@"
+	$(PARALLEL) '[ -f "$@/{/}" ] || ${EXOMIZER} "{}"@0x0900 -o "$@/{/}"' ::: "$(GAMEHELP)"/*
+	@touch "$@"
+
 # precompute binary data structures for slideshow configuration files
 $(SS): $(SS.SOURCES) | $(MD) $(GAMES.CONF)
 	mkdir -p "$@"
@@ -218,7 +224,7 @@ $(TITLE.HGR.LIST): $(TITLE.HGR.SOURCES) | $(MD)
 $(TITLE.DHGR.LIST): $(TITLE.DHGR.SOURCES) | $(MD)
 	(cd res/TITLE.DHGR/ && for f in *; do echo "$$f"; done) > "$@"
 
-$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(HELP) $(JOYSTICK) $(TITLE)
+$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP.COMPRESSED) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(HELP) $(JOYSTICK) $(TITLE)
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch
@@ -240,9 +246,9 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 		"$(HELP)" src/index/res.help.idx.a
 #
 # precompute indexed files for game help
-# note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
+# note: these can not be padded because they are compressed and the decompressor needs the exact size
 #
-	bin/buildindexedfile.py -p "$@" "$(GAMEHELP)" < "$(GAMES.SORTED)" > "$(BUILDDIR)"/GAMEHELP.IDX
+	bin/buildindexedfile.py "$@" "$(GAMEHELP.COMPRESSED)" < "$(GAMES.SORTED)" > "$(BUILDDIR)"/GAMEHELP.IDX
 #
 # precompute indexed files for slideshows
 # note: these can be padded because they're loaded into $800 at a time when $800..$1FFF is clobber-able
