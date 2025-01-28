@@ -111,6 +111,9 @@ skip:
 }
 }
 
+decrunch_dest_is_already_set:
+         ldx   #1
+         +HIDE_NEXT_2_BYTES
 ; -------------------------------------------------------------------
 ; no code below this comment has to be modified in order to generate
 ; a working decruncher of this source file.
@@ -127,8 +130,8 @@ decrunch:
 ; -------------------------------------------------------------------
 ; init zeropage, x and y regs. (12 bytes)
 ;
-        ldy #0
         ldx #3
+        ldy #0
 init_zp:
         jsr get_crunched_byte
         sta zp_bitbuf - 1,x

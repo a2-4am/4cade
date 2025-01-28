@@ -13,8 +13,10 @@
 ; - ResumeAuxDecompress
 ;
 
-kDecompressInMainMem = 0
-kDecompressInAuxMem  = 1
+kDecompressInMainMem = 0             ; must be 0 and 1 in this order, used as index
+kDecompressInAuxMem  = 1             ; against base softswitch address
+
+kCompressedDataIncludesAddress = 0   ; must be 0, compared with BEQ
 
 ;------------------------------------------------------------------------------
 ; DecompressGameHelp
@@ -27,6 +29,7 @@ kDecompressInAuxMem  = 1
 DecompressGameHelp
          clv                         ; V=0 -> always complete decompression
          ldx   #kDecompressInMainMem ; data is in mainmem
+         ldy   #kCompressedDataIncludesAddress
          lda   #$08                  ; target address (hi) -1
          bne   DecompressAfterLoad   ; always branches
 
@@ -41,6 +44,7 @@ DecompressGameHelp
 DecompressSHR
          clv                         ; V=0 -> always complete decompression
          ldx   #kDecompressInMainMem ; data is in mainmem
+         ldy   #$A0
          lda   #$1F                  ; target address (hi) -1
          bne   DecompressAfterLoad   ; always branches
 
@@ -55,6 +59,7 @@ DecompressSHR
 DecompressAuxSHR
          bit   SHRRTS                ; V=1 -> allow early exit on keypress
          ldx   #kDecompressInAuxMem  ; data is in auxmem
+         ldy   #$A0
          lda   #$1F                  ; target address (hi) -1
          bne   DecompressAfterLoad   ; always branches
 
@@ -70,6 +75,7 @@ DecompressAuxSHR
 DecompressDHGR
          clv                         ; V=0 -> always complete decompression
          ldx   #kDecompressInAuxMem  ; data is in auxmem
+         ldy   #$80
          lda   #$3F                  ; target address (hi) -1
          jsr   DecompressAfterLoad
          ; mainmem R/W after DecompressAfterLoad
@@ -90,6 +96,7 @@ DecompressDHGR
 DecompressHGR
          clv                         ; V=0 -> always complete decompression
          ldx   #kDecompressInMainMem ; data is in mainmem
+         ldy   #$60
          lda   #$3F                  ; target address (hi) -1
          ; /!\ execution falls through here
 
@@ -99,6 +106,7 @@ DecompressHGR
 ; in:    A = target address (hi) minus 1
 ;        X = 0 if data is in mainmem
 ;        X = 1 if data is in auxmem
+;        Y = decrunch _byte_hi, or 0 if compressed data includes this address
 ;        V = 0 if decompression should always run to completion (ignoring keypresses)
 ;        V = 1 if decompression should exit early on keypress (even if incomplete)
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
@@ -116,6 +124,8 @@ DecompressAfterLoad
                                      ; we always use mainmem zp and mainmem stack
 
          pha                         ; push target address (hi) -1
+         tya
+         pha
 
          bvc   +
          lda   #$60                  ; if V=1, set up returning from decompressor on keypress
@@ -126,16 +136,27 @@ DecompressAfterLoad
          jsr   SwitchToBank2
          jsr   EnableAccelerator
 
-         lda   sizelo2
+         pla
+         tay
+
+         lda   sizelo2               ; size of compressed data (lo) as set by ProRWTS2
          clc
          adc   #$F8
          sta   _byte_lo
-         lda   sizehi2
+         lda   sizehi2               ; size of compressed data (lo) as set by ProRWTS2
          sta   zp_bitbuf
          pla                         ; target address (hi) -1
          adc   zp_bitbuf
          sta  _byte_hi
 
+         tya
+         beq   +
+         sta   zp_dest_hi
+         lda   #0
+         sta   zp_dest_lo
+         jsr   decrunch_dest_is_already_set
+         jmp   .postDecompress
++
          jsr   decrunch
 .postDecompress
          stx   exo_save_x

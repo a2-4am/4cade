@@ -397,10 +397,15 @@ $(PROBOOTHD): $(PROBOOT.SOURCES) | $(MD)
 # only needs to be run when a new graphic file is added.
 # It create files in the repository which can then be checked in.
 #
+# Most of these files are a known size (enforced by truncate command)
+# so we do not include the target address in the compressed data.
+# The launcher will set the target address at runtime before
+# decompressing. This saves 2 bytes per file.
+#
 compress: $(MD)
-	$(PARALLEL) '[ -f "res/ACTION.HGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.HGR/{/}"' ::: res/ACTION.HGR.UNCOMPRESSED/*
-	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || ${EXOMIZER} "{}"@0x4000 -o "res/ACTION.DHGR/{/}"' ::: res/ACTION.DHGR.UNCOMPRESSED/*
-	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || ${EXOMIZER} "{}"@0x2000 -o "res/ARTWORK.SHR/{/}"' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/ACTION.HGR/{/}" ] || (truncate -s 8192 "{}" && ${EXOMIZER} "{}"@0x0000 -o "res/ACTION.HGR/{/}" && truncate -s -2 "res/ACTION.HGR/{/}")' ::: res/ACTION.HGR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || (truncate -s 16384 "{}" && ${EXOMIZER} "{}"@0x0000 -o "res/ACTION.DHGR/{/}" && truncate -s -2 "res/ACTION.DHGR/{/}")' ::: res/ACTION.DHGR.UNCOMPRESSED/*
+	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || (truncate -s 32768 "{}" && ${EXOMIZER} "{}"@0x0000 -o "res/ARTWORK.SHR/{/}" && truncate -s -2 "res/ARTWORK.SHR/{/}")' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/TITLE.HGR/{/}" ] || bin/packhgrfile.py "{}" "res/TITLE.HGR/{/}"' ::: res/TITLE.HGR.UNPACKED/*
 
 #
