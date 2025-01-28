@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/W.IR.BLOOM.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/W.IR.BLOOM.DATA,8100",plain
 *=$8100
          !byte $5F,%11110011
          !byte $61,%11110011

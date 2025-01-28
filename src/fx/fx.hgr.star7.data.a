@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/STAR7.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/STAR7.DATA,8100",plain
 *=$8100
          !byte $61,%11110011
          !byte $5F,%11110011

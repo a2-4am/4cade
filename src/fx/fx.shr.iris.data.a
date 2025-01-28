@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/SHR.IRIS.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/SHR.IRIS.DATA,9F00",plain
 *=$9F00
          !byte 98,79
          !byte 98,78

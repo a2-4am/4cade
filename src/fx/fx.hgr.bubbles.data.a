@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/BUBBLES.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/BUBBLES.DATA,8800",plain
 *=$8800
          !byte $0C,%01100010
          !byte $0C,%01110001

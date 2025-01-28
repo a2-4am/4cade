@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/HEART.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/HEART.DATA,8100",plain
 *=$8100
          !byte $5F,%11110011
          !byte $5D,%11110011

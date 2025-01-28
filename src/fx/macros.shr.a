@@ -110,10 +110,8 @@
          jsr   iLoadFXDATA
 }
 
-!macro SHR_STAGE_1 .shrlo, .shrhi, .mirror_rows, .mirror_cols {
+!macro SHR_STAGE_1 .mirror_rows, .mirror_cols {
          +BUILD_SHR_MIRROR_ROWS_AND_COLS .mirror_rows, .mirror_cols
-         ;X=0
-         +BUILD_SHR_LOOKUP_TABLES .shrlo, .shrhi
          ;X=0
          +COPY_SCB_AND_PALETTES
          ;X=0
@@ -121,7 +119,12 @@
          +SHR_COPY_TO_STAGE_2
 }
 
-!macro SHR_STAGE_2 .startzp, .endzp {
+!macro SHR_STAGE_2 .shrlo, .shrhi, .startzp, .endzp {
+         ; can't build these lookup tables any earlier because the coordinates
+         ; are compressed and the decompressor clobbers page 2 for its own
+         ; lookup tables
+         +BUILD_SHR_LOOKUP_TABLES .shrlo, .shrhi
+
          +COPY_TO_0 .startzp, .endzp
 
          +WRITE_AUX

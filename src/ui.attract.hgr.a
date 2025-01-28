@@ -99,6 +99,7 @@ LoadFXCODE
 LoadFXDATA
          +ST16 @filename
          stx   @okvsAddress+1
+         dex
          stx   @dataAddress+1
 
          jsr   LoadIndexedFile       ; load FXDATA list
@@ -112,12 +113,17 @@ LoadFXDATA
          !word $FDFD                 ; SMC
          +ST16 @indexRecordPtr
 
-         jsr   LoadIndexedFile       ; load actual data file
+         jsr   LoadIndexedFile       ; load compressed data file
 @dataAddress
-         !word $FD00                 ; SMC high byte
+         !word $FDF8                 ; SMC high byte
 @indexRecordPtr
          !word $FDFD                 ; SMC
-         rts
+
+         clv                         ; V=0 -> always complete decompression
+         ldx   #kDecompressInMainMem
+         ldy   #kCompressedDataIncludesAddress
+         lda   @dataAddress+1
+         jmp   DecompressAfterLoad
 
 ;------------------------------------------------------------------------------
 ; LoadHGRTransition [private]

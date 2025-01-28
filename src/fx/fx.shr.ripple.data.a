@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/SHR.RIPPLE.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/SHR.RIPPLE.DATA,9F00",plain
 *=$9F00
          !byte 98,79
          !byte 40,60

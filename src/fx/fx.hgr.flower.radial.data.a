@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/FLOWER.RAD.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/FLOWER.RAD.DATA,6B00",plain
 *=$6B00
          !byte $1F,%00010100
          !byte $1F,%00110100

@@ -1,5 +1,5 @@
 !cpu 6502
-!to "build/FXDATA/STAR.BLOOM.DATA",plain
+!to "build/FXDATA.UNCOMPRESSED/STAR.BLOOM.DATA,8100",plain
 *=$8100
          !byte $A5,%01000000
          !byte $01,%00100010

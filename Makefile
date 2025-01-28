@@ -375,8 +375,9 @@ $(DEMO): $(DEMO.SOURCES) | $(MD)
 
 # assemble graphic effects
 $(FX): $(FX.SOURCES) | $(MD)
-	mkdir -p "$@" "$(BUILDDIR)"/FX.INDEXED "$(BUILDDIR)"/FXDATA "$(BUILDDIR)"/FXCODE
+	mkdir -p "$@" "$(BUILDDIR)"/FX.INDEXED "$(BUILDDIR)"/FXDATA "$(BUILDDIR)/"/FXDATA.UNCOMPRESSED "$(BUILDDIR)"/FXCODE
 	$(PARALLEL) 'if grep -q "^!to" "{}"; then $(ACME) "{}"; fi' ::: src/fx/*.a
+	$(PARALLEL) '${EXOMIZER} {}@0x$$(echo {/}|cut -d, -f2) -o "build/FXDATA/"$$(echo {/}|cut -d, -f1)' ::: build/FXDATA.UNCOMPRESSED/*
 	(cd "$(BUILDDIR)"/FXCODE/ && for f in *; do echo "$$f"; done) > "$(FXCODE.LIST)"
 	(cd "$(BUILDDIR)"/FXDATA/ && for f in *; do echo "$$f"; done) > "$(FXDATA.LIST)"
 	@touch "$@"

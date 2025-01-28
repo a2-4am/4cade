@@ -14,7 +14,7 @@ shr_mirror_cols = $BE60   ; $A0 bytes but clobbers $27 previous bytes during con
 
          !source "src/fx/macros.a"
 
-         +SHR_STAGE_1 shrlo, shrhi, mirror_rows, shr_mirror_cols
+         +SHR_STAGE_1 mirror_rows, shr_mirror_cols
          jmp   stage2
 
 !pseudopc *-$300 {
@@ -25,7 +25,7 @@ stage2
          lda   #$80
          sta   coords-2
 
-         +SHR_STAGE_2 startzp, endzp
+         +SHR_STAGE_2 shrlo, shrhi, startzp, endzp
          rts
 
 CoordinatesFile
@@ -121,5 +121,5 @@ src2     lda   $FD00, y              ; SMC high byte
 exit     rts
 }
 endzp
-!if (* - stage2 > $200) { !serious "Stage2 code is too large" }
+!if (* - stage2 > $1F8) { !serious "Stage2 code is too large" }
 }
