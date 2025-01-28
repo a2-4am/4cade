@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/BT",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $5C13
+         lda   #>callback
+         sta   $5C14
+         jmp   $5BFC
+
+callback
+         +ENABLE_ACCEL    ; needed on subsequent calls
+         jsr   $6640      ; decompress
+         lda   #<callback
+         sta   $65BA
+         lda   #>callback
+         sta   $65BB
+         +DISABLE_ACCEL
+         lda   #0         ; set Z
+         rts
+
+!if * > HideLaunchArtwork {
+  !error "code is too large, ends at ", *
+}

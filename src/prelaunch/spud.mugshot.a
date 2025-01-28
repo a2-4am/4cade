@@ -61,7 +61,6 @@ main
          sta   $97CB
          sta   $9849
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $9052
 
 !if * > HideLaunchArtwork {

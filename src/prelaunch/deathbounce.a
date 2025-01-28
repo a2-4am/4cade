@@ -19,7 +19,6 @@
          sta   $6F44      ; don't decrease lives
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
          +READ_ROM_NO_WRITE
          jmp   $7A42
 
