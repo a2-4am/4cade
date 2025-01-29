@@ -6,6 +6,7 @@
 
 - Crossbow
 - Deathbounce
+- Electroarena
 - Kaboom!
 - Mieyen
 - Shoot Out
