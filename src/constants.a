@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2018-2023 by 4am
+;(c) 2018-2025 by 4am
 ;
 
 ;------------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 ; ...unused...
 ; D100..D4FF - HGR font data
 ; ...unused...
-; DEE6..FF91 - main program code
+; DDA9..FF91 - main program code
 ; FF92..FFF9 - API functions and global constants available for main program
 ;              code, prelaunchers, transition effects, &c.
 ;              (LoadFileDirect, Wait/UnwaitForVBL, MockingboardStuff, MachineStatus)
@@ -20,16 +20,16 @@
 ; LC RAM BANK 2
 ; D000..D5FF - ProRWTS data
 ; D600..D8BD - ProRWTS code
-; D8BE..DCB7 - ProRWTS glue code
-; DCB8..DCBD - backup of stack (during gameplay and self-running demos)
-; DCBE..DCC2 - okvs cache (attract state saved across self-running demo)
+; D8BE..DCE5 - ProRWTS glue code
+; DCE6..DCEB - backup of stack (during gameplay and self-running demos)
+; DCEC..DCF0 - okvs cache (attract state saved across self-running demo)
 ; ...unused...
 ; DFAE..DFB3 - HideLaunchArtwork function
 ; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
-; 6000..9FFF - search index (499 games = $3C3C/$4000)
-; A000..BCFF - search cache (499 games = $1837/$1D00)
+; 6000..9FFF - search index (506 games = $3D16/$4000)
+; A000..BCFF - search cache (506 games = $1887/$1D00)
 ; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;
@@ -55,6 +55,7 @@
 ; BF00..BFFF - ProRWTS glue (reset after demo)
 ;
 ; MAIN MEMORY DURING GAME LAUNCH
+; 00EA..00FF - prelaunch code
 ; 0100..0105 - re-entry code
 ; 0106..01BF - prelaunch code
 ; 0400..07FF - text screen cleared
@@ -62,13 +63,13 @@
 ; A000..     - prelaunch index file
 ;
 ; MAIN MEMORY DURING CREDITS (preserves search index and cache)
-; 0800..     - credits text
+; 0900..     - credits text
 ;
 ; MAIN MEMORY DURING GLOBAL HELP (preserves search index and cache)
-; 0800..     - help text
+; 0900..     - help text
 ;
 ; MAIN MEMORY DURING PER-GAME HELP (clobbers search cache)
-; 0800..     - help text
+; 0900..     - help text
 ; A000..     - game help index file
 ;
 ;------------------------------------------------------------------------------
