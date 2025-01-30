@@ -35,6 +35,8 @@ def best(keys, games):
     bestindex = -1
     bestlikely = False
     for game in games:
+        if game.startswith(keys):
+            return gameindex
         gamescore, likely = score(keys, game)
         if (gamescore > bestscore):
             bestscore = gamescore
@@ -42,7 +44,7 @@ def best(keys, games):
             bestlikely = likely
         gameindex += 1
     if not bestlikely:
-        return 0
+        return -1
     return bestindex
 
 def main():
@@ -50,24 +52,24 @@ def main():
     cache = OrderedDict()
     for a in ascii_lowercase:
         index1 = best(a, games)
-        if not index1: continue
+        if index1 < 0: continue
         cache[a] = OrderedDict()
         cache[a][" "] = index1
         for b in ascii_lowercase:
             index2 = best(a+b, games)
-            if not index2: continue
+            if index2 < 0: continue
             cache[a][b] = OrderedDict()
             if index2 != index1:
                 cache[a][b][" "] = index2
             for c in ascii_lowercase:
                 index3 = best(a+b+c, games)
-                if not index3: continue
+                if index3 < 0: continue
                 cache[a][b][c] = OrderedDict()
                 if index3 != index2:
                     cache[a][b][c][" "] = index3
                 for d in ascii_lowercase:
                     index4 = best(a+b+c+d, games)
-                    if not index4: continue
+                    if index4 < 0: continue
                     if index4 != index3:
                         cache[a][b][c][d] = index4
                 if not cache[a][b][c]:
