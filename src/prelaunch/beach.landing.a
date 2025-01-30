@@ -49,6 +49,7 @@ skip
          lda   #>callback2
          sta   $B734
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jmp   $B700
 
 callback2
