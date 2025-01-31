@@ -1,6 +1,6 @@
 !cpu 6502
-!to "build/FXDATA.UNCOMPRESSED/MANDELBROT.DATA,6B00",plain
-*=$6B00
+!to "build/FXDATA.UNCOMPRESSED/MANDELBROT.DATA,6D00",plain
+*=$6D00
          !byte $1F,%00010100
          !byte $20,%00010100
          !byte $20,%00110100
