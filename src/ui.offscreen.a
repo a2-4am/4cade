@@ -104,7 +104,7 @@ LoadIndexedDHRFile
          jsr   SwitchToBank2
          lda   #0
          sta   OKVS_CACHE
-         lda   #$20                  ; load first $2000 bytes into auxiliary memory
+         lda   #$1E                  ; load first $1E00 bytes into auxiliary memory
          sta   OKVS_CACHE + 5
          jsr   GetOffscreenAddress
          sta   @dhgr_addr_aux + 1
@@ -114,16 +114,24 @@ LoadIndexedDHRFile
          !word $FD00                 ; SMC high byte
          !word OKVS_CACHE
          jsr   SwitchToBank2
-         lda   OKVS_CACHE + 2        ; offset += $2000 (note: stored in big-endian)
+         lda   OKVS_CACHE + 2        ; offset += $1E00 (note: stored in big-endian)
          clc
-         adc   #$20
+         adc   #$1E
          sta   OKVS_CACHE + 2
          bcc   +
          inc   OKVS_CACHE + 1
-+        jsr   LoadIndexedFile       ; load next $2000 bytes into main memory
++        jsr   LoadIndexedFile       ; load next $1E00 bytes into main memory
 @dhgr_addr_main
          !word $FD00                 ; SMC high byte
          !word OKVS_CACHE
+
+         sta   READAUXMEM            ; unpack aux bank
+         sta   WRITEAUXMEM
+         jsr   UnpackHGRTitle
+         sta   READMAINMEM           ; then main bank
+         sta   WRITEMAINMEM
+         jsr   UnpackHGRTitle
+
          rts
 
 .LoadHGRGameTitleOffscreen
@@ -184,6 +192,12 @@ dest
          inc   dest+2
 +        dec   $E0
          bpl   loop
+
+         lda   dest+2                ; clear animation flag in last screen hole
+         sbc   #$01                  ; in case the packed data contained a $4C
+         sta   clear+2 
+clear    sta   $3FFD                 ; SMC high byte 
+
 OFFSCREENRTS
          rts
 
