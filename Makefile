@@ -408,6 +408,7 @@ compress: $(MD)
 	$(PARALLEL) '[ -f "res/ACTION.DHGR/{/}" ] || (truncate -s 16384 "{}" && ${EXOMIZER} "{}"@0x0000 -o "res/ACTION.DHGR/{/}" && truncate -s -2 "res/ACTION.DHGR/{/}")' ::: res/ACTION.DHGR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/ARTWORK.SHR/{/}" ] || (truncate -s 32768 "{}" && ${EXOMIZER} "{}"@0x0000 -o "res/ARTWORK.SHR/{/}" && truncate -s -2 "res/ARTWORK.SHR/{/}")' ::: res/ARTWORK.SHR.UNCOMPRESSED/*
 	$(PARALLEL) '[ -f "res/TITLE.HGR/{/}" ] || bin/packhgrfile.py "{}" "res/TITLE.HGR/{/}"' ::: res/TITLE.HGR.UNPACKED/*
+	$(PARALLEL) '[ -f "res/TITLE.DHGR/{/}" ] || bin/packdhgrfile.py "{}" "res/TITLE.DHGR/{/}"' ::: res/TITLE.DHGR.UNPACKED/*
 
 #
 # |attract| must be called separately because it is slow and
