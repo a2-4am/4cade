@@ -311,6 +311,7 @@ goto :EOF
 2>nul md build\X.INDEXED
 2>nul md build\FX.INDEXED
 2>nul md build\FXDATA
+2>nul md build\FXDATA.UNCOMPRESSED
 2>nul md build\FXCODE
 2>nul md build\PRELAUNCH
 2>nul md build\PRELAUNCH.INDEXED
@@ -347,6 +348,12 @@ for %%q in (src\fx\*.a) do (
   for /f "tokens=* usebackq" %%k in (`find "^!to" %%q`) do set _to=%%k
   set _to=!_to:~0,1!
   if !_to!==t %ACME% %%q
+)
+for %%q in (build\FXDATA.UNCOMPRESSED\*) do (
+  set _fx=%%~nxq
+  set _fy=!_fx:~-4!
+  set _fz=!_fx:~0,-5!
+  %EXOMIZER% %%q@0x!_fy! -o build\FXDATA\!_fz!
 )
 echo done
 goto :EOF
