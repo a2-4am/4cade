@@ -240,10 +240,11 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 	bin/padto.sh "$@"
 	bin/buildindexedfile.py "$@" res/TITLE.HGR "$(BUILDDIR)"/HGR.TITLES.LOG < "$(TITLE.HGR.LIST)" > "$(BUILDDIR)"/TITLE.IDX
 	bin/buildindexedfile.py "$@" res/TITLE.DHGR "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(TITLE.DHGR.LIST)" > "$(BUILDDIR)"/DTITLE.IDX
+	mkdir -p build/index/
 	bin/addfiles.py "$@" \
-		"$(COVER)" src/index/res.cover.idx.a \
-		"$(TITLE)" src/index/res.title.idx.a \
-		"$(HELP)" src/index/res.help.idx.a
+		"$(COVER)" build/index/res.cover.idx.a \
+		"$(TITLE)" build/index/res.title.idx.a \
+		"$(HELP)" build/index/res.help.idx.a
 #
 # precompute indexed files for game help
 # note: these can not be padded because they are compressed and the decompressor needs the exact size
@@ -308,56 +309,56 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
 	$(PARALLEL) ::: \
-	    '(grep "^00" < "$(GAMES.CONF)" | bin/buildsearch.py src/index/count00.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH00.IDX)' \
-	    '(grep "^0" < "$(GAMES.CONF)" | bin/buildsearch.py src/index/count01.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH01.IDX)' \
-	    '(grep "^.0" < "$(GAMES.CONF)" | bin/buildsearch.py src/index/count10.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH10.IDX)' \
-	    '(bin/buildsearch.py src/index/count11.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(GAMES.CONF)" > "$(BUILDDIR)"/SEARCH11.IDX)'
+	    '(grep "^00" < "$(GAMES.CONF)" | bin/buildsearch.py build/index/count00.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH00.IDX)' \
+	    '(grep "^0" < "$(GAMES.CONF)" | bin/buildsearch.py build/index/count01.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH01.IDX)' \
+	    '(grep "^.0" < "$(GAMES.CONF)" | bin/buildsearch.py build/index/count10.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH10.IDX)' \
+	    '(bin/buildsearch.py build/index/count11.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(GAMES.CONF)" > "$(BUILDDIR)"/SEARCH11.IDX)'
 #
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them,
 # plus additional miscellaneous files
 #
 	bin/addfiles.py "$@" \
-		"$(BUILDDIR)"/SEARCH00.IDX src/index/search00.idx.a \
-		res/CACHE00.IDX src/index/cache00.idx.a \
-		"$(BUILDDIR)"/SEARCH01.IDX src/index/search01.idx.a \
-		res/CACHE01.IDX src/index/cache01.idx.a \
-		"$(BUILDDIR)"/SEARCH10.IDX src/index/search10.idx.a \
-		res/CACHE10.IDX src/index/cache10.idx.a \
-		"$(BUILDDIR)"/SEARCH11.IDX src/index/search11.idx.a \
-		res/CACHE11.IDX src/index/cache11.idx.a \
-		"$(BUILDDIR)"/PRELAUNCH.IDX src/index/prelaunch.idx.a \
-		"$(ATTRACT.IDX)" src/index/attract.idx.a \
-		"$(BUILDDIR)"/DEMO.IDX src/index/demo.idx.a \
-		"$(BUILDDIR)"/XSINGLE.IDX src/index/xsingle.idx.a \
-		"$(BUILDDIR)"/FX.IDX src/index/fx.idx.a \
-		"$(BUILDDIR)"/DFX.IDX src/index/dfx.idx.a \
-		"$(BUILDDIR)"/SFX.IDX src/index/sfx.idx.a \
-		"$(BUILDDIR)"/FXCODE.IDX src/index/fxcode.idx.a \
-		"$(BUILDDIR)"/FXDATA.IDX src/index/fxdata.idx.a \
-		"$(BUILDDIR)"/GAMEHELP.IDX src/index/gamehelp.idx.a \
-		"$(BUILDDIR)"/SLIDESHOW.IDX src/index/slideshow.idx.a \
-		"$(BUILDDIR)"/MINIATTRACT0.IDX src/index/miniattract0.idx.a \
-		"$(BUILDDIR)"/MINIATTRACT1.IDX src/index/miniattract1.idx.a \
-		"$(BUILDDIR)"/TITLE.IDX src/index/title.idx.a \
-		"$(BUILDDIR)"/DTITLE.IDX src/index/dtitle.idx.a \
-		"$(BUILDDIR)"/HGR0.IDX src/index/hgr0.idx.a \
-		"$(BUILDDIR)"/HGR1.IDX src/index/hgr1.idx.a \
-		"$(BUILDDIR)"/HGR2.IDX src/index/hgr2.idx.a \
-		"$(BUILDDIR)"/HGR3.IDX src/index/hgr3.idx.a \
-		"$(BUILDDIR)"/HGR4.IDX src/index/hgr4.idx.a \
-		"$(BUILDDIR)"/HGR5.IDX src/index/hgr5.idx.a \
-		"$(BUILDDIR)"/HGR6.IDX src/index/hgr6.idx.a \
-		"$(BUILDDIR)"/DHGR.IDX src/index/dhgr.idx.a \
-		"$(BUILDDIR)"/GR.IDX src/index/gr.idx.a \
-		"$(BUILDDIR)"/DGR.IDX src/index/dgr.idx.a \
-		"$(BUILDDIR)"/ARTWORK.IDX src/index/artwork.idx.a \
-		"$(BUILDDIR)"/COVERFADE src/index/coverfade.idx.a \
-		"$(BUILDDIR)"/GR.FIZZLE src/index/gr.fizzle.idx.a \
-		"$(BUILDDIR)"/DGR.FIZZLE src/index/dgr.fizzle.idx.a \
-		"$(HELPTEXT)" src/index/helptext.idx.a \
-		"$(CREDITS)" src/index/credits.idx.a \
-		"$(JOYSTICK)" src/index/joystick.idx.a
+		"$(BUILDDIR)"/SEARCH00.IDX build/index/search00.idx.a \
+		res/CACHE00.IDX build/index/cache00.idx.a \
+		"$(BUILDDIR)"/SEARCH01.IDX build/index/search01.idx.a \
+		res/CACHE01.IDX build/index/cache01.idx.a \
+		"$(BUILDDIR)"/SEARCH10.IDX build/index/search10.idx.a \
+		res/CACHE10.IDX build/index/cache10.idx.a \
+		"$(BUILDDIR)"/SEARCH11.IDX build/index/search11.idx.a \
+		res/CACHE11.IDX build/index/cache11.idx.a \
+		"$(BUILDDIR)"/PRELAUNCH.IDX build/index/prelaunch.idx.a \
+		"$(ATTRACT.IDX)" build/index/attract.idx.a \
+		"$(BUILDDIR)"/DEMO.IDX build/index/demo.idx.a \
+		"$(BUILDDIR)"/XSINGLE.IDX build/index/xsingle.idx.a \
+		"$(BUILDDIR)"/FX.IDX build/index/fx.idx.a \
+		"$(BUILDDIR)"/DFX.IDX build/index/dfx.idx.a \
+		"$(BUILDDIR)"/SFX.IDX build/index/sfx.idx.a \
+		"$(BUILDDIR)"/FXCODE.IDX build/index/fxcode.idx.a \
+		"$(BUILDDIR)"/FXDATA.IDX build/index/fxdata.idx.a \
+		"$(BUILDDIR)"/GAMEHELP.IDX build/index/gamehelp.idx.a \
+		"$(BUILDDIR)"/SLIDESHOW.IDX build/index/slideshow.idx.a \
+		"$(BUILDDIR)"/MINIATTRACT0.IDX build/index/miniattract0.idx.a \
+		"$(BUILDDIR)"/MINIATTRACT1.IDX build/index/miniattract1.idx.a \
+		"$(BUILDDIR)"/TITLE.IDX build/index/title.idx.a \
+		"$(BUILDDIR)"/DTITLE.IDX build/index/dtitle.idx.a \
+		"$(BUILDDIR)"/HGR0.IDX build/index/hgr0.idx.a \
+		"$(BUILDDIR)"/HGR1.IDX build/index/hgr1.idx.a \
+		"$(BUILDDIR)"/HGR2.IDX build/index/hgr2.idx.a \
+		"$(BUILDDIR)"/HGR3.IDX build/index/hgr3.idx.a \
+		"$(BUILDDIR)"/HGR4.IDX build/index/hgr4.idx.a \
+		"$(BUILDDIR)"/HGR5.IDX build/index/hgr5.idx.a \
+		"$(BUILDDIR)"/HGR6.IDX build/index/hgr6.idx.a \
+		"$(BUILDDIR)"/DHGR.IDX build/index/dhgr.idx.a \
+		"$(BUILDDIR)"/GR.IDX build/index/gr.idx.a \
+		"$(BUILDDIR)"/DGR.IDX build/index/dgr.idx.a \
+		"$(BUILDDIR)"/ARTWORK.IDX build/index/artwork.idx.a \
+		"$(BUILDDIR)"/COVERFADE build/index/coverfade.idx.a \
+		"$(BUILDDIR)"/GR.FIZZLE build/index/gr.fizzle.idx.a \
+		"$(BUILDDIR)"/DGR.FIZZLE build/index/dgr.fizzle.idx.a \
+		"$(HELPTEXT)" build/index/helptext.idx.a \
+		"$(CREDITS)" build/index/credits.idx.a \
+		"$(JOYSTICK)" build/index/joystick.idx.a
 	@touch "$@"
 
 # assemble main program

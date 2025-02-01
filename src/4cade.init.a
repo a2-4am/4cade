@@ -528,23 +528,23 @@ kSearchCacheHi
          !byte >kSearchCacheRecord10
          !byte >kSearchCacheRecord11
 kSearchIndexRecord00
-         !source "src/index/search00.idx.a"
+         !source "build/index/search00.idx.a"
 kSearchIndexRecord01
-         !source "src/index/search01.idx.a"
+         !source "build/index/search01.idx.a"
 kSearchIndexRecord10
-         !source "src/index/search10.idx.a"
+         !source "build/index/search10.idx.a"
 kSearchIndexRecord11
-         !source "src/index/search11.idx.a"
+         !source "build/index/search11.idx.a"
 kSearchCacheRecord00
-         !source "src/index/cache00.idx.a"
+         !source "build/index/cache00.idx.a"
 kSearchCacheRecord01
-         !source "src/index/cache01.idx.a"
+         !source "build/index/cache01.idx.a"
 kSearchCacheRecord10
-         !source "src/index/cache10.idx.a"
+         !source "build/index/cache10.idx.a"
 kSearchCacheRecord11
-         !source "src/index/cache11.idx.a"
+         !source "build/index/cache11.idx.a"
 kGameCounts
-         !source "src/index/count00.a"
-         !source "src/index/count01.a"
-         !source "src/index/count10.a"
-         !source "src/index/count11.a"
+         !source "build/index/count00.a"
+         !source "build/index/count01.a"
+         !source "build/index/count10.a"
+         !source "build/index/count11.a"

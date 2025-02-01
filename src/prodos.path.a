@@ -57,13 +57,13 @@ kSearchCacheRecord
          !le16 0                     ; SMC in 4cade.init
 
 kPrelaunchIndexRecord
-         !source "src/index/prelaunch.idx.a"
+         !source "build/index/prelaunch.idx.a"
 
 kDemoIndexRecord
-         !source "src/index/demo.idx.a"
+         !source "build/index/demo.idx.a"
 
 kAttractModeIndexRecord
-         !source "src/index/attract.idx.a"
+         !source "build/index/attract.idx.a"
 
 kMiniAttractIndexLo
          !byte <kMiniAttractIndexRecord0
@@ -72,48 +72,48 @@ kMiniAttractIndexHi
          !byte >kMiniAttractIndexRecord0
          !byte >kMiniAttractIndexRecord1
 kMiniAttractIndexRecord0
-         !source "src/index/miniattract0.idx.a"
+         !source "build/index/miniattract0.idx.a"
 kMiniAttractIndexRecord1
-         !source "src/index/miniattract1.idx.a"
+         !source "build/index/miniattract1.idx.a"
 
 kAttractModeSlideshowIndexRecord
-         !source "src/index/slideshow.idx.a"
+         !source "build/index/slideshow.idx.a"
 
 kFXIndexRecord
-         !source "src/index/fx.idx.a"
+         !source "build/index/fx.idx.a"
 
 kDFXIndexRecord
-         !source "src/index/dfx.idx.a"
+         !source "build/index/dfx.idx.a"
 
 kSFXIndexRecord
-         !source "src/index/sfx.idx.a"
+         !source "build/index/sfx.idx.a"
 
 kFXCodeIndexRecord
-         !source "src/index/fxcode.idx.a"
+         !source "build/index/fxcode.idx.a"
 
 kFXDataIndexRecord
-         !source "src/index/fxdata.idx.a"
+         !source "build/index/fxdata.idx.a"
 
 kGameHelpIndexRecord
-         !source "src/index/gamehelp.idx.a"
+         !source "build/index/gamehelp.idx.a"
 
 kHGRTitleIndexRecord
-         !source "src/index/title.idx.a"
+         !source "build/index/title.idx.a"
 
 kDHGRTitleIndexRecord
-         !source "src/index/dtitle.idx.a"
+         !source "build/index/dtitle.idx.a"
 
 kSHRArtworkIndexRecord
-         !source "src/index/artwork.idx.a"
+         !source "build/index/artwork.idx.a"
 
 kDHGRActionIndexRecord
-         !source "src/index/dhgr.idx.a"
+         !source "build/index/dhgr.idx.a"
 
 kGRActionIndexRecord
-         !source "src/index/gr.idx.a"
+         !source "build/index/gr.idx.a"
 
 kDGRActionIndexRecord
-         !source "src/index/dgr.idx.a"
+         !source "build/index/dgr.idx.a"
 
 kHGRActionIndexLo
          !byte <kHGRActionIndexRecord0
@@ -132,31 +132,31 @@ kHGRActionIndexHi
          !byte >kHGRActionIndexRecord5
          !byte >kHGRActionIndexRecord6
 kHGRActionIndexRecord0
-         !source "src/index/hgr0.idx.a"
+         !source "build/index/hgr0.idx.a"
 kHGRActionIndexRecord1
-         !source "src/index/hgr1.idx.a"
+         !source "build/index/hgr1.idx.a"
 kHGRActionIndexRecord2
-         !source "src/index/hgr2.idx.a"
+         !source "build/index/hgr2.idx.a"
 kHGRActionIndexRecord3
-         !source "src/index/hgr3.idx.a"
+         !source "build/index/hgr3.idx.a"
 kHGRActionIndexRecord4
-         !source "src/index/hgr4.idx.a"
+         !source "build/index/hgr4.idx.a"
 kHGRActionIndexRecord5
-         !source "src/index/hgr5.idx.a"
+         !source "build/index/hgr5.idx.a"
 kHGRActionIndexRecord6
-         !source "src/index/hgr6.idx.a"
+         !source "build/index/hgr6.idx.a"
 
 kCreditsRecord
-         !source "src/index/credits.idx.a"
+         !source "build/index/credits.idx.a"
 
 kHelpTextRecord
-         !source "src/index/helptext.idx.a"
+         !source "build/index/helptext.idx.a"
 
 kJoystickRecord
-         !source "src/index/joystick.idx.a"
+         !source "build/index/joystick.idx.a"
 
 kXSingleRecord
-         !source "src/index/xsingle.idx.a"
+         !source "build/index/xsingle.idx.a"
 
 kTotalDataFile
          +PSTRING "TOTAL.DATA"
@@ -178,25 +178,25 @@ kStandardPrelaunchRecord
          !source "src/index/standard.prelaunch.a"
 
 kCoverFadeRecord
-         !source "src/index/coverfade.idx.a"
+         !source "build/index/coverfade.idx.a"
 
 ; following three records must end up on the same page
 ; after relocation to LC RAM
 kHelpBackgroundRecord
-         !source "src/index/res.help.idx.a"
+         !source "build/index/res.help.idx.a"
 
 kTitleRecord
-         !source "src/index/res.title.idx.a"
+         !source "build/index/res.title.idx.a"
 
 kCoverRecord
-         !source "src/index/res.cover.idx.a"
+         !source "build/index/res.cover.idx.a"
 
 !if (RELBASE != $2000) and (>kCoverRecord != >kHelpBackgroundRecord) {
          !serious "cover records are not all on the same page: ", kHelpBackgroundRecord, ", ", kTitleRecord, ", ", kCoverRecord
 }
 
 kGRFizzleRecord
-         !source "src/index/gr.fizzle.idx.a"
+         !source "build/index/gr.fizzle.idx.a"
 
 kDGRFizzleRecord
-         !source "src/index/dgr.fizzle.idx.a"
+         !source "build/index/dgr.fizzle.idx.a"
