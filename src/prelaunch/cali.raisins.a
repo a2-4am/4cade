@@ -24,6 +24,7 @@
          sta   $7474      ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 
          jmp   $D566
