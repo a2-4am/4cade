@@ -38,6 +38,7 @@ callback1
          sta   $1BCB
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 
          lda   #0

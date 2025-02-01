@@ -18,6 +18,7 @@
          lda   #>callback
          sta   $9609
          +DISABLE_ACCEL
+         jsr   HideLaunchArtwork
          jsr   $60A7
          jmp   $609C
 
