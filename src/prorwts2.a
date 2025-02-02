@@ -484,13 +484,15 @@ iterdevice
 set_slot        stx     slot1 + 2
                 stx     slot2 + 2
                 stx     unrentry + 2
-slot2           ldx     $cf07
-                beq     +
+slot1           ldx     $cfff
+                stx     unrentry + 1
+
+slot2           lda     $cf02,x
+                eor     #$85
+                bne     +
                 sec
                 rts
 +
-slot1           ldx     $cfff
-                stx     unrentry + 1
 !if enable_floppy = 1 {
                 php
 } ;enable_floppy = 1
