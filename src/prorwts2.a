@@ -481,9 +481,15 @@ iterdevice
                 lda     (scratchlo), y
                 beq     -
 
-set_slot        stx     slot + 2
+set_slot        stx     slot1 + 2
+                stx     slot2 + 2
                 stx     unrentry + 2
-slot            ldx     $cfff
+slot2           ldx     $cf07
+                beq     +
+                sec
+                rts
++
+slot1           ldx     $cfff
                 stx     unrentry + 1
 !if enable_floppy = 1 {
                 php
@@ -599,7 +605,7 @@ slot            ldx     $cfff
 
 iterunit        inc     unrunit2
                 bne     +
-                ldx     slot + 2
+                ldx     slot1 + 2
                 jmp     iterdevice
 +               jsr     unrentrysei
                 ldy     #$10
@@ -904,6 +910,7 @@ addr            !byte   0, $b6
   !if load_banked = 1 {
                 lda     ROMIN
   } ;load_banked = 1
+                clc
                 rts
 } ;rwts_mode = 1
 

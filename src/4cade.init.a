@@ -173,6 +173,18 @@
          ; initialize and relocate ProRWTS2 to $D400 in LC RAM bank 2
          +READ_ROM_WRITE_RAM2
          jsr   init                  ; requires RAM2 write
+         bcc   @good_smartport
+
+         ldy   #@noSmartPortlen
+-        lda   @s_noSmartPort,y
+         sta   $6AE,y
+         dey
+         bpl   -
+@hang2   bmi   @hang2
+@s_noSmartPort !scrxor $80,"REQUIRES SMARTPORT HARD DISK"
+@noSmartPortlen=(*-@s_noSmartPort)-1
+
+@good_smartport
 
          ; overwrite ProDOS IRQ handler
          sei
