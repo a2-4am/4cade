@@ -58,21 +58,19 @@ GetMockingboardStuff
          bpl   -
 
          lda   $C405
-         cmp   #$38
-         bne   @not_mouse
-         lda   $C407
-         cmp   #$18
-         beq   @use_slot5            ; looks like the mouse
-
-@not_mouse
-         stx   $C403                 ; enable Mockingboard 4C support in slot 4
+         ldy   $C407
+         stx   $C403                 ; try enable Mockingboard 4C support in slot 4
          stx   $C404
-         bne   @not_iic              ; always
 
-@use_slot5
+         cmp   $C405
+         bne   @ok_mb                ; changed, maybe worked
+         cpy   $C407
+         bne   @ok_mb                ; changed, maybe worked
+
          stx   $C503                 ; try enable Mockingboard 4C support in slot 5 instead
          stx   $C504
 
+@ok_mb
 @not_iic
          lda   #$00
          sta   $80
