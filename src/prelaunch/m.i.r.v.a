@@ -21,6 +21,7 @@
          sta   $314
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 
          jmp   $8000

@@ -15,6 +15,7 @@
          sta   $B748
          lda   #>callback1
          sta   $B749
+         jsr   HideLaunchArtwork
          jmp   $B700
 
 callback1
