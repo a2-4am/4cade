@@ -11,7 +11,7 @@ You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Parallel](https://www.gnu.org/software/parallel/)
  - [Cadius](https://github.com/mach-kernel/cadius)
- - [Exomizer for macOS](https://bitbucket.org/magli143/exomizer/wiki/Home) (An Intel macOS binaries can be downloaded [here](https://github.com/appleiifanclub/exomizer_mac_bin))
+ - [Exomizer for macOS](https://bitbucket.org/magli143/exomizer/wiki/Home) (An Intel macOS binaries can be downloaded [here](https://github.com/appleiifanclub/exomizer_mac_bin). Note: Only`exomizer`is required.`exobasic`is included for completeness)
 
 As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
 
