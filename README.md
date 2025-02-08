@@ -11,7 +11,7 @@ You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Parallel](https://www.gnu.org/software/parallel/)
  - [Cadius](https://github.com/mach-kernel/cadius)
- - [Exomizer for macOS](https://bitbucket.org/magli143/exomizer/wiki/Home) (An Intel macOS binaries can be downloaded [here](https://github.com/appleiifanclub/exomizer_mac_bin). Note: Only`exomizer`is required.`exobasic`is included for completeness)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home) (An Intel macOS binary can be downloaded [here](https://github.com/appleiifanclub/exomizer_mac_bin). Note: Only`exomizer`is required.`exobasic`is included for completeness)
 
 As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
 
@@ -40,7 +40,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Cadius for Windows](https://github.com/mach-kernel/cadius)
- - [Exomizer for Windows](https://bitbucket.org/magli143/exomizer/wiki/Home)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
 (Those tools will need to be added to your command-line PATH.)
 
@@ -62,6 +62,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 You will need
  - [Cadius](https://github.com/mach-kernel/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home) (Sorry someone need to build the binary from source in the respective Linux Distribution environment)
 
 Most of the packages are already available pre-compiled and can be installed with the following
 
