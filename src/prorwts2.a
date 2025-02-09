@@ -609,7 +609,9 @@ iterunit        inc     unrunit2
                 bne     +
                 ldx     slot1 + 2
                 jmp     iterdevice
-+               jsr     unrentrysei
++               lda     #0
+                sta     readbuff + $205 ;compensate for unreliable SmartPort error condition
+                jsr     unrentrysei
                 ldy     #$10
 -               lda     readbuff + 3, y
                 cmp     readbuff + $203, y
