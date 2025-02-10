@@ -11,6 +11,11 @@
          lda   #$60
          sta   $2049
          jsr   $2000      ; decompress
+         ldx   #3
+-        lda   keys, x
+         sta   $4AFC, x
+         dex
+         bpl   -
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -24,6 +29,8 @@
          +READ_ROM_NO_WRITE
          jsr   HideLaunchArtwork
          jmp   ($20)
+
+keys     !scrxor $80, "JLIK" ; left, right, up, down
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *
