@@ -91,13 +91,16 @@ TITLE.ANIMATED.SOURCES=$(wildcard res/TITLE.ANIMATED/*)
 TITLE.DHGR.SOURCES=$(wildcard res/TITLE.DHGR/*)
 TITLE.HGR.SOURCES=$(wildcard res/TITLE.HGR/*)
 CACHE.SOURCES=$(wildcard res/CACHE*.IDX)
-ICONS=$(wildcard res/ICONS/*)
-ATTRACT.CONF=res/ATTRACT.CONF
+ICONS.SOURCE.DIR=res/ICONS
+ICONS=$(wildcard $(ICONS.SOURCE.DIR)/*)
+ATTRACT.CONF.SOURCE=res/ATTRACT.CONF
 DFX.CONF=res/DFX.CONF
 FX.CONF=res/FX.CONF
 SFX.CONF=res/SFX.CONF
 PREFS.CONF.SOURCE=res/PREFS.CONF
 GAMES.CONF.SOURCE=res/GAMES.CONF
+CREDITS.SOURCE=res/CREDITS
+HELPTEXT.SOURCE=res/HELPTEXT
 COVER=res/COVER
 FINDER.DATA=res/Finder.Data
 FINDER.ROOT=res/Finder.Root
@@ -116,7 +119,7 @@ $(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.
 	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >> "$(CADIUS.LOG)"; \
 	done
 	cp src/prelaunch/_FileInformation.txt "$(PRELAUNCH)"/
-	for f in res/TITLE.ANIMATED res/ICONS "$(PRELAUNCH)" "$(X)"; do \
+	for f in res/TITLE.ANIMATED "$(ICONS.SOURCE.DIR)" "$(PRELAUNCH)" "$(X)"; do \
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >> "$(CADIUS.LOG)"; \
         done
@@ -147,16 +150,16 @@ $(X): | $(MD) $(GAMES.CONF)
 	@touch "$@"
 
 # precompute binary data structure for mega-attract mode configuration file
-$(ATTRACT.IDX): $(MD)
-	bin/buildokvs.py < res/ATTRACT.CONF > "$@"
+$(ATTRACT.IDX): $(ATTRACT.CONF.SOURCE) | $(MD)
+	bin/buildokvs.py < "$(ATTRACT.CONF.SOURCE)" > "$@"
 
 # precompute binary data structure and substitute special characters in global help
-$(HELPTEXT): $(MD)
-	bin/converthelp.sh res/HELPTEXT "$@"
+$(HELPTEXT): $(HELPTEXT.SOURCE) | $(MD)
+	bin/converthelp.sh "$(HELPTEXT.SOURCE)" "$@"
 
 # precompute binary data structure and substitute special characters in credits
-$(CREDITS): $(MD)
-	bin/converthelp.sh res/CREDITS "$@"
+$(CREDITS): $(CREDITS.SOURCE) | $(MD)
+	bin/converthelp.sh "$(CREDITS.SOURCE)" "$@"
 
 # precompute binary data structures and substitute special characters for each game's help
 $(GAMEHELP): $(GAMEHELP.SOURCES) | $(MD)
@@ -224,7 +227,7 @@ $(TITLE.HGR.LIST): $(TITLE.HGR.SOURCES) | $(MD)
 $(TITLE.DHGR.LIST): $(TITLE.DHGR.SOURCES) | $(MD)
 	(cd res/TITLE.DHGR/ && for f in *; do echo "$$f"; done) > "$@"
 
-$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP.COMPRESSED) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(ATTRACT.CONF) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(HELP) $(JOYSTICK) $(TITLE)
+$(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $(HELPTEXT) $(CREDITS) $(GAMEHELP.COMPRESSED) $(GAMES.CONF) $(GAMES.SORTED) $(ACTION.HGR0.LIST) $(ACTION.HGR1.LIST) $(ACTION.HGR2.LIST) $(ACTION.HGR3.LIST) $(ACTION.HGR4.LIST) $(ACTION.HGR5.LIST) $(ACTION.HGR6.LIST) $(ACTION.DGR.LIST) $(ACTION.DHGR.LIST) $(ACTION.GR.LIST) $(ARTWORK.SHR.LIST) $(TITLE.DHGR.LIST) $(TITLE.HGR.LIST) $(CACHE.SOURCES) $(DFX.CONF) $(FX.CONF) $(SFX.CONF) $(COVER) $(HELP) $(JOYSTICK) $(TITLE)
 #
 # precompute indexed files for prelaunch
 # note: prelaunch must be first in TOTAL.DATA due to a hack in LoadStandardPrelaunch

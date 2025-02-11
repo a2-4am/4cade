@@ -32,9 +32,9 @@ cheat3
 
          lda   #$60
          sta   $83f
+         jsr   HideLaunchArtwork
          jsr   $800
 
-         jsr   HideLaunchArtwork
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          pha
