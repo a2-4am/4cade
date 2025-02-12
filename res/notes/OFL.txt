@@ -1,5 +1,5 @@
-Copyright (c) 2018-2023, 4am
-with Reserved Font Name "Circuitous"
+Copyright (c) 2025, 4am
+with Reserved Font Name "Replay Mono"
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
