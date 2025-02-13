@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am
+;(c) 2019 by 4am, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/EI",plain
@@ -11,9 +11,9 @@
          lda   #$60
          sta   $3E98
          sta   $3EF2
-         jsr   $3DE9      ; phase 1
-         +DISABLE_ACCEL
          jsr   HideLaunchArtwork
+         jsr   $3DE9      ; decompress & show title
+         +DISABLE_ACCEL
          jsr   $4C00
          +ENABLE_ACCEL
          ldy   #0

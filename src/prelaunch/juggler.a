@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019, 2022 by Frank M., qkumba
+;(c) 2019, 2022, 2025 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/JUGGLER",plain
@@ -19,7 +19,8 @@
 
          lda   #$60
          sta   $7D1F
-         jsr   $3FF5      ; unpack
+         jsr   HideLaunchArtwork
+         jsr   $3FF5      ; unpack & show title
 
          lda   #$60
          sta   $BA21
@@ -34,7 +35,6 @@
 +
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $6000
 
 !if * > HideLaunchArtwork {
