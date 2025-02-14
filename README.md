@@ -4,7 +4,7 @@
 
 # Building the code
 
-## Mac OS X
+## macOS
 
 You will need
  - [Xcode command line tools](https://developer.apple.com/library/archive/technotes/tn2339/_index.html)
