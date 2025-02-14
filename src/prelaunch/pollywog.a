@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/POLLYWOG",plain
@@ -12,6 +12,9 @@
          lda   #$60       ; RTS instead of JMP
          sta   $846
          jsr   $800       ; decompress
+         lda   #$D0
+         sta   $5D2A
+         sta   $5DA5      ; don't touch $C040/annunciator strobe
          +DISABLE_ACCEL
          jsr   HideLaunchArtwork
          jmp   $7957
