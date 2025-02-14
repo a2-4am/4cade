@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba/Frank M.
+;(c) 2024, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/DEMO/POLLYWOG#060300",plain
@@ -65,6 +65,9 @@
          sta   $20D5,x
          dex
          bpl   -
+         lda   #$D0
+         sta   $5D2A
+         sta   $5DA5      ; don't touch $C040/annunciator strobe
          +DISABLE_ACCEL
          jmp   $7957
 
