@@ -29,7 +29,7 @@ $ make
 
 If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots), [Ample](https://github.com/ksherlock/ample), or [Virtual II](http://virtualii.com/).
 
-If all does not go well, try doing a clean build (`makeg clean && make`)
+If all does not go well, try doing a clean build (`make clean && make`)
 
 If that fails, perhaps you have out-of-date versions of one of the required tools? The [Makefile](https://github.com/a2-4am/4cade/blob/main/Makefile) lists, but does not enforce, the minimum version requirements of each third-party tool.
 
