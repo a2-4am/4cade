@@ -7,6 +7,7 @@
 
          !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
 
          +READ_RAM2_WRITE_RAM2
@@ -31,7 +32,6 @@ reset
          
 patch1
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          lda   #<patch2
          sta   $ACE8
          lda   #>patch2
