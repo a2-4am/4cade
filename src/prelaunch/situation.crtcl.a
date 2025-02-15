@@ -7,6 +7,7 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $336
          jsr   $300
@@ -18,7 +19,6 @@
          sta   $8BF
          lda   #$BC
          sta   $8C0
-         jsr   HideLaunchArtwork
          jmp   $800      ; decompress
 
 sitcrit_cheat
