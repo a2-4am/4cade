@@ -7,6 +7,7 @@
 
          !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          inc   $3F4       ; reboot during title screen
 
          lda   #$03       ; reset vector to $103
@@ -48,7 +49,6 @@ patch
          lda   #$FA
          sta   $108
 
-         jsr   HideLaunchArtwork
          jmp   $200       ; continue to game
 
 !if * > HideLaunchArtwork {

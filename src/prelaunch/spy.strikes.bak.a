@@ -15,6 +15,7 @@
          sta   $0849
          jsr   $0800      ; decompress
          +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -41,7 +42,6 @@ skipmb
          jsr   $8FB5      ; init MB
 +
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $6000
 
 !if * > HideLaunchArtwork {

@@ -12,6 +12,7 @@
          jsr   $300
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
@@ -49,7 +50,6 @@ reset
          dec   $410C      ; don't decrease energy
 ++
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $1800
 
 !if * > HideLaunchArtwork {

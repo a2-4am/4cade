@@ -7,6 +7,7 @@
 
          !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          +NEW_RESET_VECTOR $180
 
@@ -23,7 +24,6 @@ callback
          stx   $9E53
 
          +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
          jmp   $9D84
 
 !if * > HideLaunchArtwork {

@@ -16,6 +16,7 @@
          sta   $41A6
          jsr   $4000      ; decompress
          +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -28,7 +29,6 @@
          sta   $8A0
          stx   $8A1
 +        +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $800
 
 callback
