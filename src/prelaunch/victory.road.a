@@ -19,10 +19,10 @@ callback
          jmp   $D000
 
 ++
+         jsr   HideLaunchArtwork
          lda   #$60
          sta   $33C
          jsr   $300
-         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
          inc   $3F4       ; force reboot on reset during title screen
          lda   #$D0
