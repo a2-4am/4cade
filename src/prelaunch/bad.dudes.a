@@ -37,7 +37,7 @@ cheat
          sta   $d335
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $800
 
 !if * > HideLaunchArtwork {
