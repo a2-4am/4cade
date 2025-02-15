@@ -15,8 +15,7 @@
          lda   #$60
          sta   $BA19
          jsr   $BA00
-         jsr   HideLaunchArtwork
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $5FFD
          jmp   $BA1C
 
