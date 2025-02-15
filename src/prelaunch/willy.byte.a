@@ -7,11 +7,11 @@
 
     !source "src/macros.a"
 
+         jsr   HideLaunchArtwork
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_AT willybyte_mb, $D000
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          ldx   #(accel_e - accel)
 -        lda   accel, x
          sta   callback1, x
