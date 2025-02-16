@@ -1,0 +1,21 @@
+Move the color spheres to its matching
+base. Avoid the enemies.
+
+         joystick or keyboard
+
+                   A
+                  < >move
+                   Z
+
+return fire
+
+Ctl-D restart
+
+esc  pause
+
+Ctl-E start the  editor
+Ctl-I init
+Ctl-C clear level
+Ctl-Q quit the editor
+1-8 select block
+,. set the Scene
