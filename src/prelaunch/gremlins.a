@@ -12,8 +12,7 @@
          sta   $0839
          sta   $0863
          jsr   $0800      ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $211       ; music
          jsr   $83C       ; check key
          +GET_MACHINE_STATUS

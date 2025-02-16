@@ -21,8 +21,7 @@
          sta   $7F62      ; patch - don't increase lives
 +
          +RESET_AND_IRQ_VECTOR $100
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$00
          tay
          jmp   $2035

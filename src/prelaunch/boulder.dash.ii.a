@@ -9,9 +9,9 @@
 
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          lda   #$60
          sta   $4044
-         jsr   HideLaunchArtwork
          jsr   $4000      ; decompress & show EA title
 
          lda   MachineStatus

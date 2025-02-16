@@ -25,8 +25,7 @@ callback
          lda   #1
          sta   $A6E       ; exit to TR on 'R'
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $900
 
 !if * > HideLaunchArtwork {

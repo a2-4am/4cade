@@ -18,8 +18,7 @@
          sta   $a1d9
          sta   $8ca6
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $8000
 
 !if * > HideLaunchArtwork {

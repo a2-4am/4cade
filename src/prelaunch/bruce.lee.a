@@ -9,6 +9,7 @@
 
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          lda   #$2c
          sta   $bb8
          lda   #<callback
@@ -34,7 +35,6 @@
          sta   <(lcpatch + 1)
 +
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $900
 
 callback

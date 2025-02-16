@@ -16,7 +16,7 @@
          lda   #$ad
          sta   $1895      ; patch - don't decrease lives
 +
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jmp   $A892
 
 !if * > HideLaunchArtwork {

@@ -29,7 +29,7 @@
          sta   $7E46      ; no collisions
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $7147
 

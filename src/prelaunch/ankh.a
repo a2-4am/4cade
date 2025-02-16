@@ -11,8 +11,7 @@
          lda   #$60
          sta   $3F4E
          jsr   $3F12      ; decompress
-         jsr   HideLaunchArtwork
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $5000
 
 !if * > HideLaunchArtwork {

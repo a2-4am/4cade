@@ -23,8 +23,7 @@
          sta   $4045
          sta   $4046      ; reset vector patch
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $4000
 
 !if * > HideLaunchArtwork {

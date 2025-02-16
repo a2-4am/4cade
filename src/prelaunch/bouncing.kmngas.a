@@ -9,9 +9,9 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          +LOAD_FILE_AT kamungas_mb, $200
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $200
 
 kamungas_mb

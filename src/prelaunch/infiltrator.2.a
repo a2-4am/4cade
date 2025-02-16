@@ -17,12 +17,13 @@
          sta   $230, x
          dex
          bpl   -
-         +READ_ROM_WRITE_RAM2
+         +READ_RAM2_WRITE_RAM2
          lda   #2
          sta   $FFFD
          lda   #$30
          sta   $FFFC      ; LC reset vector fix
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
          jmp   $800
 
 newpath

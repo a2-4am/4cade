@@ -7,10 +7,9 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
          sta   $5CDA
-         jsr   HideLaunchArtwork
          jsr   $4000      ; decompress
 
          +GET_MACHINE_STATUS

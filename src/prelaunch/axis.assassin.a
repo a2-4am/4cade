@@ -7,11 +7,10 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
          sta   $3f32
          sta   $3f4e
-         jsr   HideLaunchArtwork
          jsr   $3efc      ; decompress & show title
          +DISABLE_ACCEL
          jsr   $F00

@@ -27,8 +27,7 @@
          sta   $FFFD
          eor   #$A5
          sta   $3F4
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $6000
 
 reset

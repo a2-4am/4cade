@@ -7,12 +7,11 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #>(callback1-1)
          sta   $4280
          lda   #<(callback1-1)
          sta   $4283
-         jsr   HideLaunchArtwork
          jmp   $3FFD      ; decompress & show EA title
 
 callback2

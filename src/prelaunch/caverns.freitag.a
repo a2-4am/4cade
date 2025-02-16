@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          ;+ENABLE_ACCEL   ; shows title
 
          +NEW_RESET_VECTOR $280

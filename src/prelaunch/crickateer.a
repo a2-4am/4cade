@@ -15,8 +15,7 @@ reset
          sta   $949A
          jsr   $5212
          jsr   $868       ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $839
          +ENABLE_ACCEL
          lda   #$20

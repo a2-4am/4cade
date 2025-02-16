@@ -7,13 +7,12 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
 
          lda   #$60
          sta   $94C7
          sta   $94E1
          sta   $94F2
-         jsr   HideLaunchArtwork
          jsr   $4000      ; decompress & show SAMS logo
 
          +DISABLE_ACCEL

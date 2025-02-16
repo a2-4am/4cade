@@ -23,8 +23,8 @@
 
 skipmb
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $0800
 
 !if * > HideLaunchArtwork {

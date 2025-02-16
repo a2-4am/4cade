@@ -31,8 +31,7 @@
          sta   $1338      ; patch - don't decrease lives
          sta   $10A8      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $0A00
 
 !if * > HideLaunchArtwork {

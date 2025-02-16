@@ -23,8 +23,7 @@
          lda   #$A4
          sta   $7C02     ; to $3F4 - reset ($3F2 doesn't change)
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $5ff8     ; decompress, run intro
 
          +ENABLE_ACCEL

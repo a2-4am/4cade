@@ -7,7 +7,7 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          inc   $3F4        ; 128k - must reboot
          lda   #<callback
          sta   $556B
@@ -15,7 +15,6 @@
          sta   $556C
          lda   #$4C
          sta   $5581
-         jsr   HideLaunchArtwork
          jsr   $2A55       ; show title screen
          lda   #<reset
          sta   $121A

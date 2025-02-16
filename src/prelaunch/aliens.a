@@ -14,8 +14,7 @@
          lda   #$60
          sta   $2429
          jsr   $22AA      ; decrypt
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $1FA0
 
 !if * > HideLaunchArtwork {

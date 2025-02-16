@@ -22,8 +22,8 @@ callback
          lda   #$ad
          sta   $48B0      ; patch - don't decrease lives
          sta   $48CD      ; patch - don't erase sprite
-+        +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
++
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          rts
 
 !if * > HideLaunchArtwork {

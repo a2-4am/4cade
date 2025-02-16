@@ -30,8 +30,7 @@
          lda   #1
          sta   $3261      ; which is copied from $3255
          sta   $FFFD      ; LC reset vector fix
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $3000
 
 !if * > HideLaunchArtwork {

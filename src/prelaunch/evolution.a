@@ -40,8 +40,7 @@ cheat_hi !byte $0A, $0A, $0B, $0A, $0B, $0B
          lda   #>cheat
          sta   $BA03
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $6000
 
 !if * > HideLaunchArtwork {

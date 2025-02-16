@@ -13,10 +13,9 @@
          jsr   $4000      ; decompress
          lda   $7fe       ; Buck Rogers code
          pha
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          pla
          sta   $7fe       ; overwritten by GS acceleration
-         jsr   HideLaunchArtwork
          jmp   $400
 
 !if * > HideLaunchArtwork {

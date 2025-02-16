@@ -12,8 +12,7 @@
          sta   $3ec9
          sta   $3f09
          jsr   $3e97
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$b1
          sta   $646b
          jsr   $6400

@@ -19,7 +19,7 @@
          lda   $C083
          +LC_REBOOT
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          lda   #$53
          jsr   $F800      ; now load that bit
          lda   $C08B

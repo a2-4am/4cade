@@ -33,9 +33,9 @@ callback
          lda   #$60
          sta   $9DA
          jsr   $800       ; load "DOS"
-         jsr   HideLaunchArtwork
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED

@@ -14,8 +14,7 @@
          bne   +
 *=$15A
 +        jsr   $BD5       ; decompress title
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $800
          +ENABLE_ACCEL
          jsr   $535       ; decompress game

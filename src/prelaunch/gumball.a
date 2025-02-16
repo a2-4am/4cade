@@ -17,11 +17,10 @@
          sta   $B21F
          lda   #>callback
          sta   $B220
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $B2F1
 
 callback
-         jsr   HideLaunchArtwork
          lda   $5F
          asl
          bne   +

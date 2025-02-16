@@ -304,6 +304,12 @@
          +READ_ROM_NO_WRITE
 }
 
+!macro   ENABLE_ACCEL_AND_HIDE_ARTWORK {
+         +ENABLE_ACCEL_LC
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
+}
+
 ; leave LC active on exit
 !macro   ENABLE_ACCEL_LC {
          +READ_RAM2_NO_WRITE
@@ -313,6 +319,19 @@
 !macro   DISABLE_ACCEL {
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+}
+
+!macro   DISABLE_ACCEL_AND_HIDE_ARTWORK {
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
+}
+
+!macro   HIDE_ARTWORK {
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 }
 

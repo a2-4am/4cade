@@ -22,9 +22,8 @@
          stx   $4064
          inx
          stx   $4069      ; reset vector patch
-         
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $4000
 
 !if * > HideLaunchArtwork {

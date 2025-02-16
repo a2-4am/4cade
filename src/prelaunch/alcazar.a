@@ -24,8 +24,7 @@
          lda   #1
          sta   $9DC1      ; reset vector patch
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $7c1e
 
 !if * > HideLaunchArtwork {

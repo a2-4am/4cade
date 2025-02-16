@@ -7,12 +7,11 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #>(callback - 1)
          sta   $5FC3
          lda   #<(callback - 1)
          sta   $5FC6
-         jsr   HideLaunchArtwork
          jmp   $59C2      ; decompress & show title
 
 callback

@@ -39,7 +39,7 @@
          sta   $A8D6
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $A821
 
 callback

@@ -21,6 +21,7 @@
 +
          lda   $c083
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          sta   $C05F      ; fix //c and //c+ HGR color
          lda   $c08b
          jsr   $ee1f
@@ -30,7 +31,6 @@
          sta   $600
          sta   $603       ; BIT changing reset
 
-         jsr   HideLaunchArtwork
          jmp   $981
 
 !if * > HideLaunchArtwork {

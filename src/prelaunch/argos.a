@@ -38,6 +38,6 @@ callback
          sta   $F97       ; patch - don't decrease energy
 ++
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          rts

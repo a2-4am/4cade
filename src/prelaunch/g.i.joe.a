@@ -44,8 +44,8 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_RAM1_WRITE_RAM1
-         jsr   HideLaunchArtwork
          jmp   $D400
 
 callback1

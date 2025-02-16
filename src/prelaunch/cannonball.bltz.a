@@ -24,8 +24,7 @@
          sta   $A0D5
          sta   $A0DA      ; reset fix
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $a000
 
 !if * > HideLaunchArtwork {

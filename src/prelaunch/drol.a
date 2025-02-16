@@ -28,10 +28,9 @@
          jsr   $40e0
          lda   $7fe       ; Drol code
          pha
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          pla
          sta   $7fe       ; overwritten by GS acceleration
-         jsr   HideLaunchArtwork
          jmp   $407c
 
 cheat_b !pseudopc $bf70 {

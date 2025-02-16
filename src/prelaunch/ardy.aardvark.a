@@ -16,7 +16,7 @@
          jmp   $27BF      ; decompress
 
 callback1
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
 -        lda   KBD
          bpl   -
          ldy   #(callback2_e - callback2) - 1
@@ -27,7 +27,6 @@ callback1
          iny
          sty   $9610
          inc   $9611
-         +DISABLE_ACCEL
          jmp   $401E
 
 callback2

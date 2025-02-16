@@ -16,7 +16,7 @@
          dex
          bpl   -
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jmp   $200
 
 seed

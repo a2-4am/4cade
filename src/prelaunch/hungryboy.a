@@ -23,8 +23,7 @@ patch    nop
          lda   #$A5
          sta   $70F4      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $94E0
 
 !if * > HideLaunchArtwork {

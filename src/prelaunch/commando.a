@@ -24,7 +24,7 @@ cheat
          +ENABLE_ACCEL
          dec   $11a6
          jsr   $1000      ; decompress
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +

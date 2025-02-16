@@ -18,8 +18,7 @@
          lda   #1
          sta   $849       ; reset vector fix
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $810
 
 !if * > HideLaunchArtwork {

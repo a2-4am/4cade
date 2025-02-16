@@ -24,8 +24,7 @@
          sta   $C0A
          +NEW_RESET_VECTOR $330
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $c00
 
 !if * > HideLaunchArtwork {

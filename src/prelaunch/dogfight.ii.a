@@ -12,8 +12,7 @@
          sta   $4E52
          jsr   $800       ; decompress
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $563A
 
 !if * > HideLaunchArtwork {

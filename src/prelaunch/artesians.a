@@ -42,8 +42,8 @@ hook     +RESET_VECTOR $100
          sta   $B7F0
          bit   $C057      ; enable hires
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $B31B
 
 !if * > HideLaunchArtwork {

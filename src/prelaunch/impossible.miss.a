@@ -7,10 +7,10 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
                           ; reboot on reset during title
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          +LC_REBOOT
          +READ_ROM_NO_WRITE
 

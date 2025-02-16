@@ -15,8 +15,7 @@
          sta   $892
          sta   $8A0
          jsr   $800       ; decompress
-         jsr   HideLaunchArtwork
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $8AA5      ; show Box Office animation
 ;ran out of space
 ;;         +ENABLE_ACCEL

@@ -35,7 +35,7 @@
          lda   #>callback
          sta   $E0DA
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $E000
 
 callback

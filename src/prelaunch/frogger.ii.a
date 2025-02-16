@@ -23,8 +23,7 @@
          stx   $B04B
          lda   #2
          sta   $B04C
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $800
 
 callback !pseudopc $200 {

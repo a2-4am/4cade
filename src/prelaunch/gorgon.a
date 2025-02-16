@@ -11,8 +11,7 @@
          lda   #$60
          sta   $8237
          jsr   $3FFD      ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
          sta   $B845
          jsr   $B837      ; spaceship load scene
