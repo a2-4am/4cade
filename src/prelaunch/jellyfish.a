@@ -42,6 +42,6 @@ reset    ldx   #5
 }
 reset_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

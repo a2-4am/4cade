@@ -37,6 +37,6 @@ callback
          sta   $40A4
          jmp   $4000      ; decompress
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

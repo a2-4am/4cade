@@ -29,6 +29,6 @@
          ldx   #$10
          jmp   $7d0       ; original is $7FD but GS accelerator overwrites it
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

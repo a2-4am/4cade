@@ -17,6 +17,6 @@
 rraiders_mb
          +PSTRING "PRELAUNCH/RESQ.RAIDERS.MB"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

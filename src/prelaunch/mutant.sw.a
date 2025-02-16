@@ -24,6 +24,6 @@
 
          jmp   $8B7F
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

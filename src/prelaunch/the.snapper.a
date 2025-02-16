@@ -32,6 +32,6 @@
 
 keys     !scrxor $80, "JLIK" ; left, right, up, down
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

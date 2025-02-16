@@ -55,6 +55,6 @@ callback
          sta   $A453      ; patch - don't decrease time
          jmp   $B679
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

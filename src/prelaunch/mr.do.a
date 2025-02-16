@@ -77,6 +77,6 @@ fixgs
          sei
          jmp   $08b2
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -50,6 +50,6 @@ callback2
          sta   $8644      ; patch - don't decrease lives
          jmp   $800
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large for reset vector hook, ends at ", *
 }

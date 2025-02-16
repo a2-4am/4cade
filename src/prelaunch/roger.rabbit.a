@@ -66,6 +66,6 @@
 @path    !byte @path_e-@path_b
 @path_b  !text "/GAMR/X"  ; the 'X' is a dummy character
 @path_e
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

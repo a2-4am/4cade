@@ -17,6 +17,6 @@
 cavrn_cheat
          +PSTRING "PRELAUNCH/CAVRN.CHEAT"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

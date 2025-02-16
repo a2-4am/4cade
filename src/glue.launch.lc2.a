@@ -26,7 +26,6 @@ LaunchInternal
          bne   -
          ldx   #(HideLaunchArtworkInternal_e-HideLaunchArtworkInternal)
 -        lda   HideLaunchArtworkInternal-1, x
-         sta   HideLaunchArtwork-1, x
          sta   HideLaunchArtworkLC2-1, x
          dex
          bne   -
@@ -58,7 +57,6 @@ LaunchInternal
          and   #SUPPORTS_SHR
          bne   @turnOffSHRShadow
          lda   #$60
-         sta   HideLaunchArtwork
          sta   HideLaunchArtworkLC2
          bne   @jmp                  ; always branches
 @turnOffSHRShadow
@@ -85,7 +83,7 @@ AnimationPrelaunchInit
 PrelaunchInitInternal_e
 
 HideLaunchArtworkInternal
-!pseudopc HideLaunchArtwork {
+!pseudopc HideLaunchArtworkLC2 {
          lda   #1
          sta   NEWVIDEO
          rts

@@ -37,6 +37,6 @@ callback
          inc   $3F4       ; reboot
          jmp   $7ACB
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -30,6 +30,6 @@ hook2    +RESET_VECTOR $100
 +
          jmp   $17E3
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

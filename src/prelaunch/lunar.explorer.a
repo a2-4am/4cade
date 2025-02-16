@@ -20,6 +20,6 @@
          +DISABLE_ACCEL
          jmp   $65E2
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

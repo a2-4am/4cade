@@ -40,6 +40,6 @@ callback1
          sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $1170
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

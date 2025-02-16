@@ -60,6 +60,6 @@ no_speech
          +READ_ROM_NO_WRITE
          jmp   $6200
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

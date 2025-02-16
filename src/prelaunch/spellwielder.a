@@ -53,6 +53,6 @@ callback3
 +
          jmp   $8774
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

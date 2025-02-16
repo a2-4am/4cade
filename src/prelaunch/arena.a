@@ -24,6 +24,6 @@
 
          jmp   $80D       ; skip changing the reset vector
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

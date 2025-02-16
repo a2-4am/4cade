@@ -144,7 +144,7 @@ RNDSEED      = $4E        ; word
          !src "src/decrunch/constants.a"
 
 PrelaunchInit= $EA
-HideLaunchArtwork  = $1B3
+PrelaunchMax = $1B3
 HideLaunchArtworkLC2 = $DFAE
 ; textrank
 BestMatchIndex = $E5      ; word

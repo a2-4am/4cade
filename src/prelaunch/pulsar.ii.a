@@ -56,6 +56,6 @@ callback3
          +DISABLE_ACCEL
          rts
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

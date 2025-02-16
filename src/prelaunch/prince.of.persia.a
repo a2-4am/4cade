@@ -51,6 +51,6 @@ callback
          +READ_RAM1_WRITE_RAM1
          jmp   $EE00
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

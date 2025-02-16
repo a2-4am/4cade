@@ -46,6 +46,6 @@ pcallback1
 pcallback2
          !word callback3
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

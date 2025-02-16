@@ -20,6 +20,6 @@
 flak_mb
          +PSTRING "PRELAUNCH/FLAK.MB"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

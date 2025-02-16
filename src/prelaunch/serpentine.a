@@ -31,6 +31,6 @@ patch !pseudopc $390 {
 }
 patch_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

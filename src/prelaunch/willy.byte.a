@@ -62,6 +62,6 @@ accel_e
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

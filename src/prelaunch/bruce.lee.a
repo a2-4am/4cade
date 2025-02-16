@@ -59,6 +59,6 @@ lcpatch
 }
 cheat_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

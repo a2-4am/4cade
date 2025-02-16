@@ -55,6 +55,6 @@ callback2
 call1    jmp   callback1
 call2    jmp   callback2
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

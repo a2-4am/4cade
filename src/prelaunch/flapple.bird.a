@@ -39,6 +39,6 @@
 flapple_mac
          +PSTRING "PRELAUNCH/FLAPPLE.MAC"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

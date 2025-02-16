@@ -17,6 +17,6 @@
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $1FA0
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -57,6 +57,6 @@ wait3    sbc   #$01
          rts
 callback_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -40,6 +40,6 @@ callback
 mbslot   lda   #$D1       ; SMC
          jmp   $963D
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -39,6 +39,6 @@ keypress
          lda   #$8D
          rts
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

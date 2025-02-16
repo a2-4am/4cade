@@ -46,6 +46,6 @@ hook     +RESET_VECTOR $100
          +READ_ROM_NO_WRITE
          jmp   $B31B
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

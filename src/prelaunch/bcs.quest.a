@@ -28,6 +28,6 @@ cheat
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          rts
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

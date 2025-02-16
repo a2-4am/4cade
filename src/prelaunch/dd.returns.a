@@ -35,6 +35,6 @@ x_b !pseudopc $200 {
 }
 x_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

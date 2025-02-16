@@ -48,6 +48,6 @@ callback
          sta   $E7B7      ; patch - don't increase lives
          jmp   $A922
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

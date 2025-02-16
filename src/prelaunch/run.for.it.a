@@ -47,6 +47,6 @@ callback2
          stx   $A1C7
          jmp   $A190
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

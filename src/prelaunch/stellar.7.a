@@ -44,6 +44,6 @@ callback
          sta   $8095      ; patch - don't increase damage
          jmp   $A440
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

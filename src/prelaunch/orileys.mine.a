@@ -34,6 +34,6 @@
          +READ_ROM_NO_WRITE
          jmp   $8FD
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

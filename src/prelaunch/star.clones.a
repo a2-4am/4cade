@@ -15,6 +15,6 @@
          lda   #0
          jmp   $A2A7
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

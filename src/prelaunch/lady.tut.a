@@ -60,6 +60,6 @@ patch
          jmp   $8460
 end_patch
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

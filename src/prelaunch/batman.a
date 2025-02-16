@@ -41,6 +41,6 @@ callback
          sta   $FC65
          jmp   $AB18
          
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

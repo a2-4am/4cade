@@ -30,6 +30,6 @@
 
          jmp   $4000
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

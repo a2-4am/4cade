@@ -29,6 +29,6 @@ callback
          jsr   $FC58
          jmp   $96B
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

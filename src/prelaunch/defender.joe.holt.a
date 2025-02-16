@@ -23,6 +23,6 @@
          jsr   DisableAccelerator
          jmp   $200
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

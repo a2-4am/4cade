@@ -37,6 +37,6 @@ hook3    lda   #0
 
          jmp   $1200
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -30,6 +30,6 @@ callback
          sta   $9D31      ; patch - disable sprite collision
          jmp   $9600
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

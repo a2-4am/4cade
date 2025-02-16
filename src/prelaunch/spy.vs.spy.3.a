@@ -23,6 +23,6 @@
          jsr   $9000
          jmp   $915C
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

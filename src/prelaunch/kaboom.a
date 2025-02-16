@@ -41,6 +41,6 @@ callback
          jmp   $7AEA
 +        jmp   $7AE5
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -34,6 +34,6 @@ callback
          sta   $BB01      ; patch - don't decrease lives
 +        rts
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

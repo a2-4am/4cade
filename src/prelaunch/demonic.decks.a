@@ -23,6 +23,6 @@
          +READ_ROM_NO_WRITE
          jmp   $200       ; no reset vector, code in $3Fx
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

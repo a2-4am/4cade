@@ -48,6 +48,6 @@ patch2
 +
          jmp   $0600      ; play demo/start game
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

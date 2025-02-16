@@ -44,6 +44,6 @@ callback
          ldy   #0
          jmp   $A0F9      ; decompress
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

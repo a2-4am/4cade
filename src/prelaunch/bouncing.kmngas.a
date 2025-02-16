@@ -17,6 +17,6 @@
 kamungas_mb
          +PSTRING "PRELAUNCH/KAMUNGAS.MB"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -32,6 +32,6 @@
          inc   $7A26
          jmp   $7680
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

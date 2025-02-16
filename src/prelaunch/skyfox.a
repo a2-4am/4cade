@@ -71,6 +71,6 @@ nopatch
          +READ_ROM_NO_WRITE
          jmp   $67BD
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -26,7 +26,7 @@
          ldx   #(hide_callback_e-hide_callback)
 -        lda   hide_callback, x
          sta   $106, x
-         lda   HideLaunchArtwork, x
+         lda   PrelaunchMax, x
          sta   HideArtworkCallback, x
          dex
          bpl   -
@@ -53,6 +53,6 @@ HideArtworkCallback
 }
 hide_callback_e
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

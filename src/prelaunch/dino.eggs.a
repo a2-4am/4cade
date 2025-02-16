@@ -19,6 +19,6 @@
          +HIDE_ARTWORK
          jmp   $A892
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

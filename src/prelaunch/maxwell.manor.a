@@ -21,6 +21,6 @@ callback
          jsr   HideLaunchArtworkLC2
          jmp   $21CD
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -53,6 +53,6 @@ callback2
          bcs   -
          jmp   $AE21
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

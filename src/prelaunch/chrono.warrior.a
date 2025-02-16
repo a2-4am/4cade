@@ -80,6 +80,6 @@ skip
          +READ_ROM_NO_WRITE
          jmp   $1B40
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

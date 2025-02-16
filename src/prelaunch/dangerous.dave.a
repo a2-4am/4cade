@@ -23,6 +23,6 @@ seed
          !byte   $80, $4F, $C7, $52, $FF
 
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

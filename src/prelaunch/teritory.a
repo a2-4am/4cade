@@ -45,6 +45,6 @@ callback2
          bne   jmp60+1
 +        jmp   $56BA
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

@@ -31,6 +31,6 @@ callback nop
 +
          jmp   $0451
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

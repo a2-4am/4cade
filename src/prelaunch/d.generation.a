@@ -32,6 +32,6 @@ callback
          sta   $D9F7
          jmp   $600B
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

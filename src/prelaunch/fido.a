@@ -30,6 +30,6 @@ callback
          +READ_ROM_NO_WRITE
          jmp   $DD3
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

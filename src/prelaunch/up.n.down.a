@@ -51,6 +51,6 @@ patch
 
          jmp   $200       ; continue to game
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

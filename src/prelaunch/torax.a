@@ -23,6 +23,6 @@
          ldy   #$20
          jmp   $2088
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

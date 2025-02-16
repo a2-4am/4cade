@@ -32,6 +32,6 @@ callback
          sta   $9F1       ; patch - don't decrease lives
          jmp   $800
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

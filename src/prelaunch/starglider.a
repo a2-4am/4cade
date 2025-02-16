@@ -50,6 +50,6 @@
 reset    lda   $C089
          jmp   $FAA6
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

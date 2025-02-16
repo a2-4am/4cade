@@ -17,6 +17,6 @@
          jsr   DisableAccelerator
          jmp   $7E7C
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }

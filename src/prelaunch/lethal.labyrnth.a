@@ -17,6 +17,6 @@
 lethal_kbd
          +PSTRING "PRELAUNCH/LETHAL.KBD"
 
-!if * > HideLaunchArtwork {
+!if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }
