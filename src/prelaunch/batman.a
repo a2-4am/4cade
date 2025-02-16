@@ -17,7 +17,7 @@
          jsr   $1000      ; decompress
          dex
          jsr   $D300      ; decompress
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          lda   #$60
          sta   $901
          jsr   $800       ; decompress
