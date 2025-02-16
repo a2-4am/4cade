@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          ;+ENABLE_ACCEL   ; can't - shows title right away
          lda   #$60       ; hook
          sta   $9318

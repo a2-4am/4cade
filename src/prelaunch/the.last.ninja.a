@@ -11,7 +11,7 @@
          lda   #$60
          sta   $9F7
          jsr   $800       ; load DOS
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          inx
          stx   $FA        ; fix sound
          lda   #$60

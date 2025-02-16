@@ -19,8 +19,7 @@
          lda   #>callback
          sta   $BD27
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $B700
 
 callback

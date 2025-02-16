@@ -11,7 +11,6 @@
          lda   #$60
          sta   $9C9
          jsr   $800       ; load "DOS"
-         jsr   HideLaunchArtwork
          lda   #<callback
          sta   $BF08
          lda   #>callback
@@ -22,7 +21,7 @@ callback
          pha
          txa
          pha
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          pla
          tax
          pla

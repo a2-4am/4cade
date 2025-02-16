@@ -24,7 +24,7 @@ callback
          dec   $9FA7      ; don't decrease lives
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $6000
 

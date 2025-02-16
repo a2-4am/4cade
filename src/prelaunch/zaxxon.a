@@ -41,7 +41,7 @@
          sty   $1a40
          sty   $1a61
 +        +READ_RAM2_WRITE_RAM2
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          ldy   #0
          jmp   $41D0
 

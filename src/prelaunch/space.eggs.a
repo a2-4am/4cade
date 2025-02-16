@@ -21,7 +21,7 @@
          dec   $1BBA      ; don't decrease lives
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $4880      ; run it
 

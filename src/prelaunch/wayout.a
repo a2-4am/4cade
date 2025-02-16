@@ -12,7 +12,6 @@
          lda   #$60
          sta   $206A
          jsr   $2000      ; decompress
-         jsr   HideLaunchArtwork
          lda   #$60
          sta   $97DE
          jsr   $979B      ; decompress more
@@ -22,7 +21,7 @@
          lda   #$20
          sta   $8D75
          +RESET_VECTOR $100
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $8D75
 
 !if * > HideLaunchArtwork {

@@ -20,8 +20,8 @@
          sta   $BBCC      ; patch - don't increase lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $B407
 
 !if * > HideLaunchArtwork {

@@ -31,9 +31,9 @@
          sta   $99AF      ; kill timer
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          sta   $C05F      ; fix //c and //c+ HGR color
-         jsr   HideLaunchArtwork
          jmp   $9300
 
 !if * > HideLaunchArtwork {

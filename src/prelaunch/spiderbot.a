@@ -7,8 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          inc   $3F4       ; force reboot
          lda   #$60
          sta   $6085

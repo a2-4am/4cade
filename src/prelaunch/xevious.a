@@ -7,7 +7,6 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +ENABLE_ACCEL
 
          +READ_RAM2_WRITE_RAM2
@@ -31,7 +30,7 @@ reset
          jmp   $FAA6
          
 patch1
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #<patch2
          sta   $ACE8
          lda   #>patch2

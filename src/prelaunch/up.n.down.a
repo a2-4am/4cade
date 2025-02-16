@@ -7,7 +7,7 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          inc   $3F4       ; reboot during title screen
 
          lda   #$03       ; reset vector to $103

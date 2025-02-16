@@ -31,7 +31,7 @@
          lda   #$FB
          sta   $FA87
 +        jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $F800
 
 cheat_b

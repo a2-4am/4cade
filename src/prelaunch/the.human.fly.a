@@ -20,8 +20,7 @@
          sta   $87F
          lda   #0
          sta   $880
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $D566
 
 callback

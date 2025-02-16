@@ -38,7 +38,6 @@ main
          sta   $B748
          lda   #>callback1
          sta   $B749
-         jsr   HideLaunchArtwork
          jmp   $B700
 
 callback1
@@ -60,7 +59,7 @@ callback1
          lda   #>callback2
          sta   $BD08
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $9D84
 
 !if * > HideLaunchArtwork {

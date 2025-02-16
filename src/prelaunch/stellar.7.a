@@ -33,8 +33,8 @@
          sta   $AE72
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $AE27
 
 callback

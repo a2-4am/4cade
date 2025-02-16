@@ -23,7 +23,7 @@ callback
          inc   $45FA      ; patch - don't decrease energy
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $BE77
 
 !if * > HideLaunchArtwork {

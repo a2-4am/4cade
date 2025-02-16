@@ -34,7 +34,7 @@
          sta   $64AC      ; patch - don't increase damage
 +
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          lda   #0
          jmp   $896

@@ -26,8 +26,8 @@
          dec   $920       ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   ($20)
 
 keys     !scrxor $80, "JLIK" ; left, right, up, down

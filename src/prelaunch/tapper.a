@@ -14,8 +14,7 @@
          lda   #$60
          sta   $851
          jsr   $800
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #<cheat
          sta   $248
          lda   #>cheat

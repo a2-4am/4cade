@@ -38,8 +38,8 @@
          sta   $1E98      ; patch - don't decrease bombs
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $5000
 
 !if * > HideLaunchArtwork {

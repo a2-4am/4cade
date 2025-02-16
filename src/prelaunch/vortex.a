@@ -22,8 +22,8 @@ hook     +NEW_RESET_VECTOR $BFF0
          dec   $EA8       ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $D566
 
 !if * > HideLaunchArtwork {

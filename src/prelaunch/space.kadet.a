@@ -25,8 +25,7 @@ hook2    lda   #<hook3
          sta   $9A7A+1
          lda   #>hook3
          sta   $9A7A+2
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $800       ; show title
 
 hook3    lda   #0

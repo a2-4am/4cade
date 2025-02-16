@@ -15,8 +15,7 @@
          sta   $DE3
          jsr   $C24
          jsr   $BCFC      ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $DC1
          +ENABLE_ACCEL
          jsr   $BCFC      ; decompress

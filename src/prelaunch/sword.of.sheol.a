@@ -24,8 +24,8 @@
          sta   $6BDE      ; patch - don't decrease armour
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $50F
 
 !if * > HideLaunchArtwork {

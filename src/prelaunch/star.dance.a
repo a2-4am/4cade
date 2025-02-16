@@ -27,8 +27,8 @@ hook     lda   #0
          sta   $1272      ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $7000
 
 !if * > HideLaunchArtwork {

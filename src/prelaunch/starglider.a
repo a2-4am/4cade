@@ -18,7 +18,7 @@
          jsr   $800       ; decompress
 
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jsr   $BA7B
 
          ldx   #5
