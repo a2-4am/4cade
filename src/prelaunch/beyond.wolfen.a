@@ -57,8 +57,7 @@ callback
          lda   #>patch
          sta   $A396
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $9D84
 
 
