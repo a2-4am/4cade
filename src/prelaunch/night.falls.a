@@ -19,8 +19,7 @@ callback2
          jmp   $FDF0
 
 ++
-         jsr   HideLaunchArtwork
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
 
          ldx   #5
 -        lda   $100,x

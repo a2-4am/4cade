@@ -10,8 +10,7 @@
          jmp   +
 
 callback
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $0918
 
 +

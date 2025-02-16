@@ -13,8 +13,7 @@
          jsr   $1F00      ; decompress
          dec   $6AD1
          inc   $6ADA      ; swap buttons
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $9050
 
 !if * > HideLaunchArtwork {

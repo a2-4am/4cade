@@ -16,8 +16,7 @@
          jsr   $BD41
          lda   #$60
          sta   $B5DB
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $B59B
          lda   $C054
          +ENABLE_ACCEL

@@ -39,8 +39,8 @@ callback1
          sta   $92D7      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $6000
 
 !if * > HideLaunchArtwork {

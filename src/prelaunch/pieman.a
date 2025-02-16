@@ -11,8 +11,7 @@
          lda   #$60       ; hook1
          sta   $3EA9
          jsr   $3E88      ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
 
          lda   #$60       ; hook2
          sta   $A050

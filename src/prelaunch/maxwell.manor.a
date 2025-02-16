@@ -18,7 +18,7 @@ callback
          +LC_REBOOT
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          jmp   $21CD
 
 !if * > HideLaunchArtwork {

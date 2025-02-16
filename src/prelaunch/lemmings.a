@@ -15,8 +15,8 @@
          +READ_RAM2_WRITE_RAM2
          +NEW_RESET_VECTOR_64K $300
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $6000
 
 !if * > HideLaunchArtwork {

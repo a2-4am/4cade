@@ -7,15 +7,15 @@
 
     !source "src/macros.a"
 
-         +READ_RAM1_WRITE_RAM1
+         +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          lda   #$B4
          sta   $98E
          lda   #$EF
          sta   $98D      ; reset vector fix
 
-         jsr   HideLaunchArtwork
          jmp   $800
 
 !if * > HideLaunchArtwork {

@@ -12,7 +12,6 @@
          lda   #$60
          sta   $864
          jsr   $800       ; decompress
-         jsr   HideLaunchArtwork
 
          +NEW_RESET_VECTOR $3B0
          lda   #$2C
@@ -35,6 +34,7 @@
          sta   $B608
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 
          jmp   $B5B9

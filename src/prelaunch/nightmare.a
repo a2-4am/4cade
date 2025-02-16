@@ -13,7 +13,6 @@
          lda   #$60
          sta   $404B
          jsr   $4000      ; decompress
-         jsr   HideLaunchArtwork
 
          ldx   #(callback_e-callback)-1
 -        lda   callback,x
@@ -44,6 +43,7 @@
          sta   $8980      ; patch - don't increase lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $1206
 

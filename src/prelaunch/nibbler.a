@@ -21,8 +21,8 @@
          sta   $12D3      ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $900
 
 !if * > HideLaunchArtwork {

@@ -17,7 +17,7 @@
          jsr   $1000
          dex
          jsr   $D300
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          lda   #$4C
          sta   $852
          jsr   $800

@@ -30,8 +30,7 @@ callback
 ++
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #<callback
          sta   $40A3
          lda   #>callback

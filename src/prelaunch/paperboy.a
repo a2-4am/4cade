@@ -7,9 +7,9 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          sta   callback_b+(cheat_smc-callback)+1

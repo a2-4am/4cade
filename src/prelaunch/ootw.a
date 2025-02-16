@@ -11,7 +11,7 @@
          sta   $336
          jsr   $300
          +USES_TEXT_PAGE_2
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jmp   $800
 
 !if * > HideLaunchArtwork {

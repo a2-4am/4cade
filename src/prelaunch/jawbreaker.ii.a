@@ -11,7 +11,6 @@
          lda   #$60
          sta   $85B
          jsr   $800       ; decompress
-         jsr   HideLaunchArtwork
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -20,7 +19,7 @@
          lda   #>callback
          sta   $35D
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $301
 
 callback

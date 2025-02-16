@@ -17,8 +17,7 @@
          lda   #$a5
          sta   $6d0d
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $6004
 
 !if * > HideLaunchArtwork {

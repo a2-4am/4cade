@@ -20,8 +20,8 @@
          sta   $BA5E      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $8C8
 
 !if * > HideLaunchArtwork {

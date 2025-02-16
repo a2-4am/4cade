@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          lda   #<cheat
          sta   $10da
          lda   #>cheat

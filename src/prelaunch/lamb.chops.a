@@ -12,8 +12,7 @@
          sta   $87C
          sta   $896
          jsr   $800       ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $300
          +ENABLE_ACCEL
          jsr   $87F

@@ -22,8 +22,7 @@
          lda   #$AD
          sta   $BD34      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $61E3
 
 !if * > HideLaunchArtwork {

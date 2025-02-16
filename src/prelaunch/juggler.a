@@ -19,7 +19,7 @@
 
          lda   #$60
          sta   $7D1F
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jsr   $3FF5      ; unpack & show title
 
          lda   #$60

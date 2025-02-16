@@ -45,7 +45,6 @@ main
          lda   #$60
          sta   $9FD
          jsr   $800       ; load DOS
-         jsr   HideLaunchArtwork
          lda   #$A9
          sta   $BF24
          lda   #$01
@@ -55,7 +54,7 @@ main
          lda   #>callback
          sta   $BD27
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $B700
 
 !if * > HideLaunchArtwork {

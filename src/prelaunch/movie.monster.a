@@ -11,7 +11,7 @@
          lda   #$60
          sta   $9C7
          jsr   $800        ; find and load "DOS"
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          iny
          sty   $B719
          jsr   $B700

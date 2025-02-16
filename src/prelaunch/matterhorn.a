@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-           jsr   HideLaunchArtwork
+           +HIDE_ARTWORK
            +GET_MACHINE_STATUS
            and   #CHEATS_ENABLED
            beq   +

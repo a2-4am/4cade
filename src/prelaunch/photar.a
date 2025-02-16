@@ -18,8 +18,7 @@
          sta   $62        ; uses reset vector for setup code
          +RESET_VECTOR $100
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $3FA
 
 !if * > HideLaunchArtwork {

@@ -21,8 +21,7 @@ callback
          lda   #$a5
          sta   $692D      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $91D0
 
 !if * > HideLaunchArtwork {

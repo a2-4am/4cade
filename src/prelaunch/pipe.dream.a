@@ -9,8 +9,8 @@ my_vbl
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
-         +READ_RAM1_NO_WRITE
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          lda   WaitForVBL
          cmp   #$60
          beq   @skip_vbl

@@ -16,7 +16,7 @@
          and   #CHEATS_ENABLED
          php
          jsr   DisableAccelerator
-         jsr   HideLaunchArtwork
+         jsr   HideLaunchArtworkLC2
          +LC_REBOOT
          lda   #$60
          sta   $85F

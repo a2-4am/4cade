@@ -72,8 +72,7 @@ no_hook
          lda   #>callback
          sta   $1D2E
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $A00
 
 !if * > HideLaunchArtwork {

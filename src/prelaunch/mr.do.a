@@ -32,7 +32,7 @@ cheat3
 
          lda   #$60
          sta   $83f
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jsr   $800
 
          +GET_MACHINE_STATUS

@@ -20,8 +20,8 @@
          sta   $14CC      ; patch - don't increase lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $800
 
 !if * > HideLaunchArtwork {

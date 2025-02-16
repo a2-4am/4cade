@@ -12,8 +12,7 @@
          sta   $9F1
          jsr   $800       ; load DOS
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          ldx   #$60
          jmp   $B700
 

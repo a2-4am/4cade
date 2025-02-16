@@ -24,8 +24,7 @@
          lda   #1
          sta   $202F      ; reset vector patch
 
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $2000
 
 cheat

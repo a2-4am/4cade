@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          +NEW_RESET_VECTOR $BFF0
          jmp   $27FD
 

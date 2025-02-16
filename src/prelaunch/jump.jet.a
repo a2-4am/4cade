@@ -24,8 +24,9 @@ callback
          sta   $131D      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jmp   HideLaunchArtwork
+         rts
 
 !if * > HideLaunchArtwork {
   !error "code is too large, ends at ", *

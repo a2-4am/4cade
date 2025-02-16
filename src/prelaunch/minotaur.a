@@ -18,8 +18,7 @@
          lda   #$37
          sta   $180       ; patch - enable cheat mode
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $FF8
 
 !if * > HideLaunchArtwork {

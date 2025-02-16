@@ -30,8 +30,8 @@ callback
          dec   $79B7      ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $78fb
 
 !if * > HideLaunchArtwork {
