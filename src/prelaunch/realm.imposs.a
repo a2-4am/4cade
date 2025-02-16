@@ -24,9 +24,9 @@
 +
          +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          sta   $C05F      ; fix //c and //c+ HGR color
          +READ_RAM1_WRITE_RAM1
-         jsr   HideLaunchArtwork
          jmp   $1953
 
 !if * > HideLaunchArtwork {

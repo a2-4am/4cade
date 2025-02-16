@@ -7,8 +7,7 @@
 
          !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          +NEW_RESET_VECTOR $3C0
          ldx   #(patch_e-patch)-1
 -        lda   patch,x

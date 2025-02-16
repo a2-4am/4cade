@@ -22,6 +22,7 @@
          dec   $78A8      ; patch - don't decrease lives
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +LC_REBOOT
          +READ_ROM_NO_WRITE
          ldx   #0
@@ -29,7 +30,6 @@
          inx
          stx   $7a19
          inc   $7A26
-         jsr   HideLaunchArtwork
          jmp   $7680
 
 !if * > HideLaunchArtwork {

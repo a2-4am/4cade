@@ -35,8 +35,7 @@ nopatch
          rts
 
 +
-         jsr   HideLaunchArtwork
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          inc   $80        ; requires a non-zero value for the RNG
          lda   #$60
          sta   $7E3A

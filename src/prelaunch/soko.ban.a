@@ -11,12 +11,12 @@
          lda   #$60
          sta   $A17
          jsr   $800       ; load "DOS"
-         jsr   HideLaunchArtwork
          lda   #$60
          sta   $EC38
          jsr   $EC00      ; set up vectors
          inc   $3F4       ; reboot
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          jmp   $F6C5
 
 !if * > HideLaunchArtwork {

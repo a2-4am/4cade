@@ -16,7 +16,7 @@ callback0
          jmp   $3FF8      ; decompress
 
 callback1
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          jsr   $BE00
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED

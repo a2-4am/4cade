@@ -11,7 +11,7 @@
          lda   #$60
          sta   $21F8
          jsr   $2000      ; load "DOS"
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          lda   #<callback
          sta   $1795
          lda   #>callback

@@ -60,8 +60,7 @@
          lda   #>@cheat
          sta   $1A18
 +
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $1000
 
 @path    !byte @path_e-@path_b

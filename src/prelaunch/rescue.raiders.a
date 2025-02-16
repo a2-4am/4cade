@@ -9,9 +9,9 @@
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
          +LOAD_FILE_AT rraiders_mb, $300
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $300
 
 rraiders_mb

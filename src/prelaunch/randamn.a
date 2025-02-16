@@ -40,8 +40,8 @@ callback
          +DISABLE_ACCEL
          jmp   $808
 cont
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $822
 
 !if * > HideLaunchArtwork {

@@ -20,8 +20,8 @@
          sta   $6589      ; patch - don't decrease time
 +
          jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
-         jsr   HideLaunchArtwork
          jmp   $6000
 
 !if * > HideLaunchArtwork {

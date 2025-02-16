@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          +USES_TEXT_PAGE_2
          jmp   $4a00
 

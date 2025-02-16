@@ -26,8 +26,7 @@
          sta   $209
          sta   $211
          sta   $21C
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $B7A1
 
 !if * > HideLaunchArtwork {

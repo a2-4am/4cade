@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         jsr   HideLaunchArtwork
+         +HIDE_ARTWORK
          inc   $3F4       ; force reboot
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED

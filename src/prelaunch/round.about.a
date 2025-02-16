@@ -27,9 +27,8 @@
 
          lda   #$2A
          sta   $4000      ; remove activity indicator
-      
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $7000
 
 !if * > HideLaunchArtwork {

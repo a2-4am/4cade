@@ -11,8 +11,7 @@
          lda   #$60
          sta   $82E
          jsr   $800       ; decompress
-         +DISABLE_ACCEL
-         jsr   HideLaunchArtwork
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
 
          jsr   $BD1C      ; title screen
 
