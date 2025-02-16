@@ -21,7 +21,7 @@ callback
          sta   $65BA
          lda   #>callback
          sta   $65BB
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #0         ; set Z
          rts
 
