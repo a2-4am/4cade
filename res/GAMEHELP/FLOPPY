@@ -1,21 +1,23 @@
+
 Move the color spheres to its matching
-base. Avoid the enemies.
+
+   base. Avoid or stomp the enemies.
 
          joystick or keyboard
 
-                   A
-                  < >move
-                   Z
+     A                            S
+   <   >          move          L   ;
+     Z                            X
 
-return fire
+return * * * * * * * * * * * * * * *fire
 
-Ctl-D restart
+Ctl-D* * * * * * * * * * * * * * restart
 
-esc  pause
+Esc* * * * * * * * * * * * * * * * pause
 
-Ctl-E start the  editor
-Ctl-I init
-Ctl-C clear level
-Ctl-Q quit the editor
-1-8 select block
-,. set the Scene
+Ctl-E* * * * * * * * * *start the editor
+Ctl-I* * * * * * * * * * * * * * * *Init
+Ctl-C* * * * * * * * * * * * clear level
+Ctl-Q* * * * * * * * * * quit the editor
+1-8* * * * * * * * * * * * *select block
+,. * * * * * * * * * * * * set the scene

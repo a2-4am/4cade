@@ -1,14 +1,17 @@
-  Lead the robots to self destruction
-or shoot them if there is nowhere out.
 
-      This game is keyboard only.
 
-                 R T Y
+   Lead the robots to self destruction
 
-            move F G H
+ or shoot them if there is nowhere out.
 
-                 V B N
+       This game is keyboard only.
 
+
+                 R  T  Y
+
+           move  F  G  H  move
+
+                 V  B  N
 
 
 L* * * * * * * * * * * * * * bionic leap 
@@ -16,3 +19,4 @@ L* * * * * * * * * * * * * * bionic leap
 Z* * * * * * * * * * * zap closest robot
 
 Esc* * * * * * * * * * * * * * * * *quit 
+

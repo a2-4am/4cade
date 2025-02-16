@@ -1,17 +1,22 @@
 
+
     Drop mines and destroy enemies
 
-              < > rotate
+             keyboard only
 
 
-return thrust
+             <  >  rotate
 
-space drop mines
 
-S toggle sound
+return* * * * * * * * * * * * * * thrust
 
-Esc pause
+space* * * * * * * * * * * * *drop mines
 
+S* * * * * * * * * * * * * *toggle sound
+
+Esc* * * * * * * * * * * * * * * * pause
+
+	
 Easter Egg:
 
-Press Ctl-C in the start menu
+Press Ctl-C in the start menu for a note
