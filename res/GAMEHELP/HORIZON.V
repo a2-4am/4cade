@@ -6,9 +6,9 @@ Shoot all enemies and avoid their shots!
 
              - Main menu -
 
-J/K * * * * * * select joystick/keyboard
+J/K* * * * * * * * * * joystick/keyboard
 
-M * * * * * * * * * *change key mappings
+M* * * * * * * * * * change key mappings
 
 
               - In-game -
@@ -18,6 +18,6 @@ M * * * * * * * * * *change key mappings
           Z        Fire      Shield
 
 
-Esc * * * * * * * * * * * * * * * *pause
+Esc* * * * * * * * * * * * * * * * pause
 
-Ctrl-S* * * * * * * * * * * toggle sound
+Ctrl-S * * * * * * * * * * *toggle sound

@@ -14,10 +14,10 @@
                    Z
 
 
-Space / B0* * * * * * * * * * * * * fire
+Space / B0 * * * * * * * * * * * * *fire
 
-Esc * * * * * * * * * * * * * * * *pause
+Esc* * * * * * * * * * * * * * * * pause
 
-Ctrl-R* * * * * * * * * * * * * *restart
+Ctrl-R * * * * * * * * * * * * * restart
 
-Ctrl-S* * * * * * * * * toggle laser sfx
+Ctrl-S * * * * * * * * *toggle laser sfx

@@ -8,16 +8,16 @@ Collect bats and get them to the belfry
   Asks you to configure keys on start
 
 
-<, >* * * * * * * * * * * * * * * * move
+<, > * * * * * * * * * * * * * * * *move
 
-, * * * * * * * * * * * * climb stairs
+,  * * * * * * * * * * * *climb stairs
 
-B0* * * * * * * * * * * * * * * * * jump
+B0 * * * * * * * * * * * * * * * * *jump
 
-B1* * * * * * * * * * * * * * * * * swat
+B1 * * * * * * * * * * * * * * * * *swat
 
-Esc * * * * * * * * * * * * * * * *pause
+Esc* * * * * * * * * * * * * * * * pause
 
-Ctrl-S* * * * * * * * * * * toggle sound
+Ctrl-S * * * * * * * * * * *toggle sound
 
-Ctrl-R* * * * * * * * * * * * * *restart
+Ctrl-R * * * * * * * * * * * * * restart

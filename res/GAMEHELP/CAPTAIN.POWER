@@ -15,8 +15,8 @@
 
 
 
-Joystick* * * * * * * * * * * * * * move
+Joystick * * * * * * * * * * * * * *move
 
-B0* * * * * * * * * * * * * * * * * fire
+B0 * * * * * * * * * * * * * * * * *fire
 
-B1* * * * * * * * * * * *bombs (level 2)
+B1 * * * * * * * * * * * bombs (level 2)

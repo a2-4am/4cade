@@ -13,8 +13,8 @@ S* * * * * * * * * * * * * * * * * start
 
 Paddle 0 (/) * * * * * * * * * *rotate
 
-B0* * * * * * * * * * * * * * *thrusters
+B0 * * * * * * * * * * * * * * thrusters
 
-0-9 * * * * * * * * * * * * * * * *shoot
+0-9* * * * * * * * * * * * * * * * shoot
 
-Any other key * * * * * * * * * teleport
+Any other key* * * * * * * * * *teleport

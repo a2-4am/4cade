@@ -16,8 +16,8 @@
             M , .
 
 
-P * * * * * * * * * * * * * * * * *pause
+P* * * * * * * * * * * * * * * * * pause
 
-Ctrl-S* * * * * * * * * * * * * * *sound
+Ctrl-S * * * * * * * * * * * * * * sound
 
-Ctrl-R* * * * * * * * * * * * * *restart
+Ctrl-R * * * * * * * * * * * * * restart

@@ -19,6 +19,6 @@ Ctrl-O * * * * * * restart with 1 player
 
 Ctrl-T * * * * * *restart with 2 players
 
-Ctrl-S* * * * * * * * * * * toggle sound
+Ctrl-S * * * * * * * * * * *toggle sound
 
-Esc * * * * * * * * * * * * * * * *pause
+Esc* * * * * * * * * * * * * * * * pause

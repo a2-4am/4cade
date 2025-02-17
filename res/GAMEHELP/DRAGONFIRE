@@ -18,6 +18,6 @@
 
   Space / Button to jump low fireballs
 
-0-9 * * difficulty  Esc * * * * * pause
+0-9* * *difficulty  Esc* * * * * *pause
 
-Ctrl-R* * *Restart  Ctrl-S* * * * sound
+Ctrl-R * * restart  Ctrl-S * * * *sound

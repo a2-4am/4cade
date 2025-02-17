@@ -7,9 +7,9 @@ Esc* * * * * * * * * * * go to main menu
 
   - Night driver: Stay on the road -
 
-<,> * * * * * * * * * * * * * * * *steer
+<,>* * * * * * * * * * * * * * * * steer
 
-0-3 * * * * * * * * * * * * change speed
+0-3* * * * * * * * * * * * *change speed
 
 
 Pinball: Get a high score
@@ -21,4 +21,4 @@ Spacewar: Avoid the sun in the middle
 
 Paddle 0 (/) * * * * * * * * * *rotate
 
-B1* * * * * * * * * * * * * * *thrusters
+B1 * * * * * * * * * * * * * * thrusters

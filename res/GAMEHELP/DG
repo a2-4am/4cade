@@ -6,17 +6,17 @@ joystick U I O    7 8 9  shoot  grenade
 
 keyboard M , .    1 2 3  Space    T
 
-Return* * * *status  Esc* * * * * *pause
+Return * * * status  Esc * * * * * pause
 
-Ctrl-A* * abort/die  Ctrl-S * * * *sound
+Ctrl-A * *abort/die  Ctrl-S* * * * sound
 
-Ctrl-E* * * editor   Ctrl-R* * * *redraw
+Ctrl-E * * *editor   Ctrl-R* * * *redraw
 
-Ctrl-L* * * * *load  Ctrl-G* * * * *save
+Ctrl-L * * * * load  Ctrl-G* * * * *save
 
-Ctrl-N* * *location  Ctrl-E* * * *editor
+Ctrl-N * * location  Ctrl-E* * * *editor
 
-Ctrl-C* * * * * * * cheat, and then use:
+Ctrl-C * * * * * * *cheat, and then use:
 
     K)ill all L)ife G)renades W)gun
 

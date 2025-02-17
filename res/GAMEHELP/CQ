@@ -12,7 +12,7 @@ C* catalog planets    O* * on local scan
 
 F* * * * file game    R* req com to move
 
-G* * * *galaxy map    Asterisk* end turn
+G* * * *galaxy map    Asterisk *end turn
 
 M* * * planet move    P* planet transfer
 
