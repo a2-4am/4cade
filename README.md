@@ -4,13 +4,14 @@
 
 # Building the code
 
-## Mac OS X
+## macOS
 
 You will need
  - [Xcode command line tools](https://developer.apple.com/library/archive/technotes/tn2339/_index.html)
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Parallel](https://www.gnu.org/software/parallel/)
  - [Cadius](https://github.com/mach-kernel/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home) (An Intel macOS binary can be downloaded [here](https://github.com/appleiifanclub/exomizer_bin). Note: Only`exomizer`is required.`exobasic`is included for completeness)
 
 As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
 
@@ -28,7 +29,7 @@ $ make
 
 If all goes well, the `build/` subdirectory will contain a `4cade.hdv` image which can be mounted in emulators like [OpenEmulator](https://archive.org/details/OpenEmulatorSnapshots), [Ample](https://github.com/ksherlock/ample), or [Virtual II](http://virtualii.com/).
 
-If all does not go well, try doing a clean build (`makeg clean && make`)
+If all does not go well, try doing a clean build (`make clean && make`)
 
 If that fails, perhaps you have out-of-date versions of one of the required tools? The [Makefile](https://github.com/a2-4am/4cade/blob/main/Makefile) lists, but does not enforce, the minimum version requirements of each third-party tool.
 
@@ -39,6 +40,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Cadius for Windows](https://github.com/mach-kernel/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
 (Those tools will need to be added to your command-line PATH.)
 
@@ -60,6 +62,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 You will need
  - [Cadius](https://github.com/mach-kernel/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home) (A Ubuntu Linux binary can be downloaded [here](https://github.com/appleiifanclub/exomizer_bin). Note: Only`exomizer`is required.`exobasic`is included for completeness)
 
 Most of the packages are already available pre-compiled and can be installed with the following
 
