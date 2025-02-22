@@ -34,7 +34,9 @@
          stx   $7BD5
          stx   $984B
 
+         jsr   $7F8B      ; swap screen holes
          +DISABLE_ACCEL
+         jsr   $7F8B      ; swap screen holes
          jmp   $79D3
 
 callback
