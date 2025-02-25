@@ -22,7 +22,7 @@
          sta   $201B      ; reset vector patch
          sta   $8133      ; (yes, that's 3 times)
 
-         lda   #$50
+         lda   #$30
          sta   $83E4      ; fix joystick right
          sta   $83FF      ; fix joystick down
 
