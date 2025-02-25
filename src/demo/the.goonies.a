@@ -17,6 +17,11 @@
          lda   #$60
          sta   $1045
          jsr   $1000      ; decompress
+         ldx   #5
+-        sta   $c0,x
+         sta   $ce,x
+         dex
+         bpl   -
          ldx   #$2C
          stx   $6BF       ; skip text screen
          ldx   #$60
