@@ -27,13 +27,18 @@ callback2
 +        pla
          pla
          clc
+knownrts
          rts
 
 main
          +ENABLE_ACCEL
          lda   #$60
          sta   $9EA
+         lda   #$2c
+         sta   $803
          jsr   $800       ; load "DOS"
+         lda   #$2c
+         sta   $bfc8
          lda   #<callback1
          sta   $B748
          lda   #>callback1
@@ -41,8 +46,12 @@ main
          jmp   $B700
 
 callback1
+         lda   #<knownrts
+         sta   $36
          ldx   #$00
          stx   $9E52
+         inx
+         stx   $37        ; disable text output
          ldx   #$03
          stx   $9E53      ; reset vector
          ldx   #5
