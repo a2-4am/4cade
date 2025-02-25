@@ -13,11 +13,21 @@ You will need
  - [Cadius](https://github.com/mach-kernel/cadius)
  - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
-As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
+As of this writing, ACME, Parallel, and Cadius are installable via [Homebrew](https://brew.sh/).
 
 ``` shell
 $ brew tap lifepillar/appleii
 $ brew install acme parallel mach-kernel-cadius
+```
+
+Exomizer can be installed by downloading the latest release ZIP and building from scratch.
+
+``` shell
+$ cd /path/to/unpacked/ZIP
+$ cd src; make
+$ sudo cp exomizer /usr/local/bin
+$ sudo cp exobasic /usr/local/bin
+
 ```
 
 Then open a terminal window and type
