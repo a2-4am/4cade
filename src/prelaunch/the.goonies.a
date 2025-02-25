@@ -12,6 +12,11 @@
          lda   #$60
          sta   $1045
          jsr   $1000      ; decompress
+         ldx   #5
+-        sta   $c0,x
+         sta   $ce,x
+         dex
+         bpl   -
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
