@@ -34,15 +34,10 @@
          stx   $7BD5
          stx   $984B
 
-         ldx   #$14
-         lda   #$d0
--        sta   $1df1, x   ; redirect unused page to $d000
-         dex
-         bpl   -
-
          jsr   $7F8B      ; swap screen holes
          +DISABLE_ACCEL
          jsr   $7F8B      ; swap screen holes
+         lda   $c082      ; maybe STA doesn't work reliably?
          jmp   $79D3
 
 callback
