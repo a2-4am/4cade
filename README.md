@@ -17,7 +17,7 @@ As of this writing, all of the non-Xcode programs are installable via [Homebrew]
 
 ``` shell
 $ brew tap lifepillar/appleii
-$ brew install acme parallel mach-kernel-cadius
+$ brew install acme parallel mach-kernel-cadius exomizer
 ```
 
 Then open a terminal window and type
@@ -128,7 +128,6 @@ The format of the `GAMES.CONF` file has changed as new requirements have appeare
 
 Each game's filename is used as a "foreign key" (in database terms) to build directory paths, to locate files in subdirectories, and to reference the game in other configuration files.
 
-- A game's main executable is always `X/FILENAME/FILENAME`
 - A game's HGR title screenshot is always `TITLE.HGR/FILENAME`
 - A game's super hi-res box art is always `ARTWORK.SHR/FILENAME` (not all games have artwork)
 - A games's help page is always `GAMEHELP/FILENAME` (not all games have help)
@@ -163,13 +162,11 @@ This file is read and parsed once at program startup, and the parsed data is sto
 
 # Compression
 
-Many files in Total Replay are stored in a compressed format, then decompressed at run-time. The compression and decompression is handled by [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home), which targets 8-bit platforms. Compressed files include
+Many graphic files in Total Replay are stored in a compressed format, then decompressed at run-time. The compression and decompression is handled by [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home), which targets 8-bit platforms. Compressed files include
 
 - [hi-res action screenshots](https://github.com/a2-4am/4cade/tree/main/res/ACTION.HGR)
 - [double hi-res action screenshots](https://github.com/a2-4am/4cade/tree/main/res/ACTION.DHGR)
 - [super hi-res box art](https://github.com/a2-4am/4cade/tree/main/res/ARTWORK.SHR)
-
-Both the compressed and uncompressed files are stored in the repository, so you do not need Exomizer installed to build Total Replay. You only need it if you add new graphics.
 
 To add a new compressed graphic file, add the uncompressed original file to the appropriate directory ([`ACTION.HGR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/main/res/ACTION.HGR.UNCOMPRESSED), [`ACTION.DHGR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/main/res/ACTION.DHGR.UNCOMPRESSED), or [`ARTWORK.SHR.UNCOMPRESSED`](https://github.com/a2-4am/4cade/tree/main/res/ARTWORK.SHR.UNCOMPRESSED) respectively), then run
 
