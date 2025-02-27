@@ -13,6 +13,10 @@
          +LOAD_FILE_KEEP_DIR star_maze, star_maze_dir_e-star_maze_dir_b
          +READ_ROM_NO_WRITE
 
+         lda   #$E2
+         sta   $5F07
+         sta   $5F0D
+
          lda   #$60
          sta   $21FD
          jsr   $2000      ; decompress
@@ -34,10 +38,18 @@
          stx   $7BD5
          stx   $984B
 
+         lda   #$D3
+         sta   $7E52
+         dec   $7E53
+         ldx   #(patch_e-patch_b)-1
+-        lda   patch_b, x
+         sta   $7ED9, x
+         dex
+         bpl   -
+
          jsr   $7F8B      ; swap screen holes
          +DISABLE_ACCEL
          jsr   $7F8B      ; swap screen holes
-         lda   $c082      ; maybe STA doesn't work reliably?
          jmp   $79D3
 
 callback
@@ -47,6 +59,12 @@ callback
 +        jmp   $100
 
 counter  !byte 5
+
+patch_b  +READ_ROM_NO_WRITE
+         lda   #$2C
+         sta   $7ED6
+         rts
+patch_e
 
 star_maze
          !byte star_maze_e-star_maze_b
