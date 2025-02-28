@@ -14,7 +14,8 @@
          jmp   $4000
 *=$12e                    ; game sets stack pointer to here
 callback nop
-         +RESET_AND_IRQ_VECTOR $100
+         +NEW_RESET_VECTOR $300
+         +RESET_AND_IRQ_VECTOR $300
          ldy   #0
          sty   $0D8E
          iny

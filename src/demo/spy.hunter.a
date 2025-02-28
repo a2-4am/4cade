@@ -18,13 +18,14 @@
          jmp   $4000
 
 callback
-         +RESET_AND_IRQ_VECTOR $100
+         +NEW_RESET_VECTOR $300
+         +RESET_AND_IRQ_VECTOR $300
          ldy   #0
          sty   $0D8E
          sty   $E94
          sty   $EB3
          sty   $61C6
-         iny
+         ldy   #3
          sty   $0D93
          sty   $E95
          sty   $EB4
@@ -36,9 +37,8 @@ callback
          sta   $2C5F
          lda   #$2C
          sta   $7AB
-         lda   #3
-         sta   $7AA
-         sta   $7CF
+         sty   $7AA
+         sty   $7CF
          lda   #$1A
          sta   $E78
          lda   #$12
