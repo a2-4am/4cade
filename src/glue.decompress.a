@@ -6,6 +6,7 @@
 ; Public functions
 ; - DecompressGameHelp
 ; - DecompressSHR
+; - DecompressAuxSHROnIdle
 ; - DecompressAuxSHR
 ; - DecompressDHGR
 ; - DecompressHGR
@@ -49,15 +50,18 @@ DecompressSHR
          bne   DecompressAfterLoad   ; always branches
 
 ;------------------------------------------------------------------------------
-; DecompressAuxSHR
+; DecompressAuxSHR/DecompressAuxSHROnIdle
 ;
 ; in:    compressed SHR data at $1FF8/aux
 ;        file size in sizelo2/sizehi2 as set by ProRWTS2
 ; out:   decompressed SHR data at $2000..$9FFF/aux
 ;        also see notes in DecompressAfterLoad
 ;------------------------------------------------------------------------------
-DecompressAuxSHR
+DecompressAuxSHROnIdle
          bit   SHRRTS                ; V=1 -> allow early exit on keypress
+         !byte $A9
+DecompressAuxSHR
+         clv                         ; V=0 -> always complete decompression
          ldx   #kDecompressInAuxMem  ; data is in auxmem
          ldy   #$A0
          lda   #$1F                  ; target address (hi) -1

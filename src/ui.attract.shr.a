@@ -287,7 +287,7 @@ LoadLaunchArtworkInBackground
          lda   #%00000001
          sta   gPreloadStatus
          jsr   PreSHRMode
-         jsr   DecompressAuxSHR
+         jsr   DecompressAuxSHROnIdle
          lda   KBD
          bmi   @turnOffLinearizeAndExit
          lda   #%11111111

@@ -166,7 +166,7 @@ PlayGameInAY
 @loadLaunchArtwork128K
          lda   gPreloadStatus
          bne   @resumeBackgroundDecompression
-+        jsr   LoadAuxIndexedSHRFile
+         jsr   LoadAuxIndexedSHRFile
          jsr   PreSHRMode
          jsr   DecompressAuxSHR
          jmp   @showLaunchArtwork128K
