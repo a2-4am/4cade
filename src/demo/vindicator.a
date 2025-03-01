@@ -38,11 +38,61 @@
          sta   $5E25
          sta   $5DDC      ; disable sound
 
+         ldx   #(patchlo_e-patchlo_b)-1
+-        lda   patchlo_b, x
+         sta   $fe
+         lda   patchhi_b, x
+         sta   $ff
+         ldy   #0
+         lda   #<callback
+         sta   ($fe), y
+         iny
+         lda   #>callback
+         sta   ($fe), y
+         dex
+         bpl   -
+
          +DISABLE_ACCEL
 
          jmp   $4000
 
 patch    !byte $4C,$F0,$BF
+
+callback
+         jsr   $fca8
+         +READ_ROM_NO_WRITE
+         rts
+
+patchlo_b
+         !byte $d0+1
+         !byte $e0+1
+         !byte $84+1
+         !byte $36+1
+         !byte $51+1
+         !byte $4e+1
+         !byte $6f+1
+         !byte $4d+1
+         !byte $cd+1
+         !byte $65+1
+         !byte $7f+1
+         !byte $9b+1
+         !byte $a5+1
+patchlo_e
+patchhi_b
+         !byte $43
+         !byte $50
+         !byte $52
+         !byte $54
+         !byte $54
+         !byte $55
+         !byte $56
+         !byte $57
+         !byte $58
+         !byte $5c
+         !byte $5c
+         !byte $5f
+         !byte $5f
+patchhi_e
 
 vindicator
          !byte vindicator_e-vindicator_b
