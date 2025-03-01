@@ -7,6 +7,7 @@
 
          !source "src/macros.a"
 
+         +ENABLE_ACCEL
          lda   #<callback
          sta   $4013
          lda   #>callback
@@ -14,22 +15,29 @@
          jmp   $4000
 *=$12e                    ; game sets stack pointer to here
 callback nop
-         +NEW_RESET_VECTOR $300
+         ldy   #1
+-        lda   $104, y
+         sta   $304, y
+         dey
+         bpl   -
          +RESET_AND_IRQ_VECTOR $300
          ldy   #0
          sty   $0D8E
-         iny
+         ldy   #3
          sty   $0D93
          
          +READ_RAM2_NO_WRITE
          jsr   HideLaunchArtworkLC2
          lda   MachineStatus
-         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
          sta   $739D      ; patch - don't decrease timer
 +
+         jsr   isaveslot
+         jsr   DisableAccelerator
+         jsr   isaveslot
+         +READ_ROM_NO_WRITE
          jmp   $0451
 
 !if * > PrelaunchMax {

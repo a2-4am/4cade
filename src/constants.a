@@ -391,6 +391,7 @@ ATTRACT_DGR         = %10000000
 ; shared symbols for prelaunch and effects to call ProRWTS2 functions
 iCurBlockLo    = $D601               ; constant
 iCurBlockHi    = $D603               ; constant
+isaveslot      = $D847               ; for accelerator calls after screen holes overwritten
 launchpatch    = $D85C               ; glue.launch.a
 itraverse      = $DB4B               ; Roger Rabbit, avoid, use Infiltrator 2 style instead
                                      ; also Columns (via file in disk image)

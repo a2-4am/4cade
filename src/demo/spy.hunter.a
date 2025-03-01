@@ -18,7 +18,11 @@
          jmp   $4000
 
 callback
-         +NEW_RESET_VECTOR $300
+         ldy   #1
+-        lda   $104, y
+         sta   $304, y
+         dey
+         bpl   -
          +RESET_AND_IRQ_VECTOR $300
          ldy   #0
          sty   $0D8E
@@ -50,7 +54,11 @@ callback
          sta   $EB2
          sta   $61C5
 
-         +DISABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         jsr   isaveslot
+         jsr   DisableAccelerator
+         jsr   isaveslot
+         +READ_ROM_NO_WRITE
 
          jmp   $0451
 
