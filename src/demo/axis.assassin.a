@@ -53,6 +53,9 @@
          sta   $5D43
          lsr   $5CBA
 
+         lda   #$2c
+         sta   $5E8C
+
          +DISABLE_ACCEL
          jmp   $5c00
 
