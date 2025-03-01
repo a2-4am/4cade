@@ -54,7 +54,7 @@ callback
          sta   $EB2
          sta   $61C5
 
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   isaveslot
          jsr   DisableAccelerator
          jsr   isaveslot
