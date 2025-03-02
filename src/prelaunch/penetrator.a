@@ -17,7 +17,7 @@
          beq   +
          dec   $7602      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $6000
 
 !if * > PrelaunchMax {
