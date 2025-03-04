@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $2063
+         sta   $2060
          jsr   $2000      ; decompress
 
          +READ_RAM2_NO_WRITE

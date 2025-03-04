@@ -11,7 +11,7 @@
          jsr   EnableAccelerator
          jsr   HideLaunchArtworkLC2
          lda   #$60
-         sta   $4044
+         sta   $4048
          jsr   $4000      ; decompress & show EA title
 
          lda   MachineStatus

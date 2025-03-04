@@ -12,8 +12,8 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $8034
-         jsr   $4ab0      ; decompress and show title
+         sta   $8029
+         jsr   $4c23      ; decompress and show title
 
          ldx   #3-1
 -        lda   patch,x
