@@ -16,7 +16,7 @@ VOLUME=TOTAL.REPLAY
 # third-party tools required to build
 
 # https://sourceforge.net/projects/acme-crossass/
-# version 0.96.3 or later
+# version 0.97 or later
 ACME=acme
 
 # https://github.com/mach-kernel/cadius
