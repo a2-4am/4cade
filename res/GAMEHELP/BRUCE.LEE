@@ -1,9 +1,9 @@
 
 
+
    Take lanterns, fight, avoid traps
 
       Seek and destroy the wizard
-
 
 
 
@@ -13,7 +13,8 @@
 
 
 
-
 1 & 2* * * * * * * * * * * * * * players
+
+S* * * * * * * * * * * * * * * * * sound
 
 Space* * * * * * * * * * * * * * * pause
