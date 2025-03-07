@@ -37,7 +37,7 @@
 - Remove debugging code from Mapple
 - Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
 - Add more game help (thanks Brendan R., Andrew R.)
-- Add more box art (thanks Alex R., Andrew R., Lunar)
+- Add more box art (thanks Alex R., Andrew R., Lunar, Ernst Krogtoft)
 
 ## Revision 5.2 / serial number 20240909
 
