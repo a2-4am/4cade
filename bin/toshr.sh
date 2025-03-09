@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Add or unconditionally replace SHR file with newly converted PNG file
-# Also saves final error score from conversion
 # Also removes old compressed asset of the same name, if any
 
 # parameters
@@ -14,7 +13,6 @@ PYTHON="python3.9"
 CONVERT_PY="$HOME/Documents/a2/ii-pix/convert.py"
 
 # directories within Total Replay repository
-SHR_SCORES="./res/ARTWORK.SHR.SCORES"
 SHR_COMPRESSED="./res/ARTWORK.SHR"
 SHR_UNCOMPRESSED="./res/ARTWORK.SHR.UNCOMPRESSED"
 
@@ -25,10 +23,6 @@ shr_name="${inputname%.*}" # e.g. "ZAXXON"
           --no-show-output \
           --no-save-preview \
           --fixed-colours=1 \
-          --show-final-score \
           "$1" \
-          "$SHR_UNCOMPRESSED/$shr_name" | \
-    grep FINAL_SCORE | \
-    cut -d":" -f2 \
-        > "$SHR_SCORES/$shr_name"
+          "$SHR_UNCOMPRESSED/$shr_name"
 rm -f "$SHR_COMPRESSED/$shr_name"
