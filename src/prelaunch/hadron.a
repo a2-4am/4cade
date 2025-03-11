@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/HADRON",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2027
+         jsr   $2000      ; decompress
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $FF8
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
