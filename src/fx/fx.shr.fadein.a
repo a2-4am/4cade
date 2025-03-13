@@ -38,7 +38,7 @@ palettes = $BC00                     ; $200 bytes
 
          sta   WRITEMAINMEM
 -        lda   $9E00, y              ; Back up palettes to alternate location in main memory.
-         sta   palettes, y           ; The CPU in a 64K Apple ][+/][e w/VidHD ignores STA WRITEMAINMEM/5
+         sta   palettes, y           ; The CPU in a 64K Apple ][+/][e w/VidHD ignores STA WRITEMAINMEM/WRITEAUXMEM
          lda   $9F00, y              ; but VidHD respects them, so we can't clear the palettes
          sta   palettes+$100, y      ; in auxmem until we copy them in mainmem. Whee.
          iny
