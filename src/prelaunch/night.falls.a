@@ -9,6 +9,7 @@
 
          jmp   ++
 
+*=$10b ; Basic overwrites $100-10A
 callback2
          pha
          lda   $6D8
