@@ -88,6 +88,8 @@ DGRActionCallback
 
 BlankDGR
          jsr   BlankDHGR             ; clear and display DHGR screen
+         ;Y=0
+         sty   ClearColor            ; clear DGR screen to black, not red
          ldy   #$2C                  ; BIT
          sty   PageFrom              ; now clear DGR screen
          ldx   #$04
