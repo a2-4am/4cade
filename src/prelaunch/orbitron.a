@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019-2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ORBITRON",plain
@@ -7,9 +7,12 @@
 
     !source "src/macros.a"
 
-         +USES_TEXT_PAGE_2
-         +HIDE_ARTWORK
-         jmp   $2000
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2037
+         jsr   $200C      ; decompress (don't show lores junk)
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $90D3
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
