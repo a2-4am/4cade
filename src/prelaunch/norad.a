@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2025 by Frank M.
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/N.O.R.A.D",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $497E
+         jsr   $4900      ; decompress
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $EDD
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
