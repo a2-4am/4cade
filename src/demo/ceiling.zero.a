@@ -13,7 +13,7 @@
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          lda   #$60
-         sta   $083A
+         sta   $081C
          jsr   $0800      ; decompress
          ldx   #3-1
 -        lda   patch,x
