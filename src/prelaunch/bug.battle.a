@@ -9,16 +9,18 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $9468
+         sta   $92D0
          jsr   $6400      ; decompress
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$bd
          sta   $78F2      ; patch - don't decrease lives
 +
+         jsr   isaveslot
          jsr   DisableAccelerator
+         jsr   isaveslot
          jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
          jmp   $447

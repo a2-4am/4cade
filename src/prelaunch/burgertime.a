@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $3ec9
-         sta   $3f09
-         jsr   $3e97
+         sta   $9014
+         sta   $9053
+         jsr   $416c
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$b1
          sta   $646b
@@ -27,10 +27,10 @@
          sta   $94d1
          sta   $9768
 +
-         lda   #0
-         sta   $A30A
-         lda   #1
-         sta   $A30F      ; reset vector patch
+         ldx   #0
+         stx   $A30A
+         inx
+         stx   $A30F      ; reset vector patch
          
          +DISABLE_ACCEL
          jmp   $a300

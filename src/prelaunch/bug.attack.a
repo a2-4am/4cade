@@ -15,7 +15,12 @@
          jmp   $6400      ; decompress
 
 callback
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +READ_RAM2_WRITE_RAM2
+         jsr   isaveslot
+         jsr   DisableAccelerator
+         jsr   isaveslot
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
          jmp   $4D36
 
 !if * > PrelaunchMax {
