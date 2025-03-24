@@ -12,7 +12,7 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $1e61
+         sta   $1e64
          jsr   $1e30      ; decompress/sets reset vector
 
          +RESET_VECTOR $100
@@ -30,7 +30,11 @@
          lda   #$C6
          sta   $A006      ; disable sound
 
-         +DISABLE_ACCEL
+         +READ_RAM2_WRITE_RAM2
+         jsr   isaveslot
+         jsr   DisableAccelerator
+         jsr   isaveslot
+         +READ_ROM_NO_WRITE
 
          jmp   $a000
 

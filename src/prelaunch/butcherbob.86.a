@@ -30,7 +30,9 @@ callback
          sta   $40CC       ; patch - don't decrease lives
          sta   $4E00       ; patch - don't increase lives
 +
+         jsr   isaveslot
          jsr   DisableAccelerator
+         jsr   isaveslot
          +READ_ROM_NO_WRITE
          jmp   $4015
 }

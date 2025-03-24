@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $1e61
+         sta   $1e64
          jsr   $1e30      ; decompress/sets reset vector
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
@@ -24,7 +24,12 @@
          sta   $A0D5
          sta   $A0DA      ; reset fix
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +READ_RAM2_WRITE_RAM2
+         jsr   isaveslot
+         jsr   DisableAccelerator
+         jsr   isaveslot
+         jsr   HideLaunchArtworkLC2
+         +READ_ROM_NO_WRITE
          jmp   $a000
 
 !if * > PrelaunchMax {

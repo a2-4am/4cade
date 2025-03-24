@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $8022
-         jsr   $67de      ; decompress
+         sta   $8005
+         jsr   $6858      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -24,12 +24,12 @@
          lda   #$FA
          sta   $105       ; update TR hook to reboot
          +READ_RAM2_WRITE_RAM2
-         lda   #0
-         sta   $3256      ; sets reset at $455
-         sta   $FFFC
-         lda   #1
-         sta   $3261      ; which is copied from $3255
-         sta   $FFFD      ; LC reset vector fix
+         ldx   #0
+         stx   $3256      ; sets reset at $455
+         stx   $FFFC
+         inx
+         stx   $3261      ; which is copied from $3255
+         stx   $FFFD      ; LC reset vector fix
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $3000
 
