@@ -12,9 +12,9 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $3ec9
-         sta   $3f09
-         jsr   $3e97      ; decompress
+         sta   $9014
+         sta   $9053
+         jsr   $416c      ; decompress
 
          +DISABLE_ACCEL
 
