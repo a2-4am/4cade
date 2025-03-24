@@ -123,6 +123,7 @@ $(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >> "$(CADIUS.LOG)"; \
         done
+	[[ $$(grep -c "Error(s) : [^0]" build/log) == 0 ]] || exit 1
 	bin/changebootloader.sh "$@" $(PROBOOTHD)
 	@touch "$@"
 
