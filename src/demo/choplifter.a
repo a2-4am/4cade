@@ -12,8 +12,8 @@
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
          lda   #$60
-         sta   $403F
-         jsr   $4000      ; decompress
+         sta   $1E1E
+         jsr   $1DA0      ; decompress
          ldx   #3-1
 -        lda   patch,x
          sta   $0DAB,x
@@ -23,8 +23,9 @@
          lda   #$18
          sta   $0DA9
          +DISABLE_ACCEL
+         lda   #$31
          ldy   #0
-         jmp   $400
+         jmp   $800
 
 patch    !byte $4C,$00,$01
 
