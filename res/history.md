@@ -7,6 +7,7 @@
 - Crossbow
 - Deathbounce
 - Electroarena
+- Glider
 - Kaboom!
 - Mieyen
 - Shoot Out
