@@ -10,7 +10,7 @@
          +NEW_RESET_VECTOR $BFF0
          +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
-         sta   $1A86
+         sta   $1A8A
          jsr   $1A00      ; decompress & show title
 
          +READ_RAM2_NO_WRITE
