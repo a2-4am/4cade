@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/GLIDER",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #>(callback-1)
+         sta   $6EC4
+         lda   #<(callback-1)
+         sta   $6EC7
+         jmp   $6EB3      ; decompress
+
+callback
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $D2B       ; don't decrease lives
++
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         jmp   $4100
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
