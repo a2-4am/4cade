@@ -14,7 +14,7 @@ S / Esc* * * * * * * * * * * * * *cancel
 J, L * * * * * * * * * move left / right
 K* * * * * * * * * * *drop & cancel drop
 A, S * * * * * * * * rotate left / right
-P, Return* * * * * * * * * * * * * pause
+Return * * * * * * * * * * * * * * pause
 
 Ctrl-S * * * * * * * * * * *toggle sound
 Ctrl-R * * * * * * * * * * * * * restart
