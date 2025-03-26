@@ -12,6 +12,7 @@
 
 DISK=4cade.hdv
 VOLUME=TOTAL.REPLAY
+SHELL=/bin/bash
 
 # third-party tools required to build
 
