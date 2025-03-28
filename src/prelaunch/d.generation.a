@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba/Frank M.
+;(c) 2025 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/DG",plain
@@ -9,28 +9,35 @@
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK
          inc   $3F4       ; force reboot
-         lda   #$60
-         sta   $1405
-         jsr   $1200      ; load "DOS"
-         lda   #$60
-         sta   $B64E
-         jsr   $B600
-         ldy   #9
--        lda   callback, y
-         sta   $200, y
+         ldy   #(callback_e - callback_b) - 1
+-        lda   callback_b, y
+         sta   callback, y
          dey
          bpl   -
-         lda   #0
-         sta   $6009
-         lda   #2
-         sta   $600A
+         lda   #<callback
+         sta   $8B2
+         lda   #>callback
+         sta   $8B3
+         jsr   $800       ; load "DOS"
+         lda   $c083
+         jsr   EnableAccelerator
+         jsr   $6083
+         lda   $c083
          jsr   DisableAccelerator
-         jmp   $6000
+         jmp   $6025
 
+callback_b !pseudopc $380 {
 callback
-         jsr   $62F0
-         sta   $D9F7
-         jmp   $600B
+         lda   #$60
+         sta   $6022
+         sta   $c008
+         lda   $c083
+         jsr   DisableAccelerator
+         lda   $c08b
+         sta   $c009
+         jmp   $6000
+}
+callback_e
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
