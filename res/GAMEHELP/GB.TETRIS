@@ -1,21 +1,22 @@
-                        
-                        cursor up
-                            I
-        A S          left J   L right
-rotate left / right         K
-   select / back       down / drop
+    Fit the blocks, clear the lines                        
 
             menu screen keys
-I, J, K, L * * * * * * * * * move cursor
-A / Return * * * * * * * * * * * *select
-S / Esc* * * * * * * * * * * * * *cancel
+
+                         cursor up
+                             I
+         A S          left J   L right   
+   select / cancel           K
+                            down
 
               in-game keys
-J, L * * * * * * * * * move left / right
-K* * * * * * * * * * *drop & cancel drop
-A, S * * * * * * * * rotate left / right
-Return * * * * * * * * * * * * * * pause
 
+                         move piece
+         A S          left J   L right   
+  rotate left/right          K
+                            drop
+
+Return * * * * * * * * * *select / pause
+Esc* * * * * * * * * * * * * * * *cancel
 Ctrl-S * * * * * * * * * * *toggle sound
-Ctrl-R * * * * * * * * * * * * * restart
 Ctrl-J * * * * * * * * * toggle joystick
+Ctrl-R * * * * * * * * * * * * * restart
