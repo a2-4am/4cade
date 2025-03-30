@@ -1,21 +1,22 @@
+    Fit the blocks, clear the lines                        
 
+            menu screen keys
 
-    Fit the blocks, clear the lines
+                         cursor up
+                             I
+         A S          left J   L right   
+   select / cancel           K
+                            down
 
+              in-game keys
 
+                         move piece
+         A S          left J   L right   
+  rotate left/right          K
+                            drop
 
-                 rotate
-
-                   S
-           move  J   L  move
-                   K
-
-                  drop
-
-
-
-Esc / Return * * * * * * * * * * * pause
-
-Ctrl-S * * * * * * * * * * * * * * sound
-
+Return * * * * * * * * * *select / pause
+Esc* * * * * * * * * * * * * * * *cancel
+Ctrl-S * * * * * * * * * * *toggle sound
+Ctrl-J * * * * * * * * * toggle joystick
 Ctrl-R * * * * * * * * * * * * * restart
