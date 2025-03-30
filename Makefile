@@ -108,6 +108,8 @@ FINDER.ROOT=res/Finder.Root
 HELP=res/HELP
 JOYSTICK=res/JOYSTICK
 TITLE=res/TITLE
+SOURCE_DATE := $(shell git log -1 --format=%cD | bin/rfc2822_to_touch.py)
+export SOURCE_DATE_EPOCH = $(shell git log -1 --format=%ct)
 
 .PHONY: compress attract cache clean mount all al
 
@@ -115,11 +117,16 @@ TITLE=res/TITLE
 $(HDV): $(PROBOOTHD) $(LAUNCHER.SYSTEM) $(PRELAUNCH) $(X) $(TOTAL.DATA) $(TITLE.ANIMATED.SOURCES) $(ICONS) $(FINDER.DATA) $(FINDER.ROOT) $(PREFS.CONF)
 	cp res/blank.hdv "$@"
 	cp res/_FileInformation.txt "$(BUILDDIR)"/
+	touch -d"$(SOURCE_DATE)" "$(LAUNCHER.SYSTEM)"
 	$(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$(LAUNCHER.SYSTEM)" -C >> "$(CADIUS.LOG)"
 	for f in "$(TOTAL.DATA)" "$(PREFS.CONF)" "$(FINDER.DATA)" "$(FINDER.ROOT)"; do \
+	    touch -d"$(SOURCE_DATE)" "$$f"; \
 	    $(CADIUS) ADDFILE "$@" "/$(VOLUME)/" "$$f" -C >> "$(CADIUS.LOG)"; \
 	done
 	cp src/prelaunch/_FileInformation.txt "$(PRELAUNCH)"/
+	for f in "$(PRELAUNCH)"/*; do \
+	    touch -d"$(SOURCE_DATE)" "$$f"; \
+	done
 	for f in res/TITLE.ANIMATED "$(ICONS.SOURCE.DIR)" "$(PRELAUNCH)" "$(X)"; do \
             rm -f "$$f"/.DS_Store; \
             $(CADIUS) ADDFOLDER "$@" "/$(VOLUME)/$$(basename $$f)" "$$f" -C >> "$(CADIUS.LOG)"; \
