@@ -14,19 +14,19 @@
          lda   #$60
          sta   $1D21
          jsr   $1D00      ; decompress
-         sta   $805       ; allow demo to finish level
-         sta   $9C5
-         sty   $9C6       ; exit on level complete
-         sta   $A36
-         sty   $A37       ; exit on keypress
-         sty   $1507      ; no sound
-         sty   $151C      ; no sound
-         sty   $1747      ; no sound
-         sty   $17B0      ; no sound
-         sty   $17B8      ; no sound
-         sty   $732E      ; no sound
-         sty   $7342      ; no sound
-         sta   $739F      ; no sound
+         sty   $805       ; allow demo to finish level
+         sty   $9C5
+         sta   $9C6       ; exit on level complete
+         sty   $A36
+         sta   $A37       ; exit on keypress
+         sta   $1507      ; no sound
+         sta   $151C      ; no sound
+         sta   $1747      ; no sound
+         sta   $17B0      ; no sound
+         sta   $17B8      ; no sound
+         sta   $732E      ; no sound
+         sta   $7342      ; no sound
+         sty   $739F      ; no sound
 
          +DISABLE_ACCEL
 
