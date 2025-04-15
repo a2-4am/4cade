@@ -50,6 +50,7 @@ Reenter
          !if (RELBASE != $2000) and (* < $E000) { !serious "Reenter is too low" }
          cld
          sta   $C000                 ; Turn 80STORE switch off
+         sta   CLRC3ROM              ; switch to firmware version
          ldx   #$ff
          txs                         ; so that we never trash the reset vector
          inx                         ; phoneme=000000 (pause)
