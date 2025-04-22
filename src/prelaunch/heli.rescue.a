@@ -1,0 +1,25 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/HELI.RESCUE",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $110
+
+         lda   #<callback
+         sta   $1E36
+         lda   #>callback
+         sta   $1E37
+         jmp   $1D7C      ; decompress
+
+callback
+         +DISABLE_ACCEL
+         jmp   $17B4
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
