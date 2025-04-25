@@ -8,7 +8,7 @@
          !source "src/macros.a"
 
          +ENABLE_ACCEL
-         +NEW_RESET_VECTOR $110
+         +NEW_RESET_VECTOR reset
 
          lda   #<callback
          sta   $1E36
@@ -19,6 +19,7 @@
 callback
          +DISABLE_ACCEL
          jmp   $17B4
+reset
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
