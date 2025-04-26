@@ -11,9 +11,9 @@
          +NEW_RESET_VECTOR reset
 
          lda   #<callback
-         sta   $1E36
+         sta   $1E38
          lda   #>callback
-         sta   $1E37
+         sta   $1E39
          jmp   $1D7C      ; decompress
 
 callback
