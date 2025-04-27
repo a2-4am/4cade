@@ -8,6 +8,7 @@
 - Deathbounce
 - Electroarena
 - Glider
+- Helicopter Rescue
 - Kaboom!
 - Mieyen
 - Shoot Out
