@@ -9,7 +9,6 @@
          !source "src/macros.a"
 
 callback3
-         jsr   $BD80      ; decompress
          lda   MockingboardStuff
          bne   is_mock
          rts
@@ -27,11 +26,6 @@ is_mock
          ldy   $3
          cpy   #$60
          bne   skip_a04f
-         ldy   MockingboardStuff
-         cpy   #$40
-         bcs   +
-         lsr   $7889      ; no speech
-+
 -        ldy   $76BF, x
          cpy   #$C4
          bne   +

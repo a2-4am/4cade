@@ -51,6 +51,8 @@ accel !pseudopc $bf80 {
 callback1
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
+         jsr   $BD80      ; decompress
+         +READ_RAM2_NO_WRITE ; for IIc compatibility, ROM gets banked in
          jsr   $D000
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
