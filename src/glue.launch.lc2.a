@@ -60,7 +60,7 @@ LaunchInternal
          sta   HideLaunchArtworkLC2
          bne   @jmp                  ; always branches
 @turnOffSHRShadow
-         lda   #%00101000            ; matches powerup value
+         lda   #%00001000            ; we want to control ADM, so we do not want to match the powerup value
          sta   SHADOW
          sta   SHADOW
 @jmp     jmp   iPrelaunchInit
