@@ -26,14 +26,18 @@
          ldx   #(hide_callback_e-hide_callback)
 -        lda   hide_callback, x
          sta   $106, x
-         lda   PrelaunchMax, x
-         sta   HideArtworkCallback, x
          dex
          bpl   -
-         lda   #$06
-         sta   $21CE
-         lda   #$01
-         sta   $21CF
+         ldx   #$06
+         stx   $21CE
+         +READ_RAM2_NO_WRITE
+-        lda   HideLaunchArtworkLC2 - 1, x
+         sta   hide_artwork - 1, x
+         dex
+         bne   -
+         +READ_ROM_NO_WRITE
+         inx
+         stx   $21CF
          jmp   $2000      ; decompress
 
 callback !pseudopc $7100 {
@@ -47,8 +51,9 @@ callback_e
 hide_callback !pseudopc $106 {
          ldx   #$0D
          jsr   $193
-         jsr   HideArtworkCallback
+         jsr   hide_artwork
          jmp   $56C4
+hide_artwork
 HideArtworkCallback
 }
 hide_callback_e
