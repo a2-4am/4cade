@@ -11,7 +11,11 @@
          lda   #$60
          sta   $9F7
          jsr   $800       ; load DOS
-         +HIDE_ARTWORK
+
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
+         +READ_RAM1_WRITE_RAM1
+
          inx
          stx   $FA        ; fix sound
          lda   #$60
