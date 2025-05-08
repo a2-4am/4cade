@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba
+;(c) 2024, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MILLNM.LEAPER",plain
@@ -21,6 +21,11 @@
          sta   $9985      ; patch - don't decrease lives
          sta   $8549      ; patch - don't decrease time
 +
+         ldx   #1
+         stx   $9006
+         dex
+         stx   $9001      ; reset fix
+         
          +DISABLE_ACCEL
          jmp   $9000
 
