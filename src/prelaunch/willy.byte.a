@@ -52,9 +52,13 @@ callback1
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
          jsr   $BD80      ; decompress
-         +READ_RAM2_NO_WRITE ; for IIc compatibility, ROM gets banked in
          jsr   $D000
          jsr   DisableAccelerator
+!if *!=$bf8f {
+  !error "callback4 moved ",*
+}
+callback4
+         jsr   $fca8
          +READ_ROM_NO_WRITE
          lda   #0         ; set Z
          rts
@@ -64,6 +68,6 @@ accel_e
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"
 
-!if * > PrelaunchMax {
+!if * > $1bf {
   !error "code is too large, ends at ", *
 }

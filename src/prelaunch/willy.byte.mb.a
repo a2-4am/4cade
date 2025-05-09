@@ -8,12 +8,11 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+callback4=$bf8f
+
 callback3
          lda   MockingboardStuff
-         bne   is_mock
-         rts
-
-is_mock
+         php
          and   #7
          ora   #$C0
          ldx   #0
@@ -26,6 +25,9 @@ is_mock
          ldy   $3
          cpy   #$60
          bne   skip_a04f
+         plp
+         php
+         beq   patch_cb1
 -        ldy   $76BF, x
          cpy   #$C4
          bne   +
@@ -46,7 +48,18 @@ is_mock
          bne   -
          sta   $9EB6
 
+patch_cb1
+         lda   #<callback4
+         sta   $61d8
+         sta   $739c
+         sta   $787f
+         lda   #>callback4
+         sta   $61d9
+         sta   $739d
+         sta   $7880
+
 skip_a04f
+         plp
          rts
 
 not_a04f
@@ -56,17 +69,26 @@ not_a04f
          ldy   $3
          cpy   #$A0
          bne   skip_ba06_a
+         plp
+         php
+         beq   patch_cb2
 -        ldy   $A05E, x
          cpy   #$C4
          bne   +
          sta   $A05E, x
 +        inx
          bne   -
+
+patch_cb2
+         plp
          rts
 
 skip_ba06_a
          cpy   #$60
          bne   skip_ba06_b
+         plp
+         php
+         beq   patch_cb3
 -        ldy   $9228, x
          cpy   #$C4
          bne   +
@@ -74,18 +96,31 @@ skip_ba06_a
 +        inx
          bne   -
 
+patch_cb3
+         lda   #<callback4
+         sta   $6350
+         lda   #>callback4
+         sta   $6351
+
 skip_ba06_b
+         plp
          rts
 
 not_ba06
          cpy   #$32
          bne   not_b22f
+         plp
+         php
+         beq   patch_cb4
 -        ldy   $6909, x
          cpy   #$C4
          bne   +
          sta   $6909, x
 +        inx
          bne   -
+
+patch_cb4
+         plp
          rts
 
 not_b22f
@@ -97,6 +132,9 @@ not_b22f
          bcc   not_b04a
          cpy   #$60
          bne   skip_b04a
+         plp
+         php
+         beq   patch_cb5
 -        ldy   $7CFB, x
          cpy   #$C4
          bne   +
@@ -112,12 +150,22 @@ not_b22f
 +        inx
          bne   -
 
+patch_cb5
+         lda   #<callback4
+         sta   $61a5
+         lda   #>callback4
+         sta   $61a6
+
 skip_b04a
+         plp
          rts
 
 not_b04a
          cpy   #$60
          bne   skip_b142
+         plp
+         php
+         beq   patch_cb6
 -        ldy   $705E, x
          cpy   #$C4
          bne   +
@@ -129,7 +177,9 @@ not_b04a
 +        inx
          bne   -
 
+patch_cb6
 skip_b142
+         plp
          rts
 
 not_bx4y
@@ -138,6 +188,9 @@ not_bx4y
          ldy   $3
          cpy   #$60
          bne   skip_b193
+         plp
+         php
+         beq   patch_cb7
 -        ldy   $92A8, x
          cpy   #$C4
          bne   +
@@ -145,7 +198,14 @@ not_bx4y
 +        inx
          bne   -
 
+patch_cb7
+         lda   #<callback4
+         sta   $6315
+         lda   #>callback4
+         sta   $6316
+
 skip_b193
+         plp
          rts
 
 not_b193
@@ -157,6 +217,9 @@ not_b193
          bcs   not_b0c1
          cpy   #$60
          bne   skip_b0c1
+         plp
+         php
+         beq   patch_cb8
 -        ldy   $927B, x
          cpy   #$C4
          bne   +
@@ -164,12 +227,22 @@ not_b193
 +        inx
          bne   -
 
+patch_cb8
+         lda   #<callback4
+         sta   $62dd
+         lda   #>callback4
+         sta   $62de
+
 skip_b0c1
+         plp
          rts
 
 not_b0c1
          cpy   #$60
          bne   skip_b0c6
+         plp
+         php
+         beq   patch_cb9
 -        ldy   $72EB, x
          cpy   #$C4
          bne   +
@@ -181,7 +254,9 @@ not_b0c1
 +        inx
          bne   -
 
+patch_cb9
 skip_b0c6
+         plp
          rts
 
 not_bxcy
@@ -190,6 +265,9 @@ not_bxcy
          ldy   $3
          cpy   #$60
          bne   skip_b1f4
+         plp
+         php
+         beq   patch_cb10
 -        ldy   $78CB, x
          cpy   #$C4
          bne   +
@@ -201,8 +279,10 @@ not_bxcy
          sta   $79F8
          sta   $79FB
 
+patch_cb10
 skip_b1f4
 not_b1f4
+         plp
          rts
 
 !if * > $D1FF {
