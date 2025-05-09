@@ -49,6 +49,14 @@ callback
          sta   $c005
          sta   $DE6       ; don't touch GS BRAM
          sta   $c004
+         lda   $75d0
+         lsr
+         lsr
+         lsr
+         lsr
+         and   #7
+         tax
+         sta   $478, x    ; hide CFFA state in case of reset
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
