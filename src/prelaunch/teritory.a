@@ -31,6 +31,8 @@ callback1
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 
+         lda   #$bd
+         sta   $7fe       ; overwritten by GS acceleration
          lda   #0
          sta   $2000      ; clear activity monitor
 jmp60
