@@ -45,7 +45,10 @@ callback
          sta   $2619      ; patch - don't decrease lives
          sta   $c004
 +
-
+         lda   #$60
+         sta   $c005
+         sta   $DE6       ; don't touch GS BRAM
+         sta   $c004
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          +READ_RAM1_WRITE_RAM1
