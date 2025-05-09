@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-callback4=$bf8f
+callback4=$bf95
 
 callback3
          lda   MockingboardStuff

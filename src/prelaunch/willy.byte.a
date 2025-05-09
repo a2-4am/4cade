@@ -54,13 +54,16 @@ callback1
          jsr   $BD80      ; decompress
          jsr   $D000
          jsr   DisableAccelerator
-!if *!=$bf8f {
+         +READ_ROM_NO_WRITE
+         lda   #0         ; set Z
+         rts
+
+!if *!=$bf95 {
   !error "callback4 moved ",*
 }
 callback4
          jsr   $fca8
          +READ_ROM_NO_WRITE
-         lda   #0         ; set Z
          rts
 }
 accel_e
