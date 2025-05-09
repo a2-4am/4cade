@@ -28,8 +28,7 @@
          jmp   $9500
 
 callback1
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL
          jsr   $9503
          +DISABLE_ACCEL
          jsr   $BC6C
