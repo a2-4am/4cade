@@ -40,7 +40,15 @@
          ldy   #$bd
          sty   $1a40
          sty   $1a61
-+        +READ_RAM2_WRITE_RAM2
++        lda   $bf30
+         lsr
+         lsr
+         lsr
+         lsr
+         and   #7
+         tax
+         sta   $478, x    ; hide CFFA state in case of reset
+         +READ_RAM2_WRITE_RAM2
          jsr   HideLaunchArtworkLC2
          ldy   #0
          jmp   $41D0
