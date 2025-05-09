@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by qkumba
+;(c) 2021-2022, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ROACH.HOTEL",plain
@@ -18,10 +18,10 @@
          lda   #<pcallback1
          sta   $5154
          stx   $5155
-         jmp   $800       ; decompress
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $800       ; decompress while showing title
 
 callback1
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   ($202)
 
 callback2

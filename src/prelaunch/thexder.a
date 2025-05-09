@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020, 2022 by qkumba/Frank M.
+;(c) 2019-2020, 2022, 2025 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/THEXDER",plain
@@ -12,7 +12,6 @@
          jsr   $300
          +READ_RAM2_NO_WRITE
          jsr   EnableAccelerator
-         jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
@@ -49,7 +48,7 @@ reset
          dec   $40A6      ; don't decrease energy
          dec   $410C      ; don't decrease energy
 ++
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $1800
 
 !if * > PrelaunchMax {
