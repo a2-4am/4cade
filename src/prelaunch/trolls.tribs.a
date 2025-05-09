@@ -8,9 +8,12 @@
          !source "src/macros.a"
 
          lda   #$60
+         sta   $4058
          sta   $4060
          jsr   $4000      ; decompress
-         +HIDE_ARTWORK
+         jsr   HideLaunchArtworkLC2
+         lda   #$d0
+         jsr   $405A
          lda   #1
          sta   $6056
          +LC_REBOOT
