@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022 by Frank M., qkumba
+;(c) 2020, 2022, 2025 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/QIX",plain
@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +HIDE_ARTWORK
          inc   $3F4       ; force reboot
          lda   #<callback1
          sta   $60CA
@@ -18,14 +18,13 @@
          sta   callback1,x
          dex
          bpl   -
-         jmp   $23AC
+         jmp   $23AC      ; show animation
 
 callback_b !pseudopc $340 {
 callback1
          lda   MachineStatus
          and   #CHEATS_ENABLED
          php
-         jsr   DisableAccelerator
          jsr   $100       ; decompress
          sta   $0
          lda   #8
