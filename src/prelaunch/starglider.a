@@ -17,11 +17,20 @@
          sta   $81FC
          jsr   $800       ; decompress
 
+         lda   $bf30
+         lsr
+         lsr
+         lsr
+         lsr
+         and   #7
+         ora   #$78
+         sta   patch + 1
+
          jsr   DisableAccelerator
          jsr   HideLaunchArtworkLC2
          jsr   $BA7B
 
-         ldx   #5
+         ldx   #8
 -        lda   reset,x
          sta   $110,x
          dex
@@ -44,10 +53,10 @@
          sta   $9D70      ; patch - don't increase damage
          sta   $9E37      ; patch - don't increase damage
 +
-
          jmp   $BA00
 
 reset    lda   $C089
+patch    sta   $478       ; SMC, hide CFFA state in case of reset
          jmp   $FAA6
 
 !if * > PrelaunchMax {
