@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/REAR.GUARD",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #<(callback - 1)
+         sta   $5A88
+         lda   #>(callback - 1)
+         sta   $5A85
+         jmp   $5A24      ; decompress
+
+callback
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $7C00
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
