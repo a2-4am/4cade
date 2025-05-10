@@ -13,8 +13,20 @@
          jsr   $800       ; decompress
 
          +NEW_RESET_VECTOR $190
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         ldx   #14
+-        lda   callback,x
+         sta   $196,x
+         dex
+         bpl   -
+         lda   #$96
+         sta   $7B7B
+         lda   #1
+         sta   $7B7C
          jmp   $7600
+
+callback
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $8B75
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
