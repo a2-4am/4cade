@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/TRIAD",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $94B6
+         jsr   $4C00      ; decompress
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $600
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
