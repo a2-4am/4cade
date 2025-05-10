@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SPARE.CHANGE",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $2778
+         jsr   $2700      ; decompress
+         lda   #>(callback - 1)
+         pha
+         lda   #<(callback - 1)
+         pha
+         sec
+         php
+         jmp   $BD26
+
+callback
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jmp   $2000
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
