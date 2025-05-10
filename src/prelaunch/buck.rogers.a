@@ -11,11 +11,10 @@
          lda   #$60
          sta   $4083
          jsr   $4000      ; decompress
-         lda   $7fe       ; Buck Rogers code
-         pha
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
-         pla
+         lda   #$15
          sta   $7fe       ; overwritten by GS acceleration
+         sta   $41b       ; reboot on reset
          jmp   $400
 
 !if * > PrelaunchMax {
