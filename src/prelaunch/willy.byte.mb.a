@@ -178,6 +178,11 @@ not_b04a
          bne   -
 
 patch_cb6
+         lda   #<callback4
+         sta   $6222
+         lda   #>callback4
+         sta   $6223
+
 skip_b142
          plp
          rts
@@ -280,6 +285,11 @@ not_bxcy
          sta   $79FB
 
 patch_cb10
+         lda   #<callback4
+         sta   $6141
+         lda   #>callback4
+         sta   $6142
+
 skip_b1f4
 not_b1f4
          plp
