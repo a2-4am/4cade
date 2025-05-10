@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba
+;(c) 2019, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/COMMANDO",plain
@@ -22,6 +22,7 @@ cheat
     !source "src/macros.a"
 
          +ENABLE_ACCEL
+         +NEW_RESET_VECTOR_64K $100
          dec   $11a6
          jsr   $1000      ; decompress
          jsr   HideLaunchArtworkLC2
