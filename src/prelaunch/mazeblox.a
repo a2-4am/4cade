@@ -8,13 +8,12 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL
-         lda   #<hook1
-         sta   $A18+1
-         lda   #>hook1
-         sta   $A18+2
-         jmp   $800       ; decompress1
+         +USES_TEXT_PAGE_2
+         lda   #$60
+         sta   $A20
+         jsr   $800       ; decompress1
 
-hook1    lda   #<hook2
+         lda   #<hook2
          sta   $B747+1
          lda   #>hook2
          sta   $B747+2
