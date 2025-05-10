@@ -7,12 +7,22 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
          lda   #$60
          sta   $33C
          jsr   $300
          inc   $3F4       ; force reboot
-         jmp   $1000
+         dec   $1196
+         jsr   $1000
+         lda   #<callback
+         sta   $202b
+         lda   #>callback
+         sta   $202c
+         jmp   $2000
+
+callback
+         jsr   HideLaunchArtworkLC2
+         lda   #5
+         jmp   $2093
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
