@@ -19,8 +19,13 @@
          lda   #>callback
          sta   $35D
 +
+         lda   #$60
+         sta   $347
+         jsr   $301
+         lda   #$4C
+         sta   $347
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
-         jmp   $301
+         jmp   $800
 
 callback
          ldx   #$a5
