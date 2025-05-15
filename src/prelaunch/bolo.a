@@ -18,6 +18,9 @@
          sta   $1619
          sta   $11ae
 +
+         lda   #$2C
+         sta   $132F      ; stop in-game demo from rebooting
+
          +DISABLE_ACCEL
          jmp   $1100
 
