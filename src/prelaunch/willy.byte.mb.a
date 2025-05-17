@@ -21,7 +21,7 @@ callback3
          bne   not_a04f
          ldy   $BE98
          cpy   #$34
-         bne   skip_a04f
+         bne   maybe_a22f
          ldy   $3
          cpy   #$60
          bne   skip_a04f
@@ -50,19 +50,67 @@ callback3
 
 patch_cb1
          lda   #<callback4
-         sta   $61d8
          sta   $739c
          sta   $787f
          lda   #>callback4
-         sta   $61d9
          sta   $739d
          sta   $7880
+         ldx   #$D8
+         bne   patch_61
+
+not_a04f
+         jmp   maybe_a03x
+
+maybe_a22f
+         cpy   #$32
+         bne   maybe_a202
+         ldx   #$94
+
+patch_61
+         lda   #<callback4
+         sta   $6100,x
+         lda   #>callback4
+         sta   $6101,x
 
 skip_a04f
          plp
          rts
 
-not_a04f
+maybe_a202
+         cpy   #$30
+         bne   maybe_a1d0
+         ldx   #$10
+
+patch_62
+         lda   #<callback4
+         sta   $6200,x
+         lda   #>callback4
+         sta   $6201,x
+         plp
+         rts
+
+maybe_a1d0
+         cpy   #$44
+         bne   maybe_a1a1
+         ldx   #$E1
+         bne   patch_61
+
+maybe_a1a1
+         cpy   #$41
+         bne   skip_a04f
+         lda   $BE97
+         cmp   #$31
+         bne   maybe_a0a3
+         ldx   #$A2
+         bne   patch_61
+
+maybe_a0a3
+         cmp   #$30
+         bne   skip_a04f
+         ldx   #7
+         bne   patch_61
+
+maybe_a03x
          ldy   $BE98
          cpy   #$30
          bne   not_ba06
@@ -97,10 +145,13 @@ skip_ba06_a
          bne   -
 
 patch_cb3
+         ldx   #$50
+
+patch_63
          lda   #<callback4
-         sta   $6350
+         sta   $6300,x
          lda   #>callback4
-         sta   $6351
+         sta   $6301,x
 
 skip_ba06_b
          plp
@@ -120,6 +171,8 @@ not_ba06
          bne   -
 
 patch_cb4
+skip_b04a
+skip_b142
          plp
          rts
 
@@ -151,14 +204,8 @@ not_b22f
          bne   -
 
 patch_cb5
-         lda   #<callback4
-         sta   $61a5
-         lda   #>callback4
-         sta   $61a6
-
-skip_b04a
-         plp
-         rts
+         ldx   #$A5
+         jmp   patch_61
 
 not_b04a
          cpy   #$60
@@ -178,14 +225,8 @@ not_b04a
          bne   -
 
 patch_cb6
-         lda   #<callback4
-         sta   $6222
-         lda   #>callback4
-         sta   $6223
-
-skip_b142
-         plp
-         rts
+         ldx   #$22
+         jmp   patch_62
 
 not_bx4y
          cpy   #$39
@@ -204,14 +245,8 @@ not_bx4y
          bne   -
 
 patch_cb7
-         lda   #<callback4
-         sta   $6315
-         lda   #>callback4
-         sta   $6316
-
-skip_b193
-         plp
-         rts
+         ldx   #$15
+         jmp   patch_63
 
 not_b193
          cpy   #$43
@@ -233,14 +268,8 @@ not_b193
          bne   -
 
 patch_cb8
-         lda   #<callback4
-         sta   $62dd
-         lda   #>callback4
-         sta   $62de
-
-skip_b0c1
-         plp
-         rts
+         ldx   #$DD
+         jmp   patch_62
 
 not_b0c1
          cpy   #$60
@@ -259,8 +288,12 @@ not_b0c1
 +        inx
          bne   -
 
+skip_b193
+skip_b0c1
 patch_cb9
 skip_b0c6
+skip_b1f4
+not_b1f4
          plp
          rts
 
@@ -285,16 +318,9 @@ not_bxcy
          sta   $79FB
 
 patch_cb10
-         lda   #<callback4
-         sta   $6141
-         lda   #>callback4
-         sta   $6142
+         ldx   #$41
+         jmp   patch_61
 
-skip_b1f4
-not_b1f4
-         plp
-         rts
-
-!if * > $D1FF {
+!if * > $D3FF {
   !error "code is too large, ends at ", *
 }
