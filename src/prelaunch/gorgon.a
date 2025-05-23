@@ -22,12 +22,62 @@
          lda   #$A5
          sta   $A5B0      ; patch - don't decrease lives
 +
-         lda   #0
-         sta   $A8B4
-         lda   #1
-         sta   $A8BC      ; reset vector patch
-
+         lda   #$CB
+         sta   $A821      ; disable reset vector patch
+         ldx   #2
+-        lda   patch, x
+         sta   $A67B, x
+         dex
+         bpl   -
          jmp   $A720
+
+callback
+         cmp   #$8A
+         bne   +
+         ldx   #2
+-        lda   hook1, x
+         sta   $c00, x
+         sta   $f20, x
+         sta   $9bd4, x
+         dex
+         bpl   -
+         ldx   #4
+-        lda   hook2, x
+         sta   $e89, x
+         dex
+         bpl   -
+         ldx   #(joystick_e - joystick) - 1
+-        lda   joystick, x
+         sta   axis, x
+         dex
+         bpl   -
++        rts
+
+joystick !pseudopc $380 {
+axis     lda   #1         ; SMC
+         eor   #1
+         sta   axis + 1
+         tax
+-        rol   $c064, x
+         bcs   -
+         jsr   $fb1e
+         lda   tablehi, x
+         cpy   #$80
+         bcs   +
+         lda   tablelo, x
+         cpy   #$20
+         bcc   +
+         lda   #0
++        rts
+tablelo  !byte $88, $c1
+tablehi  !byte $95, $da
+}
+joystick_e
+
+patch    jmp   callback
+hook1    jsr   axis
+hook2    lda   $c061
+         cmp   #$80
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

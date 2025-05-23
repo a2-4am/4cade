@@ -18,3 +18,5 @@ Esc* * * * * * * * * * * * * * * * pause
 Ctrl-S * * * * * * * * * * * * * * sound
 
 Ctrl-R * * * * * * * * * * * * * restart
+
+Ctrl-J * * * * * * * * * * * * *joystick
