@@ -1,0 +1,28 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/MAZY2",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+
+         +GET_MACHINE_STATUS
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $6767      ; patch - don't decrease lives
+         sta   $6752      ; patch - don't decrease time
++
+         +DISABLE_ACCEL
+         jmp   $6000
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
