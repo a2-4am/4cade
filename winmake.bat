@@ -139,7 +139,7 @@ rem note: these can not be padded because they are compressed and the decompress
 rem
 echo|set/p="indexing gamehelp..."
 cscript /nologo bin\makesorted.js
-cscript /nologo bin\buildpre.js build\GAMEHELP.COMPRESSED build\GAMEHELP.IDX build\TOTAL.DATA pad >>build\log
+cscript /nologo bin\buildpre.js build\GAMEHELP.COMPRESSED build\GAMEHELP.IDX build\TOTAL.DATA >>build\log
 echo done
 rem
 rem precompute indexed files for slideshows
