@@ -48,6 +48,13 @@ callback3
          bne   -
          sta   $9EB6
 
+!if *!=$d050 {
+  !error "patch_iic moved ",*
+}
+patch_iic
+         lda   #$20  ; SMC
+         sta   $6031 ; speech control
+
 patch_cb1
          lda   #<callback4
          sta   $739c
@@ -320,6 +327,27 @@ not_bxcy
 patch_cb10
          ldx   #$41
          jmp   patch_61
+
+accel !pseudopc $bf80 {
+callback1
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
+         jsr   $BD80      ; decompress
+         jsr   $D000
+         jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
+         lda   #0         ; set Z
+         rts
+
+!if *!=$bf95 {
+  !error "callback4 moved ",*
+}
+callback4
+         jsr   $fca8
+         +READ_ROM_NO_WRITE
+         rts
+}
+accel_e
 
 !if * > $D3FF {
   !error "code is too large, ends at ", *

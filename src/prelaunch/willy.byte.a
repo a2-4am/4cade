@@ -5,12 +5,30 @@
 !to "build/PRELAUNCH.INDEXED/WILLY.BYTE",plain
 *=$106
 
+patch_iic=$d050 ; from willy.byte.mb.a
+accel=$d1fc     ; from willy.byte.mb.a
+accel_e=$d218   ; from willy.byte.mb.a
+callback1=$bf80 ; from willy.byte.mb.a
+
     !source "src/macros.a"
 
+         ldx   $FBB3
+         cpx   #6
+         bne   not_iic1
+         ldx   $FBC0
+
+not_iic1
+         php
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          jsr   HideLaunchArtworkLC2
          +LOAD_FILE_AT willybyte_mb, $D000
+         plp
+         bne   not_iic2
+         lda   #$2c
+         sta   patch_iic + 1
+
+not_iic2
          +READ_ROM_NO_WRITE
          ldx   #(accel_e - accel)
 -        lda   accel, x
@@ -46,27 +64,6 @@ callback2
          beq   +
          cmp   #9
 +        rts
-
-accel !pseudopc $bf80 {
-callback1
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
-         jsr   $BD80      ; decompress
-         jsr   $D000
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
-         lda   #0         ; set Z
-         rts
-
-!if *!=$bf95 {
-  !error "callback4 moved ",*
-}
-callback4
-         jsr   $fca8
-         +READ_ROM_NO_WRITE
-         rts
-}
-accel_e
 
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"
