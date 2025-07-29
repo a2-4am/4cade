@@ -29,12 +29,12 @@ not_iic1
          sta   patch_iic + 1
 
 not_iic2
-         +READ_ROM_NO_WRITE
          ldx   #(accel_e - accel)
 -        lda   accel, x
          sta   callback1, x
          dex
          bpl   -
+         +READ_ROM_NO_WRITE
          lda   #<callback1
          sta   $414A
          lda   #>callback1

@@ -349,6 +349,4 @@ callback4
 }
 accel_e
 
-!if * > $D3FF {
-  !error "code is too large, ends at ", *
-}
+!fill $d400-*
