@@ -10,6 +10,7 @@
 - Glider
 - Helicopter Rescue
 - Kaboom!
+- Mazy2
 - Mieyen
 - Shoot Out
 - Spud and Mug Shot
@@ -26,6 +27,7 @@
 - Fix crash in Black Magic on Apple //c+ (closes [633](https://github.com/a2-4am/4cade/issues/633))
 - Fix crash in Hyper Head On on Apple IIgs (closes [667](https://github.com/a2-4am/4cade/issues/667))
 - Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
+- Fix reboot after Bolo demo (PR [734](https://github.com/a2-4am/4cade/pull/734), thanks Frank M.)
 - Fix uninitialized value in Apple Cider Spider and its self-running demo
 - Swap buttons by default in Lode Runner and Championship Lode Runner (closes [663](https://github.com/a2-4am/4cade/issues/663))
 - Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
@@ -35,11 +37,14 @@
 - Improve Mockingboard mono/stereo detection
 - Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't (closes [664](https://github.com/a2-4am/4cade/issues/664))
 - Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645), thanks xotmatrix)
+- Disable BRAM write in Prince of Persia on IIgs
 - Mark Mapple and Crime Wave as having in-game cheats
 - Remove debugging code from Mapple
 - Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
 - Add more game help (thanks Brendan R., Andrew R., cybernesto)
 - Add more box art (thanks Alex R., Andrew R., Lunar, Ernst Krogtoft)
+- Update title screen
+- New font
 
 ## Revision 5.2 / serial number 20240909
 
