@@ -11,6 +11,11 @@
          lda   #$60
          sta   $408C
          jsr   $4000       ; decompress
+         ldx   #$11
+         stx   $b72        ; fix game bug
+         dex
+         stx   $b83        ; fix game bug
+         stx   $7ab3       ; fix game bug
          +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
