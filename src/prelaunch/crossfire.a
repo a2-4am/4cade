@@ -9,11 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $6240
-         jsr   $6230      ; phase 1
-         lda   #$60
-         sta   $85AE      ; phase 2
-         jsr   $85A4
+         sta   $84BA
+         jsr   $6371      ; decompress
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +

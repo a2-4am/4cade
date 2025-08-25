@@ -2,7 +2,7 @@
 ;(c) 2021-2022 by qkumba
 
 !cpu 6502
-!to "build/PRELAUNCH.INDEXED/CRICKATEER",plain
+!to "build/PRELAUNCH.INDEXED/CRICKETEER",plain
 *=$106
 
          !source "src/macros.a"
@@ -11,8 +11,8 @@ reset
          +ENABLE_ACCEL
          +NEW_RESET_VECTOR reset
          lda   #$60
-         sta   $9474
-         sta   $949A
+         sta   $91F1
+         sta   $9217
          jsr   $5212
          jsr   $868       ; decompress
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
