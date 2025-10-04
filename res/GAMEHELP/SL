@@ -1,20 +1,21 @@
-      Shoot everything that moves
+      1: Assemble bomb, board ship
 
+ 2: Escape grotto 3: Destroy structures
 
 
           joystick or keyboard
 
+      (1) hold button 0 to aim
 
+      (2/3) button 0 fire, 1 bomb
 
-   Move                           Fire
+     Move      Fire (1)    Fires (2/3)
 
-    W                              O
+       W         O         Space * *fire
 
-A   S   D                      K       ;
+     A S D     K   ;       K * * * *bomb
 
-    X                              .
-
-
+       X         .
 
 Esc* * * * * * * * * * * * * * * * pause
 
