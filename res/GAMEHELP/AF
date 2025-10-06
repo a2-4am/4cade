@@ -1,0 +1,23 @@
+
+
+  Shoot asteroids and enemy spaceships
+
+           paddle 0 to rotate
+
+Rotate-left  Rotate-right   Thrust  Fire
+   D            F             <       >
+
+       Space to teleport randomly
+
+auto-fire mode: button 0 Fire   1 Thrust
+
+auto-thrust:    button 0 Thrust 1 Fire
+
+
+0* * * * * * * * * * * * * * * * respawn
+
+S (at options menu)* * * * * * * * sound
+
+Esc* * * * * * * * * * * * *options menu
+
+Ctrl-C * * * * * change background color
