@@ -1,0 +1,24 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CYBER.STRIKE",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #<callback
+         sta   $384E
+         lda   #>callback
+         sta   $384F
+         jmp   $800
+
+callback
+         jsr   $9500
+         +DISABLE_ACCEL
+         rts
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
