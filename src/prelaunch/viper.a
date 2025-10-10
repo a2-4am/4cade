@@ -1,0 +1,23 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/VIPER",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $404A
+         jsr   $4000      ; decompress
+         ldx   #0
+         stx   $C32
+         inx
+         stx   $C37       ; reset vector
+         +DISABLE_ACCEL
+         jmp   $C00
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
