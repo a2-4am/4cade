@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2025 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TROLLS.TRIBS",plain
@@ -8,14 +8,14 @@
          !source "src/macros.a"
 
          lda   #$60
-         sta   $4058
-         sta   $4060
-         jsr   $4000      ; decompress
+         sta   $3AC7
+         sta   $3AE0
+         jsr   $3A90      ; decompress
          jsr   HideLaunchArtworkLC2
-         lda   #$d0
-         jsr   $405A
-         lda   #1
-         sta   $6056
+         ldx   #$10
+         jsr   $3AC9
+         inx
+         stx   $6056
          +LC_REBOOT
          lda   MachineStatus
          and   #CHEATS_ENABLED
