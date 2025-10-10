@@ -11,7 +11,7 @@ reset
          +ENABLE_ACCEL
          +NEW_RESET_VECTOR reset
          lda   #$60
-         sta   $1A6A
+         sta   $1A67
          jsr   $1A00      ; decompress
          +READ_RAM2_NO_WRITE
          lda   MachineStatus

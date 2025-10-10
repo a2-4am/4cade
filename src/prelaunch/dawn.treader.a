@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $8954
+         sta   $86B8
          jsr   $3FF8       ; decompress
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $812
