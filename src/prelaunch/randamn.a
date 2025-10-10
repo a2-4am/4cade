@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2025 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/RANDAMN",plain
@@ -13,36 +13,55 @@
          asl
          sta   $40D5
          sta   $40DB
-         ldx   #$4e
+         inc   $bf0e
+         +READ_RAM2_NO_WRITE
+         ldx   #$bf
          txs
+-        lda+2 (reloc_e-1)-$bf, x
+         pha              ; pshhh don't look
+         dex
+         cpx   #<(reloced-1)
+         bne   -
+         beq   reloced    ; always
+
+reloc !pseudopc $173 {
+reloced
          jsr   $4000      ; decompress
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
          lda   #<callback
          sta   $BFC
          lda   #>callback
          sta   $BFD
-+
-         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          jsr   DisableAccelerator
-         jmp   cont
+         +READ_ROM_NO_WRITE
+         jmp   $822
 
-*=$17e
 callback
-         +ENABLE_ACCEL
+         +READ_RAM2_NO_WRITE
+         jsr   EnableAccelerator
          lda   #$60
          sta   $834B
          jsr   $8300
+         lda   #$4c
+         sta   $CBF
+         ldx   #0
+         stx   $CC0
+         inx
+         stx   $CC1
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
          lda   #$A5
          sta   $BE2       ; patch - don't increase lives
          sta   $1271      ; patch - don't decrease lives
-         +DISABLE_ACCEL
-         jmp   $808
-cont
-         jsr   HideLaunchArtworkLC2
++        jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
-         jmp   $822
+         jmp   $808
+  !if * != $1c0 {
+    !error "position mismatch, ", *
+  }
+}
+reloc_e
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
