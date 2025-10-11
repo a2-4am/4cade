@@ -9,24 +9,18 @@
 
          +ENABLE_ACCEL
          lda   #<callback2
-         sta   $5164
+         sta   $4DC8
          ldx   #>callback2
-         stx   $5165
+         stx   $4DC9
          lda   #<pcallback2
-         sta   $5034
-         stx   $5035
-         lda   #<pcallback1
-         sta   $5154
-         stx   $5155
+         sta   $4CE1
+         stx   $4CE2
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $800       ; decompress while showing title
 
-callback1
-         jmp   ($202)
-
 callback2
          +ENABLE_ACCEL
-         jmp   $BDF4      ; decompress
+         jmp   $BC88      ; decompress
 
 callback3
          +READ_RAM2_NO_WRITE
@@ -39,9 +33,6 @@ callback3
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
          jmp   ($200)
-
-pcallback1
-         !word callback1
 
 pcallback2
          !word callback3
