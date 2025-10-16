@@ -1,0 +1,29 @@
+;license:MIT
+;(c) 2025 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SHFLPUCK",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $4080
+         jsr   $4000      ; decompress
+         lda   #<callback
+         sta   $6D0A
+         lda   #>callback
+         sta   $6D0B
+         +LC_REBOOT
+         +DISABLE_ACCEL
+         jmp   $6D00
+
+callback
+         lda   #$88
+         sta   $BF0E      ; bank in LC from now on
+         jmp   $763D
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
