@@ -14,7 +14,7 @@
 
          lda   #$60
          sta   $2035
-         sta   $20A1
+         sta   $20A7
          ldy   #(x_e - x_b) - 1
 -        lda   x_b, y
          sta   $200, y
