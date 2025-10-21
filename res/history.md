@@ -13,6 +13,7 @@
 - Mazy2
 - Mieyen
 - Shoot Out
+- Shufflepuck Cafe
 - Spud and Mug Shot
 
 ### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
@@ -37,6 +38,7 @@
 - Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
 - Improve Mockingboard mono/stereo detection
 - Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't (closes [664](https://github.com/a2-4am/4cade/issues/664))
+- Add mouse detection and filtering for games that require a mouse
 - Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645), thanks xotmatrix)
 - Disable BRAM write in Prince of Persia on IIgs
 - Mark Mapple and Crime Wave as having in-game cheats

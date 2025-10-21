@@ -153,7 +153,7 @@ $(X): | $(MD) $(GAMES.CONF)
 	mkdir -p "$@" "$(BUILDDIR)"/X.INDEXED
 	$(PARALLEL) '$(CADIUS) EXTRACTVOLUME {} "$@"/ >> "$(CADIUS.LOG)"' ::: res/dsk/*.po
 	rm -f "$@"/**/.DS_Store "$@"/**/PRODOS* "$@"/**/LOADER.SYSTEM* "$@"/**/_FileInformation.txt
-	for f in $$(grep '^....1' "$(GAMES.CONF)" | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$f"/"$$f"* "$(BUILDDIR)"/X.INDEXED/; rm -rf "$@"/"$$f"; done
+	for f in $$(grep '^.....1' "$(GAMES.CONF)" | awk '!/^$$|^#/' | awk -F, '/,/ { print $$2 }' | awk -F= '{ print $$1 }'); do mv "$@"/"$$f"/"$$f"* "$(BUILDDIR)"/X.INDEXED/; rm -rf "$@"/"$$f"; done
 	(cd "$(BUILDDIR)"/X.INDEXED/ && for f in *; do echo "$$f"; done) > "$(XSINGLE.LIST)"
 	for d in "$@"/*; do mv "$$d"/* "$@"/; rmdir "$$d"; done
 	@touch "$@"
@@ -317,28 +317,40 @@ $(TOTAL.DATA): $(FX) $(PRELAUNCH) $(DEMO) $(SS) $(X) $(ATTRACT) $(ATTRACT.IDX) $
 #
 	bin/buildindexedfile.py -p "$@" "$(BUILDDIR)"/X.INDEXED < "$(XSINGLE.LIST)" > "$(BUILDDIR)"/XSINGLE.IDX
 #
-# create search indexes for each variation of (game-requires-joystick) X (game-requires-128K)
+# create search indexes for each variation of (game-requires-mouse) X (game-requires-joystick) X (game-requires-128K)
 # in the form of OKVS data structures, plus game counts in the form of source files
 #
 	$(PARALLEL) ::: \
-	    '(grep "^00" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count00.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH00.IDX)' \
-	    '(grep "^0" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count01.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH01.IDX)' \
-	    '(grep "^.0" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count10.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH10.IDX)' \
-	    '(bin/buildsearch.py "$(BUILDDIR)"/index/count11.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(GAMES.CONF)" > "$(BUILDDIR)"/SEARCH11.IDX)'
+	    '(grep "^000" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count000.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH000.IDX)' \
+	    '(grep "^00"  < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count001.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH001.IDX)' \
+	    '(grep "^0.0" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count010.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH010.IDX)' \
+	    '(grep "^0"   < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count011.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH011.IDX)' \
+	    '(grep "^.00" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count100.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH100.IDX)' \
+	    '(grep "^.0"  < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count101.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG > "$(BUILDDIR)"/SEARCH101.IDX)' \
+	    '(grep "^..0" < "$(GAMES.CONF)" | bin/buildsearch.py "$(BUILDDIR)"/index/count110.a "$(BUILDDIR)"/HGR.TITLES.LOG "" > "$(BUILDDIR)"/SEARCH110.IDX)' \
+	    '(bin/buildsearch.py "$(BUILDDIR)"/index/count111.a "$(BUILDDIR)"/HGR.TITLES.LOG "$(BUILDDIR)"/DHGR.TITLES.LOG < "$(GAMES.CONF)" > "$(BUILDDIR)"/SEARCH111.IDX)'
 #
 # add IDX files to the combined index file and generate
 # the index records that callers use to reference them,
 # plus additional miscellaneous files
 #
 	bin/addfiles.py "$@" \
-		"$(BUILDDIR)"/SEARCH00.IDX "$(BUILDDIR)"/index/search00.idx.a \
-		res/CACHE00.IDX "$(BUILDDIR)"/index/cache00.idx.a \
-		"$(BUILDDIR)"/SEARCH01.IDX "$(BUILDDIR)"/index/search01.idx.a \
-		res/CACHE01.IDX "$(BUILDDIR)"/index/cache01.idx.a \
-		"$(BUILDDIR)"/SEARCH10.IDX "$(BUILDDIR)"/index/search10.idx.a \
-		res/CACHE10.IDX "$(BUILDDIR)"/index/cache10.idx.a \
-		"$(BUILDDIR)"/SEARCH11.IDX "$(BUILDDIR)"/index/search11.idx.a \
-		res/CACHE11.IDX "$(BUILDDIR)"/index/cache11.idx.a \
+		"$(BUILDDIR)"/SEARCH000.IDX "$(BUILDDIR)"/index/search000.idx.a \
+		res/CACHE000.IDX "$(BUILDDIR)"/index/cache000.idx.a \
+		"$(BUILDDIR)"/SEARCH001.IDX "$(BUILDDIR)"/index/search001.idx.a \
+		res/CACHE001.IDX "$(BUILDDIR)"/index/cache001.idx.a \
+		"$(BUILDDIR)"/SEARCH010.IDX "$(BUILDDIR)"/index/search010.idx.a \
+		res/CACHE010.IDX "$(BUILDDIR)"/index/cache010.idx.a \
+		"$(BUILDDIR)"/SEARCH011.IDX "$(BUILDDIR)"/index/search011.idx.a \
+		res/CACHE011.IDX "$(BUILDDIR)"/index/cache011.idx.a \
+		"$(BUILDDIR)"/SEARCH100.IDX "$(BUILDDIR)"/index/search100.idx.a \
+		res/CACHE100.IDX "$(BUILDDIR)"/index/cache100.idx.a \
+		"$(BUILDDIR)"/SEARCH101.IDX "$(BUILDDIR)"/index/search101.idx.a \
+		res/CACHE101.IDX "$(BUILDDIR)"/index/cache101.idx.a \
+		"$(BUILDDIR)"/SEARCH110.IDX "$(BUILDDIR)"/index/search110.idx.a \
+		res/CACHE110.IDX "$(BUILDDIR)"/index/cache110.idx.a \
+		"$(BUILDDIR)"/SEARCH111.IDX "$(BUILDDIR)"/index/search111.idx.a \
+		res/CACHE111.IDX "$(BUILDDIR)"/index/cache111.idx.a \
 		"$(BUILDDIR)"/PRELAUNCH.IDX "$(BUILDDIR)"/index/prelaunch.idx.a \
 		"$(ATTRACT.IDX)" "$(BUILDDIR)"/index/attract.idx.a \
 		"$(BUILDDIR)"/DEMO.IDX "$(BUILDDIR)"/index/demo.idx.a \
@@ -439,15 +451,23 @@ attract: compress
 #
 cache: $(GAMES.CONF)
 	$(PARALLEL) ::: \
-	    'awk -F= '"'"'/^00/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache00.a' \
-	    'awk -F= '"'"'/^0/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache01.a' \
-	    'awk -F= '"'"'/^.0/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache10.a' \
-	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache11.a'
+	    'awk -F= '"'"'/^000/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache000.a' \
+	    'awk -F= '"'"'/^00/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache001.a' \
+	    'awk -F= '"'"'/^0.0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache010.a' \
+	    'awk -F= '"'"'/^0/      { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache011.a' \
+	    'awk -F= '"'"'/^.00/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache100.a' \
+	    'awk -F= '"'"'/^.0/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache101.a' \
+	    'awk -F= '"'"'/^..0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache110.a' \
+	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache111.a'
 	$(PARALLEL) ::: \
-	    '$(ACME) -o res/CACHE00.IDX "$(BUILDDIR)"/cache00.a' \
-	    '$(ACME) -o res/CACHE01.IDX "$(BUILDDIR)"/cache01.a' \
-	    '$(ACME) -o res/CACHE10.IDX "$(BUILDDIR)"/cache10.a' \
-	    '$(ACME) -o res/CACHE11.IDX "$(BUILDDIR)"/cache11.a'
+	    '$(ACME) -o res/CACHE000.IDX "$(BUILDDIR)"/cache000.a' \
+	    '$(ACME) -o res/CACHE001.IDX "$(BUILDDIR)"/cache001.a' \
+	    '$(ACME) -o res/CACHE010.IDX "$(BUILDDIR)"/cache010.a' \
+	    '$(ACME) -o res/CACHE011.IDX "$(BUILDDIR)"/cache011.a' \
+	    '$(ACME) -o res/CACHE100.IDX "$(BUILDDIR)"/cache100.a' \
+	    '$(ACME) -o res/CACHE101.IDX "$(BUILDDIR)"/cache101.a' \
+	    '$(ACME) -o res/CACHE110.IDX "$(BUILDDIR)"/cache110.a' \
+	    '$(ACME) -o res/CACHE111.IDX "$(BUILDDIR)"/cache111.a'
 
 mount: $(HDV)
 	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii "$(HDV)"

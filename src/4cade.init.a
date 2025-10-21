@@ -63,11 +63,14 @@
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
                                      ; requires ROM read
          ror   zpMachineStatus
-                                     ; now bit 4 = 1 if VidHD
-                                     ;     bit 5 = 1 if IIgs
-                                     ;     bit 6 = 1 if 128K
-                                     ;     bit 7 = 1 if joystick
-                                     ; and all other bits are 0 (we'll set bit 3 after copying it to LC RAM)
+         jsr   HasMouse              ; check for mouse (also affects filtering)
+         ror   zpMachineStatus
+                                     ; now bit 3 = 1 if VidHD
+                                     ;     bit 4 = 1 if IIgs
+                                     ;     bit 5 = 1 if 128K
+                                     ;     bit 6 = 1 if joystick
+                                     ;     bit 7 = 1 if mouse
+                                     ; and all other bits are 0 (we'll set bit 2 after copying it to LC RAM)
 
          ; IIgs fix for Alternate Display Mode (clear shadow page 2)
          lda   zpMachineStatus
@@ -152,6 +155,16 @@
          and   #HAS_JOYSTICK
          beq   +
          +LDADDR LoadingJoystick
+         jsr   LoadingPrint          ; requires ROM read
++
+         ; if (zpMachineStatus AND HAS_MOUSE) but (not IIgs) then CR & print 'mouse'
+         lda   zpMachineStatus
+         and   #IS_IIGS
+         bne   +
+         lda   zpMachineStatus
+         and   #HAS_MOUSE
+         beq   +
+         +LDADDR LoadingMouse
          jsr   LoadingPrint          ; requires ROM read
 +
          ; if zpMachineStatus AND HAS_VIDHD then CR & print 'VidHD'
@@ -296,6 +309,7 @@ ProRWTSBuffer
          !source "src/hw.vidhd.a"
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
+         !source "src/hw.mouse.a"
          !source "src/hw.mockingboard.a"
 
 SetCursorPosition
@@ -343,6 +357,8 @@ LoadingIIgs
          +PSTRING "IIgs"
 LoadingJoystick
          +PSTRING "\rjoystick"
+LoadingMouse
+         +PSTRING "\rmouse"
 LoadingVidHD
          +PSTRING "\rVidHD"
 LoadingMockingboard
@@ -444,32 +460,32 @@ OneTimeSetup
          and   #1                    ; A = #$01 or #$00
          asl
          asl
-         asl                         ; A = #$08 or #$00
+         asl
+         asl                         ; A = #$04 or #$00
          ora   MachineStatus         ; requires RAM1 read
-         sta   MachineStatus         ; set bit 3 of MachineStatus
+         sta   MachineStatus         ; set bit 2 of MachineStatus
                                      ; requires RAM1 write
-
-         rol
-         rol
-         rol
-         rol
-         and   #%00000110
-         tax                         ; X in (0,2,4,6)
+         and   #(HAS_MOUSE+HAS_JOYSTICK+HAS_128K)
+         lsr
+         lsr
+         lsr
+         lsr
+         tax                         ; X in (0,2,4,6,8,$A,$C,$E)
          ldy   kGameCounts, x
-         sty   GameCount             ; store total game count based on based on (has-joystick) X (has-128K)
+         sty   GameCount             ; store total game count based on based on (has-mouse) X (has-joystick) X (has-128K)
                                      ; requires RAM1 write
          sty   SAVE
          ldy   kGameCounts+1, x
          sty   GameCount+1           ; requires RAM1 write
          sty   SAVE+1
          lsr
-         tax                         ; X in (0,1,2,3)
+         tax                         ; X in (0,1,2,3,4,5,6,7)
          lda   kSearchIndexLo, x
-         sta   @searchIndexSrc+1     ; set up search index record based on (has-joystick) X (has-128K)
+         sta   @searchIndexSrc+1     ; set up search index record based on (has-mouse) X (has-joystick) X (has-128K)
          lda   kSearchIndexHi, x
          sta   @searchIndexSrc+2
          lda   kSearchCacheLo, x
-         sta   @searchCacheSrc+1     ; set up search cache record based on (has-joystick) X (has-128K)
+         sta   @searchCacheSrc+1     ; set up search cache record based on (has-mouse) X (has-joystick) X (has-128K)
          lda   kSearchCacheHi, x
          sta   @searchCacheSrc+2
          ldy   #5
@@ -520,43 +536,79 @@ OneTimeSetup
          !byte 1
 
 kSearchIndexLo
-         !byte <kSearchIndexRecord00
-         !byte <kSearchIndexRecord01
-         !byte <kSearchIndexRecord10
-         !byte <kSearchIndexRecord11
+         !byte <kSearchIndexRecord000
+         !byte <kSearchIndexRecord001
+         !byte <kSearchIndexRecord010
+         !byte <kSearchIndexRecord011
+         !byte <kSearchIndexRecord100
+         !byte <kSearchIndexRecord101
+         !byte <kSearchIndexRecord110
+         !byte <kSearchIndexRecord111
 kSearchIndexHi
-         !byte >kSearchIndexRecord00
-         !byte >kSearchIndexRecord01
-         !byte >kSearchIndexRecord10
-         !byte >kSearchIndexRecord11
+         !byte >kSearchIndexRecord000
+         !byte >kSearchIndexRecord001
+         !byte >kSearchIndexRecord010
+         !byte >kSearchIndexRecord011
+         !byte >kSearchIndexRecord100
+         !byte >kSearchIndexRecord101
+         !byte >kSearchIndexRecord110
+         !byte >kSearchIndexRecord111
 kSearchCacheLo
-         !byte <kSearchCacheRecord00
-         !byte <kSearchCacheRecord01
-         !byte <kSearchCacheRecord10
-         !byte <kSearchCacheRecord11
+         !byte <kSearchCacheRecord000
+         !byte <kSearchCacheRecord001
+         !byte <kSearchCacheRecord010
+         !byte <kSearchCacheRecord011
+         !byte <kSearchCacheRecord100
+         !byte <kSearchCacheRecord101
+         !byte <kSearchCacheRecord110
+         !byte <kSearchCacheRecord111
 kSearchCacheHi
-         !byte >kSearchCacheRecord00
-         !byte >kSearchCacheRecord01
-         !byte >kSearchCacheRecord10
-         !byte >kSearchCacheRecord11
-kSearchIndexRecord00
-         !source "build/index/search00.idx.a"
-kSearchIndexRecord01
-         !source "build/index/search01.idx.a"
-kSearchIndexRecord10
-         !source "build/index/search10.idx.a"
-kSearchIndexRecord11
-         !source "build/index/search11.idx.a"
-kSearchCacheRecord00
-         !source "build/index/cache00.idx.a"
-kSearchCacheRecord01
-         !source "build/index/cache01.idx.a"
-kSearchCacheRecord10
-         !source "build/index/cache10.idx.a"
-kSearchCacheRecord11
-         !source "build/index/cache11.idx.a"
+         !byte >kSearchCacheRecord000
+         !byte >kSearchCacheRecord001
+         !byte >kSearchCacheRecord010
+         !byte >kSearchCacheRecord011
+         !byte >kSearchCacheRecord100
+         !byte >kSearchCacheRecord101
+         !byte >kSearchCacheRecord110
+         !byte >kSearchCacheRecord111
+kSearchIndexRecord000
+         !source "build/index/search000.idx.a"
+kSearchIndexRecord001
+         !source "build/index/search001.idx.a"
+kSearchIndexRecord010
+         !source "build/index/search010.idx.a"
+kSearchIndexRecord011
+         !source "build/index/search011.idx.a"
+kSearchIndexRecord100
+         !source "build/index/search100.idx.a"
+kSearchIndexRecord101
+         !source "build/index/search101.idx.a"
+kSearchIndexRecord110
+         !source "build/index/search110.idx.a"
+kSearchIndexRecord111
+         !source "build/index/search111.idx.a"
+kSearchCacheRecord000
+         !source "build/index/cache000.idx.a"
+kSearchCacheRecord001
+         !source "build/index/cache001.idx.a"
+kSearchCacheRecord010
+         !source "build/index/cache010.idx.a"
+kSearchCacheRecord011
+         !source "build/index/cache011.idx.a"
+kSearchCacheRecord100
+         !source "build/index/cache100.idx.a"
+kSearchCacheRecord101
+         !source "build/index/cache101.idx.a"
+kSearchCacheRecord110
+         !source "build/index/cache110.idx.a"
+kSearchCacheRecord111
+         !source "build/index/cache111.idx.a"
 kGameCounts
-         !source "build/index/count00.a"
-         !source "build/index/count01.a"
-         !source "build/index/count10.a"
-         !source "build/index/count11.a"
+         !source "build/index/count000.a"
+         !source "build/index/count001.a"
+         !source "build/index/count010.a"
+         !source "build/index/count011.a"
+         !source "build/index/count100.a"
+         !source "build/index/count101.a"
+         !source "build/index/count110.a"
+         !source "build/index/count111.a"

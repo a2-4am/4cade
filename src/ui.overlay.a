@@ -279,8 +279,9 @@ gDrawingOnscreen=*+1
          jsr   MaybeRedrawUIForDHGR  ; transform for DHGR if this is a DHGR title screen
 @uidone  lda   #0
          sta   gDrawingOnscreen
-         bit   MachineStatus
-         bvc   +
+         lda   MachineStatus
+         and   #HAS_128K
+         beq   +
          bit   gGameToLaunchInfo
          bpl   +
          jmp   ShowOtherDHGRPage
@@ -315,8 +316,9 @@ MaybeRedrawUIForDHGR
 ; pages (e.g. adding a dot without changing the selected game), but
 ; gDrawingOnscreen tracks this and we reduce the redrawing to an
 ; absolute minimum to reduce flicker.
-         bit   MachineStatus
-         bvc   OVERLAYRTS
+         lda   MachineStatus
+         and   #HAS_128K
+         beq   OVERLAYRTS
          bit   gGameToLaunchInfo
          bpl   OVERLAYRTS
          jmp   RedrawForDHGR

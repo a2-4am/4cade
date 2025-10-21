@@ -218,12 +218,12 @@ SwitchToBank2
 ;      7 6 5 4 3 2 1 0
 ;      | | | | | | | +- bit 0 reserved
 ;      | | | | | | +--- bit 1 reserved
-;      | | | | | +----- bit 2 reserved
-;      | | | | +------- bit 3 = 1 if cheats are enabled
-;      | | | +--------- bit 4 = 1 if VidHD
-;      | | +----------- bit 5 = 1 if IIgs
-;      | +------------- bit 6 = 1 if 128K
-;      +--------------- bit 7 = 1 if joystick
+;      | | | | | +----- bit 2 = 1 if cheats are enabled
+;      | | | | +------- bit 3 = 1 if VidHD
+;      | | | +--------- bit 4 = 1 if IIgs
+;      | | +----------- bit 5 = 1 if 128K
+;      | +------------- bit 6 = 1 if joystick
+;      +--------------- bit 7 = 1 if mouse
 ; Use the bit masks defined in constants.a
          !if (RELBASE != $2000) and (* != MachineStatus) { !serious "MachineStatus=",*,", fix constants.a" }
          !byte $FD

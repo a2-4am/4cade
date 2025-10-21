@@ -21,8 +21,9 @@
 ;        graphics mode set to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 DGRActionSlideshow
-         bit   MachineStatus         ; only run DGR slideshow if we have 128K
-         bvc   DGRRTS
+         lda   MachineStatus         ; only run DGR slideshow if we have 128K
+         and   #HAS_128K
+         beq   DGRRTS
          jsr   LoadDGRTransition     ; load transition effect code at $6000
          jsr   BlankDGR              ; switch to DGR mode with initial blank screen
          jsr   okvs_iter             ; cycle through all listed DGR files

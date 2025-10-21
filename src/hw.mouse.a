@@ -1,0 +1,51 @@
+;license:MIT
+;(c) 2014 One Girl, One Laptop Productions (Quinn Dunki)
+;(c) 2023 Peter Ferrie
+;
+;  Mouse detection for 8-bit Apple II
+;  compatible with
+;  - Apple ][, ][+, //e, //e enhanced (finds Mouse II card in any slot)
+;  - Apple //c
+;  - Apple //c+
+;  - Apple IIgs
+;
+; Public API:
+; - HasMouse
+
+HasMouse
+; Figures out which slot (II[+/e/GS]) or port (//c) the mouse is in.
+; It moved around a lot over the years.
+; out:   C=1 if mouse found
+;        C=0 if mouse not found
+         ldx   #$C7
+HasMouse_loop
+         stx   HasMouse_loopModifySMC+2
+         ldy   #4
+HasMouse_loopModify
+         txa
+         pha
+         ldx   WG_MOUSE_OFFSETS, y
+HasMouse_loopModifySMC
+         lda   $C700, x              ; SMC high byte
+         eor   WG_MOUSE_IDBYTES, y
+         cmp   #1
+         pla
+         tax
+         bcs   HasMouse_nextSlot
+         dey
+         bpl   HasMouse_loopModify
+         sec
+         rts
+HasMouse_nextSlot
+         dex
+         cpx   #$C0
+         bne   HasMouse_loop
+         clc
+         rts
+
+; Mouse identification data
+; Magic 5-byte pattern that uniquely identifies the mouse card
+WG_MOUSE_OFFSETS:
+         !byte $05, $07, $0B, $0C, $FB
+WG_MOUSE_IDBYTES:
+         !byte $38, $18, $01, $20, $D6

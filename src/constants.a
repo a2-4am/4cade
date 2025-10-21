@@ -371,12 +371,13 @@ CHEAT_CATEGORY    = %00001111
 ;                       +-- your bit here! last one!
 
 ; AND masks for MachineStatus
-HAS_JOYSTICK   = %10000000
-HAS_128K       = %01000000
-IS_IIGS        = %00100000           ; /!\ do not use this to gate SHR, use SUPPORTS_SHR instead
-HAS_VIDHD      = %00010000
-SUPPORTS_SHR   = %00110000
-CHEATS_ENABLED = %00001000
+HAS_MOUSE      = %10000000
+HAS_JOYSTICK   = %01000000
+HAS_128K       = %00100000
+IS_IIGS        = %00010000           ; /!\ do not use this to gate SHR, use SUPPORTS_SHR instead
+HAS_VIDHD      = %00001000
+SUPPORTS_SHR   = %00011000
+CHEATS_ENABLED = %00000100
 
 ; AND masks for gMegaAttractModeFilter
 ATTRACT_DEMO        = %00000001

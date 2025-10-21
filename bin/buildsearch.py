@@ -15,10 +15,10 @@ import sys
 gSearchIndex = 0x6000 # must match gSearchIndex in src/constants.a
 
 # indexes into |flags| as string
-iDHGRTitle = 2
-iCheatCategory = 3
-iSingleLoad = 4
-iLaunchArtwork = 5
+iDHGRTitle = 3
+iCheatCategory = 4
+iSingleLoad = 5
+iLaunchArtwork = 6
 
 # maps of flag raw string value -> value in final flags byte
 kHasDHGRTitle =  {'0': 0, '1': 128}
