@@ -81,7 +81,7 @@ $ sudo cp bin/release/cadius /usr/local/bin/
 $ cd -
 ```
 
-To compile Exomizer, download the latest release from the [Exomizer home page][(https://bitbucket.org/magli143/exomizer/wiki/Home), then enter the following (substituting actual filenames):
+To compile Exomizer, download the latest release from the [Exomizer home page](https://bitbucket.org/magli143/exomizer/wiki/Home), then enter the following (substituting actual filenames):
 
 ``` shell
 $ 7z x exomizer-VERSION.zip
