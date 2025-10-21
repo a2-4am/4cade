@@ -1,9 +1,13 @@
 a = new ActiveXObject("scripting.filesystemobject")
 b = a.opentextfile("res\\GAMES.CONF")
-f00 = a.createtextfile("build\\filter00.txt")
-f01 = a.createtextfile("build\\filter01.txt")
-f10 = a.createtextfile("build\\filter10.txt")
-f11 = a.createtextfile("build\\filter11.txt")
+f000 = a.createtextfile("build\\filter000.txt")
+f001 = a.createtextfile("build\\filter001.txt")
+f010 = a.createtextfile("build\\filter010.txt")
+f011 = a.createtextfile("build\\filter011.txt")
+f100 = a.createtextfile("build\\filter100.txt")
+f101 = a.createtextfile("build\\filter101.txt")
+f110 = a.createtextfile("build\\filter110.txt")
+f111 = a.createtextfile("build\\filter111.txt")
 
 while (!b.atendofstream)
 {
@@ -26,35 +30,67 @@ while (!b.atendofstream)
     continue
   }
 
+  if (c.substr(0, 3) == "000")
+  {
+    f000.writeline(c.substr(c.indexOf("=") + 1))
+  }
+
   if (c.substr(0, 2) == "00")
   {
-    f00.writeline(c.substr(c.indexOf("=") + 1))
+    f001.writeline(c.substr(c.indexOf("=") + 1))
+  }
+
+  if ((c.substr(0, 1) == "0") && c.substr(2, 1) == "0"))
+  {
+    f010.writeline(c.substr(c.indexOf("=") + 1))
   }
 
   if (c.substr(0, 1) == "0")
   {
-    f01.writeline(c.substr(c.indexOf("=") + 1))
+    f011.writeline(c.substr(c.indexOf("=") + 1))
+  }
+
+  if (c.substr(1, 2) == "00")
+  {
+    f100.writeline(c.substr(c.indexOf("=") + 1))
   }
 
   if (c.substr(1, 1) == "0")
   {
-    f10.writeline(c.substr(c.indexOf("=") + 1))
+    f101.writeline(c.substr(c.indexOf("=") + 1))
   }
 
-  f11.writeline(c.substr(c.indexOf("=") + 1))
+  if (c.substr(2, 1) == "0")
+  {
+    f110.writeline(c.substr(c.indexOf("=") + 1))
+  }
+
+  f111.writeline(c.substr(c.indexOf("=") + 1))
 }
 
-f11.close()
-f10.close()
-f01.close()
-f00.close()
+f111.close()
+f110.close()
+f101.close()
+f100.close()
+f011.close()
+f010.close()
+f001.close()
+f000.close()
 
 x = new ActiveXObject("wscript.shell")
-x.run('cmd /c %python% bin\\buildcache.py < build\\filter00.txt > build\\cache00.a', 0, 1)
-x.run('cmd /c %python% bin\\buildcache.py < build\\filter01.txt > build\\cache01.a', 0, 1)
-x.run('cmd /c %python% bin\\buildcache.py < build\\filter10.txt > build\\cache10.a', 0, 1)
-x.run('cmd /c %python% bin\\buildcache.py < build\\filter11.txt > build\\cache11.a', 0, 1)
-x.run('cmd /c %acme% -o res\\CACHE00.IDX build\\cache00.a', 0, 1)
-x.run('cmd /c %acme% -o res\\CACHE01.IDX build\\cache01.a', 0, 1)
-x.run('cmd /c %acme% -o res\\CACHE10.IDX build\\cache10.a', 0, 1)
-x.run('cmd /c %acme% -o res\\CACHE11.IDX build\\cache11.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter000.txt > build\\cache000.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter001.txt > build\\cache001.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter010.txt > build\\cache010.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter011.txt > build\\cache011.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter110.txt > build\\cache100.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter111.txt > build\\cache101.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter110.txt > build\\cache110.a', 0, 1)
+x.run('cmd /c %python% bin\\buildcache.py < build\\filter111.txt > build\\cache111.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE000.IDX build\\cache000.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE001.IDX build\\cache001.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE010.IDX build\\cache010.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE011.IDX build\\cache011.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE100.IDX build\\cache100.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE101.IDX build\\cache101.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE110.IDX build\\cache110.a', 0, 1)
+x.run('cmd /c %acme% -o res\\CACHE111.IDX build\\cache111.a', 0, 1)

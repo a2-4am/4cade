@@ -22,16 +22,16 @@ dhgrlog = a.opentextfile("build\\DHGR.TITLES.LOG").readall().replace(/\r\n/, "\n
 for (i = 0; i < entries.length; i++)
 {
   bits = entries[i].indexOf(",")
-  dhgr = entries[i].substr(2, 1)
+  dhgr = entries[i].substr(3, 1)
 
   if (WScript.Arguments(1).substr(WScript.Arguments(1).length - 3, 1) == "0")
   {
     dhgr = "0"
   }
 
-  cheat = entries[i].substr(3, 1)
-  sng = entries[i].substr(4, 1)
-  art = entries[i].substr(5, 1)
+  cheat = entries[i].substr(4, 1)
+  sng = entries[i].substr(5, 1)
+  art = entries[i].substr(6, 1)
   eq = entries[i].indexOf("=")
   key = ((eq >= 0) ? entries[i].substr(bits + 1, eq - bits - 1) : entries[i])
   value = ((eq >= 0) ? entries[i].substr(eq + 1) : "")

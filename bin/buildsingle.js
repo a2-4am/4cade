@@ -1,6 +1,6 @@
 a = new ActiveXObject("scripting.filesystemobject")
 x = new ActiveXObject("wscript.shell")
-b = x.exec('findstr /b \"....1\" build\\DISPLAY.CONF')
+b = x.exec('findstr /b \".....1\" build\\DISPLAY.CONF')
 
 entries = []
 
