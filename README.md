@@ -66,7 +66,7 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 For Debian (or Ubuntu or other derivatives), you can install some of the prerequisties through `apt` by opening a terminal window and entering the following:
 
 ``` shell
-$ sudo apt install acme git parallel 7zip build-essentials
+$ sudo apt install acme git parallel 7zip build-essential
 ```
 
 Other tools will need to be compiled from source.
