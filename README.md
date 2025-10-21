@@ -4,6 +4,8 @@
 
 # Building the code
 
+Skip to [Mac OS X](#mac-os-x) / [Windows](#windows) / [Linux](#linux)
+
 ## Mac OS X
 
 You will need
