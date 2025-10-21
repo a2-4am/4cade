@@ -13,16 +13,17 @@ You will need
  - [Cadius](https://github.com/mach-kernel/cadius)
  - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
 
-As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/).
+As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/). Open `Terminal.app` and enter the following:
 
 ``` shell
 $ brew tap lifepillar/appleii
 $ brew install acme parallel mach-kernel-cadius exomizer
 ```
 
-Then open a terminal window and type
+Now you're ready to build Total Replay:
 
 ``` shell
+$ git clone https://github.com/a2-4am/4cade.git
 $ cd 4cade/
 $ make
 ```
@@ -44,7 +45,7 @@ You will need
 
 (Those tools will need to be added to your command-line PATH.)
 
-Then open a `CMD.EXE` window and type
+Now you're ready to build Total Replay. Open `CMD.EXE` and enter the following:
 
 ```
 C:\> cd 4cade
@@ -60,27 +61,35 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 ## Linux
 
-You will need
- - [Cadius](https://github.com/mach-kernel/cadius)
- - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
-
-Most of the packages are already available pre-compiled and can be installed with the following
+For Debian (or Ubuntu or other derivatives), you can install some of the prerequisties through `apt` by opening a terminal window and entering the following:
 
 ``` shell
-$ sudo apt-get install git parallel acme
+$ sudo apt install acme git parallel 7zip
 ```
 
-To compile Cadius enter the following
+Other tools will need to be compiled from source, for which you will need a compiler.
+
+To install Cadius, enter the following at the terminal prompt:
 
 ``` shell
 $ git clone https://github.com/mach-kernel/cadius.git
 $ cd cadius
 $ make
-$ cd bin/release
-$ sudo cp cadius /usr/bin
+$ sudo cp bin/release/cadius /usr/local/bin/
+$ cd -
 ```
 
-Then open a terminal window and type
+To compile Exomizer, download the latest release from the [Exomizer home page][(https://bitbucket.org/magli143/exomizer/wiki/Home), then enter the following (substituting actual filenames):
+
+``` shell
+$ 7z x exomizer-VERSION.zip
+$ cd exomizer-VERSION
+$ make
+$ sudo cp exomizer /usr/local/bin/
+$ cd -
+```
+
+Now you're ready to build Total Replay:
 
 ``` shell
 $ git clone https://github.com/a2-4am/4cade.git
