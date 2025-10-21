@@ -1,0 +1,37 @@
+# Build artifacts
+build/
+*.o
+*.lst
+*.log
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# macOS files
+.DS_Store
+._*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+LICENSE
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Docker files (don't need these in the build context)
+.dockerignore
+docker-compose.yml
+
+# Temporary files
+*.tmp
+*.bak

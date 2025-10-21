@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  builder:
+    image: 4cade-builder
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/build
+    working_dir: /build
+    command: make
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      - BUILD_PARALLEL=1
+
+  # Service for running shell commands in the build environment
+  shell:
+    image: 4cade-builder
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/build
+    working_dir: /build
+    command: /bin/bash
+    user: "${UID:-1000}:${GID:-1000}"
+    stdin_open: true
+    tty: true
+
+  # Service for cleaning build artifacts
+  clean:
+    image: 4cade-builder
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/build
+    working_dir: /build
+    command: make clean
+    user: "${UID:-1000}:${GID:-1000}"
