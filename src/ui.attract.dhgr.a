@@ -3,6 +3,7 @@
 ; Double hi-res slideshows
 ;
 ; Public functions
+; - AllDHGRSlideshow
 ; - DHGRTitleSlideshow
 ; - DHGRActionSlideshow
 ; - DHGRSingle
@@ -13,6 +14,26 @@
 ; - DrawGameTitleInActionSlideshow
 ; - RedrawForDHGR
 ;
+
+;------------------------------------------------------------------------------
+; AllSHRSlideshow
+; execute mega-attract mode of all DHGR titles & artwork (and nothing else)
+;
+; safe to call if machine can not display DHGR graphics (clears carry
+; and exits)
+;
+; in:    none
+; out:   C=0 if machine can not display DHGR
+;        otherwise all registers and flags clobbered
+;------------------------------------------------------------------------------
+AllDHGRSlideshow
+         clc
+         lda   MachineStatus         ; only run DHGR slideshow if we have 128K
+         and   #HAS_128K
+         beq   DHGRRTS0
+         lda   #(ATTRACT_DHGR_TITLE|ATTRACT_DHGR_ACTION)
+         sta   gMegaAttractModeFilter
+         jmp   MegaAttractMode
 
 ;------------------------------------------------------------------------------
 ; DHGRTitleSlideshow

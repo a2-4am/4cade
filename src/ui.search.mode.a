@@ -22,6 +22,7 @@ kInputError    = 9
 kInputJoystick = 10
 kInputQuit     = 11
 kInputSHR      = 12
+kInputDHGR     = 13
 
 InputDispatchTableLo
          !byte <OnSearch
@@ -37,6 +38,7 @@ InputDispatchTableLo
          !byte <Joystick
          !byte <OnQuit
          !byte <AllSHRSlideshow
+         !byte <AllDHGRSlideshow
 InputDispatchTableHi
          !byte >OnSearch
          !byte >OnClear
@@ -51,8 +53,9 @@ InputDispatchTableHi
          !byte >Joystick
          !byte >OnQuit
          !byte >AllSHRSlideshow
+         !byte >AllDHGRSlideshow
 
-kNumInputKeys = 13
+kNumInputKeys = 14
                                      ; number of entries in next 2 tables (each)
 InputKeys
          !byte $83                   ; Ctrl-C = toggle cheat mode
@@ -70,6 +73,7 @@ InputKeys
          !byte $90                   ; Ctrl-P = launch joystick calibration program
          !byte $91                   ; Ctrl-Q = quit
          !byte $80                   ; Ctrl-@ = SHR-only slideshow
+         !byte $9E                   ; Ctrl-^ = DHGR-only slideshow
 InputKeyDispatch
          !byte kInputCheat
          !byte kInputCredits
@@ -84,6 +88,7 @@ InputKeyDispatch
          !byte kInputJoystick
          !byte kInputQuit
          !byte kInputSHR
+         !byte kInputDHGR
 
 .noKeyMatch
          jsr   IsSearchKey

@@ -38,6 +38,7 @@ kBrowseJoystick = 10
 kBrowseQuit     = 11
 kBrowseSHR      = 12
 kBrowseRandom   = 13
+kBrowseDHGR     = 14
 
          ldy   #kNumBrowseKeys
 -        dey
@@ -161,6 +162,7 @@ BrowseDispatchTableLo
          !byte <OnQuit
          !byte <AllSHRSlideshow
          !byte <OnBrowseRandom
+         !byte <AllDHGRSlideshow
 BrowseDispatchTableHi
          !byte >OnBrowseSearch
          !byte >OnBrowsePrevious
@@ -176,11 +178,13 @@ BrowseDispatchTableHi
          !byte >OnQuit
          !byte >AllSHRSlideshow
          !byte >OnBrowseRandom
+         !byte >AllDHGRSlideshow
 
-kNumBrowseKeys = 16
+kNumBrowseKeys = 17
                                      ; number of entries in next 2 tables (each)
 BrowseKeys
          !byte $80                   ; Ctrl-@ = SHR-only slideshow
+         !byte $9E                   ; Ctrl-^ = DHGR-only slideshow
          !byte $83                   ; Ctrl-C = toggle cheat mode
          !byte $81                   ; Ctrl-A = about
          !byte $AF                   ; '/' = help
@@ -198,6 +202,7 @@ BrowseKeys
          !byte $AA                   ; '*' = select random
 BrowseKeyDispatch
          !byte kBrowseSHR
+         !byte kBrowseDHGR
          !byte kBrowseCheat
          !byte kBrowseCredits
          !byte kBrowseHelp
