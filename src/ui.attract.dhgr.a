@@ -16,7 +16,7 @@
 ;
 
 ;------------------------------------------------------------------------------
-; AllSHRSlideshow
+; AllDHGRSlideshow
 ; execute mega-attract mode of all DHGR titles & artwork (and nothing else)
 ;
 ; safe to call if machine can not display DHGR graphics (clears carry
