@@ -125,6 +125,7 @@ okvs_get
          sty   WINDEX
          sty   WINDEX+1
          lda   (SRC),y
+         beq   @fail                 ; key is empty, fail immediately
          tay
          iny
          sty   KEYLEN

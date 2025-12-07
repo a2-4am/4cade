@@ -13,6 +13,7 @@
          +COPY_TO_0 start, end
          ;X=0
          jsr   iBuildHGRTables
+         jsr   iReadyToPaint
          jmp   loop
 
 start

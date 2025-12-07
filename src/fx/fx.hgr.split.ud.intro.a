@@ -15,6 +15,7 @@ col2 = $FF
          sta   col1
          lda   #$27
          sta   col2
+         jsr   iReadyToPaint
 @introloop
          lda   #$17
          ldy   col1

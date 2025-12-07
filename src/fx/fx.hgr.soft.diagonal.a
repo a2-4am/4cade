@@ -31,6 +31,7 @@ counter = $ff
 
          lda   #39
          sta   col
+         jsr   iReadyToPaint
 ColLoop
          lda   #23
          sta   row

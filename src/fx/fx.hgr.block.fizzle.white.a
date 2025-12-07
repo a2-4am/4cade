@@ -11,6 +11,7 @@
 
          +LDADDR Coordinates
          +ST16 coord
+         jsr   iReadyToPaint
 @whiteloop
          ldy   #0
          lda   (coord),y

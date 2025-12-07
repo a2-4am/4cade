@@ -9,6 +9,7 @@
 ; e.g. iBuildHGRTables instead of BuildHGRTables.
 ;
 ; Public functions:
+; - ReadyToPaint
 ; - WaitForKeyWithTimeout
 ; - BuildHGRTables
 ; - BuildHGRMirrorTables
@@ -35,6 +36,50 @@
 ; - RippleCoordinates3Bit
 
          !source "src/fx/macros.a"
+
+ReadyToPaint
+; in:    none
+; out:   all flags/registers preserved
+;        unless key has been pressed
+         php
+         bit   KBD
+         bmi   +
+         pha
+         tya
+         pha
+         lda   PTR
+         pha
+         lda   PTR+1
+         pha
+         +LD16 gNextMegaAttractGame
+         +ST16 PTR
+         ldy   #0
+         lda   (PTR), y
+         tay
+-        lda   (PTR), y
+         sta   gLastMegaAttractFilename, y
+         dey
+         bpl   -
+
+         lda   #$60
+         sta   $300
+         jsr   $300
+
+         pla
+         sta   PTR+1
+         pla
+         sta   PTR
+         pla
+         tay
+         pla
+         plp
+         rts
++        plp
+         sta   READMAINMEM
+         sta   WRITEMAINMEM
+         pla
+         pla
+         rts
 
 WaitForKeyWithTimeout
 ; in:    A = timeout length (like standard $FCA8 wait routine)

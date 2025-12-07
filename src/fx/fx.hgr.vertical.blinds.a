@@ -5,6 +5,8 @@
 !to "build/FX.INDEXED/VERTICAL.BLINDS",plain
 *=$6000
 
+         !source "src/fx/macros.a"
+
         ldx    #0
         clc
 
@@ -199,6 +201,7 @@ patchtbl
         lda    #$60
         sta    ($fe),y
 
+        jsr    iReadyToPaint
         jmp    shift
 
 loop1   inx

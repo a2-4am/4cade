@@ -10,6 +10,7 @@ row2 = $ff
 
          !source "src/fx/macros.a"
 
+         jsr   iReadyToPaint
          lda   #$00
          sta   row1
          lda   #$BF

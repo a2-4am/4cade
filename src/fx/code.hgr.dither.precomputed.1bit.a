@@ -30,6 +30,7 @@
          dex
          bpl   -
 
+         jsr   iReadyToPaint
          jsr   .InputLoop
 
          bit   KBD

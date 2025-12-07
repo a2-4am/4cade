@@ -29,6 +29,9 @@ kAttractModeFilters
 ;------------------------------------------------------------------------------
 MegaAttractMode
          jsr   SwitchToBank1
+         lda   #$00
+         sta   gLastMegaAttractFilename
+MegaNext
          ldx   #$FF
          txs
 
@@ -68,17 +71,17 @@ MegaAttractMode
          +LD16 @mname                ; A/Y = address of module name
          jsr   RunAttractModule
          lda   KBD
-         bpl   MegaAttractMode
+         bpl   MegaNext
          cmp   #$8D                  ; Enter plays the game shown on screen.
-         bne   +                     ; Any other key switches to Search Mode.
+         bne   jmp_to_search         ; Any other key switches to Search Mode.
          jsr   ReloadSearchIndexOnly
-         +LD16 gLastMegaAttractGame
-         +ST16 @game
          jsr   okvs_find
          !word SearchIndexHandle
-@game    !word $FDFD                 ; SMC
-         jsr   PlayGameInAY          ; (might return if user hits Ctrl-Reset)
-+        jmp   SearchMode
+         !word gLastMegaAttractFilename
+         bcs   jmp_to_search         ; Game not found, return to Search Mode
+         jsr   PlayGameInAY          ; (this JSR might return if user hits Ctrl-Reset)
+jmp_to_search
+         jmp   SearchMode
 
 ;------------------------------------------------------------------------------
 ; MiniAttractMode
@@ -211,11 +214,11 @@ RunAttractModule
          lda   (PTR), y
          tay
 -        lda   (PTR), y
-         sta   DemoFilename, y
+         sta   gLastMegaAttractFilename, y
          dey
          bpl   -
-         +LDADDR DemoFilename
-         +ST16 gLastMegaAttractGame  ; save game filename in LC in case user hits Return to launch
+         +LDADDR gLastMegaAttractFilename
+         +ST16 gNextMegaAttractGame  ; save game filename in LC in case user hits Return to launch
          +ST16 xfile
 
          jsr   ClearScreens          ; avoid seeing code load into the HGR page
@@ -290,5 +293,5 @@ RunAttractModule
          !byte >GRSingle
          !byte >DGRSingle
 
-DemoFilename
+gLastMegaAttractFilename
          !byte 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15

@@ -28,8 +28,8 @@
 ; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
-; 6000..9FFF - search index (506 games = $3D16/$4000)
-; A000..BCFF - search cache (506 games = $1887/$1D00)
+; 6000..9FFF - search index (511 games = $3DC0/$4000)
+; A000..BCFF - search cache (511 games = $19CE/$1D00)
 ; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;
@@ -340,6 +340,7 @@ iReverseCoordinates3Bit   = iRippleCoordinates2Bit-3
 iRippleCoordinates3Bit    = iReverseCoordinates3Bit-3
 iSetupPrecomputed3Bit     = iRippleCoordinates3Bit-3
 iPrelaunchInit            = iSetupPrecomputed3Bit-3
+iReadyToPaint             = iPrelaunchInit-3
 
 MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
                             ; bit 6 = 1 if SSI-263 speech chip present (Mockingboard "B"-"D")

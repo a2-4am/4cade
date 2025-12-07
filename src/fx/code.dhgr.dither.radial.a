@@ -33,9 +33,13 @@ input          = $FE      ; word
          +ST16 evenrow_ptr
          +LDADDR oddrow_masks
          +ST16 oddrow_ptr
+
+         jsr   iReadyToPaint
          jsr   FullRadial
+
          bit   KBD
          bmi   Exit
+
          lda   #<no_masks
          sta   <evenrow_ptr
          sta   <oddrow_ptr

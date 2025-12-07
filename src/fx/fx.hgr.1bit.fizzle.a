@@ -33,7 +33,8 @@ copymasks = $6200                    ; [256 bytes, page-aligned]
          bne   -
          txa
          bne   --
-         rts                         ; exit via LFSR code on zero page
+         jmp   iReadyToPaint
+                                     ; exit via LFSR code on zero page
 
 start
 !pseudopc 0 {

@@ -19,7 +19,7 @@
 
 gGameToLaunch
          !word $FFFF
-gLastMegaAttractGame
+gNextMegaAttractGame
          !word $FFFF
 
 ;------------------------------------------------------------------------------
@@ -66,19 +66,19 @@ _gameToLaunchExit
 ; in:    A/Y points to a key in gSlideshowStore
 ; out:   C clear if game exists and is playable on current machine, and
 ;          (SAVE) -> game display name, and
-;          (gLastMegaAttractGame) -> game filename
+;          (gNextMegaAttractGame) -> game filename
 ;        C set otherwise
 ;        clobbers $FF, PTR
 ;        all registers clobbered
 ;------------------------------------------------------------------------------
 FindGame
-         +ST16 gLastMegaAttractGame
+         +ST16 gNextMegaAttractGame
          jsr   okvs_next_field       ; (PTR) -> OKVS value (filename or empty string)
                                      ; Y=0
          lda   (PTR), y
          beq   +
          +LD16 PTR
-         +ST16 gLastMegaAttractGame
+         +ST16 gNextMegaAttractGame
 +        jsr   okvs_next_field_PTR_is_already_set ; (PTR) -> game display name
          +LD16 PTR                   ; A/Y -> game display name
          +ST16 SAVE                  ; (SAVE) -> game display name

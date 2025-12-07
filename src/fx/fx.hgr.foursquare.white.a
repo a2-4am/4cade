@@ -54,6 +54,7 @@
          lda   #>Coordinates
          sta   $FF
          ldy   #$00
+         jsr   iReadyToPaint
 @loop1
          lda   ($FE),y
          bpl   @copy

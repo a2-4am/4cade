@@ -15,7 +15,7 @@ shrhi = $38                          ; $C8 bytes, indexed as shrhi-1,x
          ;X=0
          +COPY_SCB_AND_PALETTES
          ;WRITEAUXMEM active
-
+         jsr   iReadyToPaint
          jmp   loop1
 
 start

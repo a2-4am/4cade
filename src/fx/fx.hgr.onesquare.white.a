@@ -19,6 +19,7 @@
          sta   $FE
          lda   #>Coordinates
          sta   $FF
+         jsr   iReadyToPaint
 --       ldx   $FA
 -        lda   $FA
          sta   ($FE), y

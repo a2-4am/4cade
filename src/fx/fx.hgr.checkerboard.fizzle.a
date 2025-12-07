@@ -104,6 +104,7 @@ shapemask = $8000                    ; [$2000 bytes, page-aligned]
          bne   -
          txa
          bne   --
+         jsr   iReadyToPaint
          jsr   $1
          lda   (src+1), y            ; last lousy byte (because LFSR never hits 0)
          sta   (dst+1), y

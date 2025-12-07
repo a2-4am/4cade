@@ -8,6 +8,7 @@
          !source "src/constants.a"
 
          ldx   #191
+         jsr   iReadyToPaint
 
 ---      jsr   WaitForVBL
          lda   #$40

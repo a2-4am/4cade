@@ -30,6 +30,7 @@ input          = $FE      ; word
          +ST16 input
          +LDADDR EndCoordinates1Bit-2
          +ST16 reverse_input
+         jsr   iReadyToPaint
          jmp   Loop
 Exit     rts
 Loop     ldy   #0

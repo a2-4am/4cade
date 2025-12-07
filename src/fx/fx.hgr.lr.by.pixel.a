@@ -12,6 +12,7 @@ col = $ff
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
+         jsr   iReadyToPaint
 @jump
          jmp   @copy                 ; skip clear the first time
 

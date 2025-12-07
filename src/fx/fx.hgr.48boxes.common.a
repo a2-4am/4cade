@@ -37,6 +37,8 @@ InitOnce
          dex
          bpl   -
 
+         jsr   iReadyToPaint
+
          ; exit via MainLoop
          jmp   5                     ; must match MainLoop address in code.hgr.48boxes.a
 

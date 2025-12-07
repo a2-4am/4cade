@@ -123,6 +123,7 @@ BoxesY    = $BEB0                    ; [$50 bytes][accessed via BoxesY-1][should
          ;X=0
          +COPY_SCB_AND_PALETTES
          ;WRITEAUXMEM active
+         jsr   iReadyToPaint
          jmp   MainLoop
 
 siderows !byte 1,5,9,13,17,21

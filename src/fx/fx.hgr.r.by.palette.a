@@ -14,6 +14,7 @@ col = $ff
 
          lda   #0
          sta   col
+         jsr   iReadyToPaint
 ColLoop
          lda   #0
          sta   row

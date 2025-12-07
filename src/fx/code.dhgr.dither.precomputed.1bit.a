@@ -30,10 +30,8 @@
          dex
          bpl   -
 
+         jsr   iReadyToPaint
          jsr   .InputLoop
-
-         bit   KBD
-         bmi   .start
 
          ; phase 2 - in order, without additional masking
          +COPY_TO_0 .start, .end

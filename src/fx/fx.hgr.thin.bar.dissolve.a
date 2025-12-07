@@ -16,6 +16,7 @@ dst  = $26
          sta   row1
          lda   #$BF
          sta   row2
+         jsr   iReadyToPaint
 @loop    lda   row1
          jsr   HGRCalc
          ldy   #$27

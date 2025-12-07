@@ -9,6 +9,7 @@
          jsr   iBuildHGRTables
          jsr   iBuildDHGRMirrorCols
          +COPY_TO_0 .start, .end
+         jsr   iReadyToPaint
          jmp   .InputLoop
 
 .start

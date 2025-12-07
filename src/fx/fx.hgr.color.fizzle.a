@@ -14,6 +14,7 @@ color = $FD               ; byte
 
          lda   #$80
          sta   phase
+         jsr   iReadyToPaint
 @outerloop
          lda   #0
          sta   color

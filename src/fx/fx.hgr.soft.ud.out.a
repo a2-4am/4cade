@@ -13,6 +13,7 @@ row = $fd
 
          lda   #$FA
          sta   row
+         jsr   iReadyToPaint
 @rowloop
          lda   #6
          sta   maskindex

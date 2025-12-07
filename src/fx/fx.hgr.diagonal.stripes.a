@@ -28,6 +28,7 @@ mask2    = $F7
          sta   mask1
          lda   #13
          sta   mask2
+         jsr   iReadyToPaint
 
 RowLoop
          ldx   row1

@@ -11,6 +11,7 @@
 
          +LDADDR Coordinates
          +ST16 coord
+         jsr   iReadyToPaint
 @loop2
          ldy   #0
          lda   (coord),y

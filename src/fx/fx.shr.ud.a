@@ -18,7 +18,7 @@ reverseshrhi = $BE01                 ; $C8 bytes
          ;X=0
          +COPY_SCB_AND_PALETTES
          ;WRITEAUXMEM active
-
+         jsr   iReadyToPaint
          ldx   #$C8
          jmp   loop
 

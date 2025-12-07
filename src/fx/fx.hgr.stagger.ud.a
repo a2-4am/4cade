@@ -16,6 +16,7 @@ row2 = $ff
          lda   #$2E
          sta   row2
          ldy   #$27
+         jsr   iReadyToPaint
 @loop1   lda   row1
          jsr   HGRHalfBlockCopy
          dey

@@ -34,7 +34,8 @@ copymasks = $80                      ; [128 bytes, should not cross page boundar
          bne   -
          txa
          bne   --
-         rts                         ; exit via LFSR code on zero page
+         jmp   iReadyToPaint
+                                     ; exit via LFSR code on zero page
 
 start
 !pseudopc 0 {

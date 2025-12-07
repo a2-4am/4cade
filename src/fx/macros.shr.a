@@ -126,6 +126,7 @@
          +BUILD_SHR_LOOKUP_TABLES .shrlo, .shrhi
 
          +COPY_TO_0 .startzp, .endzp
+         jsr   iReadyToPaint
 
          +WRITE_AUX
          jsr   $0

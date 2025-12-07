@@ -198,7 +198,7 @@ SHRArtworkCallback
          bmi   SHRRTS
 
          +ST16 IndexedSHRFilename
-         +ST16 gLastMegaAttractGame
+         +ST16 gNextMegaAttractGame
 
          jsr   FindGame
          ; if game is not found (C will be set here), it means it can't be played on

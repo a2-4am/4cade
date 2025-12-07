@@ -45,6 +45,7 @@ copymasks = $6200                    ; [256 bytes, page-aligned, duplicated in a
          bne   -
          txa
          bne   --
+         jsr   iReadyToPaint
          jmp   copyaux              ; exit via LFSR code on zero page
 
 start

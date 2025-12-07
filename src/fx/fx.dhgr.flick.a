@@ -19,6 +19,7 @@ startrows_by_column = $2C1           ; [$28 bytes, main memory only]
          dex
          bne   -
          jsr   iBuildHGRTables
+         jsr   iReadyToPaint
          jmp   loop
 
 start

@@ -15,6 +15,7 @@ col = $ff
 
          lda   #5
          sta   maskindex
+         jsr   iReadyToPaint
 MaskLoop
          ldx   maskindex
          lda   even_maskslo,x

@@ -275,9 +275,10 @@ BuildingPhase
          sta   auxsrc_hgrhi-1, x
          dex
          bne   -
-         rts
+-        rts
 
 DrawingPhase
+         jsr   iReadyToPaint
          sta   $C001                 ; 80STORE mode so we can bank $2000/aux in & out with STA $C055 & $C054
 MainLoop ldx   #48
 BoxLoop  ldy   DHGR48BoxStages-1, x  ; for each box, get its current stage

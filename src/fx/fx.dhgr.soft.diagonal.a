@@ -47,9 +47,10 @@ exit=*+3
 
          lda   #40
          sta   col
+         jsr   iReadyToPaint
 
 ColLoop
-         lda   $c000
+         lda   KBD
          bmi   exit
          dec   col
          dec   counter

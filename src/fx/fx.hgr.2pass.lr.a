@@ -9,6 +9,7 @@ row = $FF
 
          !source "src/fx/macros.a"
 
+         jsr   iReadyToPaint
          lda   #$00
          sta   @h1
          sta   @h2

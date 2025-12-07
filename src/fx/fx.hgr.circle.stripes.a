@@ -36,6 +36,7 @@ mask2    = $F7
          sta   copymasks_odd1, y
          dey
          bpl   -
+         jsr   iReadyToPaint
 
 RowLoop
          ldx   row1

@@ -16,6 +16,7 @@ maskindex = $FD           ; byte
          sta   phase
          lda   #0
          sta   maskindex
+         jsr   iReadyToPaint
 @outerloop
          +LDADDR Coordinates
          +ST16 coord

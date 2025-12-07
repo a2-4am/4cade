@@ -13,6 +13,7 @@ counter = $ff
          !source "src/fx/macros.a"
          !source "src/constants.a"
 
+         jsr   iReadyToPaint
          lda   #(40+12)
          sta   counter
 

@@ -22,6 +22,7 @@ rowcounts_by_column = $3C1           ; [$28 bytes]
          sta   rowcounts_by_column, y
          dey
          bpl   -
+         jsr   iReadyToPaint
 frameloop
          ldy   #$27
 columnloop

@@ -15,6 +15,7 @@ col2 = $ff
          sta   col1
          lda   #$27
          sta   col2
+         jsr   iReadyToPaint
 @outerloop1
          lda   #$2E
          sta   row

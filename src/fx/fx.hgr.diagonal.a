@@ -19,6 +19,7 @@ counter = $ff
 
          lda   #39
          sta   col
+         jsr   iReadyToPaint
 @colloop
          lda   #23
          sta   row

@@ -31,6 +31,7 @@ col2 = $ff
          sta   col1
          lda   #39
          sta   col2
+         jsr   iReadyToPaint
 ColLoop
          lda   #6
          sta   maskindex

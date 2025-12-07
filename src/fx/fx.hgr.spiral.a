@@ -15,6 +15,7 @@
          lda   #$00
          sta   $FA
          sta   $FC
+         jsr   iReadyToPaint
 @outerloop
          lda   $FC
          sta   $FE

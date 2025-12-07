@@ -76,6 +76,7 @@
 
          lda   #$01
          sta   $FD
+         jsr   iReadyToPaint
 @outerloop
          dec   $FD
          lda   #<Coordinates

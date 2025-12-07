@@ -13,6 +13,7 @@ row = $FF
          sta   @h1
          lda   #$27
          sta   @h2
+         jsr   iReadyToPaint
 @outerloop
          lda   #$BF
          sta   row

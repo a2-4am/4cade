@@ -25,6 +25,7 @@ addrs=$7F                            ; [128 bytes]
          +COPY_SCB_AND_PALETTES
          ;WRITEAUXMEM active
 
+         jsr   iReadyToPaint
          jmp   loop
 
 start

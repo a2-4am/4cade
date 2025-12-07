@@ -25,6 +25,7 @@ copymasks=     $02C1                 ; [$08 bytes, different values in main and 
          dey
          bne   -
 
+         jsr   iReadyToPaint
          jmp   loop
 
 ;1GFEDCBA ->

@@ -52,6 +52,7 @@ palettes = $BC00                     ; $200 bytes
          bne   -
 
          sta   WRITEMAINMEM
+         jsr   iReadyToPaint
          lda   #>palettes
          sta   src+1
          ldx   #$0F                  ; palette counter ($0F -> $00, not used as index)

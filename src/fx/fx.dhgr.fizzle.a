@@ -38,6 +38,7 @@ b        sta   $8000, y
          dex
          bne   a
          sta   READMAINMEM
+         jsr   iReadyToPaint
          sta   $C001                 ; 80STORE mode
 ;X,Y=0 on entry to LFSR
 loop     txa

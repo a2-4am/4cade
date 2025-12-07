@@ -29,6 +29,7 @@ Start
 
          +LDADDR EndCoordinates1Bit-2
          +ST16 input
+         jsr   iReadyToPaint
 LoopBL                               ; bottom-left quadrant (opposite row, original column, reverse input order)
          ldy   #0
          lda   (input),y

@@ -15,6 +15,7 @@ row2 = $ff
          sta   row1
          lda   #$BF
          sta   row2
+         jsr   iReadyToPaint
 @loop1
          jsr   WaitForVBL
          lda   row1

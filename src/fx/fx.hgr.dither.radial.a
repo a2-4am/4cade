@@ -34,6 +34,7 @@ Start
          +ST16 evenrow_ptr
          +LDADDR oddrow_masks
          +ST16 oddrow_ptr
+         jsr   iReadyToPaint
          jsr   FullRadial
          bit   KBD
          bpl   +

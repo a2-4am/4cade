@@ -29,6 +29,7 @@ Start
          +ST16 input
          +LDADDR EndCoordinates1Bit-2
          +ST16 reverse_input
+         jsr   iReadyToPaint
          +HIDE_NEXT_BYTE
 Exit     rts
 Loop     ldy   #0

@@ -11,6 +11,7 @@
          ;$FF clobbered
          ;X=0
          ;Y=0
+         jsr   iReadyToPaint
          bit   <exit
          ;V=1
          jmp   loop

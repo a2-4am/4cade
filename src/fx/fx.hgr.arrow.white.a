@@ -17,6 +17,7 @@ counter = $ff
          !source "src/constants.a"
 
          jsr   iBuildHGRTables
+         jsr   iReadyToPaint
 
          lda   #(40+12+1)
          sta   counter
