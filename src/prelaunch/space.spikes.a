@@ -10,7 +10,6 @@
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LOAD_FILE_AT space_spiker, $250
-         +READ_ROM_NO_WRITE
          jmp   $250
 
 space_spiker

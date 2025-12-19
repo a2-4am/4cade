@@ -17,8 +17,7 @@
          inx
          stx   $400C      ; reset vector
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -30,8 +29,7 @@
          lda   #$6F
          sta   $6EBB      ; patch - don't decrease life
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          lda   #$4C
          sta   $405A

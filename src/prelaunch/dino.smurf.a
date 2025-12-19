@@ -11,13 +11,8 @@
          lda   #$60
          sta   $2183
          jsr   $2100      ; decompress
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         beq   +
-         lda   #$ad
-         sta   $1895      ; patch - don't decrease lives
 
-+        lda   ROM_MACHINEID
+         lda   ROM_MACHINEID
          cmp   #$06
          beq   ++
          ldy   #$2C
@@ -29,7 +24,13 @@
 +        dey
          bne   -
 
-++       +DISABLE_ACCEL
+++       +GET_MACHINE_STATUS_LC
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $1895      ; patch - don't decrease lives
+
++        +DISABLE_ACCEL_LC
          jmp   $A892
 
 !if * > PrelaunchMax {

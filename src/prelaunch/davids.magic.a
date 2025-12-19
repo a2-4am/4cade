@@ -18,15 +18,13 @@
          lda   #$60
          sta   $614
          jsr   $600
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #0
          sta   $9207      ; don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          +USES_TEXT_PAGE_2
          jmp   $802
 

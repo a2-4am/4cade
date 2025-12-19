@@ -11,16 +11,14 @@
          lda   #$4C
          sta   $90D9
          jsr   $6000      ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $1713      ; patch - don't decrease lives
          sta   $173B      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   $80D       ; skip changing the reset vector
 

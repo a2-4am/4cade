@@ -29,7 +29,7 @@
 callback !pseudopc $200 {
          +ENABLE_ACCEL
          jsr   $B050
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   ++
          ldx   #$A5
@@ -50,7 +50,7 @@ callback !pseudopc $200 {
          sta   $9AD4, x
          dex
          bpl   -
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   ($B04E)
 
 patch_b

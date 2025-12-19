@@ -22,15 +22,13 @@
          sta   $42FF
          sta   $4302
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A9
          sta   $4107      ; don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $4000
 
 callback

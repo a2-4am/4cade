@@ -11,8 +11,7 @@
          lda   #$60
          sta   $3eab
          jsr   $3e36      ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          pha
          and   #HAS_JOYSTICK
          bne   +
@@ -25,12 +24,12 @@
          sta   $729b
          sta   $6fea
 +
-         lda   #0
-         sta   $4112
          lda   #1
          sta   $4117      ; reset vector patch
+         lsr
+         sta   $4112
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
 
 !if * > PrelaunchMax {

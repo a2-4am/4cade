@@ -16,16 +16,14 @@
          lda   #$60
          sta   $F2F
          jsr   $F01       ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $4B0       ; patch - don't decrease lives
          sta   $5FD       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          ldx   #$10
          jmp   $7d0       ; original is $7FD but GS accelerator overwrites it
 

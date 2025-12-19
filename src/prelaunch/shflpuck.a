@@ -16,7 +16,7 @@
          lda   #>callback
          sta   $6D0B
          +LC_REBOOT
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $6D00
 
 callback

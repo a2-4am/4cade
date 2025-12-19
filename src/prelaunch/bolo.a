@@ -11,7 +11,7 @@
          lda   #$60
          sta   $8029
          jsr   $4c23      ; decompress and show title
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -21,7 +21,7 @@
          lda   #$2C
          sta   $132F      ; stop in-game demo from rebooting
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $1100
 
 !if * > PrelaunchMax {

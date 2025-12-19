@@ -34,8 +34,7 @@ mb_page2
          bne   mb_page1
 
 no_mb
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $4000
 
 pages    !byte 3

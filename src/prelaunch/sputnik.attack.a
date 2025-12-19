@@ -13,8 +13,7 @@
          sta   $93D9
          jsr   $6900      ; decompress
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5
@@ -25,8 +24,7 @@
          sta   $BD3E
          lda   #>callback
          sta   $BD3F
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
 -        lda   KBD
          bpl   -

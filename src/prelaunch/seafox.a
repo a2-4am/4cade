@@ -16,8 +16,7 @@
          jsr   $4000
          +ENABLE_ACCEL
          jsr   $BE06      ; decompress more
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $7881      ; patch - don't decrease torpedoes
@@ -26,8 +25,7 @@
          sta   $6C2E      ; patch - don't decrease lives
          sta   $7D34      ; patch - don't decrease fuel
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   ($20)
 

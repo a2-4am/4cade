@@ -14,7 +14,7 @@
          lda   #$60
          sta   $B727
          jsr   $B700      ; load game
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -28,7 +28,7 @@
          sta   $15C8
          lda   #>callback
          sta   $15C9
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          lda   #<callback2
          sta   $88E
          lda   #>callback2

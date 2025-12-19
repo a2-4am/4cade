@@ -50,7 +50,7 @@
          +ST16 namlo
          jsr   itraverse  ; enter subdirectory
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$4C
@@ -60,7 +60,7 @@
          lda   #>@cheat
          sta   $1A18
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $1000
 
 @path    !byte @path_e-@path_b

@@ -17,7 +17,7 @@
          sta   $6572
          lda   #>keypress
          sta   $6573
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
@@ -28,7 +28,7 @@
          sta   $52D7
          sta   $144B
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $1B00
 
 keypress
@@ -36,7 +36,6 @@ keypress
          bpl   keypress
          cmp   #$8D
          bne   keypress
-         lda   #$8D
          rts
 
 !if * > PrelaunchMax {

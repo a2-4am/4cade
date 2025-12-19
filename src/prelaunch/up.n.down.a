@@ -7,7 +7,8 @@
 
          !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          inc   $3F4       ; reboot during title screen
 
          lda   #$03       ; reset vector to $103
@@ -16,7 +17,8 @@
          sta   $2D50      ; so reset has to be somewhere $xx03
          sta   $2DB1      ; unless you want to waste more time making this reboot)
 
-         +GET_MACHINE_STATUS
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          sta   patch+1
          ldx   #$2D-1     ; copy patch code to zero page

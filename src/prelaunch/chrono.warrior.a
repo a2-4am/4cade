@@ -67,8 +67,7 @@ skip
          lda   #$60
          sta   $2079
          jsr   $2000       ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
@@ -76,8 +75,7 @@ skip
          lda   #>callback
          sta   $BC91
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $1B40
 
 !if * > PrelaunchMax {

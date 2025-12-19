@@ -11,14 +11,14 @@
          lda   #$60
          sta   $0837
          jsr   $0800      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$00
          sta   $5791      ; patch - don't decrease lives
          sta   $5352      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4003
 
 !if * > PrelaunchMax {

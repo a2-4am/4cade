@@ -7,8 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
          inc   $3F4       ; force reboot
          lda   MachineStatus
          +READ_ROM_NO_WRITE

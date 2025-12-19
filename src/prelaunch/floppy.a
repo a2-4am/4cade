@@ -15,8 +15,7 @@
          lda   #1
          sta   $42AF
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -25,8 +24,7 @@
          lda   #0
          sta   $4255      ; patch - don't decrease time
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   $4000
 

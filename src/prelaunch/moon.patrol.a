@@ -12,7 +12,7 @@
          sta   $49dd
          jsr   $800
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -21,7 +21,7 @@
 +
          +NEW_RESET_VECTOR $280
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $919
 
 !if * > PrelaunchMax {

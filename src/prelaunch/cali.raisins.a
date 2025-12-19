@@ -14,8 +14,7 @@
          jsr   $36C0      ; decompress
          +NEW_RESET_VECTOR $110
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -23,9 +22,7 @@
          sta   $69F1      ; patch - don't decrease lives
          sta   $7474      ; patch - don't decrease time
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
 
          jmp   $D566
 

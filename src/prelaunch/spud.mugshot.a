@@ -30,8 +30,7 @@ callback2
          stx   $3F3
          stx   $BCFD      ; hook exit
          jsr   $FB6F      ; reset vector
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          plp
@@ -41,8 +40,7 @@ callback2
          bcc   +
 ++       lda   #$AD
          sta   $981F      ; don't decrease lives
-+        jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
++        +DISABLE_ACCEL_LC
          plp
          bcs   +
          jmp   $23A9

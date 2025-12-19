@@ -16,7 +16,8 @@
          lda   #>reset
          sta   $FFFD      ; reset vector patch
 
-         +GET_MACHINE_STATUS
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          sta   patch2+1
          lda   #<patch1

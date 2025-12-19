@@ -33,7 +33,7 @@
          sta   $6ba2
          jsr   $3ffc
          jsr   $be00
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -42,7 +42,7 @@
          sta   $1b4e
          ;;sta $a973
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $6ba5
 
 !if * > PrelaunchMax {

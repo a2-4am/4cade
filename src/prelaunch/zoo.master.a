@@ -15,8 +15,7 @@
          lda   #$60
          sta   $89F
          jsr   $800       ; decompress more
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback

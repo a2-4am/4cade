@@ -18,14 +18,14 @@
 
 cheat
          jsr   $200
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $1eeb      ; patch - don't increase lives
          sta   $7a4e      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          rts
 
 !if * > PrelaunchMax {

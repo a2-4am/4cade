@@ -11,8 +11,7 @@
          +ENABLE_ACCEL
          jsr   $BD8E
          +RESET_VECTOR reset
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          ldx   #$A5
@@ -49,8 +48,7 @@ hook2
          stx   $795C      ; patch - don't decrease bombs
 
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          lda   #0
          rts
 

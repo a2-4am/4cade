@@ -26,8 +26,7 @@ callback2
 callback1
          +LC_REBOOT
          inc   $3F4       ; force reboot
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback2

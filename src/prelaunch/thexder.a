@@ -10,8 +10,7 @@
          lda   #$60
          sta   $346
          jsr   $300
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED

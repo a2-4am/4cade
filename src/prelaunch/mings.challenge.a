@@ -15,7 +15,7 @@
          jmp   $5B00      ; decompress
 
 callback
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $7822      ; patch - don't increase lives
@@ -24,7 +24,7 @@ callback
          lda   #>cheat
          sta   $B419
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $1183
 
 cheat

@@ -29,10 +29,7 @@ patch
          sta   $0774      ; patch - don't decrease lives
          sta   $0F05      ; patch - don't decrease lives
 +
-         +READ_RAM2_NO_WRITE
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $0400
 end_patch
 

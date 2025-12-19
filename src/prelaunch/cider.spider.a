@@ -11,7 +11,7 @@
          lda   #$60
          sta   $2076
          jsr   $1FFD      ; decompress
-         +GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS
+         +GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$BD
@@ -33,7 +33,7 @@
          lda   #1
          sta   $10B1      ; reset vector patch
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $1000
 
 callback

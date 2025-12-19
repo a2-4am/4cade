@@ -20,8 +20,7 @@
          lda   #$13
          sta   $76D2     ; disable unknown hardware support
                          ; otherwise hangs on IIGS
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -33,9 +32,7 @@
          sta   $649A      ; patch - don't increase damage
          sta   $64AC      ; patch - don't increase damage
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #0
          jmp   $896
 

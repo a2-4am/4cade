@@ -20,8 +20,7 @@
          lda   #$b5
          sta   $19D9      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $800
 
 !if * > PrelaunchMax {

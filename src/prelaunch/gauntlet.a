@@ -33,18 +33,15 @@ callback
          lda   #$60
          sta   $9DA
          jsr   $800       ; load "DOS"
-         +READ_RAM2_NO_WRITE
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         lda   MachineStatus
-         +READ_ROM_NO_WRITE
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
          sta   $B748
          lda   #>callback
          sta   $B749
-+        jmp   $B700
++        +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         jmp   $B700
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

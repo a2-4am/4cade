@@ -11,7 +11,7 @@
          lda   #$60
          sta   $A32
          jsr   $800       ; load DOS
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
@@ -19,7 +19,7 @@
          lda   #>callback
          sta   $BD27
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $B700
 
 callback

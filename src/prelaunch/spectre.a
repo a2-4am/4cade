@@ -16,13 +16,13 @@
 
 callback
          jsr   $BD78
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $6A6B      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $6000
 
 !if * > PrelaunchMax {

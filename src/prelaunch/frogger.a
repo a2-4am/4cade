@@ -16,14 +16,14 @@
 
 callback
          jsr   $BF00
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $48B0      ; patch - don't decrease lives
          sta   $48CD      ; patch - don't erase sprite
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          rts
 
 !if * > PrelaunchMax {

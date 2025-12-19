@@ -11,7 +11,8 @@
          lda   #$60
          sta   $1e64
          jsr   $1e30      ; decompress/sets reset vector
-         +GET_MACHINE_STATUS
+         +READ_RAM2_WRITE_RAM2
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -24,7 +25,6 @@
          sta   $A0D5
          sta   $A0DA      ; reset fix
 
-         +READ_RAM2_WRITE_RAM2
          jsr   isaveslot
          jsr   DisableAccelerator
          jsr   isaveslot

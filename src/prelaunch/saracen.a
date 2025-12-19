@@ -19,7 +19,7 @@
          jmp   $81F
 
 callback
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $878       ; patch - don't increase lives
@@ -29,7 +29,7 @@ callback
          +RESET_VECTOR_HALF $100
          lda   $7fe       ; Saracen code
          pha
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          pla
          sta   $7fe       ; overwritten by GS acceleration
          jmp   $400

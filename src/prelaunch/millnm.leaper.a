@@ -13,7 +13,7 @@
          sta   $836
          jsr   $800       ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #0
@@ -26,7 +26,7 @@
          dex
          stx   $9001      ; reset fix
          
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $9000
 
 !if * > PrelaunchMax {

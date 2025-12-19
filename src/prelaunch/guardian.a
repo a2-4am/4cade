@@ -12,13 +12,13 @@
          sta   $934F
          jsr   $7400      ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
          sta   $5799      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
 
 !if * > PrelaunchMax {

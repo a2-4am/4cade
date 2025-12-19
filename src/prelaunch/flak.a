@@ -14,7 +14,6 @@
          jsr   $50C0       ; decompress
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT flak_mb, $200
-         jsr   DisableAccelerator
          jmp   $200
 
 flak_mb

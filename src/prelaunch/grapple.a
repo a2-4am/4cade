@@ -13,7 +13,7 @@
          sta   $3F06
          jsr   $3EBA      ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $7A92      ; don't count deaths
@@ -21,7 +21,7 @@
          lda   #1
          sta   $40D3      ; reset vector fix
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $4000
 
 !if * > PrelaunchMax {

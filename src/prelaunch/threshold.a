@@ -7,10 +7,11 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +NEW_RESET_VECTOR $BFF0
 
-         +GET_MACHINE_STATUS
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          sta   patch+1
          ldx   #(end_patch-patch-1) ; copy patch code to zero page (stack will be destroyed by the time we need to patch)
@@ -31,10 +32,7 @@ patch
          sta   $45B0      ; patch - don't decrease lives
          sta   $7ECD      ; patch - don't increase lives
 +
-         +READ_RAM2_NO_WRITE
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $6B00
 end_patch
 

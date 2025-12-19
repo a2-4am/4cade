@@ -9,16 +9,14 @@
 
          inc   $3F4       ; force reboot on reset
 
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
-         jsr   HideLaunchArtworkLC2
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   MachineStatus
          and   #CHEATS_ENABLED
          php
          lda   WaitForVBL
+         +READ_ROM_NO_WRITE
          cmp   #$60
          php
-         +READ_ROM_NO_WRITE
          lda   #<callback
          sta   $75A8
          lda   #>callback

@@ -12,15 +12,13 @@
          sta   $2060
          jsr   $2000      ; decompress
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5
          sta   $84F5      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $D566
 
 !if * > PrelaunchMax {

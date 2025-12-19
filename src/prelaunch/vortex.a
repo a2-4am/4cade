@@ -15,15 +15,12 @@
          jmp   $4000      ; decompress2
 
 hook     +NEW_RESET_VECTOR $BFF0
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $EA8       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $D566
 
 !if * > PrelaunchMax {

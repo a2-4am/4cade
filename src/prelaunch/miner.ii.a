@@ -15,13 +15,13 @@
          jmp   $2000      ; decompress
 
 callback
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$bd
          sta   $938       ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $8D9
 
 !if * > PrelaunchMax {

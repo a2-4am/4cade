@@ -18,7 +18,7 @@ callback0
 callback1
          +HIDE_ARTWORK
          jsr   $BE00
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -28,7 +28,7 @@ callback1
          sta   $A6AD
          lda   #>callback2
          sta   $A6AE
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          rts
 
          ;Worm Wall section
@@ -43,7 +43,7 @@ callback2
 
 callback3
          jsr   $BE00
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -53,7 +53,7 @@ callback3
          sta   $B757
          lda   #>callback0
          sta   $B758
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          rts
 
 !if * > PrelaunchMax {

@@ -11,8 +11,7 @@
          lda   #$60
          sta   $A16
          jsr   $800       ; load DOS
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
@@ -20,8 +19,7 @@
          lda   #>callback
          sta   $BD08
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   $B700
 

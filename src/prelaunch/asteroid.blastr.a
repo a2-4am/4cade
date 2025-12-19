@@ -11,14 +11,14 @@
          lda   #$60
          sta   $501c
          jsr   $5000
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #0
          sta   $1133
          sta   $1530
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $800
 
 !if * > PrelaunchMax {

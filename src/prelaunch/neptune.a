@@ -12,14 +12,14 @@
          sta   $7E81
          jsr   $3FF8      ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $AC30      ; patch - don't decrease lives
          sta   $AC4E      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   ($20)
 
 !if * > PrelaunchMax {

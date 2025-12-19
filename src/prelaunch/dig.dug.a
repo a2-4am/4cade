@@ -11,14 +11,14 @@
          lda   #$60
          sta   $82D
          jsr   $800       ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$24
          sta   $a1d9
          sta   $8ca6
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $8000
 
 !if * > PrelaunchMax {

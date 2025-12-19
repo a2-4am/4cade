@@ -15,14 +15,14 @@
          sta   $6051      ; reset vector patch
 
          jsr   $5FE7      ; load assets
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $084A
          lda   #$AD
          sta   $BD34      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $61E3
 
 !if * > PrelaunchMax {

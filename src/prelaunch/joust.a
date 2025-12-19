@@ -16,7 +16,7 @@
          jsr   $7000
          +ENABLE_ACCEL
          jsr   $832
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -31,7 +31,7 @@
          inx
          stx   $A3DE      ; reset vector patch
          stx   $2C0F      ; quit handler patch
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $3e00
 
 !if * > PrelaunchMax {

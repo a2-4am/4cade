@@ -29,8 +29,7 @@ hook2    lda   #<hook3
          stx   $9E53      ; reset vector fix
          jmp   $9D84      ; decompress3
 
-hook3    +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+hook3    +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<hook4
@@ -38,8 +37,7 @@ hook3    +READ_RAM2_NO_WRITE
          lda   #>hook4
          sta   $BD08
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $A180
 
 hook4

@@ -17,8 +17,10 @@
          +ENABLE_ACCEL
          ldy   #0
          jsr   $B839
-         +DISABLE_ACCEL
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         jsr   DisableAccelerator
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $7801

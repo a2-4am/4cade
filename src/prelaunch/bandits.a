@@ -22,7 +22,7 @@
 callback
          +ENABLE_ACCEL
          jsr   $4C8       ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   $57
@@ -39,7 +39,7 @@ callback
          lda   #2
          sta   $2B4
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          lda   #0
          rts
 

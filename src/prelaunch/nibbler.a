@@ -11,8 +11,7 @@
          lda   #$60
          sta   $8A19
          jsr   $6550      ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$EA
@@ -20,9 +19,7 @@
          lda   #$A5
          sta   $12D3      ; patch - don't decrease time
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $900
 
 !if * > PrelaunchMax {

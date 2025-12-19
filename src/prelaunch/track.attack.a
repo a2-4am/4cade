@@ -26,8 +26,7 @@ callback
          tax
          pla
          jsr   $400
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   $9FC
@@ -37,8 +36,7 @@ callback
          sta   $9FC
          sta   $10E4
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $800
 
 !if * > PrelaunchMax {

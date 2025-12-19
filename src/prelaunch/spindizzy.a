@@ -7,9 +7,8 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
-
          +READ_RAM1_WRITE_RAM1
+         jsr   EnableAccelerator
          +LC_REBOOT
          +READ_ROM_NO_WRITE
 
@@ -22,17 +21,14 @@
          inx
          stx   $934F      ; fix reboot
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$2C       ; BIT
          sta   $999A
          sta   $99AF      ; kill timer
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $9300
 

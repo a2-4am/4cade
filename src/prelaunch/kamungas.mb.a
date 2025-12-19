@@ -8,7 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         jsr   EnableAccelerator
+         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $52DB
          jsr   $527C      ; decompress 1
@@ -18,8 +19,7 @@
          lda   #$60
          sta   $BD40
          jsr   $BD20      ; decompress 2
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $0213

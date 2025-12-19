@@ -15,3 +15,7 @@
          lda   #$31
          ldy   #0
          jmp   $800
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}

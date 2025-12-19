@@ -17,8 +17,7 @@
          jmp   $6000      ; decompress
 
 callback1
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$4C
@@ -28,8 +27,7 @@ callback1
          lda   #>callback2
          sta   $56B8
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          lda   #$bd
          sta   $7fe       ; overwritten by GS acceleration

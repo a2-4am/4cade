@@ -19,8 +19,7 @@
          sta   $B5D4
          sta   $B5D9      ; reset vector fix
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback1
@@ -33,9 +32,7 @@
          sta   $B5B2
          sta   $B608
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
 
          jmp   $B5B9
 

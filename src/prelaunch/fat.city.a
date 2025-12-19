@@ -15,7 +15,7 @@
          sta   $B727
          jsr   $B700      ; load game
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$2C
@@ -25,7 +25,7 @@
          sta   $14BD      ; patch - don't decrease fuel
          sta   $938       ; patch - don't decrease fuel
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $800
 
 !if * > PrelaunchMax {

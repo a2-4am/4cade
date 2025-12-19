@@ -11,8 +11,7 @@
          lda   #$60
          sta   $852
          jsr   $800       ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -22,8 +21,7 @@
          stx   $82DA
          inx
          stx   $82DB
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   $6A00
 

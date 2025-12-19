@@ -11,8 +11,7 @@
          lda   #$60
          sta   $6823
          jsr   $5ADC      ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -20,8 +19,7 @@
          sta   $1BF3      ; patch - don't increase lives
          sta   $1C05      ; patch - don't increase lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          jmp   $400
 

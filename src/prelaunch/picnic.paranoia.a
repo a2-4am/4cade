@@ -23,15 +23,12 @@ callback
          eor   #$A5
          sta   $45ef
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $79B7      ; patch - don't decrease time
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $78fb
 
 !if * > PrelaunchMax {

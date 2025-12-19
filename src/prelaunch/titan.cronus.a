@@ -25,8 +25,7 @@ hook     +NEW_RESET_VECTOR $280
          lda   #$30
          sta   $C84+3     ; (replaces TEXT:HOME:END)
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
@@ -34,8 +33,7 @@ hook     +NEW_RESET_VECTOR $280
          lda   #>callback
          sta   $1074
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $D566
 
 callback

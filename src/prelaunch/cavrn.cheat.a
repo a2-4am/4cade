@@ -79,8 +79,8 @@ noaccel
          +READ_RAM2_NO_WRITE
          jsr   DisableAccelerator
          lda   MachineStatus
-         and   #CHEATS_ENABLED
          +READ_ROM_NO_WRITE
+         and   #CHEATS_ENABLED
          rts
 }
 callback_e

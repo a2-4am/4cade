@@ -18,7 +18,7 @@
          sta   $2971      ; then disable VBL in game
 
 @good_vbl
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          lda   $fbb3
          cmp   #$6
          bne   @not_mac

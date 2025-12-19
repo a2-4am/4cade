@@ -14,7 +14,7 @@
          sta   $4206
          jsr   $4000      ; decompress 1
          jsr   $B7B5      ; decompress 2
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $734E (player 1), $734F (player 2)
@@ -26,7 +26,7 @@
          sta   $209
          sta   $211
          sta   $21C
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $B7A1
 
 !if * > PrelaunchMax {

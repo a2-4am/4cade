@@ -12,7 +12,7 @@
          sta   $51CA
          jsr   $800       ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -25,13 +25,13 @@
          sta   $AF7A
          lda   #>callback1
          sta   $AF7B
+;;         lda   #>callback2
+         sta   $AF8E
          lda   #<callback2
          sta   $AF8D
-         lda   #>callback2
-         sta   $AF8E
          lda   #1
          sta   $1300      ; allow exit to TR
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $3FFD
 
 callback1

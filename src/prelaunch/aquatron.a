@@ -15,13 +15,13 @@
          jmp   $59C2      ; decompress & show title
 
 callback
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $7696      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $400
 
 !if * > PrelaunchMax {

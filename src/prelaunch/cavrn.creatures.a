@@ -11,7 +11,6 @@
          jsr   EnableAccelerator
          jsr   HideLaunchArtworkLC2
          +LOAD_FILE_AT cavrn_cheat, $0200
-         +READ_ROM_NO_WRITE
          jmp   $200
 
 cavrn_cheat

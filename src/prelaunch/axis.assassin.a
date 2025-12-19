@@ -16,7 +16,7 @@
          jsr   $F00
          +ENABLE_ACCEL
          jsr   $be12      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -29,7 +29,7 @@
          inx
          stx   $5B30      ; reset vector patch
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $5c00
 
 !if * > PrelaunchMax {

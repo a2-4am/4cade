@@ -20,8 +20,7 @@
          sta   $1838
          sta   $183D      ; reset vector fix
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -31,9 +30,7 @@
          sta   $2472      ; patch - don't increase lives
          sta   $249E      ; patch - don't increase lives
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $1800
 
 !if * > PrelaunchMax {

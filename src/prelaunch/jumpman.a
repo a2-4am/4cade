@@ -11,7 +11,7 @@
          lda   #$60
          sta   $406E
          jsr   $4000      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $B7
@@ -23,7 +23,7 @@
          lda   #1
          sta   $88E4      ; reset vector patch
          
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $8000
 
 !if * > PrelaunchMax {

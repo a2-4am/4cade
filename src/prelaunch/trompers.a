@@ -12,14 +12,14 @@
          lda   #$60
          sta   $2025
          jsr   $2000      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $f60
 +
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $7700
 
 !if * > PrelaunchMax {

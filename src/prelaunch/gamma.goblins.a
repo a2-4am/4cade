@@ -11,7 +11,7 @@
          lda   #$60
          sta   $2034
          jsr   $2000      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $06FE
@@ -21,7 +21,7 @@
          sta   $7F62      ; patch - don't increase lives
 +
          +RESET_AND_IRQ_VECTOR $100
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$00
          tay
          jmp   $2035

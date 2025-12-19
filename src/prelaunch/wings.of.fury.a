@@ -7,12 +7,13 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #<callback
          sta   $212C
          lda   #>callback
          sta   $212D
-         +GET_MACHINE_STATUS
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          ldy   #(cheat_e-cheat)-1

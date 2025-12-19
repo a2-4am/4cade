@@ -23,15 +23,13 @@
          sta   $2E07
          lda   #>callback2
          sta   $2E08
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$60
          sta   $243D      ; no collisions
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $6000      ;612A copies pages 2E & 2F to AE & AF for final location
 
 reset

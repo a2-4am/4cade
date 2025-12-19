@@ -46,7 +46,6 @@
          sta   $7944
 
 no_speech
-         +READ_RAM2_NO_WRITE
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -56,8 +55,7 @@ no_speech
          lda   #4
          sta   $6505      ; patch - don't fall any floors after the 1st
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $6200
 
 !if * > PrelaunchMax {

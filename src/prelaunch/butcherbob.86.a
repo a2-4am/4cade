@@ -22,7 +22,7 @@
 !pseudopc $bef0+*-$100 {
 callback
          +RESET_VECTOR $BEF0
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +

@@ -22,9 +22,7 @@
          sta   $A0C4
 
 skipmb
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $0800
 
 !if * > PrelaunchMax {

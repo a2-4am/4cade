@@ -8,7 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         jsr   EnableAccelerator
+         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $99A
          sta   $A15
@@ -39,16 +40,14 @@ callback2
          jsr   EnableAccelerator
          jsr   $BC7B
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $6AB0       ; patch - don't decrease fuel
          sta   $6B5C       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          lda   #$30
          jsr   $FCA8       ; allow joystick timers to expire
          jmp   $A00
@@ -58,8 +57,7 @@ callback3
          jsr   EnableAccelerator
          jsr   $BE01
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -67,6 +65,5 @@ callback3
          sta   $7EA0       ; patch - don't decrease lives
          sta   $8AF1       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $8D00

@@ -52,8 +52,7 @@
          lda   #$AD
          sta   $E39       ; don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
 
          lda   $323
          jmp   $781B

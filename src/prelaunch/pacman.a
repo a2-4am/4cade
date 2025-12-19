@@ -19,15 +19,14 @@
          lda   #2
          sta   $104A      ; reset/IRQ vector patch
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5
          sta   $5C0E      ; patch - don't decrease lives
          sta   $4135      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $1000
 
 !if * > PrelaunchMax {

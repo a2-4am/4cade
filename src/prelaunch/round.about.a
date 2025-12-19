@@ -12,7 +12,7 @@
          sta   $3F48
          jsr   $800       ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -28,7 +28,7 @@
          lda   #$2A
          sta   $4000      ; remove activity indicator
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $7000
 
 !if * > PrelaunchMax {

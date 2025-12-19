@@ -304,9 +304,14 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   ENABLE_ACCEL_AND_HIDE_ARTWORK {
+; leave LC active on exit
+!macro   ENABLE_ACCEL_AND_HIDE_ARTWORK_LC {
          +ENABLE_ACCEL_LC
          jsr   HideLaunchArtworkLC2
+}
+
+!macro   ENABLE_ACCEL_AND_HIDE_ARTWORK {
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          +READ_ROM_NO_WRITE
 }
 
@@ -318,26 +323,45 @@
 
 !macro   DISABLE_ACCEL {
          +READ_RAM2_NO_WRITE
+         +DISABLE_ACCEL_LC
+}
+
+; when LC is active already
+!macro   DISABLE_ACCEL_LC {
          jsr   DisableAccelerator
          +READ_ROM_NO_WRITE
 }
 
+; when LC is active already
+!macro   DISABLE_ACCEL_AND_HIDE_ARTWORK_LC {
+         jsr   DisableAccelerator
+         +HIDE_ARTWORK_LC
+}
+
 !macro   DISABLE_ACCEL_AND_HIDE_ARTWORK {
          +READ_RAM2_NO_WRITE
-         jsr   DisableAccelerator
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
+}
+
+; when LC is active already
+!macro   HIDE_ARTWORK_LC {
          jsr   HideLaunchArtworkLC2
          +READ_ROM_NO_WRITE
 }
 
 !macro   HIDE_ARTWORK {
          +READ_RAM2_NO_WRITE
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +HIDE_ARTWORK_LC
+}
+
+; leave LC active on exit
+!macro   GET_MACHINE_STATUS_LC {
+         +READ_RAM2_NO_WRITE
+         lda   MachineStatus
 }
 
 !macro   GET_MACHINE_STATUS {
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          +READ_ROM_NO_WRITE
 }
 
@@ -347,30 +371,40 @@
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;sign set if SC-01, overflow set if SSI-263
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+; leave LC active on exit
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS_LC { ;sign set if SC-01, overflow set if SSI-263
+         +GET_MACHINE_STATUS_LC
          bit   MockingboardStuff
+}
+
+!macro   GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS { ;sign set if SC-01, overflow set if SSI-263
+         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS_LC
          +READ_ROM_NO_WRITE
+}
+
+; leave LC active on exit
+!macro   GET_MOCKINGBOARD_SLOT_LC {
+         +READ_RAM2_NO_WRITE
+         lda   MockingboardStuff
+         cmp   #1
+         and   #7
+         ora   #$C0
 }
 
 !macro   GET_MOCKINGBOARD_SLOT { ;carry set if present
-         +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         cmp   #1
-         and   #7
-         ora   #$C0
+         +GET_MOCKINGBOARD_SLOT_LC
          +READ_ROM_NO_WRITE
 }
 
-!macro   GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS { ;carry set if present
-         +READ_RAM2_NO_WRITE
-         lda   MockingboardStuff
-         cmp   #1
-         and   #7
-         ora   #$C0
+; leave LC active on exit
+!macro   GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS_LC { ;carry set if present
+         +GET_MOCKINGBOARD_SLOT_LC
          tax
          lda   MachineStatus
+}
+
+!macro   GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS { ;carry set if present
+         +GET_MOCKINGBOARD_SLOT_AND_MACHINE_STATUS_LC
          +READ_ROM_NO_WRITE
 }
 

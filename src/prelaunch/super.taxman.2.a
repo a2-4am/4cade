@@ -22,8 +22,7 @@ hook     lda   #0
          lda   #$2C       ; annunciator fix - kills Gizmo/joyport support
          sta   $666A      ; but fixes ][+ 80-col softswitch and //c+ coloring
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -31,9 +30,7 @@ hook     lda   #0
          sta   $67D7      ; patch - don't increase lives
          sta   $9549      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
 
 !if * > PrelaunchMax {

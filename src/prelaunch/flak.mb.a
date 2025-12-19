@@ -8,7 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +GET_MOCKINGBOARD_SLOT
+         +GET_MOCKINGBOARD_SLOT_LC
          php
          pha
          bcs   yesmb1
@@ -20,7 +20,7 @@
          sta   $C0A
          sta   $C76
          sta   $D00
-         bcc   nomb1
+         bcc   nomb1      ;always
 
 pages    !byte 3
 yesmb1
@@ -37,7 +37,7 @@ base2    sta   $B00,Y     ;Replace #$C4 with detected slot
          bne   base1
 
 nomb1
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jsr   $800        ; title animation
          +ENABLE_ACCEL
          jsr   $AAB3       ; decompress more
@@ -47,7 +47,7 @@ nomb1
          lda   #$60
          sta   $1E01
          sta   $1E2D
-         bcc   nomb2
+         bcc   nomb2      ;always
 
 yesmb2
          ldy   #5
@@ -59,8 +59,7 @@ yesmb2
          bne   -
 
 nomb2
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -72,6 +71,5 @@ nomb2
          inx
          stx   $0B44       ; reset vector fix
 
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $800

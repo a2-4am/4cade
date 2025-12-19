@@ -21,16 +21,13 @@
          lda   #$4C
          sta   $7144
          jsr   $68FD
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$60
          sta   $7E46      ; no collisions
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $7147
 
 !if * > PrelaunchMax {

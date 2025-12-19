@@ -15,8 +15,7 @@
          stx   $1381
          inx
          stx   $1386
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
@@ -24,8 +23,7 @@
          sta   $F1E       ; patch - don't increase lives
          sta   $1740      ; patch - don't decrease shield
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $1350
 
 !if * > PrelaunchMax {

@@ -9,8 +9,7 @@
 
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +HIDE_ARTWORK_LC
          lda   #$B4
          sta   $98E
          lda   #$EF

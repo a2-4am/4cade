@@ -11,8 +11,7 @@
          lda   #$60
          sta   $950B
          jsr   $5F36       ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -24,8 +23,7 @@
          stx   $820
          inx
          stx   $825        ; reset vector
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $800
 
 !if * > PrelaunchMax {

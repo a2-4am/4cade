@@ -11,7 +11,7 @@
          lda   #$60
          sta   $816
          jsr   $800       ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<cheat
@@ -24,7 +24,7 @@
          lda   #1
          sta   $202F      ; reset vector patch
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $2000
 
 cheat

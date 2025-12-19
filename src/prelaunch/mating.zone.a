@@ -21,13 +21,13 @@
          lda   $C054
          +ENABLE_ACCEL
          jsr   $B5DE
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $729F      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $BF8
 
 !if * > PrelaunchMax {

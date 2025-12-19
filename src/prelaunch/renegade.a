@@ -7,9 +7,11 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
          inc   $3F4       ; force reboot
-         +GET_MACHINE_STATUS
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          ldx   #callback_e-callback_b

@@ -7,8 +7,10 @@
 
     !source "src/macros.a"
 
-           +HIDE_ARTWORK
-           +GET_MACHINE_STATUS
+           +READ_RAM2_NO_WRITE
+           jsr   HideLaunchArtworkLC2
+           lda   MachineStatus
+           +READ_ROM_NO_WRITE
            and   #CHEATS_ENABLED
            beq   +
            lda   #$2C

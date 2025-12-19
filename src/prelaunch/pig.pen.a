@@ -18,7 +18,7 @@
          jsr   $9340      ; show title screen
          +ENABLE_ACCEL
          jsr   $9396      ; decompress more
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -26,7 +26,7 @@
          lda   #0
          sta   $7336      ; patch - don't update draw position
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $6000
 
 !if * > PrelaunchMax {

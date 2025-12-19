@@ -18,8 +18,7 @@
 hook     lda   #1
          sta   $75DD      ; reset vector fix
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -27,9 +26,7 @@ hook     lda   #1
          sta   $72DC      ; patch - don't increase lives
          sta   $72E1      ; patch - don't increase lives
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $6000
 
 !if * > PrelaunchMax {

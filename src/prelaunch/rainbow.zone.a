@@ -11,16 +11,14 @@
          lda   #$60
          sta   $93D0
          jsr   $6B00      ; decompress
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
          sta   $5A32       ; patch - don't decrease fuel
          sta   $5CFA       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $801
 
 !if * > PrelaunchMax {

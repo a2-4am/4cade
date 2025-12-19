@@ -60,7 +60,7 @@ callback1
          dex
          bpl   -
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback2
@@ -68,7 +68,7 @@ callback1
          lda   #>callback2
          sta   $BD08
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $9D84
 
 !if * > PrelaunchMax {

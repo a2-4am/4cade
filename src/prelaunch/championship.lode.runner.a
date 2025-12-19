@@ -15,7 +15,7 @@
          dec   $7618
          dec   $7621
          inc   $762A      ; swap buttons
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $7D, capped at 255
@@ -24,7 +24,7 @@
          lda   #$A5
          sta   $61AB      ; patch - don't decrease lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $6000
 
 !if * > PrelaunchMax {

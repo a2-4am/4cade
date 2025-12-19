@@ -11,14 +11,13 @@
          lda   #$60
          sta   $978
          jsr   $800       ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$b5
          sta   $82b0
          sta   $8324
 +
-         +READ_ROM_WRITE_RAM1
          lda   #<reset
          sta   $3F2
          sta   $FFFC
@@ -27,7 +26,7 @@
          sta   $FFFD
          eor   #$A5
          sta   $3F4
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $6000
 
 reset

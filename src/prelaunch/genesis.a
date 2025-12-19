@@ -15,7 +15,7 @@
          jmp   $800       ; decompress
 
 callback
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -25,7 +25,7 @@ callback
          lda   #1
          sta   $A6E       ; exit to TR on 'R'
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $900
 
 !if * > PrelaunchMax {

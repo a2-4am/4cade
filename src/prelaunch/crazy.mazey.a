@@ -11,7 +11,7 @@
          lda   #$60
          sta   $3F0B
          jsr   $3E47      ; decompress & show title
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -20,7 +20,7 @@
          sta   $F19       ; patch - don't erase sprite
          sta   $F1C       ; patch - don't erase sprite
          sta   $1105      ; patch - don't increase lives
-+        +DISABLE_ACCEL
++        +DISABLE_ACCEL_LC
          jmp   $50E0
 
 !if * > PrelaunchMax {

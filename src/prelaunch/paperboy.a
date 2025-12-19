@@ -7,13 +7,11 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_NO_WRITE
-         jsr   EnableAccelerator
-         jsr   HideLaunchArtworkLC2
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          sta   callback_b+(cheat_smc-callback)+1
-         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $8E1
          inc   $bf0e      ; disable ROM mapping

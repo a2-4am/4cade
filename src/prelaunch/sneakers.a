@@ -11,7 +11,7 @@
          lda   #$60
          sta   $84c7
          jsr   $3ffa      ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -21,7 +21,7 @@
          lda   #1
          sta   $9E2F      ; reset vector patch
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $9e00
 
 !if * > PrelaunchMax {

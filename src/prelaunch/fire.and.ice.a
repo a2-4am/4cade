@@ -16,16 +16,14 @@
          sty   $1C08
          ldy   #$A4
          sty   $1C0D      ; reset vector
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $17DF       ; patch - don't decrease fuel
          sta   $18E6       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $8E00
 
 !if * > PrelaunchMax {

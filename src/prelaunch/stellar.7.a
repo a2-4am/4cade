@@ -23,8 +23,7 @@
          lda   #$A4
          sta   $AE28      ; reset vector patch
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback
@@ -32,9 +31,7 @@
          lda   #>callback
          sta   $AE72
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $AE27
 
 callback

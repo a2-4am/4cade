@@ -7,8 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
-         +READ_RAM1_WRITE_RAM1
+         +ENABLE_ACCEL_LC
          +LC_REBOOT
          +READ_ROM_NO_WRITE
 

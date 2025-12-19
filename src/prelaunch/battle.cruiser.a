@@ -12,7 +12,7 @@
          sta   $2027
          jsr   $2000      ; decompress
 
-         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS
+         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS_LC
          bvs   +
          stx   $868
          stx   $9486
@@ -33,7 +33,7 @@
          lda   #$C5
          sta   $902A
          +NEW_RESET_VECTOR $110
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $845
 
 callback1

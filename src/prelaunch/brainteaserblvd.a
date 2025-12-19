@@ -23,7 +23,7 @@
          lda   #$A4
          sta   $0A09      ; reset vector patch
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $74
@@ -31,7 +31,7 @@
          sta   $1338      ; patch - don't decrease lives
          sta   $10A8      ; patch - don't increase lives
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $0A00
 
 !if * > PrelaunchMax {

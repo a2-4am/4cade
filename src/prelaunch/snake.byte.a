@@ -14,17 +14,14 @@
          sta   $0858
          jsr   $0800      ; decompress
 
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $7639      ; patch - don't increase lives
          dec   $78A8      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
          +LC_REBOOT
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          ldx   #0
          stx   $7a11
          inx

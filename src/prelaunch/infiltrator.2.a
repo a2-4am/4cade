@@ -22,8 +22,7 @@
          sta   $FFFD
          lda   #$30
          sta   $FFFC      ; LC reset vector fix
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +HIDE_ARTWORK_LC
          jmp   $800
 
 newpath

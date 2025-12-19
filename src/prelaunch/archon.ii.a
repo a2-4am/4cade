@@ -41,8 +41,7 @@ callback
          sta   $BC08
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   $6000
 
 !if * > PrelaunchMax {

@@ -16,8 +16,7 @@
          sta   $4AFC, x
          dex
          bpl   -
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -25,9 +24,7 @@
          sta   $1672      ; patch - don't increase lives
          dec   $920       ; patch - don't decrease time
 +
-         jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   ($20)
 
 keys     !scrxor $80, "JLIK" ; left, right, up, down

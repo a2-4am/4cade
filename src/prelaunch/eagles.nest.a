@@ -32,14 +32,14 @@ callback2
          sta   $348
          lda   #0
          sta   $349
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $78DD      ; patch - don't allow heal
          sta   $8580      ; patch - don't increase hits
 +
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $347
 
 !if * > PrelaunchMax {

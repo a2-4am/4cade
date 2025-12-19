@@ -13,7 +13,7 @@
          jsr   $2000      ; decompress
          lda   #$4C
          sta   $320
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $1532
@@ -25,7 +25,7 @@
          sta   $BE11      ; patch - don't increase lives
 +
          +RESET_VECTOR $100
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
 
 !if * > PrelaunchMax {

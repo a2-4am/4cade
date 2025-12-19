@@ -12,13 +12,13 @@
          sta   $951D
          jsr   $6690      ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $1060      ; patch - don't decrease ammunition
 +
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $800
 
 !if * > PrelaunchMax {

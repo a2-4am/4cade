@@ -30,7 +30,7 @@
          dec   $1ABC      ; patch - don't increase lives
 +
          +LC_REBOOT
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          inc   $9d        ; game relies on it
          lda   #$52
          sta   $cc        ; game relies on it

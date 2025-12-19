@@ -7,9 +7,11 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +READ_RAM2_NO_WRITE
+         jsr   HideLaunchArtworkLC2
          +RESET_VECTOR $FAA6
-         +GET_MACHINE_STATUS
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          ldx   #callback_e-callback_b

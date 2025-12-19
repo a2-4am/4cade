@@ -12,7 +12,7 @@
          sta   $4013
          jsr   $4000      ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
@@ -20,7 +20,7 @@
          sta   $E96       ; patch - don't increase lives
 +
          +RESET_VECTOR_HALF $100
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $305
 
 !if * > PrelaunchMax {

@@ -13,7 +13,7 @@
          sta   $813
          jsr   $800       ; decompress
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
@@ -22,7 +22,7 @@
 +
          lda   #$80
          sta   $71e7      ; fix joystick down
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $7000
 
 !if * > PrelaunchMax {

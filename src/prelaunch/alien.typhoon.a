@@ -16,7 +16,7 @@
          jsr   $6000
          +ENABLE_ACCEL
          jsr   $80B       ; decompress
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $7270
@@ -26,7 +26,7 @@
          lda   #1
          sta   $206C      ; reset vector patch
 
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $2001
 
 !if * > PrelaunchMax {

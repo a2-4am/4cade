@@ -23,15 +23,13 @@ callback2
          jmp   $BC88      ; decompress
 
 callback3
-         +READ_RAM2_NO_WRITE
-         lda   MachineStatus
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          dec   $CBC       ; patch - don't increase lives
          dec   $1029      ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
-         +READ_ROM_NO_WRITE
+         +DISABLE_ACCEL_LC
          jmp   ($200)
 
 pcallback2
