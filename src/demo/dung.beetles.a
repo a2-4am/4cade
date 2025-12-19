@@ -12,15 +12,8 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $603A
-         jsr   $6000      ; decompress
-
-         ldx   #1
-         stx   $083E      ; reset vector patch
-
-         lda   #$60
-         sta   $847
-         jsr   $800       ; memory move
+         sta   $841
+         jsr   $800       ; decompress
 
          ldx   #6-1
 -        lda   patch, x
