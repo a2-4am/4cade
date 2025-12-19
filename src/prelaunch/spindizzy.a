@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM1_WRITE_RAM1
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          +LC_REBOOT
          +READ_ROM_NO_WRITE

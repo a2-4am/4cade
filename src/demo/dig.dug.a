@@ -12,7 +12,7 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $826
+         sta   $82D
          jsr   $800       ; decompress
 
          ldx   #3-1

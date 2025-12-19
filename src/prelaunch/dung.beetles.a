@@ -7,21 +7,12 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
-         sta   $603A
-         jsr   $6000
-
-         lda   #1
-         sta   $083E   ; reset vector patch
-         lda   #$4C
-         sta   $847
-         lda   #0
-         sta   $848
-         lda   #$96    ; patch $847 - JMP ($3F2)
-         sta   $849    ; to JMP $9600
-
-         jmp   $800
+         sta   $841
+         jsr   $800
+         +DISABLE_ACCEL
+         jmp   $9600
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
