@@ -85,14 +85,16 @@ DHGRActionSlideshow
 ;
 ; safe to call if machine only has 64K (does nothing and exits)
 ;
-; in:    none
+; in:    A/Y contains address of filename
 ; out:   everything clobbered
 ;        graphics mode reset to display hi-res screen, which is blank
 ;------------------------------------------------------------------------------
 DHGRSingle
+         tax
          lda   MachineStatus         ; only show DHGR screenshots if we have 128K
          and   #HAS_128K
          beq   DHGRRTS0
+         txa
          +ST16 IndexedDHGRFilename
          jsr   BlankDHGR             ; switch to DHGR mode with initial blank screen
          jsr   LoadIndexedDHGRFile   ; load compressed DHGR screenshot at aux $3FF8
