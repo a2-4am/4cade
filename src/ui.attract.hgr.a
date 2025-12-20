@@ -44,7 +44,7 @@ HGRActionSlideshow
 ; HGRSingle
 ; display a single hi-res screenshot, with transition effect
 ;
-; in:    none
+; in:    A/Y contains address of filename
 ; out:   everything clobbered
 ;        graphics mode still displaying hi-res screen with last picture visible
 ;------------------------------------------------------------------------------
