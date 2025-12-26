@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $307C
-         jsr   $3048      ; decompress
+         sta   $4031
+         jsr   $4000      ; decompress
          +DISABLE_ACCEL
          jmp   $1AD0
 
