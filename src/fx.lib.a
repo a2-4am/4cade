@@ -39,6 +39,10 @@
 
 ReadyToPaint
 ; in:    none
+;        LC bank 1 R/W
+;        WRITEAUXMEM may be active if called from certain SHR FX
+;        but this only affects memory 0200-BFFF, not ZP or LC because
+;        those use a different softswitch
 ; out:   all flags/registers preserved
 ;        unless key has been pressed
          php
@@ -47,28 +51,23 @@ ReadyToPaint
          pha
          tya
          pha
-         lda   PTR
+         lda   PTR                              ; ZP
          pha
-         lda   PTR+1
+         lda   PTR+1                            ; ZP
          pha
          +LD16 gNextMegaAttractGame
-         +ST16 PTR
+         +ST16 PTR                              ; ZP
          ldy   #0
-         lda   (PTR), y
+         lda   (PTR), y                         ; ZP
          tay
--        lda   (PTR), y
-         sta   gLastMegaAttractFilename, y
+-        lda   (PTR), y                         ; ZP
+         sta   gLastMegaAttractFilename, y      ; LC1, which is R/W
          dey
          bpl   -
-
-         lda   #$60
-         sta   $300
-         jsr   $300
-
          pla
-         sta   PTR+1
+         sta   PTR+1                            ; ZP
          pla
-         sta   PTR
+         sta   PTR                              ; ZP
          pla
          tay
          pla
