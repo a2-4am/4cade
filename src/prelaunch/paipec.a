@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022, 2025 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PAIPEC",plain
@@ -11,8 +11,15 @@
          lda   #$60
          sta   $4031
          jsr   $4000      ; decompress
+         lda   #<callback
+         sta   $682C
+         lda   #>callback
+         sta   $682D
          +DISABLE_ACCEL
          jmp   $1AD0
+callback
+         sta   $C010      ; clear keypress
+         jmp   $100       ; don't reboot
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
