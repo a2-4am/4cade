@@ -18,6 +18,8 @@
 
 ### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
+- Archon
+- Archon II
 - Bejeweled
 - Retro-Ball
 - Video Vegas
