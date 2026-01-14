@@ -35,7 +35,7 @@ def best(keys, games):
     bestindex = -1
     bestlikely = False
     for game in games:
-        if game.startswith(keys):
+        if game.replace(' ', '').startswith(keys):
             return gameindex
         gamescore, likely = score(keys, game)
         if (gamescore > bestscore):
