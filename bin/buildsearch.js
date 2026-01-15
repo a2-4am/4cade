@@ -62,7 +62,7 @@ for (i = 0; i < entries.length; i++)
   }
 
   source.writeline("!be24 " + dpos)
-  source.writeline("!le16 " + dsize)
+  source.writeline("!le16 " + Number(dsize))
 }
 
 source.writeline("KeyLookup")

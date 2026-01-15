@@ -1,0 +1,31 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/DIG.EM",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $3F4E
+         jsr   $3F0E      ; decompress
+
+         +GET_MACHINE_STATUS_LC
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $5BB1      ; patch - don't decrease lives
+         sta   $760F      ; patch - don't increase lives
+         lda   #$60
+         sta   $6D4A      ; patch - don't decrease lives
+         sta   $6D2A      ; patch - don't increase lives
++
+         +DISABLE_ACCEL_LC
+         jmp   $5800
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}

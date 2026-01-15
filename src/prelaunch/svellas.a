@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SVELLAS",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+
+         +GET_MACHINE_STATUS_LC
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $60D6      ; patch - don't decrease lives
+         sta   $60C0      ; patch - don't decrease time
++
+         lda   #$80
+         sta   $8f8d      ; fix joystick down
+         +DISABLE_ACCEL_LC
+         jmp   $6000
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}

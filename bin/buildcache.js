@@ -40,7 +40,7 @@ while (!b.atendofstream)
     f001.writeline(c.substr(c.indexOf("=") + 1))
   }
 
-  if ((c.substr(0, 1) == "0") && c.substr(2, 1) == "0"))
+  if ((c.substr(0, 1) == "0") && (c.substr(2, 1) == "0"))
   {
     f010.writeline(c.substr(c.indexOf("=") + 1))
   }
