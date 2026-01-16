@@ -1,0 +1,46 @@
+;license:MIT
+;(c) 2026 by Frank M.
+
+!cpu 6502
+!to "build/DEMO/PAIPEC#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+         +GAME_REQUIRES_JOYSTICK
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $4031
+         jsr   $4000      ; decompress
+
+         lda   #$D0
+         sta   $E96       ; suppress sound
+
+         stx   $692A      ; x=0
+         inx
+         stx   $692B      ; exit on keypress
+
+         lda   #<callback
+         sta   $66D1+1
+         lda   #>callback
+         sta   $66D1+2    ; set exit at end of demo cycle
+
+         +DISABLE_ACCEL
+         jmp   $1AD0
+
+callback dec   count
+         bne   +
+         jmp   $100       ; exit after 5 levels (about 1 minute)
++        jmp   $6971      ; run one loop
+
+count    !byte 6
+
+title    +PSTRING "PAIPEC"
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
