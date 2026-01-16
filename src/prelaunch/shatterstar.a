@@ -1,0 +1,37 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SHATTERSTAR",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL
+
+         lda   #$60
+         sta   $5966
+         jsr   $5760      ; decompress
+
+         +NEW_RESET_VECTOR $110
+         sta   $9E52
+         dec   $9E53      ; reset
+         lda   #<callback
+         sta   $36
+         lda   #>callback
+         sta   $37
+         +DISABLE_ACCEL_LC
+         jmp   $9D84
+
+callback
+         cmp   #$DD
+         beq   +
+         jmp   $FDF0
++        dec   counter    ; exit on quit
+         !byte $f0,<($10e-*)
+         rts
+counter  !byte 2
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
