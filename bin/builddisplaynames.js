@@ -5,10 +5,11 @@ c = a.createtextfile("build\\DISPLAY.CONF")
 while (!b.atendofstream)
 {
   d = b.readline()
+  e = d.indexOf("/")
 
-  if (d.indexOf("[eof]") >= 0)
+  if (e > -1)
   {
-    break
+    d = d.substr(0, e)
   }
 
   if (d.indexOf("=") == -1)
