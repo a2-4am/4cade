@@ -1,0 +1,19 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/EPOCH",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $842
+         jsr   $800       ; decompress
+         +DISABLE_ACCEL
+         jmp   $B00
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}

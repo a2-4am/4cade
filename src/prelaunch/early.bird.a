@@ -9,16 +9,9 @@
 
          +ENABLE_ACCEL
 
-         lda   #<hook
-         sta   $941D
-         lda   #>hook
-         sta   $941E
-         jmp   $6D00      ; decompress
-
-hook     lda   #0
-         sta   $BB5
-         lda   #1
-         sta   $BBA       ; reset vector fix
+         lda   #$60
+         sta   $926F
+         jsr   $7000      ; decompress
 
          +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
@@ -28,7 +21,7 @@ hook     lda   #0
          sta   $6CFC      ; patch - don't increase lives
 +
          +DISABLE_ACCEL_LC
-         jmp   $BB0
+         jmp   $BC1
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
