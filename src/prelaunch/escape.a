@@ -11,10 +11,10 @@
          +NEW_RESET_VECTOR $BFF0
 
          lda   #<callback
-         sta   $603B
+         sta   $603A
          lda   #>callback
-         sta   $603C
-         jmp   $523D      ; decompress
+         sta   $603B
+         jmp   $52FA      ; decompress
 
 callback
          +GET_MACHINE_STATUS_LC
