@@ -8,15 +8,15 @@
     !source "src/macros.a"
 
          lda   #$60
-         sta   $8808
+         sta   $84EF
          jsr   $3FF5      ; decompress
          +ENABLE_ACCEL
          lda   #>(callback - 1)
-         sta   $8821
+         sta   $8508
          lda   #<(callback - 1)
-         sta   $8824
+         sta   $850B
          lda   #$19
-         jmp   $880A
+         jmp   $84F1
 
 callback
          +GET_MACHINE_STATUS_LC

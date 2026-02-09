@@ -9,9 +9,8 @@
 
          +HIDE_ARTWORK
          lda   #$60
-         sta   $3f0b
-         jsr   $3eba      ; decompress
-         lda   ROM_MACHINEID
+         sta   $85f
+         jsr   $800       ; decompress
          ldx   #$CA
          stx   $944F
          inx
