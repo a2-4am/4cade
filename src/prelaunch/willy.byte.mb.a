@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2025 by qkumba
+;(c) 2025-2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH/WILLY.BYTE.MB",plain
@@ -8,11 +8,8 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-callback4=$bf95
-
 callback3
          lda   MockingboardStuff
-         php
          and   #7
          ora   #$C0
          ldx   #0
@@ -21,13 +18,10 @@ callback3
          bne   not_a04f
          ldy   $BE98
          cpy   #$34
-         bne   maybe_a22f
+         bne   not_a04f
          ldy   $3
          cpy   #$60
          bne   skip_a04f
-         plp
-         php
-         beq   patch_cb1
 -        ldy   $76BF, x
          cpy   #$C4
          bne   +
@@ -48,102 +42,34 @@ callback3
          bne   -
          sta   $9EB6
 
-!if *!=$d050 {
+!if *!=$d04b {
   !error "patch_iic moved ",*
 }
 patch_iic
          lda   #$20  ; SMC
          sta   $6031 ; speech control
 
-patch_cb1
-         lda   #<callback4
-         sta   $739c
-         sta   $787f
-         lda   #>callback4
-         sta   $739d
-         sta   $7880
-         ldx   #$D8
-         bne   patch_61
+skip_a04f
+         rts
 
 not_a04f
-         jmp   maybe_a03x
-
-maybe_a22f
-         cpy   #$32
-         bne   maybe_a202
-         ldx   #$94
-
-patch_61
-         lda   #<callback4
-         sta   $6100,x
-         lda   #>callback4
-         sta   $6101,x
-
-skip_a04f
-         plp
-         rts
-
-maybe_a202
-         cpy   #$30
-         bne   maybe_a1d0
-         ldx   #$10
-
-patch_62
-         lda   #<callback4
-         sta   $6200,x
-         lda   #>callback4
-         sta   $6201,x
-         plp
-         rts
-
-maybe_a1d0
-         cpy   #$44
-         bne   maybe_a1a1
-         ldx   #$E1
-         bne   patch_61
-
-maybe_a1a1
-         cpy   #$41
-         bne   skip_a04f
-         lda   $BE97
-         cmp   #$31
-         bne   maybe_a0a3
-         ldx   #$A2
-         bne   patch_61
-
-maybe_a0a3
-         cmp   #$30
-         bne   skip_a04f
-         ldx   #7
-         bne   patch_61
-
-maybe_a03x
          ldy   $BE98
          cpy   #$30
          bne   not_ba06
          ldy   $3
          cpy   #$A0
          bne   skip_ba06_a
-         plp
-         php
-         beq   patch_cb2
 -        ldy   $A05E, x
          cpy   #$C4
          bne   +
          sta   $A05E, x
 +        inx
          bne   -
-
-patch_cb2
-         plp
          rts
 
 skip_ba06_a
          cpy   #$60
          bne   skip_ba06_b
-         plp
-         php
-         beq   patch_cb3
 -        ldy   $9228, x
          cpy   #$C4
          bne   +
@@ -151,36 +77,18 @@ skip_ba06_a
 +        inx
          bne   -
 
-patch_cb3
-         ldx   #$50
-
-patch_63
-         lda   #<callback4
-         sta   $6300,x
-         lda   #>callback4
-         sta   $6301,x
-
 skip_ba06_b
-         plp
          rts
 
 not_ba06
          cpy   #$32
          bne   not_b22f
-         plp
-         php
-         beq   patch_cb4
 -        ldy   $6909, x
          cpy   #$C4
          bne   +
          sta   $6909, x
 +        inx
          bne   -
-
-patch_cb4
-skip_b04a
-skip_b142
-         plp
          rts
 
 not_b22f
@@ -192,9 +100,6 @@ not_b22f
          bcc   not_b04a
          cpy   #$60
          bne   skip_b04a
-         plp
-         php
-         beq   patch_cb5
 -        ldy   $7CFB, x
          cpy   #$C4
          bne   +
@@ -210,16 +115,12 @@ not_b22f
 +        inx
          bne   -
 
-patch_cb5
-         ldx   #$A5
-         jmp   patch_61
+skip_b04a
+         rts
 
 not_b04a
          cpy   #$60
          bne   skip_b142
-         plp
-         php
-         beq   patch_cb6
 -        ldy   $705E, x
          cpy   #$C4
          bne   +
@@ -231,9 +132,8 @@ not_b04a
 +        inx
          bne   -
 
-patch_cb6
-         ldx   #$22
-         jmp   patch_62
+skip_b142
+         rts
 
 not_bx4y
          cpy   #$39
@@ -241,9 +141,6 @@ not_bx4y
          ldy   $3
          cpy   #$60
          bne   skip_b193
-         plp
-         php
-         beq   patch_cb7
 -        ldy   $92A8, x
          cpy   #$C4
          bne   +
@@ -251,9 +148,8 @@ not_bx4y
 +        inx
          bne   -
 
-patch_cb7
-         ldx   #$15
-         jmp   patch_63
+skip_b193
+         rts
 
 not_b193
          cpy   #$43
@@ -264,9 +160,6 @@ not_b193
          bcs   not_b0c1
          cpy   #$60
          bne   skip_b0c1
-         plp
-         php
-         beq   patch_cb8
 -        ldy   $927B, x
          cpy   #$C4
          bne   +
@@ -274,16 +167,12 @@ not_b193
 +        inx
          bne   -
 
-patch_cb8
-         ldx   #$DD
-         jmp   patch_62
+skip_b0c1
+         rts
 
 not_b0c1
          cpy   #$60
          bne   skip_b0c6
-         plp
-         php
-         beq   patch_cb9
 -        ldy   $72EB, x
          cpy   #$C4
          bne   +
@@ -295,13 +184,7 @@ not_b0c1
 +        inx
          bne   -
 
-skip_b193
-skip_b0c1
-patch_cb9
 skip_b0c6
-skip_b1f4
-not_b1f4
-         plp
          rts
 
 not_bxcy
@@ -310,9 +193,6 @@ not_bxcy
          ldy   $3
          cpy   #$60
          bne   skip_b1f4
-         plp
-         php
-         beq   patch_cb10
 -        ldy   $78CB, x
          cpy   #$C4
          bne   +
@@ -324,10 +204,13 @@ not_bxcy
          sta   $79F8
          sta   $79FB
 
-patch_cb10
-         ldx   #$41
-         jmp   patch_61
+not_b1f4
+skip_b1f4
+         rts
 
+!if *!=$d156 {
+  !error "accel moved ",*
+}
 accel !pseudopc $bf80 {
 callback1
          +READ_RAM2_NO_WRITE
@@ -343,10 +226,25 @@ callback1
   !error "callback4 moved ",*
 }
 callback4
-         jsr   $fca8
-         +READ_ROM_NO_WRITE
+         ldx   #(patch_e-patch) - 1
+-        ldy   patch_lo, x
+         lda   patch_val, x
+         sta   $d600, y
+         dex
+         bpl   -
+         lda   $C054
          rts
+
+patch
+patch_lo !byte 0, 1, 2, 7, 8, 9, $0a, $17, $18, $19, $1a, $24, $25, $26
+patch_e
+!if *!=$bfb5 {
+  !error "patch_val mode ", *
+}
+patch_val !byte $a2, $DD, $a9, $a9, $2b, $85, $48, $85, $5a, $24, $5a, $51, $57, $0a
+
 }
 accel_e
-
-!fill $d400-*
+!if *!=$d199 {
+  !error "accel_e moved ",*
+}

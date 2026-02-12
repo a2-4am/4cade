@@ -1,13 +1,15 @@
 ;license:MIT
-;(c) 2024-2025 by qkumba
+;(c) 2024-2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/WILLY.BYTE",plain
 *=$106
 
-patch_iic=$d050 ; from willy.byte.mb.a
-accel=$d1fc     ; from willy.byte.mb.a
-accel_e=$d218   ; from willy.byte.mb.a
+patch_iic=$d04b ; from willy.byte.mb.a
+callback4=$bf95 ; from willy.byte.mb.a
+patch_val=$bfb5 ; from willy.byte.mb.a
+accel=$d156     ; from willy.byte.mb.a
+accel_e=$d199   ; from willy.byte.mb.a
 callback1=$bf80 ; from willy.byte.mb.a
 
     !source "src/macros.a"
@@ -24,38 +26,49 @@ not_iic1
          jsr   HideLaunchArtworkLC2
          +LOAD_FILE_AT willybyte_mb, $D000
          plp
+         php
          bne   not_iic2
          lda   #$2c
          sta   patch_iic + 1
 
 not_iic2
-         ldx   #(accel_e - accel)
+         ldx   #(accel_e - accel) - 1
 -        lda   accel, x
          sta   callback1, x
          dex
          bpl   -
+         lda   $D601
+         sta   patch_val + 1
          +READ_ROM_NO_WRITE
+!if <callback1 != $80 {
          lda   #<callback1
          sta   $414A
+}
          lda   #>callback1
          sta   $414B
          lda   #$60
          sta   $426B
          jsr   $4000      ; decompress
-         lda   #$20
-         sta   $7852
-         lda   #<callback2
-         sta   $7853
-         lda   #>callback2
-         sta   $7854
+         ldx   #3
+-        lda   patch_c2 - 1, x
+         sta   $7852 - 1, x
+         stx   $B6DA      ; reset vector
+         dex
+         bne   -
          lda   #$EA
          sta   $7855
          lda   #$4C
          sta   $B6D8
-         ldx   #0
          stx   $B6D9
-         inx
-         stx   $B6DA      ; reset vector
+         plp
+         bne   not_iic3
+         ldx   #3
+-        lda   patch_c4 - 1, x
+         sta   $BD00 - 1, x
+         dex
+         bne   -
+
+not_iic3
          jmp   $6000
 
 callback2
@@ -64,6 +77,9 @@ callback2
          beq   +
          cmp   #9
 +        rts
+
+patch_c2 !byte $20, <callback2, >callback2
+patch_c4 !byte $20, <callback4, >callback4
 
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"
