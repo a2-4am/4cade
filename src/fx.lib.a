@@ -47,7 +47,7 @@ ReadyToPaint
 ;        unless key has been pressed
          php
          bit   KBD
-         bmi   +
+         bmi   @keyPressed
          pha
          tya
          pha
@@ -55,7 +55,9 @@ ReadyToPaint
          pha
          lda   PTR+1                            ; ZP
          pha
-         +LD16 gNextMegaAttractGame
+         +LD16 gNextMegaAttractGame             ; LC1, which is R/W
+         cpy   #$FF                             ; in mini-attract mode this will be -1
+         beq   @noGame
          +ST16 PTR                              ; ZP
          ldy   #0
          lda   (PTR), y                         ; ZP
@@ -64,6 +66,7 @@ ReadyToPaint
          sta   gLastMegaAttractFilename, y      ; LC1, which is R/W
          dey
          bpl   -
+@noGame
          pla
          sta   PTR+1                            ; ZP
          pla
@@ -73,7 +76,8 @@ ReadyToPaint
          pla
          plp
          rts
-+        plp
+@keyPressed
+         plp
          sta   READMAINMEM
          sta   WRITEMAINMEM
          pla
