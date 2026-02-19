@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2021-2022 by Frank M., qkumba
+;(c) 2021-2022, 2026 by Frank M., qkumba
 
 !cpu 6502
 !to "build/DEMO/FALCONS#060200",plain
@@ -11,8 +11,8 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $3f0b
-         jsr   $3eba      ; decompress
+         sta   $85F
+         jsr   $800       ; decompress
 
          lda   #$2C
          sta   $602A      ; skip input selection
