@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ALIENS",plain
@@ -9,11 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $B9B
-         jsr   $800       ; load "DOS"
-         lda   #$60
-         sta   $2429
-         jsr   $22AA      ; decrypt
+         sta   $21D2
+         jsr   $2000      ; decompress
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $1FA0
 
