@@ -9,7 +9,7 @@
 
          +HIDE_ARTWORK
          lda   #$60
-         sta   $85f
+         sta   $84f
          jsr   $800       ; decompress
          ldx   #$CA
          stx   $944F

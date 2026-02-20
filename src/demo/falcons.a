@@ -11,8 +11,8 @@
          +LOAD_XSINGLE title
 
          lda   #$60
-         sta   $3f0b
-         jsr   $3eba      ; decompress
+         sta   $84f
+         jsr   $800       ; decompress
 
          lda   #$2C
          sta   $602A      ; skip input selection
