@@ -36,6 +36,7 @@ GetMockingboardStuff
 
          lda   ROM_MACHINEID
          cmp   #$06
+         sec
          bne   @not_iic
          ldx   ROM_MACHINE2C
          bne   @not_iic
@@ -71,7 +72,10 @@ GetMockingboardStuff
          stx   $C504
 
 @ok_mb
+         clc
+
 @not_iic
+         php
          lda   #$00
          sta   $80
          sta   $82                   ; type
@@ -134,6 +138,10 @@ GetMockingboardStuff
          sta   @mb_smc23 + 2
          sta   @mb_smc24 + 2
 
+         plp
+         php
+         bcc   @skip_speech_2c1
+
          ; detect speech - SSI263
 
          sei
@@ -181,8 +189,13 @@ GetMockingboardStuff
          bne   @wait_irq
          inx
          bne   @wait_irq
+
          clc
+@skip_speech_2c1
 +        ror   $82
+
+         plp
+         bcc   @skip_speech_2c2
 
          ; detect speech - SC-01
          ;based on S/S I demo dsk
@@ -228,6 +241,7 @@ GetMockingboardStuff
 @got_irq
          sei
          clc                         ; not found
+@skip_speech_2c2
          ror   $82
 
          ldy   #$ff
