@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019, 2026 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/ARKANOID",plain
@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $97e
-         jsr   $800
+         sta   $5DDB
+         jsr   $1E00
 
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -19,19 +19,18 @@
          sta   $145c
          sta   $1d65
 +
-         lda   $c083
          jsr   DisableAccelerator
          jsr   HideLaunchArtworkLC2
          sta   $C05F      ; fix //c and //c+ HGR color
-         lda   $c08b
-         jsr   $ee1f
 
          +LC_REBOOT
          lda   #$2C
          sta   $600
          sta   $603       ; BIT changing reset
 
-         jmp   $981
+         ldy   #0
+         tya
+         jmp   $5DDC
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
