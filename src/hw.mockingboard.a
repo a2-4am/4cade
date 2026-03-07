@@ -90,6 +90,7 @@ GetMockingboardStuff
          inx
          cpx   #$C8
          bne   @slotLoop
+         plp
          ldx   #$00                  ; not found
          rts
 
