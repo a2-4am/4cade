@@ -481,18 +481,10 @@ iterdevice
                 lda     (scratchlo), y
                 beq     -
 
-set_slot        stx     slot1 + 2
-                stx     slot2 + 2
+set_slot        stx     slot + 2
                 stx     unrentry + 2
-slot1           ldx     $cfff
+slot            ldx     $cfff
                 stx     unrentry + 1
-
-slot2           lda     $cf02,x
-                eor     #$85
-                bne     +
-                sec
-                rts
-+
 !if enable_floppy = 1 {
                 php
 } ;enable_floppy = 1
@@ -607,7 +599,7 @@ slot2           lda     $cf02,x
 
 iterunit        inc     unrunit2
                 bne     +
-                ldx     slot1 + 2
+                ldx     slot + 2
                 jmp     iterdevice
 +               lda     #0
                 sta     readbuff + $205 ;compensate for unreliable SmartPort error condition
