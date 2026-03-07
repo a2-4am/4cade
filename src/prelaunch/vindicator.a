@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020 by Frank M./qkumba
+;(c) 2019-2020, 2026 by Frank M./qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/VINDICATOR",plain
@@ -7,29 +7,90 @@
 
     !source "src/macros.a"
 
+         jmp   +
+!pseudopc $329 {
+callback
+         jsr   $fca8
+         +READ_ROM_NO_WRITE
+         rts
+}
++
          +ENABLE_ACCEL
+         ldx   #15
+-        lda   $100,x
+         sta   $320,x
+         dex
+         bpl   -
+         +RESET_VECTOR $320
+
          lda   #$60
-         sta   $1867
+         sta   $185A
          jsr   $180F      ; decompress
 
-         ldx   #0
-         stx   $4001
-         inx
-         stx   $400F      ; reset vector fix
+         ldy   #1
+         sty   $400F      ; reset vector fix
+         dey
+         sty   $4001
 
          lda   #$60       ; annunciator fix - kills Gizmo/joyport support
          sta   $5B77      ; but fixes ][+ 80-col softswitch
          sta   $5B43      ; and //c+ coloring
 
-         +GET_MACHINE_STATUS
+         ldx   #(patchlo_e-patchlo_b)-1
+-        lda   patchlo_b, x
+         sta   $fe
+         lda   patchhi_b, x
+         sta   $ff
+         lda   #<callback
+         sta   ($fe), y
+         iny
+         lda   #>callback
+         sta   ($fe), y
+         dey
+         dex
+         bpl   -
+
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
          sta   $5F31      ; patch - don't decrease lives
 +
+         lda   #$20
+         sta   $185A
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         jmp   $185A
 
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
-         jmp   $4000
+patchlo_b
+         !byte $d0+1
+         !byte $e0+1
+         !byte $84+1
+         !byte $36+1
+         !byte $51+1
+         !byte $4e+1
+         !byte $6f+1
+         !byte $4d+1
+         !byte $cd+1
+         !byte $65+1
+         !byte $7f+1
+         !byte $9b+1
+         !byte $a5+1
+patchlo_e
+patchhi_b
+         !byte $43
+         !byte $50
+         !byte $52
+         !byte $54
+         !byte $54
+         !byte $55
+         !byte $56
+         !byte $57
+         !byte $58
+         !byte $5c
+         !byte $5c
+         !byte $5f
+         !byte $5f
+patchhi_e
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
