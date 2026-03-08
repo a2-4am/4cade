@@ -9,7 +9,7 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $2060
+         sta   $2068
          jsr   $2000      ; decompress
 
          +GET_MACHINE_STATUS_LC
