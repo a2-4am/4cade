@@ -10,6 +10,7 @@
          lda   #$60
          sta   $336
          jsr   $300
+         +READ_ROM_NO_WRITE
          +USES_TEXT_PAGE_2
          +HIDE_ARTWORK
          jmp   $800
