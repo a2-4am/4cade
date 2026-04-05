@@ -20,18 +20,20 @@
          beq   +
          ldy   #(cheat_e - cheat_b) - 1
 -        lda   cheat_b, y
-         sta   $FB60, y
+         sta   $FBBE, y
          dey
          bpl   -
-         lda   #$20
-         sta   $FA85
-         lda   #$60
-         sta   $FA86
-         lda   #$FB
-         sta   $FA87
+         ldy   #2
+-        lda   hook_cheat, y
+         sta   $FA85, y
+         dey
+         bpl   -
 +        jsr   DisableAccelerator
          jsr   HideLaunchArtworkLC2
          jmp   $F800
+
+hook_cheat
+         !byte $20, $BE, $FB
 
 cheat_b
          ldx   $FFC3
