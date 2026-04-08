@@ -6,10 +6,10 @@
 *=$106
 
 patch_iic=$d04b ; from willy.byte.mb.a
-callback4=$bf95 ; from willy.byte.mb.a
-patch_val=$bfb5 ; from willy.byte.mb.a
+callback4=$bf98 ; from willy.byte.mb.a
+patch_val=$bfb8 ; from willy.byte.mb.a
 accel=$d156     ; from willy.byte.mb.a
-accel_e=$d199   ; from willy.byte.mb.a
+accel_e=$d19c   ; from willy.byte.mb.a
 callback1=$bf80 ; from willy.byte.mb.a
 
     !source "src/macros.a"

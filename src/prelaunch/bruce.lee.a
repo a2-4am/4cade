@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          jsr   HideLaunchArtworkLC2
          lda   #$2c
@@ -41,9 +41,9 @@ callback
          +DISABLE_ACCEL
          jsr   $6000
          jsr   $7f8
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
-         +READ_RAM1_WRITE_RAM1
+         lda   $C08B
          rts
 
 cheat !pseudopc $cf {

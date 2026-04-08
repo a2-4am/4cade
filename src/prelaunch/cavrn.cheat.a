@@ -76,7 +76,7 @@ patch2
          jmp   $1A4E
 
 noaccel
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
          lda   MachineStatus
          +READ_ROM_NO_WRITE

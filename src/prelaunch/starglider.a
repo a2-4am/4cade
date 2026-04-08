@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          inc   $3F4       ; reboot during title screen
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          lda   MachineStatus
          +READ_ROM_NO_WRITE

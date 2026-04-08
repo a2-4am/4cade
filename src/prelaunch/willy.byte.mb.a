@@ -213,7 +213,7 @@ skip_b1f4
 }
 accel !pseudopc $bf80 {
 callback1
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          jsr   $BD80      ; decompress
          jsr   $D000
@@ -222,7 +222,7 @@ callback1
          lda   #0         ; set Z
          rts
 
-!if *!=$bf95 {
+!if *!=$bf98 {
   !error "callback4 moved ",*
 }
 callback4
@@ -238,13 +238,13 @@ callback4
 patch
 patch_lo !byte 0, 1, 2, 7, 8, 9, $0a, $17, $18, $19, $1a, $24, $25, $26
 patch_e
-!if *!=$bfb5 {
+!if *!=$bfb8 {
   !error "patch_val mode ", *
 }
 patch_val !byte $a2, $DD, $a9, $a9, $2b, $85, $48, $85, $5a, $24, $5a, $51, $57, $0a
 
 }
 accel_e
-!if *!=$d199 {
+!if *!=$d19c {
   !error "accel_e moved ",*
 }

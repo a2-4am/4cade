@@ -11,7 +11,7 @@
          lda   #$60
          sta   $2018
          jsr   $2000      ; decompress
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          +GET_MACHINE_STATUS_LC
          beq   +
          lda   #$a5

@@ -28,7 +28,8 @@
          lda   #$f0
          sta   $8A0
          stx   $8A1
-+        +READ_ROM_NO_WRITE
++        jsr   DisableAccelerator
+         +READ_ROM_NO_WRITE
          jmp   $800
 
 callback

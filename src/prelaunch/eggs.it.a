@@ -17,7 +17,7 @@
          +ENABLE_ACCEL
          ldy   #0
          jsr   $B839
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
          lda   MachineStatus
          +READ_ROM_NO_WRITE

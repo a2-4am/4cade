@@ -11,7 +11,7 @@
          lda   #$60
          sta   $244B
          jsr   $2400      ; decompress
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
                           ; reset vector in high score file
                           ; gets loaded directly to $300
          lda   MockingboardStuff

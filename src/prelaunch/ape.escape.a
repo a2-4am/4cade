@@ -20,7 +20,7 @@
          lda   $C050
          jsr   $94CA      ; show title animation
 
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          bit   CLEARKBD
          jsr   $94E4      ; decompress game

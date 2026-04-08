@@ -27,7 +27,7 @@
          sta   $3F2       ; reset vector B8F2
          sta   $3FE       ; IRQ vector B8FE
 
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   MockingboardStuff
          beq   ++
          tax

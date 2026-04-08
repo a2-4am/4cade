@@ -36,7 +36,7 @@ callback1
          sta   CLEARKBD
 
 callback2
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          jsr   $BC7B
 
@@ -53,7 +53,7 @@ callback2
          jmp   $A00
 
 callback3
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
          jsr   $BE01
 

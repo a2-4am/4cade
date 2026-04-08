@@ -11,7 +11,7 @@
          lda   #$60
          sta   $813
          jsr   $800
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   WaitForVBL
          eor   #$60
          bne   @good_vbl  ; if VBL disabled in TR

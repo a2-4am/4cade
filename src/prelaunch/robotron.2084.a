@@ -20,7 +20,7 @@
 
 callback_b !pseudopc $80 {
 callback
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED

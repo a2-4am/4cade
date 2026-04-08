@@ -14,7 +14,7 @@
          jsr   $6C17       ; decompress
          dey
          sty   $4DE8       ; disable debug key
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          lda   MockingboardStuff
          beq   no_mb
          and   #7

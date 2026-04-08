@@ -55,9 +55,9 @@ callback
          and   #7
          tax
          sta   $478, x    ; hide CFFA state in case of reset
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   DisableAccelerator
-         +READ_RAM1_WRITE_RAM1
+         lda   $C08B
          jmp   $EE00
 
 !if * > PrelaunchMax {

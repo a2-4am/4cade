@@ -317,12 +317,12 @@
 
 ; leave LC active on exit
 !macro   ENABLE_ACCEL_LC {
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
 }
 
 !macro   DISABLE_ACCEL {
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          +DISABLE_ACCEL_LC
 }
 
@@ -356,11 +356,11 @@
 
 ; leave LC active on exit
 !macro   GET_MACHINE_STATUS_LC {
-         +READ_RAM2_NO_WRITE
          lda   MachineStatus
 }
 
 !macro   GET_MACHINE_STATUS {
+         +READ_RAM2_NO_WRITE
          +GET_MACHINE_STATUS_LC
          +READ_ROM_NO_WRITE
 }

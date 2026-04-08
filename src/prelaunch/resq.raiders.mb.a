@@ -16,7 +16,7 @@
          jsr   $BFC8
          lda   #$4C
          sta   $4047
-         +READ_RAM2_NO_WRITE
+         +READ_RAM2_WRITE_RAM2
          bit   MockingboardStuff
          bvs   +
          lda   #$60
