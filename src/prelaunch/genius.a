@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022, 2024 by qkumba
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/GENIUS",plain
@@ -7,57 +7,17 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
+         jsr   HideLaunchArtworkLC2
+         +LOAD_FILE_AT genius_mb, $240
          lda   #$60
-         sta   $336
+         sta   $333
          jsr   $300
-         +ENABLE_ACCEL
-         lda   #$60
-         sta   $9CD
-         jsr   $800       ; decompress
-         +GET_MACHINE_STATUS
-         and   #CHEATS_ENABLED
-         pha
-         lda   #$60
-         sta   $95E2
-         lda   #<callback1
-         sta   $9684
-         lda   #>callback1
-         sta   $9685
-         jsr   $9592
-         pla
-         beq   +
-         dec   $1A89      ; patch - don't decrease lives
-         dec   $1ABC      ; patch - don't increase lives
-+
-         +LC_REBOOT
-         +DISABLE_ACCEL_LC
-         inc   $9d        ; game relies on it
-         lda   #$52
-         sta   $cc        ; game relies on it
-         lda   #0
-         sta   $cb        ; game relies on it
-         sta   $ca        ; game relies on it
-         lda   #$80
-         sta   $c9        ; game relies on it
-         jmp   $95E5
+         jmp   $240
 
-callback1
-         lda   #$4C
-         sta   $D7D5
-         lda   #<callback2
-         sta   $D7D6
-         lda   #>callback2
-         sta   $D7D7
-         jmp   $D7C2
-
-callback2
-         sec
-         sbc   #7
-         cmp   #2
-         bcc   +
-         jmp   $D7E2
-+        jmp   $D7D9
+genius_mb
+         +PSTRING "PRELAUNCH/GENIUS.MB"
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
