@@ -7,24 +7,24 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +READ_RAM2_WRITE_RAM2
+         jsr   EnableAccelerator
          lda   #$60
          sta   $4082
          asl
          sta   $40D5
          sta   $40DB
          inc   $bf0e
-         +READ_RAM2_NO_WRITE
-         ldx   #$bf
+         ldx   #$b2
          txs
--        lda+2 (reloc_e-1)-$bf, x
+-        lda+2 (reloc_e-1)-$b2, x
          pha              ; pshhh don't look
          dex
          cpx   #<(reloced-1)
          bne   -
          beq   reloced    ; always
 
-reloc !pseudopc $173 {
+reloc !pseudopc $163 {
 reloced
          jsr   $4000      ; decompress
          lda   #<callback
@@ -53,7 +53,7 @@ callback
          sta   $1271      ; patch - don't decrease lives
 +        +DISABLE_ACCEL_LC
          jmp   $808
-  !if * != $1c0 {
+  !if * != PrelaunchMax {
     !error "position mismatch, ", *
   }
 }
