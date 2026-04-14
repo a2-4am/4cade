@@ -4,14 +4,23 @@
 
 ### Games added in v5.3
 
+- Awass
+- Clam Bake
 - Crossbow
 - Deathbounce
+- Dig 'Em
 - Electroarena
+- Froggo
 - Glider
 - Helicopter Rescue
 - Kaboom!
 - Mazy2
 - Mieyen
+- Nibbler (Brent Iverson)
+- Sand Trap
+- Shatterstar
+- Svellas
+- Sylvan Idyll
 - Shoot Out
 - Shufflepuck Cafe
 - Spud and Mug Shot
@@ -23,6 +32,12 @@
 - Bejeweled
 - Retro-Ball
 - Video Vegas
+
+### Games upgraded in v5.3
+
+- Genius upgraded to version 20
+- Genius 2 upgraded to version 20
+- Genius 3 upgraded to version 20
 
 ### Enhancements & bug fixes in v5.3
 
@@ -36,6 +51,10 @@
 - Swap buttons by default in Lode Runner and Championship Lode Runner (closes [663](https://github.com/a2-4am/4cade/issues/663))
 - Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
 - Fix Mockingboard issues in Willy Byte (closes [665](https://github.com/a2-4am/4cade/issues/665), [666](https://github.com/a2-4am/4cade/issues/666))
+- Fix crash in Wargle (closes [773](https://github.com/a2-4am/4cade/issues/773))
+- Fix crash in Technocop when cheats are enabled (closes [777](https://github.com/a2-4am/4cade/issues/777))
+- Mark Captain Goodnight as requiring a joystick (PR [776](https://github.com/a2-4am/4cade/pull/776), thanks xotmatrix)
+- Fix IIgs compatibility issues in Out of this World (closes [778](https://github.com/a2-4am/4cade/issues/778))
 - Properly reset Mockingboard speech chip on Ctrl-Reset (closes [660](https://github.com/a2-4am/4cade/issues/660))
 - Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
 - Improve Mockingboard mono/stereo detection
@@ -45,7 +64,9 @@
 - Disable BRAM write in Prince of Persia on IIgs
 - Mark Mapple and Crime Wave as having in-game cheats
 - Remove debugging code from Mapple
+- Fix acceleration on Apple //c+
 - Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
+- Improve compatibility with mass storage devices, Total Replay no longer requires devices to implement the SmartPort API
 - Add more game help (thanks Brendan R., Andrew R., cybernesto)
 - Add more box art (thanks Alex R., Andrew R., Lunar, Ernst Krogtoft)
 - Update title screen
