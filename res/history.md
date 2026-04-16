@@ -19,11 +19,12 @@
 - Nibbler (Brent Iverson)
 - Sand Trap
 - Shatterstar
-- Svellas
-- Sylvan Idyll
 - Shoot Out
 - Shufflepuck Cafe
 - Spud and Mug Shot
+- Svellas
+- Sylvan Idyll
+- Viper
 
 ### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
