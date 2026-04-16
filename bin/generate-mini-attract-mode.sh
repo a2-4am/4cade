@@ -49,31 +49,31 @@ cat res/GAMES.CONF |
 
         # add box art, if any
         cat "$shrs" |
-            egrep "(^|=)""$game""$" |
+            grep -E "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=C/g" >> /tmp/g
 
         # add DHGR action screenshots, if any
         cat "$dhgrs" |
-            egrep "(^|=)""$game""$" |
+            grep -E "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=B/g" >> /tmp/g
 
         # add HGR action screenshots, if any
         cat "$hgrs" |
-            egrep "(^|=)""$game""$" |
+            grep -E "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=A/g" >> /tmp/g
 
         # add GR action screenshots, if any
         cat "$grs" |
-            egrep "(^|=)""$game""$" |
+            grep -E "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=D/g" >> /tmp/g
 
         # add DGR action screenshots, if any
         cat "$dgrs" |
-            egrep "(^|=)""$game""$" |
+            grep -E "(^|=)""$game""$" |
             cut -d"=" -f1 |
             sed -e "s/$/=E/g" >> /tmp/g
 
