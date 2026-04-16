@@ -47,7 +47,7 @@ cat res/GAMES.CONF |
     cut -d"=" -f1 > /tmp/games
 
 # warn about unused self-running demos
-grep '^\!to' src/demo/*.a | cut -d'/' -f5-|cut -d'#' -f1 |
+grep '^!to' src/demo/*.a | cut -d'/' -f5-|cut -d'#' -f1 |
     grep -v "SPCARTOON" |
     while read f; do
         grep "^$f=0" res/ATTRACT.CONF >/dev/null || echo "unused demo: $f";
