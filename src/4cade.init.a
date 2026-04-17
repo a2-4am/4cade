@@ -86,13 +86,6 @@
          inx
          bne   -
 !cpu 6502
-
-         ; Since we know we are on IIgs, let's also force Mono Mode off
-         lda   NEWVIDEO
-         and   #$DF
-         sta   NEWVIDEO              ; Bit 5=1 for B/W double hi-res
-         lda   #$00
-         sta   MONOCOLOR             ; bit 7=1 disables color
 +
 
          ; accommodate uppercase-only machines (64K ][ and ][+ are supported)

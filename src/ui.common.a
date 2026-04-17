@@ -22,6 +22,9 @@ Home
          lda   MachineStatus
          and   #SUPPORTS_SHR
          beq   @noSHR
+         lda   #%00000000
+         sta   MONOCOLOR             ; bit 7 = 0 -> IIgs is color, not monochrome
+                                     ; bits 0-6 reserved
          lda   #%00000001            ; bit 7 = 0 -> IIgs Apple II-compatible video modes
                                      ; bit 6 = 0 -> IIgs 128K memory map is the same as the Apple IIe
                                      ; bit 5 = 0 -> IIgs DHGR is color, not monochrome
