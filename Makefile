@@ -110,6 +110,12 @@ JOYSTICK=res/JOYSTICK
 TITLE=res/TITLE
 SOURCE_DATE := $(shell git log -1 --format=%cD | bin/rfc2822_to_touch.py)
 export SOURCE_DATE_EPOCH = $(shell git log -1 --format=%ct)
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	MOUNTER=xdg-open
+else
+	MOUNTER=osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii
+endif
 
 .PHONY: compress attract cache clean mount all al
 
@@ -470,7 +476,7 @@ cache: $(GAMES.CONF)
 	    '$(ACME) -o res/CACHE111.IDX "$(BUILDDIR)"/cache111.a'
 
 mount: $(HDV)
-	osascript bin/V2Make.scpt "`pwd`" bin/4cade.vii "$(HDV)"
+	$(MOUNTER) $(HDV)
 
 $(MD):
 	@$(ACME) --version | grep -q "ACME, release" || (echo "ACME is not installed" && exit 1)
