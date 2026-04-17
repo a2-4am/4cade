@@ -9,17 +9,17 @@
 
          +ENABLE_ACCEL
          lda   #>(callback-1)
-         sta   $6EC4
+         sta   $6B49
          lda   #<(callback-1)
-         sta   $6EC7
-         jmp   $6EB3      ; decompress
+         sta   $6B4C
+         jmp   $6B38      ; decompress
 
 callback
          +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
-         sta   $D2B       ; don't decrease lives
+         sta   $D1B       ; don't decrease lives
 +
          +DISABLE_ACCEL_LC
          jmp   $4100
