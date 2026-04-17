@@ -62,12 +62,13 @@
 - Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't (closes [664](https://github.com/a2-4am/4cade/issues/664))
 - Add mouse detection and filtering for games that require a mouse
 - Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645), thanks xotmatrix)
+- Properly reset monochrome/color mode on IIgs, now that some games set monochrome mode on purpose (hi Colin)
 - Disable BRAM write in Prince of Persia on IIgs
 - Mark Mapple and Crime Wave as having in-game cheats
 - Remove debugging code from Mapple
 - Fix acceleration on Apple //c+
 - Improve compatibility on machines running ROMx custom ROM and booting from BOOTi mass storage device
-- Improve compatibility with mass storage devices, Total Replay no longer requires devices to implement the SmartPort API
+- Improve compatibility with mass storage devices (Total Replay now runs on devices that does not implement the SmartPort API)
 - Add more game help (thanks Brendan R., Andrew R., cybernesto)
 - Add more box art (thanks Alex R., Andrew R., Lunar, Ernst Krogtoft)
 - Update title screen
