@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2025 by qkumba
+;(c) 2025, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SHFLPUCK",plain
@@ -8,6 +8,8 @@
          !source "src/macros.a"
 
          +ENABLE_ACCEL
+         lda   #%10000000
+         sta   MONOCOLOR  ; force mono before title screen
          lda   #$60
          sta   $408E
          jsr   $4000      ; decompress
