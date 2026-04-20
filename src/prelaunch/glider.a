@@ -7,7 +7,7 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #>(callback-1)
          sta   $6B49
          lda   #<(callback-1)

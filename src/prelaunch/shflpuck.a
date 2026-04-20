@@ -9,20 +9,21 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $4080
+         sta   $408E
          jsr   $4000      ; decompress
          lda   #<callback
-         sta   $6D0A
+         sta   $A00A
          lda   #>callback
-         sta   $6D0B
+         sta   $A00B
+         +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          +DISABLE_ACCEL_LC
-         jmp   $6D00
+         jmp   $A000
 
 callback
          lda   #$88
          sta   $BF0E      ; bank in LC from now on
-         jmp   $763D
+         jmp   $A8F3
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
