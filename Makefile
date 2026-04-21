@@ -476,7 +476,7 @@ cache: $(GAMES.CONF)
 	    '$(ACME) -o res/CACHE111.IDX "$(BUILDDIR)"/cache111.a'
 
 mount: $(HDV)
-	$(MOUNTER) $(HDV)
+	$(MOUNTER) $(HDV) &
 
 $(MD):
 	@$(ACME) --version | grep -q "ACME, release" || (echo "ACME is not installed" && exit 1)
