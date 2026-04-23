@@ -12,7 +12,7 @@
          jsr   $300
          +READ_ROM_NO_WRITE
          +USES_TEXT_PAGE_2
-         +HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $800
 
 !if * > PrelaunchMax {
