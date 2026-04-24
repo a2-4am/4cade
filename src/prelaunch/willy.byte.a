@@ -76,7 +76,8 @@ callback2
          cmp   #8
          beq   +
          cmp   #9
-+        rts
++        +READ_ROM_NO_WRITE
+         rts
 
 patch_c2 !byte $20, <callback2, >callback2
 patch_c4 !byte $20, <callback4, >callback4
