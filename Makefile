@@ -22,7 +22,7 @@ ACME=acme
 
 # https://github.com/mach-kernel/cadius
 # version 1.4.0 or later
-CADIUS=cadius
+CADIUS=TZ=UTC0 cadius
 
 # https://www.gnu.org/software/parallel/
 PARALLEL=parallel
@@ -108,8 +108,8 @@ FINDER.ROOT=res/Finder.Root
 HELP=res/HELP
 JOYSTICK=res/JOYSTICK
 TITLE=res/TITLE
-SOURCE_DATE := $(shell git log -1 --format=%cD | bin/rfc2822_to_touch.py)
-export SOURCE_DATE_EPOCH = $(shell git log -1 --format=%ct)
+SOURCE_DATE := $(shell TZ=UTC0 git show -s --date='format-local:%Y-%m-%dT%H:%M:%SZ' --format="%cd")
+export SOURCE_DATE_EPOCH = $(shell git show -s --format=%ct)
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 	MOUNTER=xdg-open
