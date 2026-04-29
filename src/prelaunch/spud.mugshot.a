@@ -23,7 +23,11 @@ callback2
          sta   $242D
          bcc   ++
 +        sta   $2439
-++       jsr   $23F8      ; decompress
+++       lda   $9508
+         pha
+         jsr   $23F8      ; decompress
+         pla
+         sta   $2003      ; joy/key state
          ldx   #0
          stx   $3F2
          inx
