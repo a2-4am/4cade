@@ -1,0 +1,21 @@
+
+
+      Shoot everything that moves
+
+
+
+        Left               Right
+
+rotate  S   D              L   ;  rotate
+
+          A       fire       K
+
+          X    change ammo   .
+
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-B * * * * * * * * * * * * * restart
