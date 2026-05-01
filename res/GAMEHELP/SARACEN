@@ -1,0 +1,23 @@
+   Navigate the maze, kill the chief
+
+   Avoid guards, traps, & cannonballs
+
+  You can only carry 1 item at a time
+
+
+                   S
+          move   L   ;   move
+                   X
+
+        $   pick up or drop   %
+
+ (On II+, use Space to pick up or drop)
+
+
+Esc* * * * * * * * * * * * * * * * pause
+
+Ctrl-S * * * * * * * * * * * * * * sound
+
+Ctrl-A * * * * * * * * * * restart level
+
+Ctrl-R * * * * * * * * * * *restart game
