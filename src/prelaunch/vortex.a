@@ -7,15 +7,12 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
-         lda   #<hook
-         sta   $407E+1
-         lda   #>hook
-         sta   $407E+2
-         jmp   $4000      ; decompress2
-
-hook     +NEW_RESET_VECTOR $BFF0
-         +GET_MACHINE_STATUS_LC
+         +ENABLE_ACCEL_LC
+         lda   #$60
+         sta   $407E
+         jsr   $4000      ; decompress2
+         +NEW_RESET_VECTOR $BFF0
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $EA8       ; patch - don't decrease lives

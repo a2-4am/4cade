@@ -16,12 +16,12 @@
          jmp   $5200      ; load "DOS"
 
 callback1
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
          lda   #0
          sta   $56
          jsr   $BDAC      ; decompress
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   $1B82

@@ -14,7 +14,7 @@
          lda   #$60
          sta   $B727
          jsr   $B700      ; load game
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

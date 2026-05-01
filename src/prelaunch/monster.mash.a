@@ -9,9 +9,9 @@
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$60
-         sta   $A16
+         sta   $9F6
          jsr   $800       ; load DOS
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback

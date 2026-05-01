@@ -7,17 +7,17 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$4C
          sta   $6EC5
          sta   $6EE7
          jsr   $3FF8      ; decompress
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jsr   $1000      ; title sequence
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $6ECB      ; decompress
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD

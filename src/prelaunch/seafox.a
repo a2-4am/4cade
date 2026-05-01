@@ -7,16 +7,16 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$60
          sta   $4939
          sta   $495A
          jsr   $4900      ; decompress
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jsr   $4000
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $BE06      ; decompress more
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $7881      ; patch - don't decrease torpedoes

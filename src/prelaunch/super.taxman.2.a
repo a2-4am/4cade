@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #<hook
          sta   $C81+1
          lda   #>hook
@@ -22,7 +22,7 @@ hook     lda   #0
          lda   #$2C       ; annunciator fix - kills Gizmo/joyport support
          sta   $666A      ; but fixes ][+ 80-col softswitch and //c+ coloring
 
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

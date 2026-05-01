@@ -8,17 +8,17 @@
     !source "src/macros.a"
 
 callback0
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #<callback1
          sta   $7B7B
          lda   #>callback1
          sta   $7B7C
-         jmp   $3FF8      ; decompress
+         jmp   $7B01      ; decompress
 
 callback1
          +HIDE_ARTWORK
          jsr   $BE00
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -34,7 +34,7 @@ callback1
          ;Worm Wall section
 
 callback2
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #<callback3
          sta   $6E41
          lda   #>callback3
@@ -43,7 +43,7 @@ callback2
 
 callback3
          jsr   $BE00
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

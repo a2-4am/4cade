@@ -9,7 +9,7 @@
 
          +USES_TEXT_PAGE_2
          +NEW_RESET_VECTOR $280
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $813
          jsr   $800       ; decompress
@@ -19,7 +19,7 @@
          lda   #2
          sta   $104A      ; reset/IRQ vector patch
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5

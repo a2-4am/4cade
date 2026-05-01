@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
          ldy   #6
 -        lda   $100-1,y
@@ -19,14 +19,14 @@
 
          lda   #$60
          sta   $7D1F
-         +HIDE_ARTWORK
+         jsr   HideLaunchArtworkLC2
          jsr   $3FF5      ; unpack & show title
 
          lda   #$60
          sta   $BA21
          jsr   $BA00
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

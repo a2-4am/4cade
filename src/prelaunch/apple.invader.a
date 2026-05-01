@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
          lda   #$60
          sta   $6027
@@ -54,7 +54,7 @@
          stx   $5B77
          stx   $5B84      ; IRQ vector fix
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A5

@@ -8,7 +8,10 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
-         +GET_MOCKINGBOARD_SLOT_LC
+         lda   MockingboardStuff
+         cmp   #1
+         and   #7
+         ora   #$C0
          php
          pha
          bcs   yesmb1
@@ -59,7 +62,7 @@ yesmb2
          bne   -
 
 nomb2
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

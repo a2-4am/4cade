@@ -29,8 +29,9 @@
          sta   <(cheat1 - 1), x
          dex
          bne   -
-         bit   MachineStatus
-         bvs   +
+         lda   MachineStatus
+         and   #HAS_128K
+         bne   +
          lda   #$82
          sta   <(lcpatch + 1)
 +

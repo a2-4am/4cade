@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          ldx   #(callback_e-callback_b)+1
 -        lda   callback_b-1,x
          sta   <(callback-1),x
@@ -20,7 +20,6 @@
 
 callback_b !pseudopc $80 {
 callback
-         +READ_RAM2_WRITE_RAM2
          jsr   HideLaunchArtworkLC2
          lda   MachineStatus
          and   #CHEATS_ENABLED

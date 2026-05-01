@@ -7,14 +7,13 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +NEW_RESET_VECTOR $200
          lda   #$60
          sta   $950B
          jsr   $6C17       ; decompress
          dey
          sty   $4DE8       ; disable debug key
-         +READ_RAM2_WRITE_RAM2
          lda   MockingboardStuff
          beq   no_mb
          and   #7

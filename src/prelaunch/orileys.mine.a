@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $81D
          jsr   $800       ; decompress
@@ -26,7 +26,7 @@
          sta   $83E4      ; fix joystick right
          sta   $83FF      ; fix joystick down
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD

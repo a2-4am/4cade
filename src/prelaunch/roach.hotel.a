@@ -7,7 +7,6 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
          lda   #<callback2
          sta   $4DC8
          ldx   #>callback2
@@ -15,7 +14,7 @@
          lda   #<pcallback2
          sta   $4CE1
          stx   $4CE2
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +HIDE_ARTWORK
          jmp   $800       ; decompress while showing title
 
 callback2
@@ -23,7 +22,7 @@ callback2
          jmp   $BC88      ; decompress
 
 callback3
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          dec   $CBC       ; patch - don't increase lives

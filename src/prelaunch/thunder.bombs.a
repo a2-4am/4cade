@@ -18,7 +18,7 @@
          sta   $882B+2    ; fix timing of title screen on //gs
          jsr   $87F9      ; load, show title
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $7818
          jsr   $7800      ; unpack/setup

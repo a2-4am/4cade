@@ -7,8 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $4082
          asl
@@ -24,18 +23,19 @@
          bne   -
          beq   reloced    ; always
 
-reloc !pseudopc $163 {
+reloc !pseudopc $16c {
 reloced
          jsr   $4000      ; decompress
          lda   #<callback
          sta   $BFC
          lda   #>callback
          sta   $BFD
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
          jmp   $822
 
 callback
-         +ENABLE_ACCEL_LC
+         jsr   EnableAccelerator
          lda   #$60
          sta   $834B
          jsr   $8300

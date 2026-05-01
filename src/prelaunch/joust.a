@@ -16,7 +16,7 @@
          jsr   $7000
          +ENABLE_ACCEL
          jsr   $832
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

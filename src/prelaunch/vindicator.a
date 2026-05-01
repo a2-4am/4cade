@@ -15,7 +15,7 @@ callback
          rts
 }
 +
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          ldx   #15
 -        lda   $100,x
          sta   $320,x
@@ -50,7 +50,7 @@ callback
          dex
          bpl   -
 
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD

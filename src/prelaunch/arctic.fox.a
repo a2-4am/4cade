@@ -26,7 +26,7 @@ callback2
 callback1
          +LC_REBOOT
          inc   $3F4       ; force reboot
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback2
@@ -34,8 +34,9 @@ callback1
          lda   #>callback2
          sta   $11C6
 +
+         lda   $C083
          jsr   DisableAccelerator
-         +READ_RAM1_WRITE_RAM1
+         lda   $C08B
          sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $1170
 

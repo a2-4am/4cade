@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $6068
          jsr   $6000      ; decompress
@@ -27,9 +27,9 @@
          jmp   $800
 
 callback !pseudopc $200 {
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $B050
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   ++
          ldx   #$A5

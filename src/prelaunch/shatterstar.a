@@ -20,7 +20,7 @@
          sta   $36
          lda   #>callback
          sta   $37
-         +DISABLE_ACCEL_LC
+         +DISABLE_ACCEL
          jmp   $9D84
 
 callback

@@ -10,11 +10,11 @@
          +ENABLE_ACCEL_LC
          inc   $3F4       ; force reboot
          lda   MachineStatus
-         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          pha
          lda   #$60
          sta   $A01
+         +READ_ROM_NO_WRITE
          jsr   $800       ; load "DOS"
          pla
          beq   +
@@ -28,8 +28,7 @@
          sta   $FA85, y
          dey
          bpl   -
-+        jsr   DisableAccelerator
-         jsr   HideLaunchArtworkLC2
++        +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $F800
 
 hook_cheat

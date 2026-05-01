@@ -22,7 +22,7 @@
          sta   $42FF
          sta   $4302
 
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A9

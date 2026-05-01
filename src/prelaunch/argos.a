@@ -19,9 +19,9 @@
          jmp   $300
 
 callback
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $B65A      ; decompress
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   ++
          lda   $B75A

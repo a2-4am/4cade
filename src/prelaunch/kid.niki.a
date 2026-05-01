@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $6069
 
@@ -15,7 +15,7 @@
          sta   $6051      ; reset vector patch
 
          jsr   $5FE7      ; load assets
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in $084A

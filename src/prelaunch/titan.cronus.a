@@ -7,14 +7,11 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
-         lda   #<hook
-         sta   $1053+1
-         lda   #>hook
-         sta   $1053+2
-         jmp   $1000      ; decompress
-
-hook     +NEW_RESET_VECTOR $280
+         +ENABLE_ACCEL_LC
+         lda   #$60
+         sta   $1053
+         jsr   $1000      ; decompress
+         +NEW_RESET_VECTOR $280
 
          lda   #$8C       ; CALL
          sta   $C84
@@ -25,7 +22,7 @@ hook     +NEW_RESET_VECTOR $280
          lda   #$30
          sta   $C84+3     ; (replaces TEXT:HOME:END)
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback

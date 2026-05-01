@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #<hook
          sta   $1FB9+1
          lda   #>hook
@@ -19,7 +19,7 @@ hook     lda   #0
          lda   #1
          sta   $700C      ; reset vector fix
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

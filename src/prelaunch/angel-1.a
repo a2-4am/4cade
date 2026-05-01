@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $3739
          jsr   $800        ; decompress
@@ -15,7 +15,7 @@
          stx   $B265
          inx
          stx   $B26A       ; reset vector
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $938D       ; patch - don't decrease bombs

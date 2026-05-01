@@ -8,12 +8,12 @@
     !source "src/macros.a"
 
 reset
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +NEW_RESET_VECTOR reset
          lda   #$60
          sta   $1A67
          jsr   $1A00      ; decompress
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $BFB       ; patch - don't decrease lives

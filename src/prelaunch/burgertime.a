@@ -16,9 +16,9 @@
          lda   #$b1
          sta   $646b
          jsr   $6400
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $811
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$24

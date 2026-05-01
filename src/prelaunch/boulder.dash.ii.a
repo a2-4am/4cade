@@ -7,9 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
-         jsr   HideLaunchArtworkLC2
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$60
          sta   $4048
          jsr   $4000      ; decompress & show EA title

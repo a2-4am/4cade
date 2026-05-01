@@ -12,10 +12,10 @@
          sta   $9C7
          jsr   $800        ; find and load "DOS"
          +HIDE_ARTWORK
-         iny
-         sty   $B719
+         inx
+         stx   $B719
          jsr   $B700
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback

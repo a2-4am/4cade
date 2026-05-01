@@ -42,15 +42,14 @@
          rts
 
 +
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
          +LDADDR @path
          jsr   iAddToPath
          +LDADDR gPathname
          +ST16 namlo
          jsr   itraverse  ; enter subdirectory
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$4C

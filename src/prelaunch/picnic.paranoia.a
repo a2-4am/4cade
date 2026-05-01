@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #<callback
          sta   $450d
          lda   #>callback
@@ -23,7 +23,7 @@ callback
          eor   #$A5
          sta   $45ef
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $79B7      ; patch - don't decrease time

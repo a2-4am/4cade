@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
          ldx   #<reset_e
 -        lda+2 $ff,x
@@ -28,7 +28,7 @@ reset    ldx   #5
          dex
          bpl   -
          +RESET_VECTOR $2f0
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

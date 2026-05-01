@@ -7,11 +7,11 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$60
          sta   $207C
          jsr   $2000      ; decompress
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          ldx   #3

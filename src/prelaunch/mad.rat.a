@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #>(callback-1)
          sta   $75C2
          lda   #<(callback-1)
@@ -15,7 +15,7 @@
          jmp   $3FF8      ; decompress
 
 callback
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

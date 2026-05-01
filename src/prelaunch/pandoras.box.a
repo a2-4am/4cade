@@ -7,17 +7,17 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $833
          sta   $85A
          jsr   $800       ; decompress
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jsr   $85D
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $836
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

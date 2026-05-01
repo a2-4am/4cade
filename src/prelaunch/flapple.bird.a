@@ -7,18 +7,17 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $813
          jsr   $800
-         +READ_RAM2_WRITE_RAM2
          lda   WaitForVBL
          eor   #$60
          bne   @good_vbl  ; if VBL disabled in TR
          sta   $2971      ; then disable VBL in game
 
 @good_vbl
-         +DISABLE_ACCEL_LC
+         +READ_ROM_NO_WRITE
          lda   $fbb3
          cmp   #$6
          bne   @not_mac
@@ -31,9 +30,9 @@
          +READ_RAM2_WRITE_RAM2
          +LOAD_FILE_AT flapple_mac, $b000
          jsr   $b000
-         +READ_ROM_NO_WRITE
 
 @not_mac
+         +DISABLE_ACCEL
          jmp   $2000
 
 flapple_mac

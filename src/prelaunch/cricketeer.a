@@ -17,7 +17,7 @@ reset
          jsr   $868       ; decompress
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $839
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$20
          sta   $810
          jsr   $868       ; decompress
@@ -30,7 +30,7 @@ reset
          lda   #$9A
          sta   $1D38
          sta   $1D3F
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

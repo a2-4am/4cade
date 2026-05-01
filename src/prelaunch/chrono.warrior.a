@@ -63,11 +63,11 @@ notlevel
          rts
 
 skip
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $2079
          jsr   $2000       ; decompress
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback

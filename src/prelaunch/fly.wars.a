@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $8B28
          jsr   $55FD      ; decompress
@@ -15,7 +15,7 @@
          sta   $5A6
          jsr   $5A0       ; decompress more
 
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

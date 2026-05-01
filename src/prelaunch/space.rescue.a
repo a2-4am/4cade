@@ -7,7 +7,7 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
          lda   #$60
          sta   $67DE
@@ -15,7 +15,7 @@
          +NEW_RESET_VECTOR $200
                           ; game leaks stack
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad

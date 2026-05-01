@@ -9,7 +9,6 @@
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   MachineStatus
-         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          sta   callback_b+(cheat_smc-callback)+1
          lda   #$60

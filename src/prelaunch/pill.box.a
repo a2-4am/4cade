@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jmp   skip
 
 !pseudopc $300+*-$100 {
@@ -32,7 +32,7 @@ skip
          lda   #$60
          sta   $4064
          jsr   $4000       ; decompress
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #6

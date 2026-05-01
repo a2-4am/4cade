@@ -7,14 +7,14 @@
 
     !source "src/macros.a"
 
+         +ENABLE_ACCEL_LC
          +NEW_RESET_VECTOR $280
-         +ENABLE_ACCEL
 
          lda   #$60
          sta   $2056
          jsr   $2000      ; decompress
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $1BBA      ; don't decrease lives

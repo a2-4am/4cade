@@ -7,11 +7,11 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$60       ; hook1
          sta   $4020
          jsr   $4000      ; decompress1
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jsr   $6B00      ; decompress2/title
 
          lda   #$60       ; hook2

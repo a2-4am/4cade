@@ -29,7 +29,7 @@ callback2
          jmp   $8E8C
 
 hook     +RESET_VECTOR $100
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #<callback1

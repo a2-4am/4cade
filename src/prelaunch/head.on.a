@@ -7,8 +7,7 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
 
          ; clobbers $100, sets LC & page 3 reset vectors
          +NEW_RESET_VECTOR $7000

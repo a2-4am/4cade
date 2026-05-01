@@ -7,7 +7,7 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #>(callback-1)
          sta   $51BE
          lda   #<(callback-1)
@@ -17,7 +17,7 @@
 callback
          lda   #1
          sta   $60B0      ; reset vector fix
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $9FA7      ; don't decrease lives

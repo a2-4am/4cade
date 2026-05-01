@@ -18,18 +18,17 @@
          jsr   $800
          +ENABLE_ACCEL
          jsr   $535       ; decompress game
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $773       ; patch - don't decrease lives
 +
-         jsr   DisableAccelerator
+         +DISABLE_ACCEL_LC
 
          lda   #$8d       ; fix opcode overwritten by 
          sta   $07fe      ; Laser accelerator code
 
-         +READ_ROM_NO_WRITE
          jmp   $68E
 
 !if * > PrelaunchMax {

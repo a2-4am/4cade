@@ -7,14 +7,14 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$4C
          sta   $3EC2
          jsr   $3E65      ; decompress/set reset vector
 
          +RESET_VECTOR $100
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5

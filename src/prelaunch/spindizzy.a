@@ -7,10 +7,8 @@
 
     !source "src/macros.a"
 
-         +READ_RAM2_WRITE_RAM2
-         jsr   EnableAccelerator
+         +ENABLE_ACCEL_LC
          +LC_REBOOT
-         +READ_ROM_NO_WRITE
 
          lda   #$60
          sta   $855
@@ -21,7 +19,7 @@
          inx
          stx   $934F      ; fix reboot
 
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$2C       ; BIT

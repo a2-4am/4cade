@@ -7,18 +7,19 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $2027
          jsr   $2000      ; decompress
 
-         +GET_MOCKINGBOARD_SPEECH_AND_MACHINE_STATUS_LC
+         bit   MockingboardStuff
          bvs   +
          stx   $868
          stx   $9486
          ldx   #$60
          stx   $B000      ; no speech chip, pretend no MB
-+        and   #CHEATS_ENABLED
++        lda   MachineStatus
+         and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
          sta   $A22       ; patch - don't decrease lives

@@ -8,9 +8,9 @@
     !source "src/macros.a"
 
          lda   #$60
-         sta   $346
+         sta   $348
          jsr   $300
-         +ENABLE_ACCEL_LC
+         jsr   EnableAccelerator
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED

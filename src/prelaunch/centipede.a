@@ -8,11 +8,11 @@
          !source "src/macros.a"
 
          +USES_TEXT_PAGE_2
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          lda   #$60
          sta   $0C2F
          jsr   $0C00      ; decompress
-         +GET_MACHINE_STATUS_LC
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$B5

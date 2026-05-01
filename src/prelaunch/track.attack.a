@@ -26,7 +26,7 @@ callback
          tax
          pla
          jsr   $400
-         +GET_MACHINE_STATUS_LC
+         +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
          lda   $9FC
