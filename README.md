@@ -69,26 +69,11 @@ For Debian (or Ubuntu or other derivatives), you can install some of the prerequ
 $ sudo apt install acme git parallel 7zip build-essential
 ```
 
-Other tools will need to be compiled from source.
-
-To install Cadius, enter the following at the terminal prompt:
+Other tools are installable via [Homebrew](https://brew.sh/). Open a terminal prompt and enter the following:
 
 ``` shell
-$ git clone https://github.com/mach-kernel/cadius.git
-$ cd cadius
-$ make
-$ sudo cp bin/release/cadius /usr/local/bin/
-$ cd -
-```
-
-To compile Exomizer, download the latest release from the [Exomizer home page](https://bitbucket.org/magli143/exomizer/wiki/Home), then enter the following (substituting actual filenames):
-
-``` shell
-$ 7z x exomizer-VERSION.zip
-$ cd exomizer-VERSION
-$ make
-$ sudo cp exomizer /usr/local/bin/
-$ cd -
+$ brew tap lifepillar/appleii
+$ brew install mach-kernel-cadius exomizer
 ```
 
 Now you're ready to build Total Replay:
