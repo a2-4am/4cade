@@ -12,7 +12,7 @@
          lda   #$60
          sta   $94E8
          sta   $9538
-         jsr   $3F84      ; decompress
+         jsr   $3F87      ; decompress
 
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
 

@@ -10,7 +10,7 @@
          +ENABLE_ACCEL_LC
          lda   #$60
          sta   $816
-         jsr   $800       ; decompress
+         jsr   $803       ; decompress
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
