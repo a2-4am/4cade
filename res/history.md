@@ -23,6 +23,7 @@
 - Shufflepuck Cafe
 - Spud and Mug Shot
 - Svellas
+- SwordWork
 - Sylvan Idyll
 - Viper
 
