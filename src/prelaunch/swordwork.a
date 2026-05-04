@@ -1,0 +1,30 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/SWORDWORK",plain
+*=$106
+
+    !source "src/macros.a"
+
+         +ENABLE_ACCEL_LC
+
+         lda   #$60
+         sta   $813
+         jsr   $800       ; decompress
+
+         lda   MachineStatus
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$AD
+         sta   $6860      ; patch - don't decrease lives
+         sta   $7276      ; patch - don't increase lives
++
+         lda   #$80
+         sta   $8884      ; fix joystick down
+         +DISABLE_ACCEL_LC
+         jmp   $6000
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
