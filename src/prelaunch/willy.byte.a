@@ -9,7 +9,8 @@ patch_iic=$d04b ; from willy.byte.mb.a
 callback4=$bf98 ; from willy.byte.mb.a
 patch_val=$bfb8 ; from willy.byte.mb.a
 accel=$d156     ; from willy.byte.mb.a
-accel_e=$d19c   ; from willy.byte.mb.a
+accel_e=$d1a8   ; from willy.byte.mb.a
+set_reset=accel_e
 callback1=$bf80 ; from willy.byte.mb.a
 
     !source "src/macros.a"
@@ -27,7 +28,9 @@ not_iic1
          +LOAD_FILE_AT willybyte_mb, $D000
          plp
          php
+         pha
          bne   not_iic2
+         jsr   set_reset
          lda   #$2c
          sta   patch_iic + 1
 
@@ -37,9 +40,9 @@ not_iic2
          sta   callback1, x
          dex
          bpl   -
-         lda   $D601
-         sta   patch_val + 1
          +READ_ROM_NO_WRITE
+         pla
+         sta   patch_val + 1
 !if <callback1 != $80 {
          lda   #<callback1
          sta   $414A
@@ -49,24 +52,17 @@ not_iic2
          lda   #$60
          sta   $426B
          jsr   $4000      ; decompress
-         ldx   #3
+         ldx   #4
 -        lda   patch_c2 - 1, x
          sta   $7852 - 1, x
-         stx   $B6DA      ; reset vector
-         dex
-         bne   -
-         lda   #$EA
-         sta   $7855
-         lda   #$4C
-         sta   $B6D8
-         stx   $B6D9
          plp
-         bne   not_iic3
-         ldx   #3
--        lda   patch_c4 - 1, x
+         php
+         bne   +
+         lda   patch_c4 - 1, x
          sta   $BD00 - 1, x
-         dex
++        dex
          bne   -
+         plp
 
 not_iic3
          jmp   $6000
@@ -79,8 +75,8 @@ callback2
 +        +READ_ROM_NO_WRITE
          rts
 
-patch_c2 !byte $20, <callback2, >callback2
-patch_c4 !byte $20, <callback4, >callback4
+patch_c2 !byte $20, <callback2, >callback2, $ea
+patch_c4 !byte $20, <callback4, >callback4, $ad
 
 willybyte_mb
          +PSTRING "PRELAUNCH/WILLY.BYTE.MB"

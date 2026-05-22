@@ -239,12 +239,22 @@ patch
 patch_lo !byte 0, 1, 2, 7, 8, 9, $0a, $17, $18, $19, $1a, $24, $25, $26
 patch_e
 !if *!=$bfb8 {
-  !error "patch_val mode ", *
+  !error "patch_val moved ", *
 }
 patch_val !byte $a2, $DD, $a9, $a9, $2b, $85, $48, $85, $5a, $24, $5a, $51, $57, $0a
 
+reset
+!if *!=$bfc6 {
+  !error "reset moved ", *
+}
+         +READ_RAM2_WRITE_RAM2
+         jsr   callback4
+         jmp   $100
 }
 accel_e
-!if *!=$d19c {
+!if *!=$d1a8 {
   !error "accel_e moved ",*
 }
+set_reset
+         +RESET_VECTOR reset
+         rts
