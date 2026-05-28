@@ -3,7 +3,7 @@
 from collections import OrderedDict
 from pprint import pprint
 from string import ascii_lowercase, digits
-from sys import stdin
+from sys import stdin, stderr
 
 valid_keys = ascii_lowercase + digits
 def score(inputbuffer, displayname):
@@ -56,23 +56,27 @@ def main():
         if index1 < 0: continue
         cache[a] = OrderedDict()
         cache[a][" "] = index1
+        stderr.write(f'{a}    {games[index1]}\n')
         for b in valid_keys:
             index2 = best(a+b, games)
             if index2 < 0: continue
             cache[a][b] = OrderedDict()
             if index2 != index1:
                 cache[a][b][" "] = index2
+                stderr.write(f'{a}{b}   {games[index2]}\n')
             for c in valid_keys:
                 index3 = best(a+b+c, games)
                 if index3 < 0: continue
                 cache[a][b][c] = OrderedDict()
                 if index3 != index2:
                     cache[a][b][c][" "] = index3
+                stderr.write(f'{a}{b}{c}  {games[index3]}\n')
                 for d in valid_keys:
                     index4 = best(a+b+c+d, games)
                     if index4 < 0: continue
                     if index4 != index3:
                         cache[a][b][c][d] = index4
+                        stderr.write(f'{a}{b}{c}{d} {games[index4]}\n')
                 if not cache[a][b][c]:
                     del cache[a][b][c]
             if not cache[a][b]:
