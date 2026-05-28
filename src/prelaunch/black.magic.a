@@ -10,7 +10,7 @@
                           ; acceleration has problems with Fastchip
                           ; let's remove it
 
-         ldx   #5
+         ldx   #8
 -        lda   reset, x
          sta   $163, x
          dex
@@ -34,19 +34,19 @@ callback
          lda   #$4C
          sta   $D6EB
          jsr   $D003
-         ldx   #5
+         ldx   #8
 -        lda   $163, x
          sta   $4163, x
          dex
          bpl   -
          lda   #$20
          sta   $D6EB
-         +READ_RAM2_WRITE_RAM2      ; fix on //c+
          jmp   $D6EE
 
 reset
          +READ_ROM_NO_WRITE
-         jmp   $FAA6
+         inc   $3F4
+         jmp   ($FFFC)
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

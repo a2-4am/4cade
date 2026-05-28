@@ -25,7 +25,6 @@ callback2
 
 callback1
          +LC_REBOOT
-         inc   $3F4       ; force reboot
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +

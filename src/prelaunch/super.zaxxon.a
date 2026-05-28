@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         +LC_REBOOT
+         +FORCE_REBOOT
          lda   MachineStatus
          +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
@@ -23,12 +23,12 @@
          dey
          bpl   -
 +
-         ldx   #(hide_callback_e-hide_callback)
+         ldx   #(hide_callback_e-hide_callback)-1
 -        lda   hide_callback, x
-         sta   $106, x
+         sta   $109, x
          dex
          bpl   -
-         ldx   #$06
+         ldx   #$09
          stx   $21CE
          +READ_RAM2_NO_WRITE
 -        lda   HideLaunchArtworkLC2 - 1, x
@@ -48,7 +48,8 @@ callback !pseudopc $7100 {
 }
 callback_e
 
-hide_callback !pseudopc $106 {
+hide_callback !pseudopc $109 {
+         sty   $BFDC
          ldx   #$0D
          jsr   $193
          jsr   hide_artwork

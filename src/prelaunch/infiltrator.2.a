@@ -12,7 +12,7 @@
          sta   $BFD0,x
          dex
          bpl   -
-         ldx   #5
+         ldx   #8
 -        lda   reset, x
          sta   $230, x
          dex
@@ -30,7 +30,8 @@ newpath
          !text "X/GAME"
 
 reset    +READ_ROM_NO_WRITE
-         jmp   $FAA6
+         inc   $3F4
+         jmp   ($FFFC)
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

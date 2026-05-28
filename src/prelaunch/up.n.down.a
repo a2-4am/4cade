@@ -23,10 +23,10 @@
          bpl   -
          lda   #$80       ; call patch instead of $200
          sta   $4054
-         lda   #$00
+         asl
          sta   $4055      ; updated here for new .po file locations
          jmp   $2D2C
-patch
+patch !pseudopc $80 {
          lda   #0         ; SMC
          beq   +
                           ; lives in $1B,X (X=0/1 for player 1/2)
@@ -38,20 +38,19 @@ patch
          lsr
          sta   $227
          dec   $2BC
-         lda   #$2C
-         sta   $103
-         lda   #$82
-         sta   $104
-         lda   #$C0
-         sta   $105
-         lda   #$4C       ; add reboot hook @ $103
-         sta   $106
-         lda   #$A6
-         sta   $107
-         lda   #$FA
-         sta   $108
+         ldx   #8
+         bne   +
+--       sta   $C089      ; bank in main
+         inc   $3F4       ; bypass $3F2 check at $FA62
+         jmp   ($FFFC)    ; reboot
++
+-        lda   --, x
+         sta   $103, x
+         dex
+         bpl   -
 
          jmp   $200       ; continue to game
+}
 z_e
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

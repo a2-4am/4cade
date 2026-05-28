@@ -7,9 +7,9 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL
-         +NEW_RESET_VECTOR_64K $70
-
+         +ENABLE_ACCEL_LC
+         +NEW_RESET_VECTOR_64K $6D
+         +READ_ROM_NO_WRITE
          lda   #$60
          sta   $DBE
          sta   $DE3
@@ -17,9 +17,9 @@
          jsr   $BCFC      ; decompress
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jsr   $DC1
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          jsr   $BCFC      ; decompress
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_LC
          jmp   $DE6
 
 !if * > PrelaunchMax {

@@ -26,6 +26,7 @@
          sta   $999A
          sta   $99AF      ; kill timer
 +
+         lda   $C083
          +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          sta   $C05F      ; fix //c and //c+ HGR color
          jmp   $9300

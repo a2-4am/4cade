@@ -41,14 +41,10 @@ nopatch
          sta   $7E3A
          jsr   $4635
 
-         ldx   #$82       ; READ_ROM_NO_WRITE
-         stx   $101
-         ldx   #$A6
-         stx   $104
-         ldx   #$FA
-         stx   $105       ; update TR hook to reboot
-         sta   $5FFC
-         sty   $5FFD      ; moved to LC $FFFC/D
+         +FORCE_REBOOT
+         stx   $5FFC
+         inx
+         stx   $5FFD      ; moved to LC $FFFC/D
 
          lda   #$4C
          sta   $6872

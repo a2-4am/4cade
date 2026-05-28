@@ -7,9 +7,8 @@
 
          !source "src/macros.a"
 
-         +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
 
-         +READ_RAM2_WRITE_RAM2
          lda   #<reset
          sta   $FFFC
          sta   $3F2       ; $3F3/3F4 already set to page 1
@@ -28,7 +27,8 @@
 
 reset
          +READ_ROM_NO_WRITE
-         jmp   $FAA6
+         inc   $3F4
+         jmp   ($FFFC)
          
 patch1
          +DISABLE_ACCEL_AND_HIDE_ARTWORK

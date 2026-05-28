@@ -520,42 +520,65 @@
 }
 
 !macro   NEW_RESET_VECTOR_64K .addr {
-         lda   #$2C
-         sta   .addr
-         lda   #$89
-         sta   .addr+1
-         lda   #$C0
-         sta   .addr+2
-         lda   #$4C       ; JMP $FAA6 to reboot
-         sta   .addr+3
-         lda   #$A6
-         sta   .addr+4
-         lda   #$FA
-         sta   .addr+5
+         ldx   #8
+         bne   +
+--       sta   $C089      ; bank in main
+         inc   $3F4       ; bypass $3F2 check at $FA62
+         jmp   ($FFFC)    ; reboot
++
+-        lda   --, x
+         sta   .addr, x
+         dex
+         bpl   -
+  !if <.addr != 0 {
          lda   #<.addr
          sta   $3F2
          sta   $FFFC
+  } else {
+         inx
+         stx   $3F2
+         stx   $FFFC
+  }
   !if >.addr != 1 {
+    !if >.addr = 0 {
+         inx
+         stx   $3F3
+         stx   $FFFD
+         lda   #$A5
+    } else {
          lda   #>.addr
          sta   $3F3
          sta   $FFFD
          eor   #$A5
+    }
          sta   $3F4
+  } else {
+         lda   #>.addr
+         sta   $FFFD
   }
 }
 
 ; for 64k games on ][+ which either hang or restart
 ; updates reset hook to reboot on ctrl-reset
+!macro   FORCE_REBOOT {
+         ldx   #8
+         !byte $d0
+--       !byte 8          ;bne   +
+         !byte $89, $C0   ; bank in main
+         inc   $3F4       ; bypass $3F2 check at $FA62
+         jmp   ($FFFC)    ; reboot
++
+-        lda   --, x
+         sta   $100, x
+         dex
+         bne   -
+}
+
 !macro   LC_REBOOT {
-         inc   $101       ; (assumes LC is switched in)
-         lda   #$A6
-         sta   $104
-         lda   #$FA
-         sta   $105       ; update reset hook to reboot
-         lda   #1
-         sta   $FFFD
-         lsr
-         sta   $FFFC      ; LC reset vector fix
+         +FORCE_REBOOT
+         stx   $FFFC      ; LC reset vector fix
+         inx
+         stx   $FFFD
 }
 
 ; load an external file by pathname

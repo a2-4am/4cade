@@ -23,14 +23,14 @@
          jsr   HideLaunchArtworkLC2
          sta   $C05F      ; fix //c and //c+ HGR color
 
-         +LC_REBOOT
-         lda   #$2C
-         sta   $600
-         sta   $603       ; BIT changing reset
-
+         +FORCE_REBOOT    ; fails sometimes, game bug
+         lda   #$60
+         sta   $5E16
          ldy   #0
          tya
-         jmp   $5DDC
+         jsr   $5DDC
+         dec   $5EF       ; reset to $100
+         jmp   $200
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

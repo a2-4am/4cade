@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          +READ_RAM2_WRITE_RAM2
-         +LC_REBOOT
+         +FORCE_REBOOT
          lda   MachineStatus
          pha
          lda   MockingboardStuff

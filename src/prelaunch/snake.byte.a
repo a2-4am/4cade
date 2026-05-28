@@ -8,19 +8,20 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_LC
+         lda   #$83
+         sta   $83A
          lda   #$B9
          sta   $842
          lda   #$60
          sta   $0858
-         jsr   $0800      ; decompress
+         jsr   $0803      ; decompress
 
-         +GET_MACHINE_STATUS_LC_RW
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          dec   $7639      ; patch - don't increase lives
          dec   $78A8      ; patch - don't decrease lives
 +
-         +LC_REBOOT
          +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          ldx   #0
          stx   $7a11

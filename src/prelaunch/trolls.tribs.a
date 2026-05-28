@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2025 by qkumba
+;(c) 2025, 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/TROLLS.TRIBS",plain
@@ -16,7 +16,7 @@
          jsr   $3AC9
          inx
          stx   $6056
-         +LC_REBOOT
+         +FORCE_REBOOT
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
@@ -25,8 +25,14 @@
          sta   $6564      ; patch - don't decrease weapon
          sta   $656D      ; patch - don't decrease weapon
          sta   $8257      ; patch - don't increase lives
-+
-         jmp   $6000
++        lda   #$60
+         sta   $606D
+         jsr   $6000
+         jsr   $DE77
+         sty   $FFFC
+         iny
+         sty   $FFFD
+         jmp   $6070
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

@@ -31,7 +31,7 @@
          jsr   HideLaunchArtworkLC2
          jsr   $BA7B
 
-         ldx   #8
+         ldx   #11
 -        lda   reset,x
          sta   $110,x
          dex
@@ -58,7 +58,8 @@
 
 reset    lda   $C089
 patch    sta   $478       ; SMC, hide CFFA state in case of reset
-         jmp   $FAA6
+         inc   $3F4
+         jmp   ($FFFC)
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

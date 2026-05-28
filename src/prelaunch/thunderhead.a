@@ -15,7 +15,6 @@
          jmp   $800        ; decompress
 
 callback
-         +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          lda   MachineStatus
          and   #CHEATS_ENABLED

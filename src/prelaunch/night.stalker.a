@@ -13,10 +13,8 @@
          jsr   $800       ; decompress
          jsr   $2A8       ; part 2
 
-         lda   #$A6
          sta   $6491
-         lda   #$FA
-         sta   $6496      ; reset vector patch (reboot)
+         lsr   $6496      ; reset vector patch
 
          lda   #$60
          sta   $2A5

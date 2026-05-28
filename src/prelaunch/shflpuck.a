@@ -15,6 +15,10 @@
          sta   $A00A
          lda   #>callback
          sta   $A00B
+         lda   #<callback2
+         sta   $B1D4
+         lda   #>callback2
+         sta   $B1D5
          +READ_RAM2_WRITE_RAM2
          +LC_REBOOT
          +DISABLE_ACCEL_LC
@@ -24,6 +28,10 @@ callback
          lda   #$88
          sta   $BF0E      ; bank in LC from now on
          jmp   $A8F3
+
+callback2
+         lda   $C051
+         jmp   $A703
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
