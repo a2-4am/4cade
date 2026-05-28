@@ -28,8 +28,8 @@
 ; DFB4..DFFF - (de)acceleration function
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
-; 6000..9FFF - search index (511 games = $3DC0/$4000)
-; A000..BCFF - search cache (511 games = $19CE/$1D00)
+; 6000..9FFF - search index (519 games = $3ECA/$4000)
+; A000..BCFF - search cache (519 games = $1AEA/$1D00)
 ; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;
