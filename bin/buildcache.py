@@ -2,9 +2,10 @@
 
 from collections import OrderedDict
 from pprint import pprint
-from string import ascii_lowercase
+from string import ascii_lowercase, digits
 from sys import stdin
 
+valid_keys = ascii_lowercase + digits
 def score(inputbuffer, displayname):
     if len(inputbuffer) > len(displayname):
         return 0, False
@@ -50,24 +51,24 @@ def best(keys, games):
 def main():
     games = [line.strip().lower() for line in stdin]
     cache = OrderedDict()
-    for a in ascii_lowercase:
+    for a in valid_keys:
         index1 = best(a, games)
         if index1 < 0: continue
         cache[a] = OrderedDict()
         cache[a][" "] = index1
-        for b in ascii_lowercase:
+        for b in valid_keys:
             index2 = best(a+b, games)
             if index2 < 0: continue
             cache[a][b] = OrderedDict()
             if index2 != index1:
                 cache[a][b][" "] = index2
-            for c in ascii_lowercase:
+            for c in valid_keys:
                 index3 = best(a+b+c, games)
                 if index3 < 0: continue
                 cache[a][b][c] = OrderedDict()
                 if index3 != index2:
                     cache[a][b][c][" "] = index3
-                for d in ascii_lowercase:
+                for d in valid_keys:
                     index4 = best(a+b+c+d, games)
                     if index4 < 0: continue
                     if index4 != index3:
