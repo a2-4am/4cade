@@ -29,7 +29,7 @@
 ;
 ; MAIN MEMORY DURING SEARCH/BROWSE MODE
 ; 6000..9FFF - search index (519 games = $3ECA/$4000)
-; A000..BCFF - search cache (519 games = $1B9C/$1D00)
+; A000..BCFF - search cache (519 games = $1BC7/$1D00)
 ; BD00..BEFF - prefs buffer (used to write PREFS.CONF if cheat mode changes)
 ; BF00..BFFF - ProRWTS glue (supports LoadIndexedFile)
 ;

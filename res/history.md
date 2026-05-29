@@ -5,6 +5,8 @@
 ### Games added in v5.3
 
 - Awass
+- Catacombs 2: Sylvan Idyll
+- Catacombs 4: Sand Trap
 - Clam Bake
 - Crossbow
 - Deathbounce
@@ -17,14 +19,12 @@
 - Mazy2
 - Mieyen
 - Nibbler (Brent Iverson)
-- Sand Trap
 - Shatterstar
 - Shoot Out
 - Shufflepuck Cafe
 - Spud and Mug Shot
 - Svellas
 - SwordWork
-- Sylvan Idyll
 - Viper
 
 ### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
