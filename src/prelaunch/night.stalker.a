@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019, 2022 by Frank M., qkumba
+;(c) 2019, 2022, 2026 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/NIGHT.STALKER",plain
@@ -9,17 +9,19 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $6017
+         sta   $5BD5
          jsr   $800       ; decompress
-         jsr   $2A8       ; part 2
+         jsr   $637       ; part 2
 
          sta   $6491
          lsr   $6496      ; reset vector patch
 
-         lda   #$60
-         sta   $2A5
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
-         jsr   $283
+         jsr   $6400
+         +ENABLE_ACCEL
+         lda   #$60
+         sta   $634
+         jsr   $606
          +GET_MACHINE_STATUS
          and   #CHEATS_ENABLED
          beq   +
@@ -27,6 +29,7 @@
          sta   $1DEC      ; patch - don't increase lives
          sta   $13D0      ; patch - don't decrease lives
 +
+         +DISABLE_ACCEL
          jmp   $6000
 
 
