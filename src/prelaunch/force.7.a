@@ -16,17 +16,11 @@
          lda   #$4C
          sta   $5581
          jsr   $2A55       ; show title screen
-         lda   #<reset
-         sta   $121A
          lda   #$62
          sta   $1190
          lda   #$FA
          sta   $1191
          jmp   $1000
-
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
 
 callback
          jsr   DisableAccelerator
