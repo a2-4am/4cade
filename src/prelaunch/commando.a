@@ -5,6 +5,8 @@
 !to "build/PRELAUNCH.INDEXED/COMMANDO",plain
 *=$106
 
+    !source "src/macros.a"
+
          jmp   ++
 
 cheat
@@ -18,11 +20,8 @@ cheat
          sta   $1063
 +        rts
 
-++
-    !source "src/macros.a"
-
-         +ENABLE_ACCEL
-         +NEW_RESET_VECTOR_64K $100
+++       +ENABLE_ACCEL
+         inc   $3F4
          dec   $11a6
          jsr   $1000      ; decompress
          jsr   HideLaunchArtworkLC2

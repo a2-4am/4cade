@@ -7,18 +7,16 @@
 
          !source "src/macros.a"
 
+         inc   $3F4
          lda   #$60
          sta   $33C
          jsr   $300
-         +ENABLE_ACCEL_LC
-         +LC_REBOOT
-         +READ_ROM_NO_WRITE
+         +ENABLE_ACCEL
          lda   #$60
          sta   $9A1
          jsr   $800       ; decompress
-         stx   $827F
-         inx
-         stx   $828A      ; reset vector
+         lda   #$2c
+         sta   $829A      ; reset vector
          lda   #$4C
          sta   $7144
          jsr   $68FD

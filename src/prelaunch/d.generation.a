@@ -35,10 +35,7 @@ callback
          jsr   DisableAccelerator
          lda   $c08b
          sta   $c009
-         lda   #$a6
-         sta   $d9ed
-         lda   #$fa
-         sta   $d9f2      ; reset -> reboot
+         inc   $d9f7      ; reset -> reboot
          jmp   $6000
 }
 callback_e

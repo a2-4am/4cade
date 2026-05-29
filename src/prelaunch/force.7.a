@@ -18,7 +18,7 @@
          jsr   $2A55       ; show title screen
          lda   #<reset
          sta   $121A
-         lda   #$A6
+         lda   #$62
          sta   $1190
          lda   #$FA
          sta   $1191

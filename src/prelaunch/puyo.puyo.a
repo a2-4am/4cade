@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
-         +LC_REBOOT
+         inc   $3F4
 
          lda   #$4C
          sta   $7E76

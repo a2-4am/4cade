@@ -8,22 +8,15 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL
+         inc   $3F4
          lda   #>(callback-1)
          sta   $4C76
          lda   #<(callback-1)
          sta   $4C79
          jmp   $4A53      ; decompress
 
-reset
-         +READ_ROM_NO_WRITE
-         jmp   $FAA6
-
 callback
-         lda   #<reset
-         sta   $8DCD
-         lda   #>reset
-         sta   $8DD5
-         sta   $8DDD
+         inc   $8DDF      ; reset vector
 
          +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED

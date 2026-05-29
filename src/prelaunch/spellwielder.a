@@ -21,17 +21,12 @@ callback1
          sta   $2200
          lda   #>callback2
          sta   $2201
-         lda   #$A6
-         sta   $2204
-         lda   #$FA
-         sta   $2205      ; reset vector
+         inc   $21F1      ; reset vector
          jmp   $2000
 
 callback2
-         lda   #$A6
-         sta   $8778
-         lda   #$FA
-         sta   $877A      ; reset vector
+         lda   #$2C
+         sta   $8781      ; reset vector
 
 cheat
          lda   #0         ; SMC

@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
            +ENABLE_ACCEL_AND_HIDE_ARTWORK
-           +NEW_RESET_VECTOR_64K $300
+           inc   $3F4
            lda   #$8b
            sta   $bf0e      ; disable ROM mapping
            lda   #$60
