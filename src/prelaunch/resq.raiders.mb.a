@@ -43,21 +43,15 @@
          jsr   $4024
 
          +READ_RAM1_WRITE_RAM1 ; fix crash on //c+
-         lda   #<reset
-         sta   $3F2
-         sta   $FFFC
-         lda   #>reset
-         sta   $3F3
-         sta   $FFFD
-         lda   #$A6
-         sta   $3F4
+         +RESET_VECTOR reset
          lda   #$4C
          sta   $BFE5
          jmp   $404A
 
 reset
          +READ_ROM_NO_WRITE
-         jmp   $FAA6
+         inc   $3F4
+         jmp   ($FFFC)
 
 callback1
          sec
