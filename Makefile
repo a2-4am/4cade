@@ -457,14 +457,14 @@ attract: compress
 #
 cache: $(GAMES.CONF)
 	$(PARALLEL) ::: \
-	    'awk -F= '"'"'/^000/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache000.a' 2> "$(BUILDDIR)"/cache000.log \
-	    'awk -F= '"'"'/^00/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache001.a' 2> "$(BUILDDIR)"/cache001.log \
-	    'awk -F= '"'"'/^0.0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache010.a' 2> "$(BUILDDIR)"/cache010.log \
-	    'awk -F= '"'"'/^0/      { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache011.a' 2> "$(BUILDDIR)"/cache011.log \
-	    'awk -F= '"'"'/^.00/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache100.a' 2> "$(BUILDDIR)"/cache100.log \
-	    'awk -F= '"'"'/^.0/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache101.a' 2> "$(BUILDDIR)"/cache101.log \
-	    'awk -F= '"'"'/^..0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache110.a' 2> "$(BUILDDIR)"/cache110.log \
-	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache111.a' 2> "$(BUILDDIR)"/cache111.log
+	    'awk -F= '"'"'/^000/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache000.a' \
+	    'awk -F= '"'"'/^00/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache001.a' \
+	    'awk -F= '"'"'/^0.0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache010.a' \
+	    'awk -F= '"'"'/^0/      { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache011.a' \
+	    'awk -F= '"'"'/^.00/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache100.a' \
+	    'awk -F= '"'"'/^.0/     { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache101.a' \
+	    'awk -F= '"'"'/^..0/    { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py > "$(BUILDDIR)"/cache110.a' \
+	    'awk -F= '"'"'!/^$$|^#/ { print $$2 }'"'"' < "$(GAMES.CONF)" | bin/buildcache.py -v > "$(BUILDDIR)"/cache111.a' 2> "$(BUILDDIR)"/cache.log
 	$(PARALLEL) ::: \
 	    '$(ACME) -o res/CACHE000.IDX "$(BUILDDIR)"/cache000.a' \
 	    '$(ACME) -o res/CACHE001.IDX "$(BUILDDIR)"/cache001.a' \

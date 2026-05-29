@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 from collections import OrderedDict
 from pprint import pprint
 from string import ascii_lowercase, digits
@@ -49,6 +50,9 @@ def best(keys, games):
     return bestindex
 
 def main():
+    parser = argparse.ArgumentParser(prog='buildcache')
+    parser.add_argument('--verbose', '-v', action='store_true')
+    args = parser.parse_args()
     games = [line.strip().lower() for line in stdin]
     cache = OrderedDict()
     for a in valid_keys:
@@ -56,27 +60,23 @@ def main():
         if index1 < 0: continue
         cache[a] = OrderedDict()
         cache[a][" "] = index1
-        stderr.write(f'{a}    {games[index1]}\n')
         for b in valid_keys:
             index2 = best(a+b, games)
             if index2 < 0: continue
             cache[a][b] = OrderedDict()
             if index2 != index1:
                 cache[a][b][" "] = index2
-                stderr.write(f'{a}{b}   {games[index2]}\n')
             for c in valid_keys:
                 index3 = best(a+b+c, games)
                 if index3 < 0: continue
                 cache[a][b][c] = OrderedDict()
                 if index3 != index2:
                     cache[a][b][c][" "] = index3
-                stderr.write(f'{a}{b}{c}  {games[index3]}\n')
                 for d in valid_keys:
                     index4 = best(a+b+c+d, games)
                     if index4 < 0: continue
                     if index4 != index3:
                         cache[a][b][c][d] = index4
-                        stderr.write(f'{a}{b}{c}{d} {games[index4]}\n')
                 if not cache[a][b][c]:
                     del cache[a][b][c]
             if not cache[a][b]:
@@ -91,6 +91,8 @@ def main():
             print(f'         !word {cache[a]}')
         else:
             print(f'         !word _{a}')
+            if args.verbose and (" " in cache[a]):
+                stderr.write(f'{a}    {games[cache[a][" "]]}\n')
     print('         !byte 0')
 
     for a in cache:
@@ -102,6 +104,8 @@ def main():
                 print(f'         !word {cache[a][b]}')
             else:
                 print(f'         !word _{a}{b}')
+                if args.verbose and (" " in cache[a][b]):
+                    stderr.write(f'{a}{b}   {games[cache[a][b][" "]]}\n')
         print('         !byte 0')
 
     for a in cache:
@@ -115,6 +119,8 @@ def main():
                     print(f'         !word {cache[a][b][c]}')
                 else:
                     print(f'         !word _{a}{b}{c}')
+                    if args.verbose and (" " in cache[a][b][c]):
+                        stderr.write(f'{a}{b}{c}  {games[cache[a][b][c][" "]]}\n')
             print('         !byte 0')
 
     for a in cache:
@@ -127,6 +133,8 @@ def main():
                 for d in cache[a][b][c]:
                     print(f'         !text "{d}"')
                     print(f'         !word {cache[a][b][c][d]}')
+                    if args.verbose:
+                        stderr.write(f'{a}{b}{c}{d} {games[cache[a][b][c][d]]}\n')
                 print('         !byte 0')
 
 if __name__ == '__main__':
