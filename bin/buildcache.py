@@ -2,11 +2,13 @@
 
 import argparse
 from collections import OrderedDict
-from pprint import pprint
 from string import ascii_lowercase, digits
 from sys import stdin, stderr
 
-valid_keys = ascii_lowercase + digits
+valid_keys = OrderedDict()
+for c in ascii_lowercase + digits:
+    valid_keys[c] = c
+
 def score(inputbuffer, displayname):
     if len(inputbuffer) > len(displayname):
         return 0, False
@@ -53,7 +55,11 @@ def main():
     parser = argparse.ArgumentParser(prog='buildcache')
     parser.add_argument('--verbose', '-v', action='store_true')
     args = parser.parse_args()
-    games = [line.strip().lower() for line in stdin]
+    games = [line.lower() for line in stdin]
+    valid_keys[" "] = " "
+    games = ["".join([valid_keys.get(c, "") for c in g]) for g in games]
+    del valid_keys[" "]
+    games = [g.strip() for g in games]
     cache = OrderedDict()
     for a in valid_keys:
         index1 = best(a, games)
