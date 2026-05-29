@@ -121,7 +121,6 @@ TextRankCallback
          ldy   #0
          lda   (zpstring),y
          tax
-         dex
          cpx   InputLength
          bcc   ++
          sta   gamelength
