@@ -11,27 +11,18 @@
 
          +ENABLE_ACCEL_LC
          +LOAD_XSINGLE title
-         ldx   #0
-         stx   $618C                 ; fix reset
-         stx   $6198                 ; fix IRQ
-         inx
-         stx   $618D                 ; fix reset
-         stx   $6199                 ; fix IRQ
-         lda   #$A4
-         sta   $618E                 ; fix reset checksum
-                                     ; (game picks up vectors from un-initialized memory)
          lda   #$60
-         sta   $6017
-         sta   $603F
+         sta   $5BD5
+         sta   $5C0C
          jsr   $800
          lda   #$92
          sta   $0D
-         lda   #$72
+         lda   #$C4
          sta   $0C
          lda   #$40
          sta   $0F
          stx   $0E
-         jsr   $2A8
+         jsr   $637
          lda   $c057
          lda   $c052
          lda   $c050
@@ -44,7 +35,7 @@
          bne   -
          jmp   $1C1
 x_b !pseudopc $1C1 {
-         jsr   $28D
+         jsr   $610
          lda   #$D0
          sta   $0DEF
          sta   $1DC5
@@ -52,42 +43,21 @@ x_b !pseudopc $1C1 {
          sta   $AC6E
          sta   $B765
          ldx   #3-1
--        lda   patch2,x
+-        lda   patch,x
+         sta   $18E5,x
          sta   $196D,x
-         sta   $BF00,x
-         sta   $BB6B,x
          dex
          bpl   -
-         lda   #$60
-         sta   $1D67
-         lda   #$A9
-         sta   $AB30
-         ldx   #4
-         stx   $AB31
-         dex
-         stx   $18EE
-         stx   $0CB8
-         stx   $0CD2
-         lda   #$20
-         sta   $18EC
-         sta   $0CB6
-         sta   $0CD0
-         lda   #$70
-         sta   $18ED
-         lda   #$7C
-         sta   $0CB7
-         lda   #$85
-         sta   $0CD1
-         ldx   #24
--        lda   patch, x
-         sta   $370, x
+         ldx   #7-1
+-        lda   patch2,x
+         sta   $BB5B,x
          dex
          bpl   -
          +DISABLE_ACCEL
          jmp   $6000
 
-patch    !byte $20,$30,$AB,$CE,$24,$03,$D0,$03
-patch2   !byte $4C,$00,$01,$60,$AD,$6F,$03,$05,$EA,$60,$8D,$6F,$03,$A2,$FF,$60
+patch2   !byte $00,$C0,$10,$05
+patch    !byte $4C,$00,$01
 
   !if * > $282 {
     !error "code is too large, ends at ", *
