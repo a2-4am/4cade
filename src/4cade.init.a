@@ -117,7 +117,7 @@
          ; set up text window so it only covers lower left corner
          lda   #28
          sta   $21
-         lda   #19
+         lda   #18
          sta   $22
 
          ; print machine configuration in lower left corner
