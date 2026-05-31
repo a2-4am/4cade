@@ -82,8 +82,8 @@
 
 - Aeronaut
 - AntiAir
+- Catacombs 3: Ether Quest
 - Colorix
-- Ether Quest
 - Fido
 - Hopman
 - Millennium Leaper
