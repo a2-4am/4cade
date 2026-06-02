@@ -54,7 +54,7 @@
          +DISABLE_ACCEL
          jmp   $84D
 
-patch    !byte $4C,$00,$01
+patch    !byte $4C,$08,$01
 patch2   !byte $A9,$01,$EA
 
 title    +PSTRING "LOST.TOMB"

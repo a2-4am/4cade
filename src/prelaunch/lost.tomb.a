@@ -8,6 +8,8 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         +NEW_RESET_VECTOR $108
+                          ; something writes to $100 sometimes
          lda   #$60
          sta   $82A
          jsr   $800       ; decompress
