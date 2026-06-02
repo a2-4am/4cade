@@ -55,6 +55,8 @@
 - Fix Mockingboard issues in Willy Byte (closes [665](https://github.com/a2-4am/4cade/issues/665), [666](https://github.com/a2-4am/4cade/issues/666))
 - Fix crash in Wargle (closes [773](https://github.com/a2-4am/4cade/issues/773))
 - Fix crash in Technocop when cheats are enabled (closes [777](https://github.com/a2-4am/4cade/issues/777))
+- Fix crash when exiting Radwarrior on a Laser 128 (closes [784](https://github.com/a2-4am/4cade/issues/784) and [785](https://github.com/a2-4am/4cade/issues/785) but affects other games as well)
+- Fix crash in Lost Tomb demo (thanks Tom G.)
 - Mark Angry Birds as requiring a joystick
 - Mark Captain Goodnight as requiring a joystick (PR [776](https://github.com/a2-4am/4cade/pull/776), thanks xotmatrix)
 - Fix IIgs compatibility issues in Out of this World (closes [778](https://github.com/a2-4am/4cade/issues/778))
