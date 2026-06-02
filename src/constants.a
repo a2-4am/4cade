@@ -147,20 +147,21 @@ PrelaunchMax = $1B3
 HideLaunchArtworkLC2 = $DFAE
 ; textrank
 BestMatchIndex = $E5      ; word
-tmpx         = $E7        ; byte
-remainder    = $E8        ; word
-num1         = $EA        ; word
-num2         = $EC        ; byte
-Timeout      = $ED        ; 3 bytes (used by SearchMode)
-zpword   =     $F0        ; word
-zpstring =     $F2        ; word
-runningscore=  $F4        ; word
-startat  =     $F6        ; byte
-i        =     $F7        ; byte
-tmp      =     $F8        ; byte
-gamelength=    $F9        ; byte
-firstletter=   $FA        ; byte
-MatchCount =   $FB        ; byte
+tmpx           = $E7      ; byte
+remainder      = $E8      ; word
+num1           = $EA      ; word
+num2           = $EC      ; byte
+Timeout        = $ED      ; 3 bytes (used by SearchMode)
+skipped        = $EF      ; byte
+zpword         = $F0      ; word
+zpstring       = $F2      ; word
+runningscore   = $F4      ; word
+startat        = $F6      ; byte
+i              = $F7      ; byte
+tmp            = $F8      ; byte
+gamelength     = $F9      ; byte
+firstletter    = $FA      ; byte
+MatchCount     = $FB      ; byte
 BestMatchScore = $FC      ; byte
 
 ; main memory addresses

@@ -124,6 +124,7 @@ TextRankCallback
          cpx   InputLength
          bcc   ++
          sta   gamelength
+         sty   skipped
          sty   runningscore
          sty   runningscore+1
          iny
@@ -144,6 +145,7 @@ TextRankCallback
 +        ldx   #80
          cpy   startat
          beq   +
+         inc   skipped
          ldx   #10
          cpy   #1
          beq   +
@@ -203,6 +205,14 @@ TextRankCallback
          lda   WINDEX+1
          sta   BestMatchIndex+1
          inc   MatchCount
+         lda   skipped
+         bne   +
+         tsx
+         txa
+         clc
+         adc   #8
+         tax
+         txs                         ; 100% match, stop iterating
 +        rts
 
 @div
