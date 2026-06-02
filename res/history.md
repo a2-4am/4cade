@@ -75,6 +75,7 @@
 - Improve compatibility with mass storage devices (Total Replay now runs on devices that does not implement the SmartPort API)
 - Add more game help (thanks Brendan R., Andrew R., cybernesto)
 - Add more box art (thanks Alex R., Andrew R., Lunar, Ernst Krogtoft)
+- Search improvements (on first letter always choose first alphabetical match, then heavily weight next letters until there's no match without skipping, then fall back to scoring)
 - Update title screen
 - New font
 
