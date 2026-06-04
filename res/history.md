@@ -1,8 +1,8 @@
 # Total Replay changelog
 
-## Revision 5.3 / unreleased
+## Revision 6.0 / serial number 20260604
 
-### Games added in v5.3
+### Games added in v6.0
 
 - Awass
 - Catacombs 2: Sylvan Idyll
@@ -27,7 +27,7 @@
 - SwordWork
 - Viper
 
-### Games removed in v5.3 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
+### Games removed in v6.0 (moved to [Total Replay II: Instant Replay](https://github.com/a2-4am/4sports))
 
 - Archon
 - Archon II
@@ -35,13 +35,13 @@
 - Retro-Ball
 - Video Vegas
 
-### Games upgraded in v5.3
+### Games upgraded in v6.0
 
 - Genius upgraded to version 20
 - Genius 2 upgraded to version 20
 - Genius 3 upgraded to version 20
 
-### Enhancements & bug fixes in v5.3
+### Enhancements & bug fixes in v6.0
 
 - Show game's super hi-res artwork on launch (on Apple IIgs or other supported hardware)
 - Remove visible instructions from title screens shown in search and browse modes, to reduce confusion before game launch (e.g. Mario Bros title says "Press space to start" but that's not true until you launch it). Actual in-game title screens are not affected by this change. Thanks Andrew R. for the idea.
