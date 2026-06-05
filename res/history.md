@@ -1,5 +1,9 @@
 # Total Replay changelog
 
+## Revision 6.0.1 / serial number 20260605
+
+- show proper version number during boot
+
 ## Revision 6.0 / serial number 20260604
 
 ### Games added in v6.0
