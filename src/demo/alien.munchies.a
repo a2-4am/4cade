@@ -13,7 +13,7 @@
 
          lda   #$60
          sta   $1634
-         jsr   $1610      ; decompress
+         jsr   $1613      ; decompress
 
          ldx   #10-1
 -        lda   patch1, x
