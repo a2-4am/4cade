@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fix crash in Alien Munchies demo
+- Show artwork when launching Shufflepuck Cafe [thanks Andrew R.]
 
 ## Revision 6.0.1 / serial number 20260605
 
