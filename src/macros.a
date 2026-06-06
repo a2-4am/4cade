@@ -663,5 +663,14 @@
 +
 }
 
+!macro   GAME_REQUIRES_APPLESOFT {
+         +READ_ROM_NO_WRITE          ; leaves ROM active!
+         lda   ROM_MACHINEID
+         cmp   #$38
+         bne   +
+         jmp   $100
++
+}
+
 _MACROS_=*
 }
