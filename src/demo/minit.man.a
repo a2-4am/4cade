@@ -9,6 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
+         +GAME_REQUIRES_APPLESOFT    ; leaves ROM active!
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator

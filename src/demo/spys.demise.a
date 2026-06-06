@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022 by qkumba
+;(c) 2022-2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/DEMO/SD#060300",plain
@@ -7,6 +7,8 @@
 
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
+
+         +GAME_REQUIRES_APPLESOFT    ; leaves ROM active!
 
          +READ_RAM2_WRITE_RAM2
          jsr   EnableAccelerator
