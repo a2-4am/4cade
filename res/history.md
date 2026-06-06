@@ -1,5 +1,9 @@
 # Total Replay changelog
 
+## Unreleased
+
+- Fix crash in Alien Munchies demo
+
 ## Revision 6.0.1 / serial number 20260605
 
 - show proper version number during boot
