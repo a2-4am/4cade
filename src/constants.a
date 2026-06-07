@@ -311,7 +311,7 @@ dhgr_copy01   = $8F
 ; LC RAM 1 & 2 addresses
 ; these are defined here because they are also called by other targets
 ; that are assembled separately, e.g. prelaunchers, demo launchers, and graphic effects
-UnwaitForVBL              = $FFEE
+UnwaitForVBL              = $FFED
 WaitForVBL                = UnwaitForVBL-3
 iLoadFileDirect           = WaitForVBL-3  ; note: you really want LC RAM 2 banked in before calling this
 iAddToPath                = iLoadFileDirect-3
