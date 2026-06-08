@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba/Frank M.
+;(c) 2024-2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/DEMO/POLLYWOG#060300",plain
@@ -45,15 +45,18 @@
          sta   $846
          jsr   $800       ; decompress
          iny
+         sty   $20DE      ; exit during intro
          sty   $20E1      ; disable pause
          sty   $6035
          sty   $79CF
          sty   $8272
          lda   #$4C
+         sta   $20DD
          sta   $6034
          sta   $798B
          sta   $79CE
          iny
+         sty   $20DF
          sty   $6036
          sty   $798D
          sty   $79D0
