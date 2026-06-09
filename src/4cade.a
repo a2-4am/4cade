@@ -209,9 +209,6 @@ SwitchToBank2
          +READ_RAM2_WRITE_RAM2
          rts
 
-AttractCounter
-         !byte $00        ; monotonically incremented by mega-attract mode at beginning of ATTRACT.CONF cycle
-
 ; MockingboardStuff (label is in constants.a)
 ;      slot number where Mockingboard was detected and type of board
 ;      #$00 if no Mockingboard detected
