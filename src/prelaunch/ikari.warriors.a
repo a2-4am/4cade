@@ -26,21 +26,25 @@
          lda   #$20
          sta   $E093
          sta   $E0D8
-         lda   #<EnableAccelerator
-         sta   $E094
-         lda   #>EnableAccelerator
-         sta   $E095
          lda   #<callback
-         sta   $E0D9
+         sta   $E094
          lda   #>callback
+         sta   $E095
+         lda   #<callback2
+         sta   $E0D9
+         lda   #>callback2
          sta   $E0DA
          jsr   DisableAccelerator
          jsr   HideLaunchArtworkLC2
          jmp   $E000
 
 callback
+         lda   $C083
+         jmp   EnableAccelerator
+
+callback2
          jsr   DisableAccelerator
-         +READ_RAM1_WRITE_RAM1
+         lda   $C08B
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
