@@ -10,16 +10,17 @@
          jmp   +
 
 callback
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $0918
 
 +
-        +ENABLE_ACCEL
+         +ENABLE_ACCEL_LC
          +NEW_RESET_VECTOR $BFF0
          lda   #>callback
          sta   $2076
          lda   #<callback
          sta   $2075
+         inc   $BF0E      ; leave LC banked in
          jmp   $2000      ; decompress
 
 !if * > PrelaunchMax {
