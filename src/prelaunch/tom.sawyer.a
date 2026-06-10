@@ -8,9 +8,13 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_LC
-         lda   #$60
-         sta   $206E
-         jsr   $2000      ; decompress
+         lda   #<callback
+         sta   $206F
+         lda   #>callback
+         sta   $2070      ; stack is read, can't JSR
+         jmp   $2000      ; decompress
+
+callback
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
