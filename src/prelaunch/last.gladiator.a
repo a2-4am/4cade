@@ -26,9 +26,20 @@
          sta   callback1,x
          dex
          bpl   -
+         lda   #>callback3
+         sta   $829
+         lda   #<(callback3 - 1)
+         sta   $831
 
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $11EF
+
+callback3
+         lda   #$D8
+         sta   $A863
+         sta   $A868
+         sta   $A86D      ; reset inside p-code
+         jmp   $A806
 
 reset_b !pseudopc $240 {
 callback1
