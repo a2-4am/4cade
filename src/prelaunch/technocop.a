@@ -28,7 +28,9 @@
          sta   $FA85, y
          dey
          bpl   -
-+        +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
++        jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
+
          jmp   $F800
 
 hook_cheat
