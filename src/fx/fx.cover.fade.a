@@ -49,9 +49,28 @@
 
 --       pha
 
-         ldx   #0
-         ldy   #0
-         jsr   $f411   ;hposn
+         ; calculate address of HGR line (based on HPOSN routine from Applesoft ROM)
+         pha
+         and   #$C0
+         sta   $26
+         lsr
+         lsr
+         ora   $26
+         sta   $26
+         pla
+         sta   $27
+         asl
+         asl
+         asl
+         rol   $27
+         asl
+         rol   $27
+         asl
+         ror   $26
+         lda   $27
+         and   #$1F
+         ora   #$20
+         sta   $27
 
          lda   #0
          ldx   $fd
