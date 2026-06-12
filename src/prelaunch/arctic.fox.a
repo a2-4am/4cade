@@ -8,6 +8,7 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         inc   $3F4                  ; reset to reboot
          lda   #>(callback1-1)
          sta   $4280
          lda   #<(callback1-1)
