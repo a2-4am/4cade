@@ -19,6 +19,8 @@
          sta   $B21E,x
          dex
          bpl   -
+         lda   #$64
+         sta   $B27A      ; fix ROM entrypoint
          +DISABLE_ACCEL
          jmp   $B2F1      ; stage 1 (title screen and credits)
 

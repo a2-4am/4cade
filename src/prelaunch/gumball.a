@@ -11,6 +11,8 @@
          lda   #$60
          sta   $851
          jsr   $800       ; load "DOS"
+         lda   #$64
+         sta   $B27A      ; fix ROM entrypoint
          lda   #$20
          sta   $B21E
          lda   #<callback
