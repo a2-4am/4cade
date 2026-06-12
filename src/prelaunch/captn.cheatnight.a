@@ -8,6 +8,7 @@
          !source "src/constants.a"   ; no code in these
          !source "src/macros.a"
 
+         +LC_REBOOT
          jsr   DisableAccelerator
          lda   MachineStatus
          and   #CHEATS_ENABLED
@@ -16,9 +17,6 @@
          lda   #$60
          sta   $9E4
          jsr   $800       ; decompress
-
-         +LC_REBOOT
-
          plp
          beq   +
          lda   #$AD
