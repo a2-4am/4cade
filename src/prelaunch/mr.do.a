@@ -8,7 +8,7 @@
     !source "src/macros.a"
 
          +USES_TEXT_PAGE_2
-         inc   $3F4       ; reboot on reset
+         +NEW_RESET_VECTOR_64K $51
          clc
          bcc   cheat3
 
@@ -32,10 +32,10 @@ cheat3
 
          lda   #$60
          sta   $83e
-         +HIDE_ARTWORK
+         +HIDE_ARTWORK_LC
          jsr   $800
 
-         +GET_MACHINE_STATUS
+         +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          pha
 
