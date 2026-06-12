@@ -8,19 +8,23 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_LC
-         lda   #<callback
+         ldx   #2
+-        lda   reset, x
+         sta   $9dbf, x
+         dex
+         bpl   -
+         lda   #<callback-1
          sta   $450d
          lda   #>callback
          sta   $450a
          jmp   $4500
 
 callback
-         nop
-         lda   #0
-         sta   $45e5
-         lda   #1
-         sta   $45ea
-         eor   #$A5
+         ldx   #0
+         stx   $45e5
+         inx
+         stx   $45ea
+         lda   #$A4
          sta   $45ef
 
          lda   MachineStatus
@@ -30,6 +34,8 @@ callback
 +
          +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $78fb
+
+reset    jmp   $100
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
