@@ -19,6 +19,7 @@ As of this writing, all of the non-Xcode programs are installable via [Homebrew]
 
 ``` shell
 $ brew tap lifepillar/appleii
+$ brew trust lifepillar/appleii
 $ brew install acme parallel mach-kernel-cadius exomizer
 ```
 
@@ -73,6 +74,7 @@ Other tools are installable via [Homebrew](https://brew.sh/). Open a terminal pr
 
 ``` shell
 $ brew tap lifepillar/appleii
+$ brew trust lifepillar/appleii
 $ brew install mach-kernel-cadius exomizer
 ```
 
