@@ -1,0 +1,16 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/AIRHEART",plain
+*=$106
+
+         !source "src/macros.a"
+
+         inc   $3F4                  ; reset to reboot
+         +HIDE_ARTWORK
+         jmp   (ldrlo2)              ; last ProRWTS load address
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
