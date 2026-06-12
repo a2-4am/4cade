@@ -12,6 +12,7 @@
          jsr   $300
          +ENABLE_ACCEL
 
+         inc   $3F4                  ; reset to reboot
          lda   #$60
          sta   $11A7
          jsr   $1000      ; load "DOS"
