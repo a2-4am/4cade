@@ -11,7 +11,7 @@
 
          lda   #$60
          sta   $874
-         jsr   $800       ; decompress
+         jsr   $803       ; decompress
 
          lda   MachineStatus
          and   #CHEATS_ENABLED
