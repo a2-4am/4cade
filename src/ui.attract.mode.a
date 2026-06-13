@@ -48,6 +48,11 @@ MegaNext
          !word -
          +ST16 @mname                ; A/Y = module name
                                      ; $WINDEX = index of module in attract store
+         lda   WINDEX                ; check if we just started the mega attract cycle
+         ora   WINDEX+1              ; or wrapped around after completing every module in ATTRACT.CONF
+         bne   +
+         inc   AttractCounter        ; monotonically increment a counter for testing/debugging
++
          +LDADDR -
          jsr   okvs_next             ; get module after this one
          +ST16 +

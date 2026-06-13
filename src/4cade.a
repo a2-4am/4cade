@@ -197,6 +197,8 @@ gGlobalPrefsStore
          +DEFINE_INDIRECT_VECTOR iLoadFXDATA,                  LoadFXDATA
          +DEFINE_INDIRECT_VECTOR iLoadFXCODE,                  LoadFXCODE
          +DEFINE_INDIRECT_VECTOR iLoadXSingle,                 LoadXSingle
+AttractCounter
+         !byte $00        ; monotonically incremented by mega-attract mode at beginning of ATTRACT.CONF cycle
          +DEFINE_INDIRECT_VECTOR iAddToPath,                   AddToPath
          +DEFINE_INDIRECT_VECTOR iLoadFileDirect,              LoadFileDirect
          ; SMC to RTS on a II+
