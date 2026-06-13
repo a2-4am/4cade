@@ -22,7 +22,6 @@
          dec   $8A5       ; patch - don't decrease lives
          dec   $8DE       ; patch - don't decrease lives
 +
-         +RESET_VECTOR_HALF $100
          lda   $7fe       ; Saracen code
          pha
          +DISABLE_ACCEL_LC
