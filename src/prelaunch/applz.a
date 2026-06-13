@@ -10,7 +10,8 @@
          +ENABLE_ACCEL
          lda   #$4C
          sta   $841
-         jsr   $800       ; decompress
+         ldy   #0         ; Laser 128 compat
+         jsr   $803       ; decompress
          +DISABLE_ACCEL
          jmp   $6000
 
