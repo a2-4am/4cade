@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019, 2022 by Frank M., qkumba
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SNACK.ATTACK",plain
@@ -9,20 +9,13 @@
 
          +ENABLE_ACCEL
          lda   #$60
-         sta   $82E
-         jsr   $800       ; decompress
-         +DISABLE_ACCEL_AND_HIDE_ARTWORK
-
-         jsr   $BD1C      ; title screen
-
-         lda   #$60
-         sta   $BD19
-         jsr   $BCFA
-
-         ; re-patch reset vector
-         +RESET_VECTOR $100
-
-         +GET_MACHINE_STATUS
+         sta   $1B5F
+         jsr   $1A23      ; decompress
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
+         jsr   HideLaunchArtworkLC2
+         lda   MachineStatus
+         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
          beq   +
          lda   #$a5
