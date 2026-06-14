@@ -8,6 +8,7 @@
          !source "src/macros.a"
 
          +ENABLE_ACCEL_LC
+         +LC_REBOOT
          lda   #$60
          sta   $40B5
          jsr   $4000      ; decompress
@@ -19,9 +20,7 @@
          sta   $B1D4
          lda   #>callback2
          sta   $B1D5
-         +READ_RAM2_WRITE_RAM2
-         +LC_REBOOT
-         +DISABLE_ACCEL_LC
+         +DISABLE_ACCEL
          jmp   $A000
 
 callback
