@@ -1,0 +1,21 @@
+;license:MIT
+;(c) 2026 by qkumba
+
+!cpu 6502
+!to "build/PRELAUNCH.INDEXED/CV",plain
+*=$106
+
+         !source "src/macros.a"
+
+         +ENABLE_ACCEL
+         +NEW_RESET_VECTOR $140
+
+         lda   #$60
+         sta   $221A
+         jsr   $2000      ; decompress
+         +DISABLE_ACCEL
+         jmp   $7D00
+
+!if * > PrelaunchMax {
+  !error "code is too large, ends at ", *
+}
