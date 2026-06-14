@@ -8,6 +8,7 @@
     !source "src/macros.a"
 
          +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         inc   $3F4       ; force reboot
          lda   #<callback
          sta   $212C
          lda   #>callback
@@ -38,7 +39,15 @@ cheat !pseudopc $200 {
 cheat_e
 
 callback
+         lda   #<callback2
+         sta   $215E
+         lda   #>callback2
+         sta   $215F
          jsr   DisableAccelerator
+         jmp   $2000
+
+callback2
+         inc   $3F4        ; avoid game bug
          jmp   $2000
 
 !if * > PrelaunchMax {
