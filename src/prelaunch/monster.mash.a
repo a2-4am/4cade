@@ -14,16 +14,20 @@
          +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
          beq   +
-         lda   #<callback
+         lda   #<callback2
          sta   $BD07
-         lda   #>callback
+         lda   #>callback2
          sta   $BD08
 +
+         lda   #<callback
+         sta   $B748
+         lda   #>callback
+         sta   $B749
          +DISABLE_ACCEL_LC
 
          jmp   $B700
 
-callback
+callback2
          pla
          pla
          jsr   $BD5A
@@ -41,6 +45,13 @@ callback
 +
          clc
          rts
+
+callback
+         ldx   #0
+         stx   $9E52
+         inx
+         stx   $9E53
+         jmp   $9D84
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
