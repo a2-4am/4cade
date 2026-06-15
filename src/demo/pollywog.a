@@ -9,10 +9,7 @@
          !source "src/macros.a"
 
          +GAME_REQUIRES_JOYSTICK
-         
-         lda   ROM_MACHINEID         ; is already on. ROM0 and ROM1 versions of ADM use
-         cmp   #$06                  ; interrupts and can cause hangs, so safer to just
-         bne   ++                    ; leave it turned off, especially in ATTRACT/DEMO mode.
+
          sec
          jsr   $FE1F                 ; check for IIgs
          bcs   +++
