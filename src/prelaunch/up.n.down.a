@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019, 2024 by 4am/Frank M.
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/UD",plain
@@ -7,51 +7,42 @@
 
          !source "src/macros.a"
 
-         +READ_RAM2_NO_WRITE
-         jsr   HideLaunchArtworkLC2
-         inc   $3F4       ; reboot during title screen
+         +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
+         lda   #<callback
+         sta   $401B
+         lda   #>callback
+         sta   $401C
+         jmp   $3004
 
+callback
+         jsr   $E26       ; load second stage
+         +READ_RAM2_WRITE_RAM2
+         jsr   DisableAccelerator
          lda   MachineStatus
-         +READ_ROM_NO_WRITE
          and   #CHEATS_ENABLED
-         sta   patch+1
-         ldx   #(z_e-patch)-1
-                          ; copy patch code to zero page
--        lda   patch,x    ; (stack will be destroyed by the time we need to patch)
-         sta   $80,x
-         dex
-         bpl   -
-         lda   #$80       ; call patch instead of $200
-         sta   $4054
-         asl
-         sta   $4055      ; updated here for new .po file locations
-         jmp   $2D2C
-patch !pseudopc $80 {
-         lda   #0         ; SMC
          beq   +
-                          ; lives in $1B,X (X=0/1 for player 1/2)
          lda   #$B5
          sta   $0912      ; patch - don't decrease lives
 +
-         lda   #$03       ; reset vector to $103
-         sta   $21F
-         lsr
-         sta   $227
-         dec   $2BC
-         ldx   #8
-         bne   +
---       sta   $C089      ; bank in main
-         inc   $3F4       ; bypass $3F2 check at $FA62
-         jmp   ($FFFC)    ; reboot
-+
--        lda   --, x
-         sta   $103, x
+         ldx   #2
+-        lda   reset, x
+         sta   $77D5, x
          dex
          bpl   -
+         stx   $22F       ; corrupt $3F4 to reboot
+         stx   $2C4
+         lda   #$D2       ; second reset vector
+         sta   $2B4
+         sta   $FFFC
+         lda   #$77
+         sta   $2BC
+         sta   $FFFD
 
-         jmp   $200       ; continue to game
-}
-z_e
+         jmp   $401D      ; continue to game
+
+reset
+         jmp   ($FFFC)    ; reboot
+
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
 }
