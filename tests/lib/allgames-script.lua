@@ -35,9 +35,6 @@ return {
     apple2.Type(" ")
     replay.WaitForGraphicsMode()
   end,
-  ["Fat City"] = function()
-    print("https://github.com/a2-4am/4cade/issues/827")
-  end,
   ["Helicopter Rescue"] = function()
     replay.WaitForScreenContains("DO YOU WANT INSTRUCTIONS")
     apple2.Type("N")
@@ -47,7 +44,7 @@ return {
   end,
   ["I.O. Silver"] = function()
     replay.WaitForGraphicsMode()
-    emu.wait(5)
+    emu.wait(2)
   end,
   ["Jungle Hunt"] = function()
     replay.WaitForGraphicsMode()
@@ -113,7 +110,6 @@ return {
     apple2.PressSA()
     apple2.ReleaseSA()
     replay.WaitForGraphicsMode()
-    emu.wait(5)
   end,
   ["Mutant (Steve Waldo)"] = function()
     replay.WaitForScreenContains("FAST ACTION ARCADE GAME")
@@ -150,7 +146,7 @@ return {
   end,
   ["Pentapus"] = function()
     replay.WaitForGraphicsMode()
-    emu.wait(5)
+    emu.wait(2)
   end,
   ["Planetoids"] = function()
     replay.WaitForScreenContains("EASY")
@@ -161,6 +157,10 @@ return {
     replay.WaitForScreenContains("KEYBOARD")
     apple2.Type("1")
     replay.WaitForGraphicsMode()
+  end,
+  ["Super Taxman 2"] = function()
+    replay.WaitForGraphicsMode()
+    emu.wait(2)
   end,
   ["The Goonies"] = function()   --Uses Text Page 2!
     replay.WaitForAddressEquals(0x83A, 0xD2) --'R'IGHTMOST
