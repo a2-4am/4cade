@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+# license:MIT
+# Copyright (C) 2026 Joshua Bell
+# modifications Copyright (C) 2026 4am
+
+# Syntax:
+#
+# bin/mametest [options] tests/SCRIPTNAME.lua
+#
+# Options
+#
+#    --only PATTERN      Run only matching named test steps (wildcards * and ?, | too)
+#    --skip N            Skip the first N tests
+#    --count N           Run at most N tests
+#    --visible           Don't run headless (i.e. do present video)
+#    --audible           Don't run silent (i.e. do present audio)
+#    --console           Don't run script, show console instead
+#    --slow              Don't run emulation unthrottled
+#    --debug             Run with MAME's debugger
+#    --listmedia         Print out MAME's list of drive options
+#    --listslots         Print out MAME's list of slot options
+#
+# MAMEDIR must be set to the path containing roms/ etc
+# MAMEEXE must be set to the path to the mame64 binary
+
+# --------------------------------------------------
+
+set -e
+#set -x
+
+cd "$(dirname "$0")/.."
+
+# --------------------------------------------------
+# Parse command line
+
+TEST_NAME=""
+SKIP_COUNT=""
+RUN_COUNT=""
+VISIBLE=""
+AUDIBLE=""
+CONSOLE=""
+SLOW=""
+MAMEFLAGS=""
+
+for arg in "$@"; do
+  case $1 in
+    --only)      shift; TEST_NAME="$1"; shift ;;
+    --only=*)    TEST_NAME="${1#--only=}"; shift ;;
+    --skip)      shift; SKIP_COUNT="$1"; shift ;;
+    --skip=*)    SKIP_COUNT="${1#--skip=}"; shift ;;
+    --count)     shift; RUN_COUNT="$1"; shift ;;
+    --count=*)   RUN_COUNT="${1#--count=}"; shift ;;
+    --visible)   shift; VISIBLE=true ;;
+    --audible)   shift; AUDIBLE=true ;;
+    --console)   shift; CONSOLE=true ;;
+    --slow)      shift; SLOW=true ;;
+    --debug)     shift; MAMEFLAGS="$MAMEFLAGS -debug" ;;
+    --listmedia) shift; MAMEFLAGS="$MAMEFLAGS -listmedia" ;;
+    --listslots) shift; MAMEFLAGS="$MAMEFLAGS -listslots" ;;
+    *)           SCRIPT="$(realpath "$1")"; shift; break ;;
+  esac
+done
+
+if [ $# -gt 0 ]; then
+  echo "Unexpected argument(s): $@" 1>&2
+  exit 1
+fi
+
+# Validate environment
+
+if [ ! -x "$MAMEEXE" ]; then
+  echo "MAMEEXE is not an executable" 1>&2
+  exit 1
+fi
+if [ ! -d "$MAMEDIR" ]; then
+  echo "MAMEDIR is not a directory" 1>&2
+  exit 1
+fi
+
+# --------------------------------------------------
+
+BASEDIR="$(pwd)"
+SCRIPTDIR="$(dirname "$SCRIPT")"
+TMPDIR=/tmp/mametest
+
+DISKSDIR="$TMPDIR"/disks
+mkdir -p "$DISKSDIR"
+
+NVRAMDIR="$TMPDIR"/nvram
+mkdir -p "$NVRAMDIR"
+rm -rf "$NVRAMDIR"/*
+
+# --------------------------------------------------
+# Configuration
+
+HARDIMG="build/4cade.hdv"
+
+if [ ! -f "$HARDIMG" ]; then
+  make "$HARDIMG"
+fi
+
+MODEL="apple2ee"
+MODELARGS="-sl1 '' -sl2 '' -sl3 '' -sl4 '' -sl5 '' -sl6 'diskiing' -sl7 '' -aux 'ext80'"
+DISKARGS=""
+CHECKAUXMEMORY="true"
+
+CONFIG="$(cat "$SCRIPT" | sed -n '/BEGINCONFIG/,/ENDCONFIG/p' | grep -E -v 'BEGINCONFIG|ENDCONFIG' || true)"
+if [ -n "$CONFIG" ]; then
+    eval "$CONFIG"
+fi
+
+# --------------------------------------------------
+# Disk handling
+
+NEWDISKARGS=""
+while read -r arg disk; do
+    target="$DISKSDIR/${arg#?}"
+    cp "$disk" "$target"
+    NEWDISKARGS="$NEWDISKARGS $arg $target"
+done < <(echo $DISKARGS | xargs -n 2)
+DISKARGS="$NEWDISKARGS"
+
+# --------------------------------------------------
+# Prepare configs dir
+
+CFGDIR="$TMPDIR"/cfg
+mkdir -p "$CFGDIR"
+
+cp "${BASEDIR}/tests/cfg/${MODEL}.cfg" "$CFGDIR"
+
+# --------------------------------------------------
+# Run MAME
+
+OUTPUTARGS=""
+if [ -z "$VISIBLE" ]; then
+    export SDL_VIDEODRIVER=dummy
+    OUTPUTARGS="$OUTPUTARGS -video none"
+fi
+if [ -z "$AUDIBLE" ]; then
+    export SDL_AUDIODRIVER=dummy
+    OUTPUTARGS="$OUTPUTARGS -sound none"
+fi
+
+if [ "$CONSOLE" ]; then
+  SCRIPTARGS="-console"
+else
+  TIMEOUT=$(( 60 * 60 * 4 )) # 4 hours, simulated
+  SCRIPTARGS="-seconds_to_run $TIMEOUT -autoboot_script $BASEDIR/tests/lib/autoboot.lua"
+  export LUA_SCRIPT="$SCRIPT"
+fi
+
+if [ "$SLOW" ]; then
+  THROTTLE=""
+else
+  THROTTLE="-nothrottle -nosleep"
+fi
+
+# Imported by the autoboot script
+export LUA_PATH="$BASEDIR/tests/lib/?.lua;$SCRIPTDIR/?.lua"
+export TEST_NAME
+export SKIP_COUNT
+export RUN_COUNT
+export CHECKAUXMEMORY
+
+COLOR_RED="$(tput setaf 1)"
+COLOR_RESET="$(tput sgr0)"
+export COLOR_RED
+export COLOR_RESET
+
+pushd "$MAMEDIR" > /dev/null
+# eval here to allow configs to specify empty variables e.g. -sl6 ''
+eval "'$MAMEEXE' \
+  -skip_gameinfo -nosamples \
+  -window -nomax \
+  -cfg_directory '$CFGDIR' \
+  -nvram_directory '$NVRAMDIR' \
+  $OUTPUTARGS \
+  '$MODEL' $MODELARGS $DISKARGS \
+  $THROTTLE \
+  $MAMEFLAGS \
+  $SCRIPTARGS" \
+     2> >(IFS='' ; while read line; do [[ ! $line =~ "evdev" ]] && echo "${COLOR_RED}${line}${COLOR_RESET}" >&1; done) | \
+    grep --text -E --line-buffered -v "Secure coding is automatically enabled"
+popd > /dev/null
