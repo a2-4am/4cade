@@ -2,7 +2,42 @@
 
 ## Unreleased
 
-- Fix crash in Alien Munchies demo
+- Fix crash in Alien Munchies demo on some machines
+- Fix crash in Apple Invader on some machines (closes [820](https://github.com/a2-4am/4cade/issues/820))
+- Fix crash in Applz on some machines (closes [825](https://github.com/a2-4am/4cade/issues/825))
+- Fix crash in Genius on some machines (closes [831](https://github.com/a2-4am/4cade/issues/831))
+- Fix crash in Genius 2 on some machines (closes [821](https://github.com/a2-4am/4cade/issues/821))
+- Attempting to launch Genius 3 actually launched Genius 2, which then crashed (closes [822](https://github.com/a2-4am/4cade/issues/822))
+- Fix crash in Gumball demo on some machines (closes [813](https://github.com/a2-4am/4cade/issues/813))
+- Fix crash in Ikari Warriors after completing level 1 (closes [795](https://github.com/a2-4am/4cade/issues/795))
+- Fix crash in Miner 2049er (closes [800](https://github.com/a2-4am/4cade/issues/800))
+- Fix crash in Minit Man demo on some machines (closes [793](https://github.com/a2-4am/4cade/issues/793))
+- Fix crash in Monster Mash on some machines (closes [828](https://github.com/a2-4am/4cade/issues/828))
+- Fix crash in Nibbler (B. Iverson) on some machines (closes [823](https://github.com/a2-4am/4cade/issues/823))
+- Fix crash in Orbitron on some machines (closes [829](https://github.com/a2-4am/4cade/issues/829))
+- Fix crash in Smooth Max on some machines (closes [824](https://github.com/a2-4am/4cade/issues/824))
+- Fix crash in Spy's Demise demo on some machines (closes [790](https://github.com/a2-4am/4cade/issues/790))
+- Fix crash in Phaser Fire demo on some machines (closes [814](https://github.com/a2-4am/4cade/issues/814))
+- Fix crash in Pie-Man demo on some machines (closes [791](https://github.com/a2-4am/4cade/issues/791))
+- Fix crash in Technocop (closes [799](https://github.com/a2-4am/4cade/issues/799))
+- Fix crash in The Chase on Tom Sawyer's Island (closes [797](https://github.com/a2-4am/4cade/issues/797))
+- Fix reset handling in Deep Space (closes [826](https://github.com/a2-4am/4cade/issues/826))
+- Fix reset handling in Wings of Fury (closes [832](https://github.com/a2-4am/4cade/issues/832))
+- Fix reset handling while loading Airheart (closes [801](https://github.com/a2-4am/4cade/issues/801))
+- Fix reset handling while loading Arctic Fox (closes [804](https://github.com/a2-4am/4cade/issues/804))
+- Fix reset handling while loading Captain Goodnight (closes [803](https://github.com/a2-4am/4cade/issues/803))
+- Fix reset handling while loading C'Est La Vie (closes [805](https://github.com/a2-4am/4cade/issues/805))
+- Fix reset handling while loading Ikari Warriors (closes [802](https://github.com/a2-4am/4cade/issues/802))
+- Fix reset handling while loading Mr. Do! (closes [807](https://github.com/a2-4am/4cade/issues/807))
+- Fix reset handling while loading Picnic Paranoia (closes [808](https://github.com/a2-4am/4cade/issues/808))
+- Fix reset handling while loading Run For The Money (closes [809](https://github.com/a2-4am/4cade/issues/809))
+- Fix reset handling while loading Saracen (closes [817](https://github.com/a2-4am/4cade/issues/817))
+- Fix reset handling while loading Snack Attack (closes [810](https://github.com/a2-4am/4cade/issues/810))
+- Fix reset handling while loading The Last Gladiator (closes [798](https://github.com/a2-4am/4cade/issues/798))
+- Fix reset handling while loading Up'n Down (closes [811](https://github.com/a2-4am/4cade/issues/811))
+- If you launch Castle Smurfenstein then quit and launch Castle Wolfenstein, it does not show the initial title screen (closes [812](https://github.com/a2-4am/4cade/issues/812))
+- Fix game help for Bandits ([PR 815](https://github.com/a2-4am/4cade/pull/815), thanks xotmatrix)
+- Allow additional demos on Apple II+ that were excluded for no good reason ([PR 834](https://github.com/a2-4am/4cade/pull/834), thanks Frank M.)
 - Show artwork when launching Shufflepuck Cafe [thanks Andrew R.]
 
 ## Revision 6.0.1 / serial number 20260605
