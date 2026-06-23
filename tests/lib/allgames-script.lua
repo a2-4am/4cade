@@ -30,6 +30,20 @@ return {
     apple2.Type(" ")
     replay.WaitForGraphicsMode()
   end,
+  ["BurgerTime"] = function()
+    replay.WaitForGraphicsMode()
+    apple2.Type("J")
+    apple2.SetJoy1(127,127)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    apple2.SetJoy1(0,0)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    apple2.SetJoy1(255,255)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    replay.WaitForAddressEquals(0x201E, 0xB8) --egg in corner of demo
+  end,
   ["Clam Bake"] = function()
     replay.WaitForScreenContains("CLAM BAKE")
     apple2.Type(" ")
@@ -131,6 +145,20 @@ return {
     replay.WaitForScreenContains("EYBOARD")
     apple2.Type("K")
     replay.WaitForGraphicsMode()
+  end,
+  ["Night Stalker"] = function()
+    replay.WaitForGraphicsMode()
+    apple2.Type("J")
+    apple2.SetJoy1(127,127)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    apple2.SetJoy1(0,0)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    apple2.SetJoy1(255,255)
+    apple2.PressSA()
+    apple2.ReleaseSA()
+    replay.WaitForAddressEquals(0x2000, 0xF5) --demo screen
   end,
   ["Out of This World"] = function()
     replay.WaitForScreenContains("START AT CHECKPOINT 1")
