@@ -19,29 +19,51 @@
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $8F40
 
+paddle
+         lda   #$D3
+         bit   $C062
+         bmi   +
+-        lda   $C000
++        rts
+
+keyboard
+         jsr   paddle
+         cmp   #$D3
+         bne   -
+         tax
+         rts
+
 callback
          +ENABLE_ACCEL_LC
          jsr   $4C8       ; decompress
+         lda   $57
+         cmp   #$0F
+         bne   ++
+         lda   $8FDF
+         cmp   #5
+         bne   ++
          lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
-         lda   $57
-         cmp   #$0F
-         bne   +
-         lda   $8FDF
-         cmp   #5
-         bne   +
          lda   #$AD
          sta   $63AE      ; patch - don't decrease lives
 +
-         lda   #$35       ; map shield to button 1
-         sta   $2AF
-         lda   #2
-         sta   $2B4
-
+         ldx   #2
+-        lda   patch1, x
+         sta   $206, x
+         lda   patch2, x
+         sta   $8DA4, x
+         dex
+         bpl   -
+         lda   #$D3
+         sta   $8DAB
+++
          +DISABLE_ACCEL_LC
          lda   #0
          rts
+
+patch1   jsr   paddle
+patch2   jsr   keyboard
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *

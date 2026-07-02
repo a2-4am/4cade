@@ -3,17 +3,17 @@
 
                keyboard
 
-  A stop  S shields    move  < >  move
+        A stop   move  < >  move
 
 Space* * * * * * * * * * * * * * * *fire
 
+          S or button 1 shield
 
 Ctrl-P * * * * * * * * * * * * * *paddle
 
-           button 0 to fire
+            button 0 to fire
 
-           button 1 shields
-
+          S or button 1 shield
 
 Esc* * * * * * * * * * * * * * * * pause
 
