@@ -30,7 +30,7 @@ keyboard
          jsr   paddle
          cmp   #$D3
          bne   -
-         tax
+         lda   #$A0
          rts
 
 callback
@@ -55,8 +55,6 @@ callback
          sta   $8DA4, x
          dex
          bpl   -
-         lda   #$D3
-         sta   $8DAB
 ++
          +DISABLE_ACCEL_LC
          lda   #0
