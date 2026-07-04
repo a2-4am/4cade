@@ -15,6 +15,7 @@
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          lda   #$b1
          sta   $646b
+         bit   CLEARKBD
          jsr   $6400
          +ENABLE_ACCEL_LC
          jsr   $811
