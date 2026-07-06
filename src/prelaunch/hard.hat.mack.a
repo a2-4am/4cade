@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2019, 2026 by 4am/Frank M./xot
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/HARD.HAT.MACK",plain
@@ -16,6 +16,12 @@
 patcher  rts
          lda   #1
          sta   $2218      ; reset vector patch
+         +GET_MACHINE_STATUS_LC_RW
+         and   #CHEATS_ENABLED
+         beq   +
+         lda   #$ad
+         sta   $50A5      ; patch - don't decrease lives
++
 
          +DISABLE_ACCEL
          lda   #$07
