@@ -115,7 +115,8 @@ elseif machine.system.name:match("^apple2gs") then
     -- modifiers
     ["Control"]     = { port = ":macadb:KEY3", field = "Control"    },
     ["Shift"]       = { port = ":macadb:KEY3", field = "Shift"      },
-    -- TODO: Ample MAME builds seem to use short form. What's going on?
+    -- Ample MAME builds modify port names for OA/SA, so support both forms
+    -- https://github.com/ksherlock/mame/blob/9069cdfc14f0abc9634540bf3d2ebc1d21951a50/src/mame/apple/macadb.cpp#L157-L169
     ["Open Apple"]  = { port = ":macadb:KEY3", field = { "Command / Open Apple" , "Command" } },
     ["Solid Apple"] = { port = ":macadb:KEY3", field = { "Option / Solid Apple" , "Option" }    },
 
@@ -182,30 +183,32 @@ elseif machine.system.name:match("^prav8c") then
     ["Caps Lock"]   = { port = ":kbd:KEY6", field = "Caps Lock", bits = 0x01 }, -- TODO: bits?
   }
 
-elseif machine.system.name:match("^apple2p") then
+elseif machine.system.name:match("^apple2p") or machine.system.name:match("^apple2$") then
   -- minimal support for launcher testing
 
   if machine.ioport.ports[":keyb_special"] then
     -- MAME through 0.283
     keyboard = {
-      ["Control"]     = { port = ":keyb_special", field = "Control"     },
-      ["Shift"]       = { port = ":keyb_special", field = "Left Shift"  },
+      ["Control"]     = { port = ":keyb_special", field = "Control"    },
+      ["Shift"]       = { port = ":keyb_special", field = "Left Shift" },
+      ["Reset"]       = { port = ":keyb_special", field = "Reset"      },
 
-      ["Right Arrow"] = { port = ":X2", field = "→" },
-      ["Down Arrow"]  = { port = ":X2", field = "↓"  },
+      ["Left Arrow"]  = { port = ":X2", field = "←"      },
+      ["Right Arrow"] = { port = ":X2", field = "→"      },
       ["Return"]      = { port = ":X4", field = "Return" },
-      ["Escape"]      = { port = ":X4", field = "Esc"    }
+      ["Escape"]      = { port = ":X4", field = "Esc"    },
     }
   elseif machine.ioport.ports[":kbd:nkbd:keyb_special"] then
     -- MAME from 0.284
     keyboard = {
       ["Control"]     = { port = ":kbd:nkbd:keyb_special", field = "Ctrl"        },
       ["Shift"]       = { port = ":kbd:nkbd:keyb_special", field = "Left Shift"  },
+      ["Reset"]       = { port = ":kbd:nkbd:keyb_special", field = "Reset"       },
 
+      ["Left Arrow"]  = { port = ":kbd:nkbd:X2", field = "Cursor Left"  },
       ["Right Arrow"] = { port = ":kbd:nkbd:X2", field = "Cursor Right" },
-      ["Down Arrow"]  = { port = ":kbd:nkbd:X2", field = "Cursor Left"  },
-      ["Return"]      = { port = ":kbd:nkbd:X4", field = "Return" },
-      ["Escape"]      = { port = ":kbd:nkbd:X4", field = "Esc"    }
+      ["Return"]      = { port = ":kbd:nkbd:X4", field = "Return"       },
+      ["Escape"]      = { port = ":kbd:nkbd:X4", field = "Esc"          },
     }
   else
     error(string.format(
@@ -398,9 +401,15 @@ function apple2.TypeLine(sequence)
 end
 
 local function press(k)
+  if keyboard[k] == nil then
+    error(string.format("No key binding for %q on system %q", k, machine.system.name))
+  end
   get_field(keyboard[k].port, keyboard[k].field):set_value(1)
 end
 local function release(k)
+  if keyboard[k] == nil then
+    error(string.format("No key binding for %q on system %q", k, machine.system.name))
+  end
   get_field(keyboard[k].port, keyboard[k].field):clear_value()
 end
 local function press_and_release(k)
