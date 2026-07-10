@@ -1,0 +1,99 @@
+;license:MIT
+;(c) 2026 by 4am
+
+!cpu 6502
+!to "build/DEMO/MB#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+mario_callbacks = $106
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+
+         lda   #$60
+         sta   $822E
+         jsr   $4900                 ; decompress
+
+         ldy   #0
+         sty   $540B                 ; disable sound
+         sty   $5733
+         sty   $457C
+         sty   $400C
+         iny
+         ;Y=1
+         sty   $402F                 ; reset vector patch
+         sty   $4063                 ; use keyboard by default so game
+                                     ; doesn't respond to joystick during demo
+         lda   #$20
+         sta   $537E                 ; set up callbacks for key handlers
+         sta   $5426
+         lda   #<mario_game_key
+         ;Y=1
+         +ST16 $537F
+         lda   #<mario_title_key
+         +ST16 $5427
+         lda   #<mario_death         ; set up callback after death
+         +ST16 $42F6
+
+         ldy   #$4B                  ; skip drawing options screen
+         sty   $5D2A                 ; (but do other important init within options screen)
+         iny
+         sty   $5D79
+         +LDADDR $5ED2
+         +ST16 $5D7A
+
+         jsr   $53D9                 ; turn off sound
+
+         ldx   #(move_mario_callbacks_end-move_mario_callbacks)
+-        lda   move_mario_callbacks-1, x
+         sta   mario_callbacks-1, x
+         dex
+         bne   -
+
+         +DISABLE_ACCEL
+         jmp   $4000
+
+title    +PSTRING "MB"
+
+move_mario_callbacks
+!pseudopc mario_callbacks {
+mario_game_key
+         lda   KBD
+         bmi   $100                  ; exit on keypress
+         lda   alive
+         beq   +
+         ; Mario died, so set up playing the next demo level
+         inc   alive
+         inc   levelidx
+         ldx   levelidx
+         lda   levels, x
+         beq   $100                  ; exit at end of demo cycle
+         sta   $6027
+         lda   #$8F                  ; 'press' Ctrl-O to return to options screen
++        rts
+mario_title_key
+         ldx   #$10
+         txa
+-        bit   KBD
+         bmi   $100
+         jsr   ROM_WAIT
+         dex
+         bne   -
+         lda   #$A0                  ; 'press' Space to continue to options screen
+         rts
+mario_death
+         dec   alive
+         jmp   $4685
+
+levelidx !byte $FF
+levels   !byte 3,5
+alive    !byte 0                     ; also terminates levels list
+}
+move_mario_callbacks_end
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
