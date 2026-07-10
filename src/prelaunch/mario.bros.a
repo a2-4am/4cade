@@ -19,6 +19,11 @@
 +
          lda   #1
          sta   $402F      ; reset vector patch
+         lda   #$30
+         sta   $53DD      ; avoid C020 accesses if user turns off sound
+         sta   $53E5
+         sta   $53ED
+         sta   $53F5
 
          +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
