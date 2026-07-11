@@ -16,13 +16,13 @@
          jsr   $800       ; decompress
          ldx   #5
 -        lda   $100, x
-         sta   $09E8, x
-         sta   $1547, x
+         sta   $09E8, x   ; exit on keypress
+         sta   $1547, x   ; exit at end of demo cycle
          dex
          bpl   -
          inx
-         stx   $6B22
-         stx   $084C
+         stx   $6B22      ; disable sound
+         stx   $084C      ; disable sound
 
          lda   ROM_MACHINEID
          cmp   #$06
