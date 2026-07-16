@@ -53,8 +53,8 @@ local function get_device(pattern)
 end
 
 -- System class is one of: "apple2", "apple2e", "apple2c", "apple2gs"
-local system_class = manager.machine.system.parent
-if system_class == 0 then
+local system_class = tostring(manager.machine.system.parent)
+if system_class == "0" then
   system_class = manager.machine.system.name
 end
 
@@ -813,109 +813,122 @@ function apple2.WriteMemory(addr, value)
 end
 
 --[[
-  TODO: Note which of these are supported on which platform; maybe
-  assert the correct machine class is in use, to avoid false
-  positives.
+  Softswitches, based on system_class (O = apple2, E = apple2e, C = apple2c, G = apple2gs)
 ]]
-local ssw = {
-  KBD          = 0xC000,        -- (R) keyboard
-  CLR80STORE   = 0xC000,        -- (W) restore normal PAGE2 control
-  SET80STORE   = 0xC001,        -- (W) cause PAGE2 to bank display memory
+local ssw_definitions = {
+  { "KBD"            , "OECG",  0xC000 },        -- (R) keyboard
+  { "CLR80STORE"     , ".ECG",  0xC000 },        -- (W) restore normal PAGE2 control
+  { "SET80STORE"     , ".ECG",  0xC001 },        -- (W) cause PAGE2 to bank display memory
+  { "RAMRDOFF"       , ".ECG",  0xC002 },        -- (W) Read from main 48K RAM ($200-$BFFF)
+  { "RAMRDON"        , ".ECG",  0xC003 },        -- (W) Read from auxiliary 48K RAM ($200-$BFFF)
+  { "RAMWRTOFF"      , ".ECG",  0xC004 },        -- (W) Write to main 48K RAM ($200-$BFFF)
+  { "RAMWRTON"       , ".ECG",  0xC005 },        -- (W) Write to auxiliary 48K RAM ($200-$BFFF)
+  { "SETSLOTCXROM"   , ".E.G",  0xC006 },        -- (W) Bank in slot ROM in $C100-$CFFF      (IIe/IIgs)
+  { "SETINTCXROM"    , ".E.G",  0xC007 },        -- (W) Bank in internal ROM in $C100-$CFFF  (IIe/IIgs)
+  { "ALTZPOFF"       , ".ECG",  0xC008 },        -- (W) Use main zero page/stack/LC
+  { "ALTZPON"        , ".ECG",  0xC009 },        -- (W) Use aux zero page/stack/LC
+  { "SETINTC3ROM"    , ".E.G",  0xC006 },        -- (W) ROM in Slot 3                        (IIe/IIgs)
+  { "SETSLOTC3ROM"   , ".E.G",  0xC007 },        -- (W) ROM in Aux Slot                      (IIe/IIgs)
+  { "CLR80VID"       , ".ECG",  0xC00C },        -- (W) Disable 80-column hardware
+  { "SET80VID"       , ".ECG",  0xC00D },        -- (W) Enable 80-column hardware
+  { "CLRALTCHAR"     , ".ECG",  0xC00E },        -- (W) Primary character set
+  { "SETALTCHAR"     , ".ECG",  0xC00F },        -- (W) Alternate character set (MouseText)
 
-  RAMRDOFF     = 0xC002,        -- (W) Read from main 48K RAM ($200-$BFFF)
-  RAMRDON      = 0xC003,        -- (W) Read from auxiliary 48K RAM ($200-$BFFF)
-  RAMWRTOFF    = 0xC004,        -- (W) Write to main 48K RAM ($200-$BFFF)
-  RAMWRTON     = 0xC005,        -- (W) Write to auxiliary 48K RAM ($200-$BFFF)
-  SETSLOTCXROM = 0xC006,        -- (W) Bank in slot ROM in $C100-$CFFF      (IIe/IIgs)
-  SETINTCXROM  = 0xC007,        -- (W) Bank in internal ROM in $C100-$CFFF  (IIe/IIgs)
-  ALTZPOFF     = 0xC008,        -- (W) Use main zero page/stack/LC
-  ALTZPON      = 0xC009,        -- (W) Use aux zero page/stack/LC
-  SETINTC3ROM  = 0xC006,        -- (W) ROM in Slot 3                        (IIe/IIgs)
-  SETSLOTC3ROM = 0xC007,        -- (W) ROM in Aux Slot                      (IIe/IIgs)
-  CLR80VID     = 0xC00C,        -- (W) Disable 80-column hardware
-  SET80VID     = 0xC00D,        -- (W) Enable 80-column hardware
-  CLRALTCHAR   = 0xC00E,        -- (W) Primary character set
-  SETALTCHAR   = 0xC00F,        -- (W) Alternate character set (MouseText)
+  { "KBDSTRB"        , "OECG",  0xC010 },        -- (W) clear keyboard strobe
+  { "AKD"            , ".ECG",  0xC010 },        -- (R7) Any key down / clear strobe
+  { "RDLCBNK2"       , ".ECG",  0xC011 },        -- (R7) bit 7=1 if LCBANK2 enabled
+  { "RDLCRAM"        , ".ECG",  0xC012 },        -- (R7) bit 7=1 if LC RAM (0=ROM)
+  { "RDRAMRD"        , ".ECG",  0xC013 },        -- (R7) bit 7=1 if reading auxiliary RAM
+  { "RDRAMWRT"       , ".ECG",  0xC014 },        -- (R7) bit 7=1 if writing auxiliary RAM
+  { "RDCXROM"        , ".E.G",  0xC015 },        -- (R7)                                     (IIe/IIgs)
+  { "RSTXINT"        , "..C.",  0xC015 },        -- (R)  Reset Mouse X0 Interrupt                 (IIc)
+  { "RDALTZP"        , ".ECG",  0xC016 },        -- (R7) bit 7=1 if auxiliary ZP/stack/LC enabled
+  { "RDC3ROM"        , ".E.G",  0XC017 },        -- (R7)                                     (IIe/IIgs)
+  { "RSTYINT"        , "..C.",  0XC017 },        -- (R)  Reset Mouse Y0 Interrupt                 (IIc)
+  { "RD80STORE"      , ".ECG",  0xC018 },        -- (R7) bit 7=1 if 80STORE enabled
+  { "RDVBL"          , ".E.G",  0xC019 },        -- (R7) Vertical blanking
+  { "RSTVBL"         , "..C.",  0xC019 },        -- (R7) See if VBlInt off; reset it
+  { "RDTEXT"         , ".ECG",  0xC01A },        -- (R7) bit 7=1 if text
+  { "RDMIXED"        , ".ECG",  0xC01B },        -- (R7) bit 7=1 if mixed
+  { "RDPAGE2"        , ".ECG",  0xC01C },        -- (R7) bit 7=1 if PAGE2 on
+  { "RDHIRES"        , ".ECG",  0xC01D },        -- (R7) bit 7=1 if high-resolution on
+  { "RDALTCHAR"      , ".ECG",  0xC01E },        -- (R7) bit 7=1 if ALTCHAR on
+  { "RD80VID"        , ".ECG",  0xC01F },
 
-  KBDSTRB      = 0xC010,        -- (R/W) clear keyboard strobe
-  RDLCBNK2     = 0xC011,        -- (R7) bit 7=1 if LCBANK2 enabled
-  RDLCRAM      = 0xC012,        -- (R7) bit 7=1 if LC RAM (0=ROM)
-  RDRAMRD      = 0xC013,        -- (R7) bit 7=1 if reading auxiliary RAM
-  RDRAMWRT     = 0xC014,        -- (R7) bit 7=1 if writing auxiliary RAM
-  RDCXROM      = 0xC015,        -- (R7)                                     (IIe/IIgs)
-  RDALTZP      = 0xC016,        -- (R7) bit 7=1 if auxiliary ZP/stack/LC enabled
-  RDC3ROM      = 0XC017,        -- (R7)                                     (IIe/IIgs)
-  RD80STORE    = 0xC018,        -- (R7) bit 7=1 if 80STORE enabled
-  RDVBL        = 0xC019,        -- (R7) Vertical blanking
-  RDTEXT       = 0xC01A,        -- (R7) bit 7=1 if text
-  RDMIXED      = 0xC01B,        -- (R7) bit 7=1 if mixed
-  RDPAGE2      = 0xC01C,        -- (R7) bit 7=1 if PAGE2 on
-  RDHIRES      = 0xC01D,
-  RDALTCHAR    = 0xC01E,        -- (R7) bit 7=1 if ALTCHAR on
-  RD80VID      = 0xC01F,
+  { "MONOCOLOR"      , "...G",  0xC021 },        -- IIgs - bit 7=1 switches composite to mono
+  { "TBCOLOR"        , "...G",  0xC022 },        -- IIgs - text foreground/background colors
+  { "KEYMODREG"      , "...G",  0xC025 },        -- IIgs - keyboard modifiers
+  { "NEWVIDEO"       , "...G",  0xC029 },        -- IIgs - new video modes
+  { "MACIIE"         , "....",  0xC02B },        -- Macintosh IIe Option Card
 
-  MONOCOLOR    = 0xC021,        -- IIgs - bit 7=1 switches composite to mono
-  TBCOLOR      = 0xC022,        -- IIgs - text foreground/background colors
-  KEYMODREG    = 0xC025,        -- IIgs - keyboard modifiers
-  NEWVIDEO     = 0xC029,        -- IIgs - new video modes
-  MACIIE       = 0xC02B,        -- Macintosh IIe Option Card
+  { "SPKR"           , "OECG",  0xC030 },
+  { "CLOCKCTL"       , "...G",  0xC034 },        -- IIgs
+  { "SHADOW"         , "...G",  0xC035 },        -- IIgs
 
-  SPKR         = 0xC030,
-  CLOCKCTL     = 0xC034,        -- IIgs
-  SHADOW       = 0xC035,        -- IIgs
+  { "TXTCLR"         , "OECG",  0xC050 },        -- (R/W) Graphics
+  { "TXTSET"         , "OECG",  0xC051 },        -- (R/W) Text
+  { "MIXCLR"         , "OECG",  0xC052 },        -- (R/W) Fullscreen
+  { "MIXSET"         , "OECG",  0xC053 },        -- (R/W) Mixed screen
+  { "PAGE2OFF"       , "OECG",  0xC054 },        -- (R/W) Page 1
+  { "PAGE2ON"        , "OECG",  0xC055 },        -- (R/W) Page 2
+  { "HIRESOFF"       , "OECG",  0xC056 },        -- (R/W) High resolution graphics
+  { "HIRESON"        , "OECG",  0xC057 },        -- (R/W) Low resolution graphics
+  { "AN0_OFF"        , "OE.G",  0xC058 },        -- (W)
+  { "AN0_ON"         , "OE.G",  0xC059 },        -- (W)
+  { "AN1_OFF"        , "OE.G",  0xC05A },        -- (W)
+  { "DISVBL"         , "..C.",  0xC05A },        -- (W) Disable VBL interrupts      (IIc)
+  { "AN1_ON"         , "OE.G",  0xC05B },        -- (W)
+  { "ENVBL"          , "..C.",  0xC05B },        -- (W) Enable VBL interrupts       (IIc)
+  { "AN2_OFF"        , "OE.G",  0xC05C },        -- (W)
+  { "AN2_ON"         , "OE.G",  0xC05D },        -- (W)
+  { "AN3_OFF"        , "OE.G",  0xC05E },        -- (W)
+  { "AN3_ON"         , "OE.G",  0xC05F },        -- (W)
+  { "DHIRESON"       , ".ECG",  0xC05E },        -- (W) Double high resolution graphics on
+  { "DHIRESOFF"      , ".ECG",  0xC05F },        -- (W) Double high resolution graphics off
 
-  TXTCLR       = 0xC050,        -- (R/W) Graphics
-  TXTSET       = 0xC051,        -- (R/W) Text
-  MIXCLR       = 0xC052,        -- (R/W) Fullscreen
-  MIXSET       = 0xC053,        -- (R/W) Mixed screen
-  PAGE2OFF     = 0xC054,        -- (R/W) Page 1
-  PAGE2ON      = 0xC055,        -- (R/W) Page 2
-  HIRESOFF     = 0xC056,        -- (R/W) High resolution graphics
-  HIRESON      = 0xC057,        -- (R/W) Low resolution graphics
+  { "RD80SW"         , "..C.",  0xC060 },        -- (R7) See if 80/40 switch down   (IIc)
+  { "BUTN0"          , "OECG",  0xC061 },        -- (R7)
+  { "BUTN1"          , "OECG",  0xC062 },        -- (R7)
+  { "BUTN2"          , "OE.G",  0xC063 },        -- (R7)
+  { "PDL0"           , "OECG",  0xC064 },        -- (R)
+  { "PDL1"           , "OECG",  0xC065 },        -- (R)
+  { "PDL2"           , "OE.G",  0xC066 },        -- (R)
+  { "PDL3"           , "OE.G",  0xC067 },        -- (R)
+  { "STATEREG"       , "...G",  0xC068 },        -- Mega II chip (IIgs, etc)
 
-  DISVBL       = 0xC05A,        -- (W) Disable VBL interrupts      (IIc)
-  ENVBL        = 0xC05B,        -- (W) Enable VBL interrupts       (IIc)
+  { "PTRIG"          , "OECG",  0xC070 },
+  { "RAMWORKS_BANK"  , ".EC.",  0xC073 },
+  { "LASER128EX_CFG" , "....",  0xC074 },     -- high two bits control speed
 
-  AN0_OFF      = 0xC058,        -- (W)
-  AN0_ON       = 0xC059,        -- (W)
-  AN1_OFF      = 0xC05A,        -- (W)
-  AN1_ON       = 0xC05B,        -- (W)
-  AN2_OFF      = 0xC05C,        -- (W)
-  AN2_ON       = 0xC05D,        -- (W)
-  AN3_OFF      = 0xC05E,        -- (W)
-  AN3_ON       = 0xC05F,        -- (W)
-  DHIRESON     = 0xC05E,        -- (W) Double high resolution graphics on
-  DHIRESOFF    = 0xC05F,        -- (W) Double high resolution graphics off
+  { "IOUDISON"       , "..C.",  0xC07E },        -- (W) Disable IOU access          (IIc)
+  { "RDIOUDIS"       , "..C.",  0xC07E },        -- (R7) Read IOUDIS switch (1=on)  (IIc)
+  { "IOUDISOFFF"     , "..C.",  0xC07F },        -- (W) Enable IOU access           (IIc)
+  { "RDDHIRES"       , "..C.",  0xC07F },        -- (R7) Read DHIRES switch (0=on)  (IIc)
 
-
-  BUTN0        = 0xC061,        -- (R)
-  BUTN1        = 0xC062,        -- (R)
-  BUTN2        = 0xC063,        -- (R)
-  PDL0         = 0xC064,        -- (R)
-  PDL1         = 0xC065,        -- (R)
-  PDL2         = 0xC066,        -- (R)
-  PDL3         = 0xC067,        -- (R)
-
-  STATEREG     = 0xC068,        -- Mega II chip (IIgs, etc)
-
-  PTRIG        = 0xC070,
-
-  RAMWORKS_BANK   = 0xC073,
-  LASER128EX_CFG  = 0xC074,     -- high two bits control speed
-
-  IOUDISON     = 0xC07E,        -- (W) Disable IOU access          (IIc)
-  RDIOUDIS     = 0xC07E,        -- (R7) Read IOUDIS switch (1=on)  (IIc)
-  IOUDISOFFF   = 0xC07F,        -- (W) Enable IOU access           (IIc)
-
-  RDDHIRES     = 0xC07F,        -- (R7) Read DHIRES switch (0=on)  (IIc)
-
-  ROMIN2       = 0xC082,        -- (W) Read ROM; no write
+  { "ROMIN2"         , "OECG",  0xC082 },        -- (W) Read ROM; no write
 }
 
+local ssw = {}
+for _, entry in ipairs(ssw_definitions) do
+  local name, systems, value = table.unpack(entry)
+  if system_class == "apple2" and systems:match("O") or
+    system_class == "apple2e" and systems:match("E") or
+    system_class == "apple2c" and systems:match("C") or
+    system_class == "apple2gs" and systems:match("G") then
+    ssw[name] = value
+  end
+end
+
 function apple2.ReadSSW(symbol)
+  if ssw[symbol] == nil then
+    error(string.format("No softswitch %q on system %q", symbol, machine.system.name))
+  end
   return apple2.ReadMemory(ssw[symbol])
 end
 function apple2.WriteSSW(symbol, value)
+  if ssw[symbol] == nil then
+    error(string.format("No softswitch %q on system %q", symbol, machine.system.name))
+  end
   apple2.WriteMemory(ssw[symbol], value)
 end
 
