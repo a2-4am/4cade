@@ -6,19 +6,33 @@ local util = require("util")
 
 local GameDisplayNameAddr = 0x01fd9
 local GameCountAddr = 0x01ff7
+local AttractCounter = 0x0ffe4
 
-local function is_in_graphics_mode()
-  if apple2.ReadSSW("RDTEXT") < 128 then
-    return true
-  end
-  return false
+mem = manager.machine.devices[':maincpu'].spaces['program']
+a2 = { text = true, mixed = false, page2 = false, hires = false }
+
+function handle_softsw(offset, data, mask)
+    local addr = offset
+    if     addr == 0xC050 then a2.text  = false
+    elseif addr == 0xC051 then a2.text  = true
+    elseif addr == 0xC052 then a2.mixed = false
+    elseif addr == 0xC053 then a2.mixed = true
+    elseif addr == 0xC054 then a2.page2 = false
+    elseif addr == 0xC055 then a2.page2 = true
+    elseif addr == 0xC056 then a2.hires = false
+    elseif addr == 0xC057 then a2.hires = true
+    end
 end
 
-local function is_in_text_mode()
-  if apple2.ReadSSW("RDTEXT") >= 128 then
-    return true
-  end
-  return false
+read_tap  = mem:install_read_tap(0xC050, 0xC057, "a2_softsw_r", handle_softsw)
+write_tap = mem:install_write_tap(0xC050, 0xC057, "a2_softsw_w", handle_softsw)
+
+function is_in_graphics_mode()
+    return not a2.text
+end
+
+function is_in_text_mode()
+    return a2.text
 end
 
 function replay.ScreenContains(s)
@@ -126,6 +140,7 @@ function replay.allgames(flagmask)
       if game_script then
         game_script()
       else
+        emu.wait(1)
         replay.WaitForGraphicsMode()
       end
       apple2.ControlReset()
