@@ -224,6 +224,10 @@ return {
     apple2.ReturnKey()
     replay.WaitForGraphicsMode()
   end,
+  ["Trolls and Tribulations"] = function()
+    replay.WaitForGraphicsMode()
+    emu.wait(2)
+  end,
   ["Zoo Master"] = function()
     replay.WaitForScreenContains("SOUND")
   end,
