@@ -34,14 +34,14 @@ return {
     replay.WaitForGraphicsMode()
     apple2.Type("J")
     apple2.SetJoy1(127,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     apple2.SetJoy1(0,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     apple2.SetJoy1(255,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x201E, 0xB8) --egg in corner of demo
   end,
   ["Clam Bake"] = function()
@@ -67,6 +67,11 @@ return {
   ["Kaboom!"] = function()
     replay.WaitForScreenContains("PRESS ANY KEY TO CONTINUE")
     apple2.Type(" ")
+    replay.WaitForGraphicsMode()
+  end,
+  ["Lemmings"] = function()
+    replay.WaitForScreenContains("PRESS RETURN TO CONTINUE")
+    apple2.ReturnKey()
     replay.WaitForGraphicsMode()
   end,
   ["Little Brick Out"] = function()
@@ -109,21 +114,22 @@ return {
   ["Mr. Do!"] = function()   --Uses Text Page 2!
     replay.WaitForAddressEquals(0x83A, 0xD2) --'R'IGHTMOST
     apple2.SetJoy1(255,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xCC) --'L'EFTMOST
     apple2.SetJoy1(0,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xD4) --'T'OPMOST
     apple2.SetJoy1(127,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xC2) --'B'OTTOMMOST
     apple2.SetJoy1(127,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForGraphicsMode()
+    emu.wait(2)
   end,
   ["Mutant (Steve Waldo)"] = function()
     replay.WaitForScreenContains("FAST ACTION ARCADE GAME")
@@ -150,14 +156,14 @@ return {
     replay.WaitForGraphicsMode()
     apple2.Type("J")
     apple2.SetJoy1(127,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     apple2.SetJoy1(0,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     apple2.SetJoy1(255,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x2000, 0xF5) --demo screen
   end,
   ["Out of This World"] = function()
@@ -193,20 +199,20 @@ return {
   ["The Goonies"] = function()   --Uses Text Page 2!
     replay.WaitForAddressEquals(0x83A, 0xD2) --'R'IGHTMOST
     apple2.SetJoy1(255,127)
-    apple2.PressOA()
-    apple2.ReleaseOA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xCC) --'L'EFTMOST
     apple2.SetJoy1(0,127)
-    apple2.PressOA()
-    apple2.ReleaseOA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xD4) --'T'OPMOST
     apple2.SetJoy1(127,0)
-    apple2.PressOA()
-    apple2.ReleaseOA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForAddressEquals(0x83A, 0xC2) --'B'OTTOMMOST
     apple2.SetJoy1(127,255)
-    apple2.PressOA()
-    apple2.ReleaseOA()
+    apple2.PressJoyButton1()
+    apple2.ReleaseJoyButton1()
     replay.WaitForGraphicsMode()
   end,
   ["Titan Cronus"] = function()
@@ -218,6 +224,10 @@ return {
     replay.WaitForScreenContains("PRESS RETURN TO CONTINUE")
     apple2.ReturnKey()
     replay.WaitForGraphicsMode()
+  end,
+  ["Trolls and Tribulations"] = function()
+    replay.WaitForGraphicsMode()
+    emu.wait(2)
   end,
   ["Zoo Master"] = function()
     replay.WaitForScreenContains("SOUND")
