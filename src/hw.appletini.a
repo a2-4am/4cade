@@ -35,7 +35,7 @@ HasAppletiniCard
          bcs   @notFound
          ldy   #(@sig_e-@kAppletiniMagicBytes)-1
 @byteLoop
-         lda   $209, y
+         lda   $289, y
          cmp   @kAppletiniMagicBytes, y
          bne   @notFound
          dey
@@ -49,7 +49,7 @@ HasAppletiniCard
 @params
          !byte $03                   ; param count
          !byte $00                   ; unit 0 = SmartPort controller
-         !word $200                  ; buffer
+         !word $280                  ; buffer
          !byte $03                   ; status code $03 = GETDIB
 @kAppletiniMagicBytes
          !text "Appletini"
