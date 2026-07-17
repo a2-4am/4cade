@@ -14,6 +14,15 @@
          lda   #$60
          sta   $B727
          jsr   $B700      ; load game
+         lda   #$60
+         sta   $8FA
+         jsr   $800
+         ldx   #1
+         stx   $AA9C
+         dex
+         stx   $AAA1
+         lda   #$A4
+         sta   $AAA6      ; reset to $100
 
          +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED
@@ -25,8 +34,9 @@
          sta   $14BD      ; patch - don't decrease fuel
          sta   $938       ; patch - don't decrease fuel
 +
+         
          +DISABLE_ACCEL_LC
-         jmp   $800
+         jmp   $AA8F
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
