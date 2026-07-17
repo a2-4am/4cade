@@ -10,216 +10,66 @@ replay = require("replay")
 apple2 = require("apple2")
 
 return {
-  ["Applz"] = function()
-    replay.WaitForScreenContains("APPLZ")
-    apple2.Type(" ")
-    replay.WaitForScreenContains("CONTROLS")
+  ["Bejeweled"] = function()
+    replay.WaitForAddressEquals(0x0413, 0xC2) --'B' in 'Bejeweled'
+    apple2.Type("R")
+    replay.WaitForGraphicsMode()
+  end,
+  ["Craps"] = function()
+    replay.WaitForScreenContains("SOFTAPE")
+    apple2.ReturnKey()
+    replay.WaitForGraphicsMode()
+  end,
+  ["Family Feud"] = function()
+    replay.WaitForScreenContains("SHAREDATA")
     apple2.Type(" ")
     replay.WaitForGraphicsMode()
   end,
-  ["Airheart"] = function()
+  ["Fastgammon"] = function()
+    replay.WaitForScreenContains("NEW SEQUENCE OF ROLLS")
+    apple2.Type("1")
     replay.WaitForGraphicsMode()
+  end,
+  ["Flight Simulator II"] = function()
+    replay.WaitForAddressEquals(0x202A, 0x40) --'F' on title
+    apple2.Type("A")
+    emu.wait(2)
+    apple2.Type("A")
+    emu.wait(2)
+    apple2.Type(" ")
+    replay.WaitForAddressEquals(0x2050, 0x53) --demo background
+  end,
+  ["Go Four It"] = function()
+    replay.WaitForScreenContains("NEW GAME")
+    apple2.ReturnKey()
+    replay.WaitForGraphicsMode()
+  end,
+  ["Roulette"] = function()
+    replay.WaitForScreenContains("ROULETTE")
+    apple2.ReturnKey()
+    replay.WaitForScreenContains("INSTRUCTIONS")
+    apple2.ReturnKey()
+    replay.WaitForScreenContains("BET")
+    apple2.ReturnKey()
+    replay.WaitForGraphicsMode()
+  end,
+  ["Sudoku"] = function()
+    replay.WaitForScreenContains("NEW GAME")
+    apple2.ReturnKey()
+    replay.WaitForGraphicsMode()
+  end,
+  ["The Dam Busters"] = function()
     emu.wait(10)
-  end,
-  ["Blister Ball"] = function()
-    apple2.Type(" 114")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Bongo's Bash"] = function()
-    replay.WaitForScreenContains("HIT A KEY TO CONTINUE")
-    apple2.Type(" ")
-    replay.WaitForGraphicsMode()
-  end,
-  ["BurgerTime"] = function()
-    replay.WaitForGraphicsMode()
-    apple2.Type("J")
-    apple2.SetJoy1(127,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    apple2.SetJoy1(0,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    apple2.SetJoy1(255,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForAddressEquals(0x201E, 0xB8) --egg in corner of demo
-  end,
-  ["Clam Bake"] = function()
-    replay.WaitForScreenContains("CLAM BAKE")
-    apple2.Type(" ")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Helicopter Rescue"] = function()
-    replay.WaitForScreenContains("DO YOU WANT INSTRUCTIONS")
-    apple2.Type("N")
-    replay.WaitForScreenContains("CHOOSE A SCENE")
     apple2.Type("1")
-    replay.WaitForGraphicsMode()
+    replay.WaitForAddressEquals(0x2000, 0x2A)
   end,
-  ["I.O. Silver"] = function()
-    replay.WaitForGraphicsMode()
-    emu.wait(2)
+  ["The Games: Summer Edition"] = function()
+    replay.WaitForAddressEquals(0x2000, 0x19)
   end,
-  ["Jungle Hunt"] = function()
-    replay.WaitForGraphicsMode()
-    emu.wait(2)
+  ["Winter Games"] = function()
+    replay.WaitForAddressEquals(0x2000, 0xDF)
   end,
-  ["Kaboom!"] = function()
-    replay.WaitForScreenContains("PRESS ANY KEY TO CONTINUE")
-    apple2.Type(" ")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Little Brick Out"] = function()
-    replay.WaitForScreenContains("PRESS THE SPACE BAR")
-    apple2.Type(" ")
-    replay.WaitForScreenContains("YOUR FIRST NAME")
-    apple2.ReturnKey()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Lethal Labyrinth"] = function()
-    replay.WaitForScreenContains("INITIALIZING")
-  end,
-  ["Lunar Explorer"] = function()
-    replay.WaitForScreenContains("EYBOARD OR")
-    apple2.Type("K")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Mad Bomber"] = function()
-    replay.WaitForScreenContains("ONE PLAYER")
-    apple2.Type("1")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Marauder"] = function()
-    replay.WaitForScreenContains("PLAY COMPLETE GAME")
-    apple2.Type("3")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Millennium Leaper"] = function()
-    replay.WaitForScreenContains("RETURN TO START DEMO")
-    apple2.ReturnKey()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Montezuma's Revenge"] = function()
-    replay.WaitForScreenContains("FOR MENU")
-    apple2.ReturnKey()
-    replay.WaitForScreenContains("TO START")
-    apple2.ReturnKey()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Mr. Do!"] = function()   --Uses Text Page 2!
-    replay.WaitForAddressEquals(0x83A, 0xD2) --'R'IGHTMOST
-    apple2.SetJoy1(255,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForAddressEquals(0x83A, 0xCC) --'L'EFTMOST
-    apple2.SetJoy1(0,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForAddressEquals(0x83A, 0xD4) --'T'OPMOST
-    apple2.SetJoy1(127,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForAddressEquals(0x83A, 0xC2) --'B'OTTOMMOST
-    apple2.SetJoy1(127,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Mutant (Steve Waldo)"] = function()
-    replay.WaitForScreenContains("FAST ACTION ARCADE GAME")
-    apple2.ReturnKey()
-    replay.WaitForScreenContains("MOVING WALLS")
-    apple2.ReturnKey()
-    replay.WaitForScreenContains("DIFFICULTY LEVELS")
-    apple2.ReturnKey()
-    replay.WaitForScreenContains("TO MOVE RIGHT")
-    apple2.ReturnKey()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Nibbler (B. Iverson)"] = function()
-    replay.WaitForScreenContains("PRESS ANY KEY TO BEGIN")
-    apple2.Type(" ")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Night Crawler"] = function()
-    replay.WaitForScreenContains("EYBOARD")
-    apple2.Type("K")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Night Stalker"] = function()
-    replay.WaitForGraphicsMode()
-    apple2.Type("J")
-    apple2.SetJoy1(127,127)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    apple2.SetJoy1(0,0)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    apple2.SetJoy1(255,255)
-    apple2.PressSA()
-    apple2.ReleaseSA()
-    replay.WaitForAddressEquals(0x2000, 0xF5) --demo screen
-  end,
-  ["Out of This World"] = function()
-    replay.WaitForScreenContains("START AT CHECKPOINT 1")
-    apple2.TypeLine("1")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Pacman"] = function()
-    emu.wait(5)
-    apple2.Type("1")
-    emu.wait(5)
-    apple2.Type("N")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Pentapus"] = function()
-    replay.WaitForGraphicsMode()
-    emu.wait(2)
-  end,
-  ["Planetoids"] = function()
-    replay.WaitForScreenContains("EASY")
-    apple2.Type("1")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Spy vs Spy 2"] = function()
-    replay.WaitForScreenContains("KEYBOARD")
-    apple2.Type("1")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Super Taxman 2"] = function()
-    replay.WaitForGraphicsMode()
-    emu.wait(2)
-  end,
-  ["The Goonies"] = function()   --Uses Text Page 2!
-    replay.WaitForAddressEquals(0x83A, 0xD2) --'R'IGHTMOST
-    apple2.SetJoy1(255,127)
-    apple2.PressOA()
-    apple2.ReleaseOA()
-    replay.WaitForAddressEquals(0x83A, 0xCC) --'L'EFTMOST
-    apple2.SetJoy1(0,127)
-    apple2.PressOA()
-    apple2.ReleaseOA()
-    replay.WaitForAddressEquals(0x83A, 0xD4) --'T'OPMOST
-    apple2.SetJoy1(127,0)
-    apple2.PressOA()
-    apple2.ReleaseOA()
-    replay.WaitForAddressEquals(0x83A, 0xC2) --'B'OTTOMMOST
-    apple2.SetJoy1(127,255)
-    apple2.PressOA()
-    apple2.ReleaseOA()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Titan Cronus"] = function()
-    replay.WaitForScreenContains("KEYBOARD")
-    apple2.Type("K")
-    replay.WaitForGraphicsMode()
-  end,
-  ["Treasure Dive"] = function()
-    replay.WaitForScreenContains("PRESS RETURN TO CONTINUE")
-    apple2.ReturnKey()
-    replay.WaitForGraphicsMode()
-  end,
-  ["Zoo Master"] = function()
-    replay.WaitForScreenContains("SOUND")
+  ["World Games"] = function()
+    replay.WaitForAddressEquals(0x2034, 0x5F)
   end,
 }
