@@ -69,6 +69,11 @@ return {
     apple2.Type(" ")
     replay.WaitForGraphicsMode()
   end,
+  ["Lemmings"] = function()
+    replay.WaitForScreenContains("PRESS RETURN TO CONTINUE")
+    apple2.ReturnKey()
+    replay.WaitForGraphicsMode()
+  end,
   ["Little Brick Out"] = function()
     replay.WaitForScreenContains("PRESS THE SPACE BAR")
     apple2.Type(" ")
