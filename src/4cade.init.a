@@ -46,6 +46,12 @@
                                      ; does not rely on ROM
          sta   CLRC3ROM
          ror   zpMachineStatus
+         bmi   @foundVidHD
+         jsr   HasAppletiniCard      ; check for Appletini card (allows super hi-res artwork even on non-IIgs machines)
+                                     ; does not rely on ROM
+         ror   zpMachineStatus
+@foundVidHD
+         pha
          lda   ROM_MACHINEID         ; requires ROM read
          cmp   #$06
          bne   @NotGS
@@ -65,7 +71,7 @@
          ror   zpMachineStatus
          jsr   HasMouse              ; check for mouse (also affects filtering)
          ror   zpMachineStatus
-                                     ; now bit 3 = 1 if VidHD
+                                     ; now bit 3 = 1 if SHR card (VidHD or Appletini)
                                      ;     bit 4 = 1 if IIgs
                                      ;     bit 5 = 1 if 128K
                                      ;     bit 6 = 1 if joystick
@@ -160,11 +166,22 @@
          +LDADDR LoadingMouse
          jsr   LoadingPrint          ; requires ROM read
 +
-         ; if zpMachineStatus AND HAS_VIDHD then CR & print 'VidHD'
+         ; if zpMachineStatus AND HAS_SHRCARD then CR & print 'VidHD' or 'Appletini' as appropriate
+         pla
+         tay
          lda   zpMachineStatus
-         and   #HAS_VIDHD
+         and   #HAS_SHRCARD
          beq   +
+         cpy   #ID_VIDHD
+         bne   @notVidHD
          +LDADDR LoadingVidHD
+         bne   @printSHR
+
+@notVidHD
+         ;;cpy ID_APPLETINI
+         +LDADDR LoadingAppletini
+
+@printSHR
          jsr   LoadingPrint          ; requires ROM read
 +
 
@@ -288,6 +305,7 @@
 ProRWTSBuffer
          ; these routines will only be called once, from main memory, before relocating to language card
          !source "src/hw.vidhd.a"
+         !source "src/hw.appletini.a"
          !source "src/hw.memcheck.a"
          !source "src/hw.joystick.a"
          !source "src/hw.mouse.a"
@@ -342,6 +360,8 @@ LoadingMouse
          +PSTRING "\rmouse"
 LoadingVidHD
          +PSTRING "\rVidHD"
+LoadingAppletini
+         +PSTRING "\rAppletini"
 LoadingMockingboard
          +PSTRING "\rMockingboard in slot "
 LoadingMockingboardStereo

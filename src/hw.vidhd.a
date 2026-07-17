@@ -11,9 +11,10 @@
 ; in:    none
 ; out:   C set if VidHD card found in any slot
 ;        if card was found, X = #$Cn where n is the slot number of the card
+;        and A set to $24
 ;        C clear if no VidHD card found
 ;        other flags clobbered
-;        A/Y clobbered
+;        Y clobbered
 ;------------------------------------------------------------------------------
 HasVidHDCard
          ldx   #$C7

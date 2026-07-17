@@ -1,0 +1,56 @@
+;license:MIT
+;(c) 2026 by qkumba
+;
+; Appletini support functions
+;
+
+;------------------------------------------------------------------------------
+; HasAppletiniCard
+; detect Appletini card by searching for magic bytes in slot 7 only
+;
+; in:    none
+; out:   C set if Appletini card found in slot 7
+;        if card was found, A = $41
+;        C clear if no Appletini card found
+;        other flags clobbered
+;        Y clobbered
+;------------------------------------------------------------------------------
+SIG5=$C705
+SIG7=$C707
+CMD_STATUS=$00
+HasAppletiniCard
+         lda   SIG5
+         cmp   #3
+         bne   @notFound
+         lda   SIG7
+         bne   @notFound
+         ldy   $C7FF
+         iny
+         iny
+         iny
+         sty   @SP_ENTRY+1
+@SP_ENTRY jsr  $C7FD                 ; SMC (low byte)
+         !byte CMD_STATUS
+         !word @params
+         bcs   @notFound
+         ldy   #(@sig_e-@kAppletiniMagicBytes)-1
+@byteLoop
+         lda   $209, y
+         cmp   @kAppletiniMagicBytes, y
+         bne   @notFound
+         dey
+         bpl   @byteLoop
+@found
+         sec                         ; found
+         rts
+@notFound
+         clc                         ; not found
+         rts
+@params
+         !byte $03                   ; param count
+         !byte $00                   ; unit 0 = SmartPort controller
+         !word $200                  ; buffer
+         !byte $03                   ; status code $03 = GETDIB
+@kAppletiniMagicBytes
+         !text "Appletini"
+@sig_e
