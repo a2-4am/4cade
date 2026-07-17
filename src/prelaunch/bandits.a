@@ -19,19 +19,15 @@
          +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $8F40
 
+keyboard
+         lda   #$A0
+         !byte $2C
 paddle
          lda   #$D3
          bit   $C062
          bmi   +
 -        lda   $C000
 +        rts
-
-keyboard
-         jsr   paddle
-         cmp   #$D3
-         bne   -
-         lda   #$A0
-         rts
 
 callback
          +ENABLE_ACCEL_LC
