@@ -8,6 +8,7 @@
     !source "src/macros.a"
 
          +USES_TEXT_PAGE_2
+         +READ_RAM2_WRITE_RAM2
          +NEW_RESET_VECTOR_64K $51
          clc
          bcc   cheat3
@@ -29,17 +30,16 @@ cheat1
          bne   $19e
 
 cheat3
-
          lda   #$60
          sta   $83e
-         +HIDE_ARTWORK_LC
          jsr   $800
 
          +GET_MACHINE_STATUS_LC
          and   #CHEATS_ENABLED
          pha
+         jsr   HideLaunchArtworkLC2
 
-+        lda   $846
+         lda   $846
          beq   cheat48
 
          lda   #$60
