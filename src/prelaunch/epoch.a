@@ -11,7 +11,7 @@
          lda   #$60
          sta   $842
          jsr   $800       ; decompress
-         +DISABLE_ACCEL
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
          jmp   $B00
 
 !if * > PrelaunchMax {
