@@ -13,8 +13,8 @@
          jsr   $4000      ; decompress1 and show title
          +DISABLE_ACCEL_LC
 
-         ldx   #$10
-outer    ldy   #$C3       ; show title for 4 seconds before overwriting
+         ldx   #4
+outer    ldy   #$C3       ; show title for 1 second before overwriting
 middle   lda   #$FF
 inner    sec
          sbc   #1
