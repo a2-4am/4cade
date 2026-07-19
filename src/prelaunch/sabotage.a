@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by Frank M.
+;(c) 2019,2026 by Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/SABOTAGE",plain
@@ -10,9 +10,21 @@
          +ENABLE_ACCEL_AND_HIDE_ARTWORK_LC
          lda   #$60       ; hook1
          sta   $4020
-         jsr   $4000      ; decompress1
+         jsr   $4000      ; decompress1 and show title
          +DISABLE_ACCEL_LC
-         jsr   $6B00      ; decompress2/title
+
+         ldx   #$10
+outer    ldy   #$C3       ; show title for 4 seconds before overwriting
+middle   lda   #$FF
+inner    sec
+         sbc   #1
+         bne   inner
+         dey
+         bne   middle
+         dex
+         bne   outer
+
+         jsr   $6B00      ; decompress2 (overwrites title screen)
 
          lda   #$60       ; hook2
          sta   $1DB2
