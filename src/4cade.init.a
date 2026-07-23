@@ -54,8 +54,8 @@
          pha
          lda   ROM_MACHINEID         ; requires ROM read
          cmp   #$06
+         php                         ; carry set on match
          bne   @NotGS
-         sec
          jsr   $FE1F                 ; check for IIgs (allows super hi-res artwork)
                                      ; requires ROM read
          bcs   @NotGS
@@ -69,8 +69,15 @@
          jsr   HasJoystick           ; check for joystick (absence is OK but we filter out some games that require a joystick)
                                      ; requires ROM read
          ror   zpMachineStatus
-         jsr   HasMouse              ; check for mouse (also affects filtering)
-         ror   zpMachineStatus
+         plp
+         bne   @NotIIc
+         lda   ROM_MACHINE2C
+         bne   @NotIIc
+         clc
+         lda   zpMachineStatus
+         bmi   @NoMouse              ; if IIc with joystick connected, then skip mouse check (it's either/or)
+@NotIIc  jsr   HasMouse              ; check for mouse (also affects filtering)
+@NoMouse ror   zpMachineStatus
                                      ; now bit 3 = 1 if SHR card (VidHD or Appletini)
                                      ;     bit 4 = 1 if IIgs
                                      ;     bit 5 = 1 if 128K
