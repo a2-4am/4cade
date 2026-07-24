@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2022, 2024 by qkumba, Frank M.
+;(c) 2022, 2024, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/VICTORY.ROAD",plain
@@ -37,6 +37,7 @@ callback
          sta   $A0F7
          jsr   $A000
          jsr   DisableAccelerator
+         sta   $C05E      ; fix //c color
          lda   #<callback
          sta   $A17A
          lda   #>callback

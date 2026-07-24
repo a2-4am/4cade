@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2023 by qkumba
+;(c) 2023, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/PUYO.PUYO",plain
@@ -15,6 +15,7 @@
          jsr   $6000      ; decompress
 
          jsr   DisableAccelerator
+         sta   $C05E      ; fix //c color
          jmp   $7E7C
 
 !if * > PrelaunchMax {

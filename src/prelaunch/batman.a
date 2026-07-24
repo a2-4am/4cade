@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022, 2024 by Frank M., qkumba
+;(c) 2020, 2022, 2024, 2026 by Frank M., qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/BATMAN",plain
@@ -22,6 +22,7 @@
          sta   $901
          jsr   $800       ; decompress
          jsr   DisableAccelerator
+         sta   $C05E      ; fix //c color
          ldx   #7
          jsr   $984
          lda   MachineStatus

@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2024 by qkumba
+;(c) 2024, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/I2",plain
@@ -16,11 +16,13 @@
          lda   $C083
          jsr   DisableAccelerator
          lda   $C08B
+         sta   $C05E      ; fix //c color
          jsr   $D000      ; title
          jsr   $6028      ; music
 
          lda   $C083
          jsr   EnableAccelerator
+         sta   $C05E      ; fix //c color
          lda   $C08B
          lda   #<callback
          sta   $7ABB
@@ -30,6 +32,7 @@
 
 callback
          jsr   DisableAccelerator
+         sta   $C05E      ; fix //c color
          jsr   $7B5D      ; decompress
          lda   #$4C
          sta   $7AC8
