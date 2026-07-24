@@ -15,9 +15,13 @@
          +HIDE_ARTWORK
          jsr   $FD0C
          jsr   ROM_HOME
+         +GET_MACHINE_STATUS_LC_RW
+         pha
+         and   #SUPPORTS_SHR
+         beq   +
          lda   #%11000001 ; show artwork again
          sta   NEWVIDEO
-         jsr   $823       ; decompress more
++        jsr   $823       ; decompress more
          lda   #$4C
          sta   $7AE1
          lda   #<callback
@@ -29,7 +33,7 @@
          sta   $42FF
          sta   $4302
 
-         +GET_MACHINE_STATUS_LC_RW
+         pla
          and   #CHEATS_ENABLED
          beq   +
          lda   #$A9
