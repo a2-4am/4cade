@@ -9,8 +9,15 @@
 
          +ENABLE_ACCEL
          lda   #$60
+         sta   $820
          sta   $82A
          jsr   $800       ; decompress
+         +HIDE_ARTWORK
+         jsr   $FD0C
+         jsr   ROM_HOME
+         lda   #%11000001 ; show artwork again
+         sta   NEWVIDEO
+         jsr   $823       ; decompress more
          lda   #$4C
          sta   $7AE1
          lda   #<callback
@@ -28,7 +35,7 @@
          lda   #$A9
          sta   $4107      ; don't decrease lives
 +
-         +DISABLE_ACCEL_LC
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jmp   $4000
 
 callback
