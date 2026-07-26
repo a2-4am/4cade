@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2025 by qkumba
+;(c) 2025, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/CROSSBOW",plain
@@ -14,9 +14,13 @@
          +ENABLE_ACCEL
          lda   #$60
          sta   $9A1
+         lda   #$4C
+         sta   $9F4
+         lda   #<callback
+         sta   $9F4+1
+         lda   #>callback
+         sta   $9F4+2
          jsr   $800       ; decompress
-         lda   #$2c
-         sta   $829A      ; reset vector
          lda   #$4C
          sta   $82A0
          sta   $7144
@@ -31,6 +35,10 @@
 +
          +DISABLE_ACCEL_LC
          jmp   $7147
+
+callback lda   #$2C
+         sta   $829A      ; skip setting reset pwrup byte
+         jmp   ($0052)
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
