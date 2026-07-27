@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2019, 2026 by qkumba/Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MD",plain
@@ -9,7 +9,7 @@
 
          +USES_TEXT_PAGE_2
          +READ_RAM2_WRITE_RAM2
-         +NEW_RESET_VECTOR_64K $51
+         +NEW_RESET_VECTOR_64K $2F0
          clc
          bcc   cheat3
 
