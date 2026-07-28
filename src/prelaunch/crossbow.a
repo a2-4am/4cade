@@ -13,7 +13,7 @@
          jsr   $300
          +ENABLE_ACCEL
          lda   #$60
-         sta   $9A1
+         sta   $9F4
          jsr   $800       ; decompress
          lda   #$2c
          sta   $829A      ; reset vector
