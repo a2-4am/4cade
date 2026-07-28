@@ -352,7 +352,7 @@ MockingboardStuff  = $FFF8  ; bit 7 = 1 if SC-01 speech chip present (Speech I)
 MachineStatus      = $FFF9
 
 ; LC RAM 2 addresses
-DisableAccelerator = $DFB4
+DisableAccelerator = $DFB5
 EnableAccelerator  = DisableAccelerator+3
 
 ; application constants

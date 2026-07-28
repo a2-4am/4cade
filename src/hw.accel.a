@@ -381,3 +381,28 @@ fixiic
 +        plp             ; restore interrupt state
          rts
 end_addon
+
+!ifdef PASS2 {
+} else { ;PASS2
+  !if (end_iicplus-iicplus) > (end_setspeed-setspeed) {
+    !if (end_iicplus-iicplus) > (end_addon-addon) {
+      acc_start=iicplus
+      acc_end=end_iicplus
+    } else {
+      acc_start=addon
+      acc_end=end_addon
+    }
+  } else {
+    !if (end_setspeed-setspeed) > (end_addon-addon) {
+      acc_start=setspeed
+      acc_end=end_setspeed
+    } else {
+      acc_start=addon
+      acc_end=end_addon
+    }
+  }
+
+  !if (DisableAccelerator+acc_end-acc_start) != $e000 {
+    !error "set DisableAccelerator to ",$e000-(acc_end-acc_start)
+  }
+}
