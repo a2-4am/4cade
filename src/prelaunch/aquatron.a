@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020 by qkumba, Frank M.
+;(c) 2020, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/AQUATRON",plain
@@ -16,6 +16,15 @@
 
 callback
          +GET_MACHINE_STATUS_LC_RW
+         pha
+         and   #HAS_JOYSTICK
+         bne   +
+         ldx   #2
+-        lda   skipjoy, x
+         sta   $1F37, x
+         dex
+         bpl   -
++        pla
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
@@ -23,6 +32,8 @@ callback
 +
          +DISABLE_ACCEL_LC
          jmp   $400
+
+skipjoy  !byte $4C, $87, $1F
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
