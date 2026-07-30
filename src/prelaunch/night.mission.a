@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL_LC
          lda   #$60
-         sta   $8C36
-         jsr   $44E5      ; decompress
+         sta   $8BC0
+         jsr   $4581      ; decompress
          +GET_MACHINE_STATUS_LC_RW
          and   #HAS_JOYSTICK
          bne   +
