@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by 4am/Frank M.
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MR",plain
@@ -7,23 +7,26 @@
 
          !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +ENABLE_ACCEL
          lda   #$60
-         sta   $0842
+         sta   $084F
+         sta   $0897
          jsr   $0800      ; decompress
-         +GET_MACHINE_STATUS
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jsr   $1E00
+         +ENABLE_ACCEL_LC
+         jsr   $852       ; decompress more
+         lda   #$2C
+         sta   $13D9      ; reset vector patch
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
                           ; lives in EF
          lda   #$00
          sta   $777C      ; patch - don't decrease lives
          sta   $78C5      ; patch - don't increase lives
-+
-         lda   #$EA
-         sta   $13D9
-         sta   $13DA
-         sta   $13DB      ; reset vector patch
 
++        +DISABLE_ACCEL_LC
          jmp   $7600
 
 !if * > PrelaunchMax {
