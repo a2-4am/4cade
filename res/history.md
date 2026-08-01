@@ -4,11 +4,11 @@
 
 - Add support for Appletini card
 - Add self-running demo for Mario Bros.
-- Add cheat for Hard Hat Mack (PR [839](https://github.com/a2-4am/4cade/pull/839), thanks xotmatrix)
+- Add cheat for Hard Hat Mack ([PR 839](https://github.com/a2-4am/4cade/pull/839), thanks xotmatrix)
 - Add automated testing framework and scripts to verify that all games can launch and reset in various configurations (closes [224](https://github.com/a2-4am/4cade/issues/224), thanks Josh B., Frank M.)
 - Show artwork while launching Kaboom!
 - Show artwork while launching Shufflepuck Cafe (thanks Andrew R.)
-- Show title screen longer while launching Sabotage (PR [850](https://github.com/a2-4am/4cade/pull/850), thanks Frank M.)
+- Show title screen longer while launching Sabotage ([PR 850](https://github.com/a2-4am/4cade/pull/850), thanks Frank M.)
 - Allow additional demos on Apple II+ that were excluded for no good reason ([PR 834](https://github.com/a2-4am/4cade/pull/834), thanks Frank M.)
 - Mark Alcazar as requiring a joystick
 - Fix crash in Alien Munchies demo on some machines
@@ -34,7 +34,7 @@
 - Fix crash in Pie-Man demo on some machines (closes [791](https://github.com/a2-4am/4cade/issues/791))
 - Fix crashes in Technocop (closes [799](https://github.com/a2-4am/4cade/issues/799), [838](https://github.com/a2-4am/4cade/issues/838))
 - Fix crash in The Chase on Tom Sawyer's Island (closes [797](https://github.com/a2-4am/4cade/issues/797))
-- Fix reset handling in Crossbow (PR [853](https://github.com/a2-4am/4cade/pull/853), thanks Frank M.)
+- Fix reset handling in Crossbow ([PR 853](https://github.com/a2-4am/4cade/pull/853), thanks Frank M.)
 - Fix reset handling in Deep Space (closes [826](https://github.com/a2-4am/4cade/issues/826))
 - Fix reset handling in Flobynoid (closes [845](https://github.com/a2-4am/4cade/issues/845))
 - Fix reset handling in Wings of Fury (closes [832](https://github.com/a2-4am/4cade/issues/832))
@@ -113,7 +113,7 @@
 - Fix crash in Black Magic on Apple //c+ (closes [633](https://github.com/a2-4am/4cade/issues/633))
 - Fix crash in Hyper Head On on Apple IIgs (closes [667](https://github.com/a2-4am/4cade/issues/667))
 - Fix quit option in Angry Birds (closes [636](https://github.com/a2-4am/4cade/issues/636))
-- Fix reboot after Bolo demo (PR [734](https://github.com/a2-4am/4cade/pull/734), thanks Frank M.)
+- Fix reboot after Bolo demo ([PR 734](https://github.com/a2-4am/4cade/pull/734), thanks Frank M.)
 - Fix uninitialized value in Apple Cider Spider and its self-running demo
 - Swap buttons by default in Lode Runner and Championship Lode Runner (closes [663](https://github.com/a2-4am/4cade/issues/663))
 - Improve joystick handling in Frogger II (closes [658](https://github.com/a2-4am/4cade/issues/658))
@@ -123,14 +123,14 @@
 - Fix crash when exiting Radwarrior on a Laser 128 (closes [784](https://github.com/a2-4am/4cade/issues/784) and [785](https://github.com/a2-4am/4cade/issues/785) but affects other games as well)
 - Fix crash in Lost Tomb demo (thanks Tom G.)
 - Mark Angry Birds as requiring a joystick
-- Mark Captain Goodnight as requiring a joystick (PR [776](https://github.com/a2-4am/4cade/pull/776), thanks xotmatrix)
+- Mark Captain Goodnight as requiring a joystick ([PR 776](https://github.com/a2-4am/4cade/pull/776), thanks xotmatrix)
 - Fix IIgs compatibility issues in Out of this World (closes [778](https://github.com/a2-4am/4cade/issues/778))
 - Properly reset Mockingboard speech chip on Ctrl-Reset (closes [660](https://github.com/a2-4am/4cade/issues/660))
 - Improve Mockingboard speech detection algorithm (closes [661](https://github.com/a2-4am/4cade/issues/661))
 - Improve Mockingboard mono/stereo detection
 - Remove false positive on A2FPGA which made it look like it supported Mockingboard speech even though it doesn't (closes [664](https://github.com/a2-4am/4cade/issues/664))
 - Add mouse detection and filtering for games that require a mouse
-- Reduce color fringing, especially visible on game help pages (PR [645](https://github.com/a2-4am/4cade/pull/645), thanks xotmatrix)
+- Reduce color fringing, especially visible on game help pages ([PR 645](https://github.com/a2-4am/4cade/pull/645), thanks xotmatrix)
 - Properly reset monochrome/color mode on IIgs, now that some games set monochrome mode on purpose (hi Colin)
 - Disable BRAM write in Prince of Persia on IIgs
 - Mark Mapple and Crime Wave as having in-game cheats
