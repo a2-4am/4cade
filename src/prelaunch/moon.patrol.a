@@ -9,8 +9,8 @@
 
          +ENABLE_ACCEL_LC
          lda   #$60
-         sta   $49dd
-         jsr   $498d
+         sta   $47a9
+         jsr   $800
 
          lda   MachineStatus
          and   #CHEATS_ENABLED
