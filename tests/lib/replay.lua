@@ -27,6 +27,20 @@ end
 read_tap  = mem:install_read_tap(0xC050, 0xC057, "a2_softsw_r", handle_softsw)
 write_tap = mem:install_write_tap(0xC050, 0xC057, "a2_softsw_w", handle_softsw)
 
+local last_shr_state = nil  -- nil = unknown yet, forces first write to report
+
+function handle_c029_write(offset, data, mask)
+  local shr_on = (data & 0x80) ~= 0
+  if shr_on ~= last_shr_state then
+    local pc = manager.machine.devices[':maincpu'].state['CURPC'].value
+    print(string.format("PC=%06X  SHR graphics mode %s (C029=%02X)",
+        pc, shr_on and "shown" or "hidden", data))
+    last_shr_state = shr_on
+  end
+end
+
+c029_write_tap = mem:install_write_tap(0xC029, 0xC029, "c029_w", handle_c029_write)
+
 function is_in_graphics_mode()
     return not a2.text
 end
