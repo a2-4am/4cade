@@ -6,4 +6,4 @@
 
   ======================================== ENDCONFIG ]]
 
-replay.allgames("^...")
+replay.allgames("^......1")
