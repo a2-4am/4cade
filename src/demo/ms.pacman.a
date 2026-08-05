@@ -1,0 +1,139 @@
+;license:MIT
+;(c) 2026 by 4am
+
+!cpu 6502
+!to "build/DEMO/MP#060300",plain
+*=$300
+
+         !source "src/constants.a"   ; no code in these
+         !source "src/macros.a"
+
+TIME_TO_TURN   = 7
+INITIAL_TIME   = 1
+
+UP             = $C1
+DOWN           = $DA
+LEFT           = $88
+RIGHT          = $95
+PLAYER_H       = $0373
+PLAYER_V       = $0374
+PLAYER_DIR     = $037A
+PLAYER_REQ_DIR = $037B
+
+callbacks      = $6800               ; 0x300 bytes free
+
+         +ENABLE_ACCEL_LC
+         +LOAD_XSINGLE title
+         lda   #$60
+         sta   $816
+         jsr   $803                  ; decompress
+
+         ldx   #(.move_callbacks_end-.move_callbacks)
+-        lda   .move_callbacks-1, x
+         sta   callbacks-1, x
+         dex
+         bne   -
+         ;X=0
+         stx   $202A
+         stx   $2838
+         inx
+         ;X=1
+         stx   $202F                 ; reset vector patch
+         stx   $2839                 ; game over patch
+         lda   #$20
+         sta   $2312
+         +LDADDR ms_game_key
+         +ST16 $2313                 ; trap key detection
+         lda   #$2C
+         sta   $207B                 ; bypass options screen
+         lda   #$60
+         sta   $374F                 ; turn off sound
+         +DISABLE_ACCEL
+         jmp   $2000
+
+title    +PSTRING "MP"
+
+.move_callbacks
+!pseudopc callbacks {
+ms_game_key
+         ; exit on real keypress
+         lda   KBD
+         bpl   +
+         jmp   $0100
++
+         ; only check status every other call
+         lda   .ms_check_beat
+         eor   #$01
+         sta   .ms_check_beat
+         bne   .no_key
+
+         ; update last known position, and check if player is moving
+         lda   .ms_last_h
+         eor   .ms_last_v
+         eor   PLAYER_H
+         eor   PLAYER_V
+         php
+         lda   PLAYER_H
+         sta   .ms_last_h
+         lda   PLAYER_V
+         sta   .ms_last_v
+         plp
+         beq   .turn
+
+         ; player is moving, check if we already requested a turn
+         lda   PLAYER_DIR
+         eor   PLAYER_REQ_DIR
+         bne   .no_key
+
+         ; player is moving and we have not yet requested a turn
+         ; check if it's time to request a turn
+         dec   .ms_move_beat
+         bne   .no_key
+
+.turn
+         lda   #TIME_TO_TURN
+         sta   .ms_move_beat
+         inc   .ms_key_index
+         ldx   .ms_key_index
+         cpx   #(.ms_key_script_end-.ms_key_script)
+         bcc   +
+         ldx   #0
+         stx   .ms_key_index
++        lda   .ms_key_script, x     ; return with A = next fake key
+         rts
+
+.no_key
+         lda   #0                    ; no fake key
+         rts
+
+.ms_check_beat
+         !byte 0
+.ms_move_beat
+         !byte INITIAL_TIME
+.ms_last_h
+         !byte 0
+.ms_last_v
+         !byte 0
+.ms_key_index
+         !byte 0
+.ms_key_script
+         !byte RIGHT,UP
+         !byte LEFT,UP
+         !byte RIGHT,UP
+         !byte RIGHT,UP
+         !byte RIGHT,DOWN
+         !byte RIGHT,DOWN
+         !byte LEFT,UP
+         !byte LEFT,DOWN
+         !byte LEFT,UP
+         !byte RIGHT,UP
+         !byte LEFT,UP
+         !byte LEFT,DOWN
+         !byte LEFT,DOWN
+.ms_key_script_end
+}
+.move_callbacks_end
+
+!if * > $3F0 {
+  !error "code is too large, ends at ", *
+}
