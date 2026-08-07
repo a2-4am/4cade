@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019 by qkumba/Frank M.
+;(c) 2026 by qkumba
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/JOUST",plain
@@ -7,32 +7,35 @@
 
     !source "src/macros.a"
 
-         +ENABLE_ACCEL_AND_HIDE_ARTWORK
+         +ENABLE_ACCEL_LC
          lda   #$60
-         sta   $82f
-         sta   $85e
-         jsr   $800       ; decompress and show title/options screens
-         +DISABLE_ACCEL
+         sta   $74DD
+         jsr   $2F27      ; decompress and show title/options screens
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK_LC
          jsr   $7000
-         +ENABLE_ACCEL
-         jsr   $832
-         +GET_MACHINE_STATUS_LC_RW
+         +ENABLE_ACCEL_LC
+         lda   #>(callback - 1)
+         sta   $74F5
+         lda   #<(callback - 1)
+         sta   $74F8
+         jmp   $74E0
+
+callback
+         +RESET_VECTOR $100
+         lda   #$60
+         sta   $B7D1      ; skip reset vector
+         lda   #1
+         sta   $E0F       ; quit handler patch
+
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$ad
          sta   $2bc9
          sta   $2b6b
 +
-         lda   #$4C
-         sta   $A3DC
-         ldx   #0
-         stx   $A3DD
-         stx   $2C0E   
-         inx
-         stx   $A3DE      ; reset vector patch
-         stx   $2C0F      ; quit handler patch
          +DISABLE_ACCEL_LC
-         jmp   $3e00
+         jmp   $A982
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
