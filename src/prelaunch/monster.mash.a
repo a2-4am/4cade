@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2020, 2022 by qkumba
+;(c) 2020, 2022, 2026 by qkumba, Frank M.
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/MONSTER.MASH",plain
@@ -47,11 +47,14 @@ callback2
          rts
 
 callback
-         ldx   #0
-         stx   $9E52
-         inx
-         stx   $9E53
+         +NEW_RESET_VECTOR reset
+         lda   #<reset
+         sta   $9E52
+         lda   #>reset
+         sta   $9E53
          jmp   $9D84
+
+reset
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
