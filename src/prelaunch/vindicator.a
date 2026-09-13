@@ -1,5 +1,5 @@
 ;license:MIT
-;(c) 2019-2020, 2026 by Frank M./qkumba
+;(c) 2019-2020, 2026 by Frank M./qkumba/xot
 
 !cpu 6502
 !to "build/PRELAUNCH.INDEXED/VINDICATOR",plain
@@ -31,6 +31,13 @@ callback
          sty   $400F      ; reset vector fix
          dey
          sty   $4001
+
+         lda   #$A9       ; limits controller selection to
+         sta   $55DB      ; keyboard (02) and joystick (FF)
+         lda   #$FD       ;
+         sta   $55DC      ; 55DB: lda #$FD
+         lda   #$45       ;       eor $27
+         sta   $55DD      ;       ...
 
          lda   #$60       ; annunciator fix - kills Gizmo/joyport support
          sta   $5B77      ; but fixes ][+ 80-col softswitch
