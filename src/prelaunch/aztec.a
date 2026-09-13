@@ -11,15 +11,16 @@
          lda   #$60
          sta   $1F3C
          jsr   $1E60      ; decompress
+         lda   #$60
+         sta   $6F80      ; skip the sprite erase at the end of setup
+         jsr   $6F00      ; build tables before resume restores saved state
          lda   #$20
-         sta   $6571
-         lda   #<keypress
-         sta   $6572
-         lda   #>keypress
-         sta   $6573
-         +GET_MACHINE_STATUS_LC_RW
-         and   #CHEATS_ENABLED
-         beq   +
+         sta   $6F80      ; restore the sprite erase for a new game
+         ldx   #4
+         txa              ; 4 is both the last hook index and the cheat flag
+         +READ_RAM2_WRITE_RAM2
+         bit   MachineStatus
+         beq   install_hooks
          lda   #$AD
          sta   $61B5
          sta   $61BD
@@ -27,15 +28,65 @@
          sta   $61D0
          sta   $52D7
          sta   $144B
-+
+install_hooks
+         ldy   hook_offsets,x
+         lda   hook_targets,x
+         sta   $6500,y
+         lda   #$01       ; high byte of every hook address
+         sta   $6501,y
+         dex
+         bpl   install_hooks
          +DISABLE_ACCEL_LC
          jmp   $1B00
 
-keypress
-         lda   KBD
-         bpl   keypress
-         cmp   #$8D
-         bne   keypress
+hook_offsets
+         !byte $7C,$34,$56,$EE,$FA
+hook_targets
+         !byte <death_transition,<exit_transition,<load_score_overlay
+         !byte <score_display_reset,<score_display_reset
+
+death_transition
+         dex              ; both death paths arrive with X=0
+         txs              ; reset the stack and discard stale return addresses
+         jsr   $65C7      ; run the subroutine this hook replaced
+         jmp   $657E      ; continue after the original call
+
+exit_transition
+         dex              ; $652F leaves X=0
+         txs              ; reset the stack and discard stale return addresses
+         jsr   load_converted_file
+         jmp   $6536      ; resume after the exit-image JSR
+
+load_converted_file
+         sta   $031D      ; A selects file; $19 is the full exit image
+         ldx   #$CA       ; read into main memory
+         jmp   $BC00      ; file supplies its own destination
+
+load_score_overlay
+         lda   #$0F       ; start at the first score-overlay sector
+         sta   $031E
+         lda   #$17       ; score overlay file
+         jsr   load_converted_file
+         lda   #<save_score
+         sta   $20EF      ; point the restored call back to our helper
+         lda   #$01       ; helper is on stack page 1
+         sta   $20F0
+         jsr   restore_applesoft_scratch
+         jmp   $1F30      ; continue at the winning-score entry
+
+score_display_reset
+         jsr   restore_applesoft_scratch
+         jmp   $1F33
+
+save_score
+         jsr   restore_applesoft_scratch
+         jsr   $BC00      ; don't touch X before the write; repair scratch on return
+restore_applesoft_scratch
+         lda   #$55
+         sta   $52        ; reset Applesoft's next temp pointer
+         lda   #0
+         sta   $54        ; clear high byte of Applesoft's last temp pointer
+         sta   $A4        ; clear stale FP sign extension
          rts
 
 !if * > PrelaunchMax {
