@@ -7,17 +7,32 @@
 
     !source "src/macros.a"
 
-         +HIDE_ARTWORK
+         +ENABLE_ACCEL
          lda   #$60
-         sta   $1F3C
+         sta   $1EE4
+         sta   $1F4A
          jsr   $1E60      ; decompress
+         +DISABLE_ACCEL_AND_HIDE_ARTWORK
+         jsr   $F3E2
+         jsr   $1EE7      ; title animation
+         +ENABLE_ACCEL
+         ldx   #(keypress_e - keypress_b) - 1
+-        lda   keypress_b, x
+         sta   keypress, x
+         stx   $54
+         dex
+         bpl   -
+         lda   #$55
+         sta   $52
+         lda   #$52
+         sta   $53        ; fix Applesoft display
          lda   #$20
          sta   $6571
          lda   #<keypress
          sta   $6572
          lda   #>keypress
          sta   $6573
-         +GET_MACHINE_STATUS_LC_RW
+         lda   MachineStatus
          and   #CHEATS_ENABLED
          beq   +
          lda   #$AD
@@ -28,15 +43,20 @@
          sta   $52D7
          sta   $144B
 +
+         
          +DISABLE_ACCEL_LC
          jmp   $1B00
 
+keypress_b !pseudopc $200 {
 keypress
          lda   KBD
          bpl   keypress
          cmp   #$8D
          bne   keypress
+         tax
          rts
+}
+keypress_e
 
 !if * > PrelaunchMax {
   !error "code is too large, ends at ", *
