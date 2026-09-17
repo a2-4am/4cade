@@ -13,7 +13,7 @@ You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
  - [Parallel](https://www.gnu.org/software/parallel/)
  - [Cadius](https://github.com/mach-kernel/cadius)
- - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/src/master/)
 
 As of this writing, all of the non-Xcode programs are installable via [Homebrew](https://brew.sh/). Open `Terminal.app` and enter the following:
 
@@ -43,8 +43,8 @@ If that fails, please [file a bug](https://github.com/a2-4am/4cade/issues/new).
 
 You will need
  - [ACME](https://sourceforge.net/projects/acme-crossass/)
- - [Cadius for Windows](https://www.brutaldeluxe.fr/products/crossdevtools/cadius/)
- - [Exomizer](https://bitbucket.org/magli143/exomizer/wiki/Home)
+ - [Cadius](https://github.com/mach-kernel/cadius)
+ - [Exomizer](https://bitbucket.org/magli143/exomizer/src/master/)
 
 (Those tools will need to be added to your command-line PATH.)
 
