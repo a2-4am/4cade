@@ -19,8 +19,17 @@ hook     lda   #0
          lda   #1
          sta   $4061      ; reset vector fix
 
+         lda   $FBB3      ; if not //c+ skip this fix
+         cmp   #$06
+         bne   skipTmFix  ; not an enhanced IIe/IIc/IIgs
+         lda   $FBC0
+         bne   skipTmFix  ; not a //c family member
+         lda   $FBBF
+         cmp   #$05       ; $05 = IIc Plus version byte
+         bne   skipTmFix
          lda   #$2C       ; annunciator fix - kills Gizmo/joyport support
          sta   $666A      ; but fixes ][+ 80-col softswitch and //c+ coloring
+skipTmFix
 
          +GET_MACHINE_STATUS_LC_RW
          and   #CHEATS_ENABLED

@@ -32,16 +32,12 @@ callback
          dey
          sty   $4001
 
-         lda   #$A9       ; limits controller selection to
-         sta   $55DB      ; keyboard (02) and joystick (FF)
-         lda   #$FD       ;
-         sta   $55DC      ; 55DB: lda #$FD
-         lda   #$45       ;       eor $27
-         sta   $55DD      ;       ...
-
-         lda   #$60       ; annunciator fix - kills Gizmo/joyport support
-         sta   $5B77      ; but fixes ][+ 80-col softswitch
-         sta   $5B43      ; and //c+ coloring
+         lda   #$A0       ; Disable the call that reads the selected controller
+         sta   $568B      ; during the controller selection
+         lda   #$0        ; this fixes problems caused by annunciator toggles:
+         sta   $568C      ; fixes ][+ 80-col softswitch and //c+ coloring
+         lda   #$EA       ; without removing the Gizmo/joyport support
+         sta   $568D      ; before patch code was $568B JSR $5C47
 
          ldx   #(patchlo_e-patchlo_b)-1
 -        lda   patchlo_b, x
